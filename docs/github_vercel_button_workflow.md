@@ -209,7 +209,7 @@ For this MVP, option 2 is already implemented.
 8. Click the `크롤링 수행` button in Vercel.
 9. Confirm a new GitHub Actions run starts.
 10. After the run finishes, click `새로고침` in the dashboard.
-11. Later, add official RSS/IR feeds into `config/company_sources.json` for companies that Google News misses.
+11. Later, refine blocked or low-yield official pages in `config/company_sources.json`.
 
 ## Vercel Python Entrypoint Error
 
@@ -226,4 +226,4 @@ it means Vercel detected the repository as a Python project. Commit and push the
 - The current collector uses Google News RSS by default and avoids search-result HTML scraping.
 - GDELT support exists, but its public API can rate-limit aggressively, so it is not enabled in the default button workflow.
 - Five companies had no recent Google News RSS results in the last full local run: `TIMET`, `Magnix`, `Heidenhain`, `EMM(Umicore)`, and `Shanghai Electric Wind Power`.
-- Official newsroom or IR feeds should be added gradually in `config/company_sources.json` to improve coverage.
+- Official newsroom, press, and IR pages are now listed in `config/company_sources.json`; blocked or low-yield pages should be refined gradually.

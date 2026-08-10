@@ -66,6 +66,7 @@ export default function HomePage() {
   }, []);
 
   const recentSignals = useMemo(() => signals.slice(0, 40), [signals]);
+  const officialCount = summary?.official_result_count ?? signals.filter((item) => item.source_type === "official").length;
 
   return (
     <main className="shell">
@@ -107,6 +108,10 @@ export default function HomePage() {
           <strong>{summary?.result_count ?? signals.length}</strong>
         </div>
         <div>
+          <span>공식 출처</span>
+          <strong>{officialCount}</strong>
+        </div>
+        <div>
           <span>최근 실행</span>
           <strong>{formatDate(summary?.run_started_at)}</strong>
         </div>
@@ -134,7 +139,14 @@ export default function HomePage() {
                   <tr key={`${item.company}-${item.url}`}>
                     <td>{item.company}</td>
                     <td>{item.title}</td>
-                    <td>{item.source}</td>
+                    <td>
+                      <div className="sourceStack">
+                        <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
+                          {item.source_type === "official" ? "공식" : "대체"}
+                        </span>
+                        <span>{item.source}</span>
+                      </div>
+                    </td>
                     <td>{formatDate(item.published_at)}</td>
                     <td>
                       <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 기사 열기`}>

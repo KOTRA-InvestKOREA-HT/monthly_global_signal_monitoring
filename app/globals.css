@@ -134,7 +134,7 @@ button:disabled {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -214,7 +214,7 @@ td:nth-child(1) {
 
 th:nth-child(3),
 td:nth-child(3) {
-  width: 220px;
+  width: 240px;
 }
 
 th:nth-child(4),
@@ -235,6 +235,30 @@ td {
 td a {
   color: var(--brand);
   display: inline-flex;
+}
+
+.sourceStack {
+  display: grid;
+  gap: 6px;
+}
+
+.sourceBadge {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.sourceBadge.official {
+  color: var(--ok);
+  background: #ecfdf3;
+}
+
+.sourceBadge.fallback {
+  color: var(--muted);
+  background: #eef2f6;
 }
 
 .empty {

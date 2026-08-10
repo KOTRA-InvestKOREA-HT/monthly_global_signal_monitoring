@@ -44,11 +44,13 @@ jobs:
           --companies data/target_companies.json
           --source-config config/company_sources.json
           --out-dir outputs
-          --sources official_feeds,google_news
+          --sources official_feeds,official_pages,google_news
           --days ${{ inputs.days || '45' }}
           --max-per-source 3
-          --max-per-company 6
-          --rate-limit-seconds 1.0
+          --max-per-company 4
+          --fallback-mode missing
+          --fallback-min-results 1
+          --rate-limit-seconds 0.5
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update company signal data"
@@ -58,6 +60,7 @@ jobs:
 ## Collection Policy
 
 - Prefer RSS/Atom, official newsroom/IR feeds, search APIs, and search-engine feeds.
+- Use `official_feeds` and `official_pages` before Google News fallback.
 - Do not scrape search-result HTML.
 - Keep per-request timeouts and a delay between requests.
 - Add official feeds only after manually verifying that they are stable and allowed.

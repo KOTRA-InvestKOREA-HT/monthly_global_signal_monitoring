@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-10T07:55:25Z",
+  "run_started_at": "2026-08-10T07:43:20Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -12,12 +12,12 @@
   "max_per_company": 4,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 150,
-  "result_count": 201,
-  "official_result_count": 77,
-  "fallback_result_count": 124,
+  "request_count": 153,
+  "result_count": 204,
+  "official_result_count": 82,
+  "fallback_result_count": 122,
   "companies_with_results": 73,
-  "companies_with_official_results": 30,
+  "companies_with_official_results": 31,
   "companies_without_results": [
     "TIMET",
     "Magnix",
@@ -36,9 +36,9 @@
     "Albemarle": 3,
     "TIMET": 0,
     "Air Products": 3,
-    "Chemours": 1,
+    "Chemours": 3,
     "BorgWarner": 3,
-    "DOW": 2,
+    "DOW": 3,
     "Thermo Fisher": 3,
     "Amkor Technology": 3,
     "Onsemi": 1,
@@ -71,14 +71,14 @@
     "Umicore": 2,
     "Solvay": 1,
     "Syensqo": 3,
-    "Hexagon AB": 3,
+    "Hexagon AB": 2,
     "ABB": 3,
     "Maxon": 3,
     "Siemens-Gamesa": 3,
     "Renishaw": 3,
     "Nexeon": 1,
     "Rio Tinto": 3,
-    "HyproMag": 2,
+    "HyproMag": 3,
     "EVG": 3,
     "Plansee": 1,
     "Texcell": 3,
@@ -115,9 +115,9 @@
     "Albemarle": 3,
     "TIMET": 0,
     "Air Products": 3,
-    "Chemours": 1,
+    "Chemours": 3,
     "BorgWarner": 3,
-    "DOW": 2,
+    "DOW": 3,
     "Thermo Fisher": 0,
     "Amkor Technology": 0,
     "Onsemi": 1,
@@ -150,7 +150,7 @@
     "Umicore": 2,
     "Solvay": 1,
     "Syensqo": 0,
-    "Hexagon AB": 0,
+    "Hexagon AB": 2,
     "ABB": 0,
     "Maxon": 0,
     "Siemens-Gamesa": 0,
@@ -182,7 +182,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 62,
+  "error_count": 59,
   "errors": [
     {
       "target_no": 2,
@@ -287,14 +287,6 @@
       "source_url": "https://investors.airproducts.com/news-releases",
       "source_name": "Air Products Investor News",
       "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 12,
-      "company": "Chemours",
-      "source": "official_pages",
-      "source_url": "https://www.chemours.com/en/news-media-center",
-      "source_name": "Chemours News Media Center",
-      "error": "HTTP 403 Forbidden"
     },
     {
       "target_no": 13,
@@ -513,22 +505,6 @@
       "error": "HTTP 406 Not Acceptable"
     },
     {
-      "target_no": 47,
-      "company": "Hexagon AB",
-      "source": "official_pages",
-      "source_url": "https://hexagon.com/company/newsroom/press-releases",
-      "source_name": "Hexagon Press Releases",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 47,
-      "company": "Hexagon AB",
-      "source": "official_pages",
-      "source_url": "https://hexagon.com/company/investors",
-      "source_name": "Hexagon Investors",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
       "target_no": 48,
       "company": "ABB",
       "source": "official_pages",
@@ -682,9 +658,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs\\company_signals_20260810T075525Z.json",
-    "csv": "outputs\\company_signals_20260810T075525Z.csv",
-    "summary": "outputs\\collection_summary_20260810T075525Z.json",
+    "json": "outputs\\company_signals_20260810T074320Z.json",
+    "csv": "outputs\\company_signals_20260810T074320Z.csv",
+    "summary": "outputs\\collection_summary_20260810T074320Z.json",
     "latest_json": "outputs\\latest_company_signals.json",
     "latest_csv": "outputs\\latest_company_signals.csv",
     "latest_summary": "outputs\\latest_collection_summary.json"

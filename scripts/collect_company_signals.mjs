@@ -11,6 +11,9 @@ const FIELDNAMES = [
   "collected_at",
   "collector",
   "query",
+  "source_type",
+  "source_priority",
+  "official_source_url",
 ];
 
 const SIGNAL_TERMS = [
@@ -25,17 +28,20 @@ const SIGNAL_TERMS = [
   "Korea",
 ];
 
-const USER_AGENT = "company-signal-monitor/0.1 (+https://github.com/your-org/company-signal-monitor)";
+const USER_AGENT =
+  "Mozilla/5.0 (compatible; CompanySignalMonitor/0.1; +https://github.com/buy4u49-ship-it/monthly_global_signal_monitoring)";
 
 function parseArgs(argv) {
   const args = {
     companies: "data/target_companies.json",
     sourceConfig: "config/company_sources.json",
     outDir: "outputs",
-    sources: "official_feeds,google_news",
+    sources: "official_feeds,official_pages,google_news",
     days: 45,
     maxPerSource: 3,
     maxPerCompany: 6,
+    fallbackMinResults: 1,
+    fallbackMode: "missing",
     rateLimitSeconds: 1.0,
     timeoutSeconds: 20,
     companyLimit: 0,
@@ -48,6 +54,8 @@ function parseArgs(argv) {
     "--days": "days",
     "--max-per-source": "maxPerSource",
     "--max-per-company": "maxPerCompany",
+    "--fallback-min-results": "fallbackMinResults",
+    "--fallback-mode": "fallbackMode",
     "--rate-limit-seconds": "rateLimitSeconds",
     "--timeout-seconds": "timeoutSeconds",
     "--company-limit": "companyLimit",
@@ -58,7 +66,7 @@ function parseArgs(argv) {
     const mapped = keyMap[key];
     const value = argv[index + 1];
     index += 1;
-    if (["days", "maxPerSource", "maxPerCompany", "timeoutSeconds", "companyLimit"].includes(mapped)) {
+    if (["days", "maxPerSource", "maxPerCompany", "fallbackMinResults", "timeoutSeconds", "companyLimit"].includes(mapped)) {
       args[mapped] = Number.parseInt(value, 10);
     } else if (mapped === "rateLimitSeconds") {
       args[mapped] = Number.parseFloat(value);
@@ -94,6 +102,21 @@ function cleanText(value = "") {
   return decodeXml(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function stripTracking(url) {
+  try {
+    const parsed = new URL(url);
+    for (const key of [...parsed.searchParams.keys()]) {
+      if (/^(utm_|fbclid|gclid|mc_)/i.test(key)) {
+        parsed.searchParams.delete(key);
+      }
+    }
+    parsed.hash = "";
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 function blocks(xml, tag) {
   return [...xml.matchAll(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi"))].map(
     (match) => match[1],
@@ -115,12 +138,34 @@ function parseDate(value) {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
+function extractDateFromText(value = "") {
+  const text = cleanText(value);
+  const numeric = text.match(/\b(20\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
+  if (numeric) {
+    return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
+  }
+  const monthName = text.match(
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
+  );
+  if (monthName) {
+    return parseDate(`${monthName[1]} ${monthName[2]}, ${monthName[3]}`);
+  }
+  const dayMonth = text.match(
+    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i,
+  );
+  if (dayMonth) {
+    return parseDate(`${dayMonth[2]} ${dayMonth[1]}, ${dayMonth[3]}`);
+  }
+  return null;
+}
+
 function filterRecent(rows, days, collectedAt) {
   const cutoff = Date.parse(collectedAt) - days * 24 * 60 * 60 * 1000;
+  const futureLimit = Date.parse(collectedAt) + 24 * 60 * 60 * 1000;
   return rows.filter((row) => {
     if (!row.published_at) return true;
     const published = Date.parse(row.published_at);
-    return Number.isNaN(published) || published >= cutoff;
+    return Number.isNaN(published) || (published >= cutoff && published <= futureLimit);
   });
 }
 
@@ -132,7 +177,9 @@ async function fetchText(url, timeoutSeconds) {
       signal: controller.signal,
       headers: {
         "User-Agent": USER_AGENT,
-        Accept: "application/rss+xml, application/atom+xml, application/json, text/xml;q=0.9, */*;q=0.8",
+        Accept:
+          "text/html, application/xhtml+xml, application/rss+xml, application/atom+xml, application/json, text/xml;q=0.9, */*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,ko;q=0.7",
       },
     });
     if (!response.ok) {
@@ -176,6 +223,7 @@ function buildGdeltQuery(company) {
 
 function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource) {
   const rows = [];
+  const isOfficialCollector = collector.startsWith("official_");
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
     rows.push({
@@ -188,6 +236,9 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       collected_at: collectedAt,
       collector,
       query,
+      source_type: isOfficialCollector ? "official" : "fallback",
+      source_priority: isOfficialCollector ? 10 : 90,
+      official_source_url: isOfficialCollector ? query : "",
     });
   }
   for (const entry of blocks(xml, "entry")) {
@@ -202,9 +253,133 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       collected_at: collectedAt,
       collector,
       query,
+      source_type: isOfficialCollector ? "official" : "fallback",
+      source_priority: isOfficialCollector ? 10 : 90,
+      official_source_url: isOfficialCollector ? query : "",
     });
   }
   return rows.filter((row) => row.title && row.url);
+}
+
+function parseAnchors(html, baseUrl) {
+  const anchors = [];
+  const anchorRegex = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(anchorRegex)) {
+    const attrs = match[1] || "";
+    const hrefMatch = attrs.match(/\bhref\s*=\s*["']([^"']+)["']/i);
+    if (!hrefMatch) continue;
+    const href = decodeXml(hrefMatch[1]).trim();
+    if (!href || /^(#|mailto:|tel:|javascript:)/i.test(href)) continue;
+    try {
+      anchors.push({
+        url: stripTracking(new URL(href, baseUrl).toString()),
+        title: cleanText(match[2]),
+        context: cleanText(
+          html.slice(Math.max(0, match.index - 260), Math.min(html.length, match.index + match[0].length + 260)),
+        ),
+      });
+    } catch {
+      continue;
+    }
+  }
+  return anchors;
+}
+
+function isGenericOfficialTitle(title) {
+  return /^(read more|see more\b.*|learn more|more|news release|press release|share price info|view details)$/i.test(title);
+}
+
+function titleFromUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    const last = segments.reverse().find((segment) => !/^(default|index|news|press|releases?|details?|en|global|ir)$/i.test(segment));
+    if (!last) return "";
+    const cleaned = decodeURIComponent(last)
+      .replace(/\.(html?|aspx|php)$/i, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return cleaned.length >= 16 ? cleaned : "";
+  } catch {
+    return "";
+  }
+}
+
+function officialTitle(anchor) {
+  if (!isGenericOfficialTitle(anchor.title)) return anchor.title;
+  return titleFromUrl(anchor.url);
+}
+
+function discoverFeedLinks(html, baseUrl) {
+  const urls = [];
+  const linkRegex = /<link\b([^>]*)>/gi;
+  for (const match of html.matchAll(linkRegex)) {
+    const attrs = match[1] || "";
+    if (!/(application\/rss\+xml|application\/atom\+xml|rss|atom|feed)/i.test(attrs)) continue;
+    const hrefMatch = attrs.match(/\bhref\s*=\s*["']([^"']+)["']/i);
+    if (!hrefMatch) continue;
+    const href = decodeXml(hrefMatch[1]);
+    if (/xmlrpc\.php|rsd/i.test(href)) continue;
+    try {
+      urls.push(stripTracking(new URL(href, baseUrl).toString()));
+    } catch {
+      continue;
+    }
+  }
+  for (const anchor of parseAnchors(html, baseUrl)) {
+    if (/(rss|atom|feed)/i.test(`${anchor.title} ${anchor.url}`)) {
+      urls.push(anchor.url);
+    }
+  }
+  return [...new Set(urls)].slice(0, 3);
+}
+
+function isRelevantOfficialLink(anchor, pageUrl) {
+  const title = officialTitle(anchor);
+  const direct = `${title} ${anchor.url}`.toLowerCase();
+  const detectedDate = extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`);
+  if (title.length < 8) return false;
+  if (!detectedDate) return false;
+  if (/\.(jpg|jpeg|png|gif|svg|webp|mp4|zip)$/i.test(anchor.url)) return false;
+  if (/privacy|cookie|terms|subscribe|contact|career|linkedin|facebook|twitter|youtube|instagram/i.test(direct)) {
+    return false;
+  }
+  if (
+    /^(investor relations home|corporate governance|corporate directory|corporate citizenship|management|contact us|about us|products?|solutions?|careers?)$/i.test(
+      title,
+    )
+  ) {
+    return false;
+  }
+  const keywords =
+    /press|release|news|financial|results|earnings|quarter|annual|report|presentation|announcement|acquisition|expansion|partnership|investment|korea|plant|facility|manufactur/i;
+  if (keywords.test(direct)) return true;
+  try {
+    const sourceHost = new URL(pageUrl).hostname.replace(/^www\./, "");
+    const targetHost = new URL(anchor.url).hostname.replace(/^www\./, "");
+    return (
+      sourceHost === targetHost &&
+      /\/(news|press|release|media|investor|ir|financial|results|announcements?)\b/i.test(new URL(anchor.url).pathname)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function normalizeOfficialPageEntries(entries) {
+  return entries
+    .map((entry) => {
+      if (typeof entry === "string") {
+        return { url: entry, source: "Official page", kind: "official_page" };
+      }
+      return {
+        url: entry.url,
+        source: entry.source || "Official page",
+        kind: entry.kind || "official_page",
+      };
+    })
+    .filter((entry) => entry.url);
 }
 
 async function collectOfficialFeeds(company, sourceConfig, maxPerSource, timeoutSeconds, collectedAt) {
@@ -225,6 +400,55 @@ async function collectOfficialFeeds(company, sourceConfig, maxPerSource, timeout
   return { rows, requestCount };
 }
 
+async function collectOfficialPages(company, sourceConfig, days, maxPerSource, timeoutSeconds, collectedAt) {
+  const pages = normalizeOfficialPageEntries(sourceConfig.official_pages?.[company.company] || []);
+  const rows = [];
+  const errors = [];
+  let requestCount = 0;
+  for (const page of pages) {
+    try {
+      const html = await fetchText(page.url, timeoutSeconds);
+      requestCount += 1;
+      for (const feedUrl of discoverFeedLinks(html, page.url)) {
+        try {
+          const feedXml = await fetchText(feedUrl, timeoutSeconds);
+          requestCount += 1;
+          rows.push(
+            ...filterRecent(
+              parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`),
+              days,
+              collectedAt,
+            ).slice(0, maxPerSource),
+          );
+        } catch (error) {
+          errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, error: error.message });
+        }
+      }
+      const anchors = parseAnchors(html, page.url).filter((anchor) => isRelevantOfficialLink(anchor, page.url));
+      const sourceRows = dedupeRows(
+        anchors.map((anchor) => ({
+          target_no: company.target_no,
+          company: company.company,
+          title: officialTitle(anchor),
+          url: anchor.url,
+          source: page.source,
+          published_at: extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`),
+          collected_at: collectedAt,
+          collector: "official_page",
+          query: page.url,
+          source_type: "official",
+          source_priority: page.kind === "ir" ? 15 : 20,
+          official_source_url: page.url,
+        })),
+      );
+      rows.push(...filterRecent(sourceRows, days, collectedAt).slice(0, maxPerSource));
+    } catch (error) {
+      errors.push({ source_url: page.url, source_name: page.source, error: error.message });
+    }
+  }
+  return { rows, requestCount, errors };
+}
+
 async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, collectedAt) {
   const query = buildQuery(company, days);
   const params = new URLSearchParams({
@@ -239,7 +463,14 @@ async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, co
       parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
       days,
       collectedAt,
-    ).slice(0, maxPerSource),
+    )
+      .map((row) => ({
+        ...row,
+        source_type: "fallback",
+        source_priority: 90,
+        official_source_url: "",
+      }))
+      .slice(0, maxPerSource),
     requestCount: 1,
   };
 }
@@ -266,6 +497,9 @@ async function collectGdelt(company, days, maxPerSource, timeoutSeconds, collect
       collected_at: collectedAt,
       collector: "gdelt_doc_api",
       query,
+      source_type: "fallback",
+      source_priority: 95,
+      official_source_url: "",
     }))
     .filter((row) => row.title && row.url);
   return { rows: filterRecent(rows, days, collectedAt).slice(0, maxPerSource), requestCount: 1 };
@@ -273,15 +507,29 @@ async function collectGdelt(company, days, maxPerSource, timeoutSeconds, collect
 
 function dedupeRows(rows) {
   const seen = new Set();
+  const seenTitles = new Set();
   const deduped = [];
   for (const row of rows) {
     const urlKey = row.url.replace(/[?#].*$/, "").toLowerCase();
     const key = `${row.company.toLowerCase()}|${urlKey || row.title.toLowerCase()}`;
+    const titleKey = `${row.company.toLowerCase()}|${row.title.toLowerCase().replace(/\s+/g, " ").trim()}`;
     if (seen.has(key)) continue;
+    if (row.title.length > 15 && seenTitles.has(titleKey)) continue;
     seen.add(key);
+    seenTitles.add(titleKey);
     deduped.push(row);
   }
   return deduped;
+}
+
+function sortRows(rows) {
+  return [...rows].sort((a, b) => {
+    const priority = Number(a.source_priority || 99) - Number(b.source_priority || 99);
+    if (priority !== 0) return priority;
+    const bDate = Date.parse(b.published_at || "") || 0;
+    const aDate = Date.parse(a.published_at || "") || 0;
+    return bDate - aDate;
+  });
 }
 
 function toCsv(rows) {
@@ -348,7 +596,12 @@ async function main() {
       try {
         if (source === "official_feeds") {
           result = await collectOfficialFeeds(company, sourceConfig, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        } else if (source === "official_pages") {
+          result = await collectOfficialPages(company, sourceConfig, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
         } else if (source === "google_news") {
+          if (args.fallbackMode === "missing" && dedupeRows(companyRows).length >= args.fallbackMinResults) {
+            continue;
+          }
           result = await collectGoogleNews(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
         } else if (source === "gdelt") {
           result = await collectGdelt(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
@@ -357,6 +610,14 @@ async function main() {
         }
         companyRows.push(...result.rows);
         requestCount += result.requestCount;
+        for (const sourceError of result.errors || []) {
+          errors.push({
+            target_no: company.target_no,
+            company: company.company,
+            source,
+            ...sourceError,
+          });
+        }
       } catch (error) {
         errors.push({
           target_no: company.target_no,
@@ -369,13 +630,17 @@ async function main() {
         await sleep(args.rateLimitSeconds * 1000);
       }
     }
-    rows.push(...dedupeRows(companyRows).slice(0, args.maxPerCompany));
+    rows.push(...sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany));
   }
 
-  const finalRows = dedupeRows(rows);
+  const finalRows = sortRows(dedupeRows(rows));
   const countsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
+  const officialCountsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
   for (const row of finalRows) {
     countsByCompany[row.company] += 1;
+    if (row.source_type === "official") {
+      officialCountsByCompany[row.company] += 1;
+    }
   }
 
   const summary = {
@@ -386,13 +651,19 @@ async function main() {
     days: args.days,
     max_per_source: args.maxPerSource,
     max_per_company: args.maxPerCompany,
+    fallback_mode: args.fallbackMode,
+    fallback_min_results: args.fallbackMinResults,
     request_count: requestCount,
     result_count: finalRows.length,
+    official_result_count: finalRows.filter((row) => row.source_type === "official").length,
+    fallback_result_count: finalRows.filter((row) => row.source_type !== "official").length,
     companies_with_results: Object.values(countsByCompany).filter((count) => count > 0).length,
+    companies_with_official_results: Object.values(officialCountsByCompany).filter((count) => count > 0).length,
     companies_without_results: Object.entries(countsByCompany)
       .filter(([, count]) => count === 0)
       .map(([company]) => company),
     counts_by_company: countsByCompany,
+    official_counts_by_company: officialCountsByCompany,
     error_count: errors.length,
     errors,
   };

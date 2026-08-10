@@ -1,4 +1,299 @@
 {
-  "description": "Optional official newsroom, press-release, or IR RSS/Atom feeds. Keep this file sparse and verified; the collector falls back to search/RSS sources when no official feed is configured.",
-  "official_feeds": {}
+  "description": "Official company source catalog. The collector reads official RSS/Atom feeds first, then official newsroom/press/IR pages, and uses Google News only as a fallback when official results are missing.",
+  "official_feeds": {},
+  "official_pages": {
+    "Australian Strategic Metals": [
+      {"source": "Australian Strategic Materials News", "kind": "newsroom", "url": "https://asm-au.com/news/"},
+      {"source": "Australian Strategic Materials Investors", "kind": "ir", "url": "https://asm-au.com/investors/"}
+    ],
+    "Cognex": [
+      {"source": "Cognex Press Releases", "kind": "press_release", "url": "https://www.cognex.com/company/press-releases"},
+      {"source": "Cognex Investor Relations", "kind": "ir", "url": "https://www.cognex.com/investor-relations"}
+    ],
+    "Corning": [
+      {"source": "Corning News Releases", "kind": "press_release", "url": "https://www.corning.com/worldwide/en/about-us/news-events/news-releases.html"},
+      {"source": "Corning Investor Relations", "kind": "ir", "url": "https://investor.corning.com/"}
+    ],
+    "Charles River": [
+      {"source": "Charles River IR News Releases", "kind": "ir", "url": "https://ir.criver.com/news-releases"},
+      {"source": "Charles River News", "kind": "newsroom", "url": "https://www.criver.com/about-us/news-events"}
+    ],
+    "Cytiva": [
+      {"source": "Cytiva Newsroom", "kind": "newsroom", "url": "https://www.cytiva.com/about-us/newsroom"}
+    ],
+    "Moderna": [
+      {"source": "Moderna Investor News", "kind": "ir", "url": "https://investors.modernatx.com/news/news-details"},
+      {"source": "Moderna News", "kind": "newsroom", "url": "https://www.modernatx.com/en-US/media-center/news"}
+    ],
+    "West Pharmaceutical": [
+      {"source": "West Investor News", "kind": "ir", "url": "https://investors.westpharma.com/news-releases"},
+      {"source": "West News", "kind": "newsroom", "url": "https://www.westpharma.com/news"}
+    ],
+    "Dupont": [
+      {"source": "DuPont News", "kind": "newsroom", "url": "https://www.dupont.com/news.html"},
+      {"source": "DuPont Investor Press Releases", "kind": "ir", "url": "https://investors.dupont.com/news-and-events/press-releases"}
+    ],
+    "Albemarle": [
+      {"source": "Albemarle Investor News", "kind": "ir", "url": "https://investors.albemarle.com/news/news-details"},
+      {"source": "Albemarle News", "kind": "newsroom", "url": "https://www.albemarle.com/news"}
+    ],
+    "TIMET": [
+      {"source": "TIMET News", "kind": "newsroom", "url": "https://www.timet.com/news/"}
+    ],
+    "Air Products": [
+      {"source": "Air Products News Center", "kind": "newsroom", "url": "https://www.airproducts.com/company/news-center"},
+      {"source": "Air Products Investor News", "kind": "ir", "url": "https://investors.airproducts.com/news-releases"}
+    ],
+    "Chemours": [
+      {"source": "Chemours News Media Center", "kind": "newsroom", "url": "https://www.chemours.com/en/news-media-center"},
+      {"source": "Chemours Investor News", "kind": "ir", "url": "https://investors.chemours.com/news-releases"}
+    ],
+    "BorgWarner": [
+      {"source": "BorgWarner Press Releases", "kind": "press_release", "url": "https://www.borgwarner.com/newsroom/press-releases"},
+      {"source": "BorgWarner Investor News", "kind": "ir", "url": "https://ir.borgwarner.com/news-events"}
+    ],
+    "DOW": [
+      {"source": "Dow News", "kind": "newsroom", "url": "https://corporate.dow.com/en-us/news.html"},
+      {"source": "Dow Investor News", "kind": "ir", "url": "https://investors.dow.com/en/news"}
+    ],
+    "Thermo Fisher": [
+      {"source": "Thermo Fisher News Releases", "kind": "press_release", "url": "https://thermofisher.mediaroom.com/news-releases"},
+      {"source": "Thermo Fisher Investor News", "kind": "ir", "url": "https://ir.thermofisher.com/investors/news-events/news-releases"}
+    ],
+    "Amkor Technology": [
+      {"source": "Amkor Press Releases", "kind": "press_release", "url": "https://amkor.com/newsroom/press-releases/"},
+      {"source": "Amkor Investor News", "kind": "ir", "url": "https://ir.amkor.com/news-events/news-releases"}
+    ],
+    "Onsemi": [
+      {"source": "onsemi Press Announcements", "kind": "press_release", "url": "https://www.onsemi.com/company/news-media/press-announcements"},
+      {"source": "onsemi Investor News", "kind": "ir", "url": "https://investor.onsemi.com/news-releases"}
+    ],
+    "Qualcomm": [
+      {"source": "Qualcomm News Releases", "kind": "press_release", "url": "https://www.qualcomm.com/news/releases"},
+      {"source": "Qualcomm Investor Press Releases", "kind": "ir", "url": "https://investor.qualcomm.com/news-events/press-releases"}
+    ],
+    "Skyworks": [
+      {"source": "Skyworks Newsroom", "kind": "newsroom", "url": "https://www.skyworksinc.com/en/Newsroom"},
+      {"source": "Skyworks Investor Press Releases", "kind": "ir", "url": "https://investors.skyworksinc.com/news-events/press-releases"}
+    ],
+    "Eli Lilly and Company": [
+      {"source": "Eli Lilly Investor News", "kind": "ir", "url": "https://investor.lilly.com/news-releases"},
+      {"source": "Eli Lilly News", "kind": "newsroom", "url": "https://www.lilly.com/news"}
+    ],
+    "GE Healthcare": [
+      {"source": "GE HealthCare Newsroom", "kind": "newsroom", "url": "https://www.gehealthcare.com/about/newsroom"},
+      {"source": "GE HealthCare Investor News", "kind": "ir", "url": "https://investor.gehealthcare.com/news-events/news-releases"}
+    ],
+    "Boeing": [
+      {"source": "Boeing News Releases", "kind": "press_release", "url": "https://boeing.mediaroom.com/news-releases-statements"},
+      {"source": "Boeing Investor News", "kind": "ir", "url": "https://investors.boeing.com/investors/news"}
+    ],
+    "3M": [
+      {"source": "3M Press Releases", "kind": "press_release", "url": "https://news.3m.com/press-releases"},
+      {"source": "3M Investor Press Releases", "kind": "ir", "url": "https://investors.3m.com/news-events/press-releases"}
+    ],
+    "Ouster": [
+      {"source": "Ouster Investor News", "kind": "ir", "url": "https://investors.ouster.com/news/news-releases"},
+      {"source": "Ouster News", "kind": "newsroom", "url": "https://ouster.com/news"}
+    ],
+    "Applied Materials": [
+      {"source": "Applied Materials Investor News", "kind": "ir", "url": "https://ir.appliedmaterials.com/news-releases"},
+      {"source": "Applied Materials Newsroom", "kind": "newsroom", "url": "https://www.appliedmaterials.com/us/en/newsroom.html"}
+    ],
+    "Magnix": [
+      {"source": "magniX News", "kind": "newsroom", "url": "https://www.magnix.aero/news"}
+    ],
+    "Prodrive": [
+      {"source": "Prodrive Technologies News", "kind": "newsroom", "url": "https://www.prodrive-technologies.com/news"}
+    ],
+    "ASML": [
+      {"source": "ASML Press Releases", "kind": "press_release", "url": "https://www.asml.com/en/news/press-releases"},
+      {"source": "ASML Investors", "kind": "ir", "url": "https://www.asml.com/en/investors"}
+    ],
+    "Besi": [
+      {"source": "Besi Press Releases", "kind": "ir", "url": "https://www.besi.com/investor-relations/press-releases/"},
+      {"source": "Besi News", "kind": "newsroom", "url": "https://www.besi.com/news"}
+    ],
+    "NXP": [
+      {"source": "NXP Newsroom", "kind": "newsroom", "url": "https://www.nxp.com/company/about-nxp/newsroom:NEWSROOM"},
+      {"source": "NXP Investor News", "kind": "ir", "url": "https://investors.nxp.com/news-releases"}
+    ],
+    "Norsk Hydro": [
+      {"source": "Norsk Hydro News", "kind": "newsroom", "url": "https://www.hydro.com/en/global/media/news/"},
+      {"source": "Norsk Hydro Investors", "kind": "ir", "url": "https://www.hydro.com/en/global/investors/"}
+    ],
+    "Vestas": [
+      {"source": "Vestas Company News", "kind": "newsroom", "url": "https://www.vestas.com/en/media/company-news"},
+      {"source": "Vestas Investor", "kind": "ir", "url": "https://www.vestas.com/en/investor"}
+    ],
+    "Heidenhain": [
+      {"source": "HEIDENHAIN News", "kind": "newsroom", "url": "https://www.heidenhain.com/news"},
+      {"source": "HEIDENHAIN Company Newsroom", "kind": "newsroom", "url": "https://www.heidenhain.com/company/newsroom"}
+    ],
+    "Infineon": [
+      {"source": "Infineon Press Releases", "kind": "press_release", "url": "https://www.infineon.com/cms/en/about-infineon/press/press-releases/"},
+      {"source": "Infineon Investor Relations", "kind": "ir", "url": "https://www.infineon.com/cms/en/about-infineon/investor/"}
+    ],
+    "Schmalz": [
+      {"source": "Schmalz Press Releases", "kind": "press_release", "url": "https://www.schmalz.com/en-us/company/press/press-releases/"}
+    ],
+    "Bayer": [
+      {"source": "Bayer News", "kind": "newsroom", "url": "https://www.bayer.com/media/en-us/news-stories/"},
+      {"source": "Bayer Investors", "kind": "ir", "url": "https://www.bayer.com/en/investors"}
+    ],
+    "Merck": [
+      {"source": "Merck KGaA News", "kind": "newsroom", "url": "https://www.merckgroup.com/en/news.html"},
+      {"source": "Merck KGaA Investors", "kind": "ir", "url": "https://www.merckgroup.com/en/investors.html"}
+    ],
+    "Schott Pharma": [
+      {"source": "SCHOTT Pharma Newsroom", "kind": "newsroom", "url": "https://www.schott-pharma.com/newsroom"},
+      {"source": "SCHOTT Pharma Investor Relations", "kind": "ir", "url": "https://www.schott-pharma.com/investor-relations"}
+    ],
+    "BASF": [
+      {"source": "BASF News Releases", "kind": "press_release", "url": "https://www.basf.com/global/en/media/news-releases"},
+      {"source": "BASF Investors", "kind": "ir", "url": "https://www.basf.com/global/en/investors"}
+    ],
+    "Evonik Industries": [
+      {"source": "Evonik Press Releases", "kind": "press_release", "url": "https://corporate.evonik.com/en/media/press-releases"},
+      {"source": "Evonik Investor Relations", "kind": "ir", "url": "https://corporate.evonik.com/en/investor-relations"}
+    ],
+    "Heraeus": [
+      {"source": "Heraeus Media", "kind": "newsroom", "url": "https://www.heraeus.com/en/group/media/media.html"}
+    ],
+    "Jenoptik": [
+      {"source": "Jenoptik Press Releases", "kind": "press_release", "url": "https://www.jenoptik.com/news/press-releases"},
+      {"source": "Jenoptik Investors", "kind": "ir", "url": "https://www.jenoptik.com/investors"}
+    ],
+    "EMM(Umicore)": [
+      {"source": "Umicore Newsroom", "kind": "newsroom", "url": "https://www.umicore.com/en/newsroom/"},
+      {"source": "Umicore Investors", "kind": "ir", "url": "https://www.umicore.com/en/investors/"}
+    ],
+    "Umicore": [
+      {"source": "Umicore Newsroom", "kind": "newsroom", "url": "https://www.umicore.com/en/newsroom/"},
+      {"source": "Umicore Investors", "kind": "ir", "url": "https://www.umicore.com/en/investors/"}
+    ],
+    "Solvay": [
+      {"source": "Solvay Press Releases", "kind": "press_release", "url": "https://www.solvay.com/en/press-release"},
+      {"source": "Solvay Investors", "kind": "ir", "url": "https://www.solvay.com/en/investors"}
+    ],
+    "Syensqo": [
+      {"source": "Syensqo Press Releases", "kind": "press_release", "url": "https://www.syensqo.com/en/press-releases"},
+      {"source": "Syensqo Investors", "kind": "ir", "url": "https://www.syensqo.com/en/investors"}
+    ],
+    "Hexagon AB": [
+      {"source": "Hexagon Press Releases", "kind": "press_release", "url": "https://hexagon.com/company/newsroom/press-releases"},
+      {"source": "Hexagon Investors", "kind": "ir", "url": "https://hexagon.com/company/investors"}
+    ],
+    "ABB": [
+      {"source": "ABB Press Releases", "kind": "press_release", "url": "https://global.abb/group/en/media/press-releases"},
+      {"source": "ABB Investors", "kind": "ir", "url": "https://global.abb/group/en/investors"}
+    ],
+    "Maxon": [
+      {"source": "maxon News", "kind": "newsroom", "url": "https://www.maxongroup.com/en-us/news"}
+    ],
+    "Siemens-Gamesa": [
+      {"source": "Siemens Gamesa Newsroom", "kind": "newsroom", "url": "https://www.siemensgamesa.com/en-int/newsroom"}
+    ],
+    "Renishaw": [
+      {"source": "Renishaw News", "kind": "newsroom", "url": "https://www.renishaw.com/en/news--6516"},
+      {"source": "Renishaw Investor Relations", "kind": "ir", "url": "https://www.renishaw.com/en/investor-relations--6608"}
+    ],
+    "Nexeon": [
+      {"source": "Nexeon News", "kind": "newsroom", "url": "https://www.nexeon.co.uk/news"}
+    ],
+    "Rio Tinto": [
+      {"source": "Rio Tinto News Releases", "kind": "press_release", "url": "https://www.riotinto.com/en/news/releases"},
+      {"source": "Rio Tinto Investors", "kind": "ir", "url": "https://www.riotinto.com/en/invest"}
+    ],
+    "HyproMag": [
+      {"source": "HyProMag News", "kind": "newsroom", "url": "https://hypromag.com/news/"}
+    ],
+    "EVG": [
+      {"source": "EV Group News", "kind": "newsroom", "url": "https://www.evgroup.com/news/"}
+    ],
+    "Plansee": [
+      {"source": "Plansee News", "kind": "newsroom", "url": "https://www.plansee.com/en/news.html"}
+    ],
+    "Texcell": [
+      {"source": "Texcell News", "kind": "newsroom", "url": "https://www.texcell.com/news/"}
+    ],
+    "Veolia": [
+      {"source": "Veolia Press Releases", "kind": "press_release", "url": "https://www.veolia.com/en/newsroom/press-releases"},
+      {"source": "Veolia Finance", "kind": "ir", "url": "https://www.veolia.com/en/finance"}
+    ],
+    "Airbus": [
+      {"source": "Airbus Press Releases", "kind": "press_release", "url": "https://www.airbus.com/en/newsroom/press-releases"},
+      {"source": "Airbus Investors", "kind": "ir", "url": "https://www.airbus.com/en/investors"}
+    ],
+    "Safran": [
+      {"source": "Safran Pressroom", "kind": "press_release", "url": "https://www.safran-group.com/pressroom"},
+      {"source": "Safran Finance", "kind": "ir", "url": "https://www.safran-group.com/finance"}
+    ],
+    "Air Liquide": [
+      {"source": "Air Liquide Press Releases", "kind": "press_release", "url": "https://www.airliquide.com/media/press-releases"},
+      {"source": "Air Liquide Investors", "kind": "ir", "url": "https://www.airliquide.com/investors"}
+    ],
+    "Arkema": [
+      {"source": "Arkema News", "kind": "newsroom", "url": "https://www.arkema.com/global/en/media/newslist/"},
+      {"source": "Arkema Investor Relations", "kind": "ir", "url": "https://www.arkema.com/global/en/investor-relations/"}
+    ],
+    "DNP": [
+      {"source": "DNP News", "kind": "newsroom", "url": "https://www.global.dnp/news/"}
+    ],
+    "Hitachi Metals": [
+      {"source": "Proterial Press Releases", "kind": "press_release", "url": "https://www.proterial.com/e/press/"},
+      {"source": "Proterial IR", "kind": "ir", "url": "https://www.proterial.com/e/ir/"}
+    ],
+    "Toppan Holdings": [
+      {"source": "TOPPAN News", "kind": "newsroom", "url": "https://www.holdings.toppan.com/en/news/"},
+      {"source": "TOPPAN Investor Relations", "kind": "ir", "url": "https://www.holdings.toppan.com/en/ir/"}
+    ],
+    "Nabtesco": [
+      {"source": "Nabtesco News", "kind": "newsroom", "url": "https://www.nabtesco.com/en/news/"},
+      {"source": "Nabtesco IR", "kind": "ir", "url": "https://www.nabtesco.com/en/ir/"}
+    ],
+    "Asahi Glass": [
+      {"source": "AGC News", "kind": "newsroom", "url": "https://www.agc.com/en/news/"},
+      {"source": "AGC Investor Relations", "kind": "ir", "url": "https://www.agc.com/en/ir/"}
+    ],
+    "JSR": [
+      {"source": "JSR News", "kind": "newsroom", "url": "https://www.jsr.co.jp/jsr_e/news/"},
+      {"source": "JSR IR", "kind": "ir", "url": "https://www.jsr.co.jp/jsr_e/ir/"}
+    ],
+    "Shin-Etsu Chemicals": [
+      {"source": "Shin-Etsu News", "kind": "newsroom", "url": "https://www.shinetsu.co.jp/en/news/"},
+      {"source": "Shin-Etsu IR", "kind": "ir", "url": "https://www.shinetsu.co.jp/en/ir/"}
+    ],
+    "Tokyo Electron": [
+      {"source": "Tokyo Electron News", "kind": "newsroom", "url": "https://www.tel.com/news/"},
+      {"source": "Tokyo Electron IR", "kind": "ir", "url": "https://www.tel.com/ir/"}
+    ],
+    "Tosoh": [
+      {"source": "Tosoh News", "kind": "newsroom", "url": "https://www.tosoh.com/news"},
+      {"source": "Tosoh IR", "kind": "ir", "url": "https://www.tosoh.com/ir"}
+    ],
+    "Mitsubishi Chemical": [
+      {"source": "Mitsubishi Chemical Group News", "kind": "newsroom", "url": "https://www.mcgc.com/english/news_release/"},
+      {"source": "Mitsubishi Chemical Group IR", "kind": "ir", "url": "https://www.mcgc.com/english/ir/"}
+    ],
+    "Sumitomo Chemical": [
+      {"source": "Sumitomo Chemical News", "kind": "newsroom", "url": "https://www.sumitomo-chem.co.jp/english/news/"},
+      {"source": "Sumitomo Chemical IR", "kind": "ir", "url": "https://www.sumitomo-chem.co.jp/english/ir/"}
+    ],
+    "Asahi Kasei": [
+      {"source": "Asahi Kasei News", "kind": "newsroom", "url": "https://www.asahi-kasei.com/news/"},
+      {"source": "Asahi Kasei IR", "kind": "ir", "url": "https://www.asahi-kasei.com/ir/"}
+    ],
+    "Toray": [
+      {"source": "Toray News", "kind": "newsroom", "url": "https://www.toray.com/global/news/"},
+      {"source": "Toray IR", "kind": "ir", "url": "https://www.toray.com/ir/"}
+    ],
+    "Cheng Uei Precision": [
+      {"source": "Foxlink News", "kind": "newsroom", "url": "https://www.foxlink.com/en/news"},
+      {"source": "Foxlink Investor Relations", "kind": "ir", "url": "https://www.foxlink.com/en/ir"}
+    ],
+    "Shanghai Electric Wind Power": [
+      {"source": "Shanghai Electric Wind Power News", "kind": "newsroom", "url": "https://www.sewpg.com/en/news"}
+    ]
+  }
 }

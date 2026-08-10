@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-10T07:55:25Z",
+  "run_started_at": "2026-08-10T07:47:41Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -13,9 +13,9 @@
   "fallback_mode": "missing",
   "fallback_min_results": 1,
   "request_count": 150,
-  "result_count": 201,
+  "result_count": 202,
   "official_result_count": 77,
-  "fallback_result_count": 124,
+  "fallback_result_count": 125,
   "companies_with_results": 73,
   "companies_with_official_results": 30,
   "companies_without_results": [
@@ -78,7 +78,7 @@
     "Renishaw": 3,
     "Nexeon": 1,
     "Rio Tinto": 3,
-    "HyproMag": 2,
+    "HyproMag": 3,
     "EVG": 3,
     "Plansee": 1,
     "Texcell": 3,
@@ -682,9 +682,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs\\company_signals_20260810T075525Z.json",
-    "csv": "outputs\\company_signals_20260810T075525Z.csv",
-    "summary": "outputs\\collection_summary_20260810T075525Z.json",
+    "json": "outputs\\company_signals_20260810T074741Z.json",
+    "csv": "outputs\\company_signals_20260810T074741Z.csv",
+    "summary": "outputs\\collection_summary_20260810T074741Z.json",
     "latest_json": "outputs\\latest_company_signals.json",
     "latest_csv": "outputs\\latest_company_signals.csv",
     "latest_summary": "outputs\\latest_collection_summary.json"
