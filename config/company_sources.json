@@ -1,0 +1,4 @@
+{
+  "description": "Optional official newsroom, press-release, or IR RSS/Atom feeds. Keep this file sparse and verified; the collector falls back to search/RSS sources when no official feed is configured.",
+  "official_feeds": {}
+}

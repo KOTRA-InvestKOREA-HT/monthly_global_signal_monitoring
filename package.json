@@ -1,0 +1,10 @@
+{
+  "name": "company-signal-collector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate:pdf": "python scripts/extract_pdf_companies.py --page 2 --expected data/target_companies.json --out-dir outputs",
+    "collect": "node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,google_news --days 45 --max-per-source 3 --max-per-company 6 --rate-limit-seconds 1.0"
+  }
+}
