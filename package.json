@@ -8,7 +8,10 @@
     "build": "next build",
     "start": "next start",
     "validate:pdf": "python scripts/extract_pdf_companies.py --page 2 --expected data/target_companies.json --out-dir outputs",
-    "collect": "node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5"
+    "build:technology-map": "python scripts/build_company_technology_map.py --pdf \"C:/Users/buy4u/Downloads/전체 기업 정보_참고용_최종.pdf\" --targets data/target_companies.json --keywords config/technology_keywords.json --out-json data/company_technology_map.json --out-csv data/company_technology_map.csv",
+    "collect": "node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5",
+    "filter:relevant": "node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signals.json --technology-map data/company_technology_map.json --keyword-config config/technology_keywords.json --out-dir outputs --threshold 1",
+    "collect:all": "npm run collect && npm run filter:relevant"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

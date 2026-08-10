@@ -134,7 +134,7 @@ button:disabled {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -162,10 +162,18 @@ button:disabled {
   font-size: 22px;
 }
 
+.statusRunning {
+  color: var(--brand);
+}
+
 .content {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
   gap: 16px;
+}
+
+.relevancePanel {
+  margin-bottom: 16px;
 }
 
 .panelHeader {
@@ -224,6 +232,33 @@ td:nth-child(4) {
 
 th:nth-child(5),
 td:nth-child(5) {
+  width: 48px;
+  text-align: center;
+}
+
+.relevancePanel th:nth-child(2),
+.relevancePanel td:nth-child(2) {
+  width: 180px;
+}
+
+.relevancePanel th:nth-child(3),
+.relevancePanel td:nth-child(3) {
+  width: auto;
+}
+
+.relevancePanel th:nth-child(4),
+.relevancePanel td:nth-child(4) {
+  width: 220px;
+}
+
+.relevancePanel th:nth-child(5),
+.relevancePanel td:nth-child(5) {
+  width: 150px;
+  text-align: left;
+}
+
+.relevancePanel th:nth-child(6),
+.relevancePanel td:nth-child(6) {
   width: 48px;
   text-align: center;
 }

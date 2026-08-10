@@ -19,7 +19,10 @@ function formatDate(value) {
 export default function HomePage() {
   const [days, setDays] = useState("45");
   const [signals, setSignals] = useState([]);
+  const [relevantSignals, setRelevantSignals] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [relevanceSummary, setRelevanceSummary] = useState(null);
+  const [crawlStatus, setCrawlStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [triggering, setTriggering] = useState(false);
   const [message, setMessage] = useState("");
@@ -33,11 +36,27 @@ export default function HomePage() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "데이터를 불러오지 못했습니다.");
       setSignals(payload.signals || []);
+      setRelevantSignals(payload.relevantSignals || []);
       setSummary(payload.summary || null);
+      setRelevanceSummary(payload.relevanceSummary || null);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadCrawlStatus() {
+    try {
+      const response = await fetch("/api/crawl-status", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "크롤링 상태를 확인하지 못했습니다.");
+      setCrawlStatus(payload);
+      if (payload.label === "완료" || payload.label === "실패" || payload.label === "취소") {
+        loadSignals();
+      }
+    } catch (err) {
+      setCrawlStatus({ label: "확인 실패", status: "error", error: err.message });
     }
   }
 
@@ -53,7 +72,9 @@ export default function HomePage() {
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "크롤링 실행 요청에 실패했습니다.");
-      setMessage("GitHub Actions 크롤링 실행을 요청했습니다. 완료 후 새로고침하면 최신 결과가 보입니다.");
+      setCrawlStatus({ label: "진행 중", status: "queued", requested_at: payload.requested_at });
+      setMessage("GitHub Actions 크롤링 실행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.");
+      window.setTimeout(loadCrawlStatus, 3000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -63,9 +84,17 @@ export default function HomePage() {
 
   useEffect(() => {
     loadSignals();
+    loadCrawlStatus();
   }, []);
 
-  const recentSignals = useMemo(() => signals.slice(0, 40), [signals]);
+  useEffect(() => {
+    if (crawlStatus?.label !== "진행 중") return undefined;
+    const timer = window.setInterval(loadCrawlStatus, 10000);
+    return () => window.clearInterval(timer);
+  }, [crawlStatus?.label]);
+
+  const displayedSignals = useMemo(() => signals, [signals]);
+  const displayedRelevantSignals = useMemo(() => relevantSignals, [relevantSignals]);
   const officialCount = summary?.official_result_count ?? signals.filter((item) => item.source_type === "official").length;
 
   return (
@@ -112,16 +141,77 @@ export default function HomePage() {
           <strong>{officialCount}</strong>
         </div>
         <div>
+          <span>기술 관련 후보</span>
+          <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
+        </div>
+        <div>
+          <span>크롤링 상태</span>
+          <strong className={crawlStatus?.label === "진행 중" ? "statusRunning" : ""}>
+            {triggering ? "요청 중" : crawlStatus?.label || "대기"}
+          </strong>
+        </div>
+        <div>
           <span>최근 실행</span>
           <strong>{formatDate(summary?.run_started_at)}</strong>
+        </div>
+      </section>
+
+      <section className="panel relevancePanel">
+        <div className="panelHeader">
+          <h2>기술 관련 후보</h2>
+          <span>{loading ? "불러오는 중" : `${displayedRelevantSignals.length}건 전체 표시`}</span>
+        </div>
+        <div className="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>기업</th>
+                <th>유치필요 품목</th>
+                <th>제목</th>
+                <th>출처</th>
+                <th>게시일</th>
+                <th aria-label="open" />
+              </tr>
+            </thead>
+            <tbody>
+              {displayedRelevantSignals.map((item) => (
+                <tr key={`relevant-${item.company}-${item.url}`}>
+                  <td>{item.company}</td>
+                  <td>{item.target_technology}</td>
+                  <td>{item.title}</td>
+                  <td>
+                    <div className="sourceStack">
+                      <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
+                        {item.source_type === "official" ? "공식" : "대체"}
+                      </span>
+                      <span>{item.source}</span>
+                    </div>
+                  </td>
+                  <td>{formatDate(item.published_at)}</td>
+                  <td>
+                    <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 관련 후보 열기`}>
+                      <ExternalLink size={17} />
+                    </a>
+                  </td>
+                </tr>
+              ))}
+              {!loading && displayedRelevantSignals.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="empty">
+                    표시할 기술 관련 후보가 없습니다.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
         </div>
       </section>
 
       <section className="content">
         <div className="panel">
           <div className="panelHeader">
-            <h2>최근 수집 결과</h2>
-            <span>{loading ? "불러오는 중" : `${recentSignals.length}건 표시`}</span>
+            <h2>전체 수집 결과</h2>
+            <span>{loading ? "불러오는 중" : `${displayedSignals.length}건 전체 표시`}</span>
           </div>
           <div className="tableWrap">
             <table>
@@ -135,7 +225,7 @@ export default function HomePage() {
                 </tr>
               </thead>
               <tbody>
-                {recentSignals.map((item) => (
+                {displayedSignals.map((item) => (
                   <tr key={`${item.company}-${item.url}`}>
                     <td>{item.company}</td>
                     <td>{item.title}</td>
@@ -155,7 +245,7 @@ export default function HomePage() {
                     </td>
                   </tr>
                 ))}
-                {!loading && recentSignals.length === 0 ? (
+                {!loading && displayedSignals.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="empty">
                       표시할 수집 결과가 없습니다.

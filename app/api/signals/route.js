@@ -39,13 +39,23 @@ async function readGitHubJson(filePath) {
   return JSON.parse(decoded);
 }
 
+async function readOptionalGitHubJson(filePath, fallbackValue) {
+  try {
+    return await readGitHubJson(filePath);
+  } catch {
+    return fallbackValue;
+  }
+}
+
 export async function GET() {
   try {
-    const [signals, summary] = await Promise.all([
+    const [signals, summary, relevantSignals, relevanceSummary] = await Promise.all([
       readGitHubJson("outputs/latest_company_signals.json"),
       readGitHubJson("outputs/latest_collection_summary.json"),
+      readOptionalGitHubJson("outputs/latest_relevant_signals.json", []),
+      readOptionalGitHubJson("outputs/latest_relevance_summary.json", null),
     ]);
-    return Response.json({ signals, summary });
+    return Response.json({ signals, summary, relevantSignals, relevanceSummary });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
