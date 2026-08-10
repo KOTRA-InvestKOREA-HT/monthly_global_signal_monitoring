@@ -11,7 +11,16 @@
     "query": "https://asm-au.com/feed/",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://asm-au.com/feed/"
+    "official_source_url": "https://asm-au.com/feed/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 58,
@@ -25,7 +34,16 @@
     "query": "https://www.veolia.com/en/rss-site-updates",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.veolia.com/en/rss-site-updates"
+    "official_source_url": "https://www.veolia.com/en/rss-site-updates",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "이온교환막 및 바이폴라 이온교환막 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 58,
@@ -39,7 +57,16 @@
     "query": "https://www.veolia.com/en/rss-site-updates",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.veolia.com/en/rss-site-updates"
+    "official_source_url": "https://www.veolia.com/en/rss-site-updates",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "이온교환막 및 바이폴라 이온교환막 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 58,
@@ -53,7 +80,16 @@
     "query": "https://www.veolia.com/en/rss-site-updates",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.veolia.com/en/rss-site-updates"
+    "official_source_url": "https://www.veolia.com/en/rss-site-updates",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "이온교환막 및 바이폴라 이온교환막 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 1,
@@ -67,7 +103,16 @@
     "query": "https://asm-au.com/feed/",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://asm-au.com/feed/"
+    "official_source_url": "https://asm-au.com/feed/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 58,
@@ -81,7 +126,16 @@
     "query": "https://www.veolia.com/en/rss-press-releases",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.veolia.com/en/rss-press-releases"
+    "official_source_url": "https://www.veolia.com/en/rss-press-releases",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "이온교환막 및 바이폴라 이온교환막 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 18,
@@ -95,7 +149,16 @@
     "query": "https://investor.qualcomm.com/rss/pressrelease.aspx",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx"
+    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 1,
@@ -109,7 +172,16 @@
     "query": "https://asm-au.com/feed/",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://asm-au.com/feed/"
+    "official_source_url": "https://asm-au.com/feed/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 23,
@@ -123,7 +195,16 @@
     "query": "https://news.3m.com/press-releases?pagetemplate=rss",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss"
+    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 18,
@@ -137,7 +218,16 @@
     "query": "https://investor.qualcomm.com/rss/pressrelease.aspx",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx"
+    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 23,
@@ -151,7 +241,16 @@
     "query": "https://news.3m.com/press-releases?pagetemplate=rss",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss"
+    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 18,
@@ -165,7 +264,16 @@
     "query": "https://investor.qualcomm.com/rss/pressrelease.aspx",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx"
+    "official_source_url": "https://investor.qualcomm.com/rss/pressrelease.aspx",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 23,
@@ -179,7 +287,16 @@
     "query": "https://news.3m.com/press-releases?pagetemplate=rss",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss"
+    "official_source_url": "https://news.3m.com/press-releases?pagetemplate=rss",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 23,
@@ -193,7 +310,16 @@
     "query": "https://investors.3m.com/news-events/press-releases/rss",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://investors.3m.com/news-events/press-releases/rss"
+    "official_source_url": "https://investors.3m.com/news-events/press-releases/rss",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 11,
@@ -207,7 +333,16 @@
     "query": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true"
+    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 11,
@@ -221,7 +356,16 @@
     "query": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true"
+    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 11,
@@ -235,7 +379,16 @@
     "query": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
     "source_type": "official",
     "source_priority": 10,
-    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true"
+    "official_source_url": "https://www.airproducts.com/company/news-center/api?rssfeed=true",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 21,
@@ -249,7 +402,16 @@
     "query": "https://investor.gehealthcare.com/news-events/news-releases",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases"
+    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 40,
@@ -263,7 +425,16 @@
     "query": "https://corporate.evonik.com/en/investor-relations",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://corporate.evonik.com/en/investor-relations"
+    "official_source_url": "https://corporate.evonik.com/en/investor-relations",
+    "industry": "화학소재",
+    "target_technology": "타이어용 친환경 침강실리카 제조기술",
+    "target_technology_en": "precipitated silica for eco-friendly tires",
+    "technology_group": "precipitated_silica_tire",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "타이어용 친환경 침강실리카 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 67,
@@ -277,7 +448,16 @@
     "query": "https://www.agc.com/en/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.agc.com/en/ir/"
+    "official_source_url": "https://www.agc.com/en/ir/",
+    "industry": "반도체",
+    "target_technology": "TGV용 유리기판 및 가공기술",
+    "target_technology_en": "TGV glass substrate and processing",
+    "technology_group": "tgv_glass_substrate",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "TGV용 유리기판 및 가공기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 42,
@@ -291,7 +471,16 @@
     "query": "https://www.jenoptik.com/investors",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.jenoptik.com/investors"
+    "official_source_url": "https://www.jenoptik.com/investors",
+    "industry": "기계",
+    "target_technology": "3D 비전센서",
+    "target_technology_en": "3D vision sensor",
+    "technology_group": "3d_vision_sensor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "3D 비전센서 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 21,
@@ -305,7 +494,16 @@
     "query": "https://investor.gehealthcare.com/news-events/news-releases",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases"
+    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 70,
@@ -319,7 +517,16 @@
     "query": "https://www.tel.com/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.tel.com/ir/"
+    "official_source_url": "https://www.tel.com/ir/",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 21,
@@ -333,7 +540,16 @@
     "query": "https://investor.gehealthcare.com/news-events/news-releases",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases"
+    "official_source_url": "https://investor.gehealthcare.com/news-events/news-releases",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 39,
@@ -347,7 +563,16 @@
     "query": "https://www.basf.com/global/en/investors",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.basf.com/global/en/investors"
+    "official_source_url": "https://www.basf.com/global/en/investors",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "핵사메틸렌디아민 플랫폼 생산기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 53,
@@ -361,7 +586,16 @@
     "query": "https://www.riotinto.com/en/invest",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.riotinto.com/en/invest"
+    "official_source_url": "https://www.riotinto.com/en/invest",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 53,
@@ -375,7 +609,16 @@
     "query": "https://www.riotinto.com/en/invest",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.riotinto.com/en/invest"
+    "official_source_url": "https://www.riotinto.com/en/invest",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 12,
@@ -389,7 +632,16 @@
     "query": "https://investors.chemours.com/news-releases",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://investors.chemours.com/news-releases"
+    "official_source_url": "https://investors.chemours.com/news-releases",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "이온교환막 및 바이폴라 이온교환막 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 59,
@@ -403,7 +655,18 @@
     "query": "https://www.airbus.com/en/investors",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.airbus.com/en/investors"
+    "official_source_url": "https://www.airbus.com/en/investors",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "hybrid-electric"
+    ],
+    "relevance_score": 4,
+    "relevance_decision": "relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 발견되었습니다: hybrid-electric"
   },
   {
     "target_no": 59,
@@ -417,7 +680,16 @@
     "query": "https://www.airbus.com/en/investors",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.airbus.com/en/investors"
+    "official_source_url": "https://www.airbus.com/en/investors",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 29,
@@ -431,7 +703,16 @@
     "query": "https://www.besi.com/investor-relations/press-releases/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.besi.com/investor-relations/press-releases/"
+    "official_source_url": "https://www.besi.com/investor-relations/press-releases/",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 40,
@@ -445,7 +726,16 @@
     "query": "https://corporate.evonik.com/en/investor-relations",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://corporate.evonik.com/en/investor-relations"
+    "official_source_url": "https://corporate.evonik.com/en/investor-relations",
+    "industry": "화학소재",
+    "target_technology": "타이어용 친환경 침강실리카 제조기술",
+    "target_technology_en": "precipitated silica for eco-friendly tires",
+    "technology_group": "precipitated_silica_tire",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "타이어용 친환경 침강실리카 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 40,
@@ -459,7 +749,16 @@
     "query": "https://corporate.evonik.com/en/investor-relations",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://corporate.evonik.com/en/investor-relations"
+    "official_source_url": "https://corporate.evonik.com/en/investor-relations",
+    "industry": "화학소재",
+    "target_technology": "타이어용 친환경 침강실리카 제조기술",
+    "target_technology_en": "precipitated silica for eco-friendly tires",
+    "technology_group": "precipitated_silica_tire",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "타이어용 친환경 침강실리카 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 45,
@@ -473,7 +772,16 @@
     "query": "https://www.solvay.com/en/investors",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.solvay.com/en/investors"
+    "official_source_url": "https://www.solvay.com/en/investors",
+    "industry": "화학소재",
+    "target_technology": "타이어용 친환경 침강실리카 제조기술",
+    "target_technology_en": "precipitated silica for eco-friendly tires",
+    "technology_group": "precipitated_silica_tire",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "타이어용 친환경 침강실리카 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 31,
@@ -487,7 +795,16 @@
     "query": "https://www.hydro.com/en/global/investors/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.hydro.com/en/global/investors/"
+    "official_source_url": "https://www.hydro.com/en/global/investors/",
+    "industry": "철강금속",
+    "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+    "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+    "technology_group": "nonferrous_scrap_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "비철금속 소재 스크랩 활용률 극대화 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 69,
@@ -501,7 +818,16 @@
     "query": "https://www.shinetsu.co.jp/en/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.shinetsu.co.jp/en/ir/"
+    "official_source_url": "https://www.shinetsu.co.jp/en/ir/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 69,
@@ -515,7 +841,16 @@
     "query": "https://www.shinetsu.co.jp/en/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.shinetsu.co.jp/en/ir/"
+    "official_source_url": "https://www.shinetsu.co.jp/en/ir/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 75,
@@ -529,7 +864,16 @@
     "query": "https://www.toray.com/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.toray.com/ir/"
+    "official_source_url": "https://www.toray.com/ir/",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 75,
@@ -543,7 +887,16 @@
     "query": "https://www.toray.com/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.toray.com/ir/"
+    "official_source_url": "https://www.toray.com/ir/",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 75,
@@ -557,7 +910,16 @@
     "query": "https://www.toray.com/ir/",
     "source_type": "official",
     "source_priority": 15,
-    "official_source_url": "https://www.toray.com/ir/"
+    "official_source_url": "https://www.toray.com/ir/",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 13,
@@ -571,7 +933,16 @@
     "query": "https://www.borgwarner.com/newsroom/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases"
+    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 13,
@@ -585,7 +956,16 @@
     "query": "https://www.borgwarner.com/newsroom/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases"
+    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 69,
@@ -599,7 +979,16 @@
     "query": "https://www.shinetsu.co.jp/en/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.shinetsu.co.jp/en/news/"
+    "official_source_url": "https://www.shinetsu.co.jp/en/news/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 9,
@@ -613,7 +1002,16 @@
     "query": "https://www.albemarle.com/news",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.albemarle.com/news"
+    "official_source_url": "https://www.albemarle.com/news",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 22,
@@ -627,7 +1025,16 @@
     "query": "https://boeing.mediaroom.com/news-releases-statements",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements"
+    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 31,
@@ -641,7 +1048,16 @@
     "query": "https://www.hydro.com/en/global/media/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.hydro.com/en/global/media/news/"
+    "official_source_url": "https://www.hydro.com/en/global/media/news/",
+    "industry": "철강금속",
+    "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+    "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+    "technology_group": "nonferrous_scrap_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "비철금속 소재 스크랩 활용률 극대화 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 13,
@@ -655,7 +1071,16 @@
     "query": "https://www.borgwarner.com/newsroom/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases"
+    "official_source_url": "https://www.borgwarner.com/newsroom/press-releases",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 63,
@@ -669,7 +1094,16 @@
     "query": "https://www.global.dnp/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.global.dnp/news/"
+    "official_source_url": "https://www.global.dnp/news/",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 14,
@@ -683,7 +1117,16 @@
     "query": "https://corporate.dow.com/en-us/news.html",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://corporate.dow.com/en-us/news.html"
+    "official_source_url": "https://corporate.dow.com/en-us/news.html",
+    "industry": "반도체",
+    "target_technology": "반도체 후공정용 고성능 방열소재",
+    "target_technology_en": "high-performance thermal material for semiconductor back-end",
+    "technology_group": "semiconductor_thermal_material",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "반도체 후공정용 고성능 방열소재 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 21,
@@ -697,7 +1140,16 @@
     "query": "https://www.gehealthcare.com/about/newsroom",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.gehealthcare.com/about/newsroom"
+    "official_source_url": "https://www.gehealthcare.com/about/newsroom",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 63,
@@ -711,7 +1163,16 @@
     "query": "https://www.global.dnp/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.global.dnp/news/"
+    "official_source_url": "https://www.global.dnp/news/",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 70,
@@ -725,7 +1186,16 @@
     "query": "https://www.tel.com/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.tel.com/news/"
+    "official_source_url": "https://www.tel.com/news/",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 17,
@@ -739,7 +1209,16 @@
     "query": "https://www.onsemi.com/company/news-media/press-announcements",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.onsemi.com/company/news-media/press-announcements"
+    "official_source_url": "https://www.onsemi.com/company/news-media/press-announcements",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 카메라/이미지 신호처리 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 63,
@@ -753,7 +1232,16 @@
     "query": "https://www.global.dnp/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.global.dnp/news/"
+    "official_source_url": "https://www.global.dnp/news/",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 70,
@@ -767,7 +1255,16 @@
     "query": "https://www.tel.com/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.tel.com/news/"
+    "official_source_url": "https://www.tel.com/news/",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 43,
@@ -781,7 +1278,16 @@
     "query": "https://www.umicore.com/en/newsroom/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.umicore.com/en/newsroom/"
+    "official_source_url": "https://www.umicore.com/en/newsroom/",
+    "industry": "이차전지",
+    "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+    "target_technology_en": "silicon anode material technology",
+    "technology_group": "silicon_anode_sic",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "실리콘 음극재 기술(증착형 Si-C) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 44,
@@ -795,7 +1301,16 @@
     "query": "https://www.umicore.com/en/newsroom/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.umicore.com/en/newsroom/"
+    "official_source_url": "https://www.umicore.com/en/newsroom/",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 59,
@@ -809,7 +1324,16 @@
     "query": "https://www.airbus.com/en/newsroom/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.airbus.com/en/newsroom/press-releases"
+    "official_source_url": "https://www.airbus.com/en/newsroom/press-releases",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 60,
@@ -823,7 +1347,16 @@
     "query": "https://www.safran-group.com/pressroom",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.safran-group.com/pressroom"
+    "official_source_url": "https://www.safran-group.com/pressroom",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 69,
@@ -837,7 +1370,16 @@
     "query": "https://www.shinetsu.co.jp/en/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.shinetsu.co.jp/en/news/"
+    "official_source_url": "https://www.shinetsu.co.jp/en/news/",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 70,
@@ -851,7 +1393,16 @@
     "query": "https://www.tel.com/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.tel.com/news/"
+    "official_source_url": "https://www.tel.com/news/",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 59,
@@ -865,7 +1416,16 @@
     "query": "https://www.airbus.com/en/newsroom/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.airbus.com/en/newsroom/press-releases"
+    "official_source_url": "https://www.airbus.com/en/newsroom/press-releases",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 53,
@@ -879,7 +1439,16 @@
     "query": "https://www.riotinto.com/en/news/releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.riotinto.com/en/news/releases"
+    "official_source_url": "https://www.riotinto.com/en/news/releases",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 22,
@@ -893,7 +1462,16 @@
     "query": "https://boeing.mediaroom.com/news-releases-statements",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements"
+    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 60,
@@ -907,7 +1485,16 @@
     "query": "https://www.safran-group.com/pressroom",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.safran-group.com/pressroom"
+    "official_source_url": "https://www.safran-group.com/pressroom",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 60,
@@ -921,7 +1508,19 @@
     "query": "https://www.safran-group.com/pressroom",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.safran-group.com/pressroom"
+    "official_source_url": "https://www.safran-group.com/pressroom",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "electric propulsion",
+      "hybrid-electric"
+    ],
+    "relevance_score": 5,
+    "relevance_decision": "relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 발견되었습니다: electric propulsion, hybrid-electric"
   },
   {
     "target_no": 31,
@@ -935,7 +1534,16 @@
     "query": "https://www.hydro.com/en/global/media/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.hydro.com/en/global/media/news/"
+    "official_source_url": "https://www.hydro.com/en/global/media/news/",
+    "industry": "철강금속",
+    "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+    "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+    "technology_group": "nonferrous_scrap_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "비철금속 소재 스크랩 활용률 극대화 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 9,
@@ -949,7 +1557,16 @@
     "query": "https://www.albemarle.com/news",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.albemarle.com/news"
+    "official_source_url": "https://www.albemarle.com/news",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 14,
@@ -963,7 +1580,16 @@
     "query": "https://corporate.dow.com/en-us/news.html",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://corporate.dow.com/en-us/news.html"
+    "official_source_url": "https://corporate.dow.com/en-us/news.html",
+    "industry": "반도체",
+    "target_technology": "반도체 후공정용 고성능 방열소재",
+    "target_technology_en": "high-performance thermal material for semiconductor back-end",
+    "technology_group": "semiconductor_thermal_material",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "반도체 후공정용 고성능 방열소재 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 31,
@@ -977,7 +1603,16 @@
     "query": "https://www.hydro.com/en/global/media/news/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.hydro.com/en/global/media/news/"
+    "official_source_url": "https://www.hydro.com/en/global/media/news/",
+    "industry": "철강금속",
+    "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+    "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+    "technology_group": "nonferrous_scrap_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "비철금속 소재 스크랩 활용률 극대화 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 9,
@@ -991,7 +1626,16 @@
     "query": "https://www.albemarle.com/news",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.albemarle.com/news"
+    "official_source_url": "https://www.albemarle.com/news",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 28,
@@ -1005,7 +1649,19 @@
     "query": "https://www.asml.com/en/news/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.asml.com/en/news/press-releases"
+    "official_source_url": "https://www.asml.com/en/news/press-releases",
+    "industry": "반도체",
+    "target_technology": "EUV 노광장비",
+    "target_technology_en": "EUV lithography equipment",
+    "technology_group": "euv_lithography",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "EUV",
+      "High NA"
+    ],
+    "relevance_score": 4,
+    "relevance_decision": "relevant",
+    "relevance_reason": "EUV 노광장비 관련 키워드가 발견되었습니다: EUV, High NA"
   },
   {
     "target_no": 28,
@@ -1019,7 +1675,16 @@
     "query": "https://www.asml.com/en/news/press-releases",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.asml.com/en/news/press-releases"
+    "official_source_url": "https://www.asml.com/en/news/press-releases",
+    "industry": "반도체",
+    "target_technology": "EUV 노광장비",
+    "target_technology_en": "EUV lithography equipment",
+    "technology_group": "euv_lithography",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "EUV 노광장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 22,
@@ -1033,7 +1698,16 @@
     "query": "https://boeing.mediaroom.com/news-releases-statements",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements"
+    "official_source_url": "https://boeing.mediaroom.com/news-releases-statements",
+    "industry": "우주항공",
+    "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+    "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+    "technology_group": "aerospace_electric_propulsion",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "항공용 전기모터/고출력 배터리 추진 모듈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 43,
@@ -1047,7 +1721,16 @@
     "query": "https://www.umicore.com/en/newsroom/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.umicore.com/en/newsroom/"
+    "official_source_url": "https://www.umicore.com/en/newsroom/",
+    "industry": "이차전지",
+    "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+    "target_technology_en": "silicon anode material technology",
+    "technology_group": "silicon_anode_sic",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "실리콘 음극재 기술(증착형 Si-C) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 44,
@@ -1061,7 +1744,16 @@
     "query": "https://www.umicore.com/en/newsroom/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.umicore.com/en/newsroom/"
+    "official_source_url": "https://www.umicore.com/en/newsroom/",
+    "industry": "이차전지",
+    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+    "target_technology_en": "cathode material lithium hydroxide/carbonate",
+    "technology_group": "lithium_cathode_materials",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "양극재 소재(수산화리튬, 탄산리튬) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 72,
@@ -1075,7 +1767,16 @@
     "query": "https://www.mcgc.com/english/news_release/",
     "source_type": "official",
     "source_priority": 20,
-    "official_source_url": "https://www.mcgc.com/english/news_release/"
+    "official_source_url": "https://www.mcgc.com/english/news_release/",
+    "industry": "이차전지",
+    "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+    "target_technology_en": "silicon anode material technology",
+    "technology_group": "silicon_anode_sic",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "실리콘 음극재 기술(증착형 Si-C) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 41,
@@ -1089,7 +1790,16 @@
     "query": "(\"Heraeus\" OR \"Heraeus Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 65,
@@ -1103,7 +1813,16 @@
     "query": "\"TOPPAN Holdings\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 74,
@@ -1117,7 +1836,16 @@
     "query": "\"Asahi Kasei\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "핵사메틸렌디아민 플랫폼 생산기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 62,
@@ -1131,7 +1859,16 @@
     "query": "\"Arkema\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 25,
@@ -1145,7 +1882,16 @@
     "query": "\"Applied Materials\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 32,
@@ -1159,7 +1905,16 @@
     "query": "(\"Vestas\" OR \"Vestas Wind Systems\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 24,
@@ -1173,7 +1928,16 @@
     "query": "(\"Ouster\" OR \"Ouster Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 6,
@@ -1187,7 +1951,16 @@
     "query": "(\"Moderna\" OR \"Moderna Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 65,
@@ -1201,7 +1974,16 @@
     "query": "\"TOPPAN Holdings\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 4,
@@ -1215,7 +1997,16 @@
     "query": "(\"Charles River\" OR \"Charles River Laboratories\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 65,
@@ -1229,7 +2020,16 @@
     "query": "\"TOPPAN Holdings\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 51,
@@ -1243,7 +2043,16 @@
     "query": "(\"Renishaw\" OR \"Renishaw plc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "리니어스케일",
+    "target_technology_en": "linear scale",
+    "technology_group": "linear_scale",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "리니어스케일 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 24,
@@ -1257,7 +2066,16 @@
     "query": "(\"Ouster\" OR \"Ouster Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 74,
@@ -1271,7 +2089,16 @@
     "query": "\"Asahi Kasei\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "핵사메틸렌디아민 플랫폼 생산기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 2,
@@ -1285,7 +2112,16 @@
     "query": "(\"Cognex\" OR \"Cognex Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "3D 비전센서",
+    "target_technology_en": "3D vision sensor",
+    "technology_group": "3d_vision_sensor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "3D 비전센서 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 71,
@@ -1299,7 +2135,16 @@
     "query": "(\"Tosoh\" OR \"Tosoh Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "금속타겟(티타늄, 탄탈륨)",
+    "target_technology_en": "metal target titanium/tantalum",
+    "technology_group": "metal_target_ti_ta",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "금속타겟(티타늄, 탄탈륨) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 32,
@@ -1313,7 +2158,16 @@
     "query": "(\"Vestas\" OR \"Vestas Wind Systems\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 50,
@@ -1327,7 +2181,16 @@
     "query": "(\"Siemens-Gamesa\" OR \"Siemens Gamesa\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 34,
@@ -1341,7 +2204,16 @@
     "query": "(\"Infineon\" OR \"Infineon Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 27,
@@ -1355,7 +2227,16 @@
     "query": "(\"Prodrive\" OR \"Prodrive Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 71,
@@ -1369,7 +2250,16 @@
     "query": "(\"Tosoh\" OR \"Tosoh Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "금속타겟(티타늄, 탄탈륨)",
+    "target_technology_en": "metal target titanium/tantalum",
+    "technology_group": "metal_target_ti_ta",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "금속타겟(티타늄, 탄탈륨) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 66,
@@ -1383,7 +2273,16 @@
     "query": "(\"Nabtesco\" OR \"Nabtesco Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 36,
@@ -1397,7 +2296,16 @@
     "query": "(\"Bayer\" OR \"Bayer AG\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 73,
@@ -1411,7 +2319,16 @@
     "query": "\"Sumitomo Chemical\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 36,
@@ -1425,7 +2342,16 @@
     "query": "(\"Bayer\" OR \"Bayer AG\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 37,
@@ -1439,7 +2365,16 @@
     "query": "(\"Merck\" OR \"Merck KGaA\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 37,
@@ -1453,7 +2388,16 @@
     "query": "(\"Merck\" OR \"Merck KGaA\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 37,
@@ -1467,7 +2411,16 @@
     "query": "(\"Merck\" OR \"Merck KGaA\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 8,
@@ -1481,7 +2434,16 @@
     "query": "\"DuPont\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Ag/Al Paste 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 73,
@@ -1495,7 +2457,16 @@
     "query": "\"Sumitomo Chemical\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 36,
@@ -1509,7 +2480,16 @@
     "query": "(\"Bayer\" OR \"Bayer AG\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "의약품용 부형제",
+    "target_technology_en": "pharmaceutical excipient",
+    "technology_group": "pharma_excipient",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "의약품용 부형제 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 71,
@@ -1523,7 +2503,16 @@
     "query": "(\"Tosoh\" OR \"Tosoh Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "금속타겟(티타늄, 탄탈륨)",
+    "target_technology_en": "metal target titanium/tantalum",
+    "technology_group": "metal_target_ti_ta",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "금속타겟(티타늄, 탄탈륨) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 41,
@@ -1537,7 +2526,16 @@
     "query": "(\"Heraeus\" OR \"Heraeus Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 52,
@@ -1551,7 +2549,16 @@
     "query": "(\"Nexeon\" OR \"Nexeon Limited\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+    "target_technology_en": "silicon anode material technology",
+    "technology_group": "silicon_anode_sic",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "실리콘 음극재 기술(증착형 Si-C) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 24,
@@ -1565,7 +2572,16 @@
     "query": "(\"Ouster\" OR \"Ouster Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 41,
@@ -1579,7 +2595,16 @@
     "query": "(\"Heraeus\" OR \"Heraeus Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 66,
@@ -1593,7 +2618,16 @@
     "query": "(\"Nabtesco\" OR \"Nabtesco Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 35,
@@ -1607,7 +2641,16 @@
     "query": "(\"Schmalz\" OR \"J. Schmalz\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 6,
@@ -1621,7 +2664,16 @@
     "query": "(\"Moderna\" OR \"Moderna Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 6,
@@ -1635,7 +2687,16 @@
     "query": "(\"Moderna\" OR \"Moderna Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 30,
@@ -1649,7 +2710,16 @@
     "query": "(\"NXP\" OR \"NXP Semiconductors\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 27,
@@ -1663,7 +2733,16 @@
     "query": "(\"Prodrive\" OR \"Prodrive Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 35,
@@ -1677,7 +2756,16 @@
     "query": "(\"Schmalz\" OR \"J. Schmalz\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 4,
@@ -1691,7 +2779,16 @@
     "query": "(\"Charles River\" OR \"Charles River Laboratories\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 15,
@@ -1705,7 +2802,16 @@
     "query": "(\"Thermo Fisher\" OR \"Thermo Fisher Scientific\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 16,
@@ -1719,7 +2825,16 @@
     "query": "\"Amkor Technology\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "반도체 후공정용 고성능 방열소재",
+    "target_technology_en": "high-performance thermal material for semiconductor back-end",
+    "technology_group": "semiconductor_thermal_material",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 46,
@@ -1733,7 +2848,16 @@
     "query": "\"Syensqo\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 62,
@@ -1747,7 +2871,16 @@
     "query": "\"Arkema\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 2,
@@ -1761,7 +2894,16 @@
     "query": "(\"Cognex\" OR \"Cognex Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "3D 비전센서",
+    "target_technology_en": "3D vision sensor",
+    "technology_group": "3d_vision_sensor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "3D 비전센서 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 7,
@@ -1775,7 +2917,16 @@
     "query": "(\"West Pharmaceutical\" OR \"West Pharmaceutical Services\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 8,
@@ -1789,7 +2940,16 @@
     "query": "\"DuPont\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Ag/Al Paste 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 15,
@@ -1803,7 +2963,16 @@
     "query": "(\"Thermo Fisher\" OR \"Thermo Fisher Scientific\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 47,
@@ -1817,7 +2986,16 @@
     "query": "(\"Hexagon AB\" OR \"Hexagon\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 49,
@@ -1831,7 +3009,16 @@
     "query": "(\"Maxon\" OR \"maxon group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 47,
@@ -1845,7 +3032,16 @@
     "query": "(\"Hexagon AB\" OR \"Hexagon\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 73,
@@ -1859,7 +3055,16 @@
     "query": "\"Sumitomo Chemical\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 35,
@@ -1873,7 +3078,16 @@
     "query": "(\"Schmalz\" OR \"J. Schmalz\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 3,
@@ -1887,7 +3101,16 @@
     "query": "(\"Corning\" OR \"Corning Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "EUV 블랭크 마스크",
+    "target_technology_en": "EUV blank mask",
+    "technology_group": "euv_blank_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "EUV 블랭크 마스크 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 3,
@@ -1901,7 +3124,16 @@
     "query": "(\"Corning\" OR \"Corning Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "EUV 블랭크 마스크",
+    "target_technology_en": "EUV blank mask",
+    "technology_group": "euv_blank_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "EUV 블랭크 마스크 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 16,
@@ -1915,7 +3147,16 @@
     "query": "\"Amkor Technology\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "반도체 후공정용 고성능 방열소재",
+    "target_technology_en": "high-performance thermal material for semiconductor back-end",
+    "technology_group": "semiconductor_thermal_material",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 19,
@@ -1929,7 +3170,16 @@
     "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 30,
@@ -1943,7 +3193,16 @@
     "query": "(\"NXP\" OR \"NXP Semiconductors\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 30,
@@ -1957,7 +3216,16 @@
     "query": "(\"NXP\" OR \"NXP Semiconductors\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 61,
@@ -1971,7 +3239,16 @@
     "query": "\"Air Liquide\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 61,
@@ -1985,7 +3262,16 @@
     "query": "\"Air Liquide\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 54,
@@ -1999,7 +3285,16 @@
     "query": "\"HyProMag\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 54,
@@ -2013,7 +3308,16 @@
     "query": "\"HyProMag\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "사용후 영구자석 고순도 희토류 추출 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 16,
@@ -2027,7 +3331,16 @@
     "query": "\"Amkor Technology\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "반도체 후공정용 고성능 방열소재",
+    "target_technology_en": "high-performance thermal material for semiconductor back-end",
+    "technology_group": "semiconductor_thermal_material",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 66,
@@ -2041,7 +3354,18 @@
     "query": "(\"Nabtesco\" OR \"Nabtesco Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "gearbox"
+    ],
+    "relevance_score": 1,
+    "relevance_decision": "relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 발견되었습니다: gearbox"
   },
   {
     "target_no": 19,
@@ -2055,7 +3379,16 @@
     "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 57,
@@ -2069,7 +3402,16 @@
     "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 49,
@@ -2083,7 +3425,16 @@
     "query": "(\"Maxon\" OR \"maxon group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 7,
@@ -2097,7 +3448,16 @@
     "query": "(\"West Pharmaceutical\" OR \"West Pharmaceutical Services\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 20,
@@ -2111,7 +3471,16 @@
     "query": "(\"Eli Lilly and Company\" OR \"Eli Lilly\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 57,
@@ -2125,7 +3494,16 @@
     "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 49,
@@ -2139,7 +3517,16 @@
     "query": "(\"Maxon\" OR \"maxon group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 7,
@@ -2153,7 +3540,16 @@
     "query": "(\"West Pharmaceutical\" OR \"West Pharmaceutical Services\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 27,
@@ -2167,7 +3563,16 @@
     "query": "(\"Prodrive\" OR \"Prodrive Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 38,
@@ -2181,7 +3586,18 @@
     "query": "\"SCHOTT Pharma\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "cartridge"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 발견되었습니다: cartridge"
   },
   {
     "target_no": 32,
@@ -2195,7 +3611,16 @@
     "query": "(\"Vestas\" OR \"Vestas Wind Systems\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 55,
@@ -2209,7 +3634,16 @@
     "query": "(\"EVG\" OR \"EV Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 55,
@@ -2223,7 +3657,16 @@
     "query": "(\"EVG\" OR \"EV Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 19,
@@ -2237,7 +3680,18 @@
     "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "radio frequency"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "자율주행차 IMU/RF/베이스밴드 칩 관련 키워드가 발견되었습니다: radio frequency"
   },
   {
     "target_no": 68,
@@ -2251,7 +3705,16 @@
     "query": "(\"JSR\" OR \"JSR Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "EUV 노광장비",
+    "target_technology_en": "EUV lithography equipment",
+    "technology_group": "euv_lithography",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 2,
@@ -2265,7 +3728,16 @@
     "query": "(\"Cognex\" OR \"Cognex Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "3D 비전센서",
+    "target_technology_en": "3D vision sensor",
+    "technology_group": "3d_vision_sensor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "3D 비전센서 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 5,
@@ -2279,7 +3751,18 @@
     "query": "\"Cytiva\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "biopharma"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 발견되었습니다: biopharma"
   },
   {
     "target_no": 15,
@@ -2293,7 +3776,18 @@
     "query": "(\"Thermo Fisher\" OR \"Thermo Fisher Scientific\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "biopharma"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 발견되었습니다: biopharma"
   },
   {
     "target_no": 20,
@@ -2307,7 +3801,16 @@
     "query": "(\"Eli Lilly and Company\" OR \"Eli Lilly\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 20,
@@ -2321,7 +3824,16 @@
     "query": "(\"Eli Lilly and Company\" OR \"Eli Lilly\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "유전자/세포치료제 전달체 및 GMP 원료기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 25,
@@ -2335,7 +3847,16 @@
     "query": "\"Applied Materials\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 48,
@@ -2349,7 +3870,16 @@
     "query": "(\"ABB\" OR \"ABB Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 48,
@@ -2363,7 +3893,16 @@
     "query": "(\"ABB\" OR \"ABB Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 48,
@@ -2377,7 +3916,16 @@
     "query": "(\"ABB\" OR \"ABB Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 감속기 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 76,
@@ -2391,7 +3939,16 @@
     "query": "(\"Cheng Uei Precision\" OR \"Foxlink\" OR \"Cheng Uei Precision Industry\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 카메라/이미지 신호처리 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 4,
@@ -2405,7 +3962,16 @@
     "query": "(\"Charles River\" OR \"Charles River Laboratories\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 76,
@@ -2419,7 +3985,16 @@
     "query": "(\"Cheng Uei Precision\" OR \"Foxlink\" OR \"Cheng Uei Precision Industry\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 카메라/이미지 신호처리 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 76,
@@ -2433,7 +4008,16 @@
     "query": "(\"Cheng Uei Precision\" OR \"Foxlink\" OR \"Cheng Uei Precision Industry\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "자율주행차 카메라/이미지 신호처리 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 3,
@@ -2447,7 +4031,16 @@
     "query": "(\"Corning\" OR \"Corning Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "EUV 블랭크 마스크",
+    "target_technology_en": "EUV blank mask",
+    "technology_group": "euv_blank_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "EUV 블랭크 마스크 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 8,
@@ -2461,7 +4054,16 @@
     "query": "\"DuPont\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "Ag/Al Paste",
+    "target_technology_en": "Ag/Al paste",
+    "technology_group": "ag_al_paste",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Ag/Al Paste 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 50,
@@ -2475,7 +4077,16 @@
     "query": "(\"Siemens-Gamesa\" OR \"Siemens Gamesa\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 56,
@@ -2489,7 +4100,16 @@
     "query": "(\"Plansee\" OR \"Plansee Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "금속타겟(티타늄, 탄탈륨)",
+    "target_technology_en": "metal target titanium/tantalum",
+    "technology_group": "metal_target_ti_ta",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "금속타겟(티타늄, 탄탈륨) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 46,
@@ -2503,7 +4123,16 @@
     "query": "\"Syensqo\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 68,
@@ -2517,7 +4146,16 @@
     "query": "(\"JSR\" OR \"JSR Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "EUV 노광장비",
+    "target_technology_en": "EUV lithography equipment",
+    "technology_group": "euv_lithography",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 51,
@@ -2531,7 +4169,16 @@
     "query": "(\"Renishaw\" OR \"Renishaw plc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "리니어스케일",
+    "target_technology_en": "linear scale",
+    "technology_group": "linear_scale",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "리니어스케일 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 46,
@@ -2545,7 +4192,16 @@
     "query": "\"Syensqo\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 50,
@@ -2559,7 +4215,16 @@
     "query": "(\"Siemens-Gamesa\" OR \"Siemens Gamesa\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "에너지",
+    "target_technology": "해상풍력터빈",
+    "target_technology_en": "offshore wind turbine",
+    "technology_group": "offshore_wind_turbine",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "해상풍력터빈 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 25,
@@ -2573,7 +4238,16 @@
     "query": "\"Applied Materials\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 55,
@@ -2587,7 +4261,16 @@
     "query": "(\"EVG\" OR \"EV Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+    "technology_group": "hybrid_bonding_w2w",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "nm급 W2W 하이브리드 본딩 장비 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 61,
@@ -2601,7 +4284,16 @@
     "query": "\"Air Liquide\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "이온교환막 및 바이폴라 이온교환막",
+    "target_technology_en": "ion exchange membrane and bipolar membrane",
+    "technology_group": "ion_exchange_membrane",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 38,
@@ -2615,7 +4307,16 @@
     "query": "\"SCHOTT Pharma\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 5,
@@ -2629,7 +4330,18 @@
     "query": "\"Cytiva\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "biopharma"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 발견되었습니다: biopharma"
   },
   {
     "target_no": 74,
@@ -2643,7 +4355,16 @@
     "query": "\"Asahi Kasei\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "핵사메틸렌디아민 플랫폼 생산기술 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 47,
@@ -2657,7 +4378,16 @@
     "query": "(\"Hexagon AB\" OR \"Hexagon\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "로봇용 라이다 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 64,
@@ -2671,7 +4401,16 @@
     "query": "(\"Hitachi Metals\" OR \"Proterial\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 34,
@@ -2685,7 +4424,16 @@
     "query": "(\"Infineon\" OR \"Infineon Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 34,
@@ -2699,7 +4447,16 @@
     "query": "(\"Infineon\" OR \"Infineon Technologies\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "우주항공",
+    "target_technology": "위성통신 및 레이다용 RF 반도체",
+    "target_technology_en": "RF semiconductor for satellite communication and radar",
+    "technology_group": "satellite_radar_rf_semiconductor",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "위성통신 및 레이다용 RF 반도체 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 51,
@@ -2713,7 +4470,16 @@
     "query": "(\"Renishaw\" OR \"Renishaw plc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "기계",
+    "target_technology": "리니어스케일",
+    "target_technology_en": "linear scale",
+    "technology_group": "linear_scale",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "리니어스케일 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 57,
@@ -2727,7 +4493,16 @@
     "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+    "target_technology_en": "virus validation and MCB/WCB characterization",
+    "technology_group": "virus_validation_mcb_wcb",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이러스 검증 및 MCB/WCB 특성분석 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 64,
@@ -2741,7 +4516,16 @@
     "query": "(\"Hitachi Metals\" OR \"Proterial\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 64,
@@ -2755,7 +4539,16 @@
     "query": "(\"Hitachi Metals\" OR \"Proterial\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "디스플레이",
+    "target_technology": "파인메탈마스크(FMM)",
+    "target_technology_en": "fine metal mask",
+    "technology_group": "fine_metal_mask",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "파인메탈마스크(FMM) 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 5,
@@ -2769,7 +4562,16 @@
     "query": "\"Cytiva\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+    "target_technology_en": "biopharma culture and purification system",
+    "technology_group": "bioprocess_culture_purification",
+    "excluded_from_relevance": false,
+    "matched_terms": [],
+    "relevance_score": 0,
+    "relevance_decision": "not_relevant",
+    "relevance_reason": "바이오의약품 생산용 배양 및 정제 시스템 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다."
   },
   {
     "target_no": 68,
@@ -2783,7 +4585,16 @@
     "query": "(\"JSR\" OR \"JSR Corporation\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "반도체",
+    "target_technology": "EUV 노광장비",
+    "target_technology_en": "EUV lithography equipment",
+    "technology_group": "euv_lithography",
+    "excluded_from_relevance": true,
+    "relevance_decision": "excluded",
+    "relevance_score": 0,
+    "matched_terms": [],
+    "relevance_reason": "사용자 요청에 따라 연관성 분석 제외 기업입니다."
   },
   {
     "target_no": 38,
@@ -2797,7 +4608,18 @@
     "query": "\"SCHOTT Pharma\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "바이오",
+    "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+    "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+    "technology_group": "autoinjector_pfs_fill_finish",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "cartridge"
+    ],
+    "relevance_score": 2,
+    "relevance_decision": "relevant",
+    "relevance_reason": "Autoinjector/PFS 의약품 완충전 및 제조기술 관련 키워드가 발견되었습니다: cartridge"
   },
   {
     "target_no": 62,
@@ -2811,6 +4633,17 @@
     "query": "\"Arkema\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:45d",
     "source_type": "fallback",
     "source_priority": 90,
-    "official_source_url": ""
+    "official_source_url": "",
+    "industry": "이차전지",
+    "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+    "target_technology_en": "polyvinylidene fluoride",
+    "technology_group": "pvdf",
+    "excluded_from_relevance": false,
+    "matched_terms": [
+      "PVDF"
+    ],
+    "relevance_score": 1,
+    "relevance_decision": "relevant",
+    "relevance_reason": "폴리비닐리덴 플루오라이드(PVDF) 관련 키워드가 발견되었습니다: PVDF"
   }
 ]

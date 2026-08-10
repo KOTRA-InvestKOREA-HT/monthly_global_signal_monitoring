@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-10T08:35:59Z",
+  "run_started_at": "2026-08-10T07:55:25Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -12,12 +12,12 @@
   "max_per_company": 4,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 145,
-  "result_count": 199,
-  "official_result_count": 73,
-  "fallback_result_count": 126,
+  "request_count": 150,
+  "result_count": 201,
+  "official_result_count": 77,
+  "fallback_result_count": 124,
   "companies_with_results": 73,
-  "companies_with_official_results": 29,
+  "companies_with_official_results": 30,
   "companies_without_results": [
     "TIMET",
     "Magnix",
@@ -71,7 +71,7 @@
     "Umicore": 2,
     "Solvay": 1,
     "Syensqo": 3,
-    "Hexagon AB": 2,
+    "Hexagon AB": 3,
     "ABB": 3,
     "Maxon": 3,
     "Siemens-Gamesa": 3,
@@ -81,7 +81,7 @@
     "HyproMag": 2,
     "EVG": 3,
     "Plansee": 1,
-    "Texcell": 2,
+    "Texcell": 3,
     "Veolia": 4,
     "Airbus": 4,
     "Safran": 3,
@@ -114,14 +114,14 @@
     "Dupont": 0,
     "Albemarle": 3,
     "TIMET": 0,
-    "Air Products": 0,
+    "Air Products": 3,
     "Chemours": 1,
     "BorgWarner": 3,
     "DOW": 2,
     "Thermo Fisher": 0,
     "Amkor Technology": 0,
     "Onsemi": 1,
-    "Qualcomm": 0,
+    "Qualcomm": 3,
     "Skyworks": 0,
     "Eli Lilly and Company": 0,
     "GE Healthcare": 4,
@@ -150,7 +150,7 @@
     "Umicore": 2,
     "Solvay": 1,
     "Syensqo": 0,
-    "Hexagon AB": 2,
+    "Hexagon AB": 0,
     "ABB": 0,
     "Maxon": 0,
     "Siemens-Gamesa": 0,
@@ -182,7 +182,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 65,
+  "error_count": 62,
   "errors": [
     {
       "target_no": 2,
@@ -206,14 +206,6 @@
       "source": "official_pages",
       "source_url": "https://www.corning.com/worldwide/en/about-us/news-events/news-releases.html",
       "source_name": "Corning News Releases",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 3,
-      "company": "Corning",
-      "source": "official_pages",
-      "source_url": "https://investor.corning.com/",
-      "source_name": "Corning Investor Relations",
       "error": "HTTP 403 Forbidden"
     },
     {
@@ -292,14 +284,6 @@
       "target_no": 11,
       "company": "Air Products",
       "source": "official_pages",
-      "source_url": "https://www.airproducts.com/company/news-center",
-      "source_name": "Air Products News Center",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 11,
-      "company": "Air Products",
-      "source": "official_pages",
       "source_url": "https://investors.airproducts.com/news-releases",
       "source_name": "Air Products Investor News",
       "error": "HTTP 404 Not Found"
@@ -321,28 +305,12 @@
       "error": "fetch failed"
     },
     {
-      "target_no": 14,
-      "company": "DOW",
-      "source": "official_pages",
-      "source_url": "https://investors.dow.com/en/news",
-      "source_name": "Dow Investor News",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
       "target_no": 15,
       "company": "Thermo Fisher",
       "source": "official_pages",
       "source_url": "https://thermofisher.mediaroom.com/news-releases",
       "source_name": "Thermo Fisher News Releases",
       "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 15,
-      "company": "Thermo Fisher",
-      "source": "official_pages",
-      "source_url": "https://ir.thermofisher.com/investors/news-events/news-releases",
-      "source_name": "Thermo Fisher Investor News",
-      "error": "HTTP 403 Forbidden"
     },
     {
       "target_no": 16,
@@ -367,14 +335,6 @@
       "source_url": "https://investor.onsemi.com/news-releases",
       "source_name": "onsemi Investor News",
       "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 18,
-      "company": "Qualcomm",
-      "source": "official_pages",
-      "source_url": "https://investor.qualcomm.com/news-events/press-releases",
-      "source_name": "Qualcomm Investor Press Releases",
-      "error": "HTTP 403 Forbidden"
     },
     {
       "target_no": 19,
@@ -553,6 +513,22 @@
       "error": "HTTP 406 Not Acceptable"
     },
     {
+      "target_no": 47,
+      "company": "Hexagon AB",
+      "source": "official_pages",
+      "source_url": "https://hexagon.com/company/newsroom/press-releases",
+      "source_name": "Hexagon Press Releases",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 47,
+      "company": "Hexagon AB",
+      "source": "official_pages",
+      "source_url": "https://hexagon.com/company/investors",
+      "source_name": "Hexagon Investors",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
       "target_no": 48,
       "company": "ABB",
       "source": "official_pages",
@@ -670,7 +646,7 @@
       "source": "official_pages",
       "source_url": "https://www.tosoh.com/news",
       "source_name": "Tosoh News",
-      "error": "HTTP 403 Forbidden"
+      "error": "HTTP 404 Not Found"
     },
     {
       "target_no": 71,
@@ -706,11 +682,11 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260810T083559Z.json",
-    "csv": "outputs/company_signals_20260810T083559Z.csv",
-    "summary": "outputs/collection_summary_20260810T083559Z.json",
-    "latest_json": "outputs/latest_company_signals.json",
-    "latest_csv": "outputs/latest_company_signals.csv",
-    "latest_summary": "outputs/latest_collection_summary.json"
+    "json": "outputs\\company_signals_20260810T075525Z.json",
+    "csv": "outputs\\company_signals_20260810T075525Z.csv",
+    "summary": "outputs\\collection_summary_20260810T075525Z.json",
+    "latest_json": "outputs\\latest_company_signals.json",
+    "latest_csv": "outputs\\latest_company_signals.csv",
+    "latest_summary": "outputs\\latest_collection_summary.json"
   }
 }

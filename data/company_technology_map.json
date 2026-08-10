@@ -1,0 +1,1311 @@
+{
+  "description": "Company-to-target-technology mapping extracted from the reference PDF and normalized for relevance filtering.",
+  "source_pdf": "C:\\Users\\buy4u\\Downloads\\전체 기업 정보_참고용_최종.pdf",
+  "company_count": 77,
+  "excluded_company_count": 9,
+  "excluded_companies": [
+    "3M",
+    "Air Liquide",
+    "Air Products",
+    "Amkor Technology",
+    "Applied Materials",
+    "Heraeus",
+    "JSR",
+    "Prodrive",
+    "Toray"
+  ],
+  "companies": [
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "query_aliases": [
+        "ASM",
+        "Australian Strategic Materials"
+      ],
+      "industry": "철강금속",
+      "target_technology": "사용후 영구자석 고순도 희토류 추출",
+      "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+      "technology_group": "rare_earth_magnet_recycling",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "사용후 영구류자 추석출 고순도 희토",
+      "pdf_company": "AustralMiaent aSltsrategic",
+      "pdf_row_no": 66,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 2,
+      "company": "Cognex",
+      "query_aliases": [
+        "Cognex Corporation"
+      ],
+      "industry": "기계",
+      "target_technology": "3D 비전센서",
+      "target_technology_en": "3D vision sensor",
+      "technology_group": "3d_vision_sensor",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "3D 비전센서",
+      "pdf_company": "Cognex",
+      "pdf_row_no": 1,
+      "pdf_sequence": "1"
+    },
+    {
+      "target_no": 3,
+      "company": "Corning",
+      "query_aliases": [
+        "Corning Incorporated"
+      ],
+      "industry": "디스플레이",
+      "target_technology": "EUV 블랭크 마스크",
+      "target_technology_en": "EUV blank mask",
+      "technology_group": "euv_blank_mask",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "EUV 블랭크 마스크",
+      "pdf_company": "Corning",
+      "pdf_row_no": 5,
+      "pdf_sequence": "5"
+    },
+    {
+      "target_no": 4,
+      "company": "Charles River",
+      "query_aliases": [
+        "Charles River Laboratories"
+      ],
+      "industry": "바이오",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "target_technology_en": "virus validation and MCB/WCB characterization",
+      "technology_group": "virus_validation_mcb_wcb",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "바이특러성스분 검석증 플 및랫 M폼C기B술/WCB",
+      "pdf_company": "Charles River",
+      "pdf_row_no": 21,
+      "pdf_sequence": "16"
+    },
+    {
+      "target_no": 5,
+      "company": "Cytiva",
+      "query_aliases": [],
+      "industry": "바이오",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "target_technology_en": "biopharma culture and purification system",
+      "technology_group": "bioprocess_culture_purification",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "차세배대양 바 이및오 정의제약시품스 템생산용",
+      "pdf_company": "Cytiva",
+      "pdf_row_no": 27,
+      "pdf_sequence": "21"
+    },
+    {
+      "target_no": 6,
+      "company": "Moderna",
+      "query_aliases": [
+        "Moderna Inc"
+      ],
+      "industry": "바이오",
+      "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+      "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+      "technology_group": "gene_cell_therapy_delivery_gmp",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "전차달세체대 및유 전GM자 술P.세 합포성치 료원제천용기",
+      "pdf_company": "Moderna",
+      "pdf_row_no": 31,
+      "pdf_sequence": "24"
+    },
+    {
+      "target_no": 7,
+      "company": "West Pharmaceutical",
+      "query_aliases": [
+        "West Pharmaceutical Services"
+      ],
+      "industry": "바이오",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+      "technology_group": "autoinjector_pfs_fill_finish",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "Autoin의je약ct품or 완충제전 P및FS 제,조기 술",
+      "pdf_company": "West Pharmaceutical",
+      "pdf_row_no": 24,
+      "pdf_sequence": "19"
+    },
+    {
+      "target_no": 8,
+      "company": "Dupont",
+      "query_aliases": [
+        "DuPont"
+      ],
+      "industry": "에너지",
+      "target_technology": "Ag/Al Paste",
+      "target_technology_en": "Ag/Al paste",
+      "technology_group": "ag_al_paste",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "AG/AI Paste",
+      "pdf_company": "Dupont",
+      "pdf_row_no": 43,
+      "pdf_sequence": "32"
+    },
+    {
+      "target_no": 9,
+      "company": "Albemarle",
+      "query_aliases": [
+        "Albemarle Corporation"
+      ],
+      "industry": "이차전지",
+      "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+      "target_technology_en": "cathode material lithium hydroxide/carbonate",
+      "technology_group": "lithium_cathode_materials",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
+      "pdf_company": "Albemarle",
+      "pdf_row_no": 57,
+      "pdf_sequence": "42"
+    },
+    {
+      "target_no": 10,
+      "company": "TIMET",
+      "query_aliases": [
+        "Titanium Metals Corporation"
+      ],
+      "industry": "철강금속",
+      "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+      "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+      "technology_group": "nonferrous_scrap_recycling",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "비철금속극 소대재화 스 기크술랩 활용률",
+      "pdf_company": "TIMET",
+      "pdf_row_no": 65,
+      "pdf_sequence": "47"
+    },
+    {
+      "target_no": 11,
+      "company": "Air Products",
+      "query_aliases": [
+        "Air Products and Chemicals"
+      ],
+      "industry": "화학소재",
+      "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+      "target_technology_en": "hexamethylenediamine platform production technology",
+      "technology_group": "hexamethylenediamine_hmd",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "핵사메틸렌산디 아기민술 플랫폼 생",
+      "pdf_company": "Air Products",
+      "pdf_row_no": 75,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 12,
+      "company": "Chemours",
+      "query_aliases": [
+        "The Chemours Company"
+      ],
+      "industry": "화학소재",
+      "target_technology": "이온교환막 및 바이폴라 이온교환막",
+      "target_technology_en": "ion exchange membrane and bipolar membrane",
+      "technology_group": "ion_exchange_membrane",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "이온교환막 교및환 바막이폴라 이온",
+      "pdf_company": "Chemours",
+      "pdf_row_no": 71,
+      "pdf_sequence": "50"
+    },
+    {
+      "target_no": 13,
+      "company": "BorgWarner",
+      "query_aliases": [
+        "BorgWarner Inc"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+      "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+      "technology_group": "autonomous_imu_rf_baseband",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "자율주베행이차스 IM밴U드(고칩주)파부,",
+      "pdf_company": "BorgWarner",
+      "pdf_row_no": 15,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 14,
+      "company": "DOW",
+      "query_aliases": [
+        "Dow Inc"
+      ],
+      "industry": "반도체",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "target_technology_en": "high-performance thermal material for semiconductor back-end",
+      "technology_group": "semiconductor_thermal_material",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "반도체 후공정소용재 고성능 방열",
+      "pdf_company": "DOW",
+      "pdf_row_no": 42,
+      "pdf_sequence": "31"
+    },
+    {
+      "target_no": 15,
+      "company": "Thermo Fisher",
+      "query_aliases": [
+        "Thermo Fisher Scientific"
+      ],
+      "industry": "바이오",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "target_technology_en": "biopharma culture and purification system",
+      "technology_group": "bioprocess_culture_purification",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "차세배대양 바 이및오 정의제약시품스 템생산용",
+      "pdf_company": "Thermo Fisher",
+      "pdf_row_no": 29,
+      "pdf_sequence": "22"
+    },
+    {
+      "target_no": 16,
+      "company": "Amkor Technology",
+      "query_aliases": [],
+      "industry": "반도체",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "target_technology_en": "high-performance thermal material for semiconductor back-end",
+      "technology_group": "semiconductor_thermal_material",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "반도체 후공정소용재 고성능 방열",
+      "pdf_company": "Amkor Technology",
+      "pdf_row_no": 41,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 17,
+      "company": "Onsemi",
+      "query_aliases": [
+        "onsemi"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 카메라/이미지 신호처리",
+      "target_technology_en": "autonomous vehicle camera and image signal processing",
+      "technology_group": "autonomous_camera_isp",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "자율이주미행지차신 카호메처라리(광장학치렌)즈,",
+      "pdf_company": "Onsemi",
+      "pdf_row_no": 19,
+      "pdf_sequence": "15"
+    },
+    {
+      "target_no": 18,
+      "company": "Qualcomm",
+      "query_aliases": [
+        "Qualcomm Incorporated"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+      "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+      "technology_group": "autonomous_imu_rf_baseband",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "자율주베행이차스 IM밴U드(고칩주)파부,",
+      "pdf_company": "Qualcomm",
+      "pdf_row_no": 16,
+      "pdf_sequence": "12"
+    },
+    {
+      "target_no": 19,
+      "company": "Skyworks",
+      "query_aliases": [
+        "Skyworks Solutions"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+      "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+      "technology_group": "autonomous_imu_rf_baseband",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "자율주행이차스 IM밴U드(고칩주)파부, 베",
+      "pdf_company": "Skyworks",
+      "pdf_row_no": 17,
+      "pdf_sequence": "13"
+    },
+    {
+      "target_no": 20,
+      "company": "Eli Lilly and Company",
+      "query_aliases": [
+        "Eli Lilly"
+      ],
+      "industry": "바이오",
+      "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+      "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+      "technology_group": "gene_cell_therapy_delivery_gmp",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "차전세달대체 유및전 G자M술P.세 합포성치 원료천제기용",
+      "pdf_company": "Eli Lilly and Company",
+      "pdf_row_no": 30,
+      "pdf_sequence": "23"
+    },
+    {
+      "target_no": 21,
+      "company": "GE Healthcare",
+      "query_aliases": [
+        "GE HealthCare"
+      ],
+      "industry": "바이오",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "target_technology_en": "biopharma culture and purification system",
+      "technology_group": "bioprocess_culture_purification",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "차세배대양 바 이및오 정의제약시품스 템생산용",
+      "pdf_company": "GE Healthcare",
+      "pdf_row_no": 28,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 22,
+      "company": "Boeing",
+      "query_aliases": [
+        "The Boeing Company"
+      ],
+      "industry": "우주항공",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+      "technology_group": "aerospace_electric_propulsion",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리",
+      "pdf_company": "Boeing",
+      "pdf_row_no": 51,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 23,
+      "company": "3M",
+      "query_aliases": [
+        "3M Company"
+      ],
+      "industry": "화학소재",
+      "target_technology": "이온교환막 및 바이폴라 이온교환막",
+      "target_technology_en": "ion exchange membrane and bipolar membrane",
+      "technology_group": "ion_exchange_membrane",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "이온교환막 교및환 바막이폴라 이온",
+      "pdf_company": "3M",
+      "pdf_row_no": 69,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "query_aliases": [
+        "Ouster Inc"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 라이다",
+      "target_technology_en": "robot LiDAR",
+      "technology_group": "robot_lidar",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 라이다",
+      "pdf_company": "Ouster",
+      "pdf_row_no": 14,
+      "pdf_sequence": "11"
+    },
+    {
+      "target_no": 25,
+      "company": "Applied Materials",
+      "query_aliases": [],
+      "industry": "반도체",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+      "technology_group": "hybrid_bonding_w2w",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "nm급W2W 장하비이브리드 본딩",
+      "pdf_company": "Applied Materials",
+      "pdf_row_no": 34,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 26,
+      "company": "Magnix",
+      "query_aliases": [
+        "magniX"
+      ],
+      "industry": "우주항공",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+      "technology_group": "aerospace_electric_propulsion",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리",
+      "pdf_company": "Magnix",
+      "pdf_row_no": 52,
+      "pdf_sequence": "38"
+    },
+    {
+      "target_no": 27,
+      "company": "Prodrive",
+      "query_aliases": [
+        "Prodrive Technologies"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 카메라/이미지 신호처리",
+      "target_technology_en": "autonomous vehicle camera and image signal processing",
+      "technology_group": "autonomous_camera_isp",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "자율이주미행지차신 카호메처라리(광장학치렌)즈,",
+      "pdf_company": "Prodrive",
+      "pdf_row_no": 20,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 28,
+      "company": "ASML",
+      "query_aliases": [
+        "ASML Holding"
+      ],
+      "industry": "반도체",
+      "target_technology": "EUV 노광장비",
+      "target_technology_en": "EUV lithography equipment",
+      "technology_group": "euv_lithography",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "EUV 노광장비",
+      "pdf_company": "ASML",
+      "pdf_row_no": 32,
+      "pdf_sequence": "25"
+    },
+    {
+      "target_no": 29,
+      "company": "Besi",
+      "query_aliases": [
+        "BE Semiconductor Industries",
+        "BESI"
+      ],
+      "industry": "반도체",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+      "technology_group": "hybrid_bonding_w2w",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "nm급W2W 장하비이브리드 본딩",
+      "pdf_company": "Besi",
+      "pdf_row_no": 35,
+      "pdf_sequence": "26"
+    },
+    {
+      "target_no": 30,
+      "company": "NXP",
+      "query_aliases": [
+        "NXP Semiconductors"
+      ],
+      "industry": "우주항공",
+      "target_technology": "위성통신 및 레이다용 RF 반도체",
+      "target_technology_en": "RF semiconductor for satellite communication and radar",
+      "technology_group": "satellite_radar_rf_semiconductor",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "위성통신도 및체 레 기이술다용 RF반",
+      "pdf_company": "NXP",
+      "pdf_row_no": 49,
+      "pdf_sequence": "37"
+    },
+    {
+      "target_no": 31,
+      "company": "Norsk Hydro",
+      "query_aliases": [
+        "Hydro"
+      ],
+      "industry": "철강금속",
+      "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+      "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+      "technology_group": "nonferrous_scrap_recycling",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "비철금속극 소대재화 스 기크술랩 활용률",
+      "pdf_company": "Norsk Hydro",
+      "pdf_row_no": 64,
+      "pdf_sequence": "46"
+    },
+    {
+      "target_no": 32,
+      "company": "Vestas",
+      "query_aliases": [
+        "Vestas Wind Systems"
+      ],
+      "industry": "에너지",
+      "target_technology": "해상풍력터빈",
+      "target_technology_en": "offshore wind turbine",
+      "technology_group": "offshore_wind_turbine",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "해상풍력터빈",
+      "pdf_company": "Vestas",
+      "pdf_row_no": 47,
+      "pdf_sequence": "35"
+    },
+    {
+      "target_no": 33,
+      "company": "Heidenhain",
+      "query_aliases": [
+        "HEIDENHAIN"
+      ],
+      "industry": "기계",
+      "target_technology": "리니어스케일",
+      "target_technology_en": "linear scale",
+      "technology_group": "linear_scale",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "리니어스케일",
+      "pdf_company": "Heidenhain",
+      "pdf_row_no": 3,
+      "pdf_sequence": "3"
+    },
+    {
+      "target_no": 34,
+      "company": "Infineon",
+      "query_aliases": [
+        "Infineon Technologies"
+      ],
+      "industry": "우주항공",
+      "target_technology": "위성통신 및 레이다용 RF 반도체",
+      "target_technology_en": "RF semiconductor for satellite communication and radar",
+      "technology_group": "satellite_radar_rf_semiconductor",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "위성통신도 및체 레 기이술다용 RF반",
+      "pdf_company": "Infineon",
+      "pdf_row_no": 48,
+      "pdf_sequence": "36"
+    },
+    {
+      "target_no": 35,
+      "company": "Schmalz",
+      "query_aliases": [
+        "J. Schmalz"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 감속기",
+      "target_technology_en": "robot reducer",
+      "technology_group": "robot_reducer",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 감속기",
+      "pdf_company": "Schmalz",
+      "pdf_row_no": 12,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 36,
+      "company": "Bayer",
+      "query_aliases": [
+        "Bayer AG"
+      ],
+      "industry": "바이오",
+      "target_technology": "의약품용 부형제",
+      "target_technology_en": "pharmaceutical excipient",
+      "technology_group": "pharma_excipient",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "의약품용 부형제",
+      "pdf_company": "Bayer",
+      "pdf_row_no": 25,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 37,
+      "company": "Merck",
+      "query_aliases": [
+        "Merck KGaA"
+      ],
+      "industry": "바이오",
+      "target_technology": "의약품용 부형제",
+      "target_technology_en": "pharmaceutical excipient",
+      "technology_group": "pharma_excipient",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "의약품용 부형제",
+      "pdf_company": "Merck",
+      "pdf_row_no": 26,
+      "pdf_sequence": "20"
+    },
+    {
+      "target_no": 38,
+      "company": "Schott Pharma",
+      "query_aliases": [
+        "SCHOTT Pharma"
+      ],
+      "industry": "바이오",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "target_technology_en": "autoinjector/PFS fill-finish manufacturing",
+      "technology_group": "autoinjector_pfs_fill_finish",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "Autoin의je약ct품or 완충제전 P및FS 제,조기 술",
+      "pdf_company": "Schott Pharma",
+      "pdf_row_no": 23,
+      "pdf_sequence": "18"
+    },
+    {
+      "target_no": 39,
+      "company": "BASF",
+      "query_aliases": [
+        "BASF SE"
+      ],
+      "industry": "화학소재",
+      "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+      "target_technology_en": "hexamethylenediamine platform production technology",
+      "technology_group": "hexamethylenediamine_hmd",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "핵사메틸렌산디 아기민술 플랫폼 생",
+      "pdf_company": "BASF",
+      "pdf_row_no": 77,
+      "pdf_sequence": "55"
+    },
+    {
+      "target_no": 40,
+      "company": "Evonik Industries",
+      "query_aliases": [
+        "Evonik"
+      ],
+      "industry": "화학소재",
+      "target_technology": "타이어용 친환경 침강실리카 제조기술",
+      "target_technology_en": "precipitated silica for eco-friendly tires",
+      "technology_group": "precipitated_silica_tire",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "타이어용 제친조환 경기 술침강실리카",
+      "pdf_company": "Evonik Industries",
+      "pdf_row_no": 73,
+      "pdf_sequence": "52"
+    },
+    {
+      "target_no": 41,
+      "company": "Heraeus",
+      "query_aliases": [
+        "Heraeus Group"
+      ],
+      "industry": "에너지",
+      "target_technology": "Ag/Al Paste",
+      "target_technology_en": "Ag/Al paste",
+      "technology_group": "ag_al_paste",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "AG/AI Paste",
+      "pdf_company": "Heraeus",
+      "pdf_row_no": 44,
+      "pdf_sequence": "33"
+    },
+    {
+      "target_no": 42,
+      "company": "Jenoptik",
+      "query_aliases": [
+        "JENOPTIK"
+      ],
+      "industry": "기계",
+      "target_technology": "3D 비전센서",
+      "target_technology_en": "3D vision sensor",
+      "technology_group": "3d_vision_sensor",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "3D 비전센서",
+      "pdf_company": "Jenoptik",
+      "pdf_row_no": 2,
+      "pdf_sequence": "2"
+    },
+    {
+      "target_no": 43,
+      "company": "EMM(Umicore)",
+      "query_aliases": [
+        "EMM Umicore",
+        "Umicore EMM"
+      ],
+      "industry": "이차전지",
+      "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+      "target_technology_en": "silicon anode material technology",
+      "technology_group": "silicon_anode_sic",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "실리콘 음극기재술(증착형 Si-C)",
+      "pdf_company": "EMM(Umicore)",
+      "pdf_row_no": 56,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 44,
+      "company": "Umicore",
+      "query_aliases": [],
+      "industry": "이차전지",
+      "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+      "target_technology_en": "cathode material lithium hydroxide/carbonate",
+      "technology_group": "lithium_cathode_materials",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
+      "pdf_company": "Umicore",
+      "pdf_row_no": 58,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 45,
+      "company": "Solvay",
+      "query_aliases": [
+        "Solvay SA"
+      ],
+      "industry": "화학소재",
+      "target_technology": "타이어용 친환경 침강실리카 제조기술",
+      "target_technology_en": "precipitated silica for eco-friendly tires",
+      "technology_group": "precipitated_silica_tire",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "타이어용 제친조환 경기 술침강실리카",
+      "pdf_company": "Solvay",
+      "pdf_row_no": 74,
+      "pdf_sequence": "53"
+    },
+    {
+      "target_no": 46,
+      "company": "Syensqo",
+      "query_aliases": [],
+      "industry": "이차전지",
+      "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+      "target_technology_en": "polyvinylidene fluoride",
+      "technology_group": "pvdf",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "폴리비닐리덴 플루오라이드",
+      "pdf_company": "Syensqo",
+      "pdf_row_no": 61,
+      "pdf_sequence": "45"
+    },
+    {
+      "target_no": 47,
+      "company": "Hexagon AB",
+      "query_aliases": [
+        "Hexagon"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 라이다",
+      "target_technology_en": "robot LiDAR",
+      "technology_group": "robot_lidar",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 라이다",
+      "pdf_company": "Hexagon AB",
+      "pdf_row_no": 13,
+      "pdf_sequence": "10"
+    },
+    {
+      "target_no": 48,
+      "company": "ABB",
+      "query_aliases": [
+        "ABB Group"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 감속기",
+      "target_technology_en": "robot reducer",
+      "technology_group": "robot_reducer",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 감속기",
+      "pdf_company": "ABB",
+      "pdf_row_no": 9,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 49,
+      "company": "Maxon",
+      "query_aliases": [
+        "maxon group"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 감속기",
+      "target_technology_en": "robot reducer",
+      "technology_group": "robot_reducer",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 감속기",
+      "pdf_company": "Maxon",
+      "pdf_row_no": 10,
+      "pdf_sequence": "8"
+    },
+    {
+      "target_no": 50,
+      "company": "Siemens-Gamesa",
+      "query_aliases": [
+        "Siemens Gamesa"
+      ],
+      "industry": "에너지",
+      "target_technology": "해상풍력터빈",
+      "target_technology_en": "offshore wind turbine",
+      "technology_group": "offshore_wind_turbine",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "해상풍력터빈",
+      "pdf_company": "Siemens-Gamesa",
+      "pdf_row_no": 46,
+      "pdf_sequence": "34"
+    },
+    {
+      "target_no": 51,
+      "company": "Renishaw",
+      "query_aliases": [
+        "Renishaw plc"
+      ],
+      "industry": "기계",
+      "target_technology": "리니어스케일",
+      "target_technology_en": "linear scale",
+      "technology_group": "linear_scale",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "리니어스케일",
+      "pdf_company": "Renishaw",
+      "pdf_row_no": 4,
+      "pdf_sequence": "4"
+    },
+    {
+      "target_no": 52,
+      "company": "Nexeon",
+      "query_aliases": [
+        "Nexeon Limited"
+      ],
+      "industry": "이차전지",
+      "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+      "target_technology_en": "silicon anode material technology",
+      "technology_group": "silicon_anode_sic",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "실리콘 음극기재술(증착형 Si-C)",
+      "pdf_company": "Nexeon",
+      "pdf_row_no": 55,
+      "pdf_sequence": "41"
+    },
+    {
+      "target_no": 53,
+      "company": "Rio Tinto",
+      "query_aliases": [],
+      "industry": "이차전지",
+      "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
+      "target_technology_en": "cathode material lithium hydroxide/carbonate",
+      "technology_group": "lithium_cathode_materials",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
+      "pdf_company": "Rio Tinto",
+      "pdf_row_no": 59,
+      "pdf_sequence": "43"
+    },
+    {
+      "target_no": 54,
+      "company": "HyproMag",
+      "query_aliases": [
+        "HyProMag"
+      ],
+      "industry": "철강금속",
+      "target_technology": "사용후 영구자석 고순도 희토류 추출",
+      "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+      "technology_group": "rare_earth_magnet_recycling",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "사용후 영구류자 추석출 고순도 희토",
+      "pdf_company": "HyproMag",
+      "pdf_row_no": 67,
+      "pdf_sequence": "48"
+    },
+    {
+      "target_no": 55,
+      "company": "EVG",
+      "query_aliases": [
+        "EV Group"
+      ],
+      "industry": "반도체",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+      "technology_group": "hybrid_bonding_w2w",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "nm급W2W 장하비이브리드 본딩",
+      "pdf_company": "EVG",
+      "pdf_row_no": 36,
+      "pdf_sequence": "27"
+    },
+    {
+      "target_no": 56,
+      "company": "Plansee",
+      "query_aliases": [
+        "Plansee Group"
+      ],
+      "industry": "반도체",
+      "target_technology": "금속타겟(티타늄, 탄탈륨)",
+      "target_technology_en": "metal target titanium/tantalum",
+      "technology_group": "metal_target_ti_ta",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "금속타겟(티타늄, 탄탈륨)",
+      "pdf_company": "Plansee",
+      "pdf_row_no": 39,
+      "pdf_sequence": "29"
+    },
+    {
+      "target_no": 57,
+      "company": "Texcell",
+      "query_aliases": [],
+      "industry": "바이오",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "target_technology_en": "virus validation and MCB/WCB characterization",
+      "technology_group": "virus_validation_mcb_wcb",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "바이특러성스분 검석증 플 및랫 M폼C기B술/WCB",
+      "pdf_company": "Texcell",
+      "pdf_row_no": 22,
+      "pdf_sequence": "17"
+    },
+    {
+      "target_no": 58,
+      "company": "Veolia",
+      "query_aliases": [
+        "Veolia Group"
+      ],
+      "industry": "화학소재",
+      "target_technology": "이온교환막 및 바이폴라 이온교환막",
+      "target_technology_en": "ion exchange membrane and bipolar membrane",
+      "technology_group": "ion_exchange_membrane",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "이온교환막 교및환 바막이폴라 이온",
+      "pdf_company": "Veolia",
+      "pdf_row_no": 72,
+      "pdf_sequence": "51"
+    },
+    {
+      "target_no": 59,
+      "company": "Airbus",
+      "query_aliases": [
+        "Airbus SE"
+      ],
+      "industry": "우주항공",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+      "technology_group": "aerospace_electric_propulsion",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리",
+      "pdf_company": "Airbus",
+      "pdf_row_no": 50,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 60,
+      "company": "Safran",
+      "query_aliases": [
+        "Safran Group"
+      ],
+      "industry": "우주항공",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "target_technology_en": "aerospace electric motor and high-power battery propulsion module",
+      "technology_group": "aerospace_electric_propulsion",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리",
+      "pdf_company": "Safran",
+      "pdf_row_no": 53,
+      "pdf_sequence": "39"
+    },
+    {
+      "target_no": 61,
+      "company": "Air Liquide",
+      "query_aliases": [],
+      "industry": "화학소재",
+      "target_technology": "이온교환막 및 바이폴라 이온교환막",
+      "target_technology_en": "ion exchange membrane and bipolar membrane",
+      "technology_group": "ion_exchange_membrane",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "이온교환막 교및환 바막이폴라 이온",
+      "pdf_company": "Air Liquide",
+      "pdf_row_no": 70,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 62,
+      "company": "Arkema",
+      "query_aliases": [],
+      "industry": "이차전지",
+      "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+      "target_technology_en": "polyvinylidene fluoride",
+      "technology_group": "pvdf",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "폴리비닐리덴 플루오라이드",
+      "pdf_company": "Arkema",
+      "pdf_row_no": 60,
+      "pdf_sequence": "44"
+    },
+    {
+      "target_no": 63,
+      "company": "DNP",
+      "query_aliases": [
+        "Dai Nippon Printing"
+      ],
+      "industry": "디스플레이",
+      "target_technology": "파인메탈마스크(FMM)",
+      "target_technology_en": "fine metal mask",
+      "technology_group": "fine_metal_mask",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "파인메탈마스크(FMM)",
+      "pdf_company": "DNP",
+      "pdf_row_no": 6,
+      "pdf_sequence": "6"
+    },
+    {
+      "target_no": 64,
+      "company": "Hitachi Metals",
+      "query_aliases": [
+        "Proterial"
+      ],
+      "industry": "디스플레이",
+      "target_technology": "파인메탈마스크(FMM)",
+      "target_technology_en": "fine metal mask",
+      "technology_group": "fine_metal_mask",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "파인메탈마스크(FMM)",
+      "pdf_company": "Hitachi Metals",
+      "pdf_row_no": 7,
+      "pdf_sequence": "7"
+    },
+    {
+      "target_no": 65,
+      "company": "Toppan Holdings",
+      "query_aliases": [
+        "TOPPAN Holdings"
+      ],
+      "industry": "디스플레이",
+      "target_technology": "파인메탈마스크(FMM)",
+      "target_technology_en": "fine metal mask",
+      "technology_group": "fine_metal_mask",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "파인메탈마스크(FMM)",
+      "pdf_company": "Toppan Holdings",
+      "pdf_row_no": 8,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 66,
+      "company": "Nabtesco",
+      "query_aliases": [
+        "Nabtesco Corporation"
+      ],
+      "industry": "로봇",
+      "target_technology": "로봇용 감속기",
+      "target_technology_en": "robot reducer",
+      "technology_group": "robot_reducer",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "로봇용 감속기",
+      "pdf_company": "Nabtesco",
+      "pdf_row_no": 11,
+      "pdf_sequence": "9"
+    },
+    {
+      "target_no": 67,
+      "company": "Asahi Glass",
+      "query_aliases": [
+        "AGC Inc",
+        "AGC"
+      ],
+      "industry": "반도체",
+      "target_technology": "TGV용 유리기판 및 가공기술",
+      "target_technology_en": "TGV glass substrate and processing",
+      "technology_group": "tgv_glass_substrate",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "TGV용유리기판 및 가공기술",
+      "pdf_company": "Asahi Glass",
+      "pdf_row_no": 38,
+      "pdf_sequence": "28"
+    },
+    {
+      "target_no": 68,
+      "company": "JSR",
+      "query_aliases": [
+        "JSR Corporation"
+      ],
+      "industry": "반도체",
+      "target_technology": "EUV 노광장비",
+      "target_technology_en": "EUV lithography equipment",
+      "technology_group": "euv_lithography",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "EUV 노광장비",
+      "pdf_company": "JSR",
+      "pdf_row_no": 33,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 69,
+      "company": "Shin-Etsu Chemicals",
+      "query_aliases": [
+        "Shin-Etsu Chemical"
+      ],
+      "industry": "철강금속",
+      "target_technology": "사용후 영구자석 고순도 희토류 추출",
+      "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+      "technology_group": "rare_earth_magnet_recycling",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "사용후 영구류자 추석출 고순도 희토",
+      "pdf_company": "Shin-Etsu Chemicals",
+      "pdf_row_no": 68,
+      "pdf_sequence": "49"
+    },
+    {
+      "target_no": 70,
+      "company": "Tokyo Electron",
+      "query_aliases": [
+        "TEL"
+      ],
+      "industry": "반도체",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "target_technology_en": "nm-scale W2W hybrid bonding equipment",
+      "technology_group": "hybrid_bonding_w2w",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "nm급W2W 장하비이브리드 본딩",
+      "pdf_company": "Tokyo Electron",
+      "pdf_row_no": 37,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 71,
+      "company": "Tosoh",
+      "query_aliases": [
+        "Tosoh Corporation"
+      ],
+      "industry": "반도체",
+      "target_technology": "금속타겟(티타늄, 탄탈륨)",
+      "target_technology_en": "metal target titanium/tantalum",
+      "technology_group": "metal_target_ti_ta",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "금속타겟(티타늄, 탄탈륨)",
+      "pdf_company": "Tosoh",
+      "pdf_row_no": 40,
+      "pdf_sequence": "30"
+    },
+    {
+      "target_no": 72,
+      "company": "Mitsubishi Chemical",
+      "query_aliases": [
+        "Mitsubishi Chemical Group"
+      ],
+      "industry": "이차전지",
+      "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
+      "target_technology_en": "silicon anode material technology",
+      "technology_group": "silicon_anode_sic",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "실리콘 음극기재술(증착형 Si-C)",
+      "pdf_company": "Mitsubishi Chemical",
+      "pdf_row_no": 54,
+      "pdf_sequence": "40"
+    },
+    {
+      "target_no": 73,
+      "company": "Sumitomo Chemical",
+      "query_aliases": [],
+      "industry": "이차전지",
+      "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+      "target_technology_en": "polyvinylidene fluoride",
+      "technology_group": "pvdf",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "폴리비닐리덴 플루오라이드",
+      "pdf_company": "Sumitomo Chemical",
+      "pdf_row_no": 62,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 74,
+      "company": "Asahi Kasei",
+      "query_aliases": [],
+      "industry": "화학소재",
+      "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+      "target_technology_en": "hexamethylenediamine platform production technology",
+      "technology_group": "hexamethylenediamine_hmd",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "핵사메틸렌산디 아기민술 플랫폼 생",
+      "pdf_company": "Asahi Kasei",
+      "pdf_row_no": 76,
+      "pdf_sequence": "54"
+    },
+    {
+      "target_no": 75,
+      "company": "Toray",
+      "query_aliases": [
+        "Toray Industries"
+      ],
+      "industry": "이차전지",
+      "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
+      "target_technology_en": "polyvinylidene fluoride",
+      "technology_group": "pvdf",
+      "excluded_from_relevance": true,
+      "exclude_reason": "user_requested_exclusion",
+      "raw_target_technology": "폴리비닐리덴 플루오라이드",
+      "pdf_company": "Toray",
+      "pdf_row_no": 63,
+      "pdf_sequence": "KO추T가RA"
+    },
+    {
+      "target_no": 76,
+      "company": "Cheng Uei Precision",
+      "query_aliases": [
+        "Foxlink",
+        "Cheng Uei Precision Industry"
+      ],
+      "industry": "모빌리티",
+      "target_technology": "자율주행차 카메라/이미지 신호처리",
+      "target_technology_en": "autonomous vehicle camera and image signal processing",
+      "technology_group": "autonomous_camera_isp",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "자율이주미행지차신 카호메처라리(광장학치렌)즈,",
+      "pdf_company": "Cheng Uei Precision",
+      "pdf_row_no": 18,
+      "pdf_sequence": "14"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "query_aliases": [
+        "Shanghai Electric Wind Power Group"
+      ],
+      "industry": "에너지",
+      "target_technology": "해상풍력터빈",
+      "target_technology_en": "offshore wind turbine",
+      "technology_group": "offshore_wind_turbine",
+      "excluded_from_relevance": false,
+      "exclude_reason": "",
+      "raw_target_technology": "해상풍력터빈",
+      "pdf_company": "ShanghaPi oEwleectrric Wind",
+      "pdf_row_no": 45,
+      "pdf_sequence": "KO추T가RA"
+    }
+  ]
+}

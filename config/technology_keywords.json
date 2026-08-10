@@ -1,0 +1,156 @@
+{
+  "description": "Broad multilingual keyword catalog for matching collected company signals to target attraction technologies. Terms are intentionally broad and include Korean, English, abbreviations, and adjacent technical terms.",
+  "default_threshold": 1,
+  "groups": {
+    "3d_vision_sensor": {
+      "label_ko": "3D 비전센서",
+      "label_en": "3D vision sensor",
+      "keywords": ["3D 비전", "3D 비전센서", "비전 센서", "비전센서", "머신비전", "머신 비전", "산업용 비전", "비전 검사", "영상 검사", "광학 검사", "딥러닝 검사", "바코드 리더", "스마트 카메라", "3D vision", "vision sensor", "machine vision", "industrial vision", "vision inspection", "optical inspection", "deep learning inspection", "barcode reader", "smart camera", "3D sensing"]
+    },
+    "linear_scale": {
+      "label_ko": "리니어스케일",
+      "label_en": "linear scale",
+      "keywords": ["리니어스케일", "리니어 스케일", "선형 스케일", "선형 엔코더", "리니어 엔코더", "위치 측정", "정밀 측정", "모션 제어", "linear scale", "linear encoder", "position encoder", "position measurement", "precision measurement", "motion control", "metrology encoder"]
+    },
+    "euv_blank_mask": {
+      "label_ko": "EUV 블랭크 마스크",
+      "label_en": "EUV blank mask",
+      "keywords": ["EUV", "EUV 블랭크", "블랭크 마스크", "마스크 블랭크", "포토마스크", "반도체 마스크", "노광 마스크", "blank mask", "mask blank", "EUV mask", "photomask", "photo mask", "semiconductor mask", "lithography mask"]
+    },
+    "fine_metal_mask": {
+      "label_ko": "파인메탈마스크(FMM)",
+      "label_en": "fine metal mask",
+      "keywords": ["파인메탈마스크", "파인 메탈 마스크", "FMM", "OLED 마스크", "증착 마스크", "디스플레이 마스크", "fine metal mask", "OLED mask", "deposition mask", "evaporation mask", "display mask", "shadow mask"]
+    },
+    "robot_reducer": {
+      "label_ko": "로봇용 감속기",
+      "label_en": "robot reducer",
+      "keywords": ["로봇 감속기", "로봇용 감속기", "감속기", "정밀 감속기", "하모닉 드라이브", "사이클로이드", "기어박스", "액추에이터", "서보모터", "로봇 관절", "robot reducer", "precision reducer", "harmonic drive", "cycloidal drive", "gearbox", "actuator", "servo motor", "robot joint", "robotics drive"]
+    },
+    "robot_lidar": {
+      "label_ko": "로봇용 라이다",
+      "label_en": "robot LiDAR",
+      "keywords": ["라이다", "라이더", "로봇 라이다", "로봇용 라이다", "레이저 스캐너", "3D 센싱", "로봇 인식", "자율이동로봇", "LiDAR", "lidar", "laser scanner", "3D sensing", "robot perception", "robot navigation", "autonomous mobile robot", "AMR", "SLAM"]
+    },
+    "autonomous_imu_rf_baseband": {
+      "label_ko": "자율주행차 IMU/RF/베이스밴드 칩",
+      "label_en": "autonomous vehicle IMU/RF/baseband chip",
+      "keywords": ["자율주행", "ADAS", "IMU", "관성측정", "관성 센서", "고주파", "RF", "베이스밴드", "베이스밴드 칩", "커넥티드카", "V2X", "차량용 반도체", "차량용 칩", "automotive chip", "autonomous driving", "advanced driver assistance", "inertial measurement", "inertial sensor", "baseband", "RF front end", "radio frequency", "mmWave", "V2X", "connected car", "automotive semiconductor"]
+    },
+    "autonomous_camera_isp": {
+      "label_ko": "자율주행차 카메라/이미지 신호처리",
+      "label_en": "autonomous vehicle camera and image signal processing",
+      "keywords": ["자율주행", "차량용 카메라", "카메라 모듈", "이미지 센서", "이미지 신호처리", "ISP", "광학 렌즈", "차량용 렌즈", "ADAS 카메라", "CMOS 이미지센서", "automotive camera", "camera module", "image sensor", "image signal processor", "image signal processing", "optical lens", "automotive lens", "ADAS camera", "CMOS image sensor", "machine perception"]
+    },
+    "virus_validation_mcb_wcb": {
+      "label_ko": "바이러스 검증 및 MCB/WCB 특성분석",
+      "label_en": "virus validation and MCB/WCB characterization",
+      "keywords": ["바이러스 검증", "바이러스 밸리데이션", "바이러스 제거", "바이러스 안전성", "특성분석", "세포은행", "마스터 세포은행", "작업 세포은행", "MCB", "WCB", "바이오 안전성", "virus validation", "viral validation", "viral clearance", "virus safety", "characterization", "cell bank", "master cell bank", "working cell bank", "biosafety", "bioassay"]
+    },
+    "autoinjector_pfs_fill_finish": {
+      "label_ko": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "label_en": "autoinjector/PFS fill-finish manufacturing",
+      "keywords": ["오토인젝터", "자동주사기", "프리필드시린지", "사전충전주사기", "PFS", "완충전", "무균 충전", "충전 마감", "의약품 전달", "카트리지", "스토퍼", "autoinjector", "auto injector", "prefilled syringe", "pre-filled syringe", "fill finish", "fill-finish", "aseptic filling", "drug delivery", "cartridge", "stopper", "injectable"]
+    },
+    "pharma_excipient": {
+      "label_ko": "의약품용 부형제",
+      "label_en": "pharmaceutical excipient",
+      "keywords": ["부형제", "의약품 부형제", "제제", "첨가제", "결합제", "붕해제", "용해보조제", "안정화제", "제약 원료", "excipient", "pharmaceutical excipient", "formulation", "binder", "filler", "disintegrant", "solubilizer", "stabilizer", "pharma ingredient"]
+    },
+    "bioprocess_culture_purification": {
+      "label_ko": "바이오의약품 생산용 배양 및 정제 시스템",
+      "label_en": "biopharma culture and purification system",
+      "keywords": ["바이오의약품", "세포배양", "배양", "정제", "크로마토그래피", "여과", "바이오리액터", "일회용 시스템", "싱글유즈", "배지", "레진", "biopharma", "bioprocess", "cell culture", "culture media", "purification", "chromatography", "filtration", "bioreactor", "single-use", "single use", "resin"]
+    },
+    "gene_cell_therapy_delivery_gmp": {
+      "label_ko": "유전자/세포치료제 전달체 및 GMP 원료기술",
+      "label_en": "gene/cell therapy delivery vector and GMP raw material",
+      "keywords": ["유전자치료제", "세포치료제", "전달체", "벡터", "바이럴 벡터", "AAV", "렌티바이러스", "플라스미드", "mRNA", "LNP", "지질나노입자", "올리고뉴클레오타이드", "GMP 원료", "합성 원료", "gene therapy", "cell therapy", "delivery vector", "viral vector", "lentiviral", "plasmid", "lipid nanoparticle", "oligonucleotide", "GMP material", "synthetic raw material"]
+    },
+    "euv_lithography": {
+      "label_ko": "EUV 노광장비",
+      "label_en": "EUV lithography equipment",
+      "keywords": ["EUV", "EUV 노광", "노광장비", "노광 장비", "포토리소그래피", "리소그래피", "웨이퍼 노광", "하이 NA", "High NA", "lithography", "photolithography", "EUV scanner", "exposure tool", "wafer exposure", "semiconductor equipment"]
+    },
+    "hybrid_bonding_w2w": {
+      "label_ko": "nm급 W2W 하이브리드 본딩 장비",
+      "label_en": "nm-scale W2W hybrid bonding equipment",
+      "keywords": ["하이브리드 본딩", "웨이퍼 본딩", "W2W", "D2W", "칩렛", "첨단 패키징", "후공정", "본딩 장비", "다이 본딩", "패키징 장비", "hybrid bonding", "wafer bonding", "wafer-to-wafer", "die-to-wafer", "advanced packaging", "chiplet", "bonding equipment", "die bonding", "semiconductor packaging"]
+    },
+    "tgv_glass_substrate": {
+      "label_ko": "TGV용 유리기판 및 가공기술",
+      "label_en": "TGV glass substrate and processing",
+      "keywords": ["TGV", "유리기판", "글라스 기판", "유리 코어", "글라스 코어", "글라스 인터포저", "비아", "관통전극", "through glass via", "glass substrate", "glass core", "glass interposer", "via processing", "advanced substrate", "package substrate"]
+    },
+    "metal_target_ti_ta": {
+      "label_ko": "금속타겟(티타늄, 탄탈륨)",
+      "label_en": "metal target titanium/tantalum",
+      "keywords": ["금속 타겟", "스퍼터링 타겟", "티타늄 타겟", "탄탈륨 타겟", "PVD", "증착", "박막", "반도체 타겟", "metal target", "sputtering target", "titanium target", "tantalum target", "physical vapor deposition", "deposition", "thin film", "semiconductor target"]
+    },
+    "semiconductor_thermal_material": {
+      "label_ko": "반도체 후공정용 고성능 방열소재",
+      "label_en": "high-performance thermal material for semiconductor back-end",
+      "keywords": ["방열", "열관리", "열전도", "열전도성", "반도체 후공정", "패키징 소재", "TIM", "언더필", "다이 어태치", "thermal management", "heat dissipation", "thermal interface", "thermal conductive", "semiconductor packaging", "backend", "back-end", "advanced packaging material", "die attach", "underfill"]
+    },
+    "ag_al_paste": {
+      "label_ko": "Ag/Al Paste",
+      "label_en": "Ag/Al paste",
+      "keywords": ["은 페이스트", "알루미늄 페이스트", "Ag paste", "Al paste", "Ag/Al", "전도성 페이스트", "도전성 페이스트", "금속 페이스트", "전극 페이스트", "메탈라이제이션", "silver paste", "aluminum paste", "conductive paste", "metal paste", "electrode paste", "metallization", "screen printing paste"]
+    },
+    "offshore_wind_turbine": {
+      "label_ko": "해상풍력터빈",
+      "label_en": "offshore wind turbine",
+      "keywords": ["해상풍력", "풍력터빈", "해상풍력터빈", "터빈", "블레이드", "나셀", "풍력 발전", "부유식 해상풍력", "offshore wind", "wind turbine", "wind power", "wind energy", "blade", "nacelle", "floating wind", "turbine generator"]
+    },
+    "satellite_radar_rf_semiconductor": {
+      "label_ko": "위성통신 및 레이다용 RF 반도체",
+      "label_en": "RF semiconductor for satellite communication and radar",
+      "keywords": ["위성통신", "레이다", "레이더", "RF 반도체", "고주파 반도체", "GaN", "마이크로파", "밀리미터파", "빔포밍", "전력증폭기", "LNA", "satellite communication", "radar", "RF semiconductor", "radio frequency", "microwave", "mmWave", "beamforming", "power amplifier", "low noise amplifier", "aerospace RF"]
+    },
+    "aerospace_electric_propulsion": {
+      "label_ko": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "label_en": "aerospace electric motor and high-power battery propulsion module",
+      "keywords": ["항공용 모터", "전기추진", "전기 추진", "항공 전동화", "고출력 모터", "모터 모듈", "추진 모듈", "고출력 배터리", "전기항공기", "eVTOL", "electric propulsion", "aircraft motor", "aviation motor", "aerospace motor", "high power motor", "motor module", "propulsion module", "aviation battery", "electric aircraft", "hybrid-electric"]
+    },
+    "silicon_anode_sic": {
+      "label_ko": "실리콘 음극재 기술(증착형 Si-C)",
+      "label_en": "silicon anode material technology",
+      "keywords": ["실리콘 음극재", "실리콘 음극", "Si-C", "SiC 음극", "음극재", "배터리 음극", "증착형", "리튬이온 배터리", "silicon anode", "Si-C", "silicon-carbon", "battery anode", "anode material", "lithium-ion battery", "deposited silicon", "graphite silicon"]
+    },
+    "lithium_cathode_materials": {
+      "label_ko": "양극재 소재(수산화리튬, 탄산리튬)",
+      "label_en": "cathode material lithium hydroxide/carbonate",
+      "keywords": ["양극재", "수산화리튬", "탄산리튬", "리튬", "전구체", "배터리 소재", "리튬 정제", "리튬 전환", "cathode material", "lithium hydroxide", "lithium carbonate", "lithium", "battery material", "precursor", "lithium refining", "lithium conversion", "spodumene", "brine"]
+    },
+    "pvdf": {
+      "label_ko": "폴리비닐리덴 플루오라이드(PVDF)",
+      "label_en": "polyvinylidene fluoride",
+      "keywords": ["PVDF", "폴리비닐리덴", "폴리비닐리덴 플루오라이드", "불소수지", "플루오로폴리머", "바인더", "배터리 바인더", "분리막 코팅", "polyvinylidene fluoride", "fluoropolymer", "battery binder", "separator coating", "cathode binder", "binder material"]
+    },
+    "nonferrous_scrap_recycling": {
+      "label_ko": "비철금속 소재 스크랩 활용률 극대화",
+      "label_en": "non-ferrous metal scrap recycling and utilization",
+      "keywords": ["비철금속", "스크랩", "재활용", "리사이클링", "알루미늄 재활용", "티타늄 재활용", "금속 회수", "순환경제", "재생 금속", "non-ferrous", "nonferrous", "scrap", "recycling", "metal recycling", "aluminum recycling", "titanium recycling", "metal recovery", "circular economy", "secondary metal"]
+    },
+    "rare_earth_magnet_recycling": {
+      "label_ko": "사용후 영구자석 고순도 희토류 추출",
+      "label_en": "rare earth extraction from end-of-life permanent magnets",
+      "keywords": ["희토류", "영구자석", "사용후 자석", "폐자석", "자석 재활용", "고순도 희토류", "네오디뮴", "디스프로슘", "NdFeB", "rare earth", "permanent magnet", "magnet recycling", "end-of-life magnet", "neodymium", "dysprosium", "rare earth extraction", "rare earth separation", "NdFeB magnet"]
+    },
+    "ion_exchange_membrane": {
+      "label_ko": "이온교환막 및 바이폴라 이온교환막",
+      "label_en": "ion exchange membrane and bipolar membrane",
+      "keywords": ["이온교환막", "이온 교환막", "바이폴라막", "바이폴라 이온교환막", "전해조", "수전해", "PEM", "AEM", "분리막", "막전극", "ion exchange membrane", "bipolar membrane", "bipolar ion exchange membrane", "electrolyzer", "water electrolysis", "membrane electrode", "chlor-alkali", "anion exchange membrane", "proton exchange membrane"]
+    },
+    "precipitated_silica_tire": {
+      "label_ko": "타이어용 친환경 침강실리카 제조기술",
+      "label_en": "precipitated silica for eco-friendly tires",
+      "keywords": ["침강실리카", "타이어용 실리카", "친환경 타이어", "그린 타이어", "타이어 소재", "구름저항", "고무 보강재", "precipitated silica", "tire silica", "green tire", "eco-friendly tire", "tire material", "rolling resistance", "rubber reinforcement", "silica filler"]
+    },
+    "hexamethylenediamine_hmd": {
+      "label_ko": "핵사메틸렌디아민 플랫폼 생산기술",
+      "label_en": "hexamethylenediamine platform production technology",
+      "keywords": ["헥사메틸렌디아민", "핵사메틸렌디아민", "HMD", "HMDA", "나일론66", "나일론 66", "폴리아미드66", "아디포니트릴", "디아민", "hexamethylenediamine", "hexamethylene diamine", "nylon 66", "polyamide 66", "adiponitrile", "diamine", "chemical intermediate"]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+﻿target_no,company,industry,target_technology,technology_group,excluded_from_relevance,raw_target_technology,pdf_company,pdf_row_no
+1,Australian Strategic Metals,철강금속,사용후 영구자석 고순도 희토류 추출,rare_earth_magnet_recycling,False,사용후 영구류자 추석출 고순도 희토,AustralMiaent aSltsrategic,66
+2,Cognex,기계,3D 비전센서,3d_vision_sensor,False,3D 비전센서,Cognex,1
+3,Corning,디스플레이,EUV 블랭크 마스크,euv_blank_mask,False,EUV 블랭크 마스크,Corning,5
+4,Charles River,바이오,바이러스 검증 및 MCB/WCB 특성분석,virus_validation_mcb_wcb,False,바이특러성스분 검석증 플 및랫 M폼C기B술/WCB,Charles River,21
+5,Cytiva,바이오,바이오의약품 생산용 배양 및 정제 시스템,bioprocess_culture_purification,False,차세배대양 바 이및오 정의제약시품스 템생산용,Cytiva,27
+6,Moderna,바이오,유전자/세포치료제 전달체 및 GMP 원료기술,gene_cell_therapy_delivery_gmp,False,전차달세체대 및유 전GM자 술P.세 합포성치 료원제천용기,Moderna,31
+7,West Pharmaceutical,바이오,Autoinjector/PFS 의약품 완충전 및 제조기술,autoinjector_pfs_fill_finish,False,"Autoin의je약ct품or 완충제전 P및FS 제,조기 술",West Pharmaceutical,24
+8,Dupont,에너지,Ag/Al Paste,ag_al_paste,False,AG/AI Paste,Dupont,43
+9,Albemarle,이차전지,"양극재 소재(수산화리튬, 탄산리튬)",lithium_cathode_materials,False,"양극재 소재산(리수튬산)화리튬, 탄",Albemarle,57
+10,TIMET,철강금속,비철금속 소재 스크랩 활용률 극대화,nonferrous_scrap_recycling,False,비철금속극 소대재화 스 기크술랩 활용률,TIMET,65
+11,Air Products,화학소재,핵사메틸렌디아민 플랫폼 생산기술,hexamethylenediamine_hmd,True,핵사메틸렌산디 아기민술 플랫폼 생,Air Products,75
+12,Chemours,화학소재,이온교환막 및 바이폴라 이온교환막,ion_exchange_membrane,False,이온교환막 교및환 바막이폴라 이온,Chemours,71
+13,BorgWarner,모빌리티,자율주행차 IMU/RF/베이스밴드 칩,autonomous_imu_rf_baseband,False,"자율주베행이차스 IM밴U드(고칩주)파부,",BorgWarner,15
+14,DOW,반도체,반도체 후공정용 고성능 방열소재,semiconductor_thermal_material,False,반도체 후공정소용재 고성능 방열,DOW,42
+15,Thermo Fisher,바이오,바이오의약품 생산용 배양 및 정제 시스템,bioprocess_culture_purification,False,차세배대양 바 이및오 정의제약시품스 템생산용,Thermo Fisher,29
+16,Amkor Technology,반도체,반도체 후공정용 고성능 방열소재,semiconductor_thermal_material,True,반도체 후공정소용재 고성능 방열,Amkor Technology,41
+17,Onsemi,모빌리티,자율주행차 카메라/이미지 신호처리,autonomous_camera_isp,False,"자율이주미행지차신 카호메처라리(광장학치렌)즈,",Onsemi,19
+18,Qualcomm,모빌리티,자율주행차 IMU/RF/베이스밴드 칩,autonomous_imu_rf_baseband,False,"자율주베행이차스 IM밴U드(고칩주)파부,",Qualcomm,16
+19,Skyworks,모빌리티,자율주행차 IMU/RF/베이스밴드 칩,autonomous_imu_rf_baseband,False,"자율주행이차스 IM밴U드(고칩주)파부, 베",Skyworks,17
+20,Eli Lilly and Company,바이오,유전자/세포치료제 전달체 및 GMP 원료기술,gene_cell_therapy_delivery_gmp,False,차전세달대체 유및전 G자M술P.세 합포성치 원료천제기용,Eli Lilly and Company,30
+21,GE Healthcare,바이오,바이오의약품 생산용 배양 및 정제 시스템,bioprocess_culture_purification,False,차세배대양 바 이및오 정의제약시품스 템생산용,GE Healthcare,28
+22,Boeing,우주항공,항공용 전기모터/고출력 배터리 추진 모듈,aerospace_electric_propulsion,False,추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리,Boeing,51
+23,3M,화학소재,이온교환막 및 바이폴라 이온교환막,ion_exchange_membrane,True,이온교환막 교및환 바막이폴라 이온,3M,69
+24,Ouster,로봇,로봇용 라이다,robot_lidar,False,로봇용 라이다,Ouster,14
+25,Applied Materials,반도체,nm급 W2W 하이브리드 본딩 장비,hybrid_bonding_w2w,True,nm급W2W 장하비이브리드 본딩,Applied Materials,34
+26,Magnix,우주항공,항공용 전기모터/고출력 배터리 추진 모듈,aerospace_electric_propulsion,False,추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리,Magnix,52
+27,Prodrive,모빌리티,자율주행차 카메라/이미지 신호처리,autonomous_camera_isp,True,"자율이주미행지차신 카호메처라리(광장학치렌)즈,",Prodrive,20
+28,ASML,반도체,EUV 노광장비,euv_lithography,False,EUV 노광장비,ASML,32
+29,Besi,반도체,nm급 W2W 하이브리드 본딩 장비,hybrid_bonding_w2w,False,nm급W2W 장하비이브리드 본딩,Besi,35
+30,NXP,우주항공,위성통신 및 레이다용 RF 반도체,satellite_radar_rf_semiconductor,False,위성통신도 및체 레 기이술다용 RF반,NXP,49
+31,Norsk Hydro,철강금속,비철금속 소재 스크랩 활용률 극대화,nonferrous_scrap_recycling,False,비철금속극 소대재화 스 기크술랩 활용률,Norsk Hydro,64
+32,Vestas,에너지,해상풍력터빈,offshore_wind_turbine,False,해상풍력터빈,Vestas,47
+33,Heidenhain,기계,리니어스케일,linear_scale,False,리니어스케일,Heidenhain,3
+34,Infineon,우주항공,위성통신 및 레이다용 RF 반도체,satellite_radar_rf_semiconductor,False,위성통신도 및체 레 기이술다용 RF반,Infineon,48
+35,Schmalz,로봇,로봇용 감속기,robot_reducer,False,로봇용 감속기,Schmalz,12
+36,Bayer,바이오,의약품용 부형제,pharma_excipient,False,의약품용 부형제,Bayer,25
+37,Merck,바이오,의약품용 부형제,pharma_excipient,False,의약품용 부형제,Merck,26
+38,Schott Pharma,바이오,Autoinjector/PFS 의약품 완충전 및 제조기술,autoinjector_pfs_fill_finish,False,"Autoin의je약ct품or 완충제전 P및FS 제,조기 술",Schott Pharma,23
+39,BASF,화학소재,핵사메틸렌디아민 플랫폼 생산기술,hexamethylenediamine_hmd,False,핵사메틸렌산디 아기민술 플랫폼 생,BASF,77
+40,Evonik Industries,화학소재,타이어용 친환경 침강실리카 제조기술,precipitated_silica_tire,False,타이어용 제친조환 경기 술침강실리카,Evonik Industries,73
+41,Heraeus,에너지,Ag/Al Paste,ag_al_paste,True,AG/AI Paste,Heraeus,44
+42,Jenoptik,기계,3D 비전센서,3d_vision_sensor,False,3D 비전센서,Jenoptik,2
+43,EMM(Umicore),이차전지,실리콘 음극재 기술(증착형 Si-C),silicon_anode_sic,False,실리콘 음극기재술(증착형 Si-C),EMM(Umicore),56
+44,Umicore,이차전지,"양극재 소재(수산화리튬, 탄산리튬)",lithium_cathode_materials,False,"양극재 소재산(리수튬산)화리튬, 탄",Umicore,58
+45,Solvay,화학소재,타이어용 친환경 침강실리카 제조기술,precipitated_silica_tire,False,타이어용 제친조환 경기 술침강실리카,Solvay,74
+46,Syensqo,이차전지,폴리비닐리덴 플루오라이드(PVDF),pvdf,False,폴리비닐리덴 플루오라이드,Syensqo,61
+47,Hexagon AB,로봇,로봇용 라이다,robot_lidar,False,로봇용 라이다,Hexagon AB,13
+48,ABB,로봇,로봇용 감속기,robot_reducer,False,로봇용 감속기,ABB,9
+49,Maxon,로봇,로봇용 감속기,robot_reducer,False,로봇용 감속기,Maxon,10
+50,Siemens-Gamesa,에너지,해상풍력터빈,offshore_wind_turbine,False,해상풍력터빈,Siemens-Gamesa,46
+51,Renishaw,기계,리니어스케일,linear_scale,False,리니어스케일,Renishaw,4
+52,Nexeon,이차전지,실리콘 음극재 기술(증착형 Si-C),silicon_anode_sic,False,실리콘 음극기재술(증착형 Si-C),Nexeon,55
+53,Rio Tinto,이차전지,"양극재 소재(수산화리튬, 탄산리튬)",lithium_cathode_materials,False,"양극재 소재산(리수튬산)화리튬, 탄",Rio Tinto,59
+54,HyproMag,철강금속,사용후 영구자석 고순도 희토류 추출,rare_earth_magnet_recycling,False,사용후 영구류자 추석출 고순도 희토,HyproMag,67
+55,EVG,반도체,nm급 W2W 하이브리드 본딩 장비,hybrid_bonding_w2w,False,nm급W2W 장하비이브리드 본딩,EVG,36
+56,Plansee,반도체,"금속타겟(티타늄, 탄탈륨)",metal_target_ti_ta,False,"금속타겟(티타늄, 탄탈륨)",Plansee,39
+57,Texcell,바이오,바이러스 검증 및 MCB/WCB 특성분석,virus_validation_mcb_wcb,False,바이특러성스분 검석증 플 및랫 M폼C기B술/WCB,Texcell,22
+58,Veolia,화학소재,이온교환막 및 바이폴라 이온교환막,ion_exchange_membrane,False,이온교환막 교및환 바막이폴라 이온,Veolia,72
+59,Airbus,우주항공,항공용 전기모터/고출력 배터리 추진 모듈,aerospace_electric_propulsion,False,추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리,Airbus,50
+60,Safran,우주항공,항공용 전기모터/고출력 배터리 추진 모듈,aerospace_electric_propulsion,False,추항진공 전용기 모모모 터터듈 (첨/기고단 술출 ) 이력동 배체터용리,Safran,53
+61,Air Liquide,화학소재,이온교환막 및 바이폴라 이온교환막,ion_exchange_membrane,True,이온교환막 교및환 바막이폴라 이온,Air Liquide,70
+62,Arkema,이차전지,폴리비닐리덴 플루오라이드(PVDF),pvdf,False,폴리비닐리덴 플루오라이드,Arkema,60
+63,DNP,디스플레이,파인메탈마스크(FMM),fine_metal_mask,False,파인메탈마스크(FMM),DNP,6
+64,Hitachi Metals,디스플레이,파인메탈마스크(FMM),fine_metal_mask,False,파인메탈마스크(FMM),Hitachi Metals,7
+65,Toppan Holdings,디스플레이,파인메탈마스크(FMM),fine_metal_mask,False,파인메탈마스크(FMM),Toppan Holdings,8
+66,Nabtesco,로봇,로봇용 감속기,robot_reducer,False,로봇용 감속기,Nabtesco,11
+67,Asahi Glass,반도체,TGV용 유리기판 및 가공기술,tgv_glass_substrate,False,TGV용유리기판 및 가공기술,Asahi Glass,38
+68,JSR,반도체,EUV 노광장비,euv_lithography,True,EUV 노광장비,JSR,33
+69,Shin-Etsu Chemicals,철강금속,사용후 영구자석 고순도 희토류 추출,rare_earth_magnet_recycling,False,사용후 영구류자 추석출 고순도 희토,Shin-Etsu Chemicals,68
+70,Tokyo Electron,반도체,nm급 W2W 하이브리드 본딩 장비,hybrid_bonding_w2w,False,nm급W2W 장하비이브리드 본딩,Tokyo Electron,37
+71,Tosoh,반도체,"금속타겟(티타늄, 탄탈륨)",metal_target_ti_ta,False,"금속타겟(티타늄, 탄탈륨)",Tosoh,40
+72,Mitsubishi Chemical,이차전지,실리콘 음극재 기술(증착형 Si-C),silicon_anode_sic,False,실리콘 음극기재술(증착형 Si-C),Mitsubishi Chemical,54
+73,Sumitomo Chemical,이차전지,폴리비닐리덴 플루오라이드(PVDF),pvdf,False,폴리비닐리덴 플루오라이드,Sumitomo Chemical,62
+74,Asahi Kasei,화학소재,핵사메틸렌디아민 플랫폼 생산기술,hexamethylenediamine_hmd,False,핵사메틸렌산디 아기민술 플랫폼 생,Asahi Kasei,76
+75,Toray,이차전지,폴리비닐리덴 플루오라이드(PVDF),pvdf,True,폴리비닐리덴 플루오라이드,Toray,63
+76,Cheng Uei Precision,모빌리티,자율주행차 카메라/이미지 신호처리,autonomous_camera_isp,False,"자율이주미행지차신 카호메처라리(광장학치렌)즈,",Cheng Uei Precision,18
+77,Shanghai Electric Wind Power,에너지,해상풍력터빈,offshore_wind_turbine,False,해상풍력터빈,ShanghaPi oEwleectrric Wind,45
