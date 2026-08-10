@@ -1,0 +1,34 @@
+name: collect-company-signals
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Lookback window in days"
+        required: false
+        default: "45"
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: >
+          node scripts/collect_company_signals.mjs
+          --companies data/target_companies.json
+          --source-config config/company_sources.json
+          --out-dir outputs
+          --sources official_feeds,google_news
+          --days ${{ inputs.days || '45' }}
+          --max-per-source 3
+          --max-per-company 6
+          --rate-limit-seconds 1.0
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update company signal data"
+          file_pattern: outputs/*.json outputs/*.csv
