@@ -1,4 +1,8 @@
 .next/
 node_modules/
+.pnpm-store/
 .env*.local
 *.log
+.Rhistory
+outputs/smoke/
+outputs/official-smoke/
