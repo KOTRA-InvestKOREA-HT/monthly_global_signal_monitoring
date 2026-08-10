@@ -8,6 +8,7 @@ Stage 1 only: extract the 77 target companies from the Invest KOREA PDF and coll
 - `data/target_companies.csv`: spreadsheet-friendly version of the same list.
 - `config/company_sources.json`: optional verified official RSS/Atom feeds by company.
 - `.github/workflows/collect-company-signals.yml`: manual GitHub Actions workflow for on-demand collection.
+- `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.
 - `scripts/extract_pdf_companies.py`: validates PDF page 2 against the canonical list.
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/collect_company_signals.py`: Python equivalent; use it only when the local Python SSL stack supports outbound HTTPS.
@@ -46,3 +47,7 @@ Each collected row is normalized to:
 - `query`
 
 `latest_company_signals.json` and `latest_company_signals.csv` are overwritten on each run for easy dashboard/API consumption.
+
+## Vercel
+
+This repository now contains a minimal Next.js app, so Vercel should detect it as a Next.js project. If Vercel previously detected the repository as Python, redeploy after committing the new `package.json`, `app/`, and removed root `requirements.txt`.

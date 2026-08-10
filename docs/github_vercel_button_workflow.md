@@ -40,7 +40,13 @@ outputs/latest_company_signals.csv
 outputs/latest_company_signals.json
 package.json
 README.md
-requirements.txt
+next.config.mjs
+app/layout.jsx
+app/page.jsx
+app/globals.css
+app/api/signals/route.js
+app/api/trigger-crawl/route.js
+requirements-python.txt
 scripts/collect_company_signals.mjs
 scripts/collect_company_signals.py
 scripts/extract_pdf_companies.py
@@ -54,7 +60,7 @@ Recommended: upload the generated `outputs/latest_*` files so Vercel has data to
 
 Deploy the web dashboard application from the same GitHub repository.
 
-Vercel should host:
+Vercel should host the Next.js files in this repository:
 
 ```text
 Dashboard UI
@@ -181,13 +187,15 @@ outputs/latest_company_signals.json
 outputs/latest_collection_summary.json
 ```
 
-If the dashboard is statically deployed, it will show the data from the most recent Vercel deployment. For always-fresh data after every GitHub Actions run, use one of these:
+The current dashboard uses the Vercel API route `GET /api/signals` to read the latest output files from GitHub at runtime. This avoids needing a Vercel redeploy after every crawl.
+
+If you later change to fully static data loading, use one of these:
 
 1. Trigger a Vercel redeploy after GitHub Actions commits new output files.
 2. Fetch the raw GitHub file at runtime from a Vercel API route.
 3. Store crawl results in a database later.
 
-For the next MVP step, option 2 is usually simplest.
+For this MVP, option 2 is already implemented.
 
 ## Recommended Work Order
 
@@ -197,12 +205,21 @@ For the next MVP step, option 2 is usually simplest.
 4. Confirm `outputs/latest_*` files update.
 5. Create the Vercel project from the GitHub repository.
 6. Add the GitHub token and repository environment variables in Vercel.
-7. Build the dashboard page.
-8. Add a `크롤링 수행` button.
-9. Connect the button to `POST /api/trigger-crawl`.
-10. Add a status area that shows "requested", "running", "completed", or "failed".
-11. Read and display `outputs/latest_company_signals.json`.
-12. Later, add official RSS/IR feeds into `config/company_sources.json` for companies that Google News misses.
+7. Deploy the Next.js dashboard.
+8. Click the `크롤링 수행` button in Vercel.
+9. Confirm a new GitHub Actions run starts.
+10. After the run finishes, click `새로고침` in the dashboard.
+11. Later, add official RSS/IR feeds into `config/company_sources.json` for companies that Google News misses.
+
+## Vercel Python Entrypoint Error
+
+If Vercel shows this error:
+
+```text
+No python entrypoint found
+```
+
+it means Vercel detected the repository as a Python project. Commit and push the Next.js files in `app/`, the updated `package.json`, and the removal of root `requirements.txt`. Then redeploy. The Python-only dependency list is now named `requirements-python.txt` so Vercel does not treat it as the web app runtime.
 
 ## Current Caveats
 

@@ -39,7 +39,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: python -m pip install -r requirements.txt
       - run: >
           node --use-system-ca scripts/collect_company_signals.mjs
           --companies data/target_companies.json

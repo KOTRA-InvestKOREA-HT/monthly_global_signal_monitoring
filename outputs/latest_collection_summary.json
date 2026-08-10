@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-10T06:40:55Z",
+  "run_started_at": "2026-08-10T06:18:32Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -8,9 +8,9 @@
   ],
   "days": 45,
   "max_per_source": 3,
-  "max_per_company": 6,
+  "max_per_company": 3,
   "request_count": 77,
-  "result_count": 211,
+  "result_count": 212,
   "companies_with_results": 72,
   "companies_without_results": [
     "TIMET",
@@ -76,7 +76,7 @@
     "HyproMag": 3,
     "EVG": 3,
     "Plansee": 1,
-    "Texcell": 2,
+    "Texcell": 3,
     "Veolia": 3,
     "Airbus": 3,
     "Safran": 3,
@@ -101,11 +101,11 @@
   "error_count": 0,
   "errors": [],
   "outputs": {
-    "json": "outputs/company_signals_20260810T064055Z.json",
-    "csv": "outputs/company_signals_20260810T064055Z.csv",
-    "summary": "outputs/collection_summary_20260810T064055Z.json",
-    "latest_json": "outputs/latest_company_signals.json",
-    "latest_csv": "outputs/latest_company_signals.csv",
-    "latest_summary": "outputs/latest_collection_summary.json"
+    "json": "outputs\\company_signals_20260810T061832Z.json",
+    "csv": "outputs\\company_signals_20260810T061832Z.csv",
+    "summary": "outputs\\collection_summary_20260810T061832Z.json",
+    "latest_json": "outputs\\latest_company_signals.json",
+    "latest_csv": "outputs\\latest_company_signals.csv",
+    "latest_summary": "outputs\\latest_collection_summary.json"
   }
 }
