@@ -3,9 +3,11 @@ import path from "node:path";
 
 const DEFAULT_ARGS = {
   signals: "outputs/latest_company_signals.json",
+  technologyClassification: "outputs/latest_signal_relevance_classification.json",
   indicatorConfig: "config/investment_signal_indicators.json",
   outDir: "outputs",
   threshold: 0,
+  requireTechnologyRelevance: true,
 };
 
 function parseArgs(argv) {
@@ -18,6 +20,8 @@ function parseArgs(argv) {
     const normalized = key.slice(2).replace(/-([a-z])/g, (_, char) => char.toUpperCase());
     if (normalized === "threshold") {
       args[normalized] = Number(value);
+    } else if (normalized === "requireTechnologyRelevance") {
+      args[normalized] = !["0", "false", "no"].includes(String(value).toLowerCase());
     } else {
       args[normalized] = value;
     }
@@ -43,6 +47,75 @@ function compactText(value) {
 
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function CounterLike(values) {
+  const counts = {};
+  for (const value of values) {
+    const key = value || "unknown";
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  return counts;
+}
+
+function normalizeUrlKey(url = "") {
+  try {
+    const parsed = new URL(url);
+    parsed.hash = "";
+    for (const key of [...parsed.searchParams.keys()]) {
+      if (/^(utm_|fbclid|gclid|mc_)/i.test(key)) parsed.searchParams.delete(key);
+    }
+    return parsed.toString().replace(/\/$/, "").toLowerCase();
+  } catch {
+    return String(url || "").replace(/[?#].*$/, "").replace(/\/$/, "").toLowerCase();
+  }
+}
+
+function signalKey(signal) {
+  return `${String(signal.company || "").toLowerCase()}|${normalizeUrlKey(signal.url)}`;
+}
+
+function buildTechnologyGateMap(rows) {
+  return new Map(rows.map((row) => [signalKey(row), row]));
+}
+
+function technologyGate(signal, gateMap, required) {
+  if (!required) {
+    return {
+      passed: true,
+      technology_gate_decision: "not_required",
+      technology_gate_reason: "기술/품목 관련성 게이트를 사용하지 않았습니다.",
+    };
+  }
+
+  const row = gateMap.get(signalKey(signal));
+  if (!row) {
+    return {
+      passed: false,
+      technology_gate_decision: "missing_technology_classification",
+      technology_gate_reason: "기술/품목 관련성 분류 결과에서 해당 수집 건을 찾지 못했습니다.",
+    };
+  }
+
+  const passed = row.relevance_decision === "relevant";
+  return {
+    passed,
+    technology_gate_decision: passed ? "passed" : row.relevance_decision || "not_relevant",
+    technology_gate_reason: passed
+      ? "유치필요 품목(기술)과 관련된 수집 건이므로 투자동향 시그널 판단 대상입니다."
+      : "유치필요 품목(기술)과 관련된 수집 건이 아니거나 사용자 요청 제외 기업이므로 투자동향 시그널 판단에서 제외했습니다.",
+    industry: row.industry,
+    target_technology: row.target_technology,
+    target_technology_en: row.target_technology_en,
+    technology_group: row.technology_group,
+    technology_relevance_decision: row.relevance_decision,
+    technology_relevance_score: row.relevance_score || 0,
+    technology_matched_terms: row.matched_terms || [],
+    technology_matched_fields: row.matched_fields || [],
+    technology_evidence_snippets: row.evidence_snippets || [],
+    technology_relevance_reason: row.relevance_reason || "",
+    excluded_from_relevance: row.excluded_from_relevance || false,
+  };
 }
 
 function signalText(signal) {
@@ -157,6 +230,10 @@ async function writeCsv(filePath, rows) {
   const headers = [
     "target_no",
     "company",
+    "industry",
+    "target_technology",
+    "technology_relevance_score",
+    "technology_matched_terms",
     "investment_signal_no",
     "investment_signal_label",
     "investment_signal_description",
@@ -194,13 +271,23 @@ function sortRows(a, b) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const [signals, config] = await Promise.all([readJson(args.signals), readJson(args.indicatorConfig)]);
+  const [signals, config, technologyClassification] = await Promise.all([
+    readJson(args.signals),
+    readJson(args.indicatorConfig),
+    args.requireTechnologyRelevance ? readJson(args.technologyClassification) : Promise.resolve([]),
+  ]);
   const threshold = Number.isFinite(args.threshold) && args.threshold > 0 ? args.threshold : config.default_threshold || 1;
   const indicators = config.indicators || [];
-
-  const classified = signals.map((signal) => ({
+  const technologyGateMap = buildTechnologyGateMap(technologyClassification);
+  const gatedSignals = signals.map((signal) => ({
     ...signal,
-    investment_signal_matches: classifySignal(signal, indicators, threshold).map((match) => ({
+    ...technologyGate(signal, technologyGateMap, args.requireTechnologyRelevance),
+  }));
+
+  const classified = gatedSignals.map((signal) => ({
+    ...signal,
+    investment_signal_matches: signal.passed
+      ? classifySignal(signal, indicators, threshold).map((match) => ({
       investment_signal_id: match.investment_signal_id,
       investment_signal_no: match.investment_signal_no,
       investment_signal_label: match.investment_signal_label,
@@ -208,11 +295,14 @@ async function main() {
       matched_terms: match.matched_terms,
       matched_fields: match.matched_fields,
       evidence_snippets: match.evidence_snippets,
-    })),
+    }))
+      : [],
   }));
 
-  const investmentSignals = signals.flatMap((signal) => classifySignal(signal, indicators, threshold)).sort(sortRows);
+  const eligibleSignals = gatedSignals.filter((signal) => signal.passed);
+  const investmentSignals = eligibleSignals.flatMap((signal) => classifySignal(signal, indicators, threshold)).sort(sortRows);
   const companiesWithInvestmentSignals = new Set(investmentSignals.map((row) => row.company));
+  const gateCounts = CounterLike(gatedSignals.map((signal) => signal.technology_gate_decision));
   const countsByIndicator = Object.fromEntries(
     indicators.map((indicator) => [
       indicator.id,
@@ -232,14 +322,22 @@ async function main() {
   const summary = {
     run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
     input_signal_count: signals.length,
+    technology_gate_required: args.requireTechnologyRelevance,
+    technology_classification_file: args.requireTechnologyRelevance ? args.technologyClassification : "",
+    technology_gate_pass_count: eligibleSignals.length,
+    technology_gate_counts: gateCounts,
     threshold,
     indicator_count: indicators.length,
     investment_signal_count: investmentSignals.length,
     companies_with_investment_signals: companiesWithInvestmentSignals.size,
     counts_by_indicator: countsByIndicator,
-    method: "five_indicator_body_keyword_filter",
+    method: args.requireTechnologyRelevance
+      ? "technology_gated_five_indicator_body_keyword_filter"
+      : "five_indicator_body_keyword_filter",
     matched_fields: ["company", "title", "url", "query", "content_excerpt", "content_text"],
-    note: "This pass does not call an AI API. It classifies collected official/fallback signal text against the five investment trend indicators from the reference PDF.",
+    note: args.requireTechnologyRelevance
+      ? "This pass does not call an AI API. It first requires each collected signal to be relevant to the company's target technology/item, then classifies the remaining signal text against the five investment trend indicators."
+      : "This pass does not call an AI API. It classifies collected official/fallback signal text against the five investment trend indicators from the reference PDF.",
   };
 
   await fs.mkdir(args.outDir, { recursive: true });

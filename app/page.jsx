@@ -185,6 +185,7 @@ export default function HomePage() {
               <tr>
                 <th>시그널</th>
                 <th>기업</th>
+                <th>유치필요 품목</th>
                 <th>제목 및 근거</th>
                 <th>출처</th>
                 <th>게시일</th>
@@ -201,6 +202,14 @@ export default function HomePage() {
                     </div>
                   </td>
                   <td>{item.company}</td>
+                  <td>
+                    <div className="titleStack">
+                      <strong>{item.target_technology}</strong>
+                      {shortList(item.technology_matched_terms, 4).length ? (
+                        <p className="reasonText">기술 매칭: {shortList(item.technology_matched_terms, 4).join(", ")}</p>
+                      ) : null}
+                    </div>
+                  </td>
                   <td>
                     <div className="titleStack">
                       <strong>{item.title}</strong>
@@ -239,7 +248,7 @@ export default function HomePage() {
               ))}
               {!loading && displayedInvestmentSignals.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="empty">
+                  <td colSpan="7" className="empty">
                     표시할 투자동향 시그널이 없습니다.
                   </td>
                 </tr>

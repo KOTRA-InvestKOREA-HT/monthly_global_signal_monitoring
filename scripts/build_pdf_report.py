@@ -39,6 +39,11 @@ def format_date(value):
         return str(value)[:10]
 
 
+def format_short_date(value):
+    formatted = format_date(value)
+    return formatted[2:] if formatted.startswith("20") else formatted
+
+
 def short_text(value, limit):
     text = " ".join(str(value or "").split())
     return text if len(text) <= limit else text[: limit - 3].rstrip() + "..."
@@ -339,13 +344,14 @@ def build_report(args):
         [
             {"key": "investment_signal_label", "label": "투자 시그널", "max_lines": 2, "size": 7.2},
             {"key": "company", "label": "기업", "max_lines": 2, "size": 7.2},
+            {"key": "target_technology", "label": "유치필요 품목", "max_lines": 2, "size": 7.0},
             {"key": "title", "label": "제목", "max_lines": 3, "size": 7.2},
             {"key": "evidence", "label": "본문 근거", "max_lines": 3, "size": 7.0, "format": lambda row: (row.get("evidence_snippets") or [""])[0]},
-            {"key": "published_at", "label": "게시일", "max_lines": 1, "size": 7.2, "format": lambda row: format_date(row.get("published_at"))},
+            {"key": "published_at", "label": "게시일", "max_lines": 1, "size": 7.2, "format": lambda row: format_short_date(row.get("published_at"))},
         ],
         34,
         report.new_page("5대 투자동향 시그널 상세"),
-        [92, 74, 160, 158, 48],
+        [82, 60, 100, 126, 126, 38],
         row_min_height=36,
     )
 

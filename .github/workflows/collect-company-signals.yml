@@ -51,9 +51,11 @@ jobs:
       - run: >
           node scripts/classify_investment_signals.mjs
           --signals outputs/latest_company_signals.json
+          --technology-classification outputs/latest_signal_relevance_classification.json
           --indicator-config config/investment_signal_indicators.json
           --out-dir outputs
           --threshold 4
+          --require-technology-relevance true
       - run: >
           python scripts/build_pdf_report.py
           --signals outputs/latest_company_signals.json

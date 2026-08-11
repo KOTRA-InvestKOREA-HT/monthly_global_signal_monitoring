@@ -282,32 +282,37 @@ td:nth-child(5) {
 
 .investmentPanel th:nth-child(1),
 .investmentPanel td:nth-child(1) {
-  width: 170px;
+  width: 155px;
 }
 
 .investmentPanel th:nth-child(2),
 .investmentPanel td:nth-child(2) {
-  width: 130px;
+  width: 115px;
 }
 
 .investmentPanel th:nth-child(3),
 .investmentPanel td:nth-child(3) {
-  width: auto;
+  width: 160px;
 }
 
 .investmentPanel th:nth-child(4),
 .investmentPanel td:nth-child(4) {
-  width: 210px;
+  width: auto;
 }
 
 .investmentPanel th:nth-child(5),
 .investmentPanel td:nth-child(5) {
-  width: 145px;
-  text-align: left;
+  width: 190px;
 }
 
 .investmentPanel th:nth-child(6),
 .investmentPanel td:nth-child(6) {
+  width: 135px;
+  text-align: left;
+}
+
+.investmentPanel th:nth-child(7),
+.investmentPanel td:nth-child(7) {
   width: 48px;
   text-align: center;
 }
