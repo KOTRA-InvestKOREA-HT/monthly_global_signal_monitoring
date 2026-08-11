@@ -45,7 +45,7 @@
     "virus_validation_mcb_wcb": {
       "label_ko": "바이러스 검증 및 MCB/WCB 특성분석",
       "label_en": "virus validation and MCB/WCB characterization",
-      "keywords": ["바이러스 검증", "바이러스 밸리데이션", "바이러스 제거", "바이러스 안전성", "특성분석", "세포은행", "마스터 세포은행", "작업 세포은행", "MCB", "WCB", "바이오 안전성", "virus validation", "viral validation", "viral clearance", "virus safety", "characterization", "cell bank", "master cell bank", "working cell bank", "biosafety", "bioassay"]
+      "keywords": ["바이러스 검증", "바이러스 밸리데이션", "바이러스 제거", "바이러스 안전성", "바이러스 안전성 시험", "바이러스 안전성 검사", "바이러스 출하 시험", "외래성 바이러스", "병원체 검출", "특성분석", "세포은행", "세포뱅크", "세포은행 특성분석", "세포주 특성분석", "마스터 세포은행", "작업 세포은행", "MCB", "WCB", "바이오 안전성", "차세대 염기서열 분석", "차세대 시퀀싱", "NGS 분석", "세포치료제", "유전자치료제", "바이럴 벡터", "품질관리 시험", "바이오의약품 시험", "virus validation", "viral validation", "viral clearance", "virus safety", "viral safety", "viral safety testing", "viral safety release testing", "adventitious virus", "adventitious agent", "pathogen detection", "characterization", "cell characterization", "cell bank characterization", "cell line characterization", "cell bank", "master cell bank", "working cell bank", "biosafety", "bioassay", "NGS", "GMP NGS", "cGMP NGS", "CGMP NGS", "next-generation sequencing", "next generation sequencing", "GMP", "cGMP", "CGMP", "cell therapy", "gene therapy", "viral vector", "biologics testing", "product release testing", "quality control testing", "iDTECT", "PathoQuest"]
     },
     "autoinjector_pfs_fill_finish": {
       "label_ko": "Autoinjector/PFS 의약품 완충전 및 제조기술",

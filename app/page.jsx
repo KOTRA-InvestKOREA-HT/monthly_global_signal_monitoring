@@ -16,6 +16,11 @@ function formatDate(value) {
   }).format(date);
 }
 
+function shortList(values, limit = 6) {
+  if (!Array.isArray(values)) return [];
+  return values.filter(Boolean).slice(0, limit);
+}
+
 export default function HomePage() {
   const [days, setDays] = useState("45");
   const [signals, setSignals] = useState([]);
@@ -178,7 +183,26 @@ export default function HomePage() {
                 <tr key={`relevant-${item.company}-${item.url}`}>
                   <td>{item.company}</td>
                   <td>{item.target_technology}</td>
-                  <td>{item.title}</td>
+                  <td>
+                    <div className="titleStack">
+                      <strong>{item.title}</strong>
+                      {item.relevance_reason ? <p className="reasonText">{item.relevance_reason}</p> : null}
+                      {shortList(item.evidence_snippets, 1).map((snippet) => (
+                        <p className="evidenceText" key={snippet}>
+                          {snippet}
+                        </p>
+                      ))}
+                      {shortList(item.matched_terms).length ? (
+                        <div className="keywordList">
+                          {shortList(item.matched_terms).map((term) => (
+                            <span className="keywordPill" key={term}>
+                              {term}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </td>
                   <td>
                     <div className="sourceStack">
                       <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
@@ -228,7 +252,12 @@ export default function HomePage() {
                 {displayedSignals.map((item) => (
                   <tr key={`${item.company}-${item.url}`}>
                     <td>{item.company}</td>
-                    <td>{item.title}</td>
+                    <td>
+                      <div className="titleStack">
+                        <strong>{item.title}</strong>
+                        {item.content_excerpt ? <p className="reasonText">{item.content_excerpt}</p> : null}
+                      </div>
+                    </td>
                     <td>
                       <div className="sourceStack">
                         <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>

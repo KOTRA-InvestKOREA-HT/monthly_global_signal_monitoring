@@ -14,6 +14,10 @@ const FIELDNAMES = [
   "source_type",
   "source_priority",
   "official_source_url",
+  "content_excerpt",
+  "content_word_count",
+  "content_fetch_status",
+  "content_fetched_at",
 ];
 
 const SIGNAL_TERMS = [
@@ -45,6 +49,10 @@ function parseArgs(argv) {
     rateLimitSeconds: 1.0,
     timeoutSeconds: 20,
     companyLimit: 0,
+    fetchOfficialContent: true,
+    contentCharLimit: 24000,
+    contentExcerptLimit: 800,
+    maxDetailPerCompany: 8,
   };
   const keyMap = {
     "--companies": "companies",
@@ -59,6 +67,10 @@ function parseArgs(argv) {
     "--rate-limit-seconds": "rateLimitSeconds",
     "--timeout-seconds": "timeoutSeconds",
     "--company-limit": "companyLimit",
+    "--fetch-official-content": "fetchOfficialContent",
+    "--content-char-limit": "contentCharLimit",
+    "--content-excerpt-limit": "contentExcerptLimit",
+    "--max-detail-per-company": "maxDetailPerCompany",
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
@@ -66,10 +78,24 @@ function parseArgs(argv) {
     const mapped = keyMap[key];
     const value = argv[index + 1];
     index += 1;
-    if (["days", "maxPerSource", "maxPerCompany", "fallbackMinResults", "timeoutSeconds", "companyLimit"].includes(mapped)) {
+    if (
+      [
+        "days",
+        "maxPerSource",
+        "maxPerCompany",
+        "fallbackMinResults",
+        "timeoutSeconds",
+        "companyLimit",
+        "contentCharLimit",
+        "contentExcerptLimit",
+        "maxDetailPerCompany",
+      ].includes(mapped)
+    ) {
       args[mapped] = Number.parseInt(value, 10);
     } else if (mapped === "rateLimitSeconds") {
       args[mapped] = Number.parseFloat(value);
+    } else if (mapped === "fetchOfficialContent") {
+      args[mapped] = !["0", "false", "no"].includes(String(value).toLowerCase());
     } else {
       args[mapped] = value;
     }
@@ -100,6 +126,24 @@ function decodeXml(value = "") {
 
 function cleanText(value = "") {
   return decodeXml(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function cleanHtmlText(value = "") {
+  return decodeXml(value)
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<svg\b[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<form\b[\s\S]*?<\/form>/gi, " ")
+    .replace(/<(nav|footer|header|aside)\b[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6]|tr|section|article|main)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n\s+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function stripTracking(url) {
@@ -145,18 +189,93 @@ function extractDateFromText(value = "") {
     return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
   }
   const monthName = text.match(
-    /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
   );
   if (monthName) {
-    return parseDate(`${monthName[1]} ${monthName[2]}, ${monthName[3]}`);
+    return parseDate(`${monthName[1].replace(/\.$/, "")} ${monthName[2]}, ${monthName[3]}`);
   }
   const dayMonth = text.match(
-    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})\b/i,
+    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+(20\d{2})\b/i,
   );
   if (dayMonth) {
-    return parseDate(`${dayMonth[2]} ${dayMonth[1]}, ${dayMonth[3]}`);
+    return parseDate(`${dayMonth[2].replace(/\.$/, "")} ${dayMonth[1]}, ${dayMonth[3]}`);
   }
   return null;
+}
+
+function extractAttribute(attrs = "", name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = attrs.match(new RegExp(`\\b${escaped}\\s*=\\s*["']([^"']+)["']`, "i"));
+  return match ? decodeXml(match[1]).trim() : "";
+}
+
+function extractMetaContent(html, names) {
+  const metaRegex = /<meta\b([^>]*)>/gi;
+  for (const match of html.matchAll(metaRegex)) {
+    const attrs = match[1] || "";
+    const name = extractAttribute(attrs, "name") || extractAttribute(attrs, "property") || extractAttribute(attrs, "itemprop");
+    if (!names.some((candidate) => candidate.toLowerCase() === name.toLowerCase())) continue;
+    const content = extractAttribute(attrs, "content");
+    if (content) return cleanText(content);
+  }
+  return "";
+}
+
+function extractTagText(html, tag) {
+  const match = html.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
+  return match ? cleanHtmlText(match[1]) : "";
+}
+
+function extractPublishedDateFromHtml(html) {
+  const metaDate = extractMetaContent(html, [
+    "article:published_time",
+    "datePublished",
+    "date",
+    "dc.date",
+    "dc.date.issued",
+    "publishdate",
+    "pubdate",
+    "sailthru.date",
+  ]);
+  if (metaDate) {
+    const parsed = parseDate(metaDate);
+    if (parsed) return parsed;
+  }
+
+  const jsonLdDate = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) || html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
+  if (jsonLdDate) {
+    const parsed = parseDate(jsonLdDate[1]);
+    if (parsed) return parsed;
+  }
+
+  return extractDateFromText(cleanHtmlText(html.slice(0, 5000)));
+}
+
+function extractPageTitle(html) {
+  return (
+    extractMetaContent(html, ["og:title", "twitter:title"]) ||
+    extractTagText(html, "h1") ||
+    extractTagText(html, "title")
+  ).replace(/\s+\|.*$/, "").trim();
+}
+
+function extractArticleText(html) {
+  const candidates = [];
+  for (const pattern of [
+    /<article\b[^>]*>([\s\S]*?)<\/article>/i,
+    /<main\b[^>]*>([\s\S]*?)<\/main>/i,
+    /<div\b[^>]*(?:class|id)=["'][^"']*(?:article|press|release|news|content|body)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i,
+    /<body\b[^>]*>([\s\S]*?)<\/body>/i,
+  ]) {
+    const match = html.match(pattern);
+    if (match) candidates.push(cleanHtmlText(match[1]));
+  }
+  return candidates.sort((a, b) => b.length - a.length)[0] || cleanHtmlText(html);
+}
+
+function contentExcerpt(text = "", limit = 800) {
+  const compact = text.replace(/\s+/g, " ").trim();
+  return compact.length > limit ? `${compact.slice(0, limit).trim()}...` : compact;
 }
 
 function filterRecent(rows, days, collectedAt) {
@@ -270,6 +389,7 @@ function parseAnchors(html, baseUrl) {
     if (!hrefMatch) continue;
     const href = decodeXml(hrefMatch[1]).trim();
     if (!href || /^(#|mailto:|tel:|javascript:)/i.test(href)) continue;
+    if (/[{}]/.test(href) || /%7b|%7d/i.test(href)) continue;
     try {
       anchors.push({
         url: stripTracking(new URL(href, baseUrl).toString()),
@@ -339,8 +459,11 @@ function isRelevantOfficialLink(anchor, pageUrl) {
   const title = officialTitle(anchor);
   const direct = `${title} ${anchor.url}`.toLowerCase();
   const detectedDate = extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`);
+  const pathLooksDetailed =
+    /\/(news-release-details|press-releases?|newsroom|news|media|article|announcements?)\//i.test(anchor.url) ||
+    /\b20\d{2}\b/.test(anchor.url);
   if (title.length < 8) return false;
-  if (!detectedDate) return false;
+  if (!detectedDate && !pathLooksDetailed) return false;
   if (/\.(jpg|jpeg|png|gif|svg|webp|mp4|zip)$/i.test(anchor.url)) return false;
   if (/privacy|cookie|terms|subscribe|contact|career|linkedin|facebook|twitter|youtube|instagram/i.test(direct)) {
     return false;
@@ -367,6 +490,17 @@ function isRelevantOfficialLink(anchor, pageUrl) {
   }
 }
 
+function officialSourcePriority(kind) {
+  return {
+    press_release: 10,
+    newsroom: 12,
+    ir: 15,
+    filing: 17,
+    presentation: 18,
+    financial_report: 19,
+  }[kind] || 20;
+}
+
 function normalizeOfficialPageEntries(entries) {
   return entries
     .map((entry) => {
@@ -377,6 +511,9 @@ function normalizeOfficialPageEntries(entries) {
         url: entry.url,
         source: entry.source || "Official page",
         kind: entry.kind || "official_page",
+        crawlPriority: entry.crawl_priority || "",
+        pageTitle: entry.page_title || "",
+        sourceTypeLabel: entry.source_type_label || "",
       };
     })
     .filter((entry) => entry.url);
@@ -437,7 +574,7 @@ async function collectOfficialPages(company, sourceConfig, days, maxPerSource, t
           collector: "official_page",
           query: page.url,
           source_type: "official",
-          source_priority: page.kind === "ir" ? 15 : 20,
+          source_priority: officialSourcePriority(page.kind),
           official_source_url: page.url,
         })),
       );
@@ -447,6 +584,86 @@ async function collectOfficialPages(company, sourceConfig, days, maxPerSource, t
     }
   }
   return { rows, requestCount, errors };
+}
+
+function canFetchDetailContent(url) {
+  return !/\.(pdf|xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
+}
+
+function chooseBetterTitle(currentTitle, pageTitle, url) {
+  if (!pageTitle) return currentTitle;
+  if (!currentTitle || currentTitle.length < 16 || isGenericOfficialTitle(currentTitle)) return pageTitle;
+  const urlTitle = titleFromUrl(url);
+  if (urlTitle && currentTitle.toLowerCase() === urlTitle.toLowerCase()) return pageTitle;
+  return currentTitle;
+}
+
+async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
+  if (!args.fetchOfficialContent) {
+    return { rows, requestCount: 0, errors: [] };
+  }
+
+  const enriched = [];
+  const errors = [];
+  let requestCount = 0;
+  let detailCount = 0;
+
+  for (const row of rows) {
+    if (row.source_type !== "official") {
+      enriched.push(row);
+      continue;
+    }
+
+    if (detailCount >= args.maxDetailPerCompany) {
+      enriched.push({ ...row, content_fetch_status: "skipped_detail_limit" });
+      continue;
+    }
+
+    if (!canFetchDetailContent(row.url)) {
+      enriched.push({ ...row, content_fetch_status: "skipped_non_html" });
+      continue;
+    }
+
+    try {
+      const html = await fetchText(row.url, args.timeoutSeconds);
+      requestCount += 1;
+      detailCount += 1;
+      const content = extractArticleText(html);
+      const limitedContent = content.slice(0, args.contentCharLimit);
+      const pageTitle = extractPageTitle(html);
+      const publishedAt = row.published_at || extractPublishedDateFromHtml(html) || extractDateFromText(content.slice(0, 4000));
+      enriched.push({
+        ...row,
+        title: chooseBetterTitle(row.title, pageTitle, row.url),
+        published_at: publishedAt,
+        content_text: limitedContent,
+        content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
+        content_word_count: content.split(/\s+/).filter(Boolean).length,
+        content_fetch_status: content ? "fetched" : "empty",
+        content_fetched_at: collectedAt,
+      });
+    } catch (error) {
+      errors.push({
+        target_no: row.target_no,
+        company: row.company,
+        source: "official_detail",
+        source_url: row.url,
+        source_name: row.source,
+        error: error.message,
+      });
+      enriched.push({
+        ...row,
+        content_fetch_status: "error",
+        content_fetched_at: collectedAt,
+      });
+    }
+
+    if (args.rateLimitSeconds > 0) {
+      await sleep(args.rateLimitSeconds * 1000);
+    }
+  }
+
+  return { rows: enriched, requestCount, errors };
 }
 
 async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, collectedAt) {
@@ -630,7 +847,11 @@ async function main() {
         await sleep(args.rateLimitSeconds * 1000);
       }
     }
-    rows.push(...sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany));
+    const selectedCompanyRows = sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany);
+    const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt);
+    rows.push(...enriched.rows);
+    requestCount += enriched.requestCount;
+    errors.push(...enriched.errors);
   }
 
   const finalRows = sortRows(dedupeRows(rows));
@@ -651,6 +872,9 @@ async function main() {
     days: args.days,
     max_per_source: args.maxPerSource,
     max_per_company: args.maxPerCompany,
+    fetch_official_content: args.fetchOfficialContent,
+    content_char_limit: args.contentCharLimit,
+    max_detail_per_company: args.maxDetailPerCompany,
     fallback_mode: args.fallbackMode,
     fallback_min_results: args.fallbackMinResults,
     request_count: requestCount,

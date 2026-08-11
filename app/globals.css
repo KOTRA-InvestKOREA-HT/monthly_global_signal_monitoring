@@ -277,6 +277,45 @@ td a {
   gap: 6px;
 }
 
+.titleStack {
+  display: grid;
+  gap: 7px;
+}
+
+.titleStack strong {
+  font-weight: 600;
+}
+
+.reasonText,
+.evidenceText {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.evidenceText {
+  color: #344054;
+  border-left: 3px solid #c7d7fe;
+  padding-left: 10px;
+}
+
+.keywordList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.keywordPill {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #175cd3;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 1;
+}
+
 .sourceBadge {
   width: fit-content;
   border-radius: 999px;

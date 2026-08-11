@@ -31,8 +31,9 @@ jobs:
           --out-dir outputs
           --sources official_feeds,official_pages,google_news
           --days ${{ inputs.days || '45' }}
-          --max-per-source 3
-          --max-per-company 4
+          --max-per-source 6
+          --max-per-company 10
+          --max-detail-per-company 10
           --fallback-mode missing
           --fallback-min-results 1
           --rate-limit-seconds 0.5

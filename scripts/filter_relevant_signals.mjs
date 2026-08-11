@@ -52,6 +52,8 @@ function buildSearchText(signal, includeUrl = true) {
     signal.title,
     signal.source,
     signal.query,
+    signal.content_excerpt,
+    signal.content_text,
     includeUrl ? signal.url : "",
     includeUrl ? signal.official_source_url : "",
   ].join(" ");
@@ -86,6 +88,57 @@ function matchKeywords(signal, keywords) {
   return unique(matched);
 }
 
+function includesKeyword(text, keyword) {
+  const haystack = normalizeText(text);
+  const compactHaystack = compactText(text);
+  const normalizedKeyword = normalizeText(keyword);
+  const compactKeyword = compactText(keyword);
+  if (!normalizedKeyword || normalizedKeyword.length < 2) return false;
+
+  const isShortLatinAcronym = /^[a-z0-9]{2,3}$/i.test(compactKeyword);
+  if (isShortLatinAcronym) {
+    const escaped = normalizedKeyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, "i").test(haystack);
+  }
+
+  return haystack.includes(normalizedKeyword) || (compactKeyword.length >= 4 && compactHaystack.includes(compactKeyword));
+}
+
+function matchedFieldNames(signal, matchedTerms) {
+  const fields = [
+    ["title", signal.title],
+    ["source", signal.source],
+    ["content", `${signal.content_excerpt || ""} ${signal.content_text || ""}`],
+    ["url", `${signal.url || ""} ${signal.official_source_url || ""}`],
+  ];
+  return fields
+    .filter(([, value]) => matchedTerms.some((term) => includesKeyword(value, term)))
+    .map(([name]) => name);
+}
+
+function extractEvidenceSnippets(signal, matchedTerms) {
+  const text = String(signal.content_text || signal.content_excerpt || signal.title || "").replace(/\s+/g, " ").trim();
+  if (!text) return [];
+
+  const snippets = [];
+  const normalizedText = normalizeText(text);
+  for (const term of matchedTerms) {
+    const normalizedTerm = normalizeText(term);
+    let index = normalizedText.indexOf(normalizedTerm);
+    if (index < 0) {
+      const compactTerm = compactText(term);
+      if (compactTerm.length < 4) continue;
+      index = compactText(text).indexOf(compactTerm);
+      if (index < 0) continue;
+    }
+    const start = Math.max(0, index - 150);
+    const end = Math.min(text.length, index + normalizedTerm.length + 220);
+    snippets.push(text.slice(start, end).trim());
+    if (snippets.length >= 3) break;
+  }
+  return unique(snippets);
+}
+
 function scoreMatch(signal, matchedTerms) {
   const sourceBoost = signal.source_type === "official" ? 2 : 0;
   const specificBoost = matchedTerms.some((term) => compactText(term).length >= 8) ? 1 : 0;
@@ -115,7 +168,12 @@ async function writeCsv(filePath, rows) {
     "source_type",
     "published_at",
     "collected_at",
+    "content_fetch_status",
+    "content_word_count",
+    "content_excerpt",
     "matched_terms",
+    "matched_fields",
+    "evidence_snippets",
     "relevance_score",
     "relevance_decision",
     "relevance_reason",
@@ -173,16 +231,20 @@ function classifySignal(signal, companyMap, keywordGroups, threshold) {
   const matchedTerms = matchKeywords(signal, group.keywords || []);
   const score = matchedTerms.length ? scoreMatch(signal, matchedTerms) : 0;
   const decision = score >= threshold ? "relevant" : "not_relevant";
+  const fields = matchedFieldNames(signal, matchedTerms);
+  const evidenceSnippets = extractEvidenceSnippets(signal, matchedTerms);
 
   return {
     ...base,
     matched_terms: matchedTerms,
+    matched_fields: fields,
+    evidence_snippets: evidenceSnippets,
     relevance_score: score,
     relevance_decision: decision,
     relevance_reason:
       decision === "relevant"
-        ? `${company.target_technology} 관련 키워드가 발견되었습니다: ${matchedTerms.slice(0, 8).join(", ")}`
-        : `${company.target_technology} 관련 키워드가 제목/URL/출처 메타데이터에서 발견되지 않았습니다.`,
+        ? `${company.target_technology} 관련 키워드가 ${fields.join(", ") || "수집 텍스트"}에서 발견되었습니다: ${matchedTerms.slice(0, 8).join(", ")}`
+        : `${company.target_technology} 관련 키워드가 제목/URL/출처/본문에서 발견되지 않았습니다.`,
   };
 }
 
@@ -245,8 +307,8 @@ async function main() {
       ]),
     ),
     method: "broad_keyword_synonym_filter",
-    matched_fields: ["company", "title", "url", "source", "query", "official_source_url"],
-    note: "This first pass does not call an AI API and does not fetch full article bodies. It filters collected signal metadata using broad Korean/English synonym keywords.",
+    matched_fields: ["company", "title", "url", "source", "query", "official_source_url", "content_excerpt", "content_text"],
+    note: "This pass does not call an AI API. It filters official/fallback signal metadata plus fetched official article body text using broad Korean/English synonym keywords.",
   };
 
   await fs.mkdir(args.outDir, { recursive: true });

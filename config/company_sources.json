@@ -1,299 +1,2986 @@
 {
-  "description": "Official company source catalog. The collector reads official RSS/Atom feeds first, then official newsroom/press/IR pages, and uses Google News only as a fallback when official results are missing.",
+  "description": "Official company source catalog generated from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx. The collector reads these official pages first and uses fallback search only when official results are missing.",
   "official_feeds": {},
   "official_pages": {
     "Australian Strategic Metals": [
-      {"source": "Australian Strategic Materials News", "kind": "newsroom", "url": "https://asm-au.com/news/"},
-      {"source": "Australian Strategic Materials Investors", "kind": "ir", "url": "https://asm-au.com/investors/"}
+      {
+        "source": "Australian Strategic Metals - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://asm-au.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "asm-au.com"
+      },
+      {
+        "source": "Australian Strategic Metals - Investor Centre / Investor Relations",
+        "kind": "ir",
+        "url": "https://asm-au.com/investors/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Centre",
+        "source_type_label": "Investor Relations",
+        "domain": "asm-au.com"
+      },
+      {
+        "source": "Australian Strategic Metals - ASX Announcements / Regulatory Filings / Exchange Announcements",
+        "kind": "filing",
+        "url": "https://asm-au.com/investors/asx-announcements/",
+        "crawl_priority": "Primary",
+        "page_title": "ASX Announcements",
+        "source_type_label": "Regulatory Filings / Exchange Announcements",
+        "domain": "asm-au.com"
+      },
+      {
+        "source": "Australian Strategic Metals - Corporate Presentations / Investor Presentations",
+        "kind": "presentation",
+        "url": "https://asm-au.com/investors/corporate-presentations/",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate Presentations",
+        "source_type_label": "Investor Presentations",
+        "domain": "asm-au.com"
+      },
+      {
+        "source": "Australian Strategic Metals - Company Reports / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://asm-au.com/investors/company-reports/",
+        "crawl_priority": "Primary",
+        "page_title": "Company Reports",
+        "source_type_label": "Financial Reports",
+        "domain": "asm-au.com"
+      }
     ],
     "Cognex": [
-      {"source": "Cognex Press Releases", "kind": "press_release", "url": "https://www.cognex.com/company/press-releases"},
-      {"source": "Cognex Investor Relations", "kind": "ir", "url": "https://www.cognex.com/investor-relations"}
+      {
+        "source": "Cognex - News / Investor News / Press Releases",
+        "kind": "press_release",
+        "url": "https://investor.cognex.com/news/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Investor News / Press Releases",
+        "domain": "investor.cognex.com"
+      },
+      {
+        "source": "Cognex - Investor Relations Home / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.cognex.com/home/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations Home",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.cognex.com"
+      },
+      {
+        "source": "Cognex - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.cognex.com/financial-reports/sec-filings/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.cognex.com"
+      },
+      {
+        "source": "Cognex - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://investor.cognex.com/financial-reports/annual-reports/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "investor.cognex.com"
+      }
     ],
     "Corning": [
-      {"source": "Corning News Releases", "kind": "press_release", "url": "https://www.corning.com/worldwide/en/about-us/news-events/news-releases.html"},
-      {"source": "Corning Investor Relations", "kind": "ir", "url": "https://investor.corning.com/"}
+      {
+        "source": "Corning - News & Events / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.corning.com/worldwide/en/about-us/news-events.html",
+        "crawl_priority": "Primary",
+        "page_title": "News & Events",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.corning.com"
+      },
+      {
+        "source": "Corning - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.corning.com/investor-relations/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.corning.com"
+      },
+      {
+        "source": "Corning - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.corning.com/investor-relations/financials/sec-filings/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.corning.com"
+      }
     ],
     "Charles River": [
-      {"source": "Charles River IR News Releases", "kind": "ir", "url": "https://ir.criver.com/news-releases"},
-      {"source": "Charles River News", "kind": "newsroom", "url": "https://www.criver.com/about-us/news-events"}
+      {
+        "source": "Charles River - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://ir.criver.com/news-releases/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "ir.criver.com"
+      },
+      {
+        "source": "Charles River - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://ir.criver.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "ir.criver.com"
+      },
+      {
+        "source": "Charles River - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://ir.criver.com/sec-filings/",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "ir.criver.com"
+      }
     ],
     "Cytiva": [
-      {"source": "Cytiva Newsroom", "kind": "newsroom", "url": "https://www.cytiva.com/about-us/newsroom"}
+      {
+        "source": "Cytiva - Cytiva News Center / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.cytivalifesciences.com/news-center",
+        "crawl_priority": "Primary",
+        "page_title": "Cytiva News Center",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.cytivalifesciences.com"
+      },
+      {
+        "source": "Cytiva - Danaher Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.danaher.com/press-releases",
+        "crawl_priority": "Supplemental",
+        "page_title": "Danaher Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.danaher.com"
+      },
+      {
+        "source": "Cytiva - Danaher Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.danaher.com/newsroom",
+        "crawl_priority": "Supplemental",
+        "page_title": "Danaher Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.danaher.com"
+      },
+      {
+        "source": "Cytiva - Danaher Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.danaher.com/",
+        "crawl_priority": "Supplemental",
+        "page_title": "Danaher Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.danaher.com"
+      },
+      {
+        "source": "Cytiva - Danaher SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.danaher.com/sec-filings",
+        "crawl_priority": "Supplemental",
+        "page_title": "Danaher SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.danaher.com"
+      }
     ],
     "Moderna": [
-      {"source": "Moderna Investor News", "kind": "ir", "url": "https://investors.modernatx.com/news/news-details"},
-      {"source": "Moderna News", "kind": "newsroom", "url": "https://www.modernatx.com/en-US/media-center/news"}
+      {
+        "source": "Moderna - Moderna News / Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://news.modernatx.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Moderna News / Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "news.modernatx.com"
+      },
+      {
+        "source": "Moderna - News and Media / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.modernatx.com/newsroom/news-and-media",
+        "crawl_priority": "Primary",
+        "page_title": "News and Media",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.modernatx.com"
+      },
+      {
+        "source": "Moderna - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.modernatx.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.modernatx.com"
+      },
+      {
+        "source": "Moderna - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.modernatx.com/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.modernatx.com"
+      },
+      {
+        "source": "Moderna - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://investors.modernatx.com/annual-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "investors.modernatx.com"
+      },
+      {
+        "source": "Moderna - Quarterly Results / Quarterly Results",
+        "kind": "official_page",
+        "url": "https://investors.modernatx.com/quarterly-results",
+        "crawl_priority": "Primary",
+        "page_title": "Quarterly Results",
+        "source_type_label": "Quarterly Results",
+        "domain": "investors.modernatx.com"
+      }
     ],
     "West Pharmaceutical": [
-      {"source": "West Investor News", "kind": "ir", "url": "https://investors.westpharma.com/news-releases"},
-      {"source": "West News", "kind": "newsroom", "url": "https://www.westpharma.com/news"}
+      {
+        "source": "West Pharmaceutical - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://investor.westpharma.com/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "investor.westpharma.com"
+      },
+      {
+        "source": "West Pharmaceutical - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.westpharma.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.westpharma.com"
+      },
+      {
+        "source": "West Pharmaceutical - Financial Information / Financial Reports / Filings",
+        "kind": "financial_report",
+        "url": "https://investor.westpharma.com/financial",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Information",
+        "source_type_label": "Financial Reports / Filings",
+        "domain": "investor.westpharma.com"
+      }
     ],
     "Dupont": [
-      {"source": "DuPont News", "kind": "newsroom", "url": "https://www.dupont.com/news.html"},
-      {"source": "DuPont Investor Press Releases", "kind": "ir", "url": "https://investors.dupont.com/news-and-events/press-releases"}
+      {
+        "source": "Dupont - News and Media / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.investors.dupont.com/news-and-media/",
+        "crawl_priority": "Primary",
+        "page_title": "News and Media",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.investors.dupont.com"
+      },
+      {
+        "source": "Dupont - DuPont Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.investors.dupont.com/investors/dupont-investors/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "DuPont Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.investors.dupont.com"
+      },
+      {
+        "source": "Dupont - Filings and Reports / Regulatory Filings / Reports",
+        "kind": "financial_report",
+        "url": "https://www.investors.dupont.com/investors/dupont-investors/filings-and-reports/",
+        "crawl_priority": "Primary",
+        "page_title": "Filings and Reports",
+        "source_type_label": "Regulatory Filings / Reports",
+        "domain": "www.investors.dupont.com"
+      }
     ],
     "Albemarle": [
-      {"source": "Albemarle Investor News", "kind": "ir", "url": "https://investors.albemarle.com/news/news-details"},
-      {"source": "Albemarle News", "kind": "newsroom", "url": "https://www.albemarle.com/news"}
+      {
+        "source": "Albemarle - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.albemarle.com/us/en/newsroom",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.albemarle.com"
+      },
+      {
+        "source": "Albemarle - Investor Relations Overview / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.albemarle.com/overview/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations Overview",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.albemarle.com"
+      },
+      {
+        "source": "Albemarle - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.albemarle.com/financials/sec-filings/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.albemarle.com"
+      },
+      {
+        "source": "Albemarle - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://investors.albemarle.com/financials/annual-reports/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "investors.albemarle.com"
+      }
     ],
     "TIMET": [
-      {"source": "TIMET News", "kind": "newsroom", "url": "https://www.timet.com/news/"}
+      {
+        "source": "TIMET - TIMET News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.timet.com/timet-news/",
+        "crawl_priority": "Primary",
+        "page_title": "TIMET News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.timet.com"
+      },
+      {
+        "source": "TIMET - Documents / Corporate Documents",
+        "kind": "official_page",
+        "url": "https://www.timet.com/documents/",
+        "crawl_priority": "Primary",
+        "page_title": "Documents",
+        "source_type_label": "Corporate Documents",
+        "domain": "www.timet.com"
+      }
     ],
     "Air Products": [
-      {"source": "Air Products News Center", "kind": "newsroom", "url": "https://www.airproducts.com/company/news-center"},
-      {"source": "Air Products Investor News", "kind": "ir", "url": "https://investors.airproducts.com/news-releases"}
+      {
+        "source": "Air Products - News Center / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.airproducts.com/company/news-center",
+        "crawl_priority": "Primary",
+        "page_title": "News Center",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.airproducts.com"
+      },
+      {
+        "source": "Air Products - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.airproducts.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.airproducts.com"
+      },
+      {
+        "source": "Air Products - Annual Reports and Filings / Annual Reports / Regulatory Filings",
+        "kind": "financial_report",
+        "url": "https://investors.airproducts.com/annual-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports and Filings",
+        "source_type_label": "Annual Reports / Regulatory Filings",
+        "domain": "investors.airproducts.com"
+      }
     ],
     "Chemours": [
-      {"source": "Chemours News Media Center", "kind": "newsroom", "url": "https://www.chemours.com/en/news-media-center"},
-      {"source": "Chemours Investor News", "kind": "ir", "url": "https://investors.chemours.com/news-releases"}
+      {
+        "source": "Chemours - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://investors.chemours.com/news-releases",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "investors.chemours.com"
+      },
+      {
+        "source": "Chemours - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.chemours.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.chemours.com"
+      },
+      {
+        "source": "Chemours - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.chemours.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.chemours.com"
+      },
+      {
+        "source": "Chemours - Quarterly Reports / Quarterly Results",
+        "kind": "official_page",
+        "url": "https://investors.chemours.com/financial-information/quarterly-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Quarterly Reports",
+        "source_type_label": "Quarterly Results",
+        "domain": "investors.chemours.com"
+      }
     ],
     "BorgWarner": [
-      {"source": "BorgWarner Press Releases", "kind": "press_release", "url": "https://www.borgwarner.com/newsroom/press-releases"},
-      {"source": "BorgWarner Investor News", "kind": "ir", "url": "https://ir.borgwarner.com/news-events"}
+      {
+        "source": "BorgWarner - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.borgwarner.com/newsroom/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.borgwarner.com"
+      },
+      {
+        "source": "BorgWarner - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.borgwarner.com/newsroom",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.borgwarner.com"
+      },
+      {
+        "source": "BorgWarner - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.borgwarner.com/investors/",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.borgwarner.com"
+      },
+      {
+        "source": "BorgWarner - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://www.borgwarner.com/investors/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "www.borgwarner.com"
+      },
+      {
+        "source": "BorgWarner - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.borgwarner.com/investors/annual-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "www.borgwarner.com"
+      }
     ],
     "DOW": [
-      {"source": "Dow News", "kind": "newsroom", "url": "https://corporate.dow.com/en-us/news.html"},
-      {"source": "Dow Investor News", "kind": "ir", "url": "https://investors.dow.com/en/news"}
+      {
+        "source": "DOW - Corporate Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://corporate.dow.com/en-us/news/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "corporate.dow.com"
+      },
+      {
+        "source": "DOW - Investor News / Investor News",
+        "kind": "newsroom",
+        "url": "https://investors.dow.com/en/news/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News",
+        "source_type_label": "Investor News",
+        "domain": "investors.dow.com"
+      },
+      {
+        "source": "DOW - Corporate News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://corporate.dow.com/en-us/news.html",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate News",
+        "source_type_label": "Newsroom / News",
+        "domain": "corporate.dow.com"
+      },
+      {
+        "source": "DOW - Financial Reporting / Regulatory Filings / Financial Reporting",
+        "kind": "financial_report",
+        "url": "https://investors.dow.com/en/reporting/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Reporting",
+        "source_type_label": "Regulatory Filings / Financial Reporting",
+        "domain": "investors.dow.com"
+      }
     ],
     "Thermo Fisher": [
-      {"source": "Thermo Fisher News Releases", "kind": "press_release", "url": "https://thermofisher.mediaroom.com/news-releases"},
-      {"source": "Thermo Fisher Investor News", "kind": "ir", "url": "https://ir.thermofisher.com/investors/news-events/news-releases"}
+      {
+        "source": "Thermo Fisher - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://newsroom.thermofisher.com/newsroom/overview/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "newsroom.thermofisher.com"
+      },
+      {
+        "source": "Thermo Fisher - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://ir.thermofisher.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "ir.thermofisher.com"
+      },
+      {
+        "source": "Thermo Fisher - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://ir.thermofisher.com/investors/financials/sec-filings/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "ir.thermofisher.com"
+      }
     ],
     "Amkor Technology": [
-      {"source": "Amkor Press Releases", "kind": "press_release", "url": "https://amkor.com/newsroom/press-releases/"},
-      {"source": "Amkor Investor News", "kind": "ir", "url": "https://ir.amkor.com/news-events/news-releases"}
+      {
+        "source": "Amkor Technology - Investor Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://ir.amkor.com/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "ir.amkor.com"
+      },
+      {
+        "source": "Amkor Technology - Company News Archive / Company News",
+        "kind": "newsroom",
+        "url": "https://amkor.com/category/company-news/",
+        "crawl_priority": "Primary",
+        "page_title": "Company News Archive",
+        "source_type_label": "Company News",
+        "domain": "amkor.com"
+      },
+      {
+        "source": "Amkor Technology - Corporate News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://amkor.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate News",
+        "source_type_label": "Newsroom / News",
+        "domain": "amkor.com"
+      },
+      {
+        "source": "Amkor Technology - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://ir.amkor.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "ir.amkor.com"
+      },
+      {
+        "source": "Amkor Technology - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://ir.amkor.com/financials/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "ir.amkor.com"
+      }
     ],
     "Onsemi": [
-      {"source": "onsemi Press Announcements", "kind": "press_release", "url": "https://www.onsemi.com/company/news-media/press-announcements"},
-      {"source": "onsemi Investor News", "kind": "ir", "url": "https://investor.onsemi.com/news-releases"}
+      {
+        "source": "Onsemi - Press-filtered Newsroom / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.onsemi.com/company/newsroom/news-and-insights?type=press",
+        "crawl_priority": "Primary",
+        "page_title": "Press-filtered Newsroom",
+        "source_type_label": "Press Releases",
+        "domain": "www.onsemi.com"
+      },
+      {
+        "source": "Onsemi - Investor News / Investor News",
+        "kind": "newsroom",
+        "url": "https://investor.onsemi.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News",
+        "source_type_label": "Investor News",
+        "domain": "investor.onsemi.com"
+      },
+      {
+        "source": "Onsemi - News and Insights / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.onsemi.com/company/newsroom/news-and-insights",
+        "crawl_priority": "Primary",
+        "page_title": "News and Insights",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.onsemi.com"
+      },
+      {
+        "source": "Onsemi - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.onsemi.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.onsemi.com"
+      },
+      {
+        "source": "Onsemi - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.onsemi.com/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.onsemi.com"
+      }
     ],
     "Qualcomm": [
-      {"source": "Qualcomm News Releases", "kind": "press_release", "url": "https://www.qualcomm.com/news/releases"},
-      {"source": "Qualcomm Investor Press Releases", "kind": "ir", "url": "https://investor.qualcomm.com/news-events/press-releases"}
+      {
+        "source": "Qualcomm - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.qualcomm.com/news/releases",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.qualcomm.com"
+      },
+      {
+        "source": "Qualcomm - Qualcomm News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.qualcomm.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "Qualcomm News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.qualcomm.com"
+      },
+      {
+        "source": "Qualcomm - Investor Relations Overview / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.qualcomm.com/overview/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations Overview",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.qualcomm.com"
+      },
+      {
+        "source": "Qualcomm - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.qualcomm.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.qualcomm.com"
+      },
+      {
+        "source": "Qualcomm - Historical Financial Results / Historical Financial Results",
+        "kind": "official_page",
+        "url": "https://investor.qualcomm.com/financial-info-sec-filings/historical-financial-results/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Historical Financial Results",
+        "source_type_label": "Historical Financial Results",
+        "domain": "investor.qualcomm.com"
+      },
+      {
+        "source": "Qualcomm - Investor Kit / Investor Materials",
+        "kind": "official_page",
+        "url": "https://investor.qualcomm.com/financial-info-sec-filings/investor-kit/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Kit",
+        "source_type_label": "Investor Materials",
+        "domain": "investor.qualcomm.com"
+      }
     ],
     "Skyworks": [
-      {"source": "Skyworks Newsroom", "kind": "newsroom", "url": "https://www.skyworksinc.com/en/Newsroom"},
-      {"source": "Skyworks Investor Press Releases", "kind": "ir", "url": "https://investors.skyworksinc.com/news-events/press-releases"}
+      {
+        "source": "Skyworks - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://investors.skyworksinc.com/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "investors.skyworksinc.com"
+      },
+      {
+        "source": "Skyworks - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.skyworksinc.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.skyworksinc.com"
+      },
+      {
+        "source": "Skyworks - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.skyworksinc.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.skyworksinc.com"
+      }
     ],
     "Eli Lilly and Company": [
-      {"source": "Eli Lilly Investor News", "kind": "ir", "url": "https://investor.lilly.com/news-releases"},
-      {"source": "Eli Lilly News", "kind": "newsroom", "url": "https://www.lilly.com/news"}
+      {
+        "source": "Eli Lilly and Company - Lilly News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.lilly.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "Lilly News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.lilly.com"
+      },
+      {
+        "source": "Eli Lilly and Company - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.lilly.com/investor-relations",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.lilly.com"
+      },
+      {
+        "source": "Eli Lilly and Company - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.lilly.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.lilly.com"
+      },
+      {
+        "source": "Eli Lilly and Company - Media / Media Center",
+        "kind": "official_page",
+        "url": "https://www.lilly.com/news/media",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Media Center",
+        "domain": "www.lilly.com"
+      }
     ],
     "GE Healthcare": [
-      {"source": "GE HealthCare Newsroom", "kind": "newsroom", "url": "https://www.gehealthcare.com/about/newsroom"},
-      {"source": "GE HealthCare Investor News", "kind": "ir", "url": "https://investor.gehealthcare.com/news-events/news-releases"}
+      {
+        "source": "GE Healthcare - Investor News Releases / Investor News / Press Releases",
+        "kind": "press_release",
+        "url": "https://investor.gehealthcare.com/news-events/news-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News Releases",
+        "source_type_label": "Investor News / Press Releases",
+        "domain": "investor.gehealthcare.com"
+      },
+      {
+        "source": "GE Healthcare - Corporate Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.gehealthcare.com/en/about/newsroom/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.gehealthcare.com"
+      },
+      {
+        "source": "GE Healthcare - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investor.gehealthcare.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investor.gehealthcare.com"
+      },
+      {
+        "source": "GE Healthcare - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investor.gehealthcare.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investor.gehealthcare.com"
+      }
     ],
     "Boeing": [
-      {"source": "Boeing News Releases", "kind": "press_release", "url": "https://boeing.mediaroom.com/news-releases-statements"},
-      {"source": "Boeing Investor News", "kind": "ir", "url": "https://investors.boeing.com/investors/news"}
+      {
+        "source": "Boeing - News Releases and Statements / Press Releases / Statements",
+        "kind": "press_release",
+        "url": "https://boeing.mediaroom.com/news-releases-statements",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases and Statements",
+        "source_type_label": "Press Releases / Statements",
+        "domain": "boeing.mediaroom.com"
+      },
+      {
+        "source": "Boeing - Investor News / Investor News",
+        "kind": "newsroom",
+        "url": "https://investors.boeing.com/investors/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News",
+        "source_type_label": "Investor News",
+        "domain": "investors.boeing.com"
+      },
+      {
+        "source": "Boeing - Investor Relations Overview / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.boeing.com/investors/overview/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations Overview",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.boeing.com"
+      },
+      {
+        "source": "Boeing - Reports / Regulatory Filings / Reports",
+        "kind": "financial_report",
+        "url": "https://investors.boeing.com/investors/reports/default.aspx",
+        "crawl_priority": "Primary",
+        "page_title": "Reports",
+        "source_type_label": "Regulatory Filings / Reports",
+        "domain": "investors.boeing.com"
+      }
     ],
     "3M": [
-      {"source": "3M Press Releases", "kind": "press_release", "url": "https://news.3m.com/press-releases"},
-      {"source": "3M Investor Press Releases", "kind": "ir", "url": "https://investors.3m.com/news-events/press-releases"}
+      {
+        "source": "3M - IR Press Releases / Investor Press Releases",
+        "kind": "press_release",
+        "url": "https://investors.3m.com/news-events/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "IR Press Releases",
+        "source_type_label": "Investor Press Releases",
+        "domain": "investors.3m.com"
+      },
+      {
+        "source": "3M - Corporate Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://news.3m.com/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "news.3m.com"
+      },
+      {
+        "source": "3M - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.3m.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.3m.com"
+      },
+      {
+        "source": "3M - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.3m.com/financials/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.3m.com"
+      }
     ],
     "Ouster": [
-      {"source": "Ouster Investor News", "kind": "ir", "url": "https://investors.ouster.com/news/news-releases"},
-      {"source": "Ouster News", "kind": "newsroom", "url": "https://ouster.com/news"}
+      {
+        "source": "Ouster - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://investors.ouster.com/news-events/news-releases",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "investors.ouster.com"
+      },
+      {
+        "source": "Ouster - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.ouster.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.ouster.com"
+      },
+      {
+        "source": "Ouster - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.ouster.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.ouster.com"
+      }
     ],
     "Applied Materials": [
-      {"source": "Applied Materials Investor News", "kind": "ir", "url": "https://ir.appliedmaterials.com/news-releases"},
-      {"source": "Applied Materials Newsroom", "kind": "newsroom", "url": "https://www.appliedmaterials.com/us/en/newsroom.html"}
+      {
+        "source": "Applied Materials - Investor News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://ir.appliedmaterials.com/news-releases/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "ir.appliedmaterials.com"
+      },
+      {
+        "source": "Applied Materials - Applied Materials Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.appliedmaterials.com/us/en/newsroom.html",
+        "crawl_priority": "Primary",
+        "page_title": "Applied Materials Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.appliedmaterials.com"
+      },
+      {
+        "source": "Applied Materials - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://ir.appliedmaterials.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "ir.appliedmaterials.com"
+      },
+      {
+        "source": "Applied Materials - SEC Filings / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://ir.appliedmaterials.com/financial-information/sec-filings",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings",
+        "source_type_label": "Regulatory Filings",
+        "domain": "ir.appliedmaterials.com"
+      }
     ],
     "Magnix": [
-      {"source": "magniX News", "kind": "newsroom", "url": "https://www.magnix.aero/news"}
+      {
+        "source": "Magnix - magniX News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.magnix.aero/news",
+        "crawl_priority": "Primary",
+        "page_title": "magniX News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.magnix.aero"
+      }
     ],
     "Prodrive": [
-      {"source": "Prodrive Technologies News", "kind": "newsroom", "url": "https://www.prodrive-technologies.com/news"}
+      {
+        "source": "Prodrive - Press-release Filter / Press Releases",
+        "kind": "press_release",
+        "url": "https://prodrive-technologies.com/en/about-us/news/?label=Press+release",
+        "crawl_priority": "Primary",
+        "page_title": "Press-release Filter",
+        "source_type_label": "Press Releases",
+        "domain": "prodrive-technologies.com"
+      },
+      {
+        "source": "Prodrive - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://prodrive-technologies.com/en/about-us/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "prodrive-technologies.com"
+      }
     ],
     "ASML": [
-      {"source": "ASML Press Releases", "kind": "press_release", "url": "https://www.asml.com/en/news/press-releases"},
-      {"source": "ASML Investors", "kind": "ir", "url": "https://www.asml.com/en/investors"}
+      {
+        "source": "ASML - ASML News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.asml.com/en/news",
+        "crawl_priority": "Primary",
+        "page_title": "ASML News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.asml.com"
+      },
+      {
+        "source": "ASML - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.asml.com/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.asml.com"
+      },
+      {
+        "source": "ASML - Financial Results / Financial Reports / Results",
+        "kind": "financial_report",
+        "url": "https://www.asml.com/en/investors/financial-results",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Reports / Results",
+        "domain": "www.asml.com"
+      }
     ],
     "Besi": [
-      {"source": "Besi Press Releases", "kind": "ir", "url": "https://www.besi.com/investor-relations/press-releases/"},
-      {"source": "Besi News", "kind": "newsroom", "url": "https://www.besi.com/news"}
+      {
+        "source": "Besi - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.besi.com/investor-relations/press-releases/",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.besi.com"
+      },
+      {
+        "source": "Besi - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.besi.com/investor-relations/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.besi.com"
+      },
+      {
+        "source": "Besi - Financial Reports and Publications / Financial Reports / Publications",
+        "kind": "financial_report",
+        "url": "https://www.besi.com/investor-relations/financial-reports-and-publications/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Reports and Publications",
+        "source_type_label": "Financial Reports / Publications",
+        "domain": "www.besi.com"
+      }
     ],
     "NXP": [
-      {"source": "NXP Newsroom", "kind": "newsroom", "url": "https://www.nxp.com/company/about-nxp/newsroom:NEWSROOM"},
-      {"source": "NXP Investor News", "kind": "ir", "url": "https://investors.nxp.com/news-releases"}
+      {
+        "source": "NXP - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.nxp.com/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.nxp.com"
+      },
+      {
+        "source": "NXP - Media Center Press Releases / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://media.nxp.com/media-center/press-releases/",
+        "crawl_priority": "Primary",
+        "page_title": "Media Center Press Releases",
+        "source_type_label": "Newsroom / Media",
+        "domain": "media.nxp.com"
+      },
+      {
+        "source": "NXP - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.nxp.com/company/about-nxp/investor-relations%3AINVESTOR-RELATIONS",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.nxp.com"
+      },
+      {
+        "source": "NXP - SEC Filings (IR endpoint) / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://investors.nxp.com/financial-information/irol-sec/",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings (IR endpoint)",
+        "source_type_label": "Regulatory Filings",
+        "domain": "investors.nxp.com"
+      }
     ],
     "Norsk Hydro": [
-      {"source": "Norsk Hydro News", "kind": "newsroom", "url": "https://www.hydro.com/en/global/media/news/"},
-      {"source": "Norsk Hydro Investors", "kind": "ir", "url": "https://www.hydro.com/en/global/investors/"}
+      {
+        "source": "Norsk Hydro - News Subscription / Investor News Subscription",
+        "kind": "newsroom",
+        "url": "https://www.hydro.com/en/global/investors/news-subscription/",
+        "crawl_priority": "Primary",
+        "page_title": "News Subscription",
+        "source_type_label": "Investor News Subscription",
+        "domain": "www.hydro.com"
+      },
+      {
+        "source": "Norsk Hydro - Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.hydro.com/en/global/media/",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.hydro.com"
+      },
+      {
+        "source": "Norsk Hydro - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.hydro.com/en/global/media/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.hydro.com"
+      },
+      {
+        "source": "Norsk Hydro - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.hydro.com/en/global/investors/",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.hydro.com"
+      },
+      {
+        "source": "Norsk Hydro - Reports and Presentations / Financial Reports / Presentations",
+        "kind": "presentation",
+        "url": "https://www.hydro.com/en/global/investors/reports-and-presentations/",
+        "crawl_priority": "Primary",
+        "page_title": "Reports and Presentations",
+        "source_type_label": "Financial Reports / Presentations",
+        "domain": "www.hydro.com"
+      }
     ],
     "Vestas": [
-      {"source": "Vestas Company News", "kind": "newsroom", "url": "https://www.vestas.com/en/media/company-news"},
-      {"source": "Vestas Investor", "kind": "ir", "url": "https://www.vestas.com/en/investor"}
+      {
+        "source": "Vestas - Company News / Company News",
+        "kind": "newsroom",
+        "url": "https://www.vestas.com/en/media/company-news",
+        "crawl_priority": "Primary",
+        "page_title": "Company News",
+        "source_type_label": "Company News",
+        "domain": "www.vestas.com"
+      },
+      {
+        "source": "Vestas - Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.vestas.com/en/media",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.vestas.com"
+      },
+      {
+        "source": "Vestas - Investor / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.vestas.com/en/investor",
+        "crawl_priority": "Primary",
+        "page_title": "Investor",
+        "source_type_label": "Investor Relations",
+        "domain": "www.vestas.com"
+      },
+      {
+        "source": "Vestas - Company Announcements / Regulatory Filings / Company Announcements",
+        "kind": "filing",
+        "url": "https://www.vestas.com/en/investor/announcements",
+        "crawl_priority": "Primary",
+        "page_title": "Company Announcements",
+        "source_type_label": "Regulatory Filings / Company Announcements",
+        "domain": "www.vestas.com"
+      },
+      {
+        "source": "Vestas - Vestas Reporting / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.vestas.com/en/investor/reports-and-presentations/vestas-reporting",
+        "crawl_priority": "Primary",
+        "page_title": "Vestas Reporting",
+        "source_type_label": "Financial Reports",
+        "domain": "www.vestas.com"
+      }
     ],
     "Heidenhain": [
-      {"source": "HEIDENHAIN News", "kind": "newsroom", "url": "https://www.heidenhain.com/news"},
-      {"source": "HEIDENHAIN Company Newsroom", "kind": "newsroom", "url": "https://www.heidenhain.com/company/newsroom"}
+      {
+        "source": "Heidenhain - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.heidenhain.com/news/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.heidenhain.com"
+      },
+      {
+        "source": "Heidenhain - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.heidenhain.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.heidenhain.com"
+      },
+      {
+        "source": "Heidenhain - U.S. Newsroom / Regional Newsroom",
+        "kind": "newsroom",
+        "url": "https://www.heidenhain.us/news-resources/newsroom/",
+        "crawl_priority": "Primary",
+        "page_title": "U.S. Newsroom",
+        "source_type_label": "Regional Newsroom",
+        "domain": "www.heidenhain.us"
+      }
     ],
     "Infineon": [
-      {"source": "Infineon Press Releases", "kind": "press_release", "url": "https://www.infineon.com/cms/en/about-infineon/press/press-releases/"},
-      {"source": "Infineon Investor Relations", "kind": "ir", "url": "https://www.infineon.com/cms/en/about-infineon/investor/"}
+      {
+        "source": "Infineon - Press / Press Releases / Media",
+        "kind": "press_release",
+        "url": "https://www.infineon.com/about/press",
+        "crawl_priority": "Primary",
+        "page_title": "Press",
+        "source_type_label": "Press Releases / Media",
+        "domain": "www.infineon.com"
+      },
+      {
+        "source": "Infineon - Investor News / Investor News",
+        "kind": "newsroom",
+        "url": "https://www.infineon.com/about/investor/news",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News",
+        "source_type_label": "Investor News",
+        "domain": "www.infineon.com"
+      },
+      {
+        "source": "Infineon - Investor / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.infineon.com/about/investor",
+        "crawl_priority": "Primary",
+        "page_title": "Investor",
+        "source_type_label": "Investor Relations",
+        "domain": "www.infineon.com"
+      },
+      {
+        "source": "Infineon - Financial Results / Financial Reports / Results",
+        "kind": "financial_report",
+        "url": "https://www.infineon.com/about/investor/reports-presentations/financial-results",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Reports / Results",
+        "domain": "www.infineon.com"
+      }
     ],
     "Schmalz": [
-      {"source": "Schmalz Press Releases", "kind": "press_release", "url": "https://www.schmalz.com/en-us/company/press/press-releases/"}
+      {
+        "source": "Schmalz - Latest News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.schmalz.com/en/career-company/latest/news",
+        "crawl_priority": "Primary",
+        "page_title": "Latest News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.schmalz.com"
+      }
     ],
     "Bayer": [
-      {"source": "Bayer News", "kind": "newsroom", "url": "https://www.bayer.com/media/en-us/news-stories/"},
-      {"source": "Bayer Investors", "kind": "ir", "url": "https://www.bayer.com/en/investors"}
+      {
+        "source": "Bayer - Investor News / Investor News / Ad-hoc",
+        "kind": "newsroom",
+        "url": "https://www.bayer.com/en/investors/investor-news",
+        "crawl_priority": "Primary",
+        "page_title": "Investor News",
+        "source_type_label": "Investor News / Ad-hoc",
+        "domain": "www.bayer.com"
+      },
+      {
+        "source": "Bayer - Global Newsroom / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.bayer.com/media/en-us/",
+        "crawl_priority": "Primary",
+        "page_title": "Global Newsroom",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.bayer.com"
+      },
+      {
+        "source": "Bayer - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.bayer.com/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.bayer.com"
+      },
+      {
+        "source": "Bayer - Financial Reports / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.bayer.com/en/investors/financial-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Reports",
+        "source_type_label": "Financial Reports",
+        "domain": "www.bayer.com"
+      },
+      {
+        "source": "Bayer - Quarterly Reports / Quarterly Reports",
+        "kind": "financial_report",
+        "url": "https://www.bayer.com/en/investors/quarterly-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Quarterly Reports",
+        "source_type_label": "Quarterly Reports",
+        "domain": "www.bayer.com"
+      }
     ],
     "Merck": [
-      {"source": "Merck KGaA News", "kind": "newsroom", "url": "https://www.merckgroup.com/en/news.html"},
-      {"source": "Merck KGaA Investors", "kind": "ir", "url": "https://www.merckgroup.com/en/investors.html"}
+      {
+        "source": "Merck - News / Press Releases / News",
+        "kind": "press_release",
+        "url": "https://www.emdgroup.com/en/news.html",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Press Releases / News",
+        "domain": "www.emdgroup.com"
+      },
+      {
+        "source": "Merck - News & Stories / Newsroom / Stories",
+        "kind": "newsroom",
+        "url": "https://www.emdgroup.com/en/news-stories.html",
+        "crawl_priority": "Primary",
+        "page_title": "News & Stories",
+        "source_type_label": "Newsroom / Stories",
+        "domain": "www.emdgroup.com"
+      },
+      {
+        "source": "Merck - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.emdgroup.com/en/investors.html",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.emdgroup.com"
+      },
+      {
+        "source": "Merck - Reports and Financials / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.emdgroup.com/en/investors/reports-and-financials.html",
+        "crawl_priority": "Primary",
+        "page_title": "Reports and Financials",
+        "source_type_label": "Financial Reports",
+        "domain": "www.emdgroup.com"
+      },
+      {
+        "source": "Merck - Financials / Financial Data",
+        "kind": "official_page",
+        "url": "https://www.emdgroup.com/en/investors/reports-and-financials/financials.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financials",
+        "source_type_label": "Financial Data",
+        "domain": "www.emdgroup.com"
+      },
+      {
+        "source": "Merck - Ad-hoc Releases / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.emdgroup.com/en/investors/corporate-governance/ad-hoc-releases.html",
+        "crawl_priority": "Primary",
+        "page_title": "Ad-hoc Releases",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.emdgroup.com"
+      }
     ],
     "Schott Pharma": [
-      {"source": "SCHOTT Pharma Newsroom", "kind": "newsroom", "url": "https://www.schott-pharma.com/newsroom"},
-      {"source": "SCHOTT Pharma Investor Relations", "kind": "ir", "url": "https://www.schott-pharma.com/investor-relations"}
+      {
+        "source": "Schott Pharma - IR Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://ir.schott-pharma.com/investor-relations/de/news-publications/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "IR Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "ir.schott-pharma.com"
+      },
+      {
+        "source": "Schott Pharma - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://ir.schott-pharma.com/investor-relations/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "ir.schott-pharma.com"
+      },
+      {
+        "source": "Schott Pharma - Reports and Presentations / Financial Reports / Presentations",
+        "kind": "presentation",
+        "url": "https://www.schott-pharma.com/investor-relations/news-publications/reports-and-presentations",
+        "crawl_priority": "Primary",
+        "page_title": "Reports and Presentations",
+        "source_type_label": "Financial Reports / Presentations",
+        "domain": "www.schott-pharma.com"
+      }
     ],
     "BASF": [
-      {"source": "BASF News Releases", "kind": "press_release", "url": "https://www.basf.com/global/en/media/news-releases"},
-      {"source": "BASF Investors", "kind": "ir", "url": "https://www.basf.com/global/en/investors"}
+      {
+        "source": "BASF - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.basf.com/global/en/media/news-releases",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.basf.com"
+      },
+      {
+        "source": "BASF - Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.basf.com/global/en/media",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.basf.com"
+      },
+      {
+        "source": "BASF - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.basf.com/global/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.basf.com"
+      },
+      {
+        "source": "BASF - Reporting / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.basf.com/global/en/investors/calendar-and-publications/reporting",
+        "crawl_priority": "Primary",
+        "page_title": "Reporting",
+        "source_type_label": "Financial Reports",
+        "domain": "www.basf.com"
+      },
+      {
+        "source": "BASF - Investor Releases / Investor Releases",
+        "kind": "official_page",
+        "url": "https://www.basf.com/global/en/investors/calendar-and-publications/investor-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Releases",
+        "source_type_label": "Investor Releases",
+        "domain": "www.basf.com"
+      }
     ],
     "Evonik Industries": [
-      {"source": "Evonik Press Releases", "kind": "press_release", "url": "https://corporate.evonik.com/en/media/press-releases"},
-      {"source": "Evonik Investor Relations", "kind": "ir", "url": "https://corporate.evonik.com/en/investor-relations"}
+      {
+        "source": "Evonik Industries - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://publications.evonik.com/en/media/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "publications.evonik.com"
+      },
+      {
+        "source": "Evonik Industries - Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.evonik.com/en/media.html",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.evonik.com"
+      },
+      {
+        "source": "Evonik Industries - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.evonik.com/en/investor-relations.html",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.evonik.com"
+      },
+      {
+        "source": "Evonik Industries - Reporting / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.evonik.com/en/investor-relations/Reporting.html",
+        "crawl_priority": "Primary",
+        "page_title": "Reporting",
+        "source_type_label": "Financial Reports",
+        "domain": "www.evonik.com"
+      },
+      {
+        "source": "Evonik Industries - Reports Archive / Financial Reports Archive",
+        "kind": "financial_report",
+        "url": "https://publications.evonik.com/en/investor-relations/reports",
+        "crawl_priority": "Primary",
+        "page_title": "Reports Archive",
+        "source_type_label": "Financial Reports Archive",
+        "domain": "publications.evonik.com"
+      },
+      {
+        "source": "Evonik Industries - Publications / Investor Publications",
+        "kind": "official_page",
+        "url": "https://www.evonik.com/en/investor-relations/publications.html",
+        "crawl_priority": "Primary",
+        "page_title": "Publications",
+        "source_type_label": "Investor Publications",
+        "domain": "www.evonik.com"
+      }
     ],
     "Heraeus": [
-      {"source": "Heraeus Media", "kind": "newsroom", "url": "https://www.heraeus.com/en/group/media/media.html"}
+      {
+        "source": "Heraeus - News and Stories / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.heraeus.com/en/news-and-stories/",
+        "crawl_priority": "Primary",
+        "page_title": "News and Stories",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.heraeus.com"
+      }
     ],
     "Jenoptik": [
-      {"source": "Jenoptik Press Releases", "kind": "press_release", "url": "https://www.jenoptik.com/news/press-releases"},
-      {"source": "Jenoptik Investors", "kind": "ir", "url": "https://www.jenoptik.com/investors"}
+      {
+        "source": "Jenoptik - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.jenoptik.com/news/pressreleases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.jenoptik.com"
+      },
+      {
+        "source": "Jenoptik - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.jenoptik.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.jenoptik.com"
+      },
+      {
+        "source": "Jenoptik - News and Ad-hoc Releases / Regulatory Disclosures / IR News",
+        "kind": "newsroom",
+        "url": "https://www.jenoptik.com/investors/news-and-adhoc-releases",
+        "crawl_priority": "Primary",
+        "page_title": "News and Ad-hoc Releases",
+        "source_type_label": "Regulatory Disclosures / IR News",
+        "domain": "www.jenoptik.com"
+      },
+      {
+        "source": "Jenoptik - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.jenoptik.com/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.jenoptik.com"
+      },
+      {
+        "source": "Jenoptik - Reports and Presentations / Financial Reports / Presentations",
+        "kind": "presentation",
+        "url": "https://www.jenoptik.com/investors/reports-and-presentations",
+        "crawl_priority": "Primary",
+        "page_title": "Reports and Presentations",
+        "source_type_label": "Financial Reports / Presentations",
+        "domain": "www.jenoptik.com"
+      }
     ],
     "EMM(Umicore)": [
-      {"source": "Umicore Newsroom", "kind": "newsroom", "url": "https://www.umicore.com/en/newsroom/"},
-      {"source": "Umicore Investors", "kind": "ir", "url": "https://www.umicore.com/en/investors/"}
+      {
+        "source": "EMM(Umicore) - Extra Mile Materials / Company Website",
+        "kind": "official_page",
+        "url": "https://www.extramilematerials.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Extra Mile Materials",
+        "source_type_label": "Company Website",
+        "domain": "www.extramilematerials.com"
+      },
+      {
+        "source": "EMM(Umicore) - About Us / Corporate Information",
+        "kind": "official_page",
+        "url": "https://www.extramilematerials.com/about-us",
+        "crawl_priority": "Primary",
+        "page_title": "About Us",
+        "source_type_label": "Corporate Information",
+        "domain": "www.extramilematerials.com"
+      },
+      {
+        "source": "EMM(Umicore) - HS Hyosung Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.hshyosung.com/en/media/press-release",
+        "crawl_priority": "Supplemental",
+        "page_title": "HS Hyosung Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.hshyosung.com"
+      },
+      {
+        "source": "EMM(Umicore) - Umicore Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.umicore.com/en/media/newsroom/",
+        "crawl_priority": "Supplemental",
+        "page_title": "Umicore Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.umicore.com"
+      },
+      {
+        "source": "EMM(Umicore) - Umicore Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.umicore.com/en/investor-relations/",
+        "crawl_priority": "Supplemental",
+        "page_title": "Umicore Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.umicore.com"
+      },
+      {
+        "source": "EMM(Umicore) - HS Hyosung Advanced Materials IR Notice / Investor Relations / Notices",
+        "kind": "ir",
+        "url": "https://www.hshyosungadvancedmaterials.com/en/ir/notice?lang=en&page=1",
+        "crawl_priority": "Supplemental",
+        "page_title": "HS Hyosung Advanced Materials IR Notice",
+        "source_type_label": "Investor Relations / Notices",
+        "domain": "www.hshyosungadvancedmaterials.com"
+      },
+      {
+        "source": "EMM(Umicore) - HS Hyosung Advanced Materials IR Resources / Financial Reports / IR Resources",
+        "kind": "financial_report",
+        "url": "https://www.hshyosungadvancedmaterials.com/en/ir/report",
+        "crawl_priority": "Supplemental",
+        "page_title": "HS Hyosung Advanced Materials IR Resources",
+        "source_type_label": "Financial Reports / IR Resources",
+        "domain": "www.hshyosungadvancedmaterials.com"
+      }
     ],
     "Umicore": [
-      {"source": "Umicore Newsroom", "kind": "newsroom", "url": "https://www.umicore.com/en/newsroom/"},
-      {"source": "Umicore Investors", "kind": "ir", "url": "https://www.umicore.com/en/investors/"}
+      {
+        "source": "Umicore - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.umicore.com/en/media/newsroom/",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.umicore.com"
+      },
+      {
+        "source": "Umicore - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.umicore.com/en/investor-relations/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.umicore.com"
+      },
+      {
+        "source": "Umicore - Annual Report / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Report",
+        "source_type_label": "Annual Reports",
+        "domain": "www.umicore.com"
+      },
+      {
+        "source": "Umicore - Financial Reports / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.umicore.com/en/investor-relations/publications-reports/financial-reports/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Reports",
+        "source_type_label": "Financial Reports",
+        "domain": "www.umicore.com"
+      }
     ],
     "Solvay": [
-      {"source": "Solvay Press Releases", "kind": "press_release", "url": "https://www.solvay.com/en/press-release"},
-      {"source": "Solvay Investors", "kind": "ir", "url": "https://www.solvay.com/en/investors"}
+      {
+        "source": "Solvay - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.solvay.com/en/newsroom",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.solvay.com"
+      },
+      {
+        "source": "Solvay - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.solvay.com/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.solvay.com"
+      },
+      {
+        "source": "Solvay - Regulated News / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.solvay.com/en/regulated-news",
+        "crawl_priority": "Primary",
+        "page_title": "Regulated News",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.solvay.com"
+      }
     ],
     "Syensqo": [
-      {"source": "Syensqo Press Releases", "kind": "press_release", "url": "https://www.syensqo.com/en/press-releases"},
-      {"source": "Syensqo Investors", "kind": "ir", "url": "https://www.syensqo.com/en/investors"}
+      {
+        "source": "Syensqo - News and Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.syensqo.com/en/newsroom/news-and-press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "News and Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Financial News / Financial News",
+        "kind": "newsroom",
+        "url": "https://www.syensqo.com/en/newsroom/financial-news",
+        "crawl_priority": "Primary",
+        "page_title": "Financial News",
+        "source_type_label": "Financial News",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.syensqo.com/en/newsroom",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.syensqo.com/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.syensqo.com/en/investors/annual-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Financials / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.syensqo.com/en/investors/financials",
+        "crawl_priority": "Primary",
+        "page_title": "Financials",
+        "source_type_label": "Financial Reports",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Earnings / Earnings",
+        "kind": "official_page",
+        "url": "https://www.syensqo.com/en/investors/financials/earnings",
+        "crawl_priority": "Primary",
+        "page_title": "Earnings",
+        "source_type_label": "Earnings",
+        "domain": "www.syensqo.com"
+      },
+      {
+        "source": "Syensqo - Statutory Accounts / Statutory Accounts",
+        "kind": "official_page",
+        "url": "https://www.syensqo.com/en/investors/financials/statutory-accounts",
+        "crawl_priority": "Primary",
+        "page_title": "Statutory Accounts",
+        "source_type_label": "Statutory Accounts",
+        "domain": "www.syensqo.com"
+      }
     ],
     "Hexagon AB": [
-      {"source": "Hexagon Press Releases", "kind": "press_release", "url": "https://hexagon.com/company/newsroom/press-releases"},
-      {"source": "Hexagon Investors", "kind": "ir", "url": "https://hexagon.com/company/investors"}
+      {
+        "source": "Hexagon AB - Press Releases / Press Releases / Regulatory Disclosures",
+        "kind": "press_release",
+        "url": "https://hexagon.com/company/newsroom/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases / Regulatory Disclosures",
+        "domain": "hexagon.com"
+      },
+      {
+        "source": "Hexagon AB - News & Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://hexagon.com/about/news-media",
+        "crawl_priority": "Primary",
+        "page_title": "News & Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "hexagon.com"
+      },
+      {
+        "source": "Hexagon AB - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://investors.hexagon.com/en/",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "investors.hexagon.com"
+      }
     ],
     "ABB": [
-      {"source": "ABB Press Releases", "kind": "press_release", "url": "https://global.abb/group/en/media/press-releases"},
-      {"source": "ABB Investors", "kind": "ir", "url": "https://global.abb/group/en/investors"}
+      {
+        "source": "ABB - Press Releases / Investor Press Releases",
+        "kind": "press_release",
+        "url": "https://global.abb/group/en/investors/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Investor Press Releases",
+        "domain": "global.abb"
+      },
+      {
+        "source": "ABB - News and Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.abb.com/global/en/company/media",
+        "crawl_priority": "Primary",
+        "page_title": "News and Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.abb.com"
+      },
+      {
+        "source": "ABB - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://global.abb/group/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "global.abb"
+      },
+      {
+        "source": "ABB - SEC Filings / XBRL Archive / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://global.abb/group/en/investors/results-and-reports/sec-filings/xbrl-2009",
+        "crawl_priority": "Primary",
+        "page_title": "SEC Filings / XBRL Archive",
+        "source_type_label": "Regulatory Filings",
+        "domain": "global.abb"
+      },
+      {
+        "source": "ABB - Annual Reporting Suite / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.abb.com/global/en/company/annual-reporting-suite",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reporting Suite",
+        "source_type_label": "Annual Reports",
+        "domain": "www.abb.com"
+      },
+      {
+        "source": "ABB - Quarterly Results / Quarterly Results",
+        "kind": "official_page",
+        "url": "https://global.abb/group/en/investors/quarterly-results",
+        "crawl_priority": "Primary",
+        "page_title": "Quarterly Results",
+        "source_type_label": "Quarterly Results",
+        "domain": "global.abb"
+      }
     ],
     "Maxon": [
-      {"source": "maxon News", "kind": "newsroom", "url": "https://www.maxongroup.com/en-us/news"}
+      {
+        "source": "Maxon - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.maxongroup.com/en/news-and-events/news",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.maxongroup.com"
+      },
+      {
+        "source": "Maxon - Media Center / Media Center",
+        "kind": "official_page",
+        "url": "https://www.maxongroup.com/en-us/news-and-events/media-center",
+        "crawl_priority": "Primary",
+        "page_title": "Media Center",
+        "source_type_label": "Media Center",
+        "domain": "www.maxongroup.com"
+      }
     ],
     "Siemens-Gamesa": [
-      {"source": "Siemens Gamesa Newsroom", "kind": "newsroom", "url": "https://www.siemensgamesa.com/en-int/newsroom"}
+      {
+        "source": "Siemens-Gamesa - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.siemensgamesa.com/global/en/home/press-releases.html",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.siemensgamesa.com"
+      },
+      {
+        "source": "Siemens-Gamesa - Press / Newsroom / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.siemensgamesa.com/global/en/home/press.html",
+        "crawl_priority": "Primary",
+        "page_title": "Press / Newsroom",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.siemensgamesa.com"
+      },
+      {
+        "source": "Siemens-Gamesa - Siemens Energy Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.siemens-energy.com/global/en/home/investor-relations.html",
+        "crawl_priority": "Supplemental",
+        "page_title": "Siemens Energy Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.siemens-energy.com"
+      },
+      {
+        "source": "Siemens-Gamesa - Voting Rights Announcements / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.siemens-energy.com/global/en/home/investor-relations/share/shareholder-structure-voting-rights-announcements.html",
+        "crawl_priority": "Supplemental",
+        "page_title": "Voting Rights Announcements",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.siemens-energy.com"
+      },
+      {
+        "source": "Siemens-Gamesa - Publications & Ad Hoc / Regulatory Disclosures / Publications",
+        "kind": "official_page",
+        "url": "https://www.siemens-energy.com/global/en/home/investor-relations/publications-ad-hoc.html",
+        "crawl_priority": "Supplemental",
+        "page_title": "Publications & Ad Hoc",
+        "source_type_label": "Regulatory Disclosures / Publications",
+        "domain": "www.siemens-energy.com"
+      }
     ],
     "Renishaw": [
-      {"source": "Renishaw News", "kind": "newsroom", "url": "https://www.renishaw.com/en/news--6516"},
-      {"source": "Renishaw Investor Relations", "kind": "ir", "url": "https://www.renishaw.com/en/investor-relations--6608"}
+      {
+        "source": "Renishaw - Company News / Company News",
+        "kind": "newsroom",
+        "url": "https://www.renishaw.com/en/company-news--6853",
+        "crawl_priority": "Primary",
+        "page_title": "Company News",
+        "source_type_label": "Company News",
+        "domain": "www.renishaw.com"
+      },
+      {
+        "source": "Renishaw - Latest News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.renishaw.com/en/renishaw-news--6635",
+        "crawl_priority": "Primary",
+        "page_title": "Latest News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.renishaw.com"
+      },
+      {
+        "source": "Renishaw - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.renishaw.com/en/investors--22615",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.renishaw.com"
+      },
+      {
+        "source": "Renishaw - Reports, Videos and Presentations / Financial Reports / Presentations",
+        "kind": "presentation",
+        "url": "https://www.renishaw.com/en/--21976",
+        "crawl_priority": "Primary",
+        "page_title": "Reports, Videos and Presentations",
+        "source_type_label": "Financial Reports / Presentations",
+        "domain": "www.renishaw.com"
+      },
+      {
+        "source": "Renishaw - Regulatory News / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.renishaw.com/en/regulatory-news--21977",
+        "crawl_priority": "Primary",
+        "page_title": "Regulatory News",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.renishaw.com"
+      }
     ],
     "Nexeon": [
-      {"source": "Nexeon News", "kind": "newsroom", "url": "https://www.nexeon.co.uk/news"}
+      {
+        "source": "Nexeon - Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://www.nexeonglobal.com/media",
+        "crawl_priority": "Primary",
+        "page_title": "Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "www.nexeonglobal.com"
+      },
+      {
+        "source": "Nexeon - Latest News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.nexeonglobal.com/media/latest-news",
+        "crawl_priority": "Primary",
+        "page_title": "Latest News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.nexeonglobal.com"
+      }
     ],
     "Rio Tinto": [
-      {"source": "Rio Tinto News Releases", "kind": "press_release", "url": "https://www.riotinto.com/en/news/releases"},
-      {"source": "Rio Tinto Investors", "kind": "ir", "url": "https://www.riotinto.com/en/invest"}
+      {
+        "source": "Rio Tinto - Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.riotinto.com/news/releases/",
+        "crawl_priority": "Primary",
+        "page_title": "Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - Financial News and Performance / Financial News",
+        "kind": "newsroom",
+        "url": "https://www.riotinto.com/en/invest/financial-news-performance",
+        "crawl_priority": "Primary",
+        "page_title": "Financial News and Performance",
+        "source_type_label": "Financial News",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.riotinto.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - Invest / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.riotinto.com/en/invest",
+        "crawl_priority": "Primary",
+        "page_title": "Invest",
+        "source_type_label": "Investor Relations",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - Exchange Releases / Regulatory Filings / Exchange Announcements",
+        "kind": "filing",
+        "url": "https://www.riotinto.com/invest/exchange-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Exchange Releases",
+        "source_type_label": "Regulatory Filings / Exchange Announcements",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - Annual Report / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.riotinto.com/invest/reports/annual-report",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Report",
+        "source_type_label": "Annual Reports",
+        "domain": "www.riotinto.com"
+      },
+      {
+        "source": "Rio Tinto - Reports / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.riotinto.com/en/invest/reports",
+        "crawl_priority": "Primary",
+        "page_title": "Reports",
+        "source_type_label": "Financial Reports",
+        "domain": "www.riotinto.com"
+      }
     ],
     "HyproMag": [
-      {"source": "HyProMag News", "kind": "newsroom", "url": "https://hypromag.com/news/"}
+      {
+        "source": "HyproMag - HyProMag News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://hypromag.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "HyProMag News",
+        "source_type_label": "Newsroom / News",
+        "domain": "hypromag.com"
+      },
+      {
+        "source": "HyproMag - HyProMag / Company Website",
+        "kind": "official_page",
+        "url": "https://hypromag.com/",
+        "crawl_priority": "Primary",
+        "page_title": "HyProMag",
+        "source_type_label": "Company Website",
+        "domain": "hypromag.com"
+      },
+      {
+        "source": "HyproMag - About HyProMag / Corporate Information",
+        "kind": "official_page",
+        "url": "https://hypromag.com/about/",
+        "crawl_priority": "Primary",
+        "page_title": "About HyProMag",
+        "source_type_label": "Corporate Information",
+        "domain": "hypromag.com"
+      },
+      {
+        "source": "HyproMag - Mkango 2026 News / News Archive",
+        "kind": "newsroom",
+        "url": "https://mkango.ca/news/2026",
+        "crawl_priority": "Supplemental",
+        "page_title": "Mkango 2026 News",
+        "source_type_label": "News Archive",
+        "domain": "mkango.ca"
+      },
+      {
+        "source": "HyproMag - Mkango News / Newsroom / Regulatory News",
+        "kind": "newsroom",
+        "url": "https://mkango.ca/news/",
+        "crawl_priority": "Supplemental",
+        "page_title": "Mkango News",
+        "source_type_label": "Newsroom / Regulatory News",
+        "domain": "mkango.ca"
+      }
     ],
     "EVG": [
-      {"source": "EV Group News", "kind": "newsroom", "url": "https://www.evgroup.com/news/"}
+      {
+        "source": "EVG - Press Center / News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.evgroup.com/company/news",
+        "crawl_priority": "Primary",
+        "page_title": "Press Center / News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.evgroup.com"
+      }
     ],
     "Plansee": [
-      {"source": "Plansee News", "kind": "newsroom", "url": "https://www.plansee.com/en/news.html"}
+      {
+        "source": "Plansee - Press & Stories / Press Releases / Stories",
+        "kind": "press_release",
+        "url": "https://plansee-group.com/en/news-media/press-stories",
+        "crawl_priority": "Primary",
+        "page_title": "Press & Stories",
+        "source_type_label": "Press Releases / Stories",
+        "domain": "plansee-group.com"
+      },
+      {
+        "source": "Plansee - News & Media / Newsroom / Media",
+        "kind": "newsroom",
+        "url": "https://plansee-group.com/en/news-media",
+        "crawl_priority": "Primary",
+        "page_title": "News & Media",
+        "source_type_label": "Newsroom / Media",
+        "domain": "plansee-group.com"
+      }
     ],
     "Texcell": [
-      {"source": "Texcell News", "kind": "newsroom", "url": "https://www.texcell.com/news/"}
+      {
+        "source": "Texcell - Actualités / News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://texcell.com/actualites/",
+        "crawl_priority": "Primary",
+        "page_title": "Actualités / News",
+        "source_type_label": "Newsroom / News",
+        "domain": "texcell.com"
+      },
+      {
+        "source": "Texcell - Texcell / Company Website",
+        "kind": "official_page",
+        "url": "https://texcell.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Texcell",
+        "source_type_label": "Company Website",
+        "domain": "texcell.com"
+      }
     ],
     "Veolia": [
-      {"source": "Veolia Press Releases", "kind": "press_release", "url": "https://www.veolia.com/en/newsroom/press-releases"},
-      {"source": "Veolia Finance", "kind": "ir", "url": "https://www.veolia.com/en/finance"}
+      {
+        "source": "Veolia - Financial Press Releases / Financial Press Releases",
+        "kind": "press_release",
+        "url": "https://www.veolia.com/en/veolia-group/finance/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Press Releases",
+        "source_type_label": "Financial Press Releases",
+        "domain": "www.veolia.com"
+      },
+      {
+        "source": "Veolia - Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.veolia.com/en/newsroom/press-releases",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.veolia.com"
+      },
+      {
+        "source": "Veolia - Finance / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.veolia.com/en/veolia-group/finance",
+        "crawl_priority": "Primary",
+        "page_title": "Finance",
+        "source_type_label": "Investor Relations",
+        "domain": "www.veolia.com"
+      },
+      {
+        "source": "Veolia - Financial Publications / Financial Reports",
+        "kind": "financial_report",
+        "url": "https://www.veolia.com/en/veolia-group/finance/analysts-and-investors/financial-publications",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Publications",
+        "source_type_label": "Financial Reports",
+        "domain": "www.veolia.com"
+      },
+      {
+        "source": "Veolia - Financial Information / Financial Information",
+        "kind": "official_page",
+        "url": "https://www.veolia.com/en/veolia-group/finance/financial-information",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Information",
+        "source_type_label": "Financial Information",
+        "domain": "www.veolia.com"
+      },
+      {
+        "source": "Veolia - Regulated Information / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.veolia.com/en/veolia-group/finance/regulated-information",
+        "crawl_priority": "Primary",
+        "page_title": "Regulated Information",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.veolia.com"
+      }
     ],
     "Airbus": [
-      {"source": "Airbus Press Releases", "kind": "press_release", "url": "https://www.airbus.com/en/newsroom/press-releases"},
-      {"source": "Airbus Investors", "kind": "ir", "url": "https://www.airbus.com/en/investors"}
+      {
+        "source": "Airbus - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.airbus.com/en/newsroom",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.airbus.com"
+      },
+      {
+        "source": "Airbus - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.airbus.com/en/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.airbus.com"
+      },
+      {
+        "source": "Airbus - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.airbus.com/en/investors/annual-reports",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "www.airbus.com"
+      },
+      {
+        "source": "Airbus - Financial Results / Financial Reports / Results",
+        "kind": "financial_report",
+        "url": "https://www.airbus.com/en/investors/financial-results",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Reports / Results",
+        "domain": "www.airbus.com"
+      }
     ],
     "Safran": [
-      {"source": "Safran Pressroom", "kind": "press_release", "url": "https://www.safran-group.com/pressroom"},
-      {"source": "Safran Finance", "kind": "ir", "url": "https://www.safran-group.com/finance"}
+      {
+        "source": "Safran - Pressroom / Newsroom / Press",
+        "kind": "press_release",
+        "url": "https://www.safran-group.com/pressroom",
+        "crawl_priority": "Primary",
+        "page_title": "Pressroom",
+        "source_type_label": "Newsroom / Press",
+        "domain": "www.safran-group.com"
+      },
+      {
+        "source": "Safran - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.safran-group.com/news",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.safran-group.com"
+      },
+      {
+        "source": "Safran - Analysts and Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.safran-group.com/finance/analysts-and-investors",
+        "crawl_priority": "Primary",
+        "page_title": "Analysts and Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.safran-group.com"
+      },
+      {
+        "source": "Safran - Publications and Results / Financial Reports / Results",
+        "kind": "financial_report",
+        "url": "https://www.safran-group.com/finance/publications-results",
+        "crawl_priority": "Primary",
+        "page_title": "Publications and Results",
+        "source_type_label": "Financial Reports / Results",
+        "domain": "www.safran-group.com"
+      },
+      {
+        "source": "Safran - Regulated Information / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.safran-group.com/finance/regulated-information",
+        "crawl_priority": "Primary",
+        "page_title": "Regulated Information",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.safran-group.com"
+      }
     ],
     "Air Liquide": [
-      {"source": "Air Liquide Press Releases", "kind": "press_release", "url": "https://www.airliquide.com/media/press-releases"},
-      {"source": "Air Liquide Investors", "kind": "ir", "url": "https://www.airliquide.com/investors"}
+      {
+        "source": "Air Liquide - Press Releases & News / Press Releases / News",
+        "kind": "press_release",
+        "url": "https://www.airliquide.com/group/press-releases-news",
+        "crawl_priority": "Primary",
+        "page_title": "Press Releases & News",
+        "source_type_label": "Press Releases / News",
+        "domain": "www.airliquide.com"
+      },
+      {
+        "source": "Air Liquide - Investors / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.airliquide.com/investors",
+        "crawl_priority": "Primary",
+        "page_title": "Investors",
+        "source_type_label": "Investor Relations",
+        "domain": "www.airliquide.com"
+      },
+      {
+        "source": "Air Liquide - Documents & Presentations / Financial Reports / Presentations",
+        "kind": "presentation",
+        "url": "https://www.airliquide.com/investors/documents-presentations",
+        "crawl_priority": "Primary",
+        "page_title": "Documents & Presentations",
+        "source_type_label": "Financial Reports / Presentations",
+        "domain": "www.airliquide.com"
+      },
+      {
+        "source": "Air Liquide - Regulated Information / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.airliquide.com/investors/regulated-information",
+        "crawl_priority": "Primary",
+        "page_title": "Regulated Information",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.airliquide.com"
+      }
     ],
     "Arkema": [
-      {"source": "Arkema News", "kind": "newsroom", "url": "https://www.arkema.com/global/en/media/newslist/"},
-      {"source": "Arkema Investor Relations", "kind": "ir", "url": "https://www.arkema.com/global/en/investor-relations/"}
+      {
+        "source": "Arkema - Financial News / Financial News",
+        "kind": "newsroom",
+        "url": "https://www.arkema.com/global/en/investor-relations/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial News",
+        "source_type_label": "Financial News",
+        "domain": "www.arkema.com"
+      },
+      {
+        "source": "Arkema - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.arkema.com/global/en/media/newsroom/",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.arkema.com"
+      },
+      {
+        "source": "Arkema - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.arkema.com/global/en/investor-relations/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.arkema.com"
+      },
+      {
+        "source": "Arkema - Universal Registration Document / Annual / Registration Reports",
+        "kind": "financial_report",
+        "url": "https://www.arkema.com/global/en/investor-relations/financials/universal-registration-document/",
+        "crawl_priority": "Primary",
+        "page_title": "Universal Registration Document",
+        "source_type_label": "Annual / Registration Reports",
+        "domain": "www.arkema.com"
+      },
+      {
+        "source": "Arkema - Regulated Information / Regulatory Disclosures",
+        "kind": "official_page",
+        "url": "https://www.arkema.com/global/en/investor-relations/regulated-information/",
+        "crawl_priority": "Primary",
+        "page_title": "Regulated Information",
+        "source_type_label": "Regulatory Disclosures",
+        "domain": "www.arkema.com"
+      }
     ],
     "DNP": [
-      {"source": "DNP News", "kind": "newsroom", "url": "https://www.global.dnp/news/"}
+      {
+        "source": "DNP - Corporate News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.dnp.co.jp/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Corporate News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.dnp.co.jp"
+      },
+      {
+        "source": "DNP - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.dnp.co.jp/en/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.dnp.co.jp"
+      },
+      {
+        "source": "DNP - Securities Reports / Regulatory Filings",
+        "kind": "filing",
+        "url": "https://www.dnp.co.jp/ir/library/report/",
+        "crawl_priority": "Primary",
+        "page_title": "Securities Reports",
+        "source_type_label": "Regulatory Filings",
+        "domain": "www.dnp.co.jp"
+      },
+      {
+        "source": "DNP - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.dnp.co.jp/ir/library/?lang=en",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.dnp.co.jp"
+      }
     ],
     "Hitachi Metals": [
-      {"source": "Proterial Press Releases", "kind": "press_release", "url": "https://www.proterial.com/e/press/"},
-      {"source": "Proterial IR", "kind": "ir", "url": "https://www.proterial.com/e/ir/"}
+      {
+        "source": "Hitachi Metals - Proterial Press / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.proterial.com/e/press/",
+        "crawl_priority": "Primary",
+        "page_title": "Proterial Press",
+        "source_type_label": "Press Releases",
+        "domain": "www.proterial.com"
+      },
+      {
+        "source": "Hitachi Metals - Proterial 2026 Press Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.proterial.com/e/press/2026/",
+        "crawl_priority": "Primary",
+        "page_title": "Proterial 2026 Press Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.proterial.com"
+      },
+      {
+        "source": "Hitachi Metals - Financial Results Archive / Historical Financial Results",
+        "kind": "official_page",
+        "url": "https://www.proterial.com/e/corp/highlight/ir_library/ir-prsen.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results Archive",
+        "source_type_label": "Historical Financial Results",
+        "domain": "www.proterial.com"
+      },
+      {
+        "source": "Hitachi Metals - IFRS Financial Statements Archive / Historical Financial Statements",
+        "kind": "official_page",
+        "url": "https://www.proterial.com/e/corp/highlight/ir_library/ifrs.html",
+        "crawl_priority": "Primary",
+        "page_title": "IFRS Financial Statements Archive",
+        "source_type_label": "Historical Financial Statements",
+        "domain": "www.proterial.com"
+      },
+      {
+        "source": "Hitachi Metals - Financial Information / Investor / Financial Information",
+        "kind": "official_page",
+        "url": "https://www.proterial.com/e/corp/highlight/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Information",
+        "source_type_label": "Investor / Financial Information",
+        "domain": "www.proterial.com"
+      }
     ],
     "Toppan Holdings": [
-      {"source": "TOPPAN News", "kind": "newsroom", "url": "https://www.holdings.toppan.com/en/news/"},
-      {"source": "TOPPAN Investor Relations", "kind": "ir", "url": "https://www.holdings.toppan.com/en/ir/"}
+      {
+        "source": "Toppan Holdings - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.holdings.toppan.com/en/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.holdings.toppan.com"
+      },
+      {
+        "source": "Toppan Holdings - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.holdings.toppan.com/en/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.holdings.toppan.com"
+      },
+      {
+        "source": "Toppan Holdings - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.holdings.toppan.com/en/ir/material/",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.holdings.toppan.com"
+      },
+      {
+        "source": "Toppan Holdings - Disclosure Policy / Disclosure Policy",
+        "kind": "official_page",
+        "url": "https://www.holdings.toppan.com/en/ir/governance/disclosure.html",
+        "crawl_priority": "Primary",
+        "page_title": "Disclosure Policy",
+        "source_type_label": "Disclosure Policy",
+        "domain": "www.holdings.toppan.com"
+      },
+      {
+        "source": "Toppan Holdings - Results / Financial Results",
+        "kind": "official_page",
+        "url": "https://www.holdings.toppan.com/en/ir/material/closing.html",
+        "crawl_priority": "Primary",
+        "page_title": "Results",
+        "source_type_label": "Financial Results",
+        "domain": "www.holdings.toppan.com"
+      },
+      {
+        "source": "Toppan Holdings - Financial Statements / Financial Statements",
+        "kind": "official_page",
+        "url": "https://www.holdings.toppan.com/en/ir/financial/statements.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Statements",
+        "source_type_label": "Financial Statements",
+        "domain": "www.holdings.toppan.com"
+      }
     ],
     "Nabtesco": [
-      {"source": "Nabtesco News", "kind": "newsroom", "url": "https://www.nabtesco.com/en/news/"},
-      {"source": "Nabtesco IR", "kind": "ir", "url": "https://www.nabtesco.com/en/ir/"}
+      {
+        "source": "Nabtesco - IR-filtered News / Investor News / Timely Disclosures",
+        "kind": "newsroom",
+        "url": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
+        "crawl_priority": "Primary",
+        "page_title": "IR-filtered News",
+        "source_type_label": "Investor News / Timely Disclosures",
+        "domain": "www.nabtesco.com"
+      },
+      {
+        "source": "Nabtesco - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.nabtesco.com/en/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.nabtesco.com"
+      },
+      {
+        "source": "Nabtesco - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.nabtesco.com/en/about/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.nabtesco.com"
+      }
     ],
     "Asahi Glass": [
-      {"source": "AGC News", "kind": "newsroom", "url": "https://www.agc.com/en/news/"},
-      {"source": "AGC Investor Relations", "kind": "ir", "url": "https://www.agc.com/en/ir/"}
+      {
+        "source": "Asahi Glass - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.agc.com/en/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.agc.com"
+      },
+      {
+        "source": "Asahi Glass - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.agc.com/en/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.agc.com"
+      },
+      {
+        "source": "Asahi Glass - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.agc.com/en/ir/library/index.html",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.agc.com"
+      },
+      {
+        "source": "Asahi Glass - Financial Results / Financial Results",
+        "kind": "official_page",
+        "url": "https://www.agc.com/en/ir/library/result/index.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Results",
+        "domain": "www.agc.com"
+      },
+      {
+        "source": "Asahi Glass - Financial Review / Financial Review",
+        "kind": "official_page",
+        "url": "https://www.agc.com/en/ir/library/financial/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Review",
+        "source_type_label": "Financial Review",
+        "domain": "www.agc.com"
+      }
     ],
     "JSR": [
-      {"source": "JSR News", "kind": "newsroom", "url": "https://www.jsr.co.jp/jsr_e/news/"},
-      {"source": "JSR IR", "kind": "ir", "url": "https://www.jsr.co.jp/jsr_e/ir/"}
+      {
+        "source": "JSR - Financial News / Investor / Financial News",
+        "kind": "newsroom",
+        "url": "https://www.jsr.co.jp/jsr_e/ir/ir_news.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financial News",
+        "source_type_label": "Investor / Financial News",
+        "domain": "www.jsr.co.jp"
+      },
+      {
+        "source": "JSR - 2026 News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.jsr.co.jp/jsr_e/news/2026/",
+        "crawl_priority": "Primary",
+        "page_title": "2026 News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.jsr.co.jp"
+      },
+      {
+        "source": "JSR - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.jsr.co.jp/jsr_e/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.jsr.co.jp"
+      }
     ],
     "Shin-Etsu Chemicals": [
-      {"source": "Shin-Etsu News", "kind": "newsroom", "url": "https://www.shinetsu.co.jp/en/news/"},
-      {"source": "Shin-Etsu IR", "kind": "ir", "url": "https://www.shinetsu.co.jp/en/ir/"}
+      {
+        "source": "Shin-Etsu Chemicals - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.shinetsu.co.jp/en/category/news/news-release/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.shinetsu.co.jp"
+      },
+      {
+        "source": "Shin-Etsu Chemicals - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.shinetsu.co.jp/en/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.shinetsu.co.jp"
+      },
+      {
+        "source": "Shin-Etsu Chemicals - Financial Summary / Briefing / Financial Briefings",
+        "kind": "official_page",
+        "url": "https://www.shinetsu.co.jp/en/ir/ir-data/ir-briefing/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Summary / Briefing",
+        "source_type_label": "Financial Briefings",
+        "domain": "www.shinetsu.co.jp"
+      },
+      {
+        "source": "Shin-Etsu Chemicals - Financial Data / Financial Data / Results",
+        "kind": "official_page",
+        "url": "https://www.shinetsu.co.jp/en/ir/ir-data/ir-results/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Data",
+        "source_type_label": "Financial Data / Results",
+        "domain": "www.shinetsu.co.jp"
+      }
     ],
     "Tokyo Electron": [
-      {"source": "Tokyo Electron News", "kind": "newsroom", "url": "https://www.tel.com/news/"},
-      {"source": "Tokyo Electron IR", "kind": "ir", "url": "https://www.tel.com/ir/"}
+      {
+        "source": "Tokyo Electron - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.tel.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.tel.com"
+      },
+      {
+        "source": "Tokyo Electron - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.tel.com/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.tel.com"
+      },
+      {
+        "source": "Tokyo Electron - Earnings Release / Financial Reports / Earnings",
+        "kind": "financial_report",
+        "url": "https://www.tel.com/ir/library/report/",
+        "crawl_priority": "Primary",
+        "page_title": "Earnings Release",
+        "source_type_label": "Financial Reports / Earnings",
+        "domain": "www.tel.com"
+      },
+      {
+        "source": "Tokyo Electron - IR Calendar / Investor Calendar",
+        "kind": "official_page",
+        "url": "https://www.tel.com/ir/calendar/",
+        "crawl_priority": "Primary",
+        "page_title": "IR Calendar",
+        "source_type_label": "Investor Calendar",
+        "domain": "www.tel.com"
+      }
     ],
     "Tosoh": [
-      {"source": "Tosoh News", "kind": "newsroom", "url": "https://www.tosoh.com/news"},
-      {"source": "Tosoh IR", "kind": "ir", "url": "https://www.tosoh.com/ir"}
+      {
+        "source": "Tosoh - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.tosoh.co.jp/news/release/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.tosoh.co.jp"
+      },
+      {
+        "source": "Tosoh - IR News / Investor News",
+        "kind": "newsroom",
+        "url": "https://www.tosoh.co.jp/ir/news/",
+        "crawl_priority": "Primary",
+        "page_title": "IR News",
+        "source_type_label": "Investor News",
+        "domain": "www.tosoh.co.jp"
+      },
+      {
+        "source": "Tosoh - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.tosoh.co.jp/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.tosoh.co.jp"
+      },
+      {
+        "source": "Tosoh - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.tosoh.co.jp/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.tosoh.co.jp"
+      },
+      {
+        "source": "Tosoh - IR Library / Regulatory Filings / IR Library",
+        "kind": "filing",
+        "url": "https://www.tosoh.co.jp/ir/library/",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Regulatory Filings / IR Library",
+        "domain": "www.tosoh.co.jp"
+      }
     ],
     "Mitsubishi Chemical": [
-      {"source": "Mitsubishi Chemical Group News", "kind": "newsroom", "url": "https://www.mcgc.com/english/news_release/"},
-      {"source": "Mitsubishi Chemical Group IR", "kind": "ir", "url": "https://www.mcgc.com/english/ir/"}
+      {
+        "source": "Mitsubishi Chemical - News Releases / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.mcgc.com/english/news_release/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.mcgc.com"
+      },
+      {
+        "source": "Mitsubishi Chemical - IR News / Investor News",
+        "kind": "newsroom",
+        "url": "https://www.mcgc.com/english/ir/topics/index.html",
+        "crawl_priority": "Primary",
+        "page_title": "IR News",
+        "source_type_label": "Investor News",
+        "domain": "www.mcgc.com"
+      },
+      {
+        "source": "Mitsubishi Chemical - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.mcgc.com/english/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.mcgc.com"
+      },
+      {
+        "source": "Mitsubishi Chemical - TSE Filings / Regulatory Filings / TSE Disclosures",
+        "kind": "filing",
+        "url": "https://www.mcgc.com/english/ir/indication_info/index.html",
+        "crawl_priority": "Primary",
+        "page_title": "TSE Filings",
+        "source_type_label": "Regulatory Filings / TSE Disclosures",
+        "domain": "www.mcgc.com"
+      },
+      {
+        "source": "Mitsubishi Chemical - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.mcgc.com/english/ir/library/index.html",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.mcgc.com"
+      }
     ],
     "Sumitomo Chemical": [
-      {"source": "Sumitomo Chemical News", "kind": "newsroom", "url": "https://www.sumitomo-chem.co.jp/english/news/"},
-      {"source": "Sumitomo Chemical IR", "kind": "ir", "url": "https://www.sumitomo-chem.co.jp/english/ir/"}
+      {
+        "source": "Sumitomo Chemical - News Releases Filter / Press Releases",
+        "kind": "press_release",
+        "url": "https://www.sumitomo-chem.co.jp/english/news/category/newsreleases/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases Filter",
+        "source_type_label": "Press Releases",
+        "domain": "www.sumitomo-chem.co.jp"
+      },
+      {
+        "source": "Sumitomo Chemical - IR News / Investor News",
+        "kind": "newsroom",
+        "url": "https://www.sumitomo-chem.co.jp/english/ir/news/",
+        "crawl_priority": "Primary",
+        "page_title": "IR News",
+        "source_type_label": "Investor News",
+        "domain": "www.sumitomo-chem.co.jp"
+      },
+      {
+        "source": "Sumitomo Chemical - IR News Filter / Investor News",
+        "kind": "newsroom",
+        "url": "https://www.sumitomo-chem.co.jp/english/news/category/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "IR News Filter",
+        "source_type_label": "Investor News",
+        "domain": "www.sumitomo-chem.co.jp"
+      },
+      {
+        "source": "Sumitomo Chemical - News Releases / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.sumitomo-chem.co.jp/english/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News Releases",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.sumitomo-chem.co.jp"
+      },
+      {
+        "source": "Sumitomo Chemical - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.sumitomo-chem.co.jp/english/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.sumitomo-chem.co.jp"
+      },
+      {
+        "source": "Sumitomo Chemical - Financial Results / Financial Results",
+        "kind": "official_page",
+        "url": "https://www.sumitomo-chem.co.jp/english/ir/library/financial_results/",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Results",
+        "domain": "www.sumitomo-chem.co.jp"
+      }
     ],
     "Asahi Kasei": [
-      {"source": "Asahi Kasei News", "kind": "newsroom", "url": "https://www.asahi-kasei.com/news/"},
-      {"source": "Asahi Kasei IR", "kind": "ir", "url": "https://www.asahi-kasei.com/ir/"}
+      {
+        "source": "Asahi Kasei - 2026 News / News Archive",
+        "kind": "newsroom",
+        "url": "https://www.asahi-kasei.com/news/2026",
+        "crawl_priority": "Primary",
+        "page_title": "2026 News",
+        "source_type_label": "News Archive",
+        "domain": "www.asahi-kasei.com"
+      },
+      {
+        "source": "Asahi Kasei - News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.asahi-kasei.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "News",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.asahi-kasei.com"
+      },
+      {
+        "source": "Asahi Kasei - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.asahi-kasei.com/ir",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.asahi-kasei.com"
+      },
+      {
+        "source": "Asahi Kasei - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.asahi-kasei.com/ir/library",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.asahi-kasei.com"
+      },
+      {
+        "source": "Asahi Kasei - Financial Results and Briefings / Financial Results / Briefings",
+        "kind": "official_page",
+        "url": "https://www.asahi-kasei.com/ir/library/financial-briefing",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results and Briefings",
+        "source_type_label": "Financial Results / Briefings",
+        "domain": "www.asahi-kasei.com"
+      }
     ],
     "Toray": [
-      {"source": "Toray News", "kind": "newsroom", "url": "https://www.toray.com/global/news/"},
-      {"source": "Toray IR", "kind": "ir", "url": "https://www.toray.com/ir/"}
+      {
+        "source": "Toray - Newsroom / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://www.toray.com/news/",
+        "crawl_priority": "Primary",
+        "page_title": "Newsroom",
+        "source_type_label": "Newsroom / News",
+        "domain": "www.toray.com"
+      },
+      {
+        "source": "Toray - Investor Relations / Investor Relations",
+        "kind": "ir",
+        "url": "https://www.toray.com/ir/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations",
+        "source_type_label": "Investor Relations",
+        "domain": "www.toray.com"
+      },
+      {
+        "source": "Toray - Annual Reports / Annual Reports",
+        "kind": "financial_report",
+        "url": "https://www.toray.com/ir/annual_reports/",
+        "crawl_priority": "Primary",
+        "page_title": "Annual Reports",
+        "source_type_label": "Annual Reports",
+        "domain": "www.toray.com"
+      },
+      {
+        "source": "Toray - IR Library / Financial Reports / IR Library",
+        "kind": "financial_report",
+        "url": "https://www.toray.com/ir/library/",
+        "crawl_priority": "Primary",
+        "page_title": "IR Library",
+        "source_type_label": "Financial Reports / IR Library",
+        "domain": "www.toray.com"
+      },
+      {
+        "source": "Toray - Financial Results / Financial Results",
+        "kind": "official_page",
+        "url": "https://www.toray.com/ir/library/lib_001.html",
+        "crawl_priority": "Primary",
+        "page_title": "Financial Results",
+        "source_type_label": "Financial Results",
+        "domain": "www.toray.com"
+      }
     ],
     "Cheng Uei Precision": [
-      {"source": "Foxlink News", "kind": "newsroom", "url": "https://www.foxlink.com/en/news"},
-      {"source": "Foxlink Investor Relations", "kind": "ir", "url": "https://www.foxlink.com/en/ir"}
+      {
+        "source": "Cheng Uei Precision - Foxlink Official Website / Company Website",
+        "kind": "official_page",
+        "url": "http://www.foxlink.com",
+        "crawl_priority": "Primary",
+        "page_title": "Foxlink Official Website",
+        "source_type_label": "Company Website",
+        "domain": "www.foxlink.com"
+      },
+      {
+        "source": "Cheng Uei Precision - Taiwan TDCC IR Platform - Company/IR Contact / IR Contact / Market Infrastructure",
+        "kind": "official_page",
+        "url": "https://irplatform.tdcc.com.tw/ir/en/contact/detail/1F5501BC-D439-41AC-8403-2684AA0222BB",
+        "crawl_priority": "Supplemental",
+        "page_title": "Taiwan TDCC IR Platform - Company/IR Contact",
+        "source_type_label": "IR Contact / Market Infrastructure",
+        "domain": "irplatform.tdcc.com.tw"
+      }
     ],
     "Shanghai Electric Wind Power": [
-      {"source": "Shanghai Electric Wind Power News", "kind": "newsroom", "url": "https://www.sewpg.com/en/news"}
+      {
+        "source": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+        "kind": "ir",
+        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+        "crawl_priority": "Primary",
+        "page_title": "Company Information",
+        "source_type_label": "Investor Relations / Company Profile",
+        "domain": "www.shanghai-electric.com"
+      },
+      {
+        "source": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
+        "kind": "ir",
+        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
+        "crawl_priority": "Primary",
+        "page_title": "Investor Relations Contact",
+        "source_type_label": "Investor Relations Contact",
+        "domain": "www.shanghai-electric.com"
+      },
+      {
+        "source": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
+        "kind": "filing",
+        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
+        "crawl_priority": "Primary",
+        "page_title": "Announcements and Circulars",
+        "source_type_label": "Regulatory Filings / Announcements",
+        "domain": "www.shanghai-electric.com"
+      },
+      {
+        "source": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
+        "kind": "official_page",
+        "url": "https://www.sewpg.com/",
+        "crawl_priority": "Primary",
+        "page_title": "Shanghai Electric Wind Power Official Website",
+        "source_type_label": "Company Website",
+        "domain": "www.sewpg.com"
+      },
+      {
+        "source": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
+        "kind": "official_page",
+        "url": "https://www.shanghai-electric.com/listed_en/windpower/",
+        "crawl_priority": "Primary",
+        "page_title": "Shanghai Electric Wind Power Group Profile",
+        "source_type_label": "Corporate Profile",
+        "domain": "www.shanghai-electric.com"
+      }
     ]
   }
 }
