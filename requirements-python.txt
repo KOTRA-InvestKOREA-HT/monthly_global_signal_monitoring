@@ -1,1 +1,2 @@
 pdfplumber>=0.11
+reportlab>=4.2

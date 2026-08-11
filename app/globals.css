@@ -94,6 +94,19 @@ button {
   cursor: pointer;
 }
 
+.downloadButton {
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background: #fff;
+  text-decoration: none;
+}
+
 button:disabled {
   opacity: 0.65;
   cursor: not-allowed;
@@ -173,6 +186,10 @@ button:disabled {
 }
 
 .relevancePanel {
+  margin-bottom: 16px;
+}
+
+.investmentPanel {
   margin-bottom: 16px;
 }
 
@@ -263,6 +280,38 @@ td:nth-child(5) {
   text-align: center;
 }
 
+.investmentPanel th:nth-child(1),
+.investmentPanel td:nth-child(1) {
+  width: 170px;
+}
+
+.investmentPanel th:nth-child(2),
+.investmentPanel td:nth-child(2) {
+  width: 130px;
+}
+
+.investmentPanel th:nth-child(3),
+.investmentPanel td:nth-child(3) {
+  width: auto;
+}
+
+.investmentPanel th:nth-child(4),
+.investmentPanel td:nth-child(4) {
+  width: 210px;
+}
+
+.investmentPanel th:nth-child(5),
+.investmentPanel td:nth-child(5) {
+  width: 145px;
+  text-align: left;
+}
+
+.investmentPanel th:nth-child(6),
+.investmentPanel td:nth-child(6) {
+  width: 48px;
+  text-align: center;
+}
+
 td {
   word-break: break-word;
 }
@@ -275,6 +324,25 @@ td a {
 .sourceStack {
   display: grid;
   gap: 6px;
+}
+
+.signalStack {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.signalNo {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--brand);
+  color: var(--brand);
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .titleStack {
@@ -399,7 +467,8 @@ td a {
   }
 
   .actions,
-  .actions button {
+  .actions button,
+  .downloadButton {
     width: 100%;
   }
 

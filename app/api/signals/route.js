@@ -64,13 +64,15 @@ async function readOptionalGitHubJson(filePath, fallbackValue) {
 
 export async function GET() {
   try {
-    const [signals, summary, relevantSignals, relevanceSummary] = await Promise.all([
+    const [signals, summary, relevantSignals, relevanceSummary, investmentSignals, investmentSummary] = await Promise.all([
       readGitHubJson("outputs/latest_company_signals.json"),
       readGitHubJson("outputs/latest_collection_summary.json"),
       readOptionalGitHubJson("outputs/latest_relevant_signals.json", []),
       readOptionalGitHubJson("outputs/latest_relevance_summary.json", null),
+      readOptionalGitHubJson("outputs/latest_investment_signals.json", []),
+      readOptionalGitHubJson("outputs/latest_investment_signal_summary.json", null),
     ]);
-    return Response.json({ signals, summary, relevantSignals, relevanceSummary });
+    return Response.json({ signals, summary, relevantSignals, relevanceSummary, investmentSignals, investmentSummary });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

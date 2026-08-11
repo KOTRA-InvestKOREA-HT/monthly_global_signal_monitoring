@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Play, RefreshCw } from "lucide-react";
+import { Download, ExternalLink, Play, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 function formatDate(value) {
@@ -25,8 +25,10 @@ export default function HomePage() {
   const [days, setDays] = useState("45");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
+  const [investmentSignals, setInvestmentSignals] = useState([]);
   const [summary, setSummary] = useState(null);
   const [relevanceSummary, setRelevanceSummary] = useState(null);
+  const [investmentSummary, setInvestmentSummary] = useState(null);
   const [crawlStatus, setCrawlStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [triggering, setTriggering] = useState(false);
@@ -42,8 +44,10 @@ export default function HomePage() {
       if (!response.ok) throw new Error(payload.error || "데이터를 불러오지 못했습니다.");
       setSignals(payload.signals || []);
       setRelevantSignals(payload.relevantSignals || []);
+      setInvestmentSignals(payload.investmentSignals || []);
       setSummary(payload.summary || null);
       setRelevanceSummary(payload.relevanceSummary || null);
+      setInvestmentSummary(payload.investmentSummary || null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -100,6 +104,7 @@ export default function HomePage() {
 
   const displayedSignals = useMemo(() => signals, [signals]);
   const displayedRelevantSignals = useMemo(() => relevantSignals, [relevantSignals]);
+  const displayedInvestmentSignals = useMemo(() => investmentSignals, [investmentSignals]);
   const officialCount = summary?.official_result_count ?? signals.filter((item) => item.source_type === "official").length;
 
   return (
@@ -122,6 +127,10 @@ export default function HomePage() {
             <RefreshCw className={loading ? "spin" : ""} size={18} />
             <span>새로고침</span>
           </button>
+          <a className="downloadButton" href="/reports/latest_report.pdf" target="_blank" rel="noreferrer">
+            <Download size={18} />
+            <span>보고서 다운로드</span>
+          </a>
         </div>
       </section>
 
@@ -150,6 +159,10 @@ export default function HomePage() {
           <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
         </div>
         <div>
+          <span>투자 시그널</span>
+          <strong>{investmentSummary?.investment_signal_count ?? investmentSignals.length}</strong>
+        </div>
+        <div>
           <span>크롤링 상태</span>
           <strong className={crawlStatus?.label === "진행 중" ? "statusRunning" : ""}>
             {triggering ? "요청 중" : crawlStatus?.label || "대기"}
@@ -158,6 +171,81 @@ export default function HomePage() {
         <div>
           <span>최근 실행</span>
           <strong>{formatDate(summary?.run_started_at)}</strong>
+        </div>
+      </section>
+
+      <section className="panel investmentPanel">
+        <div className="panelHeader">
+          <h2>5대 투자동향 시그널</h2>
+          <span>{loading ? "불러오는 중" : `${displayedInvestmentSignals.length}건 전체 표시`}</span>
+        </div>
+        <div className="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>시그널</th>
+                <th>기업</th>
+                <th>제목 및 근거</th>
+                <th>출처</th>
+                <th>게시일</th>
+                <th aria-label="open" />
+              </tr>
+            </thead>
+            <tbody>
+              {displayedInvestmentSignals.map((item) => (
+                <tr key={`investment-${item.investment_signal_id}-${item.company}-${item.url}`}>
+                  <td>
+                    <div className="signalStack">
+                      <span className="signalNo">{item.investment_signal_no}</span>
+                      <strong>{item.investment_signal_label}</strong>
+                    </div>
+                  </td>
+                  <td>{item.company}</td>
+                  <td>
+                    <div className="titleStack">
+                      <strong>{item.title}</strong>
+                      {item.investment_signal_reason ? <p className="reasonText">{item.investment_signal_reason}</p> : null}
+                      {shortList(item.evidence_snippets, 1).map((snippet) => (
+                        <p className="evidenceText" key={snippet}>
+                          {snippet}
+                        </p>
+                      ))}
+                      {shortList(item.matched_terms).length ? (
+                        <div className="keywordList">
+                          {shortList(item.matched_terms).map((term) => (
+                            <span className="keywordPill" key={term}>
+                              {term}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="sourceStack">
+                      <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
+                        {item.source_type === "official" ? "공식" : "대체"}
+                      </span>
+                      <span>{item.source}</span>
+                    </div>
+                  </td>
+                  <td>{formatDate(item.published_at)}</td>
+                  <td>
+                    <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 투자 시그널 열기`}>
+                      <ExternalLink size={17} />
+                    </a>
+                  </td>
+                </tr>
+              ))}
+              {!loading && displayedInvestmentSignals.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="empty">
+                    표시할 투자동향 시그널이 없습니다.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
         </div>
       </section>
 

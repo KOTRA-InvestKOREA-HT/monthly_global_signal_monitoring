@@ -24,6 +24,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-python.txt
       - run: >
           node scripts/collect_company_signals.mjs
           --companies data/target_companies.json
@@ -44,7 +48,24 @@ jobs:
           --keyword-config config/technology_keywords.json
           --out-dir outputs
           --threshold 1
+      - run: >
+          node scripts/classify_investment_signals.mjs
+          --signals outputs/latest_company_signals.json
+          --indicator-config config/investment_signal_indicators.json
+          --out-dir outputs
+          --threshold 4
+      - run: >
+          python scripts/build_pdf_report.py
+          --signals outputs/latest_company_signals.json
+          --summary outputs/latest_collection_summary.json
+          --relevant outputs/latest_relevant_signals.json
+          --relevance-summary outputs/latest_relevance_summary.json
+          --investment-signals outputs/latest_investment_signals.json
+          --investment-summary outputs/latest_investment_signal_summary.json
+          --indicator-config config/investment_signal_indicators.json
+          --font assets/fonts/NOTOSANSKR-VF.TTF
+          --out public/reports/latest_report.pdf
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update company signal data and relevance filter"
-          file_pattern: outputs/*.json outputs/*.csv
+          commit_message: "Update company signal data and signal filters"
+          file_pattern: outputs/*.json outputs/*.csv public/reports/latest_report.pdf
