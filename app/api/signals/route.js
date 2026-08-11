@@ -35,8 +35,23 @@ async function readGitHubJson(filePath) {
   }
 
   const payload = await response.json();
-  const decoded = Buffer.from(payload.content || "", "base64").toString("utf8");
-  return JSON.parse(decoded);
+  if (payload.content) {
+    const decoded = Buffer.from(payload.content, "base64").toString("utf8");
+    return JSON.parse(decoded);
+  }
+
+  if (payload.download_url) {
+    const rawResponse = await fetch(payload.download_url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      cache: "no-store",
+    });
+    if (!rawResponse.ok) {
+      throw new Error(`GitHub raw file read failed: ${rawResponse.status}`);
+    }
+    return JSON.parse(await rawResponse.text());
+  }
+
+  throw new Error(`GitHub file payload did not include readable content: ${filePath}`);
 }
 
 async function readOptionalGitHubJson(filePath, fallbackValue) {
