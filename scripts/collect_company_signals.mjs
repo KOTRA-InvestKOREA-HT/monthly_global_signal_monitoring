@@ -49,6 +49,7 @@ function parseArgs(argv) {
     rateLimitSeconds: 1.0,
     timeoutSeconds: 20,
     companyLimit: 0,
+    companyConcurrency: 1,
     fetchOfficialContent: true,
     contentCharLimit: 24000,
     contentExcerptLimit: 800,
@@ -67,6 +68,7 @@ function parseArgs(argv) {
     "--rate-limit-seconds": "rateLimitSeconds",
     "--timeout-seconds": "timeoutSeconds",
     "--company-limit": "companyLimit",
+    "--company-concurrency": "companyConcurrency",
     "--fetch-official-content": "fetchOfficialContent",
     "--content-char-limit": "contentCharLimit",
     "--content-excerpt-limit": "contentExcerptLimit",
@@ -86,6 +88,7 @@ function parseArgs(argv) {
         "fallbackMinResults",
         "timeoutSeconds",
         "companyLimit",
+        "companyConcurrency",
         "contentCharLimit",
         "contentExcerptLimit",
         "maxDetailPerCompany",
@@ -788,6 +791,79 @@ async function loadJson(filePath, fallback = null) {
   }
 }
 
+async function mapWithConcurrency(items, concurrency, worker) {
+  const limit = Math.max(1, Number(concurrency) || 1);
+  const results = new Array(items.length);
+  let cursor = 0;
+
+  async function runNext() {
+    while (cursor < items.length) {
+      const index = cursor;
+      cursor += 1;
+      results[index] = await worker(items[index], index);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => runNext()),
+  );
+  return results;
+}
+
+async function collectCompany(company, sourceConfig, selectedSources, args, collectedAt) {
+  const companyRows = [];
+  const errors = [];
+  let requestCount = 0;
+
+  for (const source of selectedSources) {
+    let result = { rows: [], requestCount: 0 };
+    try {
+      if (source === "official_feeds") {
+        result = await collectOfficialFeeds(company, sourceConfig, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else if (source === "official_pages") {
+        result = await collectOfficialPages(company, sourceConfig, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else if (source === "google_news") {
+        if (args.fallbackMode === "missing" && dedupeRows(companyRows).length >= args.fallbackMinResults) {
+          continue;
+        }
+        result = await collectGoogleNews(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else if (source === "gdelt") {
+        result = await collectGdelt(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else {
+        throw new Error(`Unknown source: ${source}`);
+      }
+      companyRows.push(...result.rows);
+      requestCount += result.requestCount;
+      for (const sourceError of result.errors || []) {
+        errors.push({
+          target_no: company.target_no,
+          company: company.company,
+          source,
+          ...sourceError,
+        });
+      }
+    } catch (error) {
+      errors.push({
+        target_no: company.target_no,
+        company: company.company,
+        source,
+        error: error.message,
+      });
+    }
+    if (result.requestCount > 0) {
+      await sleep(args.rateLimitSeconds * 1000);
+    }
+  }
+
+  const selectedCompanyRows = sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany);
+  const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt);
+  return {
+    rows: enriched.rows,
+    requestCount: requestCount + enriched.requestCount,
+    errors: [...errors, ...enriched.errors],
+  };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   let companies = await loadJson(args.companies);
@@ -806,52 +882,15 @@ async function main() {
   const errors = [];
   let requestCount = 0;
 
-  for (const company of companies) {
-    const companyRows = [];
-    for (const source of selectedSources) {
-      let result = { rows: [], requestCount: 0 };
-      try {
-        if (source === "official_feeds") {
-          result = await collectOfficialFeeds(company, sourceConfig, args.maxPerSource, args.timeoutSeconds, collectedAt);
-        } else if (source === "official_pages") {
-          result = await collectOfficialPages(company, sourceConfig, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
-        } else if (source === "google_news") {
-          if (args.fallbackMode === "missing" && dedupeRows(companyRows).length >= args.fallbackMinResults) {
-            continue;
-          }
-          result = await collectGoogleNews(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
-        } else if (source === "gdelt") {
-          result = await collectGdelt(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
-        } else {
-          throw new Error(`Unknown source: ${source}`);
-        }
-        companyRows.push(...result.rows);
-        requestCount += result.requestCount;
-        for (const sourceError of result.errors || []) {
-          errors.push({
-            target_no: company.target_no,
-            company: company.company,
-            source,
-            ...sourceError,
-          });
-        }
-      } catch (error) {
-        errors.push({
-          target_no: company.target_no,
-          company: company.company,
-          source,
-          error: error.message,
-        });
-      }
-      if (result.requestCount > 0) {
-        await sleep(args.rateLimitSeconds * 1000);
-      }
-    }
-    const selectedCompanyRows = sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany);
-    const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt);
-    rows.push(...enriched.rows);
-    requestCount += enriched.requestCount;
-    errors.push(...enriched.errors);
+  const companyResults = await mapWithConcurrency(
+    companies,
+    args.companyConcurrency,
+    (company) => collectCompany(company, sourceConfig, selectedSources, args, collectedAt),
+  );
+  for (const result of companyResults) {
+    rows.push(...result.rows);
+    requestCount += result.requestCount;
+    errors.push(...result.errors);
   }
 
   const finalRows = sortRows(dedupeRows(rows));
@@ -872,6 +911,7 @@ async function main() {
     days: args.days,
     max_per_source: args.maxPerSource,
     max_per_company: args.maxPerCompany,
+    company_concurrency: args.companyConcurrency,
     fetch_official_content: args.fetchOfficialContent,
     content_char_limit: args.contentCharLimit,
     max_detail_per_company: args.maxDetailPerCompany,

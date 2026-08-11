@@ -97,13 +97,33 @@ function technologyGate(signal, gateMap, required) {
     };
   }
 
+  const excludedFromRelevance = row.excluded_from_relevance || row.relevance_decision === "excluded";
+  if (excludedFromRelevance) {
+    return {
+      passed: true,
+      technology_gate_decision: "relevance_exempt",
+      technology_gate_reason: "사용자 요청에 따라 유치필요 품목(기술) 관련성 검사는 생략하고 5대 투자동향 시그널만 판단합니다.",
+      industry: row.industry,
+      target_technology: row.target_technology,
+      target_technology_en: row.target_technology_en,
+      technology_group: row.technology_group,
+      technology_relevance_decision: row.relevance_decision,
+      technology_relevance_score: row.relevance_score || 0,
+      technology_matched_terms: row.matched_terms || [],
+      technology_matched_fields: row.matched_fields || [],
+      technology_evidence_snippets: row.evidence_snippets || [],
+      technology_relevance_reason: row.relevance_reason || "",
+      excluded_from_relevance: true,
+    };
+  }
+
   const passed = row.relevance_decision === "relevant";
   return {
     passed,
     technology_gate_decision: passed ? "passed" : row.relevance_decision || "not_relevant",
     technology_gate_reason: passed
       ? "유치필요 품목(기술)과 관련된 수집 건이므로 투자동향 시그널 판단 대상입니다."
-      : "유치필요 품목(기술)과 관련된 수집 건이 아니거나 사용자 요청 제외 기업이므로 투자동향 시그널 판단에서 제외했습니다.",
+      : "유치필요 품목(기술)과 관련된 수집 건이 아니므로 투자동향 시그널 판단에서 제외했습니다.",
     industry: row.industry,
     target_technology: row.target_technology,
     target_technology_en: row.target_technology_en,
@@ -332,11 +352,11 @@ async function main() {
     companies_with_investment_signals: companiesWithInvestmentSignals.size,
     counts_by_indicator: countsByIndicator,
     method: args.requireTechnologyRelevance
-      ? "technology_gated_five_indicator_body_keyword_filter"
+      ? "technology_gated_with_relevance_exempt_five_indicator_body_keyword_filter"
       : "five_indicator_body_keyword_filter",
     matched_fields: ["company", "title", "url", "query", "content_excerpt", "content_text"],
     note: args.requireTechnologyRelevance
-      ? "This pass does not call an AI API. It first requires each collected signal to be relevant to the company's target technology/item, then classifies the remaining signal text against the five investment trend indicators."
+      ? "This pass does not call an AI API. It first requires collected signals to be relevant to the company's target technology/item, except for the user-defined relevance-exempt companies, then classifies the eligible signal text against the five investment trend indicators."
       : "This pass does not call an AI API. It classifies collected official/fallback signal text against the five investment trend indicators from the reference PDF.",
   };
 

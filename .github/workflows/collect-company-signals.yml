@@ -41,6 +41,7 @@ jobs:
           --fallback-mode missing
           --fallback-min-results 1
           --rate-limit-seconds 0.5
+          --company-concurrency 4
       - run: >
           node scripts/filter_relevant_signals.mjs
           --signals outputs/latest_company_signals.json
