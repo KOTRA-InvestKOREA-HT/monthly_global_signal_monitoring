@@ -4,9 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       days:
-        description: "Lookback window in days"
+        description: "Fallback lookback window in days"
         required: false
         default: "45"
+      from_date:
+        description: "Collection start date (YYYY-MM-DD)"
+        required: false
+        default: "2026-07-01"
+      to_date:
+        description: "Collection end date (YYYY-MM-DD)"
+        required: false
+        default: "2026-07-31"
+      issue_number:
+        description: "Report issue number"
+        required: false
+        default: "2"
 
 concurrency:
   group: collect-company-signals-${{ github.ref }}
@@ -35,6 +47,8 @@ jobs:
           --out-dir outputs
           --sources official_feeds,official_pages,google_news
           --days ${{ inputs.days || '45' }}
+          --from-date ${{ inputs.from_date }}
+          --to-date ${{ inputs.to_date }}
           --max-per-source 6
           --max-per-company 10
           --max-detail-per-company 10
@@ -67,6 +81,7 @@ jobs:
           --investment-summary outputs/latest_investment_signal_summary.json
           --indicator-config config/investment_signal_indicators.json
           --font assets/fonts/NOTOSANSKR-VF.TTF
+          --issue-number ${{ inputs.issue_number || '2' }}
           --out public/reports/latest_report.pdf
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:

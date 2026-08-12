@@ -1,0 +1,4 @@
+allowBuilds:
+  sharp: false
+ignoredBuiltDependencies:
+  - sharp

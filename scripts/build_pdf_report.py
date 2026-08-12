@@ -1,13 +1,14 @@
 import argparse
 import json
 import re
+import tempfile
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.ttfonts import TTFont as ReportLabTTFont
 from reportlab.pdfgen import canvas
 
 
@@ -26,7 +27,13 @@ MUTED = colors.HexColor("#8591A3")
 GREY_TEXT = colors.HexColor("#B1B6BE")
 WHITE = colors.white
 
-ISSUE_NO = "Issue 2"
+DEFAULT_ISSUE_NUMBER = "2"
+FONT_WEIGHTS = {
+    "demilight": 350,
+    "medium": 500,
+    "semibold": 600,
+    "extrabold": 800,
+}
 EXEMPT_COMPANIES = {
     "Prodrive",
     "JSR",
@@ -177,6 +184,15 @@ def parse_datetime(value):
         return None
 
 
+def parse_date_only(value):
+    if not value:
+        return None
+    try:
+        return datetime.strptime(str(value)[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    except Exception:
+        return None
+
+
 def format_date(value):
     dt = parse_datetime(value)
     if dt:
@@ -185,20 +201,39 @@ def format_date(value):
 
 
 def issue_month(summary):
+    to_date = parse_date_only(summary.get("to_date"))
+    if to_date:
+        year = to_date.year + (1 if to_date.month == 12 else 0)
+        month = 1 if to_date.month == 12 else to_date.month + 1
+        return f"{year}.{month:02d}"
     dt = parse_datetime(summary.get("run_started_at")) or datetime.now(timezone.utc)
     return dt.astimezone(timezone(timedelta(hours=9))).strftime("%Y.%m")
 
 
-def previous_month_period(summary):
+def report_period(summary):
+    from_date = parse_date_only(summary.get("from_date"))
+    to_date = parse_date_only(summary.get("to_date"))
+    if from_date and to_date:
+        return from_date, to_date
+
     dt = parse_datetime(summary.get("run_started_at")) or datetime.now(timezone.utc)
     local = dt.astimezone(timezone(timedelta(hours=9)))
     first_this_month = local.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     last_prev_month = first_this_month - timedelta(days=1)
     first_prev_month = last_prev_month.replace(day=1)
-    return (
-        first_prev_month.strftime("%Y.%m.%d").replace(".0", "."),
-        last_prev_month.strftime("%Y.%m.%d").replace(".0", "."),
-    )
+    return first_prev_month, last_prev_month
+
+
+def compact_date(dt, include_year=True):
+    if include_year:
+        return f"{dt.year}.{dt.month}.{dt.day}"
+    return f"{dt.month}.{dt.day}"
+
+
+def matrix_period_label(summary):
+    start, end = report_period(summary)
+    end_text = compact_date(end, include_year=start.year != end.year)
+    return f"{start.month}월({compact_date(start)}~{end_text})"
 
 
 def short_text(value, limit):
@@ -253,26 +288,57 @@ def wrap_text(canvas_obj, text, max_width, font_name, font_size):
     return lines
 
 
+def instantiate_variable_font(font_path, weight, out_dir):
+    from fontTools.ttLib import TTFont as FontToolsTTFont
+    from fontTools.varLib import instancer
+
+    font = FontToolsTTFont(str(font_path))
+    instanced = instancer.instantiateVariableFont(font, {"wght": weight}, inplace=False)
+    out_file = out_dir / f"NotoSansKR-{weight}.ttf"
+    instanced.save(str(out_file))
+    return out_file
+
+
 def register_fonts(font_path):
-    pdfmetrics.registerFont(TTFont("NotoSansKR", font_path))
-    pdfmetrics.registerFont(TTFont("NotoSansKR-Bold", font_path))
-    return "NotoSansKR", "NotoSansKR-Bold"
+    source = Path(font_path)
+    temp_dir = Path(tempfile.mkdtemp(prefix="noto-sans-kr-"))
+    fonts = {}
+    try:
+        for role, weight in FONT_WEIGHTS.items():
+            font_file = instantiate_variable_font(source, weight, temp_dir)
+            font_name = f"NotoSansKR-{role}"
+            pdfmetrics.registerFont(ReportLabTTFont(font_name, str(font_file)))
+            fonts[role] = font_name
+    except Exception:
+        fonts = {}
+        for role in FONT_WEIGHTS:
+            font_name = f"NotoSansKR-{role}"
+            pdfmetrics.registerFont(ReportLabTTFont(font_name, str(source)))
+            fonts[role] = font_name
+    return fonts
 
 
 class SlideReport:
-    def __init__(self, out_path, font_name, bold_font_name):
+    def __init__(self, out_path, fonts, issue_number):
         self.out_path = out_path
-        self.font = font_name
-        self.bold_font = bold_font_name
+        self.fonts = fonts
+        self.font = fonts["demilight"]
+        self.bold_font = fonts["semibold"]
+        self.issue_no = f"Issue {issue_number}"
         self.canvas = canvas.Canvas(str(out_path), pagesize=(PAGE_W, PAGE_H))
         self.page_no = 0
 
-    def set_font(self, size, color=TEXT, bold=False):
-        self.canvas.setFont(self.bold_font if bold else self.font, size)
+    def font_for(self, weight="demilight", bold=False):
+        if bold:
+            return self.fonts["semibold"]
+        return self.fonts.get(weight, self.font)
+
+    def set_font(self, size, color=TEXT, weight="demilight", bold=False):
+        self.canvas.setFont(self.font_for(weight, bold), size)
         self.canvas.setFillColor(color)
 
-    def text(self, x, y, value, size=10, color=TEXT, bold=False, align="left"):
-        self.set_font(size, color, bold=bold)
+    def text(self, x, y, value, size=10, color=TEXT, bold=False, align="left", weight="demilight"):
+        self.set_font(size, color, weight=weight, bold=bold)
         value = str(value or "")
         if align == "right":
             self.canvas.drawRightString(x, y, value)
@@ -281,15 +347,19 @@ class SlideReport:
         else:
             self.canvas.drawString(x, y, value)
 
-    def wrapped(self, text, x, y, max_width, size=10, color=TEXT, max_lines=0, line_gap=3, bold=False):
-        lines = wrap_text(self.canvas, text, max_width, self.font, size)
+    def wrapped(self, text, x, y, max_width, size=10, color=TEXT, max_lines=0, line_gap=3, bold=False, weight="demilight", align="left"):
+        font_name = self.font_for(weight, bold)
+        lines = wrap_text(self.canvas, text, max_width, font_name, size)
         if max_lines and len(lines) > max_lines:
             lines = lines[:max_lines]
             lines[-1] = short_text(lines[-1], max(8, len(lines[-1]) - 3))
-        self.set_font(size, color, bold=bold)
+        self.set_font(size, color, weight=weight, bold=bold)
         line_height = size + line_gap
         for line in lines:
-            self.canvas.drawString(x, y, line)
+            if align == "center":
+                self.canvas.drawCentredString(x + max_width / 2, y, line)
+            else:
+                self.canvas.drawString(x, y, line)
             y -= line_height
         return y
 
@@ -305,8 +375,8 @@ class SlideReport:
         c.setStrokeColor(TABLE_LINE)
         c.setLineWidth(0.7)
         c.line(0, 38, PAGE_W, 38)
-        self.text(42, 16, f"Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {ISSUE_NO}", 8, MUTED)
-        self.text(PAGE_W - 42, 16, f"{self.page_no:02d}", 8, TEXT, bold=True, align="right")
+        self.text(42, 16, f"Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {self.issue_no}", 8, MUTED)
+        self.text(PAGE_W - 42, 16, f"{self.page_no:02d}", 8, TEXT, align="right", weight="semibold")
 
     def header(self, kicker, title, page_fraction=""):
         c = self.canvas
@@ -315,8 +385,8 @@ class SlideReport:
         c.setFillColor(GOLD)
         c.rect(0, PAGE_H - 100, PAGE_W, 8, fill=1, stroke=0)
         suffix = f" · {page_fraction}" if page_fraction else ""
-        self.text(43, PAGE_H - 39, f"{kicker}{suffix}", 9, GOLD)
-        self.text(43, PAGE_H - 66, title, 22, WHITE, bold=True)
+        self.text(43, PAGE_H - 39, f"{kicker}{suffix}", 9, GOLD, weight="medium")
+        self.text(43, PAGE_H - 66, title, 22, WHITE, weight="semibold")
 
     def finish(self):
         self.canvas.save()
@@ -330,17 +400,17 @@ def draw_cover(report, summary, indicators):
     c.setFillColor(NAVY)
     c.rect(0, 0, PAGE_W, PAGE_H - 8, fill=1, stroke=0)
 
-    report.text(PAGE_W - 42, PAGE_H - 58, ISSUE_NO, 18, WHITE, bold=True, align="right")
-    report.text(PAGE_W - 42, PAGE_H - 78, issue_month(summary), 10, colors.HexColor("#C8D2DF"), align="right")
+    report.text(PAGE_W - 42, PAGE_H - 58, report.issue_no, 18, WHITE, align="right", weight="semibold")
+    report.text(PAGE_W - 42, PAGE_H - 78, issue_month(summary), 10, colors.HexColor("#C8D2DF"), align="right", weight="medium")
 
     y = PAGE_H - 208
-    report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD)
+    report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD, weight="medium")
     y -= 56
-    report.text(43, y, "타겟기업", 36, WHITE, bold=True)
+    report.text(43, y, "타겟기업", 36, WHITE, weight="semibold")
     y -= 45
-    report.text(43, y, "글로벌 투자시그널", 36, GOLD, bold=True)
+    report.text(43, y, "글로벌 투자시그널", 36, GOLD, weight="semibold")
     y -= 45
-    report.text(43, y, "모니터링", 36, WHITE, bold=True)
+    report.text(43, y, "모니터링", 36, WHITE, weight="semibold")
 
     y -= 42
     report.text(43, y, "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업", 12, WHITE)
@@ -354,18 +424,18 @@ def draw_cover(report, summary, indicators):
         c.setStrokeColor(GOLD)
         c.setLineWidth(1.2)
         c.circle(46, y + 4, 10, stroke=1, fill=0)
-        report.text(46, y, str(item["no"]), 9, GOLD, bold=True, align="center")
-        report.text(67, y - 1, item["label_ko"], 12, WHITE, bold=True)
+        report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
+        report.text(67, y - 1, item["label_ko"], 12, WHITE, weight="semibold")
         report.text(PAGE_W - 43, y - 1, item["description_ko"], 8, colors.HexColor("#C8D2DF"), align="right")
         y -= 32
 
     c.setStrokeColor(colors.HexColor("#D6DEE9"))
     c.setLineWidth(0.7)
     c.line(43, 62, PAGE_W - 43, 62)
-    report.text(43, 42, "kotra", 20, WHITE, bold=True)
+    report.text(43, 42, "kotra", 20, WHITE, weight="semibold")
     report.text(43, 29, "Korea Trade-Investment", 6.5, colors.HexColor("#C8D2DF"))
     report.text(43, 20, "Promotion Agency", 6.5, colors.HexColor("#C8D2DF"))
-    report.text(PAGE_W - 43, 31, "Invest KOREA", 11, WHITE, bold=True, align="right")
+    report.text(PAGE_W - 43, 31, "Invest KOREA", 11, WHITE, align="right", weight="semibold")
 
 
 def company_sort_key(row):
@@ -431,9 +501,9 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
 
     c.setFillColor(NAVY)
     c.rect(x, y_top - header_h, table_w, header_h, fill=1, stroke=0)
-    report.text(x + 7, y_top - 11, "기업", 8, WHITE, bold=True)
+    report.text(x + 7, y_top - 11, "기업", 8, WHITE, weight="semibold")
     for idx, signal_no in enumerate(["①", "②", "③", "④", "⑤"]):
-        report.text(signal_xs[idx] + 4, y_top - 10.5, signal_no, 7, WHITE, align="center")
+        report.text(signal_xs[idx] + 4, y_top - 10.5, signal_no, 7, WHITE, align="center", weight="semibold")
 
     y = y_top - header_h
     for profile in profiles:
@@ -452,14 +522,13 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
 def draw_matrix(report, profiles, signal_index, summary):
     report.new_page()
     report.header("S I G N A L   M A T R I X", "이번 달 시그널 매트릭스")
-    period_start, period_end = previous_month_period(summary)
     signal_companies = [p for p in profiles if any(signal_index.get(p["company"], {}).values())]
 
     desc = (
-        f"77개 타겟기업의 {period_start}~{period_end} 글로벌 투자 시그널(전조현상). "
-        "활성화된 셀 = 당월 포착된 시그널 (투자 확정 · 발표 완료 등 후행 데이터 제외)."
+        f"77개 타겟기업의 {matrix_period_label(summary)} 글로벌 투자 시그널(전조현상). "
+        "활성화된 셀 = 당월 포착된 시그널 (투자 확정 ˙ 발표 완료 등 후행 데이터 제외)."
     )
-    report.wrapped(desc, 32, PAGE_H - 128, PAGE_W - 64, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4)
+    report.wrapped(desc, 42, PAGE_H - 128, PAGE_W - 84, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="center")
 
     draw_matrix_table(report, profiles[:39], signal_index, 25, PAGE_H - 145)
     draw_matrix_table(report, profiles[39:], signal_index, 281, PAGE_H - 145, right=True)
@@ -480,7 +549,7 @@ def draw_matrix(report, profiles, signal_index, summary):
         MUTED,
     )
     no_signal = len(profiles) - len(signal_companies)
-    report.text(32, y - 24, f"당월 시그널 포착 {len(signal_companies)}개사 · 시그널 미포착 {no_signal}개사 | 상세는 다음 장", 8, colors.HexColor("#4B5870"), bold=True)
+    report.text(32, y - 24, f"당월 시그널 포착 {len(signal_companies)}개사 · 시그널 미포착 {no_signal}개사 | 상세는 다음 장", 8, colors.HexColor("#4B5870"), weight="extrabold")
     report.footer()
 
 
@@ -523,26 +592,29 @@ def draw_badge(report, x, y, value, active):
     c = report.canvas
     c.setFillColor(NAVY if active else colors.HexColor("#D8DADF"))
     c.roundRect(x, y - 9, 16, 16, 3, fill=1, stroke=0)
-    report.text(x + 8, y - 4.5, str(value), 9, WHITE, bold=True, align="center")
+    report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
-def draw_signal_row(report, no, rows, x, y, width, compact=False):
+def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator=True, slot_h=None):
     active = bool(rows)
     c = report.canvas
+    row_bottom = y - slot_h if slot_h else None
+    separator_y = row_bottom + 3 if row_bottom else y - 20
     draw_badge(report, x, y, no, active)
     label_x = x + 31
     label = SIGNAL_DESCRIPTIONS[no]
-    label_w = min(width - 190, report.canvas.stringWidth(label, report.font, 7.6) + 14)
+    label_w = min(width - 190, report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14)
     c.setFillColor(LIGHT)
     c.roundRect(label_x, y - 9, label_w, 16, 3, fill=1, stroke=0)
-    report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), bold=True)
+    report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), weight="semibold")
 
     if not active:
-        report.text(x + width - 190, y - 4, "이번 달 해당 신호 없음", 10, colors.HexColor("#B5B9BF"))
+        report.text(label_x + label_w + 18, y - 4, "이번 달 해당 신호 없음", 10, colors.HexColor("#B5B9BF"))
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
-        c.setStrokeColor(BOX_LINE)
-        c.line(x, y - 20, x + width, y - 20)
-        return y - 32
+        if draw_separator:
+            c.setStrokeColor(BOX_LINE)
+            c.line(x, separator_y, x + width, separator_y)
+        return row_bottom if row_bottom else y - 32
 
     row = rows[0]
     body_y = y - 30
@@ -550,9 +622,10 @@ def draw_signal_row(report, no, rows, x, y, width, compact=False):
     report.wrapped(detail_text(row, 300), label_x, body_y, width - 64, 9.2, TEXT, max_lines=max_lines, line_gap=3)
     source_y = body_y - ((9.2 + 3) * max_lines) - 2
     report.text(label_x, source_y, source_line(row), 7.4, MUTED)
-    c.setStrokeColor(BOX_LINE)
-    c.line(x, source_y - 13, x + width, source_y - 13)
-    return source_y - 25
+    if draw_separator:
+        c.setStrokeColor(BOX_LINE)
+        c.line(x, separator_y, x + width, separator_y)
+    return row_bottom if row_bottom else source_y - 25
 
 
 def draw_detail_page(report, profile, signal_index, relevant_rows, investment_rows, all_signal_rows, idx, total):
@@ -560,11 +633,10 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.header("C O M P A N Y   S I G N A L S", "기업별 시그널 상세", f"{idx}/{total}")
     company = profile["company"]
     rows_by_signal = signal_index.get(company, {})
-    active_count = sum(1 for no in range(1, 6) if rows_by_signal.get(no))
-    compact = active_count >= 2
-    top_y = 232 if compact else 374
-    top_h = 436 if compact else 292
-    bottom_y = 68 if compact else 232
+    compact = True
+    top_y = 232
+    top_h = 436
+    bottom_y = 68
     bottom_h = 126
     x = 30
     width = PAGE_W - 60
@@ -576,34 +648,49 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.roundRect(x, top_y, width, top_h, 10, fill=1, stroke=1)
 
     header_y = top_y + top_h - 29
-    report.text(x + 17, header_y, company, 14, TEXT, bold=True)
+    report.text(x + 17, header_y, company, 14, TEXT, weight="semibold")
     name_w = report.canvas.stringWidth(company, report.bold_font, 14)
     industry_x = min(x + 17 + name_w + 14, x + 250)
+    industry_text = profile.get("detailed_industry", "")
+    industry_w = min(132, report.canvas.stringWidth(industry_text, report.fonts["semibold"], 9) + 18)
     c.setFillColor(LIGHT)
-    c.roundRect(industry_x, header_y - 7, min(132, report.canvas.stringWidth(profile.get("detailed_industry", ""), report.font, 9) + 18), 18, 3, fill=1, stroke=0)
-    report.text(industry_x + 9, header_y - 2, profile.get("detailed_industry", ""), 9, colors.HexColor("#56687B"), bold=True)
-    report.text(industry_x + 150, header_y - 2, profile.get("country", ""), 9, colors.HexColor("#B1B6BE"))
+    c.roundRect(industry_x, header_y - 7, industry_w, 18, 3, fill=1, stroke=0)
+    report.text(industry_x + 9, header_y - 2, industry_text, 9, colors.HexColor("#56687B"), weight="semibold")
+    report.text(industry_x + industry_w + 10, header_y - 2, profile.get("country", ""), 9, colors.HexColor("#B1B6BE"), weight="semibold")
 
     c.setStrokeColor(colors.black)
     c.setLineWidth(1)
     c.line(x + 17, header_y - 18, x + width - 17, header_y - 18)
 
-    y = header_y - 40
+    signal_top = header_y - 40
+    signal_bottom = top_y + 26
+    slot_h = (signal_top - signal_bottom) / 5
+    y = signal_top
     for no in range(1, 6):
-        y = draw_signal_row(report, no, rows_by_signal.get(no, []), x + 19, y, width - 38, compact=compact)
+        y = draw_signal_row(
+            report,
+            no,
+            rows_by_signal.get(no, []),
+            x + 19,
+            y,
+            width - 38,
+            compact=compact,
+            draw_separator=no < 5,
+            slot_h=slot_h,
+        )
 
     business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
     c.setStrokeColor(TEAL_LINE)
     c.setFillColor(TEAL_BG)
     c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
     top = bottom_y + bottom_h
-    report.text(x + 16, top - 27, "글로벌 사업현황", 8, colors.HexColor("#087A70"), bold=True)
+    report.text(x + 16, top - 27, "글로벌 사업현황", 8, colors.HexColor("#087A70"), weight="semibold")
     c.setFillColor(colors.HexColor("#DDF0EE"))
     c.roundRect(x + 105, top - 34, 58, 18, 3, fill=1, stroke=0)
-    report.text(x + 134, top - 29, "타겟기술", 8, colors.HexColor("#087A70"), bold=True, align="center")
+    report.text(x + 134, top - 29, "타겟기술", 8, colors.HexColor("#087A70"), align="center", weight="semibold")
     target_text = "" if profile.get("exempt_from_relevance") else profile.get("target_technology", "")
     if target_text:
-        report.text(x + 174, top - 28, short_text(target_text, 36), 9, colors.HexColor("#087A70"), bold=True)
+        report.text(x + 174, top - 28, short_text(target_text, 36), 9, colors.HexColor("#087A70"), weight="semibold")
 
     body = business_text([business_row] if business_row else [])
     report.wrapped(body, x + 16, top - 55, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
@@ -630,8 +717,9 @@ def build_report(args):
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    font_name, bold_font_name = register_fonts(args.font)
-    report = SlideReport(out_path, font_name, bold_font_name)
+    fonts = register_fonts(args.font)
+    issue_number = re.sub(r"\D+", "", str(args.issue_number or DEFAULT_ISSUE_NUMBER)) or DEFAULT_ISSUE_NUMBER
+    report = SlideReport(out_path, fonts, issue_number)
 
     draw_cover(report, summary, indicators)
     draw_matrix(report, profiles, signal_index, summary)
@@ -667,6 +755,7 @@ def main():
     parser.add_argument("--investment-summary", required=True)
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", required=True)
+    parser.add_argument("--issue-number", default=DEFAULT_ISSUE_NUMBER)
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     build_report(args)

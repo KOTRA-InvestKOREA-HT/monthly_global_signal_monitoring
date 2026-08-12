@@ -6,10 +6,28 @@ function requiredEnv(name) {
   return value;
 }
 
+function isIsoDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+}
+
+function previousMonthRange() {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const firstDay = new Date(Date.UTC(year, month - 1, 1));
+  const lastDay = new Date(Date.UTC(year, month, 0));
+  const format = (date) => date.toISOString().slice(0, 10);
+  return { fromDate: format(firstDay), toDate: format(lastDay) };
+}
+
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
     const days = String(body.days || process.env.DEFAULT_CRAWL_DAYS || "45");
+    const fallbackRange = previousMonthRange();
+    const fromDate = isIsoDate(body.fromDate) ? body.fromDate : fallbackRange.fromDate;
+    const toDate = isIsoDate(body.toDate) ? body.toDate : fallbackRange.toDate;
+    const issueNumber = String(body.issueNumber || "2").replace(/[^\d]/g, "") || "2";
     const owner = requiredEnv("GITHUB_OWNER");
     const repo = requiredEnv("GITHUB_REPO");
     const workflowFile = requiredEnv("GITHUB_WORKFLOW_FILE");
@@ -28,7 +46,12 @@ export async function POST(request) {
         },
         body: JSON.stringify({
           ref,
-          inputs: { days },
+          inputs: {
+            days,
+            from_date: fromDate,
+            to_date: toDate,
+            issue_number: issueNumber,
+          },
         }),
       },
     );
@@ -41,7 +64,10 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({ ok: true, days, ref, requested_at: new Date().toISOString() }, { status: 202 });
+    return Response.json(
+      { ok: true, days, fromDate, toDate, issueNumber, ref, requested_at: new Date().toISOString() },
+      { status: 202 },
+    );
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

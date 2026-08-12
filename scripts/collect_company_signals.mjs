@@ -42,6 +42,8 @@ function parseArgs(argv) {
     outDir: "outputs",
     sources: "official_feeds,official_pages,google_news",
     days: 45,
+    fromDate: "",
+    toDate: "",
     maxPerSource: 3,
     maxPerCompany: 6,
     fallbackMinResults: 1,
@@ -61,6 +63,8 @@ function parseArgs(argv) {
     "--out-dir": "outDir",
     "--sources": "sources",
     "--days": "days",
+    "--from-date": "fromDate",
+    "--to-date": "toDate",
     "--max-per-source": "maxPerSource",
     "--max-per-company": "maxPerCompany",
     "--fallback-min-results": "fallbackMinResults",
@@ -281,13 +285,57 @@ function contentExcerpt(text = "", limit = 800) {
   return compact.length > limit ? `${compact.slice(0, limit).trim()}...` : compact;
 }
 
-function filterRecent(rows, days, collectedAt) {
-  const cutoff = Date.parse(collectedAt) - days * 24 * 60 * 60 * 1000;
-  const futureLimit = Date.parse(collectedAt) + 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function normalizeDateInput(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    throw new Error(`Invalid date input: ${text}. Expected YYYY-MM-DD.`);
+  }
+  return text;
+}
+
+function buildDateRange(args, collectedAt) {
+  const fromDate = normalizeDateInput(args.fromDate);
+  const toDate = normalizeDateInput(args.toDate);
+  const collectedMs = Date.parse(collectedAt);
+
+  if (fromDate || toDate) {
+    if (!fromDate || !toDate) {
+      throw new Error("Both --from-date and --to-date are required when using an explicit date range.");
+    }
+    const fromMs = Date.parse(`${fromDate}T00:00:00Z`);
+    const toMs = Date.parse(`${toDate}T23:59:59Z`);
+    if (Number.isNaN(fromMs) || Number.isNaN(toMs) || fromMs > toMs) {
+      throw new Error(`Invalid date range: ${fromDate} to ${toDate}`);
+    }
+    return {
+      mode: "explicit",
+      fromDate,
+      toDate,
+      fromMs,
+      toMs,
+      lookbackDays: Math.max(1, Math.ceil(Math.max(0, collectedMs - fromMs) / DAY_MS) + 2),
+    };
+  }
+
+  const days = Number.isFinite(args.days) && args.days > 0 ? args.days : 45;
+  return {
+    mode: "lookback",
+    fromDate: "",
+    toDate: "",
+    fromMs: collectedMs - days * DAY_MS,
+    toMs: collectedMs + DAY_MS,
+    lookbackDays: days,
+  };
+}
+
+function filterByDateRange(rows, dateRange) {
   return rows.filter((row) => {
     if (!row.published_at) return true;
     const published = Date.parse(row.published_at);
-    return Number.isNaN(published) || (published >= cutoff && published <= futureLimit);
+    return Number.isNaN(published) || (published >= dateRange.fromMs && published <= dateRange.toMs);
   });
 }
 
@@ -522,7 +570,7 @@ function normalizeOfficialPageEntries(entries) {
     .filter((entry) => entry.url);
 }
 
-async function collectOfficialFeeds(company, sourceConfig, maxPerSource, timeoutSeconds, collectedAt) {
+async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
   const feeds = sourceConfig.official_feeds?.[company.company] || [];
   const rows = [];
   let requestCount = 0;
@@ -534,13 +582,16 @@ async function collectOfficialFeeds(company, sourceConfig, maxPerSource, timeout
     const xml = await fetchText(feedUrl, timeoutSeconds);
     requestCount += 1;
     rows.push(
-      ...parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName).slice(0, maxPerSource),
+      ...filterByDateRange(
+        parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName),
+        dateRange,
+      ).slice(0, maxPerSource),
     );
   }
   return { rows, requestCount };
 }
 
-async function collectOfficialPages(company, sourceConfig, days, maxPerSource, timeoutSeconds, collectedAt) {
+async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
   const pages = normalizeOfficialPageEntries(sourceConfig.official_pages?.[company.company] || []);
   const rows = [];
   const errors = [];
@@ -554,10 +605,9 @@ async function collectOfficialPages(company, sourceConfig, days, maxPerSource, t
           const feedXml = await fetchText(feedUrl, timeoutSeconds);
           requestCount += 1;
           rows.push(
-            ...filterRecent(
+            ...filterByDateRange(
               parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`),
-              days,
-              collectedAt,
+              dateRange,
             ).slice(0, maxPerSource),
           );
         } catch (error) {
@@ -581,7 +631,7 @@ async function collectOfficialPages(company, sourceConfig, days, maxPerSource, t
           official_source_url: page.url,
         })),
       );
-      rows.push(...filterRecent(sourceRows, days, collectedAt).slice(0, maxPerSource));
+      rows.push(...filterByDateRange(sourceRows, dateRange).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: page.url, source_name: page.source, error: error.message });
     }
@@ -669,8 +719,8 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
   return { rows: enriched, requestCount, errors };
 }
 
-async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, collectedAt) {
-  const query = buildQuery(company, days);
+async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
+  const query = buildQuery(company, dateRange.lookbackDays);
   const params = new URLSearchParams({
     q: query,
     hl: "en-US",
@@ -679,10 +729,9 @@ async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, co
   });
   const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
   return {
-    rows: filterRecent(
+    rows: filterByDateRange(
       parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
-      days,
-      collectedAt,
+      dateRange,
     )
       .map((row) => ({
         ...row,
@@ -695,7 +744,7 @@ async function collectGoogleNews(company, days, maxPerSource, timeoutSeconds, co
   };
 }
 
-async function collectGdelt(company, days, maxPerSource, timeoutSeconds, collectedAt) {
+async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
   const query = buildGdeltQuery(company);
   const params = new URLSearchParams({
     query,
@@ -703,7 +752,7 @@ async function collectGdelt(company, days, maxPerSource, timeoutSeconds, collect
     format: "json",
     maxrecords: String(maxPerSource),
     sort: "HybridRel",
-    timespan: `${days}d`,
+    timespan: `${dateRange.lookbackDays}d`,
   });
   const payload = await fetchJson(`https://api.gdeltproject.org/api/v2/doc/doc?${params.toString()}`, timeoutSeconds);
   const rows = (payload.articles || [])
@@ -722,7 +771,7 @@ async function collectGdelt(company, days, maxPerSource, timeoutSeconds, collect
       official_source_url: "",
     }))
     .filter((row) => row.title && row.url);
-  return { rows: filterRecent(rows, days, collectedAt).slice(0, maxPerSource), requestCount: 1 };
+  return { rows: filterByDateRange(rows, dateRange).slice(0, maxPerSource), requestCount: 1 };
 }
 
 function dedupeRows(rows) {
@@ -810,7 +859,7 @@ async function mapWithConcurrency(items, concurrency, worker) {
   return results;
 }
 
-async function collectCompany(company, sourceConfig, selectedSources, args, collectedAt) {
+async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
   const companyRows = [];
   const errors = [];
   let requestCount = 0;
@@ -819,16 +868,16 @@ async function collectCompany(company, sourceConfig, selectedSources, args, coll
     let result = { rows: [], requestCount: 0 };
     try {
       if (source === "official_feeds") {
-        result = await collectOfficialFeeds(company, sourceConfig, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        result = await collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "official_pages") {
-        result = await collectOfficialPages(company, sourceConfig, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        result = await collectOfficialPages(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "google_news") {
         if (args.fallbackMode === "missing" && dedupeRows(companyRows).length >= args.fallbackMinResults) {
           continue;
         }
-        result = await collectGoogleNews(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        result = await collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "gdelt") {
-        result = await collectGdelt(company, args.days, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        result = await collectGdelt(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else {
         throw new Error(`Unknown source: ${source}`);
       }
@@ -878,6 +927,7 @@ async function main() {
   const sourceConfig = await loadJson(args.sourceConfig, {});
   const selectedSources = args.sources.split(",").map((source) => source.trim()).filter(Boolean);
   const collectedAt = utcNow();
+  const dateRange = buildDateRange(args, collectedAt);
   const rows = [];
   const errors = [];
   let requestCount = 0;
@@ -885,7 +935,7 @@ async function main() {
   const companyResults = await mapWithConcurrency(
     companies,
     args.companyConcurrency,
-    (company) => collectCompany(company, sourceConfig, selectedSources, args, collectedAt),
+    (company) => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt),
   );
   for (const result of companyResults) {
     rows.push(...result.rows);
@@ -909,6 +959,10 @@ async function main() {
     canonical_company_count: 77,
     sources: selectedSources,
     days: args.days,
+    date_range_mode: dateRange.mode,
+    from_date: dateRange.fromDate,
+    to_date: dateRange.toDate,
+    lookback_days: dateRange.lookbackDays,
     max_per_source: args.maxPerSource,
     max_per_company: args.maxPerCompany,
     company_concurrency: args.companyConcurrency,

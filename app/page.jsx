@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, ExternalLink, Play, RefreshCw } from "lucide-react";
+import { Calendar, Download, ExternalLink, Play, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 function formatDate(value) {
@@ -21,8 +21,38 @@ function shortList(values, limit = 6) {
   return values.filter(Boolean).slice(0, limit);
 }
 
+function pad2(value) {
+  return String(value).padStart(2, "0");
+}
+
+function defaultMonthValue() {
+  const now = new Date();
+  const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  return `${previousMonth.getFullYear()}-${pad2(previousMonth.getMonth() + 1)}`;
+}
+
+function monthRange(monthValue) {
+  const [yearText, monthText] = String(monthValue || defaultMonthValue()).split("-");
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const lastDay = new Date(year, month, 0).getDate();
+  return {
+    year,
+    month,
+    fromDate: `${year}-${pad2(month)}-01`,
+    toDate: `${year}-${pad2(month)}-${pad2(lastDay)}`,
+    label: `${year}년 ${month}월`,
+  };
+}
+
 export default function HomePage() {
-  const [days, setDays] = useState("45");
+  const initialMonth = defaultMonthValue();
+  const [monthValue, setMonthValue] = useState(initialMonth);
+  const [pickerYear, setPickerYear] = useState(Number(initialMonth.slice(0, 4)));
+  const [pickerMonth, setPickerMonth] = useState(Number(initialMonth.slice(5, 7)));
+  const [monthPickerOpen, setMonthPickerOpen] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [issueNumber, setIssueNumber] = useState("2");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
   const [investmentSignals, setInvestmentSignals] = useState([]);
@@ -34,6 +64,38 @@ export default function HomePage() {
   const [triggering, setTriggering] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const selectedPeriod = useMemo(() => monthRange(monthValue), [monthValue]);
+
+  function openMonthPicker() {
+    const current = monthRange(monthValue);
+    setPickerYear(current.year);
+    setPickerMonth(current.month);
+    setMonthPickerOpen(true);
+  }
+
+  function applyMonthPicker() {
+    const year = Number(pickerYear);
+    if (!Number.isFinite(year) || year < 2000 || year > 2100) {
+      setError("조회 연도를 2000년부터 2100년 사이로 입력해 주세요.");
+      return;
+    }
+    setMonthValue(`${year}-${pad2(pickerMonth)}`);
+    setMonthPickerOpen(false);
+    setError("");
+  }
+
+  function downloadReport() {
+    const safeIssue = String(issueNumber).replace(/[^\d]/g, "") || "2";
+    setIssueNumber(safeIssue);
+    const params = new URLSearchParams({
+      issue: safeIssue,
+      month: monthValue,
+      from: selectedPeriod.fromDate,
+      to: selectedPeriod.toDate,
+    });
+    window.open(`/api/report?${params.toString()}`, "_blank", "noopener,noreferrer");
+    setReportDialogOpen(false);
+  }
 
   async function loadSignals() {
     setLoading(true);
@@ -77,12 +139,16 @@ export default function HomePage() {
       const response = await fetch("/api/trigger-crawl", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ days }),
+        body: JSON.stringify({
+          fromDate: selectedPeriod.fromDate,
+          toDate: selectedPeriod.toDate,
+          issueNumber,
+        }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "크롤링 실행 요청에 실패했습니다.");
       setCrawlStatus({ label: "진행 중", status: "queued", requested_at: payload.requested_at });
-      setMessage("GitHub Actions 크롤링 실행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.");
+      setMessage(`${selectedPeriod.label} 기준으로 GitHub Actions 크롤링 실행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.`);
       window.setTimeout(loadCrawlStatus, 3000);
     } catch (err) {
       setError(err.message);
@@ -115,10 +181,16 @@ export default function HomePage() {
           <p>77개 타겟기업의 월간 뉴스, 보도자료, IR 신호를 확인합니다.</p>
         </div>
         <div className="actions">
-          <label className="field">
+          <div className="field">
             <span>조회 기간</span>
-            <input value={days} onChange={(event) => setDays(event.target.value)} inputMode="numeric" />
-          </label>
+            <button className="periodButton" type="button" onClick={openMonthPicker}>
+              <Calendar size={17} />
+              <strong>{selectedPeriod.label}</strong>
+              <small>
+                {selectedPeriod.fromDate} ~ {selectedPeriod.toDate}
+              </small>
+            </button>
+          </div>
           <button className="primary" onClick={triggerCrawl} disabled={triggering}>
             {triggering ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
             <span>{triggering ? "요청 중" : "크롤링 수행"}</span>
@@ -127,12 +199,81 @@ export default function HomePage() {
             <RefreshCw className={loading ? "spin" : ""} size={18} />
             <span>새로고침</span>
           </button>
-          <a className="downloadButton" href="/reports/latest_report.pdf" target="_blank" rel="noreferrer">
+          <button className="downloadButton" type="button" onClick={() => setReportDialogOpen(true)}>
             <Download size={18} />
             <span>보고서 다운로드</span>
-          </a>
+          </button>
         </div>
       </section>
+
+      {monthPickerOpen ? (
+        <div className="modalBackdrop" role="presentation" onMouseDown={() => setMonthPickerOpen(false)}>
+          <section className="modal" role="dialog" aria-modal="true" aria-labelledby="month-picker-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="modalHeader">
+              <h2 id="month-picker-title">조회 기간</h2>
+              <p>선택한 월의 1일부터 말일까지 자동으로 조회합니다.</p>
+            </div>
+            <label className="modalField">
+              <span>연도</span>
+              <input
+                type="number"
+                value={pickerYear}
+                onChange={(event) => setPickerYear(event.target.value)}
+                min="2000"
+                max="2100"
+              />
+            </label>
+            <div className="monthGrid" role="list" aria-label="월 선택">
+              {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => (
+                <button
+                  className={`monthOption ${Number(pickerMonth) === month ? "selected" : ""}`}
+                  key={month}
+                  type="button"
+                  onClick={() => setPickerMonth(month)}
+                >
+                  {month}월
+                </button>
+              ))}
+            </div>
+            <div className="modalActions">
+              <button className="secondary" type="button" onClick={() => setMonthPickerOpen(false)}>
+                취소
+              </button>
+              <button className="primary" type="button" onClick={applyMonthPicker}>
+                적용
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {reportDialogOpen ? (
+        <div className="modalBackdrop" role="presentation" onMouseDown={() => setReportDialogOpen(false)}>
+          <section className="modal compactModal" role="dialog" aria-modal="true" aria-labelledby="report-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="modalHeader">
+              <h2 id="report-dialog-title">보고서 다운로드</h2>
+              <p>표지에 표시할 Issue 번호를 선택합니다.</p>
+            </div>
+            <label className="modalField">
+              <span>Issue 번호</span>
+              <input
+                type="number"
+                min="1"
+                value={issueNumber}
+                onChange={(event) => setIssueNumber(event.target.value)}
+              />
+            </label>
+            <div className="modalActions">
+              <button className="secondary" type="button" onClick={() => setReportDialogOpen(false)}>
+                취소
+              </button>
+              <button className="primary" type="button" onClick={downloadReport}>
+                다운로드
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       {message ? <div className="notice success">{message}</div> : null}
       {error ? <div className="notice error">{error}</div> : null}
