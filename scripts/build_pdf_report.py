@@ -34,6 +34,12 @@ FONT_WEIGHTS = {
     "semibold": 600,
     "extrabold": 800,
 }
+FONT_FILES = {
+    "demilight": "NotoSansKR-DemiLight.ttf",
+    "medium": "NotoSansKR-Medium.ttf",
+    "semibold": "NotoSansKR-SemiBold.ttf",
+    "extrabold": "NotoSansKR-ExtraBold.ttf",
+}
 EXEMPT_COMPANIES = {
     "Prodrive",
     "JSR",
@@ -236,6 +242,25 @@ def matrix_period_label(summary):
     return f"{start.month}월({compact_date(start)}~{end_text})"
 
 
+def filter_rows_by_report_period(rows, summary):
+    if not summary.get("from_date") or not summary.get("to_date"):
+        return rows
+    start, end = report_period(summary)
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    end = end.replace(hour=23, minute=59, second=59, microsecond=999999)
+    filtered = []
+    for row in rows:
+        published = parse_datetime(row.get("published_at"))
+        if not published:
+            filtered.append(row)
+            continue
+        if published.tzinfo is None:
+            published = published.replace(tzinfo=timezone.utc)
+        if start <= published.astimezone(timezone.utc) <= end:
+            filtered.append(row)
+    return filtered
+
+
 def short_text(value, limit):
     text = " ".join(str(value or "").replace("&nbsp;", " ").split())
     if len(text) <= limit:
@@ -288,6 +313,22 @@ def wrap_text(canvas_obj, text, max_width, font_name, font_size):
     return lines
 
 
+def draw_justified_line(canvas_obj, x, y, line, max_width, font_name, font_size):
+    words = line.split(" ")
+    if len(words) <= 1:
+        canvas_obj.drawString(x, y, line)
+        return
+    word_width = sum(canvas_obj.stringWidth(word, font_name, font_size) for word in words)
+    gap_count = len(words) - 1
+    gap_width = max((max_width - word_width) / gap_count, canvas_obj.stringWidth(" ", font_name, font_size))
+    cursor = x
+    for index, word in enumerate(words):
+        canvas_obj.drawString(cursor, y, word)
+        cursor += canvas_obj.stringWidth(word, font_name, font_size)
+        if index < gap_count:
+            cursor += gap_width
+
+
 def instantiate_variable_font(font_path, weight, out_dir):
     from fontTools.ttLib import TTFont as FontToolsTTFont
     from fontTools.varLib import instancer
@@ -305,7 +346,8 @@ def register_fonts(font_path):
     fonts = {}
     try:
         for role, weight in FONT_WEIGHTS.items():
-            font_file = instantiate_variable_font(source, weight, temp_dir)
+            static_file = source.parent / FONT_FILES[role]
+            font_file = static_file if static_file.exists() else instantiate_variable_font(source, weight, temp_dir)
             font_name = f"NotoSansKR-{role}"
             pdfmetrics.registerFont(ReportLabTTFont(font_name, str(font_file)))
             fonts[role] = font_name
@@ -358,6 +400,8 @@ class SlideReport:
         for line in lines:
             if align == "center":
                 self.canvas.drawCentredString(x + max_width / 2, y, line)
+            elif align == "justify" and line != lines[-1]:
+                draw_justified_line(self.canvas, x, y, line, max_width, font_name, size)
             else:
                 self.canvas.drawString(x, y, line)
             y -= line_height
@@ -528,7 +572,7 @@ def draw_matrix(report, profiles, signal_index, summary):
         f"77개 타겟기업의 {matrix_period_label(summary)} 글로벌 투자 시그널(전조현상). "
         "활성화된 셀 = 당월 포착된 시그널 (투자 확정 ˙ 발표 완료 등 후행 데이터 제외)."
     )
-    report.wrapped(desc, 42, PAGE_H - 128, PAGE_W - 84, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="center")
+    report.wrapped(desc, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
 
     draw_matrix_table(report, profiles[:39], signal_index, 25, PAGE_H - 145)
     draw_matrix_table(report, profiles[39:], signal_index, 281, PAGE_H - 145, right=True)
@@ -595,11 +639,10 @@ def draw_badge(report, x, y, value, active):
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
-def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator=True, slot_h=None):
+def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator=True):
     active = bool(rows)
     c = report.canvas
-    row_bottom = y - slot_h if slot_h else None
-    separator_y = row_bottom + 3 if row_bottom else y - 20
+    inactive_separator_y = y - 19
     draw_badge(report, x, y, no, active)
     label_x = x + 31
     label = SIGNAL_DESCRIPTIONS[no]
@@ -613,19 +656,20 @@ def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
-            c.line(x, separator_y, x + width, separator_y)
-        return row_bottom if row_bottom else y - 32
+            c.line(x, inactive_separator_y, x + width, inactive_separator_y)
+        return y - 27
 
     row = rows[0]
-    body_y = y - 30
+    body_y = y - 29
     max_lines = 2 if compact else 3
     report.wrapped(detail_text(row, 300), label_x, body_y, width - 64, 9.2, TEXT, max_lines=max_lines, line_gap=3)
     source_y = body_y - ((9.2 + 3) * max_lines) - 2
     report.text(label_x, source_y, source_line(row), 7.4, MUTED)
+    separator_y = source_y - 13
     if draw_separator:
         c.setStrokeColor(BOX_LINE)
         c.line(x, separator_y, x + width, separator_y)
-    return row_bottom if row_bottom else source_y - 25
+    return separator_y - 19
 
 
 def draw_detail_page(report, profile, signal_index, relevant_rows, investment_rows, all_signal_rows, idx, total):
@@ -633,10 +677,11 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.header("C O M P A N Y   S I G N A L S", "기업별 시그널 상세", f"{idx}/{total}")
     company = profile["company"]
     rows_by_signal = signal_index.get(company, {})
-    compact = True
-    top_y = 232
-    top_h = 436
-    bottom_y = 68
+    active_count = sum(1 for no in range(1, 6) if rows_by_signal.get(no))
+    compact = active_count >= 2
+    top_y = 232 if compact else 374
+    top_h = 436 if compact else 292
+    bottom_y = 68 if compact else 232
     bottom_h = 126
     x = 30
     width = PAGE_W - 60
@@ -662,10 +707,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setLineWidth(1)
     c.line(x + 17, header_y - 18, x + width - 17, header_y - 18)
 
-    signal_top = header_y - 40
-    signal_bottom = top_y + 26
-    slot_h = (signal_top - signal_bottom) / 5
-    y = signal_top
+    y = header_y - 35
     for no in range(1, 6):
         y = draw_signal_row(
             report,
@@ -676,7 +718,6 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
             width - 38,
             compact=compact,
             draw_separator=no < 5,
-            slot_h=slot_h,
         )
 
     business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
@@ -710,6 +751,10 @@ def build_report(args):
     investment_signals = load_json(args.investment_signals, [])
     investment_summary = load_json(args.investment_summary, {})
     indicators = load_json(args.indicator_config, {}).get("indicators", [])
+
+    signals = filter_rows_by_report_period(signals, summary)
+    relevant = filter_rows_by_report_period(relevant, summary)
+    investment_signals = filter_rows_by_report_period(investment_signals, summary)
 
     profiles = build_profiles(targets, tech_map)
     signal_index = index_investment_signals(investment_signals)
