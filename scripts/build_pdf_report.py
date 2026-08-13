@@ -689,7 +689,49 @@ def draw_badge(report, x, y, value, active):
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
-def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator=True):
+DETAIL_BOX_TOP = PAGE_H - 114
+DETAIL_BOX_GAP = 22
+DETAIL_BOTTOM_MARGIN = 62
+DETAIL_BOTTOM_BOX_H = 126
+DETAIL_HEADER_TO_FIRST_SIGNAL = 64
+SIGNAL_AFTER_LINE_GAP = 18
+SIGNAL_LAST_ROW_BOTTOM_PAD = 18
+
+
+def signal_body_line_count(report, row, width, max_lines):
+    body_width = width - 64
+    lines = wrap_text(report.canvas, detail_text(row, 300), body_width, report.fonts["demilight"], 9.2)
+    return max(1, min(len(lines), max_lines))
+
+
+def signal_row_height(report, rows, width, max_lines, draw_separator=True):
+    if not rows:
+        return 43 if draw_separator else 28
+
+    line_count = signal_body_line_count(report, rows[0], width, max_lines)
+    active_content_height = 29 + (line_count * (9.2 + 3)) + 2 + 4
+    if draw_separator:
+        return active_content_height + 10 + SIGNAL_AFTER_LINE_GAP
+    return active_content_height + SIGNAL_LAST_ROW_BOTTOM_PAD
+
+
+def estimate_signal_box_height(report, rows_by_signal, width, max_lines):
+    height = DETAIL_HEADER_TO_FIRST_SIGNAL
+    for no in range(1, 6):
+        height += signal_row_height(report, rows_by_signal.get(no, []), width, max_lines, draw_separator=no < 5)
+    return height
+
+
+def choose_signal_body_lines(report, rows_by_signal, width):
+    max_height = DETAIL_BOX_TOP - (DETAIL_BOTTOM_MARGIN + DETAIL_BOTTOM_BOX_H + DETAIL_BOX_GAP)
+    for max_lines in (3, 2, 1):
+        estimated_height = estimate_signal_box_height(report, rows_by_signal, width, max_lines)
+        if estimated_height <= max_height:
+            return max_lines, estimated_height
+    return 1, min(estimate_signal_box_height(report, rows_by_signal, width, 1), max_height)
+
+
+def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
     active = bool(rows)
     c = report.canvas
     draw_badge(report, x, y, no, active)
@@ -706,19 +748,21 @@ def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
             c.line(x, y - 25, x + width, y - 25)
-        return y - 38
+            return y - 25 - SIGNAL_AFTER_LINE_GAP
+        return y - 28
 
     row = rows[0]
     body_y = y - 29
-    max_lines = 2 if compact else 3
+    line_count = signal_body_line_count(report, row, width, max_lines)
     report.wrapped(detail_text(row, 300), label_x, body_y, width - 64, 9.2, TEXT, max_lines=max_lines, line_gap=3)
-    source_y = body_y - ((9.2 + 3) * max_lines) - 2
+    source_y = body_y - ((9.2 + 3) * line_count) - 2
     report.text(label_x, source_y, source_line(row), 7.4, MUTED)
-    separator_y = source_y - 13
+    separator_y = source_y - 14
     if draw_separator:
         c.setStrokeColor(BOX_LINE)
         c.line(x, separator_y, x + width, separator_y)
-    return separator_y - 19
+        return separator_y - SIGNAL_AFTER_LINE_GAP
+    return source_y - SIGNAL_LAST_ROW_BOTTOM_PAD
 
 
 def draw_detail_page(report, profile, signal_index, relevant_rows, investment_rows, all_signal_rows, idx, total):
@@ -726,14 +770,13 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.header("C O M P A N Y   S I G N A L S", "기업별 시그널 상세", f"{idx}/{total}")
     company = profile["company"]
     rows_by_signal = signal_index.get(company, {})
-    active_count = sum(1 for no in range(1, 6) if rows_by_signal.get(no))
-    compact = active_count >= 2
-    top_y = 232 if compact else 374
-    top_h = 436 if compact else 292
-    bottom_y = 68 if compact else 232
-    bottom_h = 126
     x = 30
     width = PAGE_W - 60
+    signal_width = width - 38
+    max_lines, top_h = choose_signal_body_lines(report, rows_by_signal, signal_width)
+    top_y = DETAIL_BOX_TOP - top_h
+    bottom_h = DETAIL_BOTTOM_BOX_H
+    bottom_y = top_y - DETAIL_BOX_GAP - bottom_h
     c = report.canvas
 
     c.setStrokeColor(BOX_LINE)
@@ -741,7 +784,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setFillColor(WHITE)
     c.roundRect(x, top_y, width, top_h, 10, fill=1, stroke=1)
 
-    header_y = top_y + top_h - 29
+    header_y = DETAIL_BOX_TOP - 29
     report.text(x + 17, header_y, company, 14, TEXT, weight="semibold")
     name_w = report.canvas.stringWidth(company, report.bold_font, 14)
     industry_x = min(x + 17 + name_w + 14, x + 250)
@@ -764,8 +807,8 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
             rows_by_signal.get(no, []),
             x + 19,
             y,
-            width - 38,
-            compact=compact,
+            signal_width,
+            max_lines=max_lines,
             draw_separator=no < 5,
         )
 
