@@ -1,7 +1,9 @@
 "use client";
 
-import { Calendar, Download, ExternalLink, Play, RefreshCw } from "lucide-react";
+import { Calendar, Download, ExternalLink, EyeOff, Play, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+
+const SIGNAL_IGNORE_STORAGE_KEY = "global-signal-monitor.ignored-signals.v2";
 
 function formatDate(value) {
   if (!value) return "-";
@@ -45,6 +47,45 @@ function monthRange(monthValue) {
   };
 }
 
+function signalFingerprint(item) {
+  return [
+    item.target_no,
+    item.company,
+    item.investment_signal_no,
+  ]
+    .filter((value) => value !== undefined && value !== null && value !== "")
+    .join("|");
+}
+
+function signalKey(item) {
+  const bytes = new TextEncoder().encode(signalFingerprint(item));
+  let hash = 0x811c9dc5;
+  for (const byte of bytes) {
+    hash ^= byte;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, "0");
+}
+
+function investmentSortKey(item, mode) {
+  const signalNo = Number(item.investment_signal_no) || 99;
+  const targetNo = Number(item.target_no) || 999;
+  const company = String(item.company || "");
+  const published = new Date(item.published_at || 0).getTime() || 0;
+  if (mode === "company") {
+    return [targetNo, company, signalNo, -published];
+  }
+  return [signalNo, targetNo, company, -published];
+}
+
+function compareSortKeys(left, right) {
+  for (let index = 0; index < Math.max(left.length, right.length); index += 1) {
+    if (left[index] < right[index]) return -1;
+    if (left[index] > right[index]) return 1;
+  }
+  return 0;
+}
+
 export default function HomePage() {
   const initialMonth = defaultMonthValue();
   const [monthValue, setMonthValue] = useState(initialMonth);
@@ -59,6 +100,8 @@ export default function HomePage() {
   const [summary, setSummary] = useState(null);
   const [relevanceSummary, setRelevanceSummary] = useState(null);
   const [investmentSummary, setInvestmentSummary] = useState(null);
+  const [investmentSortMode, setInvestmentSortMode] = useState("signal");
+  const [ignoredSignalKeys, setIgnoredSignalKeys] = useState([]);
   const [crawlStatus, setCrawlStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [triggering, setTriggering] = useState(false);
@@ -93,8 +136,16 @@ export default function HomePage() {
       from: selectedPeriod.fromDate,
       to: selectedPeriod.toDate,
     });
+    if (ignoredSignalKeys.length) {
+      params.set("ignored", ignoredSignalKeys.join(","));
+    }
     window.open(`/api/report?${params.toString()}`, "_blank", "noopener,noreferrer");
     setReportDialogOpen(false);
+  }
+
+  function ignoreSignal(item) {
+    const key = signalKey(item);
+    setIgnoredSignalKeys((current) => (current.includes(key) ? current : [...current, key]));
   }
 
   async function loadSignals() {
@@ -163,6 +214,28 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(SIGNAL_IGNORE_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setIgnoredSignalKeys(parsed.filter(Boolean));
+        }
+      }
+    } catch {
+      setIgnoredSignalKeys([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SIGNAL_IGNORE_STORAGE_KEY, JSON.stringify(ignoredSignalKeys));
+    } catch {
+      // Ignore localStorage failures; the current in-memory choice still applies.
+    }
+  }, [ignoredSignalKeys]);
+
+  useEffect(() => {
     if (crawlStatus?.label !== "진행 중") return undefined;
     const timer = window.setInterval(loadCrawlStatus, 10000);
     return () => window.clearInterval(timer);
@@ -170,7 +243,12 @@ export default function HomePage() {
 
   const displayedSignals = useMemo(() => signals, [signals]);
   const displayedRelevantSignals = useMemo(() => relevantSignals, [relevantSignals]);
-  const displayedInvestmentSignals = useMemo(() => investmentSignals, [investmentSignals]);
+  const ignoredSignalSet = useMemo(() => new Set(ignoredSignalKeys), [ignoredSignalKeys]);
+  const displayedInvestmentSignals = useMemo(() => {
+    return [...investmentSignals]
+      .filter((item) => !ignoredSignalSet.has(signalKey(item)))
+      .sort((left, right) => compareSortKeys(investmentSortKey(left, investmentSortMode), investmentSortKey(right, investmentSortMode)));
+  }, [ignoredSignalSet, investmentSignals, investmentSortMode]);
   const officialCount = summary?.official_result_count ?? signals.filter((item) => item.source_type === "official").length;
 
   return (
@@ -301,7 +379,7 @@ export default function HomePage() {
         </div>
         <div>
           <span>투자 시그널</span>
-          <strong>{investmentSummary?.investment_signal_count ?? investmentSignals.length}</strong>
+          <strong>{displayedInvestmentSignals.length}</strong>
         </div>
         <div>
           <span>크롤링 상태</span>
@@ -317,8 +395,39 @@ export default function HomePage() {
 
       <section className="panel investmentPanel">
         <div className="panelHeader">
-          <h2>5대 투자동향 시그널</h2>
-          <span>{loading ? "불러오는 중" : `${displayedInvestmentSignals.length}건 전체 표시`}</span>
+          <div className="panelTitle">
+            <h2>5대 투자동향 시그널</h2>
+            <span>
+              {loading
+                ? "불러오는 중"
+                : `${displayedInvestmentSignals.length}건 표시${ignoredSignalKeys.length ? ` · ${ignoredSignalKeys.length}건 무시` : ""}`}
+            </span>
+          </div>
+          <div className="panelTools" aria-label="투자동향 시그널 표시 옵션">
+            <div className="segmentedControl" role="group" aria-label="정렬 방식">
+              <button
+                className={investmentSortMode === "signal" ? "selected" : ""}
+                type="button"
+                onClick={() => setInvestmentSortMode("signal")}
+                aria-pressed={investmentSortMode === "signal"}
+              >
+                시그널 순
+              </button>
+              <button
+                className={investmentSortMode === "company" ? "selected" : ""}
+                type="button"
+                onClick={() => setInvestmentSortMode("company")}
+                aria-pressed={investmentSortMode === "company"}
+              >
+                기업명 순
+              </button>
+            </div>
+            {ignoredSignalKeys.length ? (
+              <button className="resetIgnoreButton" type="button" onClick={() => setIgnoredSignalKeys([])}>
+                무시 목록 초기화
+              </button>
+            ) : null}
+          </div>
         </div>
         <div className="tableWrap">
           <table>
@@ -331,6 +440,7 @@ export default function HomePage() {
                 <th>출처</th>
                 <th>게시일</th>
                 <th aria-label="open" />
+                <th>처리</th>
               </tr>
             </thead>
             <tbody>
@@ -385,11 +495,17 @@ export default function HomePage() {
                       <ExternalLink size={17} />
                     </a>
                   </td>
+                  <td>
+                    <button className="ignoreButton" type="button" onClick={() => ignoreSignal(item)}>
+                      <EyeOff size={15} />
+                      <span>무시</span>
+                    </button>
+                  </td>
                 </tr>
               ))}
               {!loading && displayedInvestmentSignals.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="empty">
+                  <td colSpan="8" className="empty">
                     표시할 투자동향 시그널이 없습니다.
                   </td>
                 </tr>

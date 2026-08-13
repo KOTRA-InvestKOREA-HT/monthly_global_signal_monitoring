@@ -349,15 +349,54 @@ def register_fonts(font_path):
             static_file = source.parent / FONT_FILES[role]
             font_file = static_file if static_file.exists() else instantiate_variable_font(source, weight, temp_dir)
             font_name = f"NotoSansKR-{role}"
-            pdfmetrics.registerFont(ReportLabTTFont(font_name, str(font_file)))
+            report_font = ReportLabTTFont(font_name, str(font_file))
+            report_font.face.name = font_name.encode("ascii")
+            pdfmetrics.registerFont(report_font)
             fonts[role] = font_name
     except Exception:
         fonts = {}
         for role in FONT_WEIGHTS:
             font_name = f"NotoSansKR-{role}"
-            pdfmetrics.registerFont(ReportLabTTFont(font_name, str(source)))
+            report_font = ReportLabTTFont(font_name, str(source))
+            report_font.face.name = font_name.encode("ascii")
+            pdfmetrics.registerFont(report_font)
             fonts[role] = font_name
     return fonts
+
+
+def signal_fingerprint(row):
+    values = [
+        row.get("target_no"),
+        row.get("company"),
+        row.get("investment_signal_no"),
+    ]
+    return "|".join(str(value) for value in values if value not in (None, ""))
+
+
+def fnv1a_utf8(value):
+    hash_value = 0x811C9DC5
+    for byte in str(value).encode("utf-8"):
+        hash_value ^= byte
+        hash_value = (hash_value * 0x01000193) & 0xFFFFFFFF
+    return f"{hash_value:08x}"
+
+
+def parse_ignored_signal_keys(value):
+    if not value:
+        return set()
+    return {item.strip() for item in str(value).split(",") if item.strip()}
+
+
+def filter_ignored_signals(rows, ignored_keys):
+    if not ignored_keys:
+        return rows
+    filtered = []
+    for row in rows:
+        fingerprint = signal_fingerprint(row)
+        if fingerprint in ignored_keys or fnv1a_utf8(fingerprint) in ignored_keys:
+            continue
+        filtered.append(row)
+    return filtered
 
 
 class SlideReport:
@@ -642,7 +681,6 @@ def draw_badge(report, x, y, value, active):
 def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator=True):
     active = bool(rows)
     c = report.canvas
-    inactive_separator_y = y - 19
     draw_badge(report, x, y, no, active)
     label_x = x + 31
     label = SIGNAL_DESCRIPTIONS[no]
@@ -656,8 +694,8 @@ def draw_signal_row(report, no, rows, x, y, width, compact=False, draw_separator
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
-            c.line(x, inactive_separator_y, x + width, inactive_separator_y)
-        return y - 27
+            c.line(x, y - 25, x + width, y - 25)
+        return y - 38
 
     row = rows[0]
     body_y = y - 29
@@ -755,6 +793,7 @@ def build_report(args):
     signals = filter_rows_by_report_period(signals, summary)
     relevant = filter_rows_by_report_period(relevant, summary)
     investment_signals = filter_rows_by_report_period(investment_signals, summary)
+    investment_signals = filter_ignored_signals(investment_signals, parse_ignored_signal_keys(args.ignored_signals))
 
     profiles = build_profiles(targets, tech_map)
     signal_index = index_investment_signals(investment_signals)
@@ -801,6 +840,7 @@ def main():
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", required=True)
     parser.add_argument("--issue-number", default=DEFAULT_ISSUE_NUMBER)
+    parser.add_argument("--ignored-signals", default="")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     build_report(args)

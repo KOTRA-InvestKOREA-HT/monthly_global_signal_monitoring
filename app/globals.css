@@ -302,8 +302,51 @@ button:disabled {
   gap: 12px;
 }
 
+.panelTitle {
+  display: grid;
+  gap: 4px;
+}
+
 .panelHeader h2 {
   font-size: 17px;
+}
+
+.panelTools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.segmentedControl {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.segmentedControl button {
+  height: 30px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 11px;
+  color: var(--muted);
+  background: transparent;
+}
+
+.segmentedControl button.selected {
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.08);
+}
+
+.resetIgnoreButton {
+  height: 36px;
+  border-color: var(--line);
+  color: var(--muted);
+  background: #fff;
 }
 
 .tableWrap {
@@ -402,6 +445,7 @@ td:nth-child(5) {
 .investmentPanel th:nth-child(5),
 .investmentPanel td:nth-child(5) {
   width: 190px;
+  text-align: left;
 }
 
 .investmentPanel th:nth-child(6),
@@ -413,6 +457,12 @@ td:nth-child(5) {
 .investmentPanel th:nth-child(7),
 .investmentPanel td:nth-child(7) {
   width: 48px;
+  text-align: center;
+}
+
+.investmentPanel th:nth-child(8),
+.investmentPanel td:nth-child(8) {
+  width: 86px;
   text-align: center;
 }
 
@@ -428,6 +478,8 @@ td a {
 .sourceStack {
   display: grid;
   gap: 6px;
+  justify-items: start;
+  text-align: left;
 }
 
 .signalStack {
@@ -505,6 +557,29 @@ td a {
 .sourceBadge.fallback {
   color: var(--muted);
   background: #eef2f6;
+}
+
+.ignoreButton {
+  height: 32px;
+  justify-content: center;
+  border-color: var(--line);
+  border-radius: 7px;
+  padding: 0 10px;
+  color: var(--muted);
+  background: #fff;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+.ignoreButton span {
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+.ignoreButton:hover {
+  color: var(--err);
+  border-color: #fecaca;
+  background: #fff7f7;
 }
 
 .empty {
