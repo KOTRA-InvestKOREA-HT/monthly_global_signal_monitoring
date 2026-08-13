@@ -118,6 +118,7 @@ export default function HomePage() {
   const [crawlStatus, setCrawlStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [triggering, setTriggering] = useState(false);
+  const [downloadingReport, setDownloadingReport] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const selectedPeriod = useMemo(() => monthRange(monthValue), [monthValue]);
@@ -140,7 +141,7 @@ export default function HomePage() {
     setError("");
   }
 
-  function downloadReport() {
+  async function downloadReport() {
     const safeIssue = String(issueNumber).replace(/[^\d]/g, "") || "2";
     setIssueNumber(safeIssue);
     const params = new URLSearchParams({
@@ -152,8 +153,41 @@ export default function HomePage() {
     if (ignoredSignalKeys.length) {
       params.set("ignored", ignoredSignalKeys.join(","));
     }
-    window.open(`/api/report?${params.toString()}`, "_blank", "noopener,noreferrer");
-    setReportDialogOpen(false);
+    setDownloadingReport(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch(`/api/report?${params.toString()}`, { cache: "no-store" });
+      if (!response.ok) {
+        let errorMessage = "보고서를 생성하지 못했습니다.";
+        try {
+          const payload = await response.json();
+          errorMessage = payload.error || errorMessage;
+        } catch {
+          errorMessage = await response.text();
+        }
+        throw new Error(errorMessage);
+      }
+      const blob = await response.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = `global-signal-monitor-issue-${safeIssue}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(objectUrl);
+
+      const fallbackReason = response.headers.get("X-Report-Fallback");
+      if (fallbackReason) {
+        setMessage("선택 조건 반영 보고서 생성이 제한되어 최신 보고서 양식으로 다운로드했습니다.");
+      }
+      setReportDialogOpen(false);
+    } catch (err) {
+      setError(err.message || "보고서 다운로드에 실패했습니다.");
+    } finally {
+      setDownloadingReport(false);
+    }
   }
 
   function ignoreSignal(item) {
@@ -363,8 +397,8 @@ export default function HomePage() {
               <button className="secondary" type="button" onClick={() => setReportDialogOpen(false)}>
                 취소
               </button>
-              <button className="primary" type="button" onClick={downloadReport}>
-                다운로드
+              <button className="primary" type="button" onClick={downloadReport} disabled={downloadingReport}>
+                {downloadingReport ? "생성 중" : "다운로드"}
               </button>
             </div>
           </section>

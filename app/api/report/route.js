@@ -33,7 +33,18 @@ function pythonCandidates() {
   const localCodexPython = process.env.USERPROFILE
     ? path.join(process.env.USERPROFILE, ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", "python.exe")
     : "";
-  return [process.env.PYTHON_PATH, localCodexPython, "python3", "python"].filter(Boolean);
+  return [
+    process.env.PYTHON_PATH,
+    process.env.PYTHON,
+    localCodexPython,
+    "/usr/local/bin/python3",
+    "/usr/bin/python3",
+    "python3",
+    "py",
+    "python",
+  ]
+    .filter(Boolean)
+    .filter((value, index, values) => values.indexOf(value) === index);
 }
 
 function runPython(command, args) {
@@ -58,7 +69,7 @@ function runPython(command, args) {
     });
     child.on("error", (error) => {
       clearTimeout(timer);
-      reject(error);
+      reject(new Error(`${command}: ${error.message}`));
     });
     child.on("close", (code) => {
       clearTimeout(timer);
@@ -66,7 +77,7 @@ function runPython(command, args) {
         resolve(stdout);
         return;
       }
-      reject(new Error((stderr || stdout || `Python exited with code ${code}`).trim()));
+      reject(new Error(`${command}: ${(stderr || stdout || `Python exited with code ${code}`).trim()}`));
     });
   });
 }
@@ -106,6 +117,7 @@ async function buildDynamicReport(issue, ignored, fromDate, toDate) {
   }
 
   let lastError = null;
+  const errors = [];
   for (const command of pythonCandidates()) {
     try {
       await runPython(command, args);
@@ -114,10 +126,11 @@ async function buildDynamicReport(issue, ignored, fromDate, toDate) {
       return output;
     } catch (error) {
       lastError = error;
+      errors.push(error.message);
     }
   }
   await fs.rm(outPath, { force: true });
-  throw new Error(`선택 조건을 반영한 보고서 생성에 실패했습니다. ${lastError?.message || ""}`.trim());
+  throw new Error(`선택 조건을 반영한 보고서 생성에 실패했습니다. ${errors.join(" | ") || lastError?.message || ""}`.trim());
 }
 
 async function shouldUseStaticReport(ignored, fromDate, toDate) {
@@ -143,11 +156,17 @@ export async function GET(request) {
     const fontDir = path.join(process.cwd(), "assets", "fonts");
     const semiBoldPath = path.join(fontDir, "NotoSansKR-SemiBold.ttf");
     const demiLightPath = path.join(fontDir, "NotoSansKR-DemiLight.ttf");
-    const [sourceBytes, semiBoldBytes, demiLightBytes] = await Promise.all([
-      useStaticReport ? fs.readFile(sourcePath) : buildDynamicReport(issue, ignored, fromDate, toDate),
-      fs.readFile(semiBoldPath),
-      fs.readFile(demiLightPath),
-    ]);
+    let fallbackReason = "";
+    const dynamicSource = async () => {
+      if (useStaticReport) return fs.readFile(sourcePath);
+      try {
+        return await buildDynamicReport(issue, ignored, fromDate, toDate);
+      } catch (error) {
+        fallbackReason = error.message;
+        return fs.readFile(sourcePath);
+      }
+    };
+    const [sourceBytes, semiBoldBytes, demiLightBytes] = await Promise.all([dynamicSource(), fs.readFile(semiBoldPath), fs.readFile(demiLightPath)]);
 
     const pdf = await PDFDocument.load(sourceBytes);
     pdf.registerFontkit(fontkit);
@@ -195,13 +214,15 @@ export async function GET(request) {
     }
 
     const output = await pdf.save();
-    return new Response(output, {
-      headers: {
+    const headers = {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}.pdf"`,
         "Cache-Control": "no-store",
-      },
-    });
+    };
+    if (fallbackReason) {
+      headers["X-Report-Fallback"] = encodeURIComponent(fallbackReason.slice(0, 800));
+    }
+    return new Response(output, { headers });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
