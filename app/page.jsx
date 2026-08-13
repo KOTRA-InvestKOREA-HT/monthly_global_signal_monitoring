@@ -47,6 +47,19 @@ function monthRange(monthValue) {
   };
 }
 
+function dateOnly(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toISOString().slice(0, 10);
+}
+
+function isWithinPeriod(item, period) {
+  const published = dateOnly(item?.published_at);
+  if (!published) return true;
+  return published >= period.fromDate && published <= period.toDate;
+}
+
 function signalFingerprint(item) {
   return [
     item.target_no,
@@ -241,15 +254,20 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, [crawlStatus?.label]);
 
-  const displayedSignals = useMemo(() => signals, [signals]);
-  const displayedRelevantSignals = useMemo(() => relevantSignals, [relevantSignals]);
+  const displayedSignals = useMemo(() => signals.filter((item) => isWithinPeriod(item, selectedPeriod)), [selectedPeriod, signals]);
+  const displayedRelevantSignals = useMemo(
+    () => relevantSignals.filter((item) => isWithinPeriod(item, selectedPeriod)),
+    [relevantSignals, selectedPeriod],
+  );
   const ignoredSignalSet = useMemo(() => new Set(ignoredSignalKeys), [ignoredSignalKeys]);
   const displayedInvestmentSignals = useMemo(() => {
     return [...investmentSignals]
+      .filter((item) => isWithinPeriod(item, selectedPeriod))
       .filter((item) => !ignoredSignalSet.has(signalKey(item)))
       .sort((left, right) => compareSortKeys(investmentSortKey(left, investmentSortMode), investmentSortKey(right, investmentSortMode)));
-  }, [ignoredSignalSet, investmentSignals, investmentSortMode]);
-  const officialCount = summary?.official_result_count ?? signals.filter((item) => item.source_type === "official").length;
+  }, [ignoredSignalSet, investmentSignals, investmentSortMode, selectedPeriod]);
+  const collectedCompanyCount = useMemo(() => new Set(displayedSignals.map((item) => item.company).filter(Boolean)).size, [displayedSignals]);
+  const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
 
   return (
     <main className="shell">
@@ -363,11 +381,11 @@ export default function HomePage() {
         </div>
         <div>
           <span>수집 기업</span>
-          <strong>{summary?.companies_with_results ?? "-"}</strong>
+          <strong>{loading ? "-" : collectedCompanyCount}</strong>
         </div>
         <div>
           <span>수집 건수</span>
-          <strong>{summary?.result_count ?? signals.length}</strong>
+          <strong>{displayedSignals.length}</strong>
         </div>
         <div>
           <span>공식 출처</span>

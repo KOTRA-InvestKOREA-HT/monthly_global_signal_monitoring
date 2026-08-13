@@ -20,6 +20,15 @@ function ignoredSignalKeys(value) {
     .filter(Boolean);
 }
 
+function dateParam(value) {
+  const text = String(value || "").trim();
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : "";
+}
+
+async function readJson(filePath) {
+  return JSON.parse(await fs.readFile(path.join(process.cwd(), filePath), "utf8"));
+}
+
 function pythonCandidates() {
   const localCodexPython = process.env.USERPROFILE
     ? path.join(process.env.USERPROFILE, ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", "python.exe")
@@ -62,7 +71,7 @@ function runPython(command, args) {
   });
 }
 
-async function buildReportWithIgnoredSignals(issue, ignored) {
+async function buildDynamicReport(issue, ignored, fromDate, toDate) {
   const outPath = path.join(tmpdir(), `global-signal-report-${randomUUID()}.pdf`);
   const args = [
     "scripts/build_pdf_report.py",
@@ -89,6 +98,12 @@ async function buildReportWithIgnoredSignals(issue, ignored) {
     "--out",
     outPath,
   ];
+  if (fromDate) {
+    args.push("--from-date", fromDate);
+  }
+  if (toDate) {
+    args.push("--to-date", toDate);
+  }
 
   let lastError = null;
   for (const command of pythonCandidates()) {
@@ -102,7 +117,18 @@ async function buildReportWithIgnoredSignals(issue, ignored) {
     }
   }
   await fs.rm(outPath, { force: true });
-  throw new Error(`무시 항목을 반영한 보고서 생성에 실패했습니다. ${lastError?.message || ""}`.trim());
+  throw new Error(`선택 조건을 반영한 보고서 생성에 실패했습니다. ${lastError?.message || ""}`.trim());
+}
+
+async function shouldUseStaticReport(ignored, fromDate, toDate) {
+  if (ignored.length) return false;
+  if (!fromDate && !toDate) return true;
+  try {
+    const summary = await readJson("outputs/latest_collection_summary.json");
+    return (!fromDate || summary.from_date === fromDate) && (!toDate || summary.to_date === toDate);
+  } catch {
+    return false;
+  }
 }
 
 export async function GET(request) {
@@ -110,12 +136,15 @@ export async function GET(request) {
     const url = new URL(request.url);
     const issue = issueNumber(url.searchParams.get("issue"));
     const ignored = ignoredSignalKeys(url.searchParams.get("ignored"));
+    const fromDate = dateParam(url.searchParams.get("from"));
+    const toDate = dateParam(url.searchParams.get("to"));
+    const useStaticReport = await shouldUseStaticReport(ignored, fromDate, toDate);
     const sourcePath = path.join(process.cwd(), "public", "reports", "latest_report.pdf");
     const fontDir = path.join(process.cwd(), "assets", "fonts");
     const semiBoldPath = path.join(fontDir, "NotoSansKR-SemiBold.ttf");
     const demiLightPath = path.join(fontDir, "NotoSansKR-DemiLight.ttf");
     const [sourceBytes, semiBoldBytes, demiLightBytes] = await Promise.all([
-      ignored.length ? buildReportWithIgnoredSignals(issue, ignored) : fs.readFile(sourcePath),
+      useStaticReport ? fs.readFile(sourcePath) : buildDynamicReport(issue, ignored, fromDate, toDate),
       fs.readFile(semiBoldPath),
       fs.readFile(demiLightPath),
     ]);

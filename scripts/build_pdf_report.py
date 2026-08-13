@@ -399,6 +399,17 @@ def filter_ignored_signals(rows, ignored_keys):
     return filtered
 
 
+def override_summary_period(summary, from_date=None, to_date=None):
+    if not from_date and not to_date:
+        return summary
+    updated = dict(summary)
+    if from_date:
+        updated["from_date"] = str(from_date)[:10]
+    if to_date:
+        updated["to_date"] = str(to_date)[:10]
+    return updated
+
+
 class SlideReport:
     def __init__(self, out_path, fonts, issue_number):
         self.out_path = out_path
@@ -784,7 +795,7 @@ def build_report(args):
     targets = load_json(args.targets, [])
     tech_map = load_json(args.technology_map, {"companies": []})
     signals = load_json(args.signals, [])
-    summary = load_json(args.summary, {})
+    summary = override_summary_period(load_json(args.summary, {}), args.from_date, args.to_date)
     relevant = load_json(args.relevant, [])
     investment_signals = load_json(args.investment_signals, [])
     investment_summary = load_json(args.investment_summary, {})
@@ -841,6 +852,8 @@ def main():
     parser.add_argument("--font", required=True)
     parser.add_argument("--issue-number", default=DEFAULT_ISSUE_NUMBER)
     parser.add_argument("--ignored-signals", default="")
+    parser.add_argument("--from-date", default="")
+    parser.add_argument("--to-date", default="")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     build_report(args)
