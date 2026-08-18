@@ -439,6 +439,14 @@ class SlideReport:
         else:
             self.canvas.drawString(x, y, value)
 
+    def spaced_text(self, x, y, value, size=10, color=TEXT, weight="demilight", char_space=0.6):
+        font_name = self.font_for(weight)
+        self.set_font(size, color, weight=weight)
+        cursor_x = x
+        for char in str(value or ""):
+            self.canvas.drawString(cursor_x, y, char)
+            cursor_x += self.canvas.stringWidth(char, font_name, size) + char_space
+
     def wrapped(self, text, x, y, max_width, size=10, color=TEXT, max_lines=0, line_gap=3, bold=False, weight="demilight", align="left"):
         font_name = self.font_for(weight, bold)
         lines = wrap_text(self.canvas, text, max_width, font_name, size)
@@ -689,6 +697,20 @@ def draw_badge(report, x, y, value, active):
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
+def draw_target_marker(c, x, y):
+    c.setFillColor(colors.HexColor("#F45E7A"))
+    c.circle(x, y, 4.2, fill=1, stroke=0)
+    c.setFillColor(colors.HexColor("#F4FBFA"))
+    c.circle(x, y, 2.8, fill=1, stroke=0)
+    c.setFillColor(colors.HexColor("#0A7C72"))
+    c.circle(x, y, 1.35, fill=1, stroke=0)
+    c.setStrokeColor(colors.HexColor("#0A7C72"))
+    c.setLineWidth(0.55)
+    c.line(x + 2.6, y + 2.6, x + 6.0, y + 6.0)
+    c.line(x + 6.0, y + 6.0, x + 6.0, y + 3.7)
+    c.line(x + 6.0, y + 6.0, x + 3.7, y + 6.0)
+
+
 DETAIL_BOX_TOP = PAGE_H - 114
 DETAIL_BOX_GAP = 22
 DETAIL_BOTTOM_MARGIN = 62
@@ -817,16 +839,21 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setFillColor(TEAL_BG)
     c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
     top = bottom_y + bottom_h
-    report.text(x + 16, top - 27, "글로벌 사업현황", 8, colors.HexColor("#087A70"), weight="semibold")
+    header_y = top - 29
+    report.spaced_text(x + 16, header_y, "글로벌 사업현황", 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
     c.setFillColor(colors.HexColor("#DDF0EE"))
-    c.roundRect(x + 105, top - 34, 58, 18, 3, fill=1, stroke=0)
-    report.text(x + 134, top - 29, "타겟기술", 8, colors.HexColor("#087A70"), align="center", weight="semibold")
+    target_label_x = x + 108
+    target_label_w = 72
+    target_label_y = top - 36
+    c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
+    draw_target_marker(c, target_label_x + 14, header_y + 2)
+    report.text(target_label_x + 28, header_y, "타겟기술", 8.5, colors.HexColor("#087A70"), weight="semibold")
     target_text = "" if profile.get("exempt_from_relevance") else profile.get("target_technology", "")
     if target_text:
-        report.text(x + 174, top - 28, short_text(target_text, 36), 9, colors.HexColor("#087A70"), weight="semibold")
+        report.text(target_label_x + target_label_w + 18, header_y, short_text(target_text, 42), 9.5, colors.HexColor("#087A70"), weight="semibold")
 
     body = business_text([business_row] if business_row else [])
-    report.wrapped(body, x + 16, top - 55, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
+    report.wrapped(body, x + 16, top - 58, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
     if business_row:
         report.text(x + 16, bottom_y + 17, source_line(business_row), 8, MUTED)
     else:
