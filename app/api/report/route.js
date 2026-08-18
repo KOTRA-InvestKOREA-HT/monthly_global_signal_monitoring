@@ -133,6 +133,27 @@ async function buildDynamicReport(issue, ignored, fromDate, toDate) {
   throw new Error(`선택 조건을 반영한 보고서 생성에 실패했습니다. ${errors.join(" | ") || lastError?.message || ""}`.trim());
 }
 
+async function buildDynamicReportViaPythonFunction(requestUrl, issue, ignored, fromDate, toDate) {
+  const endpoint = new URL("/api/report-dynamic", requestUrl.origin);
+  endpoint.searchParams.set("issue", issue);
+  if (ignored.length) endpoint.searchParams.set("ignored", ignored.join(","));
+  if (fromDate) endpoint.searchParams.set("from", fromDate);
+  if (toDate) endpoint.searchParams.set("to", toDate);
+
+  const response = await fetch(endpoint, { cache: "no-store" });
+  if (!response.ok) {
+    let message = "Vercel Python 보고서 함수 호출에 실패했습니다.";
+    try {
+      const payload = await response.json();
+      message = payload.error || message;
+    } catch {
+      message = await response.text();
+    }
+    throw new Error(message);
+  }
+  return Buffer.from(await response.arrayBuffer());
+}
+
 async function shouldUseStaticReport(ignored, fromDate, toDate) {
   if (ignored.length) return false;
   if (!fromDate && !toDate) return true;
@@ -156,14 +177,18 @@ export async function GET(request) {
     const fontDir = path.join(process.cwd(), "assets", "fonts");
     const semiBoldPath = path.join(fontDir, "NotoSansKR-SemiBold.ttf");
     const demiLightPath = path.join(fontDir, "NotoSansKR-DemiLight.ttf");
-    let fallbackReason = "";
     const dynamicSource = async () => {
       if (useStaticReport) return fs.readFile(sourcePath);
       try {
         return await buildDynamicReport(issue, ignored, fromDate, toDate);
       } catch (error) {
-        fallbackReason = error.message;
-        return fs.readFile(sourcePath);
+        const canUseVercelPythonFunction = process.env.VERCEL === "1" || /ENOENT/i.test(error.message || "");
+        if (!canUseVercelPythonFunction) throw error;
+        try {
+          return await buildDynamicReportViaPythonFunction(url, issue, ignored, fromDate, toDate);
+        } catch (pythonFunctionError) {
+          throw new Error(`${error.message} | ${pythonFunctionError.message}`);
+        }
       }
     };
     const [sourceBytes, semiBoldBytes, demiLightBytes] = await Promise.all([dynamicSource(), fs.readFile(semiBoldPath), fs.readFile(demiLightPath)]);
@@ -219,9 +244,6 @@ export async function GET(request) {
         "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}.pdf"`,
         "Cache-Control": "no-store",
     };
-    if (fallbackReason) {
-      headers["X-Report-Fallback"] = encodeURIComponent(fallbackReason.slice(0, 800));
-    }
     return new Response(output, { headers });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
