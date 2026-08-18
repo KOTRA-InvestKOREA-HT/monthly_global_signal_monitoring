@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from reportlab.lib import colors
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont as ReportLabTTFont
 from reportlab.pdfgen import canvas
@@ -28,6 +29,8 @@ GREY_TEXT = colors.HexColor("#B1B6BE")
 WHITE = colors.white
 
 DEFAULT_ISSUE_NUMBER = "2"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+TARGET_EMOJI_PATH = PROJECT_ROOT / "assets" / "images" / "emoji_target_1f3af.png"
 FONT_WEIGHTS = {
     "demilight": 350,
     "medium": 500,
@@ -697,7 +700,18 @@ def draw_badge(report, x, y, value, active):
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
-def draw_target_marker(c, x, y):
+def draw_target_marker(c, x, y, size=11):
+    if TARGET_EMOJI_PATH.exists():
+        c.drawImage(
+            ImageReader(str(TARGET_EMOJI_PATH)),
+            x - size / 2,
+            y - size / 2,
+            width=size,
+            height=size,
+            mask="auto",
+        )
+        return
+
     c.setFillColor(colors.HexColor("#F45E7A"))
     c.circle(x, y, 4.4, fill=1, stroke=0)
     c.setFillColor(colors.HexColor("#F4FBFA"))
@@ -834,12 +848,12 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setFillColor(TEAL_BG)
     c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
     top = bottom_y + bottom_h
-    header_y = top - 23
+    header_y = top - 25
     report.spaced_text(x + 16, header_y, "글로벌 사업현황", 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
     c.setFillColor(colors.HexColor("#DDF0EE"))
     target_label_x = x + 98
     target_label_w = 68
-    target_label_y = top - 30
+    target_label_y = top - 32
     c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
     draw_target_marker(c, target_label_x + 13, header_y + 2)
     report.text(target_label_x + 25, header_y, "타겟기술", 8.5, colors.HexColor("#087A70"), weight="semibold")
@@ -848,11 +862,11 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         report.text(target_label_x + target_label_w + 9, header_y, short_text(target_text, 45), 9.5, colors.HexColor("#087A70"), weight="semibold")
 
     body = business_text([business_row] if business_row else [])
-    report.wrapped(body, x + 16, top - 52, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
+    report.wrapped(body, x + 16, top - 54, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
     if business_row:
-        report.text(x + 16, bottom_y + 23, source_line(business_row), 8, MUTED)
+        report.text(x + 16, bottom_y + 21, source_line(business_row), 8, MUTED)
     else:
-        report.text(x + 16, bottom_y + 23, "출처  -", 8, MUTED)
+        report.text(x + 16, bottom_y + 21, "출처  -", 8, MUTED)
     report.footer()
 
 
