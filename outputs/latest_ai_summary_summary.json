@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-20T04:35:34Z",
+  "run_started_at": "2026-08-20T04:47:32Z",
   "status": "completed",
   "method": "luna_first_terra_retry",
   "luna_model": "gpt-5",
@@ -18,14 +18,14 @@
     "investment": {
       "latest_json": "outputs/latest_investment_signals.json",
       "latest_csv": "outputs/latest_investment_signals.csv",
-      "json": "outputs/investment_signals_ai_summary_20260820T043534Z.json",
-      "csv": "outputs/investment_signals_ai_summary_20260820T043534Z.csv"
+      "json": "outputs/investment_signals_ai_summary_20260820T044732Z.json",
+      "csv": "outputs/investment_signals_ai_summary_20260820T044732Z.csv"
     },
     "relevant": {
       "latest_json": "outputs/latest_relevant_signals.json",
       "latest_csv": "outputs/latest_relevant_signals.csv",
-      "json": "outputs/relevant_signals_ai_summary_20260820T043534Z.json",
-      "csv": "outputs/relevant_signals_ai_summary_20260820T043534Z.csv"
+      "json": "outputs/relevant_signals_ai_summary_20260820T044732Z.json",
+      "csv": "outputs/relevant_signals_ai_summary_20260820T044732Z.csv"
     }
   }
 }
