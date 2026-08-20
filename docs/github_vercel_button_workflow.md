@@ -217,12 +217,18 @@ To show Korean 2-3 line evidence summaries in the dashboard and downloaded PDF, 
 
 Optional repository variables:
 
-- `AI_SUMMARY_LUNA_MODEL`: first-pass summary model. Default: `gpt-5`.
-- `AI_SUMMARY_TERRA_MODEL`: retry model for low-quality summaries. Default: `gpt-5.6`.
+- `AI_SUMMARY_LUNA_MODEL`: first-pass summary model. Default: `gpt-5.6-luna`.
+- `AI_SUMMARY_TERRA_MODEL`: retry model for low-quality summaries. Default: `gpt-5.6-terra`.
+- `AI_SUMMARY_REASONING_EFFORT`: reasoning effort for the summary model. Default: `low`.
+- `AI_SUMMARY_MAX_OUTPUT_TOKENS`: first-attempt output budget. Default: `1600`.
+- `AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS`: retry output budget when the first response is empty or runs out of output tokens. Default: `3200`.
+- `AI_SUMMARY_RELEVANT_SIGNALS`: also summarize technology-relevant candidate rows for the global business status box. Default: `true`.
 
 Do not place API keys in source files, workflow files, screenshots, or commit messages. If a key was pasted into a chat or screenshot, revoke it and create a new key before using it in GitHub Secrets.
 
 AI summaries are cached in `outputs/ai_summary_cache.json`. During later monthly runs, the workflow reuses a cached summary when the company, signal, title, URL, and evidence text fingerprint match. If the evidence fingerprint changes, that row is treated as changed and calls the OpenAI API again. Only new or changed signal rows call the OpenAI API again. The workflow auto-commits `outputs/*.json`, so the cache is preserved in GitHub after each run.
+
+The AI summary step defaults to `gpt-5.6-luna` first and `gpt-5.6-terra` only for low-quality summaries. It summarizes only report-facing rows by default: `outputs/latest_investment_signals.json` for captured investment signals and `outputs/latest_relevant_signals.json` for the global business status box, not the full collection output. It uses low reasoning and a larger output token budget to avoid a paid API call returning no visible Korean summary because reasoning consumed the entire output budget. If every AI summary request fails, the workflow stops before publishing a report.
 
 ## Vercel Python Entrypoint Error
 

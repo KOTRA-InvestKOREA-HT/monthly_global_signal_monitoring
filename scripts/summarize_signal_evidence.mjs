@@ -22,10 +22,15 @@ const DEFAULTS = {
   relevantSignals: "outputs/latest_relevant_signals.json",
   cache: "outputs/ai_summary_cache.json",
   outDir: "outputs",
-  lunaModel: process.env.AI_SUMMARY_LUNA_MODEL || "gpt-5",
-  terraModel: process.env.AI_SUMMARY_TERRA_MODEL || "gpt-5.6",
+  lunaModel: process.env.AI_SUMMARY_LUNA_MODEL || "gpt-5.6-luna",
+  terraModel: process.env.AI_SUMMARY_TERRA_MODEL || "gpt-5.6-terra",
   concurrency: 2,
   maxInputChars: 3600,
+  maxOutputTokens: process.env.AI_SUMMARY_MAX_OUTPUT_TOKENS || 1600,
+  retryMaxOutputTokens: process.env.AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS || 3200,
+  reasoningEffort: process.env.AI_SUMMARY_REASONING_EFFORT || "low",
+  failOnAllSummaryFailure: process.env.AI_SUMMARY_FAIL_ON_ALL_FAILURE || "true",
+  summarizeRelevant: process.env.AI_SUMMARY_RELEVANT_SIGNALS || "true",
   onlyMissing: true,
   optional: true,
 };
@@ -46,8 +51,12 @@ function parseArgs(argv) {
   }
   args.concurrency = Math.max(1, Number(args.concurrency) || DEFAULTS.concurrency);
   args.maxInputChars = Math.max(1000, Number(args.maxInputChars) || DEFAULTS.maxInputChars);
+  args.maxOutputTokens = Math.max(500, Number(args.maxOutputTokens) || Number(DEFAULTS.maxOutputTokens));
+  args.retryMaxOutputTokens = Math.max(args.maxOutputTokens, Number(args.retryMaxOutputTokens) || Number(DEFAULTS.retryMaxOutputTokens));
   args.onlyMissing = args.onlyMissing !== "false" && args.onlyMissing !== false;
   args.optional = args.optional !== "false" && args.optional !== false;
+  args.failOnAllSummaryFailure = args.failOnAllSummaryFailure !== "false" && args.failOnAllSummaryFailure !== false;
+  args.summarizeRelevant = args.summarizeRelevant === "true" || args.summarizeRelevant === true;
   return args;
 }
 
@@ -243,7 +252,18 @@ function parseModelJson(text) {
   }
 }
 
-async function callOpenAI({ apiKey, model, row, args, tier }) {
+function emptyOutputErrorMessage({ tier, model, payload, maxOutputTokens }) {
+  const status = payload.status || "unknown";
+  const reason = payload.incomplete_details?.reason || "none";
+  const outputTokens = payload.usage?.output_tokens ?? "unknown";
+  return `${tier} ${model}: empty model output (status=${status}, reason=${reason}, output_tokens=${outputTokens}, max_output_tokens=${maxOutputTokens})`;
+}
+
+function shouldRetryModelOutput(error) {
+  return /empty model output|max_output_tokens/i.test(error.message || "");
+}
+
+async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
   const input = sourceMaterial(row, args.maxInputChars);
   const prompt = [
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
@@ -262,12 +282,14 @@ async function callOpenAI({ apiKey, model, row, args, tier }) {
     body: JSON.stringify({
       model,
       store: false,
-      max_output_tokens: 350,
+      reasoning: { effort: args.reasoningEffort },
+      max_output_tokens: maxOutputTokens,
       input: [
         { role: "system", content: [{ type: "input_text", text: prompt }] },
         { role: "user", content: [{ type: "input_text", text: input }] },
       ],
       text: {
+        verbosity: "low",
         format: {
           type: "json_schema",
           name: "signal_summary",
@@ -294,7 +316,12 @@ async function callOpenAI({ apiKey, model, row, args, tier }) {
     throw new Error(`${tier} ${model}: ${message}`);
   }
 
-  const parsed = parseModelJson(extractOutputText(body));
+  const outputText = extractOutputText(body);
+  if (!cleanText(outputText)) {
+    throw new Error(emptyOutputErrorMessage({ tier, model, payload: body, maxOutputTokens }));
+  }
+
+  const parsed = parseModelJson(outputText);
   return {
     ai_summary_ko: cleanText(parsed.summary_ko),
     ai_summary_quality: parsed.quality,
@@ -303,6 +330,22 @@ async function callOpenAI({ apiKey, model, row, args, tier }) {
     ai_summary_model: model,
     ai_summary_tier: tier,
   };
+}
+
+async function callOpenAIWithRetry({ apiKey, model, row, args, tier }) {
+  try {
+    return await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.maxOutputTokens });
+  } catch (error) {
+    if (!shouldRetryModelOutput(error) || args.retryMaxOutputTokens <= args.maxOutputTokens) {
+      throw error;
+    }
+    const retried = await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.retryMaxOutputTokens });
+    return {
+      ...retried,
+      ai_summary_reason: `${retried.ai_summary_reason} / initial retry after ${error.message}`,
+      ai_summary_retry: true,
+    };
+  }
 }
 
 function needsTerra(summary) {
@@ -322,11 +365,11 @@ async function summarizeRow(row, args, apiKey) {
     ai_summary_source: "openai_responses_api",
     ai_summary_cache_status: "new",
   };
-  let luna = await callOpenAI({ apiKey, model: args.lunaModel, row, args, tier: "luna" });
+  let luna = await callOpenAIWithRetry({ apiKey, model: args.lunaModel, row, args, tier: "luna" });
   if (!needsTerra(luna)) return { ...row, ...base, ...luna };
 
   try {
-    const terra = await callOpenAI({ apiKey, model: args.terraModel, row, args, tier: "terra" });
+    const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra" });
     return { ...row, ...base, ...terra, ai_summary_luna_draft: luna.ai_summary_ko };
   } catch (error) {
     return {
@@ -424,7 +467,9 @@ async function main() {
   ]);
 
   const investmentCached = applyCachedSummaries(investmentRows, args, summaryCache);
-  const relevantCached = applyCachedSummaries(relevantRows, args, summaryCache);
+  const relevantCached = args.summarizeRelevant
+    ? applyCachedSummaries(relevantRows, args, summaryCache)
+    : { rows: relevantRows, hitCount: 0 };
   const cacheHitCount = investmentCached.hitCount + relevantCached.hitCount;
   const changedStaleCount = [...investmentCached.rows, ...relevantCached.rows].filter(
     (row) => row.ai_summary_cache_status === "miss_changed",
@@ -434,10 +479,10 @@ async function main() {
     let investmentOutputs = null;
     let relevantOutputs = null;
     if (cacheHitCount || changedStaleCount) {
-      [investmentOutputs, relevantOutputs] = await Promise.all([
-        writeOutputs(investmentCached.rows, args.investmentSignals, args.outDir, "investment_signals_ai_summary"),
-        writeOutputs(relevantCached.rows, args.relevantSignals, args.outDir, "relevant_signals_ai_summary"),
-      ]);
+      investmentOutputs = await writeOutputs(investmentCached.rows, args.investmentSignals, args.outDir, "investment_signals_ai_summary");
+      if (args.summarizeRelevant) {
+        relevantOutputs = await writeOutputs(relevantCached.rows, args.relevantSignals, args.outDir, "relevant_signals_ai_summary");
+      }
     }
     const summary = {
       run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
@@ -446,6 +491,7 @@ async function main() {
           ? "cache_only_missing_openai_api_key"
           : "skipped_missing_openai_api_key"
         : "failed_missing_openai_api_key",
+      summarize_relevant_signals: args.summarizeRelevant,
       cache_path: args.cache,
       cache_entry_count: Object.keys(summaryCache.entries || {}).length,
       cache_hit_count: cacheHitCount,
@@ -462,14 +508,16 @@ async function main() {
   }
 
   const investmentUpdated = await summarizeRows(investmentCached.rows, args, apiKey, "investment");
-  const relevantUpdated = await summarizeRows(relevantCached.rows, args, apiKey, "relevant");
-  const allRows = [...investmentUpdated, ...relevantUpdated];
+  const relevantUpdated = args.summarizeRelevant
+    ? await summarizeRows(relevantCached.rows, args, apiKey, "relevant")
+    : relevantCached.rows;
+  const allRows = args.summarizeRelevant ? [...investmentUpdated, ...relevantUpdated] : investmentUpdated;
   const cacheUpdate = updateSummaryCache(summaryCache, allRows, args);
-  const [investmentOutputs, relevantOutputs] = await Promise.all([
-    writeOutputs(investmentUpdated, args.investmentSignals, args.outDir, "investment_signals_ai_summary"),
-    writeOutputs(relevantUpdated, args.relevantSignals, args.outDir, "relevant_signals_ai_summary"),
-    fs.writeFile(args.cache, `${JSON.stringify(cacheUpdate.cache, null, 2)}\n`, "utf8"),
-  ]);
+  const investmentOutputs = await writeOutputs(investmentUpdated, args.investmentSignals, args.outDir, "investment_signals_ai_summary");
+  const relevantOutputs = args.summarizeRelevant
+    ? await writeOutputs(relevantUpdated, args.relevantSignals, args.outDir, "relevant_signals_ai_summary")
+    : null;
+  await fs.writeFile(args.cache, `${JSON.stringify(cacheUpdate.cache, null, 2)}\n`, "utf8");
 
   const summary = {
     run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
@@ -477,6 +525,10 @@ async function main() {
     method: "luna_first_terra_retry",
     luna_model: args.lunaModel,
     terra_model: args.terraModel,
+    reasoning_effort: args.reasoningEffort,
+    max_output_tokens: args.maxOutputTokens,
+    retry_max_output_tokens: args.retryMaxOutputTokens,
+    summarize_relevant_signals: args.summarizeRelevant,
     cache_path: args.cache,
     cache_entry_count: Object.keys(cacheUpdate.cache.entries || {}).length,
     cache_hit_count: allRows.filter((row) => row.ai_summary_cache_status === "hit").length,
@@ -484,13 +536,23 @@ async function main() {
     cache_stored_count: cacheUpdate.storedCount,
     investment_signal_count: investmentUpdated.length,
     relevant_signal_count: relevantUpdated.length,
-    summarized_count: allRows.filter((row) => cleanText(row.ai_summary_ko)).length,
-    terra_retry_count: allRows.filter((row) => row.ai_summary_tier === "terra").length,
-    failed_count: allRows.filter((row) => row.ai_summary_quality === "failed").length,
+    summarized_count: investmentUpdated.filter((row) => cleanText(row.ai_summary_ko)).length,
+    terra_retry_count: investmentUpdated.filter((row) => row.ai_summary_tier === "terra").length,
+    failed_count: investmentUpdated.filter((row) => row.ai_summary_quality === "failed").length,
     outputs: { investment: investmentOutputs, relevant: relevantOutputs },
   };
+  if (summary.failed_count && summary.summarized_count === 0) {
+    summary.status = "failed_all_ai_summaries";
+    summary.note =
+      "Every AI summary request failed, so the workflow must stop instead of publishing untranslated source excerpts as if summarization succeeded.";
+  } else if (summary.failed_count) {
+    summary.status = "completed_with_ai_summary_failures";
+  }
   await fs.writeFile(path.join(args.outDir, "latest_ai_summary_summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
   console.log(JSON.stringify(summary, null, 2));
+  if (summary.status === "failed_all_ai_summaries" && args.failOnAllSummaryFailure) {
+    process.exitCode = 1;
+  }
 }
 
 main().catch((error) => {
