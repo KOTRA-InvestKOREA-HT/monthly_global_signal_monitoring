@@ -57,7 +57,7 @@ Generate Korean AI summaries for report evidence:
 OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
 ```
 
-The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. Configure the actual OpenAI model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys to the repository.
+The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. It stores reusable summaries in `outputs/ai_summary_cache.json`; when a later crawl sees the same company/signal/title/URL/evidence fingerprint, the cached Korean summary is reused and no new OpenAI API call is made for that item. If the underlying evidence changes, the fingerprint changes and the item is summarized again. Configure the actual OpenAI model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys to the repository.
 
 ## Output Schema
 

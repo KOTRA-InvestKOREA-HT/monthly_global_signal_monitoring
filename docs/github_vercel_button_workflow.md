@@ -222,6 +222,8 @@ Optional repository variables:
 
 Do not place API keys in source files, workflow files, screenshots, or commit messages. If a key was pasted into a chat or screenshot, revoke it and create a new key before using it in GitHub Secrets.
 
+AI summaries are cached in `outputs/ai_summary_cache.json`. During later monthly runs, the workflow reuses a cached summary when the company, signal, title, URL, and evidence text fingerprint match. If the evidence fingerprint changes, that row is treated as changed and calls the OpenAI API again. Only new or changed signal rows call the OpenAI API again. The workflow auto-commits `outputs/*.json`, so the cache is preserved in GitHub after each run.
+
 ## Vercel Python Entrypoint Error
 
 If Vercel shows this error:

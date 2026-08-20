@@ -1,10 +1,26 @@
 #!/usr/bin/env node
+import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+
+const CACHE_VERSION = 1;
+const PROMPT_VERSION = "signal-summary-ko-v1";
+const SUMMARY_FIELDS = [
+  "ai_summary_ko",
+  "ai_summary_quality",
+  "ai_summary_confidence",
+  "ai_summary_reason",
+  "ai_summary_model",
+  "ai_summary_tier",
+  "ai_summary_luna_draft",
+  "ai_summary_source",
+  "ai_summary_created_at",
+];
 
 const DEFAULTS = {
   investmentSignals: "outputs/latest_investment_signals.json",
   relevantSignals: "outputs/latest_relevant_signals.json",
+  cache: "outputs/ai_summary_cache.json",
   outDir: "outputs",
   lunaModel: process.env.AI_SUMMARY_LUNA_MODEL || "gpt-5",
   terraModel: process.env.AI_SUMMARY_TERRA_MODEL || "gpt-5.6",
@@ -56,6 +72,14 @@ function shortText(value, limit) {
   return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
 }
 
+function sourceEvidence(row) {
+  const snippets = [
+    ...(Array.isArray(row.evidence_snippets) ? row.evidence_snippets : []),
+    ...(Array.isArray(row.technology_evidence_snippets) ? row.technology_evidence_snippets : []),
+  ];
+  return cleanText([snippets.join(" "), row.content_excerpt, row.content_text].filter(Boolean).join(" "));
+}
+
 function rowIdentity(row) {
   return [
     row.target_no,
@@ -68,10 +92,6 @@ function rowIdentity(row) {
 }
 
 function sourceMaterial(row, maxInputChars) {
-  const snippets = [
-    ...(Array.isArray(row.evidence_snippets) ? row.evidence_snippets : []),
-    ...(Array.isArray(row.technology_evidence_snippets) ? row.technology_evidence_snippets : []),
-  ];
   const body = [
     `기업: ${row.company || ""}`,
     `유치필요 품목/기술: ${row.target_technology || ""}`,
@@ -82,9 +102,121 @@ function sourceMaterial(row, maxInputChars) {
     `게시일: ${row.published_at || ""}`,
     `기존 판정 근거: ${row.investment_signal_reason || row.relevance_reason || ""}`,
     `매칭 키워드: ${(row.matched_terms || row.technology_matched_terms || []).join(", ")}`,
-    `본문/근거: ${cleanText([snippets.join(" "), row.content_excerpt, row.content_text].filter(Boolean).join(" "))}`,
+    `본문/근거: ${sourceEvidence(row)}`,
   ].join("\n");
   return shortText(body, maxInputChars);
+}
+
+function cachePayload(row, args) {
+  return {
+    prompt_version: PROMPT_VERSION,
+    company: cleanText(row.company),
+    target_no: String(row.target_no || ""),
+    signal: String(row.investment_signal_no || row.relevance_decision || "relevant"),
+    target_technology: cleanText(row.target_technology),
+    title: cleanText(row.title),
+    url: cleanText(row.url),
+    source: cleanText(row.source),
+    published_at: cleanText(row.published_at),
+    input: sourceMaterial(row, args.maxInputChars),
+  };
+}
+
+function cacheKey(row, args) {
+  return crypto.createHash("sha256").update(JSON.stringify(cachePayload(row, args))).digest("hex").slice(0, 32);
+}
+
+function summaryFromRow(row) {
+  if (!cleanText(row.ai_summary_ko)) return null;
+  const summary = {};
+  for (const field of SUMMARY_FIELDS) {
+    if (row[field] !== undefined && row[field] !== null && row[field] !== "") {
+      summary[field] = row[field];
+    }
+  }
+  return summary;
+}
+
+function withoutSummaryFields(row) {
+  const next = { ...row };
+  for (const field of SUMMARY_FIELDS) delete next[field];
+  delete next.ai_summary_cache_hit_at;
+  return next;
+}
+
+async function readSummaryCache(cachePath) {
+  const fallback = { version: CACHE_VERSION, entries: {} };
+  const cache = await readJson(cachePath, fallback);
+  if (!cache || typeof cache !== "object" || Array.isArray(cache)) return fallback;
+  return {
+    version: cache.version || CACHE_VERSION,
+    updated_at: cache.updated_at || "",
+    entries: cache.entries && typeof cache.entries === "object" && !Array.isArray(cache.entries) ? cache.entries : {},
+  };
+}
+
+function cacheMetadata(row, key) {
+  return {
+    cache_key: key,
+    row_identity: rowIdentity(row),
+    company: row.company || "",
+    target_no: row.target_no || "",
+    investment_signal_no: row.investment_signal_no || "",
+    relevance_decision: row.relevance_decision || "",
+    title: row.title || "",
+    url: row.url || "",
+    source: row.source || "",
+    published_at: row.published_at || "",
+    target_technology: row.target_technology || "",
+  };
+}
+
+function applyCachedSummaries(rows, args, cache) {
+  let hitCount = 0;
+  const updated = rows.map((row) => {
+    const key = cacheKey(row, args);
+    const existingSummary = summaryFromRow(row);
+    if (existingSummary && (!row.ai_summary_cache_key || row.ai_summary_cache_key === key)) {
+      return { ...row, ai_summary_cache_key: key, ai_summary_cache_status: row.ai_summary_cache_status || "existing" };
+    }
+    const entry = cache.entries[key];
+    const summary = entry ? summaryFromRow(entry) : null;
+    if (!summary) {
+      const baseRow = existingSummary && row.ai_summary_cache_key !== key ? withoutSummaryFields(row) : row;
+      return { ...baseRow, ai_summary_cache_key: key, ai_summary_cache_status: existingSummary ? "miss_changed" : "miss" };
+    }
+    hitCount += 1;
+    return {
+      ...row,
+      ...summary,
+      ai_summary_cache_key: key,
+      ai_summary_cache_status: "hit",
+      ai_summary_cache_hit_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    };
+  });
+  return { rows: updated, hitCount };
+}
+
+function updateSummaryCache(cache, rows, args) {
+  const next = {
+    version: CACHE_VERSION,
+    updated_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    entries: { ...(cache.entries || {}) },
+  };
+  let storedCount = 0;
+  for (const row of rows) {
+    const summary = summaryFromRow(row);
+    if (!summary || row.ai_summary_quality === "failed") continue;
+    const key = row.ai_summary_cache_key || cacheKey(row, args);
+    next.entries[key] = {
+      ...cacheMetadata(row, key),
+      ...summary,
+      prompt_version: PROMPT_VERSION,
+      cached_at: next.updated_at,
+    };
+    storedCount += 1;
+  }
+  return { cache: next, storedCount };
 }
 
 function extractOutputText(payload) {
@@ -188,6 +320,7 @@ async function summarizeRow(row, args, apiKey) {
   const base = {
     ai_summary_created_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
     ai_summary_source: "openai_responses_api",
+    ai_summary_cache_status: "new",
   };
   let luna = await callOpenAI({ apiKey, model: args.lunaModel, row, args, tier: "luna" });
   if (!needsTerra(luna)) return { ...row, ...base, ...luna };
@@ -245,13 +378,14 @@ async function writeCsv(filePath, rows) {
 
 async function summarizeRows(rows, args, apiKey, kind) {
   const targetRows = rows.map((row) => ({ row, shouldSummarize: !args.onlyMissing || !cleanText(row.ai_summary_ko) }));
+  const targetCount = targetRows.filter((item) => item.shouldSummarize).length;
   let completed = 0;
   const updated = await mapLimit(targetRows, args.concurrency, async ({ row, shouldSummarize }) => {
     if (!shouldSummarize) return row;
     try {
       const summarized = await summarizeRow(row, args, apiKey);
       completed += 1;
-      process.stderr.write(`[${kind}] ${completed}/${targetRows.filter((item) => item.shouldSummarize).length} ${row.company}\n`);
+      process.stderr.write(`[${kind}] ${completed}/${targetCount} ${row.company}\n`);
       return summarized;
     } catch (error) {
       return {
@@ -259,6 +393,7 @@ async function summarizeRows(rows, args, apiKey, kind) {
         ai_summary_quality: "failed",
         ai_summary_reason: error.message,
         ai_summary_created_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+        ai_summary_cache_status: "failed",
       };
     }
   });
@@ -280,12 +415,45 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const apiKey = process.env.OPENAI_API_KEY;
   await fs.mkdir(args.outDir, { recursive: true });
+  await fs.mkdir(path.dirname(args.cache), { recursive: true });
+
+  const [investmentRows, relevantRows, summaryCache] = await Promise.all([
+    readJson(args.investmentSignals, []),
+    readJson(args.relevantSignals, []),
+    readSummaryCache(args.cache),
+  ]);
+
+  const investmentCached = applyCachedSummaries(investmentRows, args, summaryCache);
+  const relevantCached = applyCachedSummaries(relevantRows, args, summaryCache);
+  const cacheHitCount = investmentCached.hitCount + relevantCached.hitCount;
+  const changedStaleCount = [...investmentCached.rows, ...relevantCached.rows].filter(
+    (row) => row.ai_summary_cache_status === "miss_changed",
+  ).length;
 
   if (!apiKey) {
+    let investmentOutputs = null;
+    let relevantOutputs = null;
+    if (cacheHitCount || changedStaleCount) {
+      [investmentOutputs, relevantOutputs] = await Promise.all([
+        writeOutputs(investmentCached.rows, args.investmentSignals, args.outDir, "investment_signals_ai_summary"),
+        writeOutputs(relevantCached.rows, args.relevantSignals, args.outDir, "relevant_signals_ai_summary"),
+      ]);
+    }
     const summary = {
       run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-      status: args.optional ? "skipped_missing_openai_api_key" : "failed_missing_openai_api_key",
-      note: "Set OPENAI_API_KEY in GitHub Secrets or the local environment to enable AI Korean summaries.",
+      status: args.optional
+        ? cacheHitCount
+          ? "cache_only_missing_openai_api_key"
+          : "skipped_missing_openai_api_key"
+        : "failed_missing_openai_api_key",
+      cache_path: args.cache,
+      cache_entry_count: Object.keys(summaryCache.entries || {}).length,
+      cache_hit_count: cacheHitCount,
+      changed_stale_count: changedStaleCount,
+      note: cacheHitCount
+        ? "OPENAI_API_KEY is missing, so cached Korean summaries were reused and new/changed items were left without AI summaries."
+        : "Set OPENAI_API_KEY in GitHub Secrets or the local environment to enable AI Korean summaries.",
+      outputs: { investment: investmentOutputs, relevant: relevantOutputs },
     };
     await fs.writeFile(path.join(args.outDir, "latest_ai_summary_summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
     console.log(JSON.stringify(summary, null, 2));
@@ -293,25 +461,27 @@ async function main() {
     return;
   }
 
-  const [investmentRows, relevantRows] = await Promise.all([
-    readJson(args.investmentSignals, []),
-    readJson(args.relevantSignals, []),
-  ]);
-
-  const investmentUpdated = await summarizeRows(investmentRows, args, apiKey, "investment");
-  const relevantUpdated = await summarizeRows(relevantRows, args, apiKey, "relevant");
+  const investmentUpdated = await summarizeRows(investmentCached.rows, args, apiKey, "investment");
+  const relevantUpdated = await summarizeRows(relevantCached.rows, args, apiKey, "relevant");
+  const allRows = [...investmentUpdated, ...relevantUpdated];
+  const cacheUpdate = updateSummaryCache(summaryCache, allRows, args);
   const [investmentOutputs, relevantOutputs] = await Promise.all([
     writeOutputs(investmentUpdated, args.investmentSignals, args.outDir, "investment_signals_ai_summary"),
     writeOutputs(relevantUpdated, args.relevantSignals, args.outDir, "relevant_signals_ai_summary"),
+    fs.writeFile(args.cache, `${JSON.stringify(cacheUpdate.cache, null, 2)}\n`, "utf8"),
   ]);
 
-  const allRows = [...investmentUpdated, ...relevantUpdated];
   const summary = {
     run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
     status: "completed",
     method: "luna_first_terra_retry",
     luna_model: args.lunaModel,
     terra_model: args.terraModel,
+    cache_path: args.cache,
+    cache_entry_count: Object.keys(cacheUpdate.cache.entries || {}).length,
+    cache_hit_count: allRows.filter((row) => row.ai_summary_cache_status === "hit").length,
+    cache_miss_count: allRows.filter((row) => row.ai_summary_cache_status === "new" || row.ai_summary_cache_status === "failed").length,
+    cache_stored_count: cacheUpdate.storedCount,
     investment_signal_count: investmentUpdated.length,
     relevant_signal_count: relevantUpdated.length,
     summarized_count: allRows.filter((row) => cleanText(row.ai_summary_ko)).length,
