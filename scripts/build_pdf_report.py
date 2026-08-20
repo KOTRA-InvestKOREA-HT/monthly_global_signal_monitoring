@@ -286,6 +286,27 @@ def clean_text(value):
     return re.sub(r"\s+", " ", text).strip()
 
 
+def normalize_summary_text(value):
+    text = clean_text(value)
+    replacements = [
+        ("중순수%", "한 자릿수 중반대"),
+        ("저순수%", "한 자릿수 초반대"),
+        ("고순수%", "한 자릿수 후반대"),
+        ("중순수", "한 자릿수 중반대"),
+        ("저순수", "한 자릿수 초반대"),
+        ("고순수", "한 자릿수 후반대"),
+        ("중반 두 자릿수", "두 자릿수 중반대"),
+        ("초반 두 자릿수", "두 자릿수 초반대"),
+        ("후반 두 자릿수", "두 자릿수 후반대"),
+        ("중반대 두 자릿수", "두 자릿수 중반대"),
+        ("초반대 두 자릿수", "두 자릿수 초반대"),
+        ("후반대 두 자릿수", "두 자릿수 후반대"),
+    ]
+    for source, target in replacements:
+        text = text.replace(source, target)
+    return text.strip()
+
+
 def wrap_text(canvas_obj, text, max_width, font_name, font_size):
     text = clean_text(text)
     if not text:
@@ -664,7 +685,7 @@ def source_line(row):
 
 
 def detail_text(row, limit=260):
-    ai_summary = clean_text(row.get("ai_summary_ko"))
+    ai_summary = normalize_summary_text(row.get("ai_summary_ko"))
     if ai_summary:
         return short_text(ai_summary, limit)
 

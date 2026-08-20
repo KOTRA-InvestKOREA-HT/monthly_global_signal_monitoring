@@ -76,6 +76,23 @@ function cleanText(value) {
     .trim();
 }
 
+function normalizeKoreanSummaryText(value) {
+  return cleanText(value)
+    .replace(/중순수%/g, "한 자릿수 중반대")
+    .replace(/저순수%/g, "한 자릿수 초반대")
+    .replace(/고순수%/g, "한 자릿수 후반대")
+    .replace(/중순수/g, "한 자릿수 중반대")
+    .replace(/저순수/g, "한 자릿수 초반대")
+    .replace(/고순수/g, "한 자릿수 후반대")
+    .replace(/중반 두 자릿수/g, "두 자릿수 중반대")
+    .replace(/초반 두 자릿수/g, "두 자릿수 초반대")
+    .replace(/후반 두 자릿수/g, "두 자릿수 후반대")
+    .replace(/중반대 두 자릿수/g, "두 자릿수 중반대")
+    .replace(/초반대 두 자릿수/g, "두 자릿수 초반대")
+    .replace(/후반대 두 자릿수/g, "두 자릿수 후반대")
+    .trim();
+}
+
 function shortText(value, limit) {
   const text = cleanText(value);
   return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
@@ -140,7 +157,9 @@ function summaryFromRow(row) {
   const summary = {};
   for (const field of SUMMARY_FIELDS) {
     if (row[field] !== undefined && row[field] !== null && row[field] !== "") {
-      summary[field] = row[field];
+      summary[field] = ["ai_summary_ko", "ai_summary_reason", "ai_summary_luna_draft"].includes(field)
+        ? normalizeKoreanSummaryText(row[field])
+        : row[field];
     }
   }
   return summary;
@@ -270,6 +289,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
     "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 5대 투자동향 시그널에 관련된 사실만 골라 한국어로 요약한다.",
     "투자 확정, 이미 완료된 발표 등 후행 사실은 전조현상처럼 과장하지 말고, 확인 가능한 내용만 쓴다.",
     "보고서 본문에 바로 들어가므로 2~3문장, 160자 이내, 명사형 나열보다 자연스러운 한국어 문장으로 작성한다.",
+    "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
   ].join("\n");
 
@@ -323,10 +343,10 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
 
   const parsed = parseModelJson(outputText);
   return {
-    ai_summary_ko: cleanText(parsed.summary_ko),
+    ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
     ai_summary_quality: parsed.quality,
     ai_summary_confidence: Number(parsed.confidence) || 0,
-    ai_summary_reason: cleanText(parsed.reason),
+    ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
     ai_summary_model: model,
     ai_summary_tier: tier,
   };

@@ -23,6 +23,24 @@ function shortList(values, limit = 6) {
   return values.filter(Boolean).slice(0, limit);
 }
 
+function normalizeSummaryText(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/중순수%/g, "한 자릿수 중반대")
+    .replace(/저순수%/g, "한 자릿수 초반대")
+    .replace(/고순수%/g, "한 자릿수 후반대")
+    .replace(/중순수/g, "한 자릿수 중반대")
+    .replace(/저순수/g, "한 자릿수 초반대")
+    .replace(/고순수/g, "한 자릿수 후반대")
+    .replace(/중반 두 자릿수/g, "두 자릿수 중반대")
+    .replace(/초반 두 자릿수/g, "두 자릿수 초반대")
+    .replace(/후반 두 자릿수/g, "두 자릿수 후반대")
+    .replace(/중반대 두 자릿수/g, "두 자릿수 중반대")
+    .replace(/초반대 두 자릿수/g, "두 자릿수 초반대")
+    .replace(/후반대 두 자릿수/g, "두 자릿수 후반대")
+    .trim();
+}
+
 function pad2(value) {
   return String(value).padStart(2, "0");
 }
@@ -518,7 +536,7 @@ export default function HomePage() {
                       <strong>{item.title}</strong>
                       {item.investment_signal_reason ? <p className="reasonText">{item.investment_signal_reason}</p> : null}
                       {item.ai_summary_ko ? (
-                        <p className="evidenceText">{item.ai_summary_ko}</p>
+                        <p className="evidenceText">{normalizeSummaryText(item.ai_summary_ko)}</p>
                       ) : (
                         shortList(item.evidence_snippets, 1).map((snippet) => (
                           <p className="evidenceText" key={snippet}>
@@ -599,7 +617,7 @@ export default function HomePage() {
                       <strong>{item.title}</strong>
                       {item.relevance_reason ? <p className="reasonText">{item.relevance_reason}</p> : null}
                       {item.ai_summary_ko ? (
-                        <p className="evidenceText">{item.ai_summary_ko}</p>
+                        <p className="evidenceText">{normalizeSummaryText(item.ai_summary_ko)}</p>
                       ) : (
                         shortList(item.evidence_snippets, 1).map((snippet) => (
                           <p className="evidenceText" key={snippet}>
