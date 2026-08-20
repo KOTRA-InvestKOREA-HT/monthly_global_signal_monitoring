@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-20T04:37:21Z",
+  "run_started_at": "2026-08-20T05:12:20Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,7 +20,7 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 717,
+  "request_count": 718,
   "result_count": 451,
   "official_result_count": 404,
   "fallback_result_count": 47,
@@ -191,7 +191,7 @@
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 70,
+  "error_count": 69,
   "errors": [
     {
       "target_no": 2,
@@ -296,14 +296,6 @@
       "source_url": "https://www.airproducts.com/company/news-center/2026/04/0430-air-products-fiscal-2026-second-quarter-earnings",
       "source_name": "Air Products - Investor Relations / Investor Relations",
       "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 12,
-      "company": "Chemours",
-      "source": "official_pages",
-      "source_url": "https://investors.chemours.com/financial-information/sec-filings",
-      "source_name": "Chemours - SEC Filings / Regulatory Filings",
-      "error": "fetch failed"
     },
     {
       "target_no": 14,
@@ -755,9 +747,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260820T043721Z.json",
-    "csv": "outputs/company_signals_20260820T043721Z.csv",
-    "summary": "outputs/collection_summary_20260820T043721Z.json",
+    "json": "outputs/company_signals_20260820T051220Z.json",
+    "csv": "outputs/company_signals_20260820T051220Z.csv",
+    "summary": "outputs/collection_summary_20260820T051220Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
