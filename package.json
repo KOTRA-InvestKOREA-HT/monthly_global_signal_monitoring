@@ -12,8 +12,9 @@
     "collect": "node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,google_news --days 45 --max-per-source 6 --max-per-company 10 --max-detail-per-company 10 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5 --company-concurrency 4",
     "filter:relevant": "node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signals.json --technology-map data/company_technology_map.json --keyword-config config/technology_keywords.json --out-dir outputs --threshold 1",
     "filter:investment": "node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true",
+    "summarize:ai": "node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs",
     "report:pdf": "python scripts/build_pdf_report.py --signals outputs/latest_company_signals.json --summary outputs/latest_collection_summary.json --relevant outputs/latest_relevant_signals.json --relevance-summary outputs/latest_relevance_summary.json --investment-signals outputs/latest_investment_signals.json --investment-summary outputs/latest_investment_signal_summary.json --indicator-config config/investment_signal_indicators.json --font assets/fonts/NOTOSANSKR-VF.TTF --out public/reports/latest_report.pdf",
-    "collect:all": "npm run collect && npm run filter:relevant && npm run filter:investment && npm run report:pdf"
+    "collect:all": "npm run collect && npm run filter:relevant && npm run filter:investment && npm run summarize:ai && npm run report:pdf"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",

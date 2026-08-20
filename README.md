@@ -51,6 +51,14 @@ node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signal
 
 The relevance filter uses broad Korean/English synonyms and excludes these companies from relevance analysis by request: `Prodrive`, `JSR`, `Applied Materials`, `Amkor Technology`, `Heraeus`, `Toray`, `3M`, `Air Liquide`, `Air Products`.
 
+Generate Korean AI summaries for report evidence:
+
+```bash
+OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
+```
+
+The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. Configure the actual OpenAI model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys to the repository.
+
 ## Output Schema
 
 Each collected row is normalized to:

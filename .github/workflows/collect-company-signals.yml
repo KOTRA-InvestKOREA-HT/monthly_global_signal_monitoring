@@ -72,6 +72,15 @@ jobs:
           --threshold 4
           --require-technology-relevance true
       - run: >
+          node scripts/summarize_signal_evidence.mjs
+          --investment-signals outputs/latest_investment_signals.json
+          --relevant-signals outputs/latest_relevant_signals.json
+          --out-dir outputs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_SUMMARY_LUNA_MODEL: ${{ vars.AI_SUMMARY_LUNA_MODEL || 'gpt-5' }}
+          AI_SUMMARY_TERRA_MODEL: ${{ vars.AI_SUMMARY_TERRA_MODEL || 'gpt-5.6' }}
+      - run: >
           python scripts/build_pdf_report.py
           --signals outputs/latest_company_signals.json
           --summary outputs/latest_collection_summary.json

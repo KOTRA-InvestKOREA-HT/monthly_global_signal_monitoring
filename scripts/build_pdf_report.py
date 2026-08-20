@@ -664,6 +664,10 @@ def source_line(row):
 
 
 def detail_text(row, limit=260):
+    ai_summary = clean_text(row.get("ai_summary_ko"))
+    if ai_summary:
+        return short_text(ai_summary, limit)
+
     evidence = ""
     snippets = row.get("evidence_snippets") or row.get("technology_evidence_snippets") or []
     if snippets:

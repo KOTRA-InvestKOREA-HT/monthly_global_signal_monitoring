@@ -211,6 +211,17 @@ For this MVP, option 2 is already implemented.
 10. After the run finishes, click `새로고침` in the dashboard.
 11. Later, refine blocked or low-yield official pages in `config/company_sources.json`.
 
+## AI Summary Setup
+
+To show Korean 2-3 line evidence summaries in the dashboard and downloaded PDF, add a fresh OpenAI API key as the GitHub repository secret `OPENAI_API_KEY`.
+
+Optional repository variables:
+
+- `AI_SUMMARY_LUNA_MODEL`: first-pass summary model. Default: `gpt-5`.
+- `AI_SUMMARY_TERRA_MODEL`: retry model for low-quality summaries. Default: `gpt-5.6`.
+
+Do not place API keys in source files, workflow files, screenshots, or commit messages. If a key was pasted into a chat or screenshot, revoke it and create a new key before using it in GitHub Secrets.
+
 ## Vercel Python Entrypoint Error
 
 If Vercel shows this error:

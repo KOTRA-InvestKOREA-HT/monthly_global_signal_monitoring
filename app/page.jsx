@@ -517,11 +517,16 @@ export default function HomePage() {
                     <div className="titleStack">
                       <strong>{item.title}</strong>
                       {item.investment_signal_reason ? <p className="reasonText">{item.investment_signal_reason}</p> : null}
-                      {shortList(item.evidence_snippets, 1).map((snippet) => (
-                        <p className="evidenceText" key={snippet}>
-                          {snippet}
-                        </p>
-                      ))}
+                      {item.ai_summary_ko ? (
+                        <p className="evidenceText">{item.ai_summary_ko}</p>
+                      ) : (
+                        shortList(item.evidence_snippets, 1).map((snippet) => (
+                          <p className="evidenceText" key={snippet}>
+                            {snippet}
+                          </p>
+                        ))
+                      )}
+                      {item.ai_summary_tier ? <p className="reasonText">AI 요약: {item.ai_summary_tier === "terra" ? "Terra 재요약" : "Luna 1차 요약"}</p> : null}
                       {shortList(item.matched_terms).length ? (
                         <div className="keywordList">
                           {shortList(item.matched_terms).map((term) => (
@@ -593,11 +598,16 @@ export default function HomePage() {
                     <div className="titleStack">
                       <strong>{item.title}</strong>
                       {item.relevance_reason ? <p className="reasonText">{item.relevance_reason}</p> : null}
-                      {shortList(item.evidence_snippets, 1).map((snippet) => (
-                        <p className="evidenceText" key={snippet}>
-                          {snippet}
-                        </p>
-                      ))}
+                      {item.ai_summary_ko ? (
+                        <p className="evidenceText">{item.ai_summary_ko}</p>
+                      ) : (
+                        shortList(item.evidence_snippets, 1).map((snippet) => (
+                          <p className="evidenceText" key={snippet}>
+                            {snippet}
+                          </p>
+                        ))
+                      )}
+                      {item.ai_summary_tier ? <p className="reasonText">AI 요약: {item.ai_summary_tier === "terra" ? "Terra 재요약" : "Luna 1차 요약"}</p> : null}
                       {shortList(item.matched_terms).length ? (
                         <div className="keywordList">
                           {shortList(item.matched_terms).map((term) => (
