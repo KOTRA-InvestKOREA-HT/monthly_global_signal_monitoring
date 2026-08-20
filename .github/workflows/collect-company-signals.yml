@@ -98,4 +98,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update company signal data and signal filters"
-          file_pattern: outputs/*.json outputs/*.csv public/reports/latest_report.pdf
+          file_pattern: outputs/latest_*.json outputs/latest_*.csv outputs/ai_summary_cache.json public/reports/latest_report.pdf

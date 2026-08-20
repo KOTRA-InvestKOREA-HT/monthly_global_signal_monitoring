@@ -1,0 +1,4 @@
+outputs/*_20*.json
+outputs/*_20*.csv
+outputs/smoke/
+outputs/official-smoke/

@@ -6,3 +6,5 @@ node_modules/
 .Rhistory
 outputs/smoke/
 outputs/official-smoke/
+outputs/*_20*.json
+outputs/*_20*.csv
