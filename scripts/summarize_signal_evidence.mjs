@@ -4,7 +4,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CACHE_VERSION = 1;
-const PROMPT_VERSION = "signal-summary-ko-v2";
+const INVESTMENT_PROMPT_VERSION = "signal-summary-ko-v2";
+const RELEVANT_PROMPT_VERSION = "business-summary-ko-v3";
 const SUMMARY_FIELDS = [
   "ai_summary_ko",
   "ai_summary_headline_ko",
@@ -332,7 +333,7 @@ function sourceMaterial(row, maxInputChars) {
 
 function cachePayload(row, args) {
   return {
-    prompt_version: PROMPT_VERSION,
+    prompt_version: row.investment_signal_no ? INVESTMENT_PROMPT_VERSION : RELEVANT_PROMPT_VERSION,
     company: cleanText(row.company),
     target_no: String(row.target_no || ""),
     signal: String(row.investment_signal_no || row.relevance_decision || "relevant"),
@@ -436,7 +437,7 @@ function updateSummaryCache(cache, rows, args) {
     next.entries[key] = {
       ...cacheMetadata(row, key),
       ...summary,
-      prompt_version: PROMPT_VERSION,
+      prompt_version: row.investment_signal_no ? INVESTMENT_PROMPT_VERSION : RELEVANT_PROMPT_VERSION,
       cached_at: next.updated_at,
     };
     storedCount += 1;
@@ -486,10 +487,10 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
     "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 관련된 사실만 골라 한국어로 요약한다.",
     isBusinessSummary
-      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 3~4줄로 보이는 자연스러운 한국어 요약문, 170~260자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
+      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 PDF에서 4줄 전후로 보이는 자연스러운 한국어 요약문, 260~360자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
       : "이 항목은 5대 투자동향 시그널 상세에 들어간다. 완전한 문장이 아니라 보고서식 간략 문구로 작성한다.",
     isBusinessSummary
-      ? "사업현황의 의미, 기술/품목과의 연결성, 확인된 활동을 자연스럽게 설명하되 과장하지 않는다."
+      ? "사업현황의 의미, 기술/품목과의 연결성, 확인된 활동, 향후 모니터링 관점을 자연스럽게 설명하되 과장하지 않는다."
       : "summary_headline_ko는 전체 내용의 개괄 요약 문구다. 18~42자, 명사구 중심, 종결어미 없이 쓴다.",
     isBusinessSummary
       ? "투자 확정, 이미 완료된 발표 등은 사실 그대로만 쓰고 전조현상처럼 과장하지 않는다."
