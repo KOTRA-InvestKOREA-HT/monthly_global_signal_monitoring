@@ -1,17 +1,17 @@
 {
-  "run_started_at": "2026-08-20T05:15:32Z",
-  "input_signal_count": 451,
+  "run_started_at": "2026-08-24T09:18:00Z",
+  "input_signal_count": 454,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 139,
+  "technology_gate_pass_count": 140,
   "technology_gate_counts": {
-    "not_relevant": 312,
-    "passed": 85,
+    "not_relevant": 314,
+    "passed": 86,
     "relevance_exempt": 54
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 89,
+  "investment_signal_count": 90,
   "companies_with_investment_signals": 21,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
@@ -40,18 +40,18 @@
     "production_expansion_diversification": {
       "no": 2,
       "label_ko": "생산 확대 및 다변화 의지",
-      "count": 19,
+      "count": 20,
       "companies": [
         "Applied Materials",
         "Australian Strategic Metals",
         "Amkor Technology",
         "ASML",
-        "EVG",
         "Ouster",
         "GE Healthcare",
         "Skyworks",
         "West Pharmaceutical",
         "Arkema",
+        "EVG",
         "Vestas",
         "Maxon",
         "Prodrive"

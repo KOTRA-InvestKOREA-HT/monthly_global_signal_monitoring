@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-08-20T05:15:21Z",
-  "input_signal_count": 451,
+  "run_started_at": "2026-08-24T09:17:50Z",
+  "input_signal_count": 454,
   "technology_company_count": 77,
   "analyzed_company_count": 68,
   "excluded_company_count": 9,
@@ -16,7 +16,7 @@
     "Toray"
   ],
   "threshold": 1,
-  "relevant_signal_count": 85,
+  "relevant_signal_count": 86,
   "companies_with_relevant_signals": 27,
   "companies_without_relevant_signals": [
     "Cognex",
@@ -64,15 +64,13 @@
   "companies_without_any_collected_signal": [
     "TIMET",
     "Heidenhain",
-    "Nexeon",
-    "Texcell",
     "Shanghai Electric Wind Power"
   ],
   "counts_by_company": {
     "Australian Strategic Metals": 3,
     "Cognex": 0,
     "Corning": 0,
-    "Charles River": 2,
+    "Charles River": 3,
     "Cytiva": 2,
     "Moderna": 3,
     "West Pharmaceutical": 6,
@@ -147,7 +145,7 @@
     "robot_lidar": 5,
     "autonomous_imu_rf_baseband": 4,
     "autonomous_camera_isp": 0,
-    "virus_validation_mcb_wcb": 2,
+    "virus_validation_mcb_wcb": 3,
     "autoinjector_pfs_fill_finish": 7,
     "pharma_excipient": 0,
     "bioprocess_culture_purification": 4,

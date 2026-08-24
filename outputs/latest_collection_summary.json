@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-20T05:12:20Z",
+  "run_started_at": "2026-08-24T09:14:54Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -11,7 +11,7 @@
   "date_range_mode": "explicit",
   "from_date": "2026-07-01",
   "to_date": "2026-07-31",
-  "lookback_days": 53,
+  "lookback_days": 57,
   "max_per_source": 6,
   "max_per_company": 10,
   "company_concurrency": 4,
@@ -20,17 +20,15 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 718,
-  "result_count": 451,
-  "official_result_count": 404,
-  "fallback_result_count": 47,
-  "companies_with_results": 72,
+  "request_count": 715,
+  "result_count": 454,
+  "official_result_count": 403,
+  "fallback_result_count": 51,
+  "companies_with_results": 74,
   "companies_with_official_results": 62,
   "companies_without_results": [
     "TIMET",
     "Heidenhain",
-    "Nexeon",
-    "Texcell",
     "Shanghai Electric Wind Power"
   ],
   "counts_by_company": {
@@ -50,7 +48,7 @@
     "DOW": 7,
     "Thermo Fisher": 3,
     "Amkor Technology": 6,
-    "Onsemi": 9,
+    "Onsemi": 8,
     "Qualcomm": 8,
     "Skyworks": 6,
     "Eli Lilly and Company": 6,
@@ -59,7 +57,7 @@
     "3M": 10,
     "Ouster": 6,
     "Applied Materials": 6,
-    "Magnix": 2,
+    "Magnix": 3,
     "Prodrive": 7,
     "ASML": 8,
     "Besi": 6,
@@ -85,12 +83,12 @@
     "Maxon": 10,
     "Siemens-Gamesa": 6,
     "Renishaw": 10,
-    "Nexeon": 0,
+    "Nexeon": 1,
     "Rio Tinto": 6,
     "HyproMag": 2,
     "EVG": 6,
     "Plansee": 1,
-    "Texcell": 0,
+    "Texcell": 2,
     "Veolia": 10,
     "Airbus": 10,
     "Safran": 6,
@@ -129,7 +127,7 @@
     "DOW": 7,
     "Thermo Fisher": 3,
     "Amkor Technology": 6,
-    "Onsemi": 9,
+    "Onsemi": 8,
     "Qualcomm": 8,
     "Skyworks": 6,
     "Eli Lilly and Company": 0,
@@ -191,7 +189,7 @@
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 69,
+  "error_count": 70,
   "errors": [
     {
       "target_no": 2,
@@ -338,6 +336,14 @@
       "error": "HTTP 403 Forbidden"
     },
     {
+      "target_no": 19,
+      "company": "Skyworks",
+      "source": "official_pages",
+      "source_url": "https://investors.skyworksinc.com/financial-information/sec-filings",
+      "source_name": "Skyworks - SEC Filings / Regulatory Filings",
+      "error": "fetch failed"
+    },
+    {
       "target_no": 20,
       "company": "Eli Lilly and Company",
       "source": "official_pages",
@@ -352,6 +358,14 @@
       "source_url": "https://www.lilly.com/news/media",
       "source_name": "Eli Lilly and Company - Media / Media Center",
       "error": "fetch failed"
+    },
+    {
+      "target_no": 21,
+      "company": "GE Healthcare",
+      "source": "official_pages",
+      "source_url": "https://www.gehealthcare.com/en/about/newsroom/press-releases",
+      "source_name": "GE Healthcare - Corporate Press Releases / Press Releases",
+      "error": "HTTP 403 Forbidden"
     },
     {
       "target_no": 22,
@@ -637,14 +651,6 @@
       "target_no": 60,
       "company": "Safran",
       "source": "official_detail",
-      "source_url": "https://www.safran-group.com/calendar/h1-2026-results",
-      "source_name": "Safran - Pressroom / Newsroom / Press",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 60,
-      "company": "Safran",
-      "source": "official_detail",
       "source_url": "https://www.safran-group.com/download/media/451759",
       "source_name": "Safran - Pressroom / Newsroom / Press",
       "error": "HTTP 403 Forbidden"
@@ -711,7 +717,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
       "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     },
     {
       "target_no": 77,
@@ -719,7 +725,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
       "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     },
     {
       "target_no": 77,
@@ -743,13 +749,13 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260820T051220Z.json",
-    "csv": "outputs/company_signals_20260820T051220Z.csv",
-    "summary": "outputs/collection_summary_20260820T051220Z.json",
+    "json": "outputs/company_signals_20260824T091454Z.json",
+    "csv": "outputs/company_signals_20260824T091454Z.csv",
+    "summary": "outputs/collection_summary_20260824T091454Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
