@@ -5,7 +5,8 @@ import path from "node:path";
 
 const CACHE_VERSION = 1;
 const INVESTMENT_PROMPT_VERSION = "signal-summary-ko-v2";
-const RELEVANT_PROMPT_VERSION = "business-summary-ko-v4";
+const RELEVANT_PROMPT_VERSION = "business-summary-ko-v5";
+const BUSINESS_SUMMARY_MIN_CHARS = 220;
 const SUMMARY_FIELDS = [
   "ai_summary_ko",
   "ai_summary_headline_ko",
@@ -402,7 +403,7 @@ function applyCachedSummaries(rows, args, cache) {
   const updated = rows.map((row) => {
     const key = cacheKey(row, args);
     const existingSummary = summaryFromRow(row);
-    if (existingSummary && (!row.ai_summary_cache_key || row.ai_summary_cache_key === key)) {
+    if (existingSummary && row.ai_summary_cache_key === key) {
       return { ...row, ai_summary_cache_key: key, ai_summary_cache_status: row.ai_summary_cache_status || "existing" };
     }
     const entry = cache.entries[key];
@@ -487,7 +488,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
     "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 관련된 사실만 골라 한국어로 요약한다.",
     isBusinessSummary
-      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 PDF에서 4줄 전후로 보이는 통합 한국어 요약문, 260~360자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
+      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 PDF에서 4줄 전후로 보이는 통합 한국어 요약문으로 작성한다. 반드시 3~4문장, 총 260~360자 내외로 쓴다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
       : "이 항목은 5대 투자동향 시그널 상세에 들어간다. 완전한 문장이 아니라 보고서식 간략 문구로 작성한다.",
     isBusinessSummary
       ? "별도 해석 문장이나 편집자 코멘트를 덧붙이지 말고, 보도자료/IR에 담긴 사업 활동·기술 적용·고객/시장 흐름을 하나의 자연스러운 요약으로 통합한다."
@@ -496,7 +497,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       ? "보고서체 문장으로 작성한다. 존대말과 구어체를 쓰지 않는다. '습니다', '합니다', '했습니다', '보여줍니다', '분류했습니다', '보완합니다'는 절대 쓰지 않는다."
       : "summary_detail_ko는 관련 핵심 내용의 상세 요약 문구다. 35~85자, 종결어미 없이 보고서 캡션처럼 쓴다.",
     isBusinessSummary
-      ? "summary_ko에는 자연스러운 문장형 요약만 넣고, '-'로 headline/detail을 나누지 않는다. 문장 종결은 '확인된다', '제시된다', '예정이다', '수행한다', '추진한다' 같은 객관적 보고서체를 사용한다."
+      ? "summary_ko에는 자연스러운 문장형 요약만 넣고, '-'로 headline/detail을 나누지 않는다. 1문장짜리 또는 2문장짜리 요약은 실패로 간주된다. 문장 종결은 '확인된다', '제시된다', '예정이다', '수행한다', '추진한다' 같은 객관적 보고서체를 사용한다."
       : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
@@ -598,11 +599,21 @@ async function callOpenAIWithRetry({ apiKey, model, row, args, tier, kind }) {
   }
 }
 
-function needsTerra(summary) {
+function needsBusinessSummaryRefresh(row) {
+  const text = cleanText(row.ai_summary_ko);
+  if (!text) return true;
+  if (text.length < BUSINESS_SUMMARY_MIN_CHARS) return true;
+  if (cleanText(row.ai_summary_headline_ko) || cleanText(row.ai_summary_detail_ko)) return true;
+  if (/습니다|합니다|했습니다|보여줍니다|분류했습니다|보완합니다/.test(text)) return true;
+  return false;
+}
+
+function needsTerra(summary, kind) {
   const text = cleanText(summary.ai_summary_ko);
   const koreanChars = (text.match(/[가-힣]/g) || []).length;
   const latinChars = (text.match(/[A-Za-z]/g) || []).length;
   if (!text || text.length < 35) return true;
+  if (kind === "relevant" && text.length < BUSINESS_SUMMARY_MIN_CHARS) return true;
   if (koreanChars < 15) return true;
   if (latinChars > koreanChars * 1.8) return true;
   if (/요약할 수 없|확인할 수 없|정보가 부족|needs_review/i.test(`${text} ${summary.ai_summary_quality}`)) return true;
@@ -616,10 +627,20 @@ async function summarizeRow(row, args, apiKey, kind) {
     ai_summary_cache_status: "new",
   };
   let luna = await callOpenAIWithRetry({ apiKey, model: args.lunaModel, row, args, tier: "luna", kind });
-  if (!needsTerra(luna)) return { ...row, ...base, ...luna };
+  if (!needsTerra(luna, kind)) return { ...row, ...base, ...luna };
 
   try {
     const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra", kind });
+    if (kind === "relevant" && needsTerra(terra, kind)) {
+      return {
+        ...row,
+        ...base,
+        ...terra,
+        ai_summary_quality: "needs_review",
+        ai_summary_reason: `${terra.ai_summary_reason} / Terra 결과도 목표 분량 미달`,
+        ai_summary_luna_draft: luna.ai_summary_ko,
+      };
+    }
     return { ...row, ...base, ...terra, ai_summary_luna_draft: luna.ai_summary_ko };
   } catch (error) {
     return {
@@ -670,7 +691,10 @@ async function writeCsv(filePath, rows) {
 }
 
 async function summarizeRows(rows, args, apiKey, kind) {
-  const targetRows = rows.map((row) => ({ row, shouldSummarize: !args.onlyMissing || !cleanText(row.ai_summary_ko) }));
+  const targetRows = rows.map((row) => ({
+    row,
+    shouldSummarize: !args.onlyMissing || !cleanText(row.ai_summary_ko) || (kind === "relevant" && needsBusinessSummaryRefresh(row)),
+  }));
   const targetCount = targetRows.filter((item) => item.shouldSummarize).length;
   let completed = 0;
   const updated = await mapLimit(targetRows, args.concurrency, async ({ row, shouldSummarize }) => {
