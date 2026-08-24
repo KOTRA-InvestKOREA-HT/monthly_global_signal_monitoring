@@ -5,7 +5,7 @@ import path from "node:path";
 
 const CACHE_VERSION = 1;
 const INVESTMENT_PROMPT_VERSION = "signal-summary-ko-v2";
-const RELEVANT_PROMPT_VERSION = "business-summary-ko-v3";
+const RELEVANT_PROMPT_VERSION = "business-summary-ko-v4";
 const SUMMARY_FIELDS = [
   "ai_summary_ko",
   "ai_summary_headline_ko",
@@ -487,16 +487,16 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
     "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 관련된 사실만 골라 한국어로 요약한다.",
     isBusinessSummary
-      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 PDF에서 4줄 전후로 보이는 자연스러운 한국어 요약문, 260~360자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
+      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 PDF에서 4줄 전후로 보이는 통합 한국어 요약문, 260~360자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
       : "이 항목은 5대 투자동향 시그널 상세에 들어간다. 완전한 문장이 아니라 보고서식 간략 문구로 작성한다.",
     isBusinessSummary
-      ? "사업현황의 의미, 기술/품목과의 연결성, 확인된 활동, 향후 모니터링 관점을 자연스럽게 설명하되 과장하지 않는다."
+      ? "별도 해석 문장이나 편집자 코멘트를 덧붙이지 말고, 보도자료/IR에 담긴 사업 활동·기술 적용·고객/시장 흐름을 하나의 자연스러운 요약으로 통합한다."
       : "summary_headline_ko는 전체 내용의 개괄 요약 문구다. 18~42자, 명사구 중심, 종결어미 없이 쓴다.",
     isBusinessSummary
-      ? "투자 확정, 이미 완료된 발표 등은 사실 그대로만 쓰고 전조현상처럼 과장하지 않는다."
+      ? "보고서체 문장으로 작성한다. 존대말과 구어체를 쓰지 않는다. '습니다', '합니다', '했습니다', '보여줍니다', '분류했습니다', '보완합니다'는 절대 쓰지 않는다."
       : "summary_detail_ko는 관련 핵심 내용의 상세 요약 문구다. 35~85자, 종결어미 없이 보고서 캡션처럼 쓴다.",
     isBusinessSummary
-      ? "summary_ko에는 자연스러운 문장형 요약만 넣고, '-'로 headline/detail을 나누지 않는다."
+      ? "summary_ko에는 자연스러운 문장형 요약만 넣고, '-'로 headline/detail을 나누지 않는다. 문장 종결은 '확인된다', '제시된다', '예정이다', '수행한다', '추진한다' 같은 객관적 보고서체를 사용한다."
       : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",

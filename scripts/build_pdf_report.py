@@ -914,51 +914,13 @@ def detail_text(row, limit=260):
     return short_text(evidence or title, limit)
 
 
-def joined_terms(row, limit=2):
-    terms = row.get("technology_matched_terms") or row.get("matched_terms") or []
-    cleaned = []
-    for term in terms:
-        text = clean_text(term)
-        if not text or text.lower() in {item.lower() for item in cleaned}:
-            continue
-        cleaned.append(text)
-        if len(cleaned) >= limit:
-            break
-    return ", ".join(cleaned)
-
-
 def expand_business_summary(row, text):
-    text = normalize_summary_text(text)
-    if len(text) >= 230:
-        return text
-
-    additions = []
-    target = clean_text(row.get("target_technology"))
-    terms = joined_terms(row, 2)
-    has_limited_link = bool(re.search(r"확인되지|제시되지|직접.*연계.*제한|관련성.*확인되지|계획.*없", text))
-
-    if target and target not in text:
-        if has_limited_link:
-            additions.append(
-                f"다만 {target}과 직접 연결되는 신규 투자·증설 계획은 제한적으로 확인되어 참고 정보로 분류했습니다."
-            )
-        else:
-            additions.append(
-                f"유치필요 품목인 {target}과 연결되는 공식 사업 활동으로, 관련 기술 적용과 고객 수요 흐름을 함께 보여줍니다."
-            )
-
-    if terms:
-        additions.append("관련 기술 키워드가 본문에서 함께 확인되어 품목 연계성을 보완합니다.")
-
-    if not additions:
-        additions.append("공식 출처에서 확인된 사업 활동을 기준으로 정리했으며, 다음 월에도 동일 품목과의 연결성을 이어서 점검할 필요가 있습니다.")
-
-    return normalize_summary_text(" ".join([text, *additions]))
+    return normalize_summary_text(text)
 
 
 def business_text(rows):
     if not rows:
-        return "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않았습니다."
+        return "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않는다."
     row = sort_signal_rows(rows)[0]
     ai_summary = normalize_summary_text(row.get("ai_summary_ko"))
     if ai_summary:
