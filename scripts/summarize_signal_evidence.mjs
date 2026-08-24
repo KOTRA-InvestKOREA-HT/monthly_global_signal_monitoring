@@ -4,9 +4,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CACHE_VERSION = 1;
-const PROMPT_VERSION = "signal-summary-ko-v1";
+const PROMPT_VERSION = "signal-summary-ko-v2";
 const SUMMARY_FIELDS = [
   "ai_summary_ko",
+  "ai_summary_headline_ko",
+  "ai_summary_detail_ko",
   "ai_summary_quality",
   "ai_summary_confidence",
   "ai_summary_reason",
@@ -90,7 +92,202 @@ function normalizeKoreanSummaryText(value) {
     .replace(/중반대 두 자릿수/g, "두 자릿수 중반대")
     .replace(/초반대 두 자릿수/g, "두 자릿수 초반대")
     .replace(/후반대 두 자릿수/g, "두 자릿수 후반대")
+    .replace(/उपलब्ध성/g, "가용성")
     .trim();
+}
+
+function phraseEndingText(value) {
+  let text = String(value || "").trim();
+  const replacements = [
+    [/확인되지\s+(않았다|않는다)$/g, "확인되지 않음"],
+    [/제시되지\s+(않았다|않는다)$/g, "제시되지 않음"],
+    [/나타나지\s+(않았다|않는다)$/g, "나타나지 않음"],
+    [/부족하다$/g, "부족"],
+    [/필요하다$/g, "필요"],
+    [/계획이다$/g, "계획"],
+    [/예정이다$/g, "예정"],
+    [/목표로\s+하고\s+있다$/g, "목표"],
+    [/추진\s+중이다$/g, "추진"],
+    [/검토\s+중이다$/g, "검토"],
+    [/진행\s+중이다$/g, "진행"],
+    [/이어지고\s+있다$/g, "지속"],
+    [/진행하고\s+있다$/g, "진행"],
+    [/추진하고\s+있다$/g, "추진"],
+    [/검토하고\s+있다$/g, "검토"],
+    [/보여준다$/g, "시사"],
+    [/시사한다$/g, "시사"],
+    [/해석된다$/g, "해석"],
+    [/판단된다$/g, "판단"],
+    [/예상된다$/g, "예상"],
+    [/확인된다$/g, "확인"],
+    [/확인됐다$/g, "확인"],
+    [/나타났다$/g, "확인"],
+    [/언급됐다$/g, "언급"],
+    [/언급했다$/g, "언급"],
+    [/발표됐다$/g, "발표"],
+    [/발표했다$/g, "발표"],
+    [/공개했다$/g, "공개"],
+    [/밝혔다$/g, "공개"],
+    [/체결했다$/g, "체결"],
+    [/서명했다$/g, "서명"],
+    [/선임했다$/g, "선임"],
+    [/인수했다$/g, "인수"],
+    [/완료했다$/g, "완료"],
+    [/가동했다$/g, "가동"],
+    [/기록했다$/g, "기록"],
+    [/제공한다$/g, "제공"],
+    [/제공했다$/g, "제공"],
+    [/지원한다$/g, "지원"],
+    [/지원했다$/g, "지원"],
+    [/적용한다$/g, "적용"],
+    [/적용했다$/g, "적용"],
+    [/수용했다$/g, "수용"],
+    [/확대한다$/g, "확대"],
+    [/확대했다$/g, "확대"],
+    [/강화한다$/g, "강화"],
+    [/강화했다$/g, "강화"],
+    [/구축한다$/g, "구축"],
+    [/구축했다$/g, "구축"],
+    [/개발한다$/g, "개발"],
+    [/개발했다$/g, "개발"],
+    [/운영한다$/g, "운영"],
+    [/운영했다$/g, "운영"],
+    [/있다$/g, ""],
+    [/없다$/g, "없음"],
+    [/된다$/g, ""],
+    [/됐다$/g, ""],
+    [/한다$/g, ""],
+    [/했다$/g, ""],
+    [/이다$/g, ""],
+  ];
+  for (const [pattern, replacement] of replacements) {
+    text = text.replace(pattern, replacement);
+  }
+  return text.trim();
+}
+
+function phraseifySummaryText(value) {
+  const connectorMap = {
+    "구축하고": "구축",
+    "확보하고": "확보",
+    "강화하고": "강화",
+    "확대하고": "확대",
+    "공급하고": "공급",
+    "체결하고": "체결",
+    "수행하고": "수행",
+    "협력하고": "협력",
+    "진행하고": "진행",
+    "도입하고": "도입",
+    "설치하고": "설치",
+    "시연하고": "시연",
+    "개발하고": "개발",
+    "운영하고": "운영",
+    "공개하고": "공개",
+    "투자하고": "투자",
+    "언급하고": "언급",
+    "기록하고": "기록",
+    "가동하고": "가동",
+    "완료하고": "완료",
+    "발표하고": "발표",
+    "제공하며": "제공",
+    "적용하며": "적용",
+    "추진하며": "추진",
+    "검토하며": "검토",
+    "밝혔으며": "공개",
+    "발표했으며": "발표",
+    "체결했으며": "체결",
+    "기록했으며": "기록",
+    "확인했으며": "확인",
+  };
+  const connectorPattern = new RegExp(`(${Object.keys(connectorMap).join("|")})(,\\s*|\\s+|$)`, "g");
+  const text = normalizeKoreanSummaryText(value)
+    .replace(/^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+/, "")
+    .replace(/^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+/, "")
+    .replace(/^(이는|다만|또한)\s+/g, "")
+    .replace(/([A-Za-z][A-Za-z0-9().·&/-]*)의\s+/g, "$1 ")
+    .replace(connectorPattern, (_, verb, separator) => `${connectorMap[verb]}${separator?.includes(",") ? ", " : " "}`)
+    .replace(/영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다/g, "영향 가능성 언급")
+    .replace(/수\s+있다고\s+밝혔다/g, "가능성 언급")
+    .replace(/됐다고\s+(공개|발표|언급)/g, " $1")
+    .replace(/했다고\s+(공개|발표|언급)/g, " $1")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)/g, "$1 $3")
+    .replace(/(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)/g, "")
+    .replace(/\s+(다만|또한|그리고)\s+/g, ", ")
+    .replace(/[.!?。]+/g, ". ");
+
+  return text
+    .split(/\s*\.\s*|\s*;\s*/)
+    .map((clause) => phraseEndingText(clause.replace(/^(이는|다만|또한|그리고)\s+/g, "")))
+    .filter(Boolean)
+    .join(", ")
+    .replace(/\s*,\s*,\s*/g, ", ")
+    .replace(/(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)/g, " $2")
+    .replace(/(을|를)\s+단계적으로\s+추진/g, " 단계적 추진")
+    .replace(/확대할\s+계획/g, "확대 계획")
+    .replace(/(을|를)\s+위험요인으로\s+언급/g, " 위험요인 언급")
+    .replace(/영향을\s+위험요인으로\s+언급/g, "영향 위험요인 언급")
+    .replace(/(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)/g, " $2")
+    .replace(/(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)/g, " $2")
+    .replace(/(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+/g, "$1·")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)하는\s+/g, "$1 ")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석/g, "$1 움직임")
+    .replace(/계획은 확인되지 않음/g, "계획 확인되지 않음")
+    .replace(/사실은 확인되지 않음/g, "사실 확인되지 않음")
+    .replace(/근거는 확인되지 않음/g, "근거 확인되지 않음")
+    .replace(/내용은 확인되지 않음/g, "내용 확인되지 않음")
+    .replace(/관련성은 확인되지 않음/g, "관련성 확인되지 않음")
+    .replace(/직접 연계는 확인되지 않음/g, "직접 연계 확인되지 않음")
+    .replace(/직접적 연관성은 확인되지 않음/g, "직접 연관성 확인되지 않음")
+    .replace(/연계도 확인되지 않음/g, "연계 확인되지 않음")
+    .replace(/,\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+/g, ", ")
+    .replace(/가능성을\s+시사/g, "가능성")
+    .replace(/,\s*(다만|또한)\s+/g, ", ")
+    .replace(/\s*·\s*/g, "·")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function conciseSummaryPhrase(value, limit = 80) {
+  const text = phraseifySummaryText(value);
+  return shortText(text, limit);
+}
+
+function summaryHeadlineDetail({ headline, detail, summary }) {
+  const normalizedHeadline = conciseSummaryPhrase(headline, 58);
+  const normalizedDetail = conciseSummaryPhrase(detail, 105);
+  if (normalizedHeadline || normalizedDetail) {
+    return {
+      headline: normalizedHeadline || conciseSummaryPhrase(summary, 58),
+      detail: normalizedDetail,
+    };
+  }
+
+  const text = normalizeKoreanSummaryText(summary);
+  const dashed = text.split(/\s[-–—]\s/);
+  if (dashed.length >= 2) {
+    return {
+      headline: conciseSummaryPhrase(dashed[0], 58),
+      detail: conciseSummaryPhrase(dashed.slice(1).join(" - "), 105),
+    };
+  }
+  const sentences = text.split(/(?<=[.!?。])\s+/).filter(Boolean);
+  if (sentences.length >= 2) {
+    return {
+      headline: conciseSummaryPhrase(sentences[0], 58),
+      detail: conciseSummaryPhrase(sentences.slice(1).join(" "), 105),
+    };
+  }
+  const clauses = text.split(/,\s*/).filter(Boolean);
+  if (clauses.length >= 2) {
+    return {
+      headline: conciseSummaryPhrase(clauses[0], 58),
+      detail: conciseSummaryPhrase(clauses.slice(1).join(", "), 105),
+    };
+  }
+  return {
+    headline: conciseSummaryPhrase(text, 58),
+    detail: "",
+  };
 }
 
 function shortText(value, limit) {
@@ -153,11 +350,11 @@ function cacheKey(row, args) {
 }
 
 function summaryFromRow(row) {
-  if (!cleanText(row.ai_summary_ko)) return null;
+  if (!cleanText(row.ai_summary_ko) && !cleanText(row.ai_summary_headline_ko) && !cleanText(row.ai_summary_detail_ko)) return null;
   const summary = {};
   for (const field of SUMMARY_FIELDS) {
     if (row[field] !== undefined && row[field] !== null && row[field] !== "") {
-      summary[field] = ["ai_summary_ko", "ai_summary_reason", "ai_summary_luna_draft"].includes(field)
+      summary[field] = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"].includes(field)
         ? normalizeKoreanSummaryText(row[field])
         : row[field];
     }
@@ -282,13 +479,24 @@ function shouldRetryModelOutput(error) {
   return /empty model output|max_output_tokens/i.test(error.message || "");
 }
 
-async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
+async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kind }) {
   const input = sourceMaterial(row, args.maxInputChars);
+  const isBusinessSummary = kind === "relevant";
   const prompt = [
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
-    "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 5대 투자동향 시그널에 관련된 사실만 골라 한국어로 요약한다.",
-    "투자 확정, 이미 완료된 발표 등 후행 사실은 전조현상처럼 과장하지 말고, 확인 가능한 내용만 쓴다.",
-    "보고서 본문에 바로 들어가므로 2~3문장, 160자 이내, 명사형 나열보다 자연스러운 한국어 문장으로 작성한다.",
+    "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 관련된 사실만 골라 한국어로 요약한다.",
+    isBusinessSummary
+      ? "이 항목은 보고서 하단의 글로벌 사업현황 박스에 들어간다. summary_ko는 3~4줄로 보이는 자연스러운 한국어 요약문, 170~260자 내외로 작성한다. summary_headline_ko와 summary_detail_ko는 빈 문자열로 둔다."
+      : "이 항목은 5대 투자동향 시그널 상세에 들어간다. 완전한 문장이 아니라 보고서식 간략 문구로 작성한다.",
+    isBusinessSummary
+      ? "사업현황의 의미, 기술/품목과의 연결성, 확인된 활동을 자연스럽게 설명하되 과장하지 않는다."
+      : "summary_headline_ko는 전체 내용의 개괄 요약 문구다. 18~42자, 명사구 중심, 종결어미 없이 쓴다.",
+    isBusinessSummary
+      ? "투자 확정, 이미 완료된 발표 등은 사실 그대로만 쓰고 전조현상처럼 과장하지 않는다."
+      : "summary_detail_ko는 관련 핵심 내용의 상세 요약 문구다. 35~85자, 종결어미 없이 보고서 캡션처럼 쓴다.",
+    isBusinessSummary
+      ? "summary_ko에는 자연스러운 문장형 요약만 넣고, '-'로 headline/detail을 나누지 않는다."
+      : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
   ].join("\n");
@@ -319,11 +527,13 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
             additionalProperties: false,
             properties: {
               summary_ko: { type: "string" },
+              summary_headline_ko: { type: "string" },
+              summary_detail_ko: { type: "string" },
               quality: { type: "string", enum: ["pass", "needs_review"] },
               confidence: { type: "number" },
               reason: { type: "string" },
             },
-            required: ["summary_ko", "quality", "confidence", "reason"],
+            required: ["summary_ko", "summary_headline_ko", "summary_detail_ko", "quality", "confidence", "reason"],
           },
         },
       },
@@ -342,8 +552,27 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
   }
 
   const parsed = parseModelJson(outputText);
+  if (isBusinessSummary) {
+    return {
+      ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
+      ai_summary_headline_ko: "",
+      ai_summary_detail_ko: "",
+      ai_summary_quality: parsed.quality,
+      ai_summary_confidence: Number(parsed.confidence) || 0,
+      ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
+      ai_summary_model: model,
+      ai_summary_tier: tier,
+    };
+  }
+  const parts = summaryHeadlineDetail({
+    headline: parsed.summary_headline_ko,
+    detail: parsed.summary_detail_ko,
+    summary: parsed.summary_ko,
+  });
   return {
-    ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
+    ai_summary_ko: normalizeKoreanSummaryText(`${parts.headline}${parts.detail ? ` - ${parts.detail}` : ""}`),
+    ai_summary_headline_ko: parts.headline,
+    ai_summary_detail_ko: parts.detail,
     ai_summary_quality: parsed.quality,
     ai_summary_confidence: Number(parsed.confidence) || 0,
     ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -352,14 +581,14 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens }) {
   };
 }
 
-async function callOpenAIWithRetry({ apiKey, model, row, args, tier }) {
+async function callOpenAIWithRetry({ apiKey, model, row, args, tier, kind }) {
   try {
-    return await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.maxOutputTokens });
+    return await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.maxOutputTokens, kind });
   } catch (error) {
     if (!shouldRetryModelOutput(error) || args.retryMaxOutputTokens <= args.maxOutputTokens) {
       throw error;
     }
-    const retried = await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.retryMaxOutputTokens });
+    const retried = await callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens: args.retryMaxOutputTokens, kind });
     return {
       ...retried,
       ai_summary_reason: `${retried.ai_summary_reason} / initial retry after ${error.message}`,
@@ -379,17 +608,17 @@ function needsTerra(summary) {
   return summary.ai_summary_quality !== "pass" || summary.ai_summary_confidence < 0.72;
 }
 
-async function summarizeRow(row, args, apiKey) {
+async function summarizeRow(row, args, apiKey, kind) {
   const base = {
     ai_summary_created_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
     ai_summary_source: "openai_responses_api",
     ai_summary_cache_status: "new",
   };
-  let luna = await callOpenAIWithRetry({ apiKey, model: args.lunaModel, row, args, tier: "luna" });
+  let luna = await callOpenAIWithRetry({ apiKey, model: args.lunaModel, row, args, tier: "luna", kind });
   if (!needsTerra(luna)) return { ...row, ...base, ...luna };
 
   try {
-    const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra" });
+    const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra", kind });
     return { ...row, ...base, ...terra, ai_summary_luna_draft: luna.ai_summary_ko };
   } catch (error) {
     return {
@@ -446,7 +675,7 @@ async function summarizeRows(rows, args, apiKey, kind) {
   const updated = await mapLimit(targetRows, args.concurrency, async ({ row, shouldSummarize }) => {
     if (!shouldSummarize) return row;
     try {
-      const summarized = await summarizeRow(row, args, apiKey);
+      const summarized = await summarizeRow(row, args, apiKey, kind);
       completed += 1;
       process.stderr.write(`[${kind}] ${completed}/${targetCount} ${row.company}\n`);
       return summarized;

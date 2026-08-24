@@ -38,7 +38,233 @@ function normalizeSummaryText(value) {
     .replace(/중반대 두 자릿수/g, "두 자릿수 중반대")
     .replace(/초반대 두 자릿수/g, "두 자릿수 초반대")
     .replace(/후반대 두 자릿수/g, "두 자릿수 후반대")
+    .replace(/उपलब्ध성/g, "가용성")
     .trim();
+}
+
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function stripSummaryLead(value, item) {
+  let text = normalizeSummaryText(value);
+  const company = item?.company ? escapeRegExp(item.company) : "";
+  if (company) {
+    text = text.replace(new RegExp(`^${company}(은|는|이|가)\\s+`), "");
+  }
+  return text
+    .replace(/^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+/, "")
+    .replace(/^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+/, "")
+    .replace(/^(이는|다만|또한)\s+/g, "")
+    .replace(/([A-Za-z][A-Za-z0-9().·&/-]*)의\s+/g, "$1 ")
+    .trim();
+}
+
+function phraseEndingText(value) {
+  let text = String(value || "").trim();
+  const replacements = [
+    [/확인되지\s+(않았다|않는다)$/g, "확인되지 않음"],
+    [/제시되지\s+(않았다|않는다)$/g, "제시되지 않음"],
+    [/나타나지\s+(않았다|않는다)$/g, "나타나지 않음"],
+    [/부족하다$/g, "부족"],
+    [/필요하다$/g, "필요"],
+    [/계획이다$/g, "계획"],
+    [/예정이다$/g, "예정"],
+    [/목표로\s+하고\s+있다$/g, "목표"],
+    [/추진\s+중이다$/g, "추진"],
+    [/검토\s+중이다$/g, "검토"],
+    [/진행\s+중이다$/g, "진행"],
+    [/이어지고\s+있다$/g, "지속"],
+    [/진행하고\s+있다$/g, "진행"],
+    [/추진하고\s+있다$/g, "추진"],
+    [/검토하고\s+있다$/g, "검토"],
+    [/보여준다$/g, "시사"],
+    [/시사한다$/g, "시사"],
+    [/해석된다$/g, "해석"],
+    [/판단된다$/g, "판단"],
+    [/예상된다$/g, "예상"],
+    [/확인된다$/g, "확인"],
+    [/확인됐다$/g, "확인"],
+    [/나타났다$/g, "확인"],
+    [/언급됐다$/g, "언급"],
+    [/언급했다$/g, "언급"],
+    [/발표됐다$/g, "발표"],
+    [/발표했다$/g, "발표"],
+    [/공개했다$/g, "공개"],
+    [/밝혔다$/g, "공개"],
+    [/체결했다$/g, "체결"],
+    [/서명했다$/g, "서명"],
+    [/선임했다$/g, "선임"],
+    [/인수했다$/g, "인수"],
+    [/완료했다$/g, "완료"],
+    [/가동했다$/g, "가동"],
+    [/기록했다$/g, "기록"],
+    [/제공한다$/g, "제공"],
+    [/제공했다$/g, "제공"],
+    [/지원한다$/g, "지원"],
+    [/지원했다$/g, "지원"],
+    [/적용한다$/g, "적용"],
+    [/적용했다$/g, "적용"],
+    [/수용했다$/g, "수용"],
+    [/확대한다$/g, "확대"],
+    [/확대했다$/g, "확대"],
+    [/강화한다$/g, "강화"],
+    [/강화했다$/g, "강화"],
+    [/구축한다$/g, "구축"],
+    [/구축했다$/g, "구축"],
+    [/개발한다$/g, "개발"],
+    [/개발했다$/g, "개발"],
+    [/운영한다$/g, "운영"],
+    [/운영했다$/g, "운영"],
+    [/있다$/g, ""],
+    [/없다$/g, "없음"],
+    [/된다$/g, ""],
+    [/됐다$/g, ""],
+    [/한다$/g, ""],
+    [/했다$/g, ""],
+    [/이다$/g, ""],
+  ];
+  for (const [pattern, replacement] of replacements) {
+    text = text.replace(pattern, replacement);
+  }
+  return text.trim();
+}
+
+function phraseifySummaryText(value, item) {
+  const connectorMap = {
+    "구축하고": "구축",
+    "확보하고": "확보",
+    "강화하고": "강화",
+    "확대하고": "확대",
+    "공급하고": "공급",
+    "체결하고": "체결",
+    "수행하고": "수행",
+    "협력하고": "협력",
+    "진행하고": "진행",
+    "도입하고": "도입",
+    "설치하고": "설치",
+    "시연하고": "시연",
+    "개발하고": "개발",
+    "운영하고": "운영",
+    "공개하고": "공개",
+    "투자하고": "투자",
+    "언급하고": "언급",
+    "기록하고": "기록",
+    "가동하고": "가동",
+    "완료하고": "완료",
+    "발표하고": "발표",
+    "제공하며": "제공",
+    "적용하며": "적용",
+    "추진하며": "추진",
+    "검토하며": "검토",
+    "밝혔으며": "공개",
+    "발표했으며": "발표",
+    "체결했으며": "체결",
+    "기록했으며": "기록",
+    "확인했으며": "확인",
+  };
+  const connectorPattern = new RegExp(`(${Object.keys(connectorMap).join("|")})(,\\s*|\\s+|$)`, "g");
+  const text = stripSummaryLead(value, item)
+    .replace(/([A-Za-z][A-Za-z0-9().·&/-]*)의\s+/g, "$1 ")
+    .replace(connectorPattern, (_, verb, separator) => `${connectorMap[verb]}${separator?.includes(",") ? ", " : " "}`)
+    .replace(/영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다/g, "영향 가능성 언급")
+    .replace(/수\s+있다고\s+밝혔다/g, "가능성 언급")
+    .replace(/됐다고\s+(공개|발표|언급)/g, " $1")
+    .replace(/했다고\s+(공개|발표|언급)/g, " $1")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)/g, "$1 $3")
+    .replace(/(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)/g, "")
+    .replace(/\s+(다만|또한|그리고)\s+/g, ", ")
+    .replace(/[.!?。]+/g, ". ");
+
+  return text
+    .split(/\s*\.\s*|\s*;\s*/)
+    .map((clause) => phraseEndingText(clause.replace(/^(이는|다만|또한|그리고)\s+/g, "")))
+    .filter(Boolean)
+    .join(", ")
+    .replace(/\s*,\s*,\s*/g, ", ")
+    .replace(/(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)/g, " $2")
+    .replace(/(을|를)\s+단계적으로\s+추진/g, " 단계적 추진")
+    .replace(/확대할\s+계획/g, "확대 계획")
+    .replace(/(을|를)\s+위험요인으로\s+언급/g, " 위험요인 언급")
+    .replace(/영향을\s+위험요인으로\s+언급/g, "영향 위험요인 언급")
+    .replace(/(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)/g, " $2")
+    .replace(/(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)/g, " $2")
+    .replace(/(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+/g, "$1·")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)하는\s+/g, "$1 ")
+    .replace(/([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석/g, "$1 움직임")
+    .replace(/계획은 확인되지 않음/g, "계획 확인되지 않음")
+    .replace(/사실은 확인되지 않음/g, "사실 확인되지 않음")
+    .replace(/근거는 확인되지 않음/g, "근거 확인되지 않음")
+    .replace(/내용은 확인되지 않음/g, "내용 확인되지 않음")
+    .replace(/관련성은 확인되지 않음/g, "관련성 확인되지 않음")
+    .replace(/직접 연계는 확인되지 않음/g, "직접 연계 확인되지 않음")
+    .replace(/직접적 연관성은 확인되지 않음/g, "직접 연관성 확인되지 않음")
+    .replace(/연계도 확인되지 않음/g, "연계 확인되지 않음")
+    .replace(/,\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+/g, ", ")
+    .replace(/가능성을\s+시사/g, "가능성")
+    .replace(/,\s*(다만|또한)\s+/g, ", ")
+    .replace(/\s*·\s*/g, "·")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function compactSummaryPhrase(value, limit = 90, item = null) {
+  const text = phraseifySummaryText(value, item);
+  return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
+}
+
+function summaryParts(item) {
+  const headline = compactSummaryPhrase(item?.ai_summary_headline_ko, 58, item);
+  const detail = compactSummaryPhrase(item?.ai_summary_detail_ko, 120, item);
+  if (headline || detail) {
+    return { headline: headline || compactSummaryPhrase(item?.ai_summary_ko, 58, item), detail };
+  }
+
+  const text = normalizeSummaryText(item?.ai_summary_ko);
+  const dashed = text.split(/\s[-–—]\s/);
+  if (dashed.length >= 2) {
+    return {
+      headline: compactSummaryPhrase(dashed[0], 58, item),
+      detail: compactSummaryPhrase(dashed.slice(1).join(" - "), 120, item),
+    };
+  }
+  const sentences = text.split(/(?<=[.!?。])\s+/).filter(Boolean);
+  if (sentences.length >= 2) {
+    return {
+      headline: compactSummaryPhrase(sentences[0], 58, item),
+      detail: compactSummaryPhrase(sentences.slice(1).join(" "), 120, item),
+    };
+  }
+  const clauses = text.split(/,\s*/).filter(Boolean);
+  if (clauses.length >= 2) {
+    return {
+      headline: compactSummaryPhrase(clauses[0], 58, item),
+      detail: compactSummaryPhrase(clauses.slice(1).join(", "), 120, item),
+    };
+  }
+  return { headline: compactSummaryPhrase(text, 58, item), detail: "" };
+}
+
+function AiSummaryText({ item }) {
+  const parts = summaryParts(item);
+  if (!parts.headline && !parts.detail) return null;
+  return (
+    <p className="evidenceText structuredSummary">
+      <strong>{parts.headline}</strong>
+      {parts.detail ? (
+        <>
+          <span className="summaryDash"> - </span>
+          <span className="summaryDetail">{parts.detail}</span>
+        </>
+      ) : null}
+    </p>
+  );
+}
+
+function BusinessSummaryText({ item }) {
+  const text = normalizeSummaryText(item?.ai_summary_ko);
+  if (!text) return null;
+  return <p className="evidenceText businessSummary">{text}</p>;
 }
 
 function pad2(value) {
@@ -536,7 +762,7 @@ export default function HomePage() {
                       <strong>{item.title}</strong>
                       {item.investment_signal_reason ? <p className="reasonText">{item.investment_signal_reason}</p> : null}
                       {item.ai_summary_ko ? (
-                        <p className="evidenceText">{normalizeSummaryText(item.ai_summary_ko)}</p>
+                        <AiSummaryText item={item} />
                       ) : (
                         shortList(item.evidence_snippets, 1).map((snippet) => (
                           <p className="evidenceText" key={snippet}>
@@ -617,7 +843,7 @@ export default function HomePage() {
                       <strong>{item.title}</strong>
                       {item.relevance_reason ? <p className="reasonText">{item.relevance_reason}</p> : null}
                       {item.ai_summary_ko ? (
-                        <p className="evidenceText">{normalizeSummaryText(item.ai_summary_ko)}</p>
+                        <BusinessSummaryText item={item} />
                       ) : (
                         shortList(item.evidence_snippets, 1).map((snippet) => (
                           <p className="evidenceText" key={snippet}>

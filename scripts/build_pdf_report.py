@@ -301,10 +301,222 @@ def normalize_summary_text(value):
         ("중반대 두 자릿수", "두 자릿수 중반대"),
         ("초반대 두 자릿수", "두 자릿수 초반대"),
         ("후반대 두 자릿수", "두 자릿수 후반대"),
+        ("उपलब्ध성", "가용성"),
     ]
     for source, target in replacements:
         text = text.replace(source, target)
     return text.strip()
+
+
+def strip_summary_lead(value, row=None):
+    text = normalize_summary_text(value)
+    company = clean_text((row or {}).get("company"))
+    if company:
+        text = re.sub(rf"^{re.escape(company)}(은|는|이|가)\s+", "", text)
+    text = re.sub(r"^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+", "", text)
+    text = re.sub(r"^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+", "", text)
+    text = re.sub(r"^(이는|다만|또한)\s+", "", text)
+    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
+    return text.strip()
+
+
+def phrase_ending_text(value):
+    text = clean_text(value)
+    replacements = [
+        (r"확인되지\s+(않았다|않는다)$", "확인되지 않음"),
+        (r"제시되지\s+(않았다|않는다)$", "제시되지 않음"),
+        (r"나타나지\s+(않았다|않는다)$", "나타나지 않음"),
+        (r"부족하다$", "부족"),
+        (r"필요하다$", "필요"),
+        (r"계획이다$", "계획"),
+        (r"예정이다$", "예정"),
+        (r"목표로\s+하고\s+있다$", "목표"),
+        (r"추진\s+중이다$", "추진"),
+        (r"검토\s+중이다$", "검토"),
+        (r"진행\s+중이다$", "진행"),
+        (r"이어지고\s+있다$", "지속"),
+        (r"진행하고\s+있다$", "진행"),
+        (r"추진하고\s+있다$", "추진"),
+        (r"검토하고\s+있다$", "검토"),
+        (r"보여준다$", "시사"),
+        (r"시사한다$", "시사"),
+        (r"해석된다$", "해석"),
+        (r"판단된다$", "판단"),
+        (r"예상된다$", "예상"),
+        (r"확인된다$", "확인"),
+        (r"확인됐다$", "확인"),
+        (r"나타났다$", "확인"),
+        (r"언급됐다$", "언급"),
+        (r"언급했다$", "언급"),
+        (r"발표됐다$", "발표"),
+        (r"발표했다$", "발표"),
+        (r"공개했다$", "공개"),
+        (r"밝혔다$", "공개"),
+        (r"체결했다$", "체결"),
+        (r"서명했다$", "서명"),
+        (r"선임했다$", "선임"),
+        (r"인수했다$", "인수"),
+        (r"완료했다$", "완료"),
+        (r"가동했다$", "가동"),
+        (r"기록했다$", "기록"),
+        (r"제공한다$", "제공"),
+        (r"제공했다$", "제공"),
+        (r"지원한다$", "지원"),
+        (r"지원했다$", "지원"),
+        (r"적용한다$", "적용"),
+        (r"적용했다$", "적용"),
+        (r"수용했다$", "수용"),
+        (r"확대한다$", "확대"),
+        (r"확대했다$", "확대"),
+        (r"강화한다$", "강화"),
+        (r"강화했다$", "강화"),
+        (r"구축한다$", "구축"),
+        (r"구축했다$", "구축"),
+        (r"개발한다$", "개발"),
+        (r"개발했다$", "개발"),
+        (r"운영한다$", "운영"),
+        (r"운영했다$", "운영"),
+        (r"있다$", ""),
+        (r"없다$", "없음"),
+        (r"된다$", ""),
+        (r"됐다$", ""),
+        (r"한다$", ""),
+        (r"했다$", ""),
+        (r"이다$", ""),
+    ]
+    for source, target in replacements:
+        text = re.sub(source, target, text)
+    return text.strip()
+
+
+def phraseify_summary_text(value, row=None):
+    connector_map = {
+        "구축하고": "구축",
+        "확보하고": "확보",
+        "강화하고": "강화",
+        "확대하고": "확대",
+        "공급하고": "공급",
+        "체결하고": "체결",
+        "수행하고": "수행",
+        "협력하고": "협력",
+        "진행하고": "진행",
+        "도입하고": "도입",
+        "설치하고": "설치",
+        "시연하고": "시연",
+        "개발하고": "개발",
+        "운영하고": "운영",
+        "공개하고": "공개",
+        "투자하고": "투자",
+        "언급하고": "언급",
+        "기록하고": "기록",
+        "가동하고": "가동",
+        "완료하고": "완료",
+        "발표하고": "발표",
+        "제공하며": "제공",
+        "적용하며": "적용",
+        "추진하며": "추진",
+        "검토하며": "검토",
+        "밝혔으며": "공개",
+        "발표했으며": "발표",
+        "체결했으며": "체결",
+        "기록했으며": "기록",
+        "확인했으며": "확인",
+    }
+    text = strip_summary_lead(value, row)
+    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
+    connector_pattern = "|".join(re.escape(key) for key in connector_map)
+    text = re.sub(
+        rf"({connector_pattern})(,\s*|\s+|$)",
+        lambda match: f"{connector_map[match.group(1)]}{', ' if ',' in match.group(2) else ' '}",
+        text,
+    )
+    text = re.sub(r"영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다", "영향 가능성 언급", text)
+    text = re.sub(r"수\s+있다고\s+밝혔다", "가능성 언급", text)
+    text = re.sub(r"됐다고\s+(공개|발표|언급)", r" \1", text)
+    text = re.sub(r"했다고\s+(공개|발표|언급)", r" \1", text)
+    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)", r"\1 \3", text)
+    text = re.sub(r"(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)", "", text)
+    text = re.sub(r"\s+(다만|또한|그리고)\s+", ", ", text)
+    text = re.sub(r"[.!?。]+", ". ", text)
+    clauses = [
+        phrase_ending_text(re.sub(r"^(이는|다만|또한|그리고)\s+", "", clause))
+        for clause in re.split(r"\s*\.\s*|\s*;\s*", text)
+    ]
+    text = ", ".join(clause for clause in clauses if clause)
+    text = re.sub(r"\s*,\s*,\s*", ", ", text)
+    text = re.sub(r"(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)", r" \2", text)
+    text = re.sub(r"(을|를)\s+단계적으로\s+추진", " 단계적 추진", text)
+    text = re.sub(r"확대할\s+계획", "확대 계획", text)
+    text = re.sub(r"(을|를)\s+위험요인으로\s+언급", " 위험요인 언급", text)
+    text = re.sub(r"영향을\s+위험요인으로\s+언급", "영향 위험요인 언급", text)
+    text = re.sub(r"(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)", r" \2", text)
+    text = re.sub(r"(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)", r" \2", text)
+    text = re.sub(r"(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+", r"\1·", text)
+    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하는\s+", r"\1 ", text)
+    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석", r"\1 움직임", text)
+    text = text.replace("계획은 확인되지 않음", "계획 확인되지 않음")
+    text = text.replace("사실은 확인되지 않음", "사실 확인되지 않음")
+    text = text.replace("근거는 확인되지 않음", "근거 확인되지 않음")
+    text = text.replace("내용은 확인되지 않음", "내용 확인되지 않음")
+    text = text.replace("관련성은 확인되지 않음", "관련성 확인되지 않음")
+    text = text.replace("직접 연계는 확인되지 않음", "직접 연계 확인되지 않음")
+    text = text.replace("직접적 연관성은 확인되지 않음", "직접 연관성 확인되지 않음")
+    text = text.replace("연계도 확인되지 않음", "연계 확인되지 않음")
+    text = re.sub(r",\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+", ", ", text)
+    text = text.replace("가능성을 시사", "가능성")
+    text = re.sub(r",\s*(다만|또한)\s+", ", ", text)
+    text = re.sub(r"\s*·\s*", "·", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def compact_summary_phrase(value, limit=90, row=None):
+    return short_text(phraseify_summary_text(value, row), limit)
+
+
+def summary_parts(row):
+    headline = compact_summary_phrase(row.get("ai_summary_headline_ko"), 58, row)
+    detail = compact_summary_phrase(row.get("ai_summary_detail_ko"), 120, row)
+    if headline or detail:
+        return {
+            "headline": headline or compact_summary_phrase(row.get("ai_summary_ko"), 58, row),
+            "detail": detail,
+        }
+
+    text = normalize_summary_text(row.get("ai_summary_ko"))
+    if not text:
+        return None
+
+    dashed = re.split(r"\s[-–—]\s", text)
+    if len(dashed) >= 2:
+        return {
+            "headline": compact_summary_phrase(dashed[0], 58, row),
+            "detail": compact_summary_phrase(" - ".join(dashed[1:]), 120, row),
+        }
+
+    sentences = [item for item in re.split(r"(?<=[.!?。])\s+", text) if item]
+    if len(sentences) >= 2:
+        return {
+            "headline": compact_summary_phrase(sentences[0], 58, row),
+            "detail": compact_summary_phrase(" ".join(sentences[1:]), 120, row),
+        }
+
+    clauses = [item for item in re.split(r",\s*", text) if item]
+    if len(clauses) >= 2:
+        return {
+            "headline": compact_summary_phrase(clauses[0], 58, row),
+            "detail": compact_summary_phrase(", ".join(clauses[1:]), 120, row),
+        }
+
+    return {"headline": compact_summary_phrase(text, 58, row), "detail": ""}
+
+
+def summary_plain_text(row):
+    parts = summary_parts(row)
+    if not parts:
+        return ""
+    if parts["detail"]:
+        return f"{parts['headline']} - {parts['detail']}"
+    return parts["headline"]
 
 
 def wrap_text(canvas_obj, text, max_width, font_name, font_size):
@@ -685,7 +897,7 @@ def source_line(row):
 
 
 def detail_text(row, limit=260):
-    ai_summary = normalize_summary_text(row.get("ai_summary_ko"))
+    ai_summary = summary_plain_text(row)
     if ai_summary:
         return short_text(ai_summary, limit)
 
@@ -706,7 +918,56 @@ def business_text(rows):
     if not rows:
         return "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않았습니다."
     row = sort_signal_rows(rows)[0]
-    return detail_text(row, 320)
+    ai_summary = normalize_summary_text(row.get("ai_summary_ko"))
+    if ai_summary:
+        return short_text(ai_summary, 360)
+    return detail_text(row, 360)
+
+
+def summary_line_count(report, row, width, size, max_lines):
+    text = summary_plain_text(row) or detail_text(row, 300)
+    font_name = report.fonts["demilight"]
+    lines = wrap_text(report.canvas, text, width, font_name, size)
+    return max(1, min(len(lines), max_lines))
+
+
+def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=3):
+    parts = summary_parts(row)
+    line_height = size + line_gap
+    if not parts:
+        line_count = summary_line_count(report, row, width, size, max_lines)
+        report.wrapped(detail_text(row, 300), x, y, width, size, TEXT, max_lines=max_lines, line_gap=line_gap)
+        return line_count
+
+    headline = parts["headline"]
+    detail = parts["detail"]
+    headline_font = report.fonts["semibold"]
+    detail_font = report.fonts["demilight"]
+    dash = " - " if detail else ""
+    headline_width = report.canvas.stringWidth(headline, headline_font, size)
+    dash_width = report.canvas.stringWidth(dash, detail_font, size)
+    detail_width = report.canvas.stringWidth(detail, detail_font, size)
+
+    if not detail or headline_width + dash_width + detail_width <= width or max_lines <= 1:
+        available_detail_width = max(0, width - headline_width - dash_width)
+        detail_to_draw = detail
+        if detail and detail_width > available_detail_width:
+            detail_lines = wrap_text(report.canvas, detail, available_detail_width, detail_font, size)
+            detail_to_draw = detail_lines[0] if detail_lines else ""
+        report.text(x, y, headline, size, TEXT, weight="semibold")
+        cursor = x + headline_width
+        if detail_to_draw:
+            report.text(cursor, y, dash, size, colors.black, weight="demilight")
+            report.text(cursor + dash_width, y, detail_to_draw, size, colors.black, weight="demilight")
+        return 1
+
+    report.wrapped(headline, x, y, width, size, TEXT, max_lines=1, line_gap=line_gap, weight="semibold")
+    detail_lines = wrap_text(report.canvas, detail, width, detail_font, size)
+    detail_text_value = f"- {detail}"
+    if len(detail_lines) > max_lines - 1:
+        detail_text_value = f"- {' '.join(detail_lines[: max_lines - 1])}"
+    report.wrapped(detail_text_value, x, y - line_height, width, size, colors.black, max_lines=max_lines - 1, line_gap=line_gap, weight="demilight")
+    return min(max_lines, 1 + len(detail_lines))
 
 
 def best_business_row(company, relevant_rows, investment_rows, all_signal_rows):
@@ -756,8 +1017,7 @@ SIGNAL_LAST_ROW_BOTTOM_PAD = 18
 
 def signal_body_line_count(report, row, width, max_lines):
     body_width = width - 64
-    lines = wrap_text(report.canvas, detail_text(row, 300), body_width, report.fonts["demilight"], 9.2)
-    return max(1, min(len(lines), max_lines))
+    return summary_line_count(report, row, body_width, 9.2, max_lines)
 
 
 def signal_row_height(report, rows, width, max_lines, draw_separator=True):
@@ -809,8 +1069,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
 
     row = rows[0]
     body_y = y - 29
-    line_count = signal_body_line_count(report, row, width, max_lines)
-    report.wrapped(detail_text(row, 300), label_x, body_y, width - 64, 9.2, TEXT, max_lines=max_lines, line_gap=3)
+    line_count = draw_summary_text(report, row, label_x, body_y, width - 64, 9.2, max_lines=max_lines, line_gap=3)
     source_y = body_y - ((9.2 + 3) * line_count) - 2
     report.text(label_x, source_y, source_line(row), 7.4, MUTED)
     separator_y = source_y - 14
@@ -887,7 +1146,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         report.text(target_label_x + target_label_w + 9, header_y, short_text(target_text, 45), 9.5, colors.HexColor("#087A70"), weight="semibold")
 
     body = business_text([business_row] if business_row else [])
-    report.wrapped(body, x + 16, top - 54, width - 32, 9.3, TEXT, max_lines=4, line_gap=3)
+    report.wrapped(body, x + 16, top - 54, width - 32, 9.3, TEXT, max_lines=4, line_gap=3, weight="demilight")
     if business_row:
         report.text(x + 16, bottom_y + 21, source_line(business_row), 8, MUTED)
     else:
