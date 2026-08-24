@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-24T09:14:54Z",
+  "run_started_at": "2026-08-24T09:34:47Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -189,7 +189,7 @@
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 70,
+  "error_count": 71,
   "errors": [
     {
       "target_no": 2,
@@ -336,14 +336,6 @@
       "error": "HTTP 403 Forbidden"
     },
     {
-      "target_no": 19,
-      "company": "Skyworks",
-      "source": "official_pages",
-      "source_url": "https://investors.skyworksinc.com/financial-information/sec-filings",
-      "source_name": "Skyworks - SEC Filings / Regulatory Filings",
-      "error": "fetch failed"
-    },
-    {
       "target_no": 20,
       "company": "Eli Lilly and Company",
       "source": "official_pages",
@@ -368,6 +360,14 @@
       "error": "HTTP 403 Forbidden"
     },
     {
+      "target_no": 21,
+      "company": "GE Healthcare",
+      "source": "official_pages",
+      "source_url": "https://investor.gehealthcare.com/financial-information/sec-filings",
+      "source_name": "GE Healthcare - SEC Filings / Regulatory Filings",
+      "error": "fetch failed"
+    },
+    {
       "target_no": 22,
       "company": "Boeing",
       "source": "official_detail",
@@ -382,6 +382,14 @@
       "source_url": "https://www.appliedmaterials.com/us/en/newsroom.html",
       "source_name": "Applied Materials - Applied Materials Newsroom / Newsroom / News",
       "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 26,
+      "company": "Magnix",
+      "source": "official_pages",
+      "source_url": "https://www.magnix.aero/news",
+      "source_name": "Magnix - magniX News / Newsroom / News",
+      "error": "fetch failed"
     },
     {
       "target_no": 33,
@@ -733,7 +741,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
       "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     },
     {
       "target_no": 77,
@@ -753,9 +761,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260824T091454Z.json",
-    "csv": "outputs/company_signals_20260824T091454Z.csv",
-    "summary": "outputs/collection_summary_20260824T091454Z.json",
+    "json": "outputs/company_signals_20260824T093447Z.json",
+    "csv": "outputs/company_signals_20260824T093447Z.csv",
+    "summary": "outputs/collection_summary_20260824T093447Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"

@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-24T09:18:00Z",
+  "run_started_at": "2026-08-24T09:37:48Z",
   "input_signal_count": 454,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
