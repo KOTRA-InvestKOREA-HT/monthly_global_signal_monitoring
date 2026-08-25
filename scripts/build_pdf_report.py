@@ -549,6 +549,22 @@ def wrap_text(canvas_obj, text, max_width, font_name, font_size):
     return lines
 
 
+def short_text_to_width(canvas_obj, text, max_width, font_name, font_size):
+    text = " ".join(str(text or "").replace("&nbsp;", " ").split())
+    if canvas_obj.stringWidth(text, font_name, font_size) <= max_width:
+        return text
+    suffix = "..."
+    lo, hi = 0, len(text)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        candidate = text[:mid].rstrip() + suffix
+        if canvas_obj.stringWidth(candidate, font_name, font_size) <= max_width:
+            lo = mid
+        else:
+            hi = mid - 1
+    return text[:lo].rstrip() + suffix
+
+
 def draw_justified_line(canvas_obj, x, y, line, max_width, font_name, font_size):
     words = line.split(" ")
     if len(words) <= 1:
@@ -1011,27 +1027,55 @@ def draw_target_marker(c, x, y, size=11):
 
 
 DETAIL_BOX_TOP = PAGE_H - 114
-DETAIL_BOX_GAP = 22
-DETAIL_BOTTOM_MARGIN = 62
-DETAIL_BOTTOM_BOX_H = 126
-DETAIL_HEADER_TO_FIRST_SIGNAL = 64
-SIGNAL_AFTER_LINE_GAP = 18
-SIGNAL_LAST_ROW_BOTTOM_PAD = 18
+DETAIL_BOX_GAP = 16
+DETAIL_BOTTOM_MARGIN = 56
+DETAIL_HEADER_TO_FIRST_SIGNAL = 58
+SIGNAL_AFTER_LINE_GAP = 10
+SIGNAL_LAST_ROW_BOTTOM_PAD = 14
+SIGNAL_EMPTY_ROW_H = 34
+SIGNAL_EMPTY_LAST_ROW_H = 24
+SIGNAL_LABEL_TO_BODY = 24
+SIGNAL_BODY_SIZE = 9.0
+SIGNAL_BODY_GAP = 2.1
+SIGNAL_SOURCE_SIZE = 7.2
+SIGNAL_SOURCE_GAP = 1.5
+SIGNAL_SEPARATOR_GAP = 10
+BUSINESS_MIN_BOX_H = 88
+BUSINESS_MAX_BOX_H = 124
+BUSINESS_HEADER_TOP_PAD = 25
+BUSINESS_BODY_TOP_PAD = 44
+BUSINESS_SOURCE_GAP = 8
+BUSINESS_SOURCE_BOTTOM_PAD = 15
+BUSINESS_BODY_FITS = (
+    (9.3, 2.0),
+    (9.0, 1.8),
+    (8.7, 1.6),
+    (8.4, 1.4),
+    (8.1, 1.2),
+    (7.8, 1.1),
+    (7.5, 1.0),
+)
 
 
 def signal_body_line_count(report, row, width, max_lines):
     body_width = width - 64
-    return summary_line_count(report, row, body_width, 9.2, max_lines)
+    return summary_line_count(report, row, body_width, SIGNAL_BODY_SIZE, max_lines)
 
 
 def signal_row_height(report, rows, width, max_lines, draw_separator=True):
     if not rows:
-        return 43 if draw_separator else 28
+        return SIGNAL_EMPTY_ROW_H if draw_separator else SIGNAL_EMPTY_LAST_ROW_H
 
     line_count = signal_body_line_count(report, rows[0], width, max_lines)
-    active_content_height = 29 + (line_count * (9.2 + 3)) + 2 + 4
+    active_content_height = (
+        SIGNAL_LABEL_TO_BODY
+        + (line_count * (SIGNAL_BODY_SIZE + SIGNAL_BODY_GAP))
+        + SIGNAL_SOURCE_GAP
+        + SIGNAL_SOURCE_SIZE
+        + SIGNAL_SEPARATOR_GAP
+    )
     if draw_separator:
-        return active_content_height + 10 + SIGNAL_AFTER_LINE_GAP
+        return active_content_height + SIGNAL_AFTER_LINE_GAP
     return active_content_height + SIGNAL_LAST_ROW_BOTTOM_PAD
 
 
@@ -1042,13 +1086,44 @@ def estimate_signal_box_height(report, rows_by_signal, width, max_lines):
     return height
 
 
-def choose_signal_body_lines(report, rows_by_signal, width):
-    max_height = DETAIL_BOX_TOP - (DETAIL_BOTTOM_MARGIN + DETAIL_BOTTOM_BOX_H + DETAIL_BOX_GAP)
+def choose_signal_body_lines(report, rows_by_signal, width, bottom_h):
+    max_height = DETAIL_BOX_TOP - (DETAIL_BOTTOM_MARGIN + bottom_h + DETAIL_BOX_GAP)
     for max_lines in (3, 2, 1):
         estimated_height = estimate_signal_box_height(report, rows_by_signal, width, max_lines)
         if estimated_height <= max_height:
             return max_lines, estimated_height
     return 1, min(estimate_signal_box_height(report, rows_by_signal, width, 1), max_height)
+
+
+def fitted_business_body(report, text, width, max_lines=4):
+    font_name = report.fonts["demilight"]
+    for size, line_gap in BUSINESS_BODY_FITS:
+        lines = wrap_text(report.canvas, text, width, font_name, size)
+        if len(lines) <= max_lines:
+            return {"lines": lines, "size": size, "line_gap": line_gap, "truncated": False}
+
+    size, line_gap = BUSINESS_BODY_FITS[-1]
+    lines = wrap_text(report.canvas, text, width, font_name, size)
+    visible = lines[:max_lines]
+    if len(lines) > max_lines and visible:
+        visible[-1] = short_text_to_width(report.canvas, f"{visible[-1]}...", width, font_name, size)
+    return {"lines": visible, "size": size, "line_gap": line_gap, "truncated": len(lines) > max_lines}
+
+
+def business_box_metrics(report, text, width):
+    body_width = width - 32
+    body = fitted_business_body(report, text, body_width, max_lines=4)
+    line_count = max(1, len(body["lines"]))
+    line_height = body["size"] + body["line_gap"]
+    height = (
+        BUSINESS_BODY_TOP_PAD
+        + (line_count * line_height)
+        + BUSINESS_SOURCE_GAP
+        + 8
+        + BUSINESS_SOURCE_BOTTOM_PAD
+    )
+    body["height"] = max(BUSINESS_MIN_BOX_H, min(BUSINESS_MAX_BOX_H, height))
+    return body
 
 
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
@@ -1067,16 +1142,27 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
-            c.line(x, y - 25, x + width, y - 25)
-            return y - 25 - SIGNAL_AFTER_LINE_GAP
-        return y - 28
+            separator_y = y - 22
+            c.line(x, separator_y, x + width, separator_y)
+            return separator_y - SIGNAL_AFTER_LINE_GAP
+        return y - SIGNAL_EMPTY_LAST_ROW_H
 
     row = rows[0]
-    body_y = y - 29
-    line_count = draw_summary_text(report, row, label_x, body_y, width - 64, 9.2, max_lines=max_lines, line_gap=3)
-    source_y = body_y - ((9.2 + 3) * line_count) - 2
-    report.text(label_x, source_y, source_line(row), 7.4, MUTED)
-    separator_y = source_y - 14
+    body_y = y - SIGNAL_LABEL_TO_BODY
+    line_count = draw_summary_text(
+        report,
+        row,
+        label_x,
+        body_y,
+        width - 64,
+        SIGNAL_BODY_SIZE,
+        max_lines=max_lines,
+        line_gap=SIGNAL_BODY_GAP,
+    )
+    source_y = body_y - ((SIGNAL_BODY_SIZE + SIGNAL_BODY_GAP) * line_count) - SIGNAL_SOURCE_GAP
+    source_text = short_text_to_width(report.canvas, source_line(row), width - 64, report.fonts["demilight"], SIGNAL_SOURCE_SIZE)
+    report.text(label_x, source_y, source_text, SIGNAL_SOURCE_SIZE, MUTED)
+    separator_y = source_y - SIGNAL_SEPARATOR_GAP
     if draw_separator:
         c.setStrokeColor(BOX_LINE)
         c.line(x, separator_y, x + width, separator_y)
@@ -1092,9 +1178,12 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     x = 30
     width = PAGE_W - 60
     signal_width = width - 38
-    max_lines, top_h = choose_signal_body_lines(report, rows_by_signal, signal_width)
+    business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
+    business_body = business_text([business_row] if business_row else [])
+    business_layout = business_box_metrics(report, business_body, width)
+    bottom_h = business_layout["height"]
+    max_lines, top_h = choose_signal_body_lines(report, rows_by_signal, signal_width, bottom_h)
     top_y = DETAIL_BOX_TOP - top_h
-    bottom_h = DETAIL_BOTTOM_BOX_H
     bottom_y = top_y - DETAIL_BOX_GAP - bottom_h
     c = report.canvas
 
@@ -1131,7 +1220,6 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
             draw_separator=no < 5,
         )
 
-    business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
     c.setStrokeColor(TEAL_LINE)
     c.setFillColor(TEAL_BG)
     c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
@@ -1149,12 +1237,19 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     if target_text:
         report.text(target_label_x + target_label_w + 9, header_y, short_text(target_text, 45), 9.5, colors.HexColor("#087A70"), weight="semibold")
 
-    body = business_text([business_row] if business_row else [])
-    report.wrapped(body, x + 16, top - 54, width - 32, 9.3, TEXT, max_lines=4, line_gap=3, weight="demilight")
+    body_y = top - BUSINESS_BODY_TOP_PAD
+    report.set_font(business_layout["size"], TEXT, weight="demilight")
+    line_height = business_layout["size"] + business_layout["line_gap"]
+    for line in business_layout["lines"]:
+        report.canvas.drawString(x + 16, body_y, line)
+        body_y -= line_height
+    source_y = max(bottom_y + BUSINESS_SOURCE_BOTTOM_PAD, body_y - BUSINESS_SOURCE_GAP)
+    source_width = width - 32
     if business_row:
-        report.text(x + 16, bottom_y + 21, source_line(business_row), 8, MUTED)
+        source_text = short_text_to_width(report.canvas, source_line(business_row), source_width, report.fonts["demilight"], 8)
+        report.text(x + 16, source_y, source_text, 8, MUTED)
     else:
-        report.text(x + 16, bottom_y + 21, "출처  -", 8, MUTED)
+        report.text(x + 16, source_y, "출처  -", 8, MUTED)
     report.footer()
 
 
