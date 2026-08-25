@@ -1029,16 +1029,18 @@ def draw_target_marker(c, x, y, size=11):
 DETAIL_BOX_TOP = PAGE_H - 114
 DETAIL_BOX_GAP = 16
 DETAIL_BOTTOM_MARGIN = 56
-DETAIL_SIGNAL_TOP_PAD = 64
-DETAIL_SIGNAL_SLOT_H = 66
-DETAIL_SIGNAL_BOTTOM_PAD = 22
-DETAIL_TOP_BOX_H = DETAIL_SIGNAL_TOP_PAD + (DETAIL_SIGNAL_SLOT_H * 5) + DETAIL_SIGNAL_BOTTOM_PAD
+DETAIL_FIRST_SIGNAL_BASELINE_OFFSET = 64
+DETAIL_SIGNAL_BOTTOM_PAD = 24
+SIGNAL_LABEL_TOP_OFFSET = 7
 SIGNAL_LABEL_TO_BODY = 23
 SIGNAL_BODY_SIZE = 8.8
 SIGNAL_BODY_GAP = 1.4
 SIGNAL_SOURCE_SIZE = 7.1
 SIGNAL_SOURCE_GAP = 1.0
-SIGNAL_SEPARATOR_OFFSET = 51
+SIGNAL_SOURCE_BOTTOM_OFFSET = 2.5
+SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET = 14
+SIGNAL_CONTENT_TO_SEPARATOR = 10
+SIGNAL_SEPARATOR_TO_NEXT_LABEL_TOP = 18
 BUSINESS_MIN_BOX_H = 88
 BUSINESS_MAX_BOX_H = 124
 BUSINESS_HEADER_TOP_PAD = 25
@@ -1059,6 +1061,36 @@ BUSINESS_BODY_FITS = (
 def signal_body_line_count(report, row, width, max_lines):
     body_width = width - 64
     return summary_line_count(report, row, body_width, SIGNAL_BODY_SIZE, max_lines)
+
+
+def signal_content_bottom_offset(report, rows, width, max_lines):
+    if not rows:
+        return SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET
+    line_count = signal_body_line_count(report, rows[0], width, max_lines)
+    return (
+        SIGNAL_LABEL_TO_BODY
+        + (line_count * (SIGNAL_BODY_SIZE + SIGNAL_BODY_GAP))
+        + SIGNAL_SOURCE_GAP
+        + SIGNAL_SOURCE_BOTTOM_OFFSET
+    )
+
+
+def signal_box_layout(report, rows_by_signal, width, max_lines):
+    y_offset = DETAIL_FIRST_SIGNAL_BASELINE_OFFSET
+    positions = {}
+    for no in range(1, 6):
+        positions[no] = DETAIL_BOX_TOP - y_offset
+        content_offset = signal_content_bottom_offset(report, rows_by_signal.get(no, []), width, max_lines)
+        if no < 5:
+            y_offset += (
+                content_offset
+                + SIGNAL_CONTENT_TO_SEPARATOR
+                + SIGNAL_SEPARATOR_TO_NEXT_LABEL_TOP
+                + SIGNAL_LABEL_TOP_OFFSET
+            )
+        else:
+            y_offset += content_offset + DETAIL_SIGNAL_BOTTOM_PAD
+    return positions, y_offset
 
 
 def fitted_business_body(report, text, width, max_lines=4):
@@ -1108,7 +1140,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
-            separator_y = y - SIGNAL_SEPARATOR_OFFSET
+            separator_y = y - SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET - SIGNAL_CONTENT_TO_SEPARATOR
             c.line(x, separator_y, x + width, separator_y)
         return None
 
@@ -1128,7 +1160,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     source_text = short_text_to_width(report.canvas, source_line(row), width - 64, report.fonts["demilight"], SIGNAL_SOURCE_SIZE)
     report.text(label_x, source_y, source_text, SIGNAL_SOURCE_SIZE, MUTED)
     if draw_separator:
-        separator_y = y - SIGNAL_SEPARATOR_OFFSET
+        separator_y = source_y - SIGNAL_SOURCE_BOTTOM_OFFSET - SIGNAL_CONTENT_TO_SEPARATOR
         c.setStrokeColor(BOX_LINE)
         c.line(x, separator_y, x + width, separator_y)
     return None
@@ -1147,7 +1179,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     business_layout = business_box_metrics(report, business_body, width)
     bottom_h = business_layout["height"]
     max_lines = 2
-    top_h = DETAIL_TOP_BOX_H
+    signal_positions, top_h = signal_box_layout(report, rows_by_signal, signal_width, max_lines)
     top_y = DETAIL_BOX_TOP - top_h
     bottom_y = top_y - DETAIL_BOX_GAP - bottom_h
     c = report.canvas
@@ -1172,14 +1204,13 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setLineWidth(1)
     c.line(x + 17, header_y - 18, x + width - 17, header_y - 18)
 
-    first_signal_y = DETAIL_BOX_TOP - DETAIL_SIGNAL_TOP_PAD
     for no in range(1, 6):
         draw_signal_row(
             report,
             no,
             rows_by_signal.get(no, []),
             x + 19,
-            first_signal_y - ((no - 1) * DETAIL_SIGNAL_SLOT_H),
+            signal_positions[no],
             signal_width,
             max_lines=max_lines,
             draw_separator=no < 5,
