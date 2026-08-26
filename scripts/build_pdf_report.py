@@ -43,6 +43,12 @@ FONT_FILES = {
     "semibold": "NotoSansKR-SemiBold.ttf",
     "extrabold": "NotoSansKR-ExtraBold.ttf",
 }
+
+
+def normalize_company_key(value):
+    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
+
+
 EXEMPT_COMPANIES = {
     "Prodrive",
     "JSR",
@@ -53,6 +59,37 @@ EXEMPT_COMPANIES = {
     "3M",
     "Air Liquide",
     "Air Products",
+}
+TARGET_TECH_LABEL_COMPANIES = {
+    normalize_company_key(company)
+    for company in [
+        "Charles River",
+        "Texcell",
+        "Schott Pharma",
+        "West Pharmaceutical",
+        "Cytiva",
+        "GE Healthcare",
+        "Thermo Fisher",
+        "Eli Lilly and Company",
+        "Eli Lilly and Compan",
+        "Moderna",
+        "Asahi Glass",
+        "Infineon",
+        "NXP",
+        "Mitsubishi Chemical",
+        "Nexeon",
+        "EMM(Umicore)",
+        "Norsk Hydro",
+        "TIMET",
+        "Australian Strategic Metals",
+        "HyproMag",
+        "Shin-Etsu Chemicals",
+        "Evonik Industries",
+        "Solvay",
+        "Air Products",
+        "Asahi Kasei",
+        "BASF",
+    ]
 }
 
 COUNTRY_BY_COMPANY = {
@@ -1124,6 +1161,16 @@ def business_box_metrics(report, text, width):
     return body
 
 
+def target_section_for_profile(profile):
+    if profile.get("exempt_from_relevance"):
+        return "", ""
+    target_text = str(profile.get("target_technology") or "").strip()
+    if not target_text:
+        return "", ""
+    label = "타겟기술" if normalize_company_key(profile.get("company")) in TARGET_TECH_LABEL_COMPANIES else "타겟품목"
+    return label, target_text
+
+
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
     active = bool(rows)
     c = report.canvas
@@ -1222,15 +1269,15 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     top = bottom_y + bottom_h
     header_y = top - 25
     report.spaced_text(x + 16, header_y, "글로벌 사업현황", 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
-    c.setFillColor(colors.HexColor("#DDF0EE"))
-    target_label_x = x + 98
-    target_label_w = 68
-    target_label_y = top - 32
-    c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
-    draw_target_marker(c, target_label_x + 13, header_y + 2)
-    report.text(target_label_x + 25, header_y, "타겟기술", 8.5, colors.HexColor("#087A70"), weight="semibold")
-    target_text = "" if profile.get("exempt_from_relevance") else profile.get("target_technology", "")
+    target_label, target_text = target_section_for_profile(profile)
     if target_text:
+        c.setFillColor(colors.HexColor("#DDF0EE"))
+        target_label_x = x + 98
+        target_label_w = 68
+        target_label_y = top - 32
+        c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
+        draw_target_marker(c, target_label_x + 13, header_y + 2)
+        report.text(target_label_x + 25, header_y, target_label, 8.5, colors.HexColor("#087A70"), weight="semibold")
         report.text(target_label_x + target_label_w + 9, header_y, short_text(target_text, 45), 9.5, colors.HexColor("#087A70"), weight="semibold")
 
     body_y = top - BUSINESS_BODY_TOP_PAD

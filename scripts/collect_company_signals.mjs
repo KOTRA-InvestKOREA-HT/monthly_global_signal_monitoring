@@ -14,6 +14,7 @@ const FIELDNAMES = [
   "source_type",
   "source_priority",
   "official_source_url",
+  "source_direct_url",
   "content_excerpt",
   "content_word_count",
   "content_fetch_status",
@@ -166,6 +167,75 @@ function stripTracking(url) {
   } catch {
     return url;
   }
+}
+
+function isHttpUrl(value) {
+  return /^https?:\/\//i.test(String(value || "").trim());
+}
+
+function looksLikeSourceIndexUrl(value) {
+  if (!isHttpUrl(value)) return false;
+  try {
+    const pathname = new URL(value).pathname.replace(/\/+$/, "").toLowerCase();
+    if (!pathname || pathname === "") return true;
+    if (/(\/|^)(rss|feed|atom)(\/|$)/i.test(pathname)) return true;
+    const genericSegments = new Set([
+      "en",
+      "global",
+      "news",
+      "news-events",
+      "newsroom",
+      "media",
+      "press",
+      "press-release",
+      "press-releases",
+      "releases",
+      "investor",
+      "investors",
+      "investor-relations",
+      "ir",
+      "announcements",
+    ]);
+    const segments = pathname.split("/").filter(Boolean);
+    return segments.length > 0 && segments.length <= 3 && segments.every((segment) => genericSegments.has(segment));
+  } catch {
+    return false;
+  }
+}
+
+function directUrlCandidate(value) {
+  const text = stripTracking(String(value || "").trim());
+  return isHttpUrl(text) && !looksLikeSourceIndexUrl(text) ? text : "";
+}
+
+function bestRssItemUrl(block, fallbackUrl = "") {
+  const candidates = [tagText(block, "link"), tagText(block, "guid"), tagText(block, "id")].filter(Boolean);
+  const direct = candidates.map(directUrlCandidate).find(Boolean);
+  return direct || stripTracking(candidates.find(isHttpUrl) || fallbackUrl || "");
+}
+
+function atomEntryLinkUrls(entry) {
+  const preferred = [];
+  const fallback = [];
+  const linkRegex = /<link\b([^>]*)>/gi;
+  for (const match of entry.matchAll(linkRegex)) {
+    const attrs = match[1] || "";
+    const href = extractAttribute(attrs, "href");
+    if (!href) continue;
+    const rel = extractAttribute(attrs, "rel").toLowerCase();
+    if (!rel || rel === "alternate") {
+      preferred.push(href);
+    } else {
+      fallback.push(href);
+    }
+  }
+  return [...preferred, ...fallback];
+}
+
+function bestAtomEntryUrl(entry, fallbackUrl = "") {
+  const candidates = [...atomEntryLinkUrls(entry), tagText(entry, "link"), tagText(entry, "id"), fallbackUrl].filter(Boolean);
+  const direct = candidates.map(directUrlCandidate).find(Boolean);
+  return direct || stripTracking(candidates.find(isHttpUrl) || fallbackUrl || "");
 }
 
 function blocks(xml, tag) {
@@ -396,11 +466,12 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
   const isOfficialCollector = collector.startsWith("official_");
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
+    const itemUrl = bestRssItemUrl(item, query);
     rows.push({
       target_no: company.target_no,
       company: company.company,
       title: tagText(item, "title"),
-      url: tagText(item, "link"),
+      url: itemUrl,
       source: sourceText ? `${defaultSource}: ${sourceText}` : defaultSource,
       published_at: parseDate(tagText(item, "pubDate")),
       collected_at: collectedAt,
@@ -409,15 +480,16 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       source_type: isOfficialCollector ? "official" : "fallback",
       source_priority: isOfficialCollector ? 10 : 90,
       official_source_url: isOfficialCollector ? query : "",
+      source_direct_url: directUrlCandidate(itemUrl),
     });
   }
   for (const entry of blocks(xml, "entry")) {
-    const linkMatch = entry.match(/<link\b[^>]*href=["']([^"']+)["'][^>]*>/i);
+    const entryUrl = bestAtomEntryUrl(entry);
     rows.push({
       target_no: company.target_no,
       company: company.company,
       title: tagText(entry, "title"),
-      url: linkMatch ? decodeXml(linkMatch[1]) : tagText(entry, "link"),
+      url: entryUrl,
       source: defaultSource,
       published_at: parseDate(tagText(entry, "published") || tagText(entry, "updated")),
       collected_at: collectedAt,
@@ -426,6 +498,7 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       source_type: isOfficialCollector ? "official" : "fallback",
       source_priority: isOfficialCollector ? 10 : 90,
       official_source_url: isOfficialCollector ? query : "",
+      source_direct_url: directUrlCandidate(entryUrl),
     });
   }
   return rows.filter((row) => row.title && row.url);
@@ -510,6 +583,7 @@ function isRelevantOfficialLink(anchor, pageUrl) {
   const title = officialTitle(anchor);
   const direct = `${title} ${anchor.url}`.toLowerCase();
   const detectedDate = extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`);
+  if (looksLikeSourceIndexUrl(anchor.url)) return false;
   const pathLooksDetailed =
     /\/(news-release-details|press-releases?|newsroom|news|media|article|announcements?)\//i.test(anchor.url) ||
     /\b20\d{2}\b/.test(anchor.url);
@@ -629,6 +703,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           source_type: "official",
           source_priority: officialSourcePriority(page.kind),
           official_source_url: page.url,
+          source_direct_url: directUrlCandidate(anchor.url),
         })),
       );
       rows.push(...filterByDateRange(sourceRows, dateRange).slice(0, maxPerSource));

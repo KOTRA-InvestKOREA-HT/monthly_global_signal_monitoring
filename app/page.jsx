@@ -23,6 +23,20 @@ function shortList(values, limit = 6) {
   return values.filter(Boolean).slice(0, limit);
 }
 
+function sourceUrl(item) {
+  const candidates = [
+    item?.direct_source_url,
+    item?.source_direct_url,
+    item?.detail_url,
+    item?.article_url,
+    item?.canonical_url,
+    item?.document_url,
+    item?.url,
+    item?.official_source_url,
+  ];
+  return candidates.find((value) => /^https?:\/\//i.test(String(value || "").trim())) || "#";
+}
+
 function normalizeSummaryText(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -792,7 +806,7 @@ export default function HomePage() {
                   </td>
                   <td>{formatDate(item.published_at)}</td>
                   <td>
-                    <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 투자 시그널 열기`}>
+                    <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 투자 시그널 열기`}>
                       <ExternalLink size={17} />
                     </a>
                   </td>
@@ -873,7 +887,7 @@ export default function HomePage() {
                   </td>
                   <td>{formatDate(item.published_at)}</td>
                   <td>
-                    <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 관련 후보 열기`}>
+                    <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 관련 후보 열기`}>
                       <ExternalLink size={17} />
                     </a>
                   </td>
@@ -928,7 +942,7 @@ export default function HomePage() {
                     </td>
                     <td>{formatDate(item.published_at)}</td>
                     <td>
-                      <a href={item.url} target="_blank" rel="noreferrer" aria-label={`${item.company} 기사 열기`}>
+                      <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 기사 열기`}>
                         <ExternalLink size={17} />
                       </a>
                     </td>

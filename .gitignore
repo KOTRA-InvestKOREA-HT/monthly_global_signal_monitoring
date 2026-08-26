@@ -6,5 +6,7 @@ node_modules/
 .Rhistory
 outputs/smoke/
 outputs/official-smoke/
+outputs/pdf_verify/
 outputs/*_20*.json
 outputs/*_20*.csv
+scripts/__pycache__/

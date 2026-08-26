@@ -146,6 +146,7 @@ function signalText(signal) {
     signal.content_text,
     signal.query,
     signal.url,
+    signal.source_direct_url,
   ].join(" ");
 }
 
@@ -173,7 +174,7 @@ function matchedFields(signal, terms) {
   const fields = [
     ["title", signal.title],
     ["content", `${signal.content_excerpt || ""} ${signal.content_text || ""}`],
-    ["url", signal.url],
+    ["url", `${signal.url || ""} ${signal.source_direct_url || ""}`],
     ["query", signal.query],
   ];
   return fields
@@ -354,7 +355,7 @@ async function main() {
     method: args.requireTechnologyRelevance
       ? "technology_gated_with_relevance_exempt_five_indicator_body_keyword_filter"
       : "five_indicator_body_keyword_filter",
-    matched_fields: ["company", "title", "url", "query", "content_excerpt", "content_text"],
+    matched_fields: ["company", "title", "url", "query", "source_direct_url", "content_excerpt", "content_text"],
     note: args.requireTechnologyRelevance
       ? "This pass does not call an AI API. It first requires collected signals to be relevant to the company's target technology/item, except for the user-defined relevance-exempt companies, then classifies the eligible signal text against the five investment trend indicators."
       : "This pass does not call an AI API. It classifies collected official/fallback signal text against the five investment trend indicators from the reference PDF.",

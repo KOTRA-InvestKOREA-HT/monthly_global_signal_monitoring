@@ -56,6 +56,7 @@ function buildSearchText(signal, includeUrl = true) {
     signal.content_text,
     includeUrl ? signal.url : "",
     includeUrl ? signal.official_source_url : "",
+    includeUrl ? signal.source_direct_url : "",
   ].join(" ");
 }
 
@@ -109,7 +110,7 @@ function matchedFieldNames(signal, matchedTerms) {
     ["title", signal.title],
     ["source", signal.source],
     ["content", `${signal.content_excerpt || ""} ${signal.content_text || ""}`],
-    ["url", `${signal.url || ""} ${signal.official_source_url || ""}`],
+    ["url", `${signal.url || ""} ${signal.official_source_url || ""} ${signal.source_direct_url || ""}`],
   ];
   return fields
     .filter(([, value]) => matchedTerms.some((term) => includesKeyword(value, term)))
@@ -307,7 +308,7 @@ async function main() {
       ]),
     ),
     method: "broad_keyword_synonym_filter",
-    matched_fields: ["company", "title", "url", "source", "query", "official_source_url", "content_excerpt", "content_text"],
+    matched_fields: ["company", "title", "url", "source", "query", "official_source_url", "source_direct_url", "content_excerpt", "content_text"],
     note: "This pass does not call an AI API. It filters official/fallback signal metadata plus fetched official article body text using broad Korean/English synonym keywords.",
   };
 
