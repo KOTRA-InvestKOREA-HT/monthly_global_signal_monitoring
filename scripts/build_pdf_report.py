@@ -1079,20 +1079,14 @@ SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET = 14
 SIGNAL_CONTENT_TO_SEPARATOR = 10
 SIGNAL_SEPARATOR_TO_NEXT_LABEL_TOP = 6
 BUSINESS_MIN_BOX_H = 88
-BUSINESS_MAX_BOX_H = 124
+BUSINESS_MAX_BOX_H = 136
 BUSINESS_HEADER_TOP_PAD = 25
 BUSINESS_BODY_TOP_PAD = 44
 BUSINESS_SOURCE_GAP = 8
 BUSINESS_SOURCE_BOTTOM_PAD = 15
-BUSINESS_BODY_FITS = (
-    (9.3, 2.3),
-    (9.0, 2.1),
-    (8.7, 1.85),
-    (8.4, 1.6),
-    (8.1, 1.4),
-    (7.8, 1.25),
-    (7.5, 1.15),
-)
+BUSINESS_BODY_SIZE = 9.0
+BUSINESS_BODY_LINE_GAP = 1.35
+BUSINESS_BODY_MAX_LINES = 5
 
 
 def signal_body_line_count(report, row, width, max_lines):
@@ -1130,14 +1124,10 @@ def signal_box_layout(report, rows_by_signal, width, max_lines):
     return positions, y_offset
 
 
-def fitted_business_body(report, text, width, max_lines=4):
+def fitted_business_body(report, text, width, max_lines=BUSINESS_BODY_MAX_LINES):
     font_name = report.fonts["demilight"]
-    for size, line_gap in BUSINESS_BODY_FITS:
-        lines = wrap_text(report.canvas, text, width, font_name, size)
-        if len(lines) <= max_lines:
-            return {"lines": lines, "size": size, "line_gap": line_gap, "truncated": False}
-
-    size, line_gap = BUSINESS_BODY_FITS[-1]
+    size = BUSINESS_BODY_SIZE
+    line_gap = BUSINESS_BODY_LINE_GAP
     lines = wrap_text(report.canvas, text, width, font_name, size)
     visible = lines[:max_lines]
     if len(lines) > max_lines and visible:
@@ -1147,7 +1137,7 @@ def fitted_business_body(report, text, width, max_lines=4):
 
 def business_box_metrics(report, text, width):
     body_width = width - 32
-    body = fitted_business_body(report, text, body_width, max_lines=4)
+    body = fitted_business_body(report, text, body_width, max_lines=BUSINESS_BODY_MAX_LINES)
     line_count = max(1, len(body["lines"]))
     line_height = body["size"] + body["line_gap"]
     height = (
