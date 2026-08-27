@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Download, ExternalLink, EyeOff, Play, RefreshCw } from "lucide-react";
+import { Calendar, Download, ExternalLink, Eye, EyeOff, ListChecks, Play, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const SIGNAL_IGNORE_STORAGE_KEY = "global-signal-monitor.ignored-signals.v2";
@@ -364,6 +364,7 @@ export default function HomePage() {
   const [pickerMonth, setPickerMonth] = useState(Number(initialMonth.slice(5, 7)));
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [ignoreDialogOpen, setIgnoreDialogOpen] = useState(false);
   const [issueNumber, setIssueNumber] = useState("2");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
@@ -451,6 +452,10 @@ export default function HomePage() {
   function ignoreSignal(item) {
     const key = signalKey(item);
     setIgnoredSignalKeys((current) => (current.includes(key) ? current : [...current, key]));
+  }
+
+  function unignoreSignal(key) {
+    setIgnoredSignalKeys((current) => current.filter((item) => item !== key));
   }
 
   async function loadSignals() {
@@ -552,12 +557,25 @@ export default function HomePage() {
     [relevantSignals, selectedPeriod],
   );
   const ignoredSignalSet = useMemo(() => new Set(ignoredSignalKeys), [ignoredSignalKeys]);
+  const periodInvestmentSignals = useMemo(
+    () => investmentSignals.filter((item) => isWithinPeriod(item, selectedPeriod)),
+    [investmentSignals, selectedPeriod],
+  );
+  const ignoredSignalEntries = useMemo(() => {
+    const rowByKey = new Map();
+    for (const item of periodInvestmentSignals) {
+      const key = signalKey(item);
+      if (!rowByKey.has(key)) {
+        rowByKey.set(key, item);
+      }
+    }
+    return ignoredSignalKeys.map((key) => ({ key, item: rowByKey.get(key) || null }));
+  }, [ignoredSignalKeys, periodInvestmentSignals]);
   const displayedInvestmentSignals = useMemo(() => {
-    return [...investmentSignals]
-      .filter((item) => isWithinPeriod(item, selectedPeriod))
+    return [...periodInvestmentSignals]
       .filter((item) => !ignoredSignalSet.has(signalKey(item)))
       .sort((left, right) => compareSortKeys(investmentSortKey(left, investmentSortMode), investmentSortKey(right, investmentSortMode)));
-  }, [ignoredSignalSet, investmentSignals, investmentSortMode, selectedPeriod]);
+  }, [ignoredSignalSet, investmentSortMode, periodInvestmentSignals]);
   const collectedCompanyCount = useMemo(() => new Set(displayedSignals.map((item) => item.company).filter(Boolean)).size, [displayedSignals]);
   const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
 
@@ -663,6 +681,56 @@ export default function HomePage() {
         </div>
       ) : null}
 
+      {ignoreDialogOpen ? (
+        <div className="modalBackdrop" role="presentation" onMouseDown={() => setIgnoreDialogOpen(false)}>
+          <section className="modal ignoredModal" role="dialog" aria-modal="true" aria-labelledby="ignore-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="modalHeader">
+              <h2 id="ignore-dialog-title">무시 목록</h2>
+              <p>
+                {ignoredSignalKeys.length
+                  ? `${ignoredSignalKeys.length}건의 시그널이 보고서와 화면 목록에서 제외됩니다.`
+                  : "현재 무시한 시그널이 없습니다."}
+              </p>
+            </div>
+
+            {ignoredSignalEntries.length ? (
+              <div className="ignoredList">
+                {ignoredSignalEntries.map(({ key, item }) => (
+                  <article className="ignoredItem" key={key}>
+                    <div>
+                      <div className="ignoredMeta">
+                        <span className="ignoredSignalNo">{item?.investment_signal_no || "-"}</span>
+                        <strong>{item?.investment_signal_label || "현재 조회 기간에 없는 무시 항목"}</strong>
+                        {item?.company ? <span>{item.company}</span> : null}
+                      </div>
+                      <p className="ignoredTitle">{item?.title || "이전 데이터에서 저장된 무시 항목입니다. 취소하면 목록에서 제거됩니다."}</p>
+                      {item?.source ? <p className="ignoredSource">{item.source}</p> : null}
+                    </div>
+                    <button className="unignoreButton" type="button" onClick={() => unignoreSignal(key)}>
+                      <Eye size={15} />
+                      <span>무시 취소</span>
+                    </button>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="ignoredEmpty">무시 처리한 항목이 생기면 이곳에서 개별로 되돌릴 수 있습니다.</p>
+            )}
+
+            <div className="modalActions">
+              {ignoredSignalKeys.length ? (
+                <button className="secondary" type="button" onClick={() => setIgnoredSignalKeys([])}>
+                  전체 초기화
+                </button>
+              ) : null}
+              <button className="primary" type="button" onClick={() => setIgnoreDialogOpen(false)}>
+                닫기
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
       {message ? <div className="notice success">{message}</div> : null}
       {error ? <div className="notice error">{error}</div> : null}
 
@@ -732,11 +800,10 @@ export default function HomePage() {
                 기업명 순
               </button>
             </div>
-            {ignoredSignalKeys.length ? (
-              <button className="resetIgnoreButton" type="button" onClick={() => setIgnoredSignalKeys([])}>
-                무시 목록 초기화
-              </button>
-            ) : null}
+            <button className="resetIgnoreButton" type="button" onClick={() => setIgnoreDialogOpen(true)}>
+              <ListChecks size={15} />
+              <span>무시 목록 확인</span>
+            </button>
           </div>
         </div>
         <div className="tableWrap">

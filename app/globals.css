@@ -151,6 +151,10 @@ button {
   width: min(360px, 100%);
 }
 
+.ignoredModal {
+  width: min(760px, 100%);
+}
+
 .modalHeader {
   margin-bottom: 16px;
 }
@@ -204,6 +208,97 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.ignoredList {
+  max-height: min(52vh, 520px);
+  overflow-y: auto;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ignoredItem {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  background: #fff;
+}
+
+.ignoredMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ignoredMeta strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ignoredSignalNo {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #9dbbff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ignoredTitle,
+.ignoredSource,
+.ignoredEmpty {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.ignoredTitle {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ignoredSource {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ignoredEmpty {
+  margin-bottom: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.unignoreButton {
+  height: 32px;
+  justify-content: center;
+  border-color: var(--line);
+  border-radius: 7px;
+  padding: 0 10px;
+  color: var(--brand);
+  background: #fff;
+  white-space: nowrap;
+}
+
+.unignoreButton:hover {
+  border-color: #bcd0ff;
+  background: #f5f8ff;
 }
 
 button:disabled {
@@ -674,6 +769,14 @@ td a {
 
   .field,
   .field input {
+    width: 100%;
+  }
+
+  .ignoredItem {
+    grid-template-columns: 1fr;
+  }
+
+  .unignoreButton {
     width: 100%;
   }
 }
