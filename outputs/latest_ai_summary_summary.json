@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-08-24T09:42:36Z",
+  "run_started_at": "2026-08-27T03:41:57Z",
   "status": "completed",
   "method": "luna_first_terra_retry",
   "luna_model": "gpt-5.6-luna",
@@ -9,27 +9,27 @@
   "retry_max_output_tokens": 3200,
   "summarize_relevant_signals": true,
   "cache_path": "outputs/ai_summary_cache.json",
-  "cache_entry_count": 436,
-  "cache_hit_count": 90,
-  "cache_miss_count": 86,
-  "cache_stored_count": 176,
-  "investment_signal_count": 90,
-  "relevant_signal_count": 86,
-  "summarized_count": 90,
-  "terra_retry_count": 66,
+  "cache_entry_count": 488,
+  "cache_hit_count": 88,
+  "cache_miss_count": 65,
+  "cache_stored_count": 153,
+  "investment_signal_count": 79,
+  "relevant_signal_count": 74,
+  "summarized_count": 79,
+  "terra_retry_count": 60,
   "failed_count": 0,
   "outputs": {
     "investment": {
       "latest_json": "outputs/latest_investment_signals.json",
       "latest_csv": "outputs/latest_investment_signals.csv",
-      "json": "outputs/investment_signals_ai_summary_20260824T094236Z.json",
-      "csv": "outputs/investment_signals_ai_summary_20260824T094236Z.csv"
+      "json": "outputs/investment_signals_ai_summary_20260827T034157Z.json",
+      "csv": "outputs/investment_signals_ai_summary_20260827T034157Z.csv"
     },
     "relevant": {
       "latest_json": "outputs/latest_relevant_signals.json",
       "latest_csv": "outputs/latest_relevant_signals.csv",
-      "json": "outputs/relevant_signals_ai_summary_20260824T094236Z.json",
-      "csv": "outputs/relevant_signals_ai_summary_20260824T094236Z.csv"
+      "json": "outputs/relevant_signals_ai_summary_20260827T034157Z.json",
+      "csv": "outputs/relevant_signals_ai_summary_20260827T034157Z.csv"
     }
   }
 }
