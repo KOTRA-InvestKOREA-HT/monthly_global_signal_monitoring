@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-08-27T03:41:57Z",
+  "updated_at": "2026-09-02T07:03:23Z",
   "entries": {
     "075817baf59716c6310cee84ff92abe0": {
       "cache_key": "075817baf59716c6310cee84ff92abe0",
@@ -4164,7 +4164,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:00Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "c76488a9411c3e2a34d234af4a1909b8": {
       "cache_key": "c76488a9411c3e2a34d234af4a1909b8",
@@ -4189,7 +4189,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:00Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "47bb4e9352d8c0c4047f501ec00f8f64": {
       "cache_key": "47bb4e9352d8c0c4047f501ec00f8f64",
@@ -4317,7 +4317,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:13Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8d843ba5a473398beaeb9f10150efa34": {
       "cache_key": "8d843ba5a473398beaeb9f10150efa34",
@@ -4368,7 +4368,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "c280c2af5a3cb96c4dc2de757dd503d2": {
       "cache_key": "c280c2af5a3cb96c4dc2de757dd503d2",
@@ -4393,7 +4393,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:25Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "e5c3766a7c81e1d07f84122e470fe39c": {
       "cache_key": "e5c3766a7c81e1d07f84122e470fe39c",
@@ -4419,7 +4419,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:28Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "bd6270ea4b134708514cf3713fc52552": {
       "cache_key": "bd6270ea4b134708514cf3713fc52552",
@@ -4496,7 +4496,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:37Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "90ec2ca10a8e45d14ad6d52112be161e": {
       "cache_key": "90ec2ca10a8e45d14ad6d52112be161e",
@@ -4522,7 +4522,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:41Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "407dd41f2f1121c41c0992524ae4544c": {
       "cache_key": "407dd41f2f1121c41c0992524ae4544c",
@@ -4548,7 +4548,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:46Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "6e2a0d5a059d92095dbeb77cb0afc2c0": {
       "cache_key": "6e2a0d5a059d92095dbeb77cb0afc2c0",
@@ -4574,7 +4574,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:49Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "a65b02068596146e3925d3cf823e8d29": {
       "cache_key": "a65b02068596146e3925d3cf823e8d29",
@@ -4600,7 +4600,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:55Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "7d7a6051f26d8ecd01796067ac1886cc": {
       "cache_key": "7d7a6051f26d8ecd01796067ac1886cc",
@@ -4651,7 +4651,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:02Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8ec382b57b8cc0c659c9d102c5b4f4f9": {
       "cache_key": "8ec382b57b8cc0c659c9d102c5b4f4f9",
@@ -4703,7 +4703,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:04Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "6c3164c508efd9b0bb0c8b475922c729": {
       "cache_key": "6c3164c508efd9b0bb0c8b475922c729",
@@ -4755,7 +4755,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:12Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "78c95f79d55fa83203a95b447f92687f": {
       "cache_key": "78c95f79d55fa83203a95b447f92687f",
@@ -4806,7 +4806,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:21Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "38c5a1011ae8000837d2c53f1b894a2f": {
       "cache_key": "38c5a1011ae8000837d2c53f1b894a2f",
@@ -4857,7 +4857,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:29Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5d12b26cc87e60f58e61026e6cfab045": {
       "cache_key": "5d12b26cc87e60f58e61026e6cfab045",
@@ -4961,7 +4961,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:40Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "693269c5e96d56a5ae3c1714849747df": {
       "cache_key": "693269c5e96d56a5ae3c1714849747df",
@@ -4987,7 +4987,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:45Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "a43b92367b3a36cd44988aebb2ba0c5d": {
       "cache_key": "a43b92367b3a36cd44988aebb2ba0c5d",
@@ -5064,7 +5064,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "f114880297317a71b8fc466875fc8e64": {
       "cache_key": "f114880297317a71b8fc466875fc8e64",
@@ -5116,7 +5116,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:00Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "a878db51b5f4014fe7faabe3f99bbd05": {
       "cache_key": "a878db51b5f4014fe7faabe3f99bbd05",
@@ -5194,7 +5194,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:12Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "b45c59e7f961c67d1b08086a2c36b755": {
       "cache_key": "b45c59e7f961c67d1b08086a2c36b755",
@@ -5220,7 +5220,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:14Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "b9117d49e4b80075377f62c0ba5dc064": {
       "cache_key": "b9117d49e4b80075377f62c0ba5dc064",
@@ -5271,7 +5271,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "cbcdc5d8b461100e7b60e4ff48261e18": {
       "cache_key": "cbcdc5d8b461100e7b60e4ff48261e18",
@@ -5322,7 +5322,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:29Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "0a8784fc4c34024c18f776de57c0d4ae": {
       "cache_key": "0a8784fc4c34024c18f776de57c0d4ae",
@@ -5347,7 +5347,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:31Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "ec36d0eba4963d5ec712f2855ec9f9df": {
       "cache_key": "ec36d0eba4963d5ec712f2855ec9f9df",
@@ -5373,7 +5373,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:33Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "2b2e8eb0a3c14fc8f590750253c8dac1": {
       "cache_key": "2b2e8eb0a3c14fc8f590750253c8dac1",
@@ -5399,7 +5399,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:35Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "6050c1654f674f9163701f3eb1461ac8": {
       "cache_key": "6050c1654f674f9163701f3eb1461ac8",
@@ -5450,7 +5450,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:44Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "0be5a2d241e159431932a2f71d228911": {
       "cache_key": "0be5a2d241e159431932a2f71d228911",
@@ -5502,7 +5502,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:52Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5104a7da56dff48467c253b25a1be853": {
       "cache_key": "5104a7da56dff48467c253b25a1be853",
@@ -5579,7 +5579,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:02Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "dcaa09964352b2b78d47979d942f8834": {
       "cache_key": "dcaa09964352b2b78d47979d942f8834",
@@ -5605,7 +5605,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:07Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "e16d1c269368712224cdc5025c3fa780": {
       "cache_key": "e16d1c269368712224cdc5025c3fa780",
@@ -5657,7 +5657,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:15Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "0d492a7877a24940dce0c11f6b9172e4": {
       "cache_key": "0d492a7877a24940dce0c11f6b9172e4",
@@ -5760,7 +5760,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:32Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "d44cb12ba3fd662f91b1c655e0557205": {
       "cache_key": "d44cb12ba3fd662f91b1c655e0557205",
@@ -5786,7 +5786,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:35Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "b97e4bcbcda6f770394c9305a3ed48ee": {
       "cache_key": "b97e4bcbcda6f770394c9305a3ed48ee",
@@ -5837,7 +5837,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:39Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "65bd3f46cd5a03a79b1b1c036b440048": {
       "cache_key": "65bd3f46cd5a03a79b1b1c036b440048",
@@ -5863,7 +5863,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:42Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "0b0fff01e2b9f19a5cf352ddda09d0a2": {
       "cache_key": "0b0fff01e2b9f19a5cf352ddda09d0a2",
@@ -5889,7 +5889,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:46Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8b7d9f279f4034d7d42c13007e224a9e": {
       "cache_key": "8b7d9f279f4034d7d42c13007e224a9e",
@@ -5914,7 +5914,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:51Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "820d06951e3fef55a4d77cdfd1405b4e": {
       "cache_key": "820d06951e3fef55a4d77cdfd1405b4e",
@@ -6148,7 +6148,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:33Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "eb4a1c313c5acd84cc0fc9ce6c96e87e": {
       "cache_key": "eb4a1c313c5acd84cc0fc9ce6c96e87e",
@@ -6174,7 +6174,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:33Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "2b8b6a10d9488520b0ef2b294f5f5366": {
       "cache_key": "2b8b6a10d9488520b0ef2b294f5f5366",
@@ -6200,7 +6200,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:42Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "929d10c62661f9ca1193e8e68a74672b": {
       "cache_key": "929d10c62661f9ca1193e8e68a74672b",
@@ -6277,7 +6277,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:51Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "68e3d68b2ac75a0aadfee69898feb330": {
       "cache_key": "68e3d68b2ac75a0aadfee69898feb330",
@@ -6354,7 +6354,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:59Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "b82453c65ddf704d788dafa17d52d917": {
       "cache_key": "b82453c65ddf704d788dafa17d52d917",
@@ -6379,7 +6379,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:05Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5c3e0b12860a1168ba9622a4fe72ca87": {
       "cache_key": "5c3e0b12860a1168ba9622a4fe72ca87",
@@ -6404,7 +6404,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:07Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8b011b6334ca1b3126ed137f017bfb89": {
       "cache_key": "8b011b6334ca1b3126ed137f017bfb89",
@@ -6429,7 +6429,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:11Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8c8684a9ab9b87a9eefac1f85e6bb3a7": {
       "cache_key": "8c8684a9ab9b87a9eefac1f85e6bb3a7",
@@ -8544,7 +8544,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:37:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "ddb245456ebc5561719b22cd9cacea3a": {
       "cache_key": "ddb245456ebc5561719b22cd9cacea3a",
@@ -8567,7 +8567,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:37:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5ccbb634a13d0b215f92e556a64ee9f9": {
       "cache_key": "5ccbb634a13d0b215f92e556a64ee9f9",
@@ -8590,7 +8590,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:37:57Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "fb727a308c816cad68a5068a0de45153": {
       "cache_key": "fb727a308c816cad68a5068a0de45153",
@@ -8637,7 +8637,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:02Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "51865d062827efc30f9c9632a4ef60f0": {
       "cache_key": "51865d062827efc30f9c9632a4ef60f0",
@@ -8683,7 +8683,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "9b4fb89c36bb67f818b3656ed7468845": {
       "cache_key": "9b4fb89c36bb67f818b3656ed7468845",
@@ -8706,7 +8706,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:12Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "f32cdbdd76bdb8f5013b4ea5a452f585": {
       "cache_key": "f32cdbdd76bdb8f5013b4ea5a452f585",
@@ -8729,7 +8729,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:12Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "31569083cd1d4e1b8b2814ca4c903bcc": {
       "cache_key": "31569083cd1d4e1b8b2814ca4c903bcc",
@@ -8752,7 +8752,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:17Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "3d307c400f522653679b145a1919151f": {
       "cache_key": "3d307c400f522653679b145a1919151f",
@@ -8775,7 +8775,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:17Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "638ef105c853b1953386d03a449c9e8e": {
       "cache_key": "638ef105c853b1953386d03a449c9e8e",
@@ -8822,7 +8822,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "12303b65700f4747dea0ac07a024527c": {
       "cache_key": "12303b65700f4747dea0ac07a024527c",
@@ -8869,7 +8869,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:34Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "bb4878e953126c2c883663232ef1f22f": {
       "cache_key": "bb4878e953126c2c883663232ef1f22f",
@@ -8892,7 +8892,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:38Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "d1530f53b818acde3c9105c4e4a5d999": {
       "cache_key": "d1530f53b818acde3c9105c4e4a5d999",
@@ -8916,7 +8916,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:41Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "d47e7544e4d96b680fbee6b43d303953": {
       "cache_key": "d47e7544e4d96b680fbee6b43d303953",
@@ -8963,7 +8963,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:48Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "e159c5fdd7eac262046eb525f2e6fae5": {
       "cache_key": "e159c5fdd7eac262046eb525f2e6fae5",
@@ -8986,7 +8986,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:52Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "a39f7f20b82177532e48c4f9ba452d12": {
       "cache_key": "a39f7f20b82177532e48c4f9ba452d12",
@@ -9010,7 +9010,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "178af315ed667694d6db6d6371fe9a61": {
       "cache_key": "178af315ed667694d6db6d6371fe9a61",
@@ -9048,17 +9048,17 @@
       "source": "Norsk Hydro - News Subscription / Investor News Subscription",
       "published_at": "2025-12-11T00:00:00Z",
       "target_technology": "비철금속 소재 스크랩 활용률 극대화",
-      "ai_summary_ko": "Norsk Hydro는 알루미늄과 재생에너지 사업을 기반으로 금속 재활용, 재생에너지 및 배터리 등 지속가능 산업 전반에 사업과 투자를 전개한다. 알루미늄 원료를 혁신적·효율적 방식으로 제품과 솔루션으로 전환하고, 환경 부담을 낮춘 소재 공급을 추진한다. 전 세계 약 40개국 140여 개 사업장에서 3만2,000명을 고용하며 알루미늄 밸류체인 관련 역량을 운영한다.",
-      "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.88,
-      "ai_summary_reason": "금속 재활용 사업 참여와 알루미늄 소재의 지속가능성 추진이 공식 기업 개요에 명시되어 있다. / Terra 결과도 목표 분량 미달",
-      "ai_summary_model": "gpt-5.6-terra",
-      "ai_summary_tier": "terra",
+      "ai_summary_ko": "Norsk Hydro는 알루미늄과 재생에너지 중심 기업으로서 알루미늄·에너지·금속 재활용·재생에너지·배터리 등 지속가능 산업 전반에서 사업과 투자를 수행한다. 금속 재활용 사업을 통해 관련 시장에 진출하고 있으며, 천연자원을 혁신적이고 효율적인 방식으로 제품과 솔루션으로 전환하는 사업 방향을 제시한다. 세계 40개국 약 140개 거점에서 사업을 운영하며, 제품의 친환경 소재 전환을 통해 지속가능한 사회와 산업 발전을 지원하는 전략을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "본문에 금속 재활용 사업, 지속가능 산업 투자 및 친환경 알루미늄 전환 전략이 명시되어 유치필요 기술과의 관련성이 확인된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
       "ai_summary_luna_draft": "Norsk Hydro는 알루미늄·에너지·금속 재활용·재생에너지·배터리 분야의 사업과 투자를 전개하며 약 40개국에 진출한 기업으로, 알루미늄 및 금속 재활용 관련 시장에 폭넓게 참여하는 사업 구조가 확인된다. 천연자원을 혁신적이고 효율적인 방식으로 제품과 솔루션으로 전환하고, 지속가능한 산업 기반의 사업을 추진한다. 특히 제품 생산에 필요한 친환경 소재 제공을 목표로 알루미늄 사업의 전환을 추진하며, 금속 재활용을 포함한 지속가능 소재 사업 확대 방향이 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:40:15Z",
+      "ai_summary_created_at": "2026-09-02T07:01:01Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "53a099cd19a061866ab8106aa2e686b5": {
       "cache_key": "53a099cd19a061866ab8106aa2e686b5",
@@ -9082,7 +9082,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "e61efbda1f5b9b57a9125733c85d9921": {
       "cache_key": "e61efbda1f5b9b57a9125733c85d9921",
@@ -9106,7 +9106,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:10Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5b69d6ce2aa5fc7e064f042b3480ae5a": {
       "cache_key": "5b69d6ce2aa5fc7e064f042b3480ae5a",
@@ -9130,7 +9130,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:15Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "731ab2ec077fc6b9075c4b5d005436cc": {
       "cache_key": "731ab2ec077fc6b9075c4b5d005436cc",
@@ -9144,17 +9144,17 @@
       "source": "Norsk Hydro - Media / Newsroom / Media",
       "published_at": "2019-03-19T00:00:00Z",
       "target_technology": "비철금속 소재 스크랩 활용률 극대화",
-      "ai_summary_ko": "Hydro는 2050년 넷제로 달성을 위한 로드맵에서 화석연료 사용의 단계적 중단과 공정 배출 저감을 추진 과제로 제시한다. 이와 함께 사용 후 소비자 스크랩의 재활용 확대를 핵심 실행 수단으로 설정한다. 회사는 알루미늄 산업의 지속가능성·혁신 및 관련 기회와 과제를 다루며, 재활용을 통한 소재 순환 확대 방향을 제시한다.",
+      "ai_summary_ko": "Norsk Hydro는 2050년 넷제로 달성을 위한 로드맵에서 화석연료 소비 단계적 폐지, 공정배출 제거와 함께 소비자 사용 후 알루미늄 스크랩 재활용 확대를 핵심 과제로 제시한다. 알루미늄 산업의 지속가능성·혁신 및 산업 기회와 과제를 다루는 주제 체계를 운영한다. Karmøy 기술 파일럿은 Hydro와 노르웨이, 세계 차원의 획기적 기술 프로젝트로 소개된다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.92,
-      "ai_summary_reason": "본문에 2050년 넷제로 목표와 사용 후 소비자 스크랩 재활용 확대가 명시되어 있다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "본문에 2050 넷제로 로드맵의 소비자 사용 후 스크랩 재활용 확대와 Karmøy 기술 파일럿 관련 사실이 명시돼 있다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Norsk Hydro는 2050년 넷제로 달성을 위한 로드맵에서 화석연료 사용 단계적 폐지와 공정 배출 감축을 주요 과제로 제시한다. 이와 함께 소비 후 스크랩(post-consumer scrap) 재활용 확대를 추진해 알루미늄 산업의 자원순환 및 지속가능성을 강화할 계획이다. 관련 내용은 알루미늄 산업의 지속가능성과 혁신 과제를 다루는 기업 주요 의제로 제시된다.",
+      "ai_summary_luna_draft": "Norsk Hydro는 2050년 넷제로 달성을 위해 화석연료 사용을 단계적으로 축소하고 공정 배출을 제거하는 로드맵을 제시한다. 이와 함께 사용 후 발생한 비철금속 스크랩의 재활용을 확대해 알루미늄 생산 과정의 순환성을 높이는 활동을 추진한다. 관련 의제는 지속가능성, 혁신 및 알루미늄 산업의 미래 과제와 연계되어 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:40:23Z",
+      "ai_summary_created_at": "2026-09-02T07:01:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "110fba82e88b00134b04748c943de0df": {
       "cache_key": "110fba82e88b00134b04748c943de0df",
@@ -9178,7 +9178,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:23Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "69e58cba969c36926f5f11c385c850f4": {
       "cache_key": "69e58cba969c36926f5f11c385c850f4",
@@ -9202,7 +9202,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:28Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "4145a9003c5a980d747037162a2baea2": {
       "cache_key": "4145a9003c5a980d747037162a2baea2",
@@ -9216,17 +9216,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터에는 고리튬망간(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재를 다루는 영상 콘텐츠가 게시돼 있다. 배터리 소재 관련 기술 주제와 함께 자원 희소성 및 재활용, 코발트·특수소재 관련 콘텐츠도 제시된다. 다만 제공된 본문에는 수산화리튬·탄산리튬의 생산, 공급, 투자 또는 고객 적용 현황은 확인되지 않는다.",
+      "ai_summary_ko": "Umicore 뉴스룸의 비디오 센터는 고리튬망간(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재를 주제로 한 영상을 제공한다. 코발트 및 특수소재, 재활용, 귀금속 화학, 자동차 촉매 등 소재·기술 관련 콘텐츠도 함께 제시된다. 다만 제공된 본문에는 수산화리튬·탄산리튬의 생산, 공급, 고객 적용 또는 투자 계획에 관한 구체적 사실은 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "본문은 비디오 제목 나열에 그치며 수산화리튬·탄산리튬 관련 구체적 사업 활동이나 투자 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.45,
+      "ai_summary_reason": "본문은 비디오 제목 목록에 그치며 수산화리튬·탄산리튬 관련 사업 활동이나 투자·공급 사실을 제공하지 않음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore 뉴스룸의 공식 영상 자료에서 리튬 및 배터리 소재와 관련된 고리튬·망간(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재가 주요 주제로 제시된다. 영상 목록에는 배터리 소재 외에도 전기광학 소재, 특수소재, 자원 부족 및 재활용, 자동차·정지형 촉매, 귀금속 화학, 코발트·특수소재 분야가 포함된다. 다만 수산화리튬·탄산리튬의 조달, 생산 확대, 고객 적용 또는 신규 투자 계획에 관한 구체적 사업 활동은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore 뉴스룸 비디오 센터에서 고망간 리튬 배터리, 전고체 배터리, 충전식 배터리 소재를 주제로 한 콘텐츠가 제시된다. 관련 콘텐츠는 리튬 기반 배터리 소재와 소재 기술에 대한 기업의 사업 영역 및 기술 관심 분야를 소개하는 구성으로 확인된다. 다만 수산화리튬·탄산리튬의 구체적 조달, 생산, 투자 또는 고객 적용 활동과 관련한 세부 내용은 본문에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:40:29Z",
+      "ai_summary_created_at": "2026-09-02T07:01:13Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "985b6fcab191b9a1f2ed58f116ff4f44": {
       "cache_key": "985b6fcab191b9a1f2ed58f116ff4f44",
@@ -9240,17 +9240,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore는 2025년 3월 27일 배터리 소재 전략 검토 결과와 2028년 로드맵을 공개했다. 회사는 기반 사업의 리더십 강화와 현금창출력 제고에 전략적 초점을 재조정했다. 배터리 양극재 사업은 가치 회복을 위한 체계 구축 대상으로 제시되며, 경영진은 핵심 역량과 사업모델을 활용해 해당 사업의 가치 회복을 추진할 계획이다.",
+      "ai_summary_ko": "Umicore는 2025년 3월 27일 배터리 소재 전략 검토 결과와 2028년 로드맵을 공개했다. 회사는 기반 사업의 리더십 강화와 현금창출력 제고에 전략 초점을 재조정한다. 배터리 양극재 사업은 가치 회복을 위한 체계 구축 대상으로 제시되며, 핵심 역량과 사업모델을 활용해 수익성 개선을 추진한다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.82,
-      "ai_summary_reason": "본문은 배터리 양극재 사업의 가치 회복 전략을 제시하지만 수산화리튬·탄산리튬의 생산·조달·투자 관련 구체적 사실은 포함하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "본문은 배터리 양극재 사업의 가치 회복 전략을 언급하지만 수산화리튬·탄산리튬 관련 구체적 사업 활동이나 기술 내용은 제시하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore는 2025년 3월 배터리 소재 전략 검토 결과와 2028년 로드맵을 공개했다. 기초사업의 리더십을 강화하고 강한 현금창출 잠재력을 추가로 확보하는 방향으로 사업 초점을 조정한다. 배터리 양극재 소재 사업은 핵심 역량과 사업모델을 활용해 가치 회복을 추진하며, 관련 전략과 실행 방향을 경영진이 제시한다.",
+      "ai_summary_luna_draft": "Umicore는 2025년 3월 27일 최고경영진이 배터리 소재 전략 검토 결과와 2028년 로드맵을 공개하고, 기초사업 부문의 리더십 강화 및 현금창출 잠재력 확대 방향을 제시했다. 양극재 소재 사업은 가치 회복을 위한 전략 재정비 대상으로 설정되며, 핵심 역량과 기존 사업모델을 활용한 회복 방안이 제시된다. 관련 발표를 통해 기초사업의 현금창출 극대화와 배터리 양극재 소재 사업의 가치 회복을 병행하는 전략을 추진한다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:40:35Z",
+      "ai_summary_created_at": "2026-09-02T07:01:19Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "037e5c36d74d1326f13d3fb33d402c29": {
       "cache_key": "037e5c36d74d1326f13d3fb33d402c29",
@@ -9273,7 +9273,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:39Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "96cf411b9385453fba655599a0cfe6f8": {
       "cache_key": "96cf411b9385453fba655599a0cfe6f8",
@@ -9296,7 +9296,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "fc3fcab19d94ff87bf0a3ec05b331e88": {
       "cache_key": "fc3fcab19d94ff87bf0a3ec05b331e88",
@@ -9342,7 +9342,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:47Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "3950bf509f41ad0d177b4d8517626e34": {
       "cache_key": "3950bf509f41ad0d177b4d8517626e34",
@@ -9506,7 +9506,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:40:07Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "5ae1d04a6b6f1a44089d7f9b3f7107dc": {
       "cache_key": "5ae1d04a6b6f1a44089d7f9b3f7107dc",
@@ -9599,7 +9599,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:40:14Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "039a4f8ced48c2c81b4cf9e9bcc77ef4": {
       "cache_key": "039a4f8ced48c2c81b4cf9e9bcc77ef4",
@@ -9646,7 +9646,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:40:25Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "d7489821f8e9286674e02d9444b6d04d": {
       "cache_key": "d7489821f8e9286674e02d9444b6d04d",
@@ -9715,7 +9715,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:40:30Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "479c1df2a2a1cfd4cc100ed554911aca": {
       "cache_key": "479c1df2a2a1cfd4cc100ed554911aca",
@@ -9799,17 +9799,17 @@
       "source": "Safran - Pressroom / Newsroom / Press",
       "published_at": "",
       "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
-      "ai_summary_ko": "Safran 뉴스룸에는 ‘Tomorrow’s electric aircraft’ 제목의 콘텐츠가 게시돼 전기항공기를 주제로 제시한다. 제공된 본문은 ‘See more’ 링크 문구만 포함한다. 항공용 전기모터 또는 고출력 배터리 추진 모듈의 개발·적용·고객·시장 관련 세부 내용은 확인되지 않는다.",
+      "ai_summary_ko": "Safran은 프레스룸에서 ‘Tomorrow’s electric aircraft’ 제목의 전기항공기 관련 콘텐츠를 게시했다. 제공된 본문에는 항공용 전기모터 또는 고출력 배터리 추진 모듈의 사양, 적용 기체, 개발 단계가 제시되지 않는다. 고객사·협력사, 생산·공급 계획 및 시장 진출 활동에 관한 정보도 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.25,
-      "ai_summary_reason": "제목의 electric aircraft 외에 본문, 기술 사양, 사업 활동 근거가 제공되지 않았다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.35,
+      "ai_summary_reason": "제목의 electric aircraft 외에 기술·사업 활동을 뒷받침하는 본문 정보가 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Safran은 ‘Tomorrow’s electric aircraft’라는 제목을 통해 미래 전기항공기를 주제로 한 내용을 제시한다. 전기항공기와 관련된 사업 또는 기술 방향성이 언급되지만, 공개된 근거에는 항공용 전기모터의 사양과 적용 분야가 구체적으로 제시되지 않는다. 고출력 배터리, 추진 모듈, 시험·개발 현황 및 고객·시장 확대와 관련한 세부 정보도 확인되지 않아 관련 기술의 사업화 수준은 추가 자료 확인이 필요하다.",
+      "ai_summary_luna_draft": "Safran의 보도자료 제목에서 ‘Tomorrow’s electric aircraft’가 제시되어 전기항공기 관련 사업 주제가 확인된다. 이는 항공용 전기모터 및 고출력 배터리 추진 모듈과 연관된 전동화 항공 분야의 관심을 나타내는 내용으로 판단된다. 다만 제공된 본문에는 적용 기술의 세부 사양, 개발·생산 활동, 고객 및 시장 확대 흐름에 관한 정보가 포함되지 않아 구체적인 사업 현황은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:41:02Z",
+      "ai_summary_created_at": "2026-09-02T07:02:15Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "6e5d8e2bea95094010bfb4ab45b0afdd": {
       "cache_key": "6e5d8e2bea95094010bfb4ab45b0afdd",
@@ -9833,7 +9833,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:04Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "c99f97abdc430a02bbcc854db7303697": {
       "cache_key": "c99f97abdc430a02bbcc854db7303697",
@@ -9847,17 +9847,17 @@
       "source": "Vestas - Company News / Company News",
       "published_at": "",
       "target_technology": "해상풍력터빈",
-      "ai_summary_ko": "Vestas는 덴마크의 대장장이 기업에서 출발해 풍력터빈 제조기업으로 성장해 온 연혁을 소개한다. 회사는 세계 최대 풍력터빈 제조기업이라는 자사 위상을 제시한다. 기업 차원의 언론 문의는 본사에서 접수하며, 아시아태평양·북미·북·중부유럽에 지역별 커뮤니케이션 담당자를 배치한다. 제공 내용에는 해상풍력터빈의 제품 사양, 수주, 생산 또는 투자 활동이 제시되지 않는다.",
+      "ai_summary_ko": "제공된 본문은 Vestas가 덴마크 대장장이 기업에서 출발해 세계 최대 풍력터빈 제조사로 성장한 이력을 소개한다. 기업 뉴스·미디어 페이지에는 본사 및 아시아태평양, 북미, 북중부 유럽 지역의 언론·커뮤니케이션 연락처가 제시된다. 해상풍력터빈의 제품 사양, 개발·생산 계획, 수주·고객 또는 시장 활동에 관한 구체적 사실은 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.96,
-      "ai_summary_reason": "본문은 기업 소개 및 언론 연락처 정보로 구성돼 있으며, 해상풍력터빈 관련 사업·기술 활동의 구체적 근거가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "본문은 기업 연혁과 미디어 연락처 중심이며, 해상풍력터빈 관련 사업·기술 활동의 근거가 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Vestas는 덴마크에서 대장장이 기업으로 출발한 이후 풍력터빈 제조기업으로 성장한 기업 연혁을 제시한다. 현재 세계 최대 풍력터빈 제조기업으로 소개되며, 풍력터빈 분야의 사업 기반과 기업 정체성을 확인할 수 있다. 아시아·태평양, 북미, 북·중부 유럽 등 권역별 홍보·커뮤니케이션 담당자를 운영하고 있으나, 본 자료에서는 해상풍력터빈의 신규 투자·공급계약·기술 적용 관련 구체적 활동은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Vestas는 덴마크의 대장장이 기업으로 출발해 풍력터빈 제조기업으로 성장한 연혁을 제시한다. 현재 세계 최대 규모의 풍력터빈 제조기업으로 소개되며, 풍력발전 설비 제조 역량을 글로벌 사업 기반으로 보유한 사실이 확인된다. 다만 해상풍력터빈의 구체적인 기술 적용, 공급 실적, 신규 투자 또는 시장 확대 계획에 관한 내용은 본문에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:41:11Z",
+      "ai_summary_created_at": "2026-09-02T07:02:18Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "4ec2a0d02f932536db731c154fd80042": {
       "cache_key": "4ec2a0d02f932536db731c154fd80042",
@@ -9871,17 +9871,17 @@
       "source": "Vestas - Company News / Company News",
       "published_at": "",
       "target_technology": "해상풍력터빈",
-      "ai_summary_ko": "Vestas는 이미지 라이브러리를 통해 풍력터빈 설치 현장과 경영진 관련 이미지를 제공하며, 이용 조건 정보도 함께 안내한다. 페이스북·링크드인·인스타그램·유튜브 채널에서 기업 활동, 인력, 채용, 업무문화 및 지속가능 에너지 솔루션 관련 콘텐츠를 공유한다. 임직원과 외부 협력사를 대상으로 소셜미디어 이용 및 콘텐츠 제작 가이드라인을 운영한다.",
+      "ai_summary_ko": "Vestas는 이미지 라이브러리를 통해 다양한 풍력터빈 설치 현장과 경영진 관련 이미지를 다운로드용으로 제공하며, 이용 조건 정보도 함께 안내한다. 페이스북·링크드인·인스타그램·유튜브 채널에서 기업 활동, 인력, 채용 및 지속가능 에너지 솔루션 관련 영상과 콘텐츠를 게시한다. 임직원 및 외부 협력사를 대상으로 브랜드에 영향을 줄 수 있는 소셜미디어 이용 및 콘텐츠 제작 지침을 운영한다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.18,
-      "ai_summary_reason": "본문은 소셜미디어·이미지 자료 안내에 한정되며 해상풍력터빈의 제품, 기술, 사업 또는 고객·시장 활동 관련 사실을 제시하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "본문은 소셜미디어 및 이미지 라이브러리 안내로, 해상풍력터빈의 제품·기술·사업 활동에 관한 구체적 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Vestas는 이미지 라이브러리를 통해 다양한 풍력터빈 설치 현장의 이미지와 경영진 관련 자료를 제공하며, 풍력터빈 사업 및 현장 정보를 대외적으로 공유한다. 페이스북·링크드인·인스타그램·유튜브 등 소셜미디어 채널을 운영하며 사업 스토리, 사진, 영상 및 혁신 관련 콘텐츠를 공개한다. 링크드인에서는 최신 소식과 채용공고, 조직문화 정보를 제공하고, 유튜브에서는 지속가능 에너지 솔루션과 관련된 기업 영상 및 글로벌 활동을 소개한다.",
+      "ai_summary_luna_draft": "Vestas는 이미지 라이브러리를 통해 다양한 풍력터빈 현장 관련 이미지와 경영진 자료를 다운로드할 수 있도록 제공한다. 페이스북·링크드인·인스타그램·유튜브 등 소셜미디어 채널에서 풍력터빈을 포함한 지속가능 에너지 솔루션 관련 기업 소식과 영상, 혁신 사례를 공유한다. 다만 해상풍력터빈의 사업 추진, 기술 적용, 고객 및 시장 확대와 관련한 구체적 내용은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:41:11Z",
+      "ai_summary_created_at": "2026-09-02T07:02:24Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "604b525feec2b497904ba2d00737c7da": {
       "cache_key": "604b525feec2b497904ba2d00737c7da",
@@ -9895,17 +9895,17 @@
       "source": "EMM(Umicore) - Umicore Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
-      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터는 ‘Silicon Anode’를 배터리 관련 전문가 콘텐츠로 제시한다. 고체전지용 프로토타이핑 센터도 별도 영상으로 소개하며 차세대 배터리 기술 개발 활동을 다룬다. 다만 제공된 본문에는 실리콘-탄소 복합 음극재의 증착 공정, 성능 사양, 양산 계획 및 고객 적용 현황은 확인되지 않는다.",
+      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터는 ‘Silicon Anode’를 배터리 관련 전문가 콘텐츠로 제시한다. 고체전지용 프로토타이핑 센터 영상도 함께 제공해 차세대 배터리 소재 및 전지 개발 활동을 소개한다. 다만 제공된 본문에는 실리콘 음극재의 증착형 Si-C 구조, 성능 특성, 생산능력이나 고객 적용 현황에 관한 구체적 설명은 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.68,
-      "ai_summary_reason": "실리콘 음극 및 고체전지 프로토타이핑 관련 콘텐츠는 확인되나, 요청 기술인 증착형 Si-C의 구체적 기술·사업 사실이 본문에 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.62,
+      "ai_summary_reason": "실리콘 음극재 관련 영상 제목은 확인되나 증착형 Si-C 기술의 구체적 기술·사업 근거가 제공되지 않음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore 뉴스룸의 ‘Video center’에 실리콘 음극재를 다루는 ‘Silicon Anode’ 영상 항목이 제시된다. 또한 전고체 배터리용 프로토타이핑 센터와 배터리 관련 기술·사업 활동을 소개하는 영상 콘텐츠가 함께 구성된다. 다만 원문에서는 쿠키 설정 제한으로 영상 세부 내용과 실리콘 음극재의 적용 방식, 개발 단계 및 사업 추진 현황은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore 뉴스룸의 ‘Video center’에 실리콘 음극재를 주제로 한 ‘Silicon Anode’ 콘텐츠가 제시된다. 또한 전고체 배터리용 프로토타이핑 센터 관련 영상이 함께 소개돼 차세대 배터리 소재 및 기술 개발 활동이 확인된다. 다만 원문 영상은 기능성 쿠키 미동의로 차단돼 증착형 Si-C 기술의 세부 내용, 적용 현황과 고객·시장 흐름은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:41:18Z",
+      "ai_summary_created_at": "2026-09-02T07:02:29Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "47228847f16abe0c06181a5cc569e9e8": {
       "cache_key": "47228847f16abe0c06181a5cc569e9e8",
@@ -9919,17 +9919,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore는 벨기에 올렌 사업장에서 배터리 양극 활물질 계량 작업과 배터리 셀 사이클러·조립 관련 연구개발 활동을 운영하는 것으로 제시된다. 핀란드 코콜라에서는 배터리 소재 시험을 위한 분석실을 운용한다. 폴란드 니사에는 배터리 소재 생산시설과 전처리 공정을 포함한 생산 거점을 보유한 것으로 확인된다.",
+      "ai_summary_ko": "Umicore는 벨기에 올렌 사업장에서 배터리 양극활물질 계량 작업과 배터리 셀 사이클러·조립 관련 연구개발 활동을 수행하는 것으로 제시된다. 핀란드 코콜라 분석실에서는 배터리 소재 시험이 이뤄지며, 폴란드 니사에는 배터리 소재 생산시설과 전처리 공정 운영 현장이 확인된다. 다만 제공 자료에는 수산화리튬·탄산리튬의 생산 또는 조달 관련 구체적 내용은 포함되지 않는다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "제공 본문은 미디어 갤러리 캡션으로 양극 활물질·배터리 소재 관련 시설 및 활동은 확인되나, 수산화리튬·탄산리튬의 생산·조달·투자 관련 사실은 제시되지 않았다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "배터리 양극활물질 및 배터리 소재 생산·시험 활동은 확인되나, 유치필요 품목인 수산화리튬·탄산리튬 관련 직접 근거가 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore는 벨기에 올렌에서 배터리 양극 활물질의 계량과 배터리 조립·사이클러 기반 연구개발을 수행하는 현황을 제시한다. 핀란드 코콜라에서는 배터리 소재 분석·시험이 이뤄지며, 폴란드 니사에서는 배터리 소재 생산시설과 전처리 공정 운영 모습이 확인된다. 한국 천안에도 Umicore 표지 시설이 소개되나, 수산화리튬·탄산리튬의 조달이나 신규 투자·사업 확대 계획은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore는 벨기에 올렌에서 배터리 양극 활물질의 계량과 연구개발용 배터리 사이클러·조립 설비를 운영하는 모습이 제시된다. 핀란드 코콜라에서는 배터리 소재 분석·시험 활동이 수행되며, 폴란드 니사에서는 배터리 소재 생산시설과 전처리 공정이 확인된다. 한국 천안 사업장과 촉매·귀금속 정제 관련 시설도 함께 소개되나, 수산화리튬·탄산리튬의 구체적 취급 여부나 공급 계획은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-27T03:41:22Z",
+      "ai_summary_created_at": "2026-09-02T07:02:34Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "47a1f9a8d7a1bd883d39d598c550df13": {
       "cache_key": "47a1f9a8d7a1bd883d39d598c550df13",
@@ -9952,7 +9952,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:06Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "3eabbd4342d97499c63dc5dc37fd4d94": {
       "cache_key": "3eabbd4342d97499c63dc5dc37fd4d94",
@@ -9975,7 +9975,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "66ecb82e8100708a9902f3d9a58132c6": {
       "cache_key": "66ecb82e8100708a9902f3d9a58132c6",
@@ -10046,7 +10046,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:18Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "92ecbca2513bce678e1c7dd7e4cad0b0": {
       "cache_key": "92ecbca2513bce678e1c7dd7e4cad0b0",
@@ -10070,7 +10070,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:22Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "075cdd272d509ab0a873570cbce03943": {
       "cache_key": "075cdd272d509ab0a873570cbce03943",
@@ -10084,17 +10084,17 @@
       "source": "Skyworks - Press Releases / Press Releases",
       "published_at": "2026-07-28T00:00:00Z",
       "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
-      "ai_summary_ko": "Skyworks는 2026회계연도 3분기 매출 9억3,500만달러를 기록했으며, 자동차와 데이터센터가 주도한 광범위 시장 성장 동력이 지속됐다고 밝혔다. 회사는 다양한 응용처용 아날로그·혼합신호 반도체와 솔루션을 개발·제조·공급한다. Qorvo와의 결합을 위한 규제 승인을 추진하고 약 20억달러 규모의 인수 부채 조달을 예상한다.",
+      "ai_summary_ko": "Skyworks는 아날로그·혼합신호 반도체와 솔루션을 개발·제조·공급하며, RF 프런트엔드 모듈, 스위치, 증폭기, 전력관리 및 RF 수동소자 제품군을 보유한다. 2026회계연도 3분기 매출은 9억3,500만달러를 기록했다. 자동차와 데이터센터를 중심으로 광범위한 시장 성장 동력이 지속되고 있다고 밝혔다. Qorvo와의 결합을 위한 규제 승인 절차를 진행하며 통합 법인 경영진 구성을 발표했다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "자동차 시장 성장 및 RF 관련 제품군은 확인되나, 자율주행차용 IMU·베이스밴드 칩의 구체적 사업 활동이나 기술 적용 내용은 본문 발췌에서 확인되지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "제공된 본문에는 자동차 시장 성장 및 RF 제품군은 언급되나, 자율주행차용 IMU 또는 베이스밴드 칩의 개발·공급·적용 사실은 확인되지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Skyworks는 아날로그·혼합신호 반도체 및 관련 솔루션을 다양한 응용 분야에 개발·제조·공급하며, 2026 회계연도 3분기 매출 9억3,500만 달러를 기록했다. 자동차와 데이터센터를 주요 성장동력으로 제시하며 광범위한 시장에서 사업 모멘텀을 이어가는 흐름이 확인된다. 자동차 분야의 RF 등 무선통신 반도체 적용 확대와 Qorvo 결합을 통한 사업 강화가 추진되나, 자율주행차용 IMU·베이스밴드 칩에 대한 구체적 적용 내용은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Skyworks는 자동차 및 데이터센터를 성장동력으로 아날로그·혼합신호 반도체와 RF 솔루션 사업의 확대 흐름을 제시한다. 자동차 분야를 포함한 광범위한 시장에서 관련 제품 수요가 이어지는 가운데, Qorvo와의 결합을 통해 RF·통신 반도체 포트폴리오와 시장 대응력 강화를 추진한다. Qorvo 인수 관련 규제 승인이 진행 중이며, 약 20억 달러 규모의 인수금융 조달과 통합회사 운영체계 마련이 예정이다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-24T09:41:23Z",
+      "ai_summary_created_at": "2026-09-02T07:02:44Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "eeace603a46396fbd90173e9b7bef0bb": {
       "cache_key": "eeace603a46396fbd90173e9b7bef0bb",
@@ -10108,17 +10108,17 @@
       "source": "Skyworks - Press Releases / Press Releases",
       "published_at": "2026-07-28T00:00:00Z",
       "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
-      "ai_summary_ko": "Skyworks와 Qorvo는 기존에 발표한 결합 거래 완료를 전제로 통합법인 경영진 구성을 발표했다. Skyworks의 Phil Brace 사장은 통합법인 최고경영자(CEO)를 맡을 예정이며, 양사는 양사 역량 결합과 고객의 복합 과제 대응을 추진한다. 발표문에는 자동차용 IMU, RF 또는 베이스밴드 칩의 개발·공급, 고객사, 수주 및 투자 계획에 관한 구체적 내용은 제시되지 않는다.",
+      "ai_summary_ko": "Skyworks와 Qorvo는 기존에 발표한 거래 완료를 전제로 통합 법인의 예상 경영진 구성을 발표했다. Skyworks의 Phil Brace 사장 겸 CEO가 통합 법인 CEO를 맡을 예정이며, 양사는 양사의 산업 전문성과 운영 경험을 결합하는 체계를 준비 중이다. 통합 경영진은 조직 전환을 지원하고 고객의 복합 과제 대응 역량을 결집하는 역할을 수행할 예정이다. 다만 본 발표에는 자율주행차용 IMU·RF·베이스밴드 칩의 제품 개발, 공급 또는 고객 적용 관련 구체적 내용은 제시되지 않는다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.9,
-      "ai_summary_reason": "보도자료의 핵심은 Skyworks-Qorvo 통합법인 경영진 발표이며, 자율주행차용 IMU/RF/베이스밴드 칩 관련 사업 활동이나 기술 적용 사실이 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "본문은 Skyworks와 Qorvo의 통합 법인 경영진 발표에 관한 내용이며, 자율주행차용 IMU·RF·베이스밴드 칩 관련 사업·기술 활동의 구체적 근거가 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Skyworks와 Qorvo는 거래 종결 이후 출범할 통합 회사의 예상 경영진을 발표하고, 양사 조직과 역량을 결합하기 위한 준비에 착수한 것으로 확인된다. 통합 경영진은 고객의 복잡한 기술 과제 해결을 지원하고, 거래 완료 후 원활한 전환과 운영 안정성을 추진한다. 다만 공개된 내용에서는 자율주행차용 IMU·RF·베이스밴드 칩의 개발, 적용 또는 고객 수요와 관련한 구체적 사업 활동은 제시되지 않는다.",
+      "ai_summary_luna_draft": "Skyworks와 Qorvo는 기존 발표된 거래가 성공적으로 완료될 경우 출범할 합병회사의 예상 경영진을 공동 발표하고, 거래 종결 이후 리더십 체계를 가동할 예정으로 제시된다. 양사는 양사 조직의 강점을 결합하고 고객의 복잡한 과제 해결을 지원하는 방향으로 통합을 추진하며, 원활한 전환과 향후 사업 기회 실현을 경영진의 주요 역할로 제시한다. 다만 본 자료에는 자율주행차용 IMU·RF·베이스밴드 칩의 구체적인 제품, 적용 사례 또는 고객·시장 성과가 포함되지 않아 관련 기술 유치 가능성은 제한적으로 확인된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-24T09:41:31Z",
+      "ai_summary_created_at": "2026-09-02T07:02:50Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "3666550714c8f935300b25e5b0b405a8": {
       "cache_key": "3666550714c8f935300b25e5b0b405a8",
@@ -10142,7 +10142,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:31Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "64768cd50bc5ffdf7b042d3c8c56a6a3": {
       "cache_key": "64768cd50bc5ffdf7b042d3c8c56a6a3",
@@ -10189,7 +10189,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:41Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "377b94f2670793cdeef4e5b4a2cd29f2": {
       "cache_key": "377b94f2670793cdeef4e5b4a2cd29f2",
@@ -10203,17 +10203,17 @@
       "source": "Skyworks - Press Releases / Press Releases",
       "published_at": "2026-07-15T00:00:00Z",
       "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
-      "ai_summary_ko": "Skyworks는 2026회계연도 3분기 실적과 사업 전망을 논의하기 위한 애널리스트 콘퍼런스콜을 7월 28일 개최할 예정이다. 실적 보도자료는 같은 날 장 마감 후 GlobeNewswire와 회사 투자자관계 웹사이트를 통해 공개될 예정이다. 회사는 사람·장소·사물을 연결하는 고성능 아날로그 및 혼합신호 반도체 기업으로 소개된다.",
+      "ai_summary_ko": "Skyworks는 2026회계연도 3분기 실적 및 사업 전망을 논의하기 위한 애널리스트 컨퍼런스콜을 7월 28일 개최할 예정이다. 시장 마감 후 실적 보도자료를 GlobeNewswire와 기업 웹사이트를 통해 공개한다. 회사는 사람·장소·사물을 연결하는 고성능 아날로그 및 혼합신호 반도체 기업으로 소개된다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.93,
-      "ai_summary_reason": "본문은 실적발표 일정 안내에 한정돼 있으며, 자율주행차용 IMU·RF·베이스밴드 칩의 제품 개발, 공급, 고객 또는 시장 활동 관련 구체적 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "공개 내용은 실적발표 일정 안내로, 자율주행차용 IMU·RF·베이스밴드 칩의 제품, 기술 적용, 고객 또는 사업 활동에 관한 구체적 사실이 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Skyworks는 사람·장소·사물을 연결하는 고성능 아날로그 및 혼합신호 반도체를 개발하는 기업으로 소개된다. 제품·솔루션 분야에는 RF 프런트엔드 모듈, 스위치, 증폭기, 필터, 전력관리 부품 등이 포함되며, 자동차·모바일·인프라·항공우주·의료 등 시장을 대상으로 한다. 2026 회계연도 3분기 실적과 사업 전망을 발표할 예정이나, 자율주행차용 IMU·RF·베이스밴드 칩의 구체적 적용이나 신규 사업 활동은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Skyworks는 사람·장소·사물을 연결하는 고성능 아날로그 및 혼합신호 반도체 기업으로 소개된다. 회사 웹사이트에는 자동차를 포함한 시장 분야와 RF 프런트엔드 모듈, 스위치, 증폭기, 전력관리 등 제품군이 제시된다. 2026년 7월 28일 3분기 실적과 사업 전망을 발표하고 애널리스트 대상 콘퍼런스콜을 개최할 예정이다. 다만 자율주행차용 IMU·RF·베이스밴드 칩의 개발·공급 또는 고객 적용에 관한 구체적 내용은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-24T09:41:45Z",
+      "ai_summary_created_at": "2026-09-02T07:03:03Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "1cf6d5e37567a254fbaa2d29af0b874a": {
       "cache_key": "1cf6d5e37567a254fbaa2d29af0b874a",
@@ -10227,17 +10227,17 @@
       "source": "Infineon - Press / Press Releases / Media",
       "published_at": "2026-07-07T00:00:00Z",
       "target_technology": "위성통신 및 레이다용 RF 반도체",
-      "ai_summary_ko": "인피니언은 미국 국제무역위원회(US ITC) 전원위원회가 2026년 5월 7일 내린 최종판정이 확정됐다고 발표했다. 해당 판정에 따라 이노사이언스의 특허침해 GaN 제품은 미국 시장에서 수입·판매가 금지된다. 인피니언은 GaN 관련 지식재산권 보호를 통해 미국 내 전력·RF 반도체 시장에서의 기술 경쟁력 방어를 추진한다.",
-      "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.7,
-      "ai_summary_reason": "제공 본문은 ITC 판정과 GaN 제품의 미국 시장 금지 사실만 확인되며, 위성통신·레이다용 RF 반도체 적용 또는 고객·시장 활동의 직접 근거는 부족하다. / Terra 결과도 목표 분량 미달",
-      "ai_summary_model": "gpt-5.6-terra",
-      "ai_summary_tier": "terra",
+      "ai_summary_ko": "Infineon은 미국 국제무역위원회(US ITC) 전원위원회가 2026년 5월 7일 내린 최종판정이 확정됐다고 7월 7일 발표했다. 이에 따라 Innoscience의 특허 침해 GaN 제품은 미국 시장에서 판매 및 유통이 금지된다. 해당 조치는 위성통신 및 레이다용 RF 반도체에 활용되는 GaN 제품과 관련된 미국 시장 접근 제한 사례로 제시된다. Infineon은 관련 판정과 제품 금지 내용을 공식 보도자료를 통해 공개했다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "제공된 공식 보도자료에서 US ITC 최종판정 확정, Innoscience의 특허 침해 GaN 제품 미국 시장 금지 사실이 확인된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
       "ai_summary_luna_draft": "인피니언은 미국 국제무역위원회(US ITC) 전원위원회가 2026년 5월 7일 내린 최종판정을 확정했다고 발표했다. 해당 판정은 이노사이언스의 인피니언 특허 침해 GaN 제품에 대해 미국 시장 내 반입 및 판매를 제한하는 내용으로, 2026년 7월 7일 공개됐다. GaN 기반 RF 반도체의 특허 보호와 미국 시장 유통 제한이 확인되며, 위성통신 및 레이다용 RF 반도체 분야의 경쟁·공급 환경에 영향을 미칠 사안으로 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-24T09:41:52Z",
+      "ai_summary_created_at": "2026-09-02T07:03:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "e4835ab47d56632f1e1d6fadc167a6ae": {
       "cache_key": "e4835ab47d56632f1e1d6fadc167a6ae",
@@ -10261,7 +10261,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "6357160249a674875a18fffd815c89bb": {
       "cache_key": "6357160249a674875a18fffd815c89bb",
@@ -10308,7 +10308,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:40Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8d6e4e86fbe4a812b6c98d176b0192ab": {
       "cache_key": "8d6e4e86fbe4a812b6c98d176b0192ab",
@@ -10332,7 +10332,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "9ffdb310d4f45673eb8f6b67d9f8cc5e": {
       "cache_key": "9ffdb310d4f45673eb8f6b67d9f8cc5e",
@@ -10356,7 +10356,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "95ceff969a41c7e0d82b7b288fc13d06": {
       "cache_key": "95ceff969a41c7e0d82b7b288fc13d06",
@@ -10379,7 +10379,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:12Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "bf3602c6615bdc03d1f7c478b9ee0e5f": {
       "cache_key": "bf3602c6615bdc03d1f7c478b9ee0e5f",
@@ -10403,7 +10403,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "c18c8fe0ba86c1ea715936872bed7255": {
       "cache_key": "c18c8fe0ba86c1ea715936872bed7255",
@@ -10426,7 +10426,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:17Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8f221c8467d7df744d70f78b6c1d436d": {
       "cache_key": "8f221c8467d7df744d70f78b6c1d436d",
@@ -10450,7 +10450,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "2bbeec44f380a165b77c87cc4e0142e4": {
       "cache_key": "2bbeec44f380a165b77c87cc4e0142e4",
@@ -10488,17 +10488,17 @@
       "source": "Google News: Healthcare Packaging",
       "published_at": "2026-07-21T07:00:00Z",
       "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
-      "ai_summary_ko": "SCHOTT Pharmaceutical Packaging은 멸균 카트리지 시스템을 적용한 펜 인젝터 플랫폼을 제시한다. 해당 플랫폼은 펜형 주사기용 카트리지 구성을 중심으로 한 제품으로 확인된다. 제공 자료에는 의약품 충전 공정, PFS 적용, 제조 역량, 고객 및 시장 관련 세부 내용은 제시되지 않는다.",
+      "ai_summary_ko": "SCHOTT Pharmaceutical Packaging은 멸균 카트리지 시스템을 적용한 펜 인젝터 플랫폼을 제시한다. 공개된 본문에는 카트리지 충전 공정, 프리필드 시린지(PFS) 제조기술, 무균충전 설비 사양이나 생산능력 관련 정보가 포함되지 않는다. 고객 적용 현황, 상용화 일정 및 공급 시장에 관한 구체적 사실도 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.58,
-      "ai_summary_reason": "제목 외 본문 근거가 없어 충전·제조기술 및 사업 활동의 구체적 사실을 확인할 수 없음 / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.32,
+      "ai_summary_reason": "제공된 근거가 제목뿐이어서 유치필요 기술의 구체적 적용·제조 활동을 검증할 수 없음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "SCHOTT Pharmaceutical Packaging은 무균 카트리지 시스템을 적용한 펜 인젝터 플랫폼을 제시하는 자료를 공개한 것으로 확인된다. 해당 플랫폼은 펜형 주사기와 멸균 카트리지 시스템의 결합을 전제로 하며, 의약품 전달기기 및 완충전·제조기술과의 연관성이 확인된다. 다만 자료 제목 외에 제품 사양, 생산공정, 적용 의약품, 고객 및 시장 확대 계획에 관한 구체적 내용은 제공되지 않아 추가 확인이 필요하다.",
+      "ai_summary_luna_draft": "SCHOTT Pharmaceutical Packaging이 멸균 카트리지 시스템을 적용한 펜 인젝터 플랫폼을 제시한 내용이 확인된다. 해당 플랫폼은 의약품 카트리지 기반 주사기기 구성과 연계되는 기술로, 자가주사기 및 사전충전형 주사기 제조·충전 분야와의 관련성이 제시된다. 다만 제공된 자료에는 완충전 공정, 제조 방식, 적용 의약품, 고객사 및 상용화 일정에 관한 구체적 내용은 포함되지 않은 것으로 확인된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-08-24T09:42:28Z",
+      "ai_summary_created_at": "2026-09-02T07:03:13Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-24T09:42:36Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "fad556458675d5e4038b791b9af1f6a9": {
       "cache_key": "fad556458675d5e4038b791b9af1f6a9",
@@ -10834,7 +10834,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "14ef59bbf5acfdc04b49f71ede340b72": {
       "cache_key": "14ef59bbf5acfdc04b49f71ede340b72",
@@ -11195,7 +11195,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:41Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "cfbd1de9ed4c970ae1c0d564ff38e454": {
       "cache_key": "cfbd1de9ed4c970ae1c0d564ff38e454",
@@ -11417,7 +11417,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:08Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "8170d6963d2faeb6b9a32b6b67ef65e0": {
       "cache_key": "8170d6963d2faeb6b9a32b6b67ef65e0",
@@ -11465,7 +11465,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "69ea87b5fc121e08d90c91686d02bcc0": {
       "cache_key": "69ea87b5fc121e08d90c91686d02bcc0",
@@ -11631,7 +11631,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:56Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "56b3c243da6ca7c9242afc8aa47cd716": {
       "cache_key": "56b3c243da6ca7c9242afc8aa47cd716",
@@ -11772,7 +11772,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:44Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-02T07:03:23Z"
     },
     "56d41ddd2c32272fde632e7e0fd2fe6b": {
       "cache_key": "56d41ddd2c32272fde632e7e0fd2fe6b",
@@ -11797,6 +11797,1406 @@
       "ai_summary_created_at": "2026-08-27T03:41:47Z",
       "prompt_version": "business-summary-ko-v5",
       "cached_at": "2026-08-27T03:41:57Z"
+    },
+    "eef26eb7bae6cb13254f736890527552": {
+      "cache_key": "eef26eb7bae6cb13254f736890527552",
+      "row_identity": "21|GE Healthcare|1|https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "company": "GE Healthcare",
+      "target_no": 21,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "GE HealthCare announces CFO transition; reports preliminary second quarter 2026 financial results and reaffirms guidance reflecting business momentum",
+      "url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "source": "GE Healthcare - Investor News Releases / Investor News / Press Releases",
+      "published_at": "2026-07-23T20:15:36Z",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "ai_summary_ko": "관세·무역제한 및 지정학 불안 공급망 리스크 - 관세·기타 무역제한과 지정학·경제 불안이 사업 운영 및 공급망에 미칠 영향에 대한 위험요인 공시",
+      "ai_summary_headline_ko": "관세·무역제한 및 지정학 불안 공급망 리스크",
+      "ai_summary_detail_ko": "관세·기타 무역제한과 지정학·경제 불안이 사업 운영 및 공급망에 미칠 영향에 대한 위험요인 공시",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.84,
+      "ai_summary_reason": "공급망·무역 리스크는 언급됐으나, 바이오의약품 생산용 배양·정제 시스템 관련 공급망 다변화나 투자·조달 계획의 구체적 근거는 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "관세·지정학 불안에 따른 공급망 변동성 리스크 - 무역 제한과 국제 갈등이 사업·공급망 및 재무성과에 미칠 영향 언급",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:05Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "bbf11151009291960e2ec6bdf657b0b1": {
+      "cache_key": "bbf11151009291960e2ec6bdf657b0b1",
+      "row_identity": "25|Applied Materials|1|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
+      "target_no": 25,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Applied Materials Announces Third Quarter 2026 Results Press Release Arow1-50 --> > -->",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "source": "Applied Materials - Investor Relations / Investor Relations",
+      "published_at": "2026-08-13T20:01:37Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "수출통제 합의 및 관세·지정학 리스크 공시 - 미 상무부 수출통제 준수 사안 합의 관련 2억5,300만달러 비용 반영, 관세·지정학 분쟁 영향 위험요인 명시",
+      "ai_summary_headline_ko": "수출통제 합의 및 관세·지정학 리스크 공시",
+      "ai_summary_detail_ko": "미 상무부 수출통제 준수 사안 합의 관련 2억5,300만달러 비용 반영, 관세·지정학 분쟁 영향 위험요인 명시",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "nm급 W2W 하이브리드 본딩 장비 또는 공급망 다변화·특정지역 의존도 축소 관련 직접 사실은 본문 근거에 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "수출통제·지정학 리스크 대응 필요성 - 관세·보복조치·지정학적 분쟁과 수출통제 준수 이슈 언급, W2W 하이브리드 본딩 장비 관련 내용은 미확인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:05Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "900d774e4c4ec102ed3f737486cc1fa3": {
+      "cache_key": "900d774e4c4ec102ed3f737486cc1fa3",
+      "row_identity": "24|Ouster|1|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Ouster Announces Results for Second Quarter 2026",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇용 라이다 공급망·통상 규제 리스크 노출 - 핵심 외부 공급업체 의존과 공급망 제약, 관세·수출입 규정 변경의 사업 영향 가능성 명시",
+      "ai_summary_headline_ko": "로봇용 라이다 공급망·통상 규제 리스크 노출",
+      "ai_summary_detail_ko": "핵심 외부 공급업체 의존과 공급망 제약, 관세·수출입 규정 변경의 사업 영향 가능성 명시",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "공급망·관세·규제 리스크는 언급됐으나 특정지역 의존도 축소나 공급망 다변화 등 대응 조치는 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "로봇용 라이다 공급망·통상 리스크 노출 - 핵심 외부 공급업체 의존, 공급망 제약과 관세·수출입 규제 변화 관련 위험 요인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:15Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "2135f573eb0a4dd7ed5e80f83621ee29": {
+      "cache_key": "2135f573eb0a4dd7ed5e80f83621ee29",
+      "row_identity": "16|Amkor Technology|1|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Amkor Technology Reports Financial Results for the Second Quarter 2026",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-27T20:03:28Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "무역제한·수출통제 관련 해외 운영 리스크 - 국제 공장·운영 의존과 지역분쟁, 무역장벽·수출통제·관세·통관·부과금 리스크 열거",
+      "ai_summary_headline_ko": "무역제한·수출통제 관련 해외 운영 리스크",
+      "ai_summary_detail_ko": "국제 공장·운영 의존과 지역분쟁, 무역장벽·수출통제·관세·통관·부과금 리스크 열거",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.7,
+      "ai_summary_reason": "공급망·지정학 리스크는 언급됐으나 고성능 방열소재의 조달, 공급망 다변화 또는 투자 수요와의 직접적 연계 근거는 부재",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "첨단 반도체 후공정 역량 확대와 무역리스크 - 첨단 패키징·테스트 생산능력 확대와 수출통제·관세 등 무역제한 리스크 언급",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:16Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "ea3e4759d49f5f4180fd71dc94010294": {
+      "cache_key": "ea3e4759d49f5f4180fd71dc94010294",
+      "row_identity": "4|Charles River|1|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Charles River Laboratories Announces Second-Quarter 2026 Results",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-08-05T11:00:57Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "NHP 공급망 조사 종료 및 공급 제약 리스크 - 미국 정부의 NHP 공급망 조사 종료 관련 재고비용 반영, NHP 공급 제약 및 지정학적 분쟁발 글로벌 경제 교란 리스크 언급",
+      "ai_summary_headline_ko": "NHP 공급망 조사 종료 및 공급 제약 리스크",
+      "ai_summary_detail_ko": "미국 정부의 NHP 공급망 조사 종료 관련 재고비용 반영, NHP 공급 제약 및 지정학적 분쟁발 글로벌 경제 교란 리스크 언급",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.93,
+      "ai_summary_reason": "공급망 및 지정학 리스크는 언급됐으나, 유치필요 기술인 바이러스 검증·MCB/WCB 특성분석과의 직접적 연관성 또는 공급망 다변화 대응 조치는 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "NHP 공급망 제약 및 지정학적 불확실성 대응 - NHP 공급망 관련 미국 정부 조사 종결과 지정학적 충돌에 따른 공급 차질·불확실성 언급",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:24Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "35b3b37c6bb846f04bf0cc2dbae1457f": {
+      "cache_key": "35b3b37c6bb846f04bf0cc2dbae1457f",
+      "row_identity": "16|Amkor Technology|1|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Amkor Technology Announces Strategic Partnership with NVIDIA to Expand Advanced Packaging and Test for Next-Generation AI Infrastructure",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-23T21:00:54Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "미국 첨단 패키징 증설 기반 공급망 다변화 - NVIDIA 선지급 기반 애리조나 첨단 패키징·테스트 역량 확대, 아시아 생산거점 보완을 통한 지리적 분산 공급망 구축",
+      "ai_summary_headline_ko": "미국 첨단 패키징 증설 기반 공급망 다변화",
+      "ai_summary_detail_ko": "NVIDIA 선지급 기반 애리조나 첨단 패키징·테스트 역량 확대, 아시아 생산거점 보완을 통한 지리적 분산 공급망 구축",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "공급망 다변화 근거는 명확하나, 유치필요 품목인 반도체 후공정용 고성능 방열소재 관련 직접 언급은 부재",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "엔비디아 협력으로 미국 첨단 패키징 생산 확대 - 15억 달러 다년 계약 기반 애리조나 생산능력 확장, 아시아 생산거점과 연계한 공급망 다변화 및 고밀도·이종집적 기술 개발",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:25Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "27e75d2c29b041b3d80ddf3679e58046": {
+      "cache_key": "27e75d2c29b041b3d80ddf3679e58046",
+      "row_identity": "59|Airbus|1|https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-elevates-hybrid-electric-integration-with-leia-project",
+      "company": "Airbus",
+      "target_no": 59,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Airbus elevates hybrid-electric integration with LEIA Project Press Release Innovation 22 July 2026 2 min read",
+      "url": "https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-elevates-hybrid-electric-integration-with-leia-project",
+      "source": "Airbus - Investors / Investor Relations",
+      "published_at": "2026-07-22T00:00:00Z",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "ai_summary_ko": "하이브리드 전기항공 아키텍처 국제 공급망 통합 - EU·영국·미국 파트너와 단·중거리 항공기용 고전압 발전·배전 기술 통합 및 인증 추진",
+      "ai_summary_headline_ko": "하이브리드 전기항공 아키텍처 국제 공급망 통합",
+      "ai_summary_detail_ko": "EU·영국·미국 파트너와 단·중거리 항공기용 고전압 발전·배전 기술 통합 및 인증 추진",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.69,
+      "ai_summary_reason": "국경 간 공급망 통합은 언급됐으나 특정 지역 의존도 축소나 지정학 리스크 대응 목적은 명시되지 않았고, 전기모터·고출력 배터리 추진 모듈과의 직접 연계도 제한적",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "하이브리드 전기 항공 전력망 통합 기술 고도화 - EU·영국·미국 파트너와 고전압 전력 생성·분배 및 공급망 통합 기술 개발, 단·중거리 항공기 적용·인증 기반 마련",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:33Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "4217a7a375ff2d3992bc94951945d8d6": {
+      "cache_key": "4217a7a375ff2d3992bc94951945d8d6",
+      "row_identity": "16|Amkor Technology|1|https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "TSMC and Amkor Technology Announce Long Term Partnership to Accelerate Advanced Packaging in the United States",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-06-16T13:01:12Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "미국 애리조나 첨단 패키징 역량 확대 협력 - TSMC와 10년 계약으로 첨단 패키징·테스트 서비스 및 지역 생산능력 확대, 회복력 있는 미국 반도체 공급망 구축 추진",
+      "ai_summary_headline_ko": "미국 애리조나 첨단 패키징 역량 확대 협력",
+      "ai_summary_detail_ko": "TSMC와 10년 계약으로 첨단 패키징·테스트 서비스 및 지역 생산능력 확대, 회복력 있는 미국 반도체 공급망 구축 추진",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "공급망 다변화·회복력 관련 근거는 있으나, 유치필요 품목인 고성능 방열소재의 직접적인 수요·조달 언급은 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "미국 반도체 공급망 강화 위한 첨단 패키징 협력 - TSMC·Amkor, 애리조나 첨단 패키징·테스트 역량 확대 및 미국 내 공급망 회복력 강화 위한 10년 협력",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:37Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "f701b21d845088414af89a88d5ba8afe": {
+      "cache_key": "f701b21d845088414af89a88d5ba8afe",
+      "row_identity": "24|Ouster|1|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-26T11:00:31Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "자율 농기계용 차세대 디지털 라이다 적용 - GUSS 자율 과수원 장비에 L4 실리콘 기반 Rev8 OS0 컬러 디지털 라이다 탑재 계획",
+      "ai_summary_headline_ko": "자율 농기계용 차세대 디지털 라이다 적용",
+      "ai_summary_detail_ko": "GUSS 자율 과수원 장비에 L4 실리콘 기반 Rev8 OS0 컬러 디지털 라이다 탑재 계획",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.93,
+      "ai_summary_reason": "규제 리스크 언급은 일반적 법률 고지이며 특정지역 의존도 축소·공급망 다변화 등 공급망·지정학 대응 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "GUSS 자율농기계에 차세대 디지털 라이다 적용 - 존디어 자회사 GUSS, 차세대 과수원 기계에 Ouster Rev8 OS0 컬러 디지털 라이다 센서 도입 계획",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:45Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "a5c3328d612cda4d6aec80e035d66ccd": {
+      "cache_key": "a5c3328d612cda4d6aec80e035d66ccd",
+      "row_identity": "25|Applied Materials|2|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
+      "target_no": 25,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Applied Materials Announces Third Quarter 2026 Results Press Release Arow1-50 --> > -->",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "source": "Applied Materials - Investor Relations / Investor Relations",
+      "published_at": "2026-08-13T20:01:37Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "싱가포르 클린룸 증설과 글로벌 생산기반 확대 - 5억싱가포르달러 탐피니스 캠퍼스로 첨단 클린룸 역량 2배 이상 확대, 10년 말까지 수요 대응용 추가 제조역량 투자",
+      "ai_summary_headline_ko": "싱가포르 클린룸 증설과 글로벌 생산기반 확대",
+      "ai_summary_detail_ko": "5억싱가포르달러 탐피니스 캠퍼스로 첨단 클린룸 역량 2배 이상 확대, 10년 말까지 수요 대응용 추가 제조역량 투자",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.7,
+      "ai_summary_reason": "제조역량 확대 근거는 확인되나 nm급 W2W 하이브리드 본딩 장비와의 직접적 연관성은 본문에 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "싱가포르 첨단 클린룸 증설 및 제조역량 확대 - APAC 수요 대응 위해 Tampines Campus에 5억 달러 투자, 첨단 클린룸 역량 2배 이상 확대 및 글로벌 생산거점 강화",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:48Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "69b1de2c79aab70b2a7244ff9935c63c": {
+      "cache_key": "69b1de2c79aab70b2a7244ff9935c63c",
+      "row_identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Amkor Technology Announces Strategic Partnership with NVIDIA to Expand Advanced Packaging and Test for Next-Generation AI Infrastructure",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-23T21:00:54Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "AI용 첨단 패키징·테스트 역량 및 생산능력 확대 - NVIDIA 선지급 기반 미국 첨단 패키징 생산능력 확장, 고밀도 인터커넥트·차세대 이종집적 기술 공동 개발",
+      "ai_summary_headline_ko": "AI용 첨단 패키징·테스트 역량 및 생산능력 확대",
+      "ai_summary_detail_ko": "NVIDIA 선지급 기반 미국 첨단 패키징 생산능력 확장, 고밀도 인터커넥트·차세대 이종집적 기술 공동 개발",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.82,
+      "ai_summary_reason": "원문은 첨단 패키징 생산능력 확대 및 관련 기술 개발을 명시하나, 고성능 방열소재의 직접적인 조달·적용 계획은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "NVIDIA 협력 기반 미국 첨단 패키징 생산능력 확대 - 다년간 협력·선급금으로 미국 첨단 패키징 생산능력 확대, 고밀도 인터커넥트·이종집적 기술 개발 추진, 방열소재 적용은 미확인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:54Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "ad5c63868da4080cd7e1e7dcf0b308ed": {
+      "cache_key": "ad5c63868da4080cd7e1e7dcf0b308ed",
+      "row_identity": "34|Infineon|2|https://www.infineon.com/press-release/2026/infpr202608-133",
+      "company": "Infineon",
+      "target_no": 34,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Infineon and Tack One win SICC Award for Best Technological Collaboration",
+      "url": "https://www.infineon.com/press-release/2026/infpr202608-133",
+      "source": "Infineon - Press / Press Releases / Media",
+      "published_at": "2026-08-31T00:00:00Z",
+      "target_technology": "위성통신 및 레이다용 RF 반도체",
+      "ai_summary_ko": "싱가포르 기후회복력 기술협력 수상 - Tack One과 도시·농촌 홍수 대비 및 기후회복력 개선 기술협력으로 SICC 최우수 기술협력상 선정",
+      "ai_summary_headline_ko": "싱가포르 기후회복력 기술협력 수상",
+      "ai_summary_detail_ko": "Tack One과 도시·농촌 홍수 대비 및 기후회복력 개선 기술협력으로 SICC 최우수 기술협력상 선정",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "본문은 기술협력 수상 및 홍수 대비 관련 내용으로, 위성통신·레이다용 RF 반도체 생산 확대나 APAC 신규 생산시설 검토 근거를 제공하지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "싱가포르 기술협력 수상 및 지속가능성 인정 - Infineon·Tack One 기술협력 수상 내용으로, RF 반도체 생산 확대·APAC 신규시설 검토 근거 확인되지 않음",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:58:57Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "9cc82ed57af89698055dfac80917a564": {
+      "cache_key": "9cc82ed57af89698055dfac80917a564",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-26T11:00:31Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "자율 과수원 장비용 차세대 디지털 라이다 통합 계획 - GUSS 차세대 자율 과수원 장비에 L4 실리콘 기반 Rev8 OS0 네이티브 컬러 디지털 라이다 탑재 계획",
+      "ai_summary_headline_ko": "자율 과수원 장비용 차세대 디지털 라이다 통합 계획",
+      "ai_summary_detail_ko": "GUSS 차세대 자율 과수원 장비에 L4 실리콘 기반 Rev8 OS0 네이티브 컬러 디지털 라이다 탑재 계획",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "본문은 제품 통합·배치 계획에 관한 내용이며 APAC 시설 확장, 생산기지 검토 또는 생산 확대·다변화 관련 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "차세대 디지털 라이다 농업 로봇 적용 계획 - GUSS 차세대 자율 과수원 기계에 Ouster Rev8 OS0 디지털 라이다 통합 예정",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:03Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "85e9377c7d1db91bc4724ea2a1b37547": {
+      "cache_key": "85e9377c7d1db91bc4724ea2a1b37547",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-11T10:00:32Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "유타 교통현대화용 디지털 라이다 160개 교차로 확대 - REV8 색상 디지털 라이다 기반 BlueCity 교통관리 솔루션 추가 도입, 최대 500피트 선행 감지 기능 적용",
+      "ai_summary_headline_ko": "유타 교통현대화용 디지털 라이다 160개 교차로 확대",
+      "ai_summary_detail_ko": "REV8 색상 디지털 라이다 기반 BlueCity 교통관리 솔루션 추가 도입, 최대 500피트 선행 감지 기능 적용",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "본문은 미국 유타주 교통관리 솔루션 공급 확대 내용이며 APAC 신규 시설 확장·생산기지 타당성 조사 등 생산 확대 및 다변화 의지 근거를 제공하지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "유타주 교통망 대상 REV8 라이다 확대 - 160개 교차로에 BlueCity·OS1 Max Rev8 공급 확대, 생산기지·APAC 진출 내용은 미확인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:04Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "6440dc50a817bd953f68f683424b6c5b": {
+      "cache_key": "6440dc50a817bd953f68f683424b6c5b",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Ouster Announces Upcoming Investor Events",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-07T12:01:40Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "아태 지역 거점 보유 및 로봇용 디지털 라이다 사업 기반 - 아시아태평양 지역 사무소를 포함한 글로벌 사업망과 산업·로봇용 고성능 디지털 라이다 플랫폼 운영",
+      "ai_summary_headline_ko": "아태 지역 거점 보유 및 로봇용 디지털 라이다 사업 기반",
+      "ai_summary_detail_ko": "아시아태평양 지역 사무소를 포함한 글로벌 사업망과 산업·로봇용 고성능 디지털 라이다 플랫폼 운영",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.93,
+      "ai_summary_reason": "본문은 아태 지역 사무소 및 글로벌 사업망만 언급하며, APAC 신규 시설 확장·생산기지 타당성 조사 등 생산 확대·다변화 의지는 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "아시아태평양 로봇용 라이다 사업 기반 보유 - 산업·로보틱스·자동차·스마트 인프라용 디지털 라이다 플랫폼 제공, 아시아태평양 포함 글로벌 거점 운영",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:10Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "6ac79dc4f4ac80f720b0eeb390b0a194": {
+      "cache_key": "6ac79dc4f4ac80f720b0eeb390b0a194",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Ouster Announces Results for Second Quarter 2026",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇·피지컬 AI용 라이다·카메라 출하 확대 - 2026년 2분기 라이다·카메라 센서 1만7천대 이상 출하, 라이다 비중 약 53% 기록",
+      "ai_summary_headline_ko": "로봇·피지컬 AI용 라이다·카메라 출하 확대",
+      "ai_summary_detail_ko": "2026년 2분기 라이다·카메라 센서 1만7천대 이상 출하, 라이다 비중 약 53% 기록",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.88,
+      "ai_summary_reason": "제공 본문에는 APAC 신규 시설 확장, 생산기지 타당성 조사 등 생산 확대·다변화 의지를 뒷받침하는 구체적 근거가 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "라이다·카메라 센서 출하 확대와 매출 성장 - 2분기 라이다·카메라 센서 1, 7만대 이상 출하, 전년 대비 매출 56% 증가했으나 APAC 생산시설 확장 근거 미확인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:12Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "b8b44f0c69720ab57e9029042efc91f8": {
+      "cache_key": "b8b44f0c69720ab57e9029042efc91f8",
+      "row_identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "West Reports Second-Quarter 2026 Results",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-23T10:00:44Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "아시아태평양 매출 고성장과 생산거점 검토 가능성 - 2026년 2분기 아시아태평양 매출 24, 9% 증가, 유기적 성장률 27, 0% 기록이나 신규 시설·생산기지 계획 언급 부재",
+      "ai_summary_headline_ko": "아시아태평양 매출 고성장과 생산거점 검토 가능성",
+      "ai_summary_detail_ko": "2026년 2분기 아시아태평양 매출 24, 9% 증가, 유기적 성장률 27, 0% 기록이나 신규 시설·생산기지 계획 언급 부재",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "제공 본문은 APAC 매출 성장만 제시하며, APAC 신규 시설 확장·생산기지 타당성 조사 또는 Autoinjector/PFS 제조 역량 확대 관련 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "아시아태평양 매출 성장 및 수요 확대 - 2026년 2분기 아시아태평양 매출 24, 9% 증가, 생산기지 확장·다변화 계획은 본문상 확인되지 않음",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:18Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "f7fe3ae0974fdbd0164cbfc2fe317260": {
+      "cache_key": "f7fe3ae0974fdbd0164cbfc2fe317260",
+      "row_identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "TSMC and Amkor Technology Announce Long Term Partnership to Accelerate Advanced Packaging in the United States",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-06-16T13:01:12Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "미국 애리조나 첨단 반도체 패키징 생산능력 확대 - TSMC·Amkor 10년 협력 기반 첨단 패키징·테스트 서비스 조달 및 HPC·AI 수요 대응 생산능력 확충",
+      "ai_summary_headline_ko": "미국 애리조나 첨단 반도체 패키징 생산능력 확대",
+      "ai_summary_detail_ko": "TSMC·Amkor 10년 협력 기반 첨단 패키징·테스트 서비스 조달 및 HPC·AI 수요 대응 생산능력 확충",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "첨단 패키징 생산능력 확대는 확인되나, 유치필요 품목인 고성능 방열소재의 도입·조달 계획은 본문에 명시되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "미국 애리조나 첨단 패키징 생산능력 확대 - TSMC와 10년 협력계약 체결, 고성능 컴퓨팅·AI 수요 대응 위한 후공정·테스트 역량 강화",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:22Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "e14717b9778e4e4c783dab8660b0844e": {
+      "cache_key": "e14717b9778e4e4c783dab8660b0844e",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Ouster Acquires StereoLabs, Creating a World-Leading Physical AI Sensing and Perception Company",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-02-09T09:30:26Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇용 라이다·AI 비전 통합 인지 플랫폼 강화 - StereoLabs 인수로 디지털 라이다·카메라·AI 컴퓨팅·센서 융합 소프트웨어 결합, 로봇·산업용 인지 솔루션 확대",
+      "ai_summary_headline_ko": "로봇용 라이다·AI 비전 통합 인지 플랫폼 강화",
+      "ai_summary_detail_ko": "StereoLabs 인수로 디지털 라이다·카메라·AI 컴퓨팅·센서 융합 소프트웨어 결합, 로봇·산업용 인지 솔루션 확대",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.93,
+      "ai_summary_reason": "제공 본문은 인수 및 인지 플랫폼 확대 내용이며, APAC 신규 시설·생산기지 검토 등 생산 확대 및 다변화 의지를 뒷받침하는 구체적 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "로봇용 라이다·AI 인식 플랫폼 통합 - StereoLabs 인수로 디지털 라이다·카메라·AI 연산·센서 융합 기반 로봇 인식 플랫폼 확대",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:28Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "5737db2fadb916592305944014667bd2": {
+      "cache_key": "5737db2fadb916592305944014667bd2",
+      "row_identity": "16|Amkor Technology|3|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 3,
+      "relevance_decision": "",
+      "title": "Amkor Technology Reports Financial Results for the Second Quarter 2026",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-27T20:03:28Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "첨단 패키징·테스트 설비 증설 추진 - AI·HPC 고객 프로그램 확대와 첨단 패키징·테스트 역량 증설 언급, 회사채·증자 등 신규 재원 조달 내역 미제시",
+      "ai_summary_headline_ko": "첨단 패키징·테스트 설비 증설 추진",
+      "ai_summary_detail_ko": "AI·HPC 고객 프로그램 확대와 첨단 패키징·테스트 역량 증설 언급, 회사채·증자 등 신규 재원 조달 내역 미제시",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.91,
+      "ai_summary_reason": "본문은 첨단 패키징·테스트 설비 증설을 언급하지만, 회사채 발행·유상증자·신용공여 등 구체적 투자 재원 확보 사실은 제시하지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "고성능 반도체 후공정 역량 확대 기반 투자 여력 - 상반기 AI·HPC 고객 프로그램 및 첨단 패키징·테스트 생산능력 확대, EBITDA 4억 달러 기록",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:29Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "3e5c747a7a59316899e929056183b669": {
+      "cache_key": "3e5c747a7a59316899e929056183b669",
+      "row_identity": "25|Applied Materials|3|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
+      "target_no": 25,
+      "investment_signal_no": 3,
+      "relevance_decision": "",
+      "title": "Applied Materials Announces Third Quarter 2026 Results Press Release Arow1-50 --> > -->",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "source": "Applied Materials - Investor Relations / Investor Relations",
+      "published_at": "2026-08-13T20:01:37Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "영업현금흐름 기반 설비투자 여력 - 2026년 3분기 영업활동 현금흐름 30억4천만달러, 설비투자 7억700만달러 집행",
+      "ai_summary_headline_ko": "영업현금흐름 기반 설비투자 여력",
+      "ai_summary_detail_ko": "2026년 3분기 영업활동 현금흐름 30억4천만달러, 설비투자 7억700만달러 집행",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "회사채·유상증자·신용공여 등 외부 투자재원 조달 사실은 없으며, 현금흐름과 설비투자 수치만 확인됨",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "영업현금흐름 기반 반도체 설비투자 지속 - 3분기 영업현금흐름 30, 4억달러, 자본적지출 7, 07억달러·누계 19, 88억달러 기록",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:36Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "8c757578e0e238672e92e876d9f0c523": {
+      "cache_key": "8c757578e0e238672e92e876d9f0c523",
+      "row_identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": 3,
+      "relevance_decision": "",
+      "title": "West Reports Second-Quarter 2026 Results",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-23T10:00:44Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "2분기 영업현금흐름·설비투자 집행 현황 - 영업현금흐름 2억1,390만달러, 설비투자 8,590만달러 및 잉여현금흐름 1억2,800만달러",
+      "ai_summary_headline_ko": "2분기 영업현금흐름·설비투자 집행 현황",
+      "ai_summary_detail_ko": "영업현금흐름 2억1,390만달러, 설비투자 8,590만달러 및 잉여현금흐름 1억2,800만달러",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.77,
+      "ai_summary_reason": "회사채·유상증자·신용공여 등 외부 투자재원 조달 사실이나 Autoinjector/PFS 관련 설비투자 용도는 본문에서 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "자본적 지출 기반 제조설비 투자 지속 - 2026년 2분기 자본적 지출 8,590만 달러, 주사제 솔루션 생산 관련 투자 재원 활용",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:38Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "2da08b2844c3a3bf78dd193218fa3a9d": {
+      "cache_key": "2da08b2844c3a3bf78dd193218fa3a9d",
+      "row_identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Charles River Laboratories Announces Second-Quarter 2026 Results",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-08-05T11:00:57Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "바이러스 검증·MCB/WCB 분석 관련 근거 미확인 - 비임상 시험·NGS 협력만 제시돼 해당 기술 유치 수요 판단 제한",
+      "ai_summary_headline_ko": "바이러스 검증·MCB/WCB 분석 관련 근거 미확인",
+      "ai_summary_detail_ko": "비임상 시험·NGS 협력만 제시돼 해당 기술 유치 수요 판단 제한",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "본문에 바이러스 검증 또는 MCB/WCB 특성분석 관련 협력·투자·도입 사실이 직접 제시되지 않았습니다.",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "비임상시험·NGS 기반 연구협력 확대 - Eli Lilly AI/ML 플랫폼에 비임상시험 전문성 제공, Arovella에 체외 NGS 서비스 협력",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:45Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "3ca033b871e4600c11415408be9a1956": {
+      "cache_key": "3ca033b871e4600c11415408be9a1956",
+      "row_identity": "55|EVG|4|https://www.evgroup.com/company/news/detail/cezamat-boosts-advanced-photonics-rd-with-state-of-the-art-uv-nanoimprint-system-from-ev-group",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "21.04.2026 CEZAMAT Boosts Advanced Photonics R&D with State-of-the-Art UV Nanoimprint System from EV Group Read more",
+      "url": "https://www.evgroup.com/company/news/detail/cezamat-boosts-advanced-photonics-rd-with-state-of-the-art-uv-nanoimprint-system-from-ev-group",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "2026-04-21T00:00:00Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "첨단 포토닉스 R&D용 UV 나노임프린트 장비 도입 - CEZAMAT 연구센터, EVG®6200 NT 기반 고해상도·확장형 마이크로·나노구조 제작 역량 강화",
+      "ai_summary_headline_ko": "첨단 포토닉스 R&D용 UV 나노임프린트 장비 도입",
+      "ai_summary_detail_ko": "CEZAMAT 연구센터, EVG®6200 NT 기반 고해상도·확장형 마이크로·나노구조 제작 역량 강화",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.88,
+      "ai_summary_reason": "R&D 연구센터 장비 도입 사례이나, 유치필요 기술인 nm급 W2W 하이브리드 본딩 장비와는 직접 관련성이 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "CEZAMAT EVG UV 나노임프린트 장비 도입 - 첨단 포토닉스 R&D용 EVG6200 NT 플랫폼 공급, nm급 W2W 하이브리드 본딩과의 직접 연계 근거 부족",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:45Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "4a26250e268781b14f19668fd310f44b": {
+      "cache_key": "4a26250e268781b14f19668fd310f44b",
+      "row_identity": "25|Applied Materials|4|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
+      "target_no": 25,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Applied Materials Announces Third Quarter 2026 Results Press Release Arow1-50 --> > -->",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "source": "Applied Materials - Investor Relations / Investor Relations",
+      "published_at": "2026-08-13T20:01:37Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "EPIC Center 산학연 R&D 파트너십 확대 - 선도 칩메이커·대학·혁신 파트너 대상 R&D 협력 11건으로 확대, nm급 W2W 하이브리드 본딩 장비 관련성은 미확인",
+      "ai_summary_headline_ko": "EPIC Center 산학연 R&D 파트너십 확대",
+      "ai_summary_detail_ko": "선도 칩메이커·대학·혁신 파트너 대상 R&D 협력 11건으로 확대, nm급 W2W 하이브리드 본딩 장비 관련성은 미확인",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "R&D 파트너십 확대 사실은 확인되나, 대상 품목인 nm급 W2W 하이브리드 본딩 장비와의 직접적 연관성은 본문에 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "EPIC Center R&D 협력 네트워크 확대 - 선도 반도체 기업·대학·혁신 파트너와 협력 11건으로 확대됐으나 W2W 하이브리드 본딩 연계 근거 부족",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:53Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "44e5214013f083741296d4523ed057c1": {
+      "cache_key": "44e5214013f083741296d4523ed057c1",
+      "row_identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Amkor Technology Reports Financial Results for the Second Quarter 2026",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-27T20:03:28Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "반도체 생태계 전략적 파트너십 및 첨단 패키징 확대 - AI·HPC 고객 프로그램 추진과 첨단 패키징·테스트 생산능력 확대 병행, 고성능 방열소재 공동개발·도입 관련 근거 미확인",
+      "ai_summary_headline_ko": "반도체 생태계 전략적 파트너십 및 첨단 패키징 확대",
+      "ai_summary_detail_ko": "AI·HPC 고객 프로그램 추진과 첨단 패키징·테스트 생산능력 확대 병행, 고성능 방열소재 공동개발·도입 관련 근거 미확인",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "전략적 파트너십 확대는 언급됐으나 반도체 후공정용 고성능 방열소재, 공동연구·라이선싱·PoC 등의 구체적 협력 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "반도체 생태계 전략적 파트너십 확대 - AI·HPC 고객 프로그램 및 첨단 패키징·테스트 역량 확장, 후공정 기술 협력 기반 강화",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:54Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "63f456de80e2e7380882fc8eeab9528e": {
+      "cache_key": "63f456de80e2e7380882fc8eeab9528e",
+      "row_identity": "55|EVG|4|https://www.evgroup.com/company/news/detail/ev-group-highlights-hybrid-bonding-layer-transfer-and-maskless-lithography-technologies-for-heterogeneous-integration-and-advanced-packaging-at-ectc-2026",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "19.05.2026 EV Group Highlights Hybrid Bonding, Layer Transfer and Maskless Lithography Technologies for Heterogeneous Integration and Advanced Packaging at ECTC 2026 Read more",
+      "url": "https://www.evgroup.com/company/news/detail/ev-group-highlights-hybrid-bonding-layer-transfer-and-maskless-lithography-technologies-for-heterogeneous-integration-and-advanced-packaging-at-ectc-2026",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "2026-05-19T00:00:00Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "차세대 3D 메모리용 W2W 하이브리드 본딩 기술 공개 - EVG, 3D NAND·DRAM용 W2W 본딩의 서브마이크론 정렬·고강도 접합 기반 고수율 양산 및 생태계 협력 강조",
+      "ai_summary_headline_ko": "차세대 3D 메모리용 W2W 하이브리드 본딩 기술 공개",
+      "ai_summary_detail_ko": "EVG, 3D NAND·DRAM용 W2W 본딩의 서브마이크론 정렬·고강도 접합 기반 고수율 양산 및 생태계 협력 강조",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "W2W 하이브리드 본딩의 적용 분야와 요구 성능, 생태계 협력 관련 내용이 본문에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T06:59:59Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "b8170363e23ce2017f2e9eea6650ae35": {
+      "cache_key": "b8170363e23ce2017f2e9eea6650ae35",
+      "row_identity": "55|EVG|4|https://www.evgroup.com/company/news/detail/xanadu-and-ev-group-partner-to-build-industrial-scale-photonic-quantum-hardware",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "05.05.2026 Xanadu and EV Group partner to build industrial-scale photonic quantum hardware Read more",
+      "url": "https://www.evgroup.com/company/news/detail/xanadu-and-ev-group-partner-to-build-industrial-scale-photonic-quantum-hardware",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "광자 양자 하드웨어용 이종집적·웨이퍼 본딩 공동개발 - Xanadu와 전략적 파트너십 체결, 광자 양자 시스템 확장용 이종집적 및 웨이퍼 본딩 공정 개발",
+      "ai_summary_headline_ko": "광자 양자 하드웨어용 이종집적·웨이퍼 본딩 공동개발",
+      "ai_summary_detail_ko": "Xanadu와 전략적 파트너십 체결, 광자 양자 시스템 확장용 이종집적 및 웨이퍼 본딩 공정 개발",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "웨이퍼 본딩 공정 공동개발은 확인되나 nm급 W2W 하이브리드 본딩 기술의 직접적 언급은 부재",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "포토닉 양자 하드웨어용 웨이퍼 본딩 협력 - Xanadu와 EVG, 광자 양자시스템 확장을 위한 이종집적·웨이퍼 본딩 공정 공동개발 추진",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:02Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "b1f104777b24a4f298e10a8d307a8c2c": {
+      "cache_key": "b1f104777b24a4f298e10a8d307a8c2c",
+      "row_identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-11T10:00:32Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "유타 교통관리용 디지털 라이다 대규모 확대 - Econolite·유타 교통부 계약 기반 160개 교차로 BlueCity·OS1 Max Rev8 배치, 로봇용 라이다 공동 R&D 근거 미확인",
+      "ai_summary_headline_ko": "유타 교통관리용 디지털 라이다 대규모 확대",
+      "ai_summary_detail_ko": "Econolite·유타 교통부 계약 기반 160개 교차로 BlueCity·OS1 Max Rev8 배치, 로봇용 라이다 공동 R&D 근거 미확인",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.91,
+      "ai_summary_reason": "본문은 교통관리용 라이다 배치 계약 내용이며, 로봇용 라이다 관련 공동연구·라이선싱·PoC·지분투자 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "Econolite 협력 기반 라이다 교통관리 확대 - Ouster REV8 디지털 라이다 적용, 유타주 160개 교차로 추가 구축 및 최대 500피트 전방 감지",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:04Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "37cacbb84ef38e89379afa8c74a44297": {
+      "cache_key": "37cacbb84ef38e89379afa8c74a44297",
+      "row_identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Ouster Announces Results for Second Quarter 2026",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇용 라이다·카메라 신제품 출시 및 성능 고도화 - Rev8 네이티브 컬러 라이다와 ZED X Nano 출시, 시스템 통합 단순화 및 출시기간 단축 지향",
+      "ai_summary_headline_ko": "로봇용 라이다·카메라 신제품 출시 및 성능 고도화",
+      "ai_summary_detail_ko": "Rev8 네이티브 컬러 라이다와 ZED X Nano 출시, 시스템 통합 단순화 및 출시기간 단축 지향",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "본문의 research and development는 신규 제품 개발비 관련 위험요인 언급에 그치며, 공동연구·라이선싱·PoC·지분투자 등 기술 생태계 협력 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "라이다·카메라 통합 센싱 플랫폼 고도화 - Rev8·ZED X Nano 출시와 시스템 통합 간소화 추진, 연구개발 투자 필요성은 위험요인으로만 언급",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:10Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "afb16b7c5a922af31dfe1e0334b47aa5": {
+      "cache_key": "afb16b7c5a922af31dfe1e0334b47aa5",
+      "row_identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "company": "Amkor Technology",
+      "target_no": 16,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Amkor Technology Announces Strategic Partnership with NVIDIA to Expand Advanced Packaging and Test for Next-Generation AI Infrastructure",
+      "url": "https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "source": "Amkor Technology - Investor Press Releases / Press Releases",
+      "published_at": "2026-07-23T21:00:54Z",
+      "target_technology": "반도체 후공정용 고성능 방열소재",
+      "ai_summary_ko": "AI 인프라용 첨단 패키징·테스트 공동개발 확대 - NVIDIA와 다년간 협력 체결, 고밀도 인터커넥트·차세대 이종집적 기술 로드맵 연계 및 미국 생산능력 확충",
+      "ai_summary_headline_ko": "AI 인프라용 첨단 패키징·테스트 공동개발 확대",
+      "ai_summary_detail_ko": "NVIDIA와 다년간 협력 체결, 고밀도 인터커넥트·차세대 이종집적 기술 로드맵 연계 및 미국 생산능력 확충",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.76,
+      "ai_summary_reason": "첨단 패키징 공동개발은 확인되나, 유치필요 품목인 고성능 방열소재에 대한 직접 언급은 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "차세대 AI용 첨단 패키징·테스트 기술 협력 - NVIDIA와 15억달러 다년 계약·선급금 기반 미국 첨단 패키징 생산능력 확대 및 이기종 집적 기술 개발",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:13Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "5f72eccf2e05e5a812b449b7266bc8a2": {
+      "cache_key": "5f72eccf2e05e5a812b449b7266bc8a2",
+      "row_identity": "21|GE Healthcare|4|https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "company": "GE Healthcare",
+      "target_no": 21,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "GE HealthCare announces CFO transition; reports preliminary second quarter 2026 financial results and reaffirms guidance reflecting business momentum",
+      "url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "source": "GE Healthcare - Investor News Releases / Investor News / Press Releases",
+      "published_at": "2026-07-23T20:15:36Z",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "ai_summary_ko": "CFO 교체 및 2026년 2분기 실적 발표 - 바이오의약품 배양·정제 시스템 관련 공동연구·라이선싱·PoC·투자 사실 미확인",
+      "ai_summary_headline_ko": "CFO 교체 및 2026년 2분기 실적 발표",
+      "ai_summary_detail_ko": "바이오의약품 배양·정제 시스템 관련 공동연구·라이선싱·PoC·투자 사실 미확인",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "본문은 CFO 교체와 실적·가이던스 발표가 핵심이며, R&D 언급은 일반적 위험요인으로 관련 기술 생태계 협력 사실을 확인할 수 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "상업화 제품·기술 연구개발 지속성 언급 - 상업적 제품·기술 관련 연구개발 지속 필요성 언급, 배양·정제 시스템 연계 근거 부족",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:20Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "466b27276bc8e652e45343a2461c261c": {
+      "cache_key": "466b27276bc8e652e45343a2461c261c",
+      "row_identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "West Reports Second-Quarter 2026 Results",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-23T10:00:44Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "주사제 전달 솔루션 연구개발 지출 지속 - 2026년 2분기 연구개발비 1,970만달러, 전년 동기 1,910만달러 대비 소폭 증가",
+      "ai_summary_headline_ko": "주사제 전달 솔루션 연구개발 지출 지속",
+      "ai_summary_detail_ko": "2026년 2분기 연구개발비 1,970만달러, 전년 동기 1,910만달러 대비 소폭 증가",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "연구개발비 증가는 확인되나 Autoinjector/PFS 완충전·제조기술 관련 공동연구·라이선싱·PoC·지분투자 활동의 구체적 근거 부재",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "주사제 솔루션 분야 연구개발 투자 확대 - 2026년 2분기 연구개발비 1,970만 달러로 전년 동기 대비 증가, 매출의 2% 수준",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:22Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "62b9f7730904c77704793f7b1ada633f": {
+      "cache_key": "62b9f7730904c77704793f7b1ada633f",
+      "row_identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Charles River Provides NGS Services to Arovella Therapeutics, Accelerating Progress Toward Alternative Cancer Treatment Approaches",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-07-13T12:00:27Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "NGS 기반 세포은행 특성분석·바이러스 안전성 검증 협력 - Arovella 세포은행 NGS 특성분석과 ALA-101 임상 배치 바이러스 안전성 출하검사 지원",
+      "ai_summary_headline_ko": "NGS 기반 세포은행 특성분석·바이러스 안전성 검증 협력",
+      "ai_summary_detail_ko": "Arovella 세포은행 NGS 특성분석과 ALA-101 임상 배치 바이러스 안전성 출하검사 지원",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "Charles River의 세포은행 특성분석용 NGS 서비스와 임상 배치 바이러스 안전성 출하검사 수행 내용이 본문에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:28Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "089777ab12dae289414f51ebd94c2f40": {
+      "cache_key": "089777ab12dae289414f51ebd94c2f40",
+      "row_identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Ouster Acquires StereoLabs, Creating a World-Leading Physical AI Sensing and Perception Company",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-02-09T09:30:26Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster, StereoLabs 인수로 로봇용 통합 인지 플랫폼 강화 - 디지털 라이다·카메라·AI 연산·센서융합·인지 소프트웨어 결합, 로봇·산업용 플랫폼 구축",
+      "ai_summary_headline_ko": "Ouster, StereoLabs 인수로 로봇용 통합 인지 플랫폼 강화",
+      "ai_summary_detail_ko": "디지털 라이다·카메라·AI 연산·센서융합·인지 소프트웨어 결합, 로봇·산업용 플랫폼 구축",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "StereoLabs 인수를 통해 라이다와 AI 비전·인지 기술을 결합한 통합 플랫폼 구축 사실이 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:33Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "ae45b539b1ee6b93d312b1e0a6f66dfb": {
+      "cache_key": "ae45b539b1ee6b93d312b1e0a6f66dfb",
+      "row_identity": "4|Charles River|relevant|https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Charles River Provides NGS Services to Arovella Therapeutics, Accelerating Progress Toward Alternative Cancer Treatment Approaches",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-07-13T12:00:27Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "Charles River는 Arovella Therapeutics의 ALA-101 제조공정에 사용되는 2개 세포은행을 대상으로 FDA가 승인한 NGS 기반 바이러스 안전성 시험을 제공한다. 세포은행 특성분석과 임상 배치의 바이러스 안전성 출하 시험도 수행하며, 해당 서비스는 ALA-101의 임상 개발 및 성공적인 IND 신청을 지원한다. ALA-101은 CD19 양성 B세포 림프종과 백혈병 치료를 목표로 하는 차세대 범용 CAR-iNKT 세포치료제로, 대체 항암 치료 접근법으로 개발이 추진된다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "본문에 NGS 기반 2개 세포은행 바이러스 안전성 시험, 세포은행 특성분석, 임상 배치 바이러스 안전성 출하 시험 및 ALA-101 적용 대상이 구체적으로 제시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:48Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "3e7e40d9a74cd3b54c0ffb25dc44db0d": {
+      "cache_key": "3e7e40d9a74cd3b54c0ffb25dc44db0d",
+      "row_identity": "4|Charles River|relevant|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-08-20T12:00:33Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "Charles River Laboratories와 Medigen Vaccine Biologics Corp는 차세대 다가 엔테로바이러스 백신 개발을 위해 바이러스 시드뱅크의 특성분석 및 검증을 공동 추진한다. Charles River는 차세대염기서열분석(NGS) 등 첨단 분석 플랫폼과 cGMP NGS 시험 서비스를 활용해 바이러스 유전정보 분석과 병원체 검출을 지원한다. 이를 통해 백신 개발 기간 단축, 제품 품질 및 안전성 확보, 글로벌 규제 대응을 추진하며 동물시험 감소에도 기여할 예정이다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "바이러스 시드뱅크 특성분석·검증, NGS 기반 병원체 검출 및 규제 대응 등 유치필요 기술과 직접 관련된 공식 협력 내용이 확인된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:48Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "1c531212ad91fed4c7eb77b9f2aac459": {
+      "cache_key": "1c531212ad91fed4c7eb77b9f2aac459",
+      "row_identity": "4|Charles River|relevant|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "company": "Charles River",
+      "target_no": 4,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Charles River Laboratories Announces Second-Quarter 2026 Results",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "source": "Charles River - News Releases / Press Releases",
+      "published_at": "2026-08-05T11:00:57Z",
+      "target_technology": "바이러스 검증 및 MCB/WCB 특성분석",
+      "ai_summary_ko": "Charles River는 PathoQuest 인수를 통해 확보한 시험관 내 차세대염기서열분석(NGS) 서비스를 Arovella Therapeutics에 제공하는 협력을 추진한다. 해당 서비스는 Arovella의 대체 암 치료 접근법 개발 가속을 지원한다. 또한 Eli Lilly의 TuneLab AI/ML 플랫폼에 비임상 시험 전문성을 제공해 신약발견 및 연구개발 현대화에 참여한다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "NGS 서비스 제공 사실은 확인되나, 바이러스 검증 및 MCB/WCB 특성분석 수행 여부는 본문에 명시되지 않았다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "Charles River Laboratories는 PathoQuest 인수를 통해 확보한 체외 차세대염기서열분석(NGS) 서비스를 바탕으로 Arovella Therapeutics와 협력한다. 해당 서비스는 Arovella의 대체 암 치료법 개발을 위한 연구에 적용되어 후보물질 관련 분석과 개발 진전을 지원한다. 회사는 제약·바이오 기업의 신약 연구와 초기 개발을 지원하는 필수 제품·서비스 제공을 지속하며, 비임상시험 전문성과 데이터 기반 기술 적용 확대를 추진한다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:52Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "bb5e7e87c30a9bde3925617cfc0d760a": {
+      "cache_key": "bb5e7e87c30a9bde3925617cfc0d760a",
+      "row_identity": "55|EVG|relevant|https://www.evgroup.com/company/news/detail/ev-group-addresses-critical-manufacturing-challenges-for-next-generation-co-packaged-optics",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "01.09.2026 EV Group Addresses Critical Manufacturing Challenges for Next-Generation Co-Packaged Optics Read more",
+      "url": "https://www.evgroup.com/company/news/detail/ev-group-addresses-critical-manufacturing-challenges-for-next-generation-co-packaged-optics",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "2026-09-01T00:00:00Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "EVG는 차세대 공동 패키지 광학(CPO) 제조를 위해 웨이퍼 본딩, 나노임프린트 리소그래피, 박형 웨이퍼 공정 기술 포트폴리오를 제공한다. 하이브리드 본딩으로 광집적회로와 전자집적회로를 저기생성 방식으로 통합하고, 퓨전 본딩으로 III-V 반도체의 이종집적을 지원한다. NILPhotonics 및 이종집적 역량센터에서 고객·파트너의 제품 설계와 제조공정을 개발·검증한 뒤 양산으로 이전하는 협력을 추진한다. AI 데이터센터와 HPC용 확장형 CPO 아키텍처 수요 대응이 주요 적용 분야로 제시된다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "본문에 웨이퍼 본딩, 하이브리드 본딩, 이종집적, CPO 적용 및 고객·파트너 협력 내용이 구체적으로 제시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:52Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "4f3218908a5b8a47dff462506068ac39": {
+      "cache_key": "4f3218908a5b8a47dff462506068ac39",
+      "row_identity": "55|EVG|relevant|https://www.evgroup.com/company/news/detail/cezamat-boosts-advanced-photonics-rd-with-state-of-the-art-uv-nanoimprint-system-from-ev-group",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "21.04.2026 CEZAMAT Boosts Advanced Photonics R&D with State-of-the-Art UV Nanoimprint System from EV Group Read more",
+      "url": "https://www.evgroup.com/company/news/detail/cezamat-boosts-advanced-photonics-rd-with-state-of-the-art-uv-nanoimprint-system-from-ev-group",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "2026-04-21T00:00:00Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "EVG는 CEZAMAT 연구 인프라에 SmartNIL 기술 기반 EVG6200 NT UV 나노임프린트 리소그래피 시스템을 설치했다. 해당 플랫폼은 차세대 마이크로·나노구조의 고해상도 및 확장 가능한 제작을 지원한다. EVG는 웨이퍼 본딩, 리소그래피, 박막 웨이퍼 가공 및 계측 장비를 통해 반도체 전공정 미세화, 3D 집적 및 첨단 패키징 응용을 지원한다. 별도 관련 발표에서는 200nm 인터커넥트 피치의 웨이퍼-투-웨이퍼 하이브리드 본딩 시연이 제시된다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.68,
+      "ai_summary_reason": "본문의 직접 사업 내용은 UV 나노임프린트 장비 설치이며, W2W 하이브리드 본딩은 관련 뉴스 항목으로만 언급돼 대상 품목과의 직접성 확인이 제한적이다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "EV Group은 CEZAMAT 연구 인프라에 EVG 6200 NT SmartNIL UV 나노임프린트 리소그래피 시스템을 설치했다고 발표했다. 해당 장비는 차세대 마이크로·나노구조의 고해상도·확장형 제조와 첨단 포토닉스 연구개발에 활용된다. 본문에는 웨이퍼 대 웨이퍼 하이브리드 본딩이나 nm급 하이브리드 본딩 장비의 공급·적용 내용은 확인되지 않는다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:00:57Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "938a6158d9187555cfa1e36c3927c4d2": {
+      "cache_key": "938a6158d9187555cfa1e36c3927c4d2",
+      "row_identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/stories-by-hydro/",
+      "company": "Norsk Hydro",
+      "target_no": 31,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Stories by Hydro",
+      "url": "https://www.hydro.com/en/global/media/stories-by-hydro/",
+      "source": "Norsk Hydro - News Subscription / Investor News Subscription",
+      "published_at": "",
+      "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+      "ai_summary_ko": "Norsk Hydro의 Stories by Hydro 페이지에는 재활용 분야에서 유럽 저탄소 알루미늄이 대형 알루미늄 스크랩 허점으로 위협받고 있다는 제목의 콘텐츠가 노출된다. 페이지는 재활용을 지속가능성, 알루미늄 사용, 혁신·기술과 함께 주요 주제로 제시한다. 제공 자료에는 스크랩 회수·선별·재생 공정, 활용률 목표, 투자계획 또는 고객 적용 사례가 포함되지 않는다. 해당 기사 본문과 게시일도 제공되지 않는다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.92,
+      "ai_summary_reason": "본문이 아닌 페이지 내 콘텐츠 목록과 기사 제목만 제공돼 스크랩 활용률 극대화 관련 구체적 사업·기술 사실을 확인할 수 없음 / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "Norsk Hydro는 알루미늄 산업의 지속가능성을 주제로 스크랩 및 재활용 관련 콘텐츠를 게시하고 있다. 유럽 저탄소 알루미늄의 경쟁력을 저해할 수 있는 알루미늄 스크랩 제도상 허점을 다루며, 재활용 확대와 저탄소 소재 시장 형성 필요성을 제시한다. 또한 디자이너와 협력해 친환경 알루미늄 적용을 확대하고, 제품·기술·시장 전반의 지속가능성 관련 활동을 소개하는 흐름이 확인된다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:07Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "fcfb324163e0c676f0bcb0e8e5a91222": {
+      "cache_key": "fcfb324163e0c676f0bcb0e8e5a91222",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-participate-upcoming-investor-conferences-12",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West to Participate in Upcoming Investor Conferences",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-participate-upcoming-investor-conferences-12",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-08-26T20:00:36Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical은 주사제 투여를 위한 혁신적 솔루션과 서비스를 제공하며, 제약 개발사와 협력해 생명·치료 의약품의 안전한 보관 및 전달을 지원한다. 전 세계 50개 사업장과 26개 제조시설에서 연간 410억 개 이상의 부품·디바이스를 공급하는 제조 기반을 보유한다. 2025 회계연도 순매출은 30억7,000만 달러로 집계되며, 2026년 9월 글로벌 헬스케어 투자자 콘퍼런스에서 사업 현황을 발표할 예정이다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.94,
+      "ai_summary_reason": "주사제 투여 솔루션, 의약품 보관·전달, 제조시설 및 부품·디바이스 공급 실적이 공식 본문에 명시되어 유치 관련 기술·사업 활동을 확인할 수 있음.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:23Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "a424c36973fe0c70c4cc0deb1c8706e7": {
+      "cache_key": "a424c36973fe0c70c4cc0deb1c8706e7",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-26T11:00:31Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "John Deere 자회사 GUSS Automation은 차세대 자율 과수원 기계 플릿에 Ouster Rev8 OS0 네이티브 컬러 디지털 라이다 센서와 L4 Ouster Silicon을 적용할 계획이다. 고가치 작물 재배지는 기존 GPS만으로 센티미터급 정밀 항법이 어려워, 해당 라이다를 통해 자율 농업기계의 인지·운용 역량을 확대한다. 센서는 넓은 시야와 고밀도 3D 포인트클라우드로 나무 줄기, 작물 열, 지면 윤곽을 정밀 매핑해 무인 살포기의 복잡한 야외 환경 주행과 안전성 향상을 지원할 예정이다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "공식 보도자료에 Rev8 OS0 디지털 라이다의 자율 과수원 기계 적용 계획과 구체적인 기술 활용 내용이 제시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:27Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "b0e2ff08a43a6dd33ca53ee11bb3d81d": {
+      "cache_key": "b0e2ff08a43a6dd33ca53ee11bb3d81d",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-11T10:00:32Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster는 Econolite와 협력해 미국 유타주 교통부의 추가 계약을 확보하고, 주 전역 160개 교차로에 라이다 기반 교통관리 솔루션 BlueCity를 확대 배치한다. OS1 Max REV8 디지털 라이다는 최대 500피트 전방 감지와 색상·3D 깊이 동시 수집을 통해 교통 흐름 관리, 상황 인식 및 디지털 트윈 구축을 지원한다. 보행자·자전거 이용자 영상의 엣지단 블러링과 색상 기반 이벤트 분석 기능을 적용해 교통 안전성과 운영 효율 향상을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "유타주 160개 교차로 확대 배치, REV8 라이다의 감지·색상·3D 기능 및 교통관리 적용 내용이 공식 보도자료에 구체적으로 제시된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:30Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "9852c3f02460f7fca609da51a2b42e98": {
+      "cache_key": "9852c3f02460f7fca609da51a2b42e98",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Ouster Announces Upcoming Investor Events",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-07T12:01:40Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster는 Physical AI 구현을 위한 센싱·인지 기술 기업으로, 산업·로봇·자동차·스마트 인프라 분야를 대상으로 고성능 디지털 라이다, 카메라, AI 컴퓨팅, 센서 융합·인지 소프트웨어 및 AI 모델을 통합한 플랫폼을 제공한다. 해당 플랫폼은 물리적 환경에서의 품질 향상과 자동화 적용을 지원하며, 미주·유럽·아시아태평양 거점을 기반으로 수천 개 고객을 확보한 사업 구조가 확인된다. 2026년 8월 기술·인터넷·통신 및 AI 확장성 관련 투자자 행사 참여를 예정하고, 기관투자자 대상 기업 설명과 면담을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "공식 보도자료에 디지털 라이다의 적용 분야, 통합 기술 플랫폼, 글로벌 고객 기반 및 투자자 행사 계획이 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:32Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "eaac8592992ca95b19024781f0eb5910": {
+      "cache_key": "eaac8592992ca95b19024781f0eb5910",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Ouster Announces Results for Second Quarter 2026",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster는 Physical AI용 센싱·인지 플랫폼을 기반으로 2026년 2분기 5500만 달러의 매출과 1만7000대 이상의 라이다·카메라 센서 출하를 기록하며 제품 매출 14분기 연속 성장을 이어간다. 출하 센서 중 라이다가 약 53%를 차지해 로봇 및 자율화 시장에서의 적용 확대가 확인된다. 신제품 Rev8은 네이티브 컬러와 높은 성능을 앞세워 주요 고객과의 관계를 강화하고 있으며, 고객의 Physical AI 투자가 복잡한 실세계 자율应用으로 확대되는 흐름이 제시된다. 시스템 통합 간소화와 시장 출시 기간 단축을 통해 관련 솔루션 공급을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.95,
+      "ai_summary_reason": "라이다 출하량, 제품 비중, 신제품 성능 및 Physical AI·자율화 시장 확대와 관련된 공식 발표 내용이 확인된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:35Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "696da9938f06bdcfc5948684f76d7e85": {
+      "cache_key": "696da9938f06bdcfc5948684f76d7e85",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West Reports Second-Quarter 2026 Results",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-23T10:00:44Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical은 혁신적 고품질 주사제 솔루션 및 서비스를 제공하는 기업으로서 2026년 2분기 매출 8억7,230만달러를 기록했으며, 전년 동기 대비 13.8%, 유기적 기준 12.7% 증가했다. 2분기 설비투자액은 8,590만달러, 영업현금흐름은 2억1,390만달러로 집계된다. 2026년 연간 매출은 33억4,500만~33억8,000만달러로 전망되며, 유기적 성장률은 10.0~11.0%로 제시된다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.62,
+      "ai_summary_reason": "제공된 본문에는 주사제 솔루션 사업과 실적은 확인되나, Autoinjector/PFS 완충전·제조기술 또는 관련 제품·투자 활동의 구체적 근거는 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "West Pharmaceutical은 혁신적이고 고품질인 주사제 솔루션 및 서비스를 제공하는 기업으로 소개된다. 2026년 2분기 매출은 8억7,230만 달러로 전년 동기 대비 13.8% 증가했으며, 유기적 성장률은 12.7%로 집계된다. 회사는 주사제 관련 사업 흐름을 기반으로 2026년 연간 매출 33억4,500만~33억8,000만 달러를 전망하고 실적 확대를 추진한다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:36Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "46307ef1eeee8d0c22ae0931f015fc78": {
+      "cache_key": "46307ef1eeee8d0c22ae0931f015fc78",
+      "row_identity": "59|Airbus|relevant|https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-elevates-hybrid-electric-integration-with-leia-project",
+      "company": "Airbus",
+      "target_no": 59,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Airbus elevates hybrid-electric integration with LEIA Project Press Release Innovation 22 July 2026 2 min read",
+      "url": "https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-elevates-hybrid-electric-integration-with-leia-project",
+      "source": "Airbus - Investors / Investor Relations",
+      "published_at": "2026-07-22T00:00:00Z",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "ai_summary_ko": "Airbus는 EU·영국·미국 파트너와 함께 차세대 상업용 항공기를 위한 하이브리드 전기 비추진 에너지 아키텍처 실증사업 LEIA를 추진한다. EU Clean Aviation 공동사업 지원을 받는 LEIA는 단거리·중거리 항공기용 전기 시스템의 고전압 발전·배전 기술 고도화와 부품 수준 혁신의 항공기 적용·인증 준비를 목표로 한다. 본 사업은 전기 추진·전력 관리 아키텍처의 통합과 지능화를 통해 항공기 전기 시스템의 차세대 적용 기반을 마련하는 활동으로 제시된다. 선행 SWITCH 프로젝트에서는 Collins Aerospace가 Pratt & Whitney, GKN Aerospace, MTU Aero Engines와 함께 하이브리드 전기 파워트레인 하위 시스템의 통합 실험실 시험을 완료한 것으로 확인된다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "Airbus 공식 보도자료에 LEIA 사업, 고전압 발전·배전, 전기 시스템 통합·인증 준비 및 SWITCH 시험 완료 내용이 구체적으로 제시된다.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:42Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "3349afb1b8e81aad4762a7c37fa05a64": {
+      "cache_key": "3349afb1b8e81aad4762a7c37fa05a64",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-declares-quarterly-dividend-0",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West Declares Quarterly Dividend",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-declares-quarterly-dividend-0",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-21T20:00:39Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical Services 이사회는 2026년 7월 21일 보통주 주당 0.22달러의 정기 분기배당을 결정했으며, 지급일은 8월 5일로 제시됐다. 동사는 주사제 의약품의 안전하고 효과적인 밀봉·전달을 지원하는 고품질 솔루션 및 서비스를 제공한다. 전 세계 50개 사업장과 26개 제조시설에서 연간 410억 개 이상의 부품 및 기기를 공급한다. 다만 본문에는 오토인젝터·사전충전형주사기(PFS) 완충전 또는 제조기술 관련 구체적 사업 내용은 제시되지 않는다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.92,
+      "ai_summary_reason": "본문은 배당 발표과 주사제 솔루션의 일반적 기업 소개만 포함하며, 대상 기술의 구체적 활동·투자·수요 정보를 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "West Pharmaceutical Services는 주사제 투여를 위한 혁신적 솔루션과 서비스를 제공하며, 의약품의 안전한 보관·전달을 지원하는 개발 파트너로 사업을 전개한다. 전 세계 50개 사업장과 26개 제조시설, 1만 명 이상의 인력을 기반으로 연간 410억 개 이상의 부품·디바이스를 공급한다. 2025 회계연도 순매출은 30억7,000만 달러로 확인되며, 2026년 7월 분기 배당금 지급을 결정했다. 다만 Autoinjector/PFS 완충전 및 제조기술에 대한 구체적 활동은 제시되지 않는다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:46Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "b0859dd4c0ee90db317b0678f0014f3c": {
+      "cache_key": "b0859dd4c0ee90db317b0678f0014f3c",
+      "row_identity": "59|Airbus|relevant|https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-launches-new-flight-test-programme-for-wing-of-tomorrow",
+      "company": "Airbus",
+      "target_no": 59,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Airbus launches new flight test programme for Wing of Tomorrow Press Release Innovation 21 July 2026 3 min read",
+      "url": "https://www.airbus.com/en/newsroom/press-releases/2026-07-airbus-launches-new-flight-test-programme-for-wing-of-tomorrow",
+      "source": "Airbus - Investors / Investor Relations",
+      "published_at": "2026-07-21T00:00:00Z",
+      "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
+      "ai_summary_ko": "Airbus는 차세대 단일통로 항공기용 고세장비 날개 성능을 평가하는 ‘Wing of Tomorrow’ 비행시험 프로그램을 개시한다. 향후 3년간 A321neo에 실물 크기 날개 연장부를 장착해 다양한 날개 형상의 실제 비행 성능과 기체 조종 특성 영향을 검증한다. 디지털 모델링과 풍동시험으로 설계를 확정하고 비행 데이터를 통해 장익 설계의 효율성 및 기술 위험을 평가한다. 해당 발표에는 항공용 전기모터나 고출력 배터리 추진 모듈의 개발·조달·적용 계획은 제시되지 않는다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.95,
+      "ai_summary_reason": "제공된 본문은 날개 설계 및 비행시험 프로그램에 관한 내용이며, 유치필요 품목인 항공용 전기모터·고출력 배터리 추진 모듈 관련 구체적 사업 활동이나 수요 근거가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "Airbus는 차세대 단일통로 항공기의 고효율화를 위해 고세장비 날개 성능을 검증하는 Wing of Tomorrow 비행시험 프로그램을 개시한다. 향후 3년간 A321neo에 실물 크기 날개 연장부를 장착하고 실제 비행조건에서 형상별 조종성과 거동을 평가한다. 디지털 모델링과 풍동시험을 거쳐 비행 데이터를 확보하고 장익 설계의 적용 가능성을 검토할 예정이며, 본문에서는 항공용 전기모터·고출력 배터리 추진 모듈 관련 활동은 확인되지 않는다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:47Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "ece8a3ee6af4c805d64074d4579ad265": {
+      "cache_key": "ece8a3ee6af4c805d64074d4579ad265",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-host-second-quarter-2026-conference-call",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West to Host Second-Quarter 2026 Conference Call",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-host-second-quarter-2026-conference-call",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-07T11:37:50Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical Services는 주사제 투여용 혁신 솔루션 및 서비스를 제공하며, 의약품 개발사의 생명구조·삶의 질 개선 의약품에 대한 안전하고 효과적인 보관 및 전달을 지원한다. 전 세계 50개 사업장과 26개 제조시설에서 1만명 이상의 인력을 운영하고, 연간 410억개 이상의 부품 및 디바이스를 공급한다. 2026년 2분기 실적과 사업 전망은 7월 23일 컨퍼런스콜을 통해 공개할 예정이다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.91,
+      "ai_summary_reason": "본문에 주사제 솔루션 사업, 글로벌 제조시설 및 부품·디바이스 공급 규모가 명시되어 있다.",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "West Pharmaceutical Services는 주사제 투여를 위한 혁신적 솔루션과 서비스를 제공하며, 의약품 개발사와 협력해 생명구호·치료 의약품의 안전한 보관과 전달을 지원하는 사업을 전개한다. 전 세계 50개 사업장과 26개 제조시설에서 연간 410억 개 이상의 부품 및 디바이스를 공급해 주사제 관련 고객의 생산·공급 활동을 뒷받침한다. 2026년 2분기 실적 발표와 사업 전망 설명을 위한 컨퍼런스콜을 7월 23일 개최할 예정이다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:01:56Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "a4d76e57e85c10bce58a2eaf5b8c5317": {
+      "cache_key": "a4d76e57e85c10bce58a2eaf5b8c5317",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-completes-sale-and-transfer-manufacturing-and-supply-rights",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West Completes Sale and Transfer of the Manufacturing and Supply Rights for SmartDose® 3.5mL On-Body Delivery System",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-completes-sale-and-transfer-manufacturing-and-supply-rights",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-07-01T20:30:30Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical은 2026년 7월 1일 SmartDose® 3.5mL 온바디 약물 전달 시스템의 제조·공급권과 관련 시설 매각 및 이전을 완료한 것으로 확인된다. 회사는 SmartDose® 10mL 온바디 약물 전달 시스템을 포함한 기타 제품의 개발·제조를 지속하며, 대용량 약물 투여를 위한 적응형 기술 적용을 추진한다. 전 세계 26개 제조시설을 포함한 50개 사업장에서 연간 410억 개 이상의 부품·기기를 공급하고, 제약 개발사를 대상으로 주입형 의약품의 안전한 보관·전달 지원을 수행한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "SmartDose 제조·공급권 이전 완료와 10mL 제품 개발·제조 지속, 대용량 적응형 기술 및 글로벌 주입형 의약품 지원 활동이 공식 보도자료에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:02:00Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "be7cf4368c01e71c14aeb14cbe5b7a70": {
+      "cache_key": "be7cf4368c01e71c14aeb14cbe5b7a70",
+      "row_identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-appoints-michel-lagarde-be-president-and-chief-executive",
+      "company": "West Pharmaceutical",
+      "target_no": 7,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "West Appoints Michel Lagarde to be President and Chief Executive Officer",
+      "url": "https://investor.westpharma.com/news-releases/news-release-details/west-appoints-michel-lagarde-be-president-and-chief-executive",
+      "source": "West Pharmaceutical - Press Releases / Press Releases",
+      "published_at": "2026-06-01T20:30:27Z",
+      "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
+      "ai_summary_ko": "West Pharmaceutical Services는 주사제 약물 투여용 혁신 솔루션 분야의 글로벌 기업으로 소개된다. 이사회는 2026년 8월 31일부로 Michel Lagarde를 사장·최고경영자 및 이사회 구성원으로 선임했다. 같은 날 기존 사장·CEO인 Eric M. Green은 은퇴하며, 수석 사외이사 Robert F. Friel은 이사회 의장으로 취임할 예정이다. 발표문은 차기 경영진이 회사의 성장과 혁신 단계를 이끌 계획임을 제시한다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.72,
+      "ai_summary_reason": "제공 본문은 경영진 교체와 주사제 투여 솔루션 기업이라는 일반적 소개에 한정되며, Autoinjector/PFS 완충전·제조기술의 구체적 사업 활동이나 수요 정보가 확인되지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "West Pharmaceutical Services는 주사제 투여를 위한 혁신 솔루션을 제공하는 글로벌 기업으로, 2026년 8월 31일부터 Michel Lagarde를 사장 겸 최고경영자 및 이사회 구성원으로 선임할 예정이다. 신임 CEO는 헬스케어·생명과학 분야 경험을 바탕으로 고객 중심 경영과 성장·혁신을 주도할 계획이다. 회사는 이번 리더십 전환을 통해 주사제 투여 솔루션 분야의 신뢰도와 장기적 가치 창출을 이어가는 방향을 제시한다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:02:08Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "04fc27ecbfc874b9155347fc3b05fa69": {
+      "cache_key": "04fc27ecbfc874b9155347fc3b05fa69",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Ouster Acquires StereoLabs, Creating a World-Leading Physical AI Sensing and Perception Company",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-02-09T09:30:26Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "오우스터는 2026년 2월 4일 AI 비전·인지 솔루션 기업 스테레오랩스를 인수해 디지털 라이다, 카메라, AI 컴퓨팅, 센서 융합·인지 소프트웨어와 AI 모델을 결합한 물리적 AI 통합 센싱·인지 플랫폼을 구축했다. 해당 플랫폼은 산업, 로봇, 스마트 인프라 분야를 대상으로 라이다와 카메라 기반의 고성능 인지 기능을 제공하는 구조로 제시된다. 스테레오랩스는 3D 비전 기술을 기반으로 ZED 카메라 9만 대 이상을 출하했으며, 1만 곳 이상의 고객과 수천 명 규모 개발자 커뮤니티를 확보했다. 인수로 오우스터는 라이다 사업의 성장세를 이어가면서 적용 시장과 사업 범위를 확대할 예정이다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "라이다·카메라·AI 인지 플랫폼 구축, 로봇 적용 분야, 고객 및 출하 실적이 공식 보도자료에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:02:09Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "a055a5684cde8a07789d3fea9ca0826f": {
+      "cache_key": "a055a5684cde8a07789d3fea9ca0826f",
+      "row_identity": "34|Infineon|relevant|https://www.infineon.com/press-release/2026/infpr202608-133",
+      "company": "Infineon",
+      "target_no": 34,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Infineon and Tack One win SICC Award for Best Technological Collaboration",
+      "url": "https://www.infineon.com/press-release/2026/infpr202608-133",
+      "source": "Infineon - Press / Press Releases / Media",
+      "published_at": "2026-08-31T00:00:00Z",
+      "target_technology": "위성통신 및 레이다용 RF 반도체",
+      "ai_summary_ko": "인피니언과 Tack One은 싱가포르국제상공회의소(SICC)로부터 ‘최우수 기술협력’ 상을 공동 수상했다. 공개된 자료에는 양사의 협력 성과와 수상 사실이 제시된다. 다만 제공된 본문에는 GaN 기술의 구체적 적용 제품, 위성통신·레이다용 RF 반도체 개발 내용 및 고객·시장 관련 정보가 확인되지 않는다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.42,
+      "ai_summary_reason": "제공된 본문은 로그인 안내와 이미지 설명이 대부분이며, 위성통신·레이다용 RF 반도체 및 GaN의 구체적 사업·기술 활동 근거가 부족하다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "인피니언과 Tack One이 싱가포르 국제상공회의소(SICC)로부터 최우수 기술 협력상을 수상한 사실이 확인된다. 양사는 기술 협력 성과를 바탕으로 대외적인 사업 활동을 전개한 것으로 제시되지만, 제공된 본문만으로는 협력 대상 제품과 적용 분야가 구체적으로 확인되지 않는다. GaN 기반 위성통신·레이다용 RF 반도체와의 직접적인 연계성 및 고객·시장 확대 내용은 추가 자료 확인이 필요하다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:02:40Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
+    },
+    "af5b2d777b3c92372cbd991a9594c16d": {
+      "cache_key": "af5b2d777b3c92372cbd991a9594c16d",
+      "row_identity": "21|GE Healthcare|relevant|https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "company": "GE Healthcare",
+      "target_no": 21,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "GE HealthCare announces CFO transition; reports preliminary second quarter 2026 financial results and reaffirms guidance reflecting business momentum",
+      "url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcare-announces-cfo-transition-reports-preliminary",
+      "source": "GE Healthcare - Investor News Releases / Investor News / Press Releases",
+      "published_at": "2026-07-23T20:15:36Z",
+      "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
+      "ai_summary_ko": "GE 헬스케어는 2026년 2분기 잠정 실적에서 전년 동기 대비 매출 5.7%, 유기적 매출 3.5% 성장을 제시하고 조정 주당순이익이 기존 예상치를 상회했다고 밝혔다. 회사는 연간 2026년 가이던스를 재확인했으며, 재무 규율 및 자본배분 전략에 부합하는 전략적 투자를 추진해 왔다. 다만 해당 발표에는 바이오의약품 생산용 배양·정제 시스템, 레진 제품·공급, 고객 적용 또는 관련 생산설비 투자에 관한 구체적 사업 활동은 제시되지 않았다.",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "제공된 본문은 CFO 교체 및 전사 잠정 실적 발표가 중심이며, resin 키워드 외 바이오의약품 배양·정제 시스템 관련 제품, 기술, 투자, 고객 또는 시장 사실이 확인되지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "GE HealthCare는 2026년 2분기 매출이 전년 동기 대비 5.7%, 유기적 매출이 3.5% 증가했다고 발표하고 연간 가이던스를 재확인했다. 재무책임자 교체와 후임자 선임 절차도 공개했다. 다만 본문에서는 바이오의약품 생산용 배양·정제 시스템의 공급, 적용, 고객 또는 시장 확대와 관련된 구체적 활동이 확인되지 않으며, ‘resin’ 단일 키워드만 제시된다.",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-02T07:02:53Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-02T07:03:23Z"
     }
   }
 }
