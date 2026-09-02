@@ -1,36 +1,34 @@
 {
-  "run_started_at": "2026-09-02T06:58:05Z",
-  "input_signal_count": 450,
+  "run_started_at": "2026-09-02T07:50:26Z",
+  "input_signal_count": 425,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 136,
+  "technology_gate_pass_count": 125,
   "technology_gate_counts": {
-    "not_relevant": 314,
-    "passed": 82,
-    "relevance_exempt": 54
+    "not_relevant": 300,
+    "passed": 72,
+    "relevance_exempt": 53
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 83,
-  "companies_with_investment_signals": 21,
+  "investment_signal_count": 79,
+  "companies_with_investment_signals": 19,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
       "no": 1,
       "label_ko": "공급망·지정학 리스크 대응",
-      "count": 23,
+      "count": 21,
       "companies": [
         "HyproMag",
-        "ASML",
-        "GE Healthcare",
         "Applied Materials",
         "Ouster",
         "Amkor Technology",
         "3M",
         "Charles River",
+        "Albemarle",
         "Arkema",
-        "Norsk Hydro",
-        "Skyworks",
-        "Airbus",
+        "Australian Strategic Metals",
+        "Nexeon",
         "Cytiva",
         "Prodrive",
         "Maxon"
@@ -39,65 +37,63 @@
     "production_expansion_diversification": {
       "no": 2,
       "label_ko": "생산 확대 및 다변화 의지",
-      "count": 20,
+      "count": 21,
       "companies": [
+        "Nexeon",
         "Applied Materials",
-        "Australian Strategic Metals",
         "Amkor Technology",
-        "ASML",
+        "HyproMag",
         "Infineon",
         "Ouster",
-        "GE Healthcare",
-        "Skyworks",
         "West Pharmaceutical",
         "Arkema",
         "EVG",
         "Vestas",
         "Maxon",
+        "Airbus",
         "Prodrive"
       ]
     },
     "investment_financing": {
       "no": 3,
       "label_ko": "투자 재원 확보",
-      "count": 9,
+      "count": 7,
       "companies": [
         "Amkor Technology",
-        "GE Healthcare",
-        "Skyworks",
-        "ASML",
+        "Cytiva",
+        "Albemarle",
         "Applied Materials",
         "Arkema",
-        "West Pharmaceutical",
-        "Cytiva"
+        "West Pharmaceutical"
       ]
     },
     "technology_ecosystem_rd": {
       "no": 4,
       "label_ko": "기술 생태계 밀착(R&D)",
-      "count": 30,
+      "count": 28,
       "companies": [
         "Charles River",
-        "GE Healthcare",
-        "Nabtesco",
         "EVG",
         "Prodrive",
+        "Nexeon",
         "Applied Materials",
+        "Albemarle",
         "Amkor Technology",
+        "Airbus",
         "Maxon",
         "Arkema",
         "Ouster",
         "West Pharmaceutical",
         "3M",
-        "Cytiva",
         "ASML"
       ]
     },
     "strategic_people_movement": {
       "no": 5,
       "label_ko": "핵심 전략 인력의 이동",
-      "count": 1,
+      "count": 2,
       "companies": [
+        "Cytiva",
         "Prodrive"
       ]
     }
