@@ -665,6 +665,12 @@ td a {
   font-weight: 700;
 }
 
+.sourceBadge.press {
+  color: #1d4ed8;
+  background: #e6edff;
+  white-space: nowrap;
+}
+
 .sourceBadge.official {
   color: var(--ok);
   background: #ecfdf3;

@@ -200,11 +200,16 @@ function extractEvidence(signal, terms) {
   return unique(snippets);
 }
 
+function isPressRelease(signal) {
+  return signal.source_type === "official" && Boolean(signal.is_press_release);
+}
+
 function scoreMatch(signal, terms, fields) {
   const officialBoost = signal.source_type === "official" ? 1 : 0;
+  const pressBoost = isPressRelease(signal) ? 1 : 0;
   const contentBoost = fields.includes("content") ? 1 : 0;
   const specificBoost = terms.some((term) => compactText(term).length >= 10) ? 1 : 0;
-  return terms.length + officialBoost + contentBoost + specificBoost;
+  return terms.length + officialBoost + pressBoost + contentBoost + specificBoost;
 }
 
 function classifySignal(signal, indicators, threshold) {
@@ -262,6 +267,8 @@ async function writeCsv(filePath, rows) {
     "url",
     "source",
     "source_type",
+    "source_kind",
+    "source_label_ko",
     "published_at",
     "collected_at",
     "matched_terms",
@@ -284,6 +291,9 @@ function sortRows(a, b) {
   if (b.investment_signal_score !== a.investment_signal_score) {
     return b.investment_signal_score - a.investment_signal_score;
   }
+  const pressA = isPressRelease(a) ? 0 : 1;
+  const pressB = isPressRelease(b) ? 0 : 1;
+  if (pressA !== pressB) return pressA - pressB;
   const officialA = a.source_type === "official" ? 0 : 1;
   const officialB = b.source_type === "official" ? 0 : 1;
   if (officialA !== officialB) return officialA - officialB;

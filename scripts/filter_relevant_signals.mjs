@@ -140,10 +140,15 @@ function extractEvidenceSnippets(signal, matchedTerms) {
   return unique(snippets);
 }
 
+function isPressRelease(signal) {
+  return signal.source_type === "official" && Boolean(signal.is_press_release);
+}
+
 function scoreMatch(signal, matchedTerms) {
   const sourceBoost = signal.source_type === "official" ? 2 : 0;
+  const pressBoost = isPressRelease(signal) ? 1 : 0;
   const specificBoost = matchedTerms.some((term) => compactText(term).length >= 8) ? 1 : 0;
-  return matchedTerms.length + sourceBoost + specificBoost;
+  return matchedTerms.length + sourceBoost + pressBoost + specificBoost;
 }
 
 function toCsvValue(value) {
@@ -167,6 +172,8 @@ async function writeCsv(filePath, rows) {
     "url",
     "source",
     "source_type",
+    "source_kind",
+    "source_label_ko",
     "published_at",
     "collected_at",
     "content_fetch_status",
@@ -250,6 +257,9 @@ function classifySignal(signal, companyMap, keywordGroups, threshold) {
 }
 
 function sortRelevantRows(a, b) {
+  const pressA = isPressRelease(a) ? 0 : 1;
+  const pressB = isPressRelease(b) ? 0 : 1;
+  if (pressA !== pressB) return pressA - pressB;
   const sourceA = a.source_type === "official" ? 0 : 1;
   const sourceB = b.source_type === "official" ? 0 : 1;
   if (sourceA !== sourceB) return sourceA - sourceB;

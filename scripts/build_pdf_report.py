@@ -311,6 +311,7 @@ TEXTS = {
         "source_prefix": "출처",
         "source_fallback": "수집 출처",
         "source_empty": "출처  -",
+        "source_press_release": "공식보도자료",
         "item_title": "품목별 글로벌 사업동향",
         "item_target_label": "투자유치 필요 품목·기술",
         "item_trend_label": "{month} 글로벌 사업동향",
@@ -340,6 +341,7 @@ TEXTS = {
         "source_prefix": "Source",
         "source_fallback": "Collected source",
         "source_empty": "Source  -",
+        "source_press_release": "Official press release",
         "item_title": "Global Business Trends by Item",
         "item_target_label": "Target item / technology",
         "item_trend_label": "Global business trend, {month}",
@@ -1038,14 +1040,37 @@ def build_profiles(targets, tech_map):
     return profiles
 
 
+PRESS_RELEASE_PATTERN = re.compile(
+    r"press[\s_-]*releases?|news[\s_-]*releases?|media[\s_-]*releases?|pressreleases?|newsreleases?"
+    r"|보도\s*자료|press[\s_-]*room|pressemitteilung|communiqu[eé]s?[\s_-]*de[\s_-]*presse"
+    r"|comunicad[oa]s?[\s_-]*de[\s_-]*prensa",
+    re.IGNORECASE,
+)
+
+
+def is_press_release(row):
+    """수집 단계의 source_kind가 없는 과거 데이터도 출처명·URL로 공식 보도자료를 판별한다."""
+    if not row or row.get("source_type") != "official":
+        return False
+    if row.get("is_press_release") is True:
+        return True
+    if row.get("source_kind"):
+        return row.get("source_kind") == "press_release"
+    haystack = " ".join(
+        str(row.get(field) or "") for field in ("source", "official_source_url", "url")
+    )
+    return bool(PRESS_RELEASE_PATTERN.search(haystack))
+
+
 def sort_signal_rows(rows):
     def key(row):
+        press = 0 if is_press_release(row) else 1
         official = 0 if row.get("source_type") == "official" else 1
         technology_score = -(row.get("technology_relevance_score") or row.get("relevance_score") or 0)
         signal_score = -(row.get("investment_signal_score") or 0)
         dt = parse_datetime(row.get("published_at"))
         timestamp = -dt.timestamp() if dt else 0
-        return (official, technology_score, signal_score, timestamp)
+        return (press, official, technology_score, signal_score, timestamp)
 
     return sorted(rows, key=key)
 
@@ -1130,6 +1155,8 @@ def draw_matrix(report, profiles, signal_index, summary):
 
 def source_line(row):
     source = row.get("source") or row.get("collector") or t("source_fallback")
+    if is_press_release(row):
+        source = f"{t('source_press_release')} · {source}"
     return short_text(f"{t('source_prefix')}  {source} {format_date(row.get('published_at'))}", 120)
 
 

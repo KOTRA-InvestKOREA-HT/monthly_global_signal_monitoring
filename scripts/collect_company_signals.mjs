@@ -12,6 +12,9 @@ const FIELDNAMES = [
   "collector",
   "query",
   "source_type",
+  "source_kind",
+  "is_press_release",
+  "source_label_ko",
   "source_priority",
   "official_source_url",
   "source_direct_url",
@@ -461,9 +464,13 @@ function buildGdeltQuery(company) {
   return `${nameClause} (${terms})`;
 }
 
-function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource) {
+function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
   const rows = [];
   const isOfficialCollector = collector.startsWith("official_");
+  const sourceFieldsFor = (itemUrl) =>
+    isOfficialCollector
+      ? officialSourceFields(feedKind, defaultSource, query, itemUrl)
+      : fallbackSourceFields(90);
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
     const itemUrl = bestRssItemUrl(item, query);
@@ -477,8 +484,7 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       collected_at: collectedAt,
       collector,
       query,
-      source_type: isOfficialCollector ? "official" : "fallback",
-      source_priority: isOfficialCollector ? 10 : 90,
+      ...sourceFieldsFor(itemUrl),
       official_source_url: isOfficialCollector ? query : "",
       source_direct_url: directUrlCandidate(itemUrl),
     });
@@ -495,8 +501,7 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       collected_at: collectedAt,
       collector,
       query,
-      source_type: isOfficialCollector ? "official" : "fallback",
-      source_priority: isOfficialCollector ? 10 : 90,
+      ...sourceFieldsFor(entryUrl),
       official_source_url: isOfficialCollector ? query : "",
       source_direct_url: directUrlCandidate(entryUrl),
     });
@@ -615,15 +620,55 @@ function isRelevantOfficialLink(anchor, pageUrl) {
   }
 }
 
+const PRESS_RELEASE_PATTERN =
+  /press[\s_-]*releases?|news[\s_-]*releases?|media[\s_-]*releases?|pressreleases?|newsreleases?|보도\s*자료|press[\s_-]*room|pressemitteilung|communiqu[eé]s?[\s_-]*de[\s_-]*presse|comunicad[oa]s?[\s_-]*de[\s_-]*prensa/i;
+
+function looksLikePressRelease(...hints) {
+  return PRESS_RELEASE_PATTERN.test(hints.filter(Boolean).join(" "));
+}
+
+// 설정 파일의 kind 값이 없거나 일반적인 경우에도 출처명/URL로 공식 보도자료를 식별한다.
+function resolveOfficialKind(kind, ...hints) {
+  if (kind === "press_release") return "press_release";
+  if (looksLikePressRelease(...hints)) return "press_release";
+  return kind || "official_page";
+}
+
+function sourceLabelKo(sourceType, sourceKind) {
+  if (sourceType !== "official") return "대체출처";
+  return sourceKind === "press_release" ? "공식보도자료" : "공식출처";
+}
+
 function officialSourcePriority(kind) {
   return {
-    press_release: 10,
+    press_release: 5,
     newsroom: 12,
     ir: 15,
     filing: 17,
     presentation: 18,
     financial_report: 19,
   }[kind] || 20;
+}
+
+function officialSourceFields(kind, ...hints) {
+  const sourceKind = resolveOfficialKind(kind, ...hints);
+  return {
+    source_type: "official",
+    source_kind: sourceKind,
+    is_press_release: sourceKind === "press_release",
+    source_label_ko: sourceLabelKo("official", sourceKind),
+    source_priority: officialSourcePriority(sourceKind),
+  };
+}
+
+function fallbackSourceFields(priority) {
+  return {
+    source_type: "fallback",
+    source_kind: "news",
+    is_press_release: false,
+    source_label_ko: sourceLabelKo("fallback", "news"),
+    source_priority: priority,
+  };
 }
 
 function normalizeOfficialPageEntries(entries) {
@@ -652,12 +697,13 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
     const feedUrl = typeof feed === "string" ? feed : feed.url;
     const sourceName =
       typeof feed === "string" ? `Official feed: ${company.company}` : feed.source || `Official feed: ${company.company}`;
+    const feedKind = typeof feed === "string" ? "" : feed.kind || "";
     if (!feedUrl) continue;
     const xml = await fetchText(feedUrl, timeoutSeconds);
     requestCount += 1;
     rows.push(
       ...filterByDateRange(
-        parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName),
+        parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind),
         dateRange,
       ).slice(0, maxPerSource),
     );
@@ -680,7 +726,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           requestCount += 1;
           rows.push(
             ...filterByDateRange(
-              parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`),
+              parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
               dateRange,
             ).slice(0, maxPerSource),
           );
@@ -700,8 +746,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           collected_at: collectedAt,
           collector: "official_page",
           query: page.url,
-          source_type: "official",
-          source_priority: officialSourcePriority(page.kind),
+          ...officialSourceFields(page.kind, page.source, page.sourceTypeLabel, page.pageTitle, page.url, anchor.url),
           official_source_url: page.url,
           source_direct_url: directUrlCandidate(anchor.url),
         })),
@@ -810,8 +855,7 @@ async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSecond
     )
       .map((row) => ({
         ...row,
-        source_type: "fallback",
-        source_priority: 90,
+        ...fallbackSourceFields(90),
         official_source_url: "",
       }))
       .slice(0, maxPerSource),
@@ -841,8 +885,7 @@ async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, co
       collected_at: collectedAt,
       collector: "gdelt_doc_api",
       query,
-      source_type: "fallback",
-      source_priority: 95,
+      ...fallbackSourceFields(95),
       official_source_url: "",
     }))
     .filter((row) => row.title && row.url);
@@ -868,6 +911,10 @@ function dedupeRows(rows) {
 
 function sortRows(rows) {
   return [...rows].sort((a, b) => {
+    // 공식 보도자료를 항상 최우선으로 노출한다.
+    const pressA = a.is_press_release ? 0 : 1;
+    const pressB = b.is_press_release ? 0 : 1;
+    if (pressA !== pressB) return pressA - pressB;
     const priority = Number(a.source_priority || 99) - Number(b.source_priority || 99);
     if (priority !== 0) return priority;
     const bDate = Date.parse(b.published_at || "") || 0;
@@ -1049,6 +1096,7 @@ async function main() {
     request_count: requestCount,
     result_count: finalRows.length,
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
+    press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
     fallback_result_count: finalRows.filter((row) => row.source_type !== "official").length,
     companies_with_results: Object.values(countsByCompany).filter((count) => count > 0).length,
     companies_with_official_results: Object.values(officialCountsByCompany).filter((count) => count > 0).length,

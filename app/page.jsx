@@ -37,6 +37,40 @@ function sourceUrl(item) {
   return candidates.find((value) => /^https?:\/\//i.test(String(value || "").trim())) || "#";
 }
 
+const PRESS_RELEASE_PATTERN =
+  /press[\s_-]*releases?|news[\s_-]*releases?|media[\s_-]*releases?|pressreleases?|newsreleases?|보도\s*자료|press[\s_-]*room|pressemitteilung|communiqu[eé]s?[\s_-]*de[\s_-]*presse|comunicad[oa]s?[\s_-]*de[\s_-]*prensa/i;
+
+// 수집 단계에서 붙은 source_kind가 없는 과거 데이터도 출처명/URL로 공식 보도자료를 판별한다.
+function isPressRelease(item) {
+  if (item?.source_type !== "official") return false;
+  if (item?.is_press_release === true) return true;
+  if (item?.source_kind) return item.source_kind === "press_release";
+  return PRESS_RELEASE_PATTERN.test([item?.source, item?.official_source_url, item?.url].filter(Boolean).join(" "));
+}
+
+function sourceBadgeLabel(item) {
+  if (item?.source_type !== "official") return "대체";
+  return isPressRelease(item) ? "공식보도자료" : "공식";
+}
+
+function sourceBadgeClass(item) {
+  if (item?.source_type !== "official") return "fallback";
+  return isPressRelease(item) ? "press" : "official";
+}
+
+// 공식 보도자료를 목록 상단으로 올리고, 나머지는 기존 순서를 유지한다.
+function pressReleaseFirst(items) {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((left, right) => {
+      const pressLeft = isPressRelease(left.item) ? 0 : 1;
+      const pressRight = isPressRelease(right.item) ? 0 : 1;
+      if (pressLeft !== pressRight) return pressLeft - pressRight;
+      return left.index - right.index;
+    })
+    .map((entry) => entry.item);
+}
+
 function normalizeSummaryText(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -343,10 +377,11 @@ function investmentSortKey(item, mode) {
   const targetNo = Number(item.target_no) || 999;
   const company = String(item.company || "");
   const published = new Date(item.published_at || 0).getTime() || 0;
+  const press = isPressRelease(item) ? 0 : 1;
   if (mode === "company") {
-    return [targetNo, company, signalNo, -published];
+    return [targetNo, company, signalNo, press, -published];
   }
-  return [signalNo, targetNo, company, -published];
+  return [signalNo, targetNo, company, press, -published];
 }
 
 function compareSortKeys(left, right) {
@@ -553,9 +588,12 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, [crawlStatus?.label]);
 
-  const displayedSignals = useMemo(() => signals.filter((item) => isWithinPeriod(item, selectedPeriod)), [selectedPeriod, signals]);
+  const displayedSignals = useMemo(
+    () => pressReleaseFirst(signals.filter((item) => isWithinPeriod(item, selectedPeriod))),
+    [selectedPeriod, signals],
+  );
   const displayedRelevantSignals = useMemo(
-    () => relevantSignals.filter((item) => isWithinPeriod(item, selectedPeriod)),
+    () => pressReleaseFirst(relevantSignals.filter((item) => isWithinPeriod(item, selectedPeriod))),
     [relevantSignals, selectedPeriod],
   );
   const ignoredSignalSet = useMemo(() => new Set(ignoredSignalKeys), [ignoredSignalKeys]);
@@ -580,6 +618,7 @@ export default function HomePage() {
   }, [ignoredSignalSet, investmentSortMode, periodInvestmentSignals]);
   const collectedCompanyCount = useMemo(() => new Set(displayedSignals.map((item) => item.company).filter(Boolean)).size, [displayedSignals]);
   const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
+  const pressReleaseCount = displayedSignals.filter((item) => isPressRelease(item)).length;
 
   return (
     <main className="shell">
@@ -761,6 +800,10 @@ export default function HomePage() {
           <strong>{officialCount}</strong>
         </div>
         <div>
+          <span>공식보도자료</span>
+          <strong>{pressReleaseCount}</strong>
+        </div>
+        <div>
           <span>기술 관련 후보</span>
           <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
         </div>
@@ -874,9 +917,7 @@ export default function HomePage() {
                   </td>
                   <td>
                     <div className="sourceStack">
-                      <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
-                        {item.source_type === "official" ? "공식" : "대체"}
-                      </span>
+                      <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
                       <span>{item.source}</span>
                     </div>
                   </td>
@@ -955,9 +996,7 @@ export default function HomePage() {
                   </td>
                   <td>
                     <div className="sourceStack">
-                      <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
-                        {item.source_type === "official" ? "공식" : "대체"}
-                      </span>
+                      <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
                       <span>{item.source}</span>
                     </div>
                   </td>
@@ -1010,9 +1049,7 @@ export default function HomePage() {
                     </td>
                     <td>
                       <div className="sourceStack">
-                        <span className={`sourceBadge ${item.source_type === "official" ? "official" : "fallback"}`}>
-                          {item.source_type === "official" ? "공식" : "대체"}
-                        </span>
+                        <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
                         <span>{item.source}</span>
                       </div>
                     </td>
