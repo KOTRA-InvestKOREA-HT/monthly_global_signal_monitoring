@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-02T07:47:23Z",
+  "run_started_at": "2026-09-03T02:31:53Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -11,7 +11,7 @@
   "date_range_mode": "explicit",
   "from_date": "2026-08-01",
   "to_date": "2026-08-31",
-  "lookback_days": 35,
+  "lookback_days": 36,
   "max_per_source": 6,
   "max_per_company": 10,
   "company_concurrency": 4,
@@ -20,16 +20,17 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 690,
+  "request_count": 695,
   "result_count": 425,
-  "official_result_count": 389,
-  "fallback_result_count": 36,
-  "companies_with_results": 72,
+  "official_result_count": 391,
+  "fallback_result_count": 34,
+  "companies_with_results": 71,
   "companies_with_official_results": 64,
   "companies_without_results": [
     "TIMET",
     "Magnix",
     "Heidenhain",
+    "Schmalz",
     "Texcell",
     "Shanghai Electric Wind Power"
   ],
@@ -57,7 +58,7 @@
     "GE Healthcare": 7,
     "Boeing": 7,
     "3M": 10,
-    "Ouster": 7,
+    "Ouster": 8,
     "Applied Materials": 8,
     "Magnix": 0,
     "Prodrive": 7,
@@ -68,7 +69,7 @@
     "Vestas": 6,
     "Heidenhain": 0,
     "Infineon": 7,
-    "Schmalz": 1,
+    "Schmalz": 0,
     "Bayer": 6,
     "Merck": 6,
     "Schott Pharma": 6,
@@ -79,7 +80,7 @@
     "EMM(Umicore)": 9,
     "Umicore": 10,
     "Solvay": 4,
-    "Syensqo": 4,
+    "Syensqo": 3,
     "Hexagon AB": 8,
     "ABB": 1,
     "Maxon": 10,
@@ -93,7 +94,7 @@
     "Texcell": 0,
     "Veolia": 10,
     "Airbus": 10,
-    "Safran": 5,
+    "Safran": 6,
     "Air Liquide": 6,
     "Arkema": 9,
     "DNP": 10,
@@ -136,7 +137,7 @@
     "GE Healthcare": 7,
     "Boeing": 7,
     "3M": 10,
-    "Ouster": 7,
+    "Ouster": 8,
     "Applied Materials": 8,
     "Magnix": 0,
     "Prodrive": 7,
@@ -172,7 +173,7 @@
     "Texcell": 0,
     "Veolia": 10,
     "Airbus": 10,
-    "Safran": 5,
+    "Safran": 6,
     "Air Liquide": 0,
     "Arkema": 9,
     "DNP": 10,
@@ -191,7 +192,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 72,
+  "error_count": 70,
   "errors": [
     {
       "target_no": 2,
@@ -346,6 +347,14 @@
       "error": "HTTP 403 Forbidden"
     },
     {
+      "target_no": 21,
+      "company": "GE Healthcare",
+      "source": "official_pages",
+      "source_url": "https://investor.gehealthcare.com/financial-information/sec-filings",
+      "source_name": "GE Healthcare - SEC Filings / Regulatory Filings",
+      "error": "fetch failed"
+    },
+    {
       "target_no": 22,
       "company": "Boeing",
       "source": "official_detail",
@@ -482,43 +491,11 @@
       "error": "HTTP 404 Not Found"
     },
     {
-      "target_no": 43,
-      "company": "EMM(Umicore)",
-      "source": "official_detail",
-      "source_url": "https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
-      "source_name": "EMM(Umicore) - Umicore Investor Relations / Investor Relations",
-      "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 43,
-      "company": "EMM(Umicore)",
-      "source": "official_detail",
-      "source_url": "https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "source_name": "EMM(Umicore) - Umicore Investor Relations / Investor Relations",
-      "error": "HTTP 404 Not Found"
-    },
-    {
       "target_no": 44,
       "company": "Umicore",
       "source": "official_detail",
       "source_url": "https://www.umicore.com/en/media/newsroom/currentAnnouncement.cta.url",
       "source_name": "Umicore - Newsroom / Newsroom / News",
-      "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 44,
-      "company": "Umicore",
-      "source": "official_detail",
-      "source_url": "https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
-      "source_name": "Umicore - Investor Relations / Investor Relations",
-      "error": "HTTP 404 Not Found"
-    },
-    {
-      "target_no": 44,
-      "company": "Umicore",
-      "source": "official_detail",
-      "source_url": "https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "source_name": "Umicore - Investor Relations / Investor Relations",
       "error": "HTTP 404 Not Found"
     },
     {
@@ -677,6 +654,14 @@
       "target_no": 60,
       "company": "Safran",
       "source": "official_detail",
+      "source_url": "https://www.safran-group.com/download/media/450817",
+      "source_name": "Safran - Pressroom / Newsroom / Press",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 60,
+      "company": "Safran",
+      "source": "official_detail",
       "source_url": "https://www.safran-group.com/download/media/431019",
       "source_name": "Safran - Pressroom / Newsroom / Press",
       "error": "HTTP 403 Forbidden"
@@ -771,9 +756,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260902T074723Z.json",
-    "csv": "outputs/company_signals_20260902T074723Z.csv",
-    "summary": "outputs/collection_summary_20260902T074723Z.json",
+    "json": "outputs/company_signals_20260903T023153Z.json",
+    "csv": "outputs/company_signals_20260903T023153Z.csv",
+    "summary": "outputs/collection_summary_20260903T023153Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"

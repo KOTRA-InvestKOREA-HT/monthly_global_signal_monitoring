@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-02T07:52:51Z",
+  "updated_at": "2026-09-03T02:36:18Z",
   "entries": {
     "075817baf59716c6310cee84ff92abe0": {
       "cache_key": "075817baf59716c6310cee84ff92abe0",
@@ -4368,7 +4368,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:18:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "c280c2af5a3cb96c4dc2de757dd503d2": {
       "cache_key": "c280c2af5a3cb96c4dc2de757dd503d2",
@@ -4651,7 +4651,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:02Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8ec382b57b8cc0c659c9d102c5b4f4f9": {
       "cache_key": "8ec382b57b8cc0c659c9d102c5b4f4f9",
@@ -4703,7 +4703,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:04Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6c3164c508efd9b0bb0c8b475922c729": {
       "cache_key": "6c3164c508efd9b0bb0c8b475922c729",
@@ -4755,7 +4755,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:12Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "78c95f79d55fa83203a95b447f92687f": {
       "cache_key": "78c95f79d55fa83203a95b447f92687f",
@@ -5064,7 +5064,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:19:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "f114880297317a71b8fc466875fc8e64": {
       "cache_key": "f114880297317a71b8fc466875fc8e64",
@@ -5116,7 +5116,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:00Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a878db51b5f4014fe7faabe3f99bbd05": {
       "cache_key": "a878db51b5f4014fe7faabe3f99bbd05",
@@ -5194,7 +5194,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:12Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b45c59e7f961c67d1b08086a2c36b755": {
       "cache_key": "b45c59e7f961c67d1b08086a2c36b755",
@@ -5220,7 +5220,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:14Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b9117d49e4b80075377f62c0ba5dc064": {
       "cache_key": "b9117d49e4b80075377f62c0ba5dc064",
@@ -5271,7 +5271,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "cbcdc5d8b461100e7b60e4ff48261e18": {
       "cache_key": "cbcdc5d8b461100e7b60e4ff48261e18",
@@ -5450,7 +5450,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:44Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "0be5a2d241e159431932a2f71d228911": {
       "cache_key": "0be5a2d241e159431932a2f71d228911",
@@ -5527,7 +5527,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:20:57Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "5b06ac35f0324a9e38bdcd54d576c089": {
       "cache_key": "5b06ac35f0324a9e38bdcd54d576c089",
@@ -5631,7 +5631,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:13Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fa8f18a5e449d3347e6e7c8ac05ec976": {
       "cache_key": "fa8f18a5e449d3347e6e7c8ac05ec976",
@@ -5657,7 +5657,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:15Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "0d492a7877a24940dce0c11f6b9172e4": {
       "cache_key": "0d492a7877a24940dce0c11f6b9172e4",
@@ -5786,7 +5786,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:35Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b97e4bcbcda6f770394c9305a3ed48ee": {
       "cache_key": "b97e4bcbcda6f770394c9305a3ed48ee",
@@ -5837,7 +5837,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:39Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "65bd3f46cd5a03a79b1b1c036b440048": {
       "cache_key": "65bd3f46cd5a03a79b1b1c036b440048",
@@ -5863,7 +5863,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:42Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "0b0fff01e2b9f19a5cf352ddda09d0a2": {
       "cache_key": "0b0fff01e2b9f19a5cf352ddda09d0a2",
@@ -5889,7 +5889,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:46Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8b7d9f279f4034d7d42c13007e224a9e": {
       "cache_key": "8b7d9f279f4034d7d42c13007e224a9e",
@@ -5914,7 +5914,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:21:51Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "820d06951e3fef55a4d77cdfd1405b4e": {
       "cache_key": "820d06951e3fef55a4d77cdfd1405b4e",
@@ -6354,7 +6354,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:22:59Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b82453c65ddf704d788dafa17d52d917": {
       "cache_key": "b82453c65ddf704d788dafa17d52d917",
@@ -6379,7 +6379,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:05Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "5c3e0b12860a1168ba9622a4fe72ca87": {
       "cache_key": "5c3e0b12860a1168ba9622a4fe72ca87",
@@ -6404,7 +6404,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:07Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8b011b6334ca1b3126ed137f017bfb89": {
       "cache_key": "8b011b6334ca1b3126ed137f017bfb89",
@@ -6429,7 +6429,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:23:11Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8c8684a9ab9b87a9eefac1f85e6bb3a7": {
       "cache_key": "8c8684a9ab9b87a9eefac1f85e6bb3a7",
@@ -8544,7 +8544,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:37:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "ddb245456ebc5561719b22cd9cacea3a": {
       "cache_key": "ddb245456ebc5561719b22cd9cacea3a",
@@ -8590,7 +8590,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:37:57Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fb727a308c816cad68a5068a0de45153": {
       "cache_key": "fb727a308c816cad68a5068a0de45153",
@@ -8683,7 +8683,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "9b4fb89c36bb67f818b3656ed7468845": {
       "cache_key": "9b4fb89c36bb67f818b3656ed7468845",
@@ -8706,7 +8706,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:12Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "f32cdbdd76bdb8f5013b4ea5a452f585": {
       "cache_key": "f32cdbdd76bdb8f5013b4ea5a452f585",
@@ -8822,7 +8822,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "12303b65700f4747dea0ac07a024527c": {
       "cache_key": "12303b65700f4747dea0ac07a024527c",
@@ -8963,7 +8963,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:48Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e159c5fdd7eac262046eb525f2e6fae5": {
       "cache_key": "e159c5fdd7eac262046eb525f2e6fae5",
@@ -8986,7 +8986,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:52Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a39f7f20b82177532e48c4f9ba452d12": {
       "cache_key": "a39f7f20b82177532e48c4f9ba452d12",
@@ -9010,7 +9010,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "178af315ed667694d6db6d6371fe9a61": {
       "cache_key": "178af315ed667694d6db6d6371fe9a61",
@@ -9034,7 +9034,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:38:56Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8fd12095680d875d5d17e586ce174aa2": {
       "cache_key": "8fd12095680d875d5d17e586ce174aa2",
@@ -9058,7 +9058,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:01Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "53a099cd19a061866ab8106aa2e686b5": {
       "cache_key": "53a099cd19a061866ab8106aa2e686b5",
@@ -9082,7 +9082,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e61efbda1f5b9b57a9125733c85d9921": {
       "cache_key": "e61efbda1f5b9b57a9125733c85d9921",
@@ -9106,7 +9106,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:10Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "5b69d6ce2aa5fc7e064f042b3480ae5a": {
       "cache_key": "5b69d6ce2aa5fc7e064f042b3480ae5a",
@@ -9130,7 +9130,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:15Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "731ab2ec077fc6b9075c4b5d005436cc": {
       "cache_key": "731ab2ec077fc6b9075c4b5d005436cc",
@@ -9154,7 +9154,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:39Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "110fba82e88b00134b04748c943de0df": {
       "cache_key": "110fba82e88b00134b04748c943de0df",
@@ -9178,7 +9178,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:23Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "69e58cba969c36926f5f11c385c850f4": {
       "cache_key": "69e58cba969c36926f5f11c385c850f4",
@@ -9202,7 +9202,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:28Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "4145a9003c5a980d747037162a2baea2": {
       "cache_key": "4145a9003c5a980d747037162a2baea2",
@@ -9216,17 +9216,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore 뉴스룸의 비디오 센터에는 고리튬망간(HLM) 배터리, 전고체 배터리 및 충전식 배터리 소재를 주제로 한 영상이 게시돼 있다. 해당 콘텐츠는 리튬과 배터리 소재를 주요 기술 주제로 다루며, 배터리 소재 사업 및 기술 정보를 대외적으로 제공하는 활동으로 확인된다. 다만 제공된 본문에는 수산화리튬·탄산리튬의 생산, 조달, 공급 또는 고객 적용 관련 구체적 내용은 제시되지 않는다.",
+      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터에는 고리튬망간(HLM) 배터리, 전고체 배터리 및 충전식 배터리 소재 관련 영상 콘텐츠가 제시된다. 해당 콘텐츠는 배터리 소재 기술과 리튬 기반 배터리 주제를 다룬다. 다만 수산화리튬·탄산리튬의 생산, 조달, 고객사 적용 또는 투자·증설 활동에 관한 구체적 사실은 본문에서 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.45,
-      "ai_summary_reason": "본문은 배터리 소재 관련 영상 제목만 제시하며 수산화리튬·탄산리튬 관련 사업 활동이나 기술·시장 사실을 구체적으로 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.55,
+      "ai_summary_reason": "본문은 영상 제목 및 배터리 소재 관련 키워드만 제공하며, 수산화리튬·탄산리튬 관련 사업 활동이나 기술 적용 사실이 구체적으로 제시되지 않음. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore 뉴스룸의 Video Center에서 고망간 리튬(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재 관련 콘텐츠가 제시된다. 해당 콘텐츠는 리튬 기반 배터리 소재와 양극재 기술을 주요 주제로 다루며, 코발트 및 특수소재 사업과의 연계 가능성도 확인된다. 다만 원문 영상은 기능성 쿠키 미동의로 재생이 제한되어 수산화리튬·탄산리튬의 구체적 적용, 생산 확대, 고객 및 시장 활동에 관한 세부 사실은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore 뉴스룸의 영상 콘텐츠에서 리튬 및 배터리 소재와 관련해 고리튬 망간(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재가 주요 주제로 제시된다. 이와 함께 전기·광학 소재, 특수소재, 자원 부족 대응 및 재활용, 정지형·자동차 촉매, 귀금속 화학, 코발트·특수소재 사업이 소개된다. 다만 수산화리튬·탄산리튬의 조달, 생산 확대, 고객 적용 또는 시장 거래와 관련한 구체적 사업 활동은 본문에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:51:43Z",
+      "ai_summary_created_at": "2026-09-03T02:35:33Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "985b6fcab191b9a1f2ed58f116ff4f44": {
       "cache_key": "985b6fcab191b9a1f2ed58f116ff4f44",
@@ -9240,17 +9240,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "우미코어는 2025년 3월 27일 배터리 소재 전략 검토 결과와 2028 로드맵을 공개했다. 회사는 기반 사업의 리더십 강화와 현금창출력 제고에 전략 초점을 재조정하고, 배터리 양극재 사업에서는 가치 회복을 위한 체계 구축을 추진한다. CEO와 경영진은 핵심 역량 및 사업모델을 활용해 기반 사업의 현금창출 잠재력을 극대화하고 양극재 부문의 가치 회복을 도모하는 방향을 제시한다.",
+      "ai_summary_ko": "Umicore는 2025년 3월 27일 자본시장일 행사에서 배터리 소재 전략 검토 결과와 2028 로드맵을 공개했다. 회사는 기반 사업의 리더십 강화와 현금창출력 확대에 전략 초점을 재조정했다. 배터리 양극재 사업은 가치 회복을 위한 체계 구축 대상으로 제시되며, 핵심 역량과 사업모델을 활용한 실행 방향을 추진한다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "본문은 배터리 양극재 사업 전략만 언급하며 수산화리튬·탄산리튬의 조달·투자·기술 적용 관련 구체적 사실은 제시하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "공식 발표문에 배터리 양극재 사업의 전략 검토, 가치 회복 체계 구축 및 2028 로드맵이 명시되어 있다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore는 2025년 3월 배터리 소재 전략 검토 결과와 2028년 로드맵을 공개했다. 기초 사업 부문에서는 핵심 역량과 사업모델을 활용해 리더십을 강화하고 현금창출 잠재력을 추가로 확대하는 방향을 제시했다. 배터리 양극재 소재 사업은 가치 회복을 위한 전략적 재정비 대상으로 설정하고, 관련 사업의 회복과 수익성 개선을 추진할 예정이다.",
+      "ai_summary_luna_draft": "Umicore는 2025년 3월 자본시장 설명회에서 배터리 소재 전략 검토 결과와 2028년까지의 사업 로드맵을 제시한다. 핵심 사업의 경쟁력과 리더십을 강화하고, 해당 사업에서 창출되는 현금흐름을 확대하는 방향을 추진한다. 배터리 양극재 소재 사업은 전략적 재정비를 통해 가치 회복을 도모하며, 회사의 핵심 역량과 사업모델을 활용한 수익성 개선이 주요 과제로 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:51:45Z",
+      "ai_summary_created_at": "2026-09-03T02:35:33Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "037e5c36d74d1326f13d3fb33d402c29": {
       "cache_key": "037e5c36d74d1326f13d3fb33d402c29",
@@ -9273,7 +9273,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:39Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "96cf411b9385453fba655599a0cfe6f8": {
       "cache_key": "96cf411b9385453fba655599a0cfe6f8",
@@ -9296,7 +9296,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fc3fcab19d94ff87bf0a3ec05b331e88": {
       "cache_key": "fc3fcab19d94ff87bf0a3ec05b331e88",
@@ -9319,7 +9319,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "d672c6fb6787077c00bab9278f09e112": {
       "cache_key": "d672c6fb6787077c00bab9278f09e112",
@@ -9342,7 +9342,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:39:47Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3950bf509f41ad0d177b4d8517626e34": {
       "cache_key": "3950bf509f41ad0d177b4d8517626e34",
@@ -9715,7 +9715,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:40:30Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "479c1df2a2a1cfd4cc100ed554911aca": {
       "cache_key": "479c1df2a2a1cfd4cc100ed554911aca",
@@ -9799,17 +9799,17 @@
       "source": "Safran - Pressroom / Newsroom / Press",
       "published_at": "",
       "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
-      "ai_summary_ko": "Safran 뉴스룸은 ‘Tomorrow’s electric aircraft’라는 제목의 콘텐츠를 게시했다. 제공된 본문에는 전기항공기 관련 세부 사업 활동이나 기술 사양이 포함되지 않았다. 항공용 전기모터 및 고출력 배터리 추진 모듈의 개발·적용·고객 현황은 확인되지 않는다.",
+      "ai_summary_ko": "Safran은 ‘Tomorrow’s electric aircraft’ 제목의 자료를 통해 전기항공기를 주제로 제시한다. 제공된 원문에는 항공용 전기모터, 고출력 배터리 또는 추진 모듈의 사양과 개발 단계, 적용 기체 관련 내용이 포함되지 않는다. 고객·협력사, 투자, 양산 및 시장 진출 활동도 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.32,
-      "ai_summary_reason": "제목 외 본문 근거가 없어 기술·사업 관련 사실 확인이 제한된다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.2,
+      "ai_summary_reason": "제목 외 본문 근거가 없어 유치필요 기술 관련 사업 활동 및 기술 적용 사실을 확인할 수 없음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Safran이 ‘Tomorrow’s electric aircraft’라는 제목의 항공 분야 콘텐츠를 공개한 사실이 확인된다. 제목을 통해 전기항공기 관련 주제가 제시되나, 항공용 전기모터의 개발·적용 내용은 확인되지 않는다. 고출력 배터리 추진 모듈의 기술 사양, 사업 활동, 고객 및 시장 흐름에 관한 구체적 정보도 제공 자료에서 확인되지 않아 관련 유치 시그널의 세부 검토가 필요하다.",
+      "ai_summary_luna_draft": "Safran 공식 뉴스룸에 ‘Tomorrow’s electric aircraft’ 제목의 자료가 게시되어 미래 전기항공기 관련 사업 주제가 제시된다. 다만 제공된 본문에는 항공용 전기모터, 고출력 배터리 또는 추진 모듈의 구체적인 기술 사양과 적용 내용이 확인되지 않는다. 고객, 시장 전개 및 사업 추진 일정에 관한 정보도 제시되지 않아 관련 유치 수요와의 직접적인 연계성은 추가 확인이 필요하다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:03Z",
+      "ai_summary_created_at": "2026-09-03T02:35:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6e5d8e2bea95094010bfb4ab45b0afdd": {
       "cache_key": "6e5d8e2bea95094010bfb4ab45b0afdd",
@@ -9833,7 +9833,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:04Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "c99f97abdc430a02bbcc854db7303697": {
       "cache_key": "c99f97abdc430a02bbcc854db7303697",
@@ -9847,17 +9847,17 @@
       "source": "Vestas - Company News / Company News",
       "published_at": "",
       "target_technology": "해상풍력터빈",
-      "ai_summary_ko": "제공된 본문은 베스타스의 기업 연혁과 풍력터빈 제조사로서의 일반적 소개를 포함한다. 회사는 덴마크의 대장간 기업에서 출발해 세계 최대 풍력터빈 제조사로 성장한 이력을 제시한다. 다만 해상풍력터빈의 제품 사양, 기술 적용, 수주·고객, 생산·투자 또는 시장 진출 활동에 관한 구체적 사실은 확인되지 않는다. 본문 대부분은 본사 및 지역별 언론·홍보 담당자 연락처 안내로 구성된다.",
+      "ai_summary_ko": "제공된 본문은 베스타스의 연혁과 기업·지역별 미디어 연락처를 안내한다. 베스타스가 세계 최대 풍력터빈 제조업체로 소개되지만, 해상풍력터빈의 제품 사양·기술 적용·수주·생산 또는 투자 활동은 제시되지 않는다. 이에 따라 해상풍력터빈 관련 유치 필요 품목·기술 및 사업 추진 현황은 본 자료만으로 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.96,
-      "ai_summary_reason": "풍력터빈 일반 언급만 있으며 해상풍력터빈 관련 사업·기술·시장 활동의 구체적 근거가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "본문은 회사 소개 및 미디어 연락처 중심이며 해상풍력터빈 관련 구체적 사업·기술 사실이 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Vestas는 덴마크에서 대장장이 기업으로 출발해 세계 최대 풍력터빈 제조기업으로 성장한 이력을 소개한다. 현재 풍력터빈 제조 역량을 기반으로 글로벌 사업을 전개하고 있으며, 아시아·태평양과 북미·유럽 등 지역별 커뮤니케이션 체계를 운영한다. 다만 해상풍력터빈 관련 구체적인 제품 적용, 수주, 투자 또는 신규 사업 추진 내용은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "베스타스는 덴마크에서 대장장이 기업으로 출발해 세계 최대 규모의 풍력터빈 제조기업으로 성장한 연혁을 제시한다. 회사 홈페이지는 풍력터빈 제조 역량과 기업 연혁을 소개하며, 아시아·태평양, 북미, 북·중부 유럽 등 지역별 홍보·미디어 연락망을 운영한다. 다만 해당 자료에서는 해상풍력터빈의 구체적 적용 사례, 신규 사업 추진, 고객 및 시장 확대 흐름은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:07Z",
+      "ai_summary_created_at": "2026-09-03T02:35:45Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "4ec2a0d02f932536db731c154fd80042": {
       "cache_key": "4ec2a0d02f932536db731c154fd80042",
@@ -9871,17 +9871,17 @@
       "source": "Vestas - Company News / Company News",
       "published_at": "",
       "target_technology": "해상풍력터빈",
-      "ai_summary_ko": "Vestas는 이미지 라이브러리를 통해 다양한 풍력터빈 설치 현장 및 경영진 관련 이미지를 다운로드할 수 있도록 제공한다. 페이스북·링크드인·인스타그램·유튜브 채널에서 기업 소식, 채용 정보, 조직문화, 지속가능 에너지 솔루션 관련 영상과 콘텐츠를 게시한다. 임직원과 외부 협력사를 대상으로 소셜미디어 사용 및 콘텐츠 제작 시 브랜드에 영향을 줄 수 있는 사항에 관한 가이드라인을 운영한다.",
+      "ai_summary_ko": "Vestas는 페이스북, 링크드인, 인스타그램, 유튜브 채널을 통해 기업 활동, 채용 정보, 조직문화 및 지속가능 에너지 솔루션 관련 콘텐츠를 제공한다. 이미지 라이브러리에서는 풍력터빈 설치 현장과 경영진 이미지를 다운로드용으로 제공한다. 임직원 및 외부 협력자에게 브랜드에 영향을 미칠 수 있는 소셜미디어 사용과 콘텐츠 제작 지침 준수를 요구한다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.98,
-      "ai_summary_reason": "본문은 소셜미디어 및 이미지 라이브러리 안내로 구성돼 있으며, 해상풍력터빈의 제품·기술·사업 활동 관련 구체적 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.97,
+      "ai_summary_reason": "본문은 소셜미디어 및 이미지 라이브러리 안내로, 해상풍력터빈의 제품·기술·수주·시장 활동 관련 구체적 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Vestas는 풍력터빈 관련 다양한 사업 현장 이미지를 온라인 이미지 라이브러리에서 제공하며, 이용 조건과 다운로드 정보를 함께 제시한다. 페이스북·링크드인·인스타그램·유튜브 등 소셜미디어 채널을 통해 풍력터빈 및 지속가능 에너지 솔루션 관련 기업 활동, 혁신 사례와 영상을 공유한다. 채용 공고와 기업 문화 정보도 링크드인에서 제공하는 것으로 확인된다.",
+      "ai_summary_luna_draft": "Vestas는 이미지 라이브러리를 통해 다양한 풍력터빈 설치 현장과 경영진 관련 이미지의 다운로드 서비스를 제공한다. 페이스북·링크드인·인스타그램 등 소셜미디어에서 풍력터빈 사업과 기업 활동, 구성원 관련 사진·게시물·영상을 공유하고 최신 채용 및 기업문화 정보를 안내한다. 유튜브에서는 지속가능 에너지 솔루션과 관련한 기업 영상, 혁신 사례 및 글로벌 활동 콘텐츠를 공개한다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:13Z",
+      "ai_summary_created_at": "2026-09-03T02:35:52Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "604b525feec2b497904ba2d00737c7da": {
       "cache_key": "604b525feec2b497904ba2d00737c7da",
@@ -9895,17 +9895,17 @@
       "source": "EMM(Umicore) - Umicore Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "실리콘 음극재 기술(증착형 Si-C)",
-      "ai_summary_ko": "Umicore 영상센터는 실리콘 음극재(Silicon Anode)를 배터리 기술 분야의 주요 콘텐츠로 제시한다. 전고체 배터리 프로토타이핑 센터 관련 영상도 함께 공개해 차세대 배터리 개발 활동을 소개한다. 배터리 재활용 솔루션 영상 역시 제공하며, 본문상 증착형 Si-C 공정·성능·양산 및 고객 적용 관련 구체적 정보는 확인되지 않는다.",
+      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터에 ‘Silicon Anode’ 콘텐츠가 게시돼 배터리용 실리콘 음극재를 별도 주제로 다루는 사실이 확인된다. 같은 영상 목록에는 전고체 배터리 프로토타이핑 센터와 배터리 재활용 솔루션 관련 콘텐츠도 포함된다. 다만 제공된 본문에는 증착형 Si-C 구조, 성능 특성, 개발 단계 및 고객·양산 적용 정보는 제시되지 않는다.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "실리콘 음극재와 전고체 배터리 프로토타이핑 관련 영상 제목은 확인되나, 증착형 Si-C 기술의 구체적 개발·사업화 근거는 제공되지 않음 / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "실리콘 음극재 관련 영상 제목은 확인되나, 유치필요 기술인 증착형 Si-C에 대한 구체적 기술·사업 근거가 부족함 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore 뉴스룸의 영상 센터에 ‘Silicon Anode’ 관련 콘텐츠가 게시되어 실리콘 음극 기술을 사업·기술 활동의 한 분야로 제시한다. 동일 화면에는 전고체 배터리용 프로토타이핑 센터와 배터리 재활용 솔루션 관련 콘텐츠도 함께 확인된다. 다만 원문 영상이 쿠키 설정으로 차단되어 증착형 Si-C 기술의 구체적 개발 내용, 적용 현황 및 고객·시장 흐름은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore 뉴스룸의 영상 자료에서 실리콘 음극재 관련 ‘Silicon Anode’ 콘텐츠가 확인된다. 해당 자료는 전고체 배터리용 프로토타이핑 센터와 배터리 소재·기술 사업을 함께 제시하며, 실리콘 음극재 기술을 차세대 배터리 분야의 주요 개발 항목으로 다루는 흐름이 나타난다. 다만 영상 본문과 세부 기술 사양, 적용 고객 및 사업 추진 일정은 제공된 화면에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:15Z",
+      "ai_summary_created_at": "2026-09-03T02:35:52Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "47228847f16abe0c06181a5cc569e9e8": {
       "cache_key": "47228847f16abe0c06181a5cc569e9e8",
@@ -9919,17 +9919,17 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore는 벨기에 올렌 사업장에서 배터리 양극 활물질 계량 작업을 수행하고, 배터리 셀 사이클러 및 조립 설비를 활용한 연구개발 활동을 전개한다. 핀란드 코콜라 분석실에서는 배터리 소재 시험을 수행하며, 폴란드 니사에는 배터리 소재 생산시설과 전처리 공정을 운영한다. 한국 천안 사업장 표지 이미지도 공개돼 배터리 소재 관련 국내 거점의 존재가 확인된다.",
+      "ai_summary_ko": "Umicore는 벨기에 올렌에서 배터리 양극활물질 계량 작업과 배터리 사이클러·조립 설비를 활용한 연구개발을 수행한다. 핀란드 코콜라에서는 배터리 소재 시험 분석실을 운영한다. 폴란드 니사에는 배터리 소재 생산시설과 전처리 공정을 갖추고 있으며, 한국 천안 사업장 표지판도 자료에 제시된다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.76,
-      "ai_summary_reason": "본문은 양극 활물질 및 배터리 소재 생산·시험·R&D 활동을 보여주지만 수산화리튬·탄산리튬의 생산 또는 적용 사실은 명시하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.62,
+      "ai_summary_reason": "제공된 내용은 미디어 갤러리 사진 설명 중심으로, 수산화리튬·탄산리튬의 생산·조달·투자 관련 사실은 확인되지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore는 벨기에 올렌에서 배터리 양극 활물질 계량과 배터리 조립·사이클러 기반 연구개발을 수행하는 현장을 공개한다. 핀란드 코콜라에서는 배터리 소재 분석·시험 설비를 운영하며, 폴란드 니사에서는 배터리 소재 생산기지와 전처리 공정 운영 현황이 제시된다. 다만 수산화리튬·탄산리튬의 조달, 생산 확대 또는 고객·시장 관련 활동은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore는 벨기에 올렌에서 배터리 양극 활물질의 계량 및 연구개발용 배터리 사이클러·조립 설비를 운영하는 모습이 제시된다. 핀란드 코콜라에서는 배터리 소재 분석·시험이 수행되며, 폴란드 니사에서는 배터리 소재 생산시설과 전처리 공정 운영 현황이 확인된다. 관련 자료는 수산화리튬·탄산리튬을 포함한 양극재 소재의 생산·분석·연구개발 기반과 사업 활동을 보여주는 자료로 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:22Z",
+      "ai_summary_created_at": "2026-09-03T02:36:00Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "47a1f9a8d7a1bd883d39d598c550df13": {
       "cache_key": "47a1f9a8d7a1bd883d39d598c550df13",
@@ -9952,7 +9952,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:06Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3eabbd4342d97499c63dc5dc37fd4d94": {
       "cache_key": "3eabbd4342d97499c63dc5dc37fd4d94",
@@ -9975,7 +9975,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "66ecb82e8100708a9902f3d9a58132c6": {
       "cache_key": "66ecb82e8100708a9902f3d9a58132c6",
@@ -10046,7 +10046,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:41:18Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "92ecbca2513bce678e1c7dd7e4cad0b0": {
       "cache_key": "92ecbca2513bce678e1c7dd7e4cad0b0",
@@ -10308,7 +10308,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:40Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8d6e4e86fbe4a812b6c98d176b0192ab": {
       "cache_key": "8d6e4e86fbe4a812b6c98d176b0192ab",
@@ -10332,7 +10332,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "9ffdb310d4f45673eb8f6b67d9f8cc5e": {
       "cache_key": "9ffdb310d4f45673eb8f6b67d9f8cc5e",
@@ -10356,7 +10356,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "95ceff969a41c7e0d82b7b288fc13d06": {
       "cache_key": "95ceff969a41c7e0d82b7b288fc13d06",
@@ -10379,7 +10379,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:12Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "bf3602c6615bdc03d1f7c478b9ee0e5f": {
       "cache_key": "bf3602c6615bdc03d1f7c478b9ee0e5f",
@@ -10403,7 +10403,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:43Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "c18c8fe0ba86c1ea715936872bed7255": {
       "cache_key": "c18c8fe0ba86c1ea715936872bed7255",
@@ -10426,7 +10426,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:17Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8f221c8467d7df744d70f78b6c1d436d": {
       "cache_key": "8f221c8467d7df744d70f78b6c1d436d",
@@ -10450,7 +10450,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-24T09:42:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "2bbeec44f380a165b77c87cc4e0142e4": {
       "cache_key": "2bbeec44f380a165b77c87cc4e0142e4",
@@ -10524,7 +10524,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:09Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "65a5c798107535ea635a821a8a6a2e55": {
       "cache_key": "65a5c798107535ea635a821a8a6a2e55",
@@ -10550,7 +10550,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:09Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fb28c6ecde703db8bc3a26245647c28a": {
       "cache_key": "fb28c6ecde703db8bc3a26245647c28a",
@@ -10576,7 +10576,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:18Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "59e5e9ec11ebc63c61a7dd12f04e8693": {
       "cache_key": "59e5e9ec11ebc63c61a7dd12f04e8693",
@@ -10628,7 +10628,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:26Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b0611f879cf46bfe567a7c4895b9aab2": {
       "cache_key": "b0611f879cf46bfe567a7c4895b9aab2",
@@ -10654,7 +10654,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:26Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e2a76b7a25e43021a7325ae2ea9d9693": {
       "cache_key": "e2a76b7a25e43021a7325ae2ea9d9693",
@@ -10680,7 +10680,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:34Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b87606e9effe4ada370fe59f568488a3": {
       "cache_key": "b87606e9effe4ada370fe59f568488a3",
@@ -10757,7 +10757,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:42Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "bd4ececc457b36e11a136a782a1ddb7f": {
       "cache_key": "bd4ececc457b36e11a136a782a1ddb7f",
@@ -10834,7 +10834,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "14ef59bbf5acfdc04b49f71ede340b72": {
       "cache_key": "14ef59bbf5acfdc04b49f71ede340b72",
@@ -10886,7 +10886,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:38:57Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a9146da60d0c8295023ed146069109c8": {
       "cache_key": "a9146da60d0c8295023ed146069109c8",
@@ -10911,7 +10911,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:02Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e65b58122ba4940be601b1ae31087add": {
       "cache_key": "e65b58122ba4940be601b1ae31087add",
@@ -10937,7 +10937,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:04Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "7ee873f348cf11bcb8430178b2799f51": {
       "cache_key": "7ee873f348cf11bcb8430178b2799f51",
@@ -10963,7 +10963,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:07Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b62608e261dbef6e16e45263a953de7f": {
       "cache_key": "b62608e261dbef6e16e45263a953de7f",
@@ -10988,7 +10988,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:15Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "87096a1cfc24ee7350e4d3fc0b2dc5c5": {
       "cache_key": "87096a1cfc24ee7350e4d3fc0b2dc5c5",
@@ -11014,7 +11014,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:17Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3b930e476a87507190c25920d964ed9a": {
       "cache_key": "3b930e476a87507190c25920d964ed9a",
@@ -11040,7 +11040,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:20Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3b65d759bb218443fa830731b4ca2a0b": {
       "cache_key": "3b65d759bb218443fa830731b4ca2a0b",
@@ -11066,7 +11066,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:25Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "f5e84b3d4636c6e547a0845a4253c327": {
       "cache_key": "f5e84b3d4636c6e547a0845a4253c327",
@@ -11092,7 +11092,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:29Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "19c0f7ea8a656a21e02fb420b79bac65": {
       "cache_key": "19c0f7ea8a656a21e02fb420b79bac65",
@@ -11195,7 +11195,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:41Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "cfbd1de9ed4c970ae1c0d564ff38e454": {
       "cache_key": "cfbd1de9ed4c970ae1c0d564ff38e454",
@@ -11221,7 +11221,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:46Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e069ac6419d224e8c3858c60edf995be": {
       "cache_key": "e069ac6419d224e8c3858c60edf995be",
@@ -11247,7 +11247,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:48Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "7a44f0be05e11c6ebb6545f5c66e36e9": {
       "cache_key": "7a44f0be05e11c6ebb6545f5c66e36e9",
@@ -11272,7 +11272,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:52Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "228cb9b228cc5518f7033cf162134aaa": {
       "cache_key": "228cb9b228cc5518f7033cf162134aaa",
@@ -11298,7 +11298,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:53Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "07344c10b878ab51fff98e96f6f8a745": {
       "cache_key": "07344c10b878ab51fff98e96f6f8a745",
@@ -11323,7 +11323,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:39:56Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6c7071f685dfb2437ae254c84b2aa3bc": {
       "cache_key": "6c7071f685dfb2437ae254c84b2aa3bc",
@@ -11370,7 +11370,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:26Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fa54511ba8093d52196d30742d2ed6c9": {
       "cache_key": "fa54511ba8093d52196d30742d2ed6c9",
@@ -11393,7 +11393,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:05Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6a1200c4e483dc8737aae2902a9c5f87": {
       "cache_key": "6a1200c4e483dc8737aae2902a9c5f87",
@@ -11417,7 +11417,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:08Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "8170d6963d2faeb6b9a32b6b67ef65e0": {
       "cache_key": "8170d6963d2faeb6b9a32b6b67ef65e0",
@@ -11441,7 +11441,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:34Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fa2e41dd1c66ebd0270d86f894b95f3a": {
       "cache_key": "fa2e41dd1c66ebd0270d86f894b95f3a",
@@ -11465,7 +11465,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:21Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "69ea87b5fc121e08d90c91686d02bcc0": {
       "cache_key": "69ea87b5fc121e08d90c91686d02bcc0",
@@ -11489,7 +11489,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:37Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-08-27T03:41:57Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "1aa9c3fb6c5e4af7c3fe9ee731a13c1f": {
       "cache_key": "1aa9c3fb6c5e4af7c3fe9ee731a13c1f",
@@ -11560,7 +11560,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "17972c4809f28bb7f79f29e8fe644ca1": {
       "cache_key": "17972c4809f28bb7f79f29e8fe644ca1",
@@ -11631,7 +11631,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:40:56Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "56b3c243da6ca7c9242afc8aa47cd716": {
       "cache_key": "56b3c243da6ca7c9242afc8aa47cd716",
@@ -11678,7 +11678,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:28Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e2792e29ce08ae04453e3e3405637178": {
       "cache_key": "e2792e29ce08ae04453e3e3405637178",
@@ -11701,7 +11701,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:32Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a04295d89a458187b61cdfb110b6b1ad": {
       "cache_key": "a04295d89a458187b61cdfb110b6b1ad",
@@ -11715,17 +11715,17 @@
       "source": "Cytiva - Danaher Investor Relations / Investor Relations RSS",
       "published_at": "2026-08-03T20:15:00Z",
       "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
-      "ai_summary_ko": "Danaher는 2026년 8월 Julie Sawyer Montgomery를 사장 겸 최고경영자로 임명했다고 발표했다. 공시 문서는 회사의 성장 기회와 향후 실적 전망, 관례적 종결조건을 전제로 한 StatLab 인수 진행 사항을 언급한다. 제공된 본문에는 Cytiva의 바이오의약품 생산용 배양·정제 시스템, 레진 제품 또는 관련 고객·시장 적용 현황은 제시되지 않는다.",
+      "ai_summary_ko": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 선임했다. 공개된 발췌문은 회사의 성장 기회와 관례적 종결 조건이 적용되는 StatLab 인수 관련 전향적 진술을 포함한다. Cytiva의 바이오의약품 생산용 배양·정제 시스템, 레진 제품의 적용 분야, 생산설비 공급 및 고객·시장 확대와 관련된 구체적 사업 활동은 확인되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.94,
-      "ai_summary_reason": "본문은 경영진 인사와 일반적 미래예측 문구가 중심이며, 대상 품목·기술 관련 사업 사실을 확인할 수 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.08,
+      "ai_summary_reason": "제공된 본문은 Danaher 경영진 선임 및 전향적 진술 중심이며, Cytiva의 배양·정제 시스템 또는 resin 관련 사업 사실을 뒷받침하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 선임하는 인사 내용을 발표하고, 회사의 성장 및 사업 기회와 향후 실적에 관한 미래예측 진술을 제시한다. 자료에는 StatLab 인수 추진과 관련한 내용도 포함되며, Cytiva의 바이오의약품 생산용 배양·정제 시스템과 연관된 resin 용어가 확인된다. 다만 해당 수지의 구체적 적용 기술, 제품·설비 확대, 고객 확보 및 시장 흐름에 관한 세부 내용은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 선임한 내용의 자료를 게시했다. 자료에는 회사의 성장 및 사업 기회, 향후 실적과 관련한 전망이 포함된다. 또한 StatLab 인수 추진이 언급되며, 바이오의약품 생산용 배양·정제 시스템과 연관된 resin 키워드가 확인되나 구체적인 기술 적용이나 사업 활동 내용은 제시되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:36Z",
+      "ai_summary_created_at": "2026-09-03T02:36:07Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "c44bb752cb8da7a92e60c3fa340a0739": {
       "cache_key": "c44bb752cb8da7a92e60c3fa340a0739",
@@ -11749,7 +11749,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:35Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "dd11c48f2c0bd942184d2da245873430": {
       "cache_key": "dd11c48f2c0bd942184d2da245873430",
@@ -11772,7 +11772,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-08-27T03:41:44Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "56d41ddd2c32272fde632e7e0fd2fe6b": {
       "cache_key": "56d41ddd2c32272fde632e7e0fd2fe6b",
@@ -11900,7 +11900,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:16Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "ea3e4759d49f5f4180fd71dc94010294": {
       "cache_key": "ea3e4759d49f5f4180fd71dc94010294",
@@ -11926,7 +11926,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:24Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "35b3b37c6bb846f04bf0cc2dbae1457f": {
       "cache_key": "35b3b37c6bb846f04bf0cc2dbae1457f",
@@ -11952,7 +11952,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:25Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "27e75d2c29b041b3d80ddf3679e58046": {
       "cache_key": "27e75d2c29b041b3d80ddf3679e58046",
@@ -12004,7 +12004,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:37Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "f701b21d845088414af89a88d5ba8afe": {
       "cache_key": "f701b21d845088414af89a88d5ba8afe",
@@ -12030,7 +12030,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:45Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a5c3328d612cda4d6aec80e035d66ccd": {
       "cache_key": "a5c3328d612cda4d6aec80e035d66ccd",
@@ -12082,7 +12082,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "ad5c63868da4080cd7e1e7dcf0b308ed": {
       "cache_key": "ad5c63868da4080cd7e1e7dcf0b308ed",
@@ -12108,7 +12108,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:58:57Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "9cc82ed57af89698055dfac80917a564": {
       "cache_key": "9cc82ed57af89698055dfac80917a564",
@@ -12134,7 +12134,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:03Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "85e9377c7d1db91bc4724ea2a1b37547": {
       "cache_key": "85e9377c7d1db91bc4724ea2a1b37547",
@@ -12160,7 +12160,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:04Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6440dc50a817bd953f68f683424b6c5b": {
       "cache_key": "6440dc50a817bd953f68f683424b6c5b",
@@ -12186,7 +12186,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:10Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6ac79dc4f4ac80f720b0eeb390b0a194": {
       "cache_key": "6ac79dc4f4ac80f720b0eeb390b0a194",
@@ -12238,7 +12238,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:18Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "f7fe3ae0974fdbd0164cbfc2fe317260": {
       "cache_key": "f7fe3ae0974fdbd0164cbfc2fe317260",
@@ -12264,7 +12264,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "e14717b9778e4e4c783dab8660b0844e": {
       "cache_key": "e14717b9778e4e4c783dab8660b0844e",
@@ -12290,7 +12290,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:28Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "5737db2fadb916592305944014667bd2": {
       "cache_key": "5737db2fadb916592305944014667bd2",
@@ -12316,7 +12316,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:29Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3e5c747a7a59316899e929056183b669": {
       "cache_key": "3e5c747a7a59316899e929056183b669",
@@ -12368,7 +12368,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:38Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "2da08b2844c3a3bf78dd193218fa3a9d": {
       "cache_key": "2da08b2844c3a3bf78dd193218fa3a9d",
@@ -12394,7 +12394,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:45Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3ca033b871e4600c11415408be9a1956": {
       "cache_key": "3ca033b871e4600c11415408be9a1956",
@@ -12472,7 +12472,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T06:59:54Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "63f456de80e2e7380882fc8eeab9528e": {
       "cache_key": "63f456de80e2e7380882fc8eeab9528e",
@@ -12549,7 +12549,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:04Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "37cacbb84ef38e89379afa8c74a44297": {
       "cache_key": "37cacbb84ef38e89379afa8c74a44297",
@@ -12601,7 +12601,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:13Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "5f72eccf2e05e5a812b449b7266bc8a2": {
       "cache_key": "5f72eccf2e05e5a812b449b7266bc8a2",
@@ -12653,7 +12653,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:22Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "62b9f7730904c77704793f7b1ada633f": {
       "cache_key": "62b9f7730904c77704793f7b1ada633f",
@@ -12678,7 +12678,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:28Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "089777ab12dae289414f51ebd94c2f40": {
       "cache_key": "089777ab12dae289414f51ebd94c2f40",
@@ -12703,7 +12703,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:33Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "ae45b539b1ee6b93d312b1e0a6f66dfb": {
       "cache_key": "ae45b539b1ee6b93d312b1e0a6f66dfb",
@@ -12726,7 +12726,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:48Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "3e7e40d9a74cd3b54c0ffb25dc44db0d": {
       "cache_key": "3e7e40d9a74cd3b54c0ffb25dc44db0d",
@@ -12749,7 +12749,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:48Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "1c531212ad91fed4c7eb77b9f2aac459": {
       "cache_key": "1c531212ad91fed4c7eb77b9f2aac459",
@@ -12773,7 +12773,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:22Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "bb5e7e87c30a9bde3925617cfc0d760a": {
       "cache_key": "bb5e7e87c30a9bde3925617cfc0d760a",
@@ -12796,7 +12796,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:00:52Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:03:23Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "4f3218908a5b8a47dff462506068ac39": {
       "cache_key": "4f3218908a5b8a47dff462506068ac39",
@@ -12844,7 +12844,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:07Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fcfb324163e0c676f0bcb0e8e5a91222": {
       "cache_key": "fcfb324163e0c676f0bcb0e8e5a91222",
@@ -12867,7 +12867,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:23Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a424c36973fe0c70c4cc0deb1c8706e7": {
       "cache_key": "a424c36973fe0c70c4cc0deb1c8706e7",
@@ -12890,7 +12890,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:27Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b0e2ff08a43a6dd33ca53ee11bb3d81d": {
       "cache_key": "b0e2ff08a43a6dd33ca53ee11bb3d81d",
@@ -12913,7 +12913,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:30Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "9852c3f02460f7fca609da51a2b42e98": {
       "cache_key": "9852c3f02460f7fca609da51a2b42e98",
@@ -12936,7 +12936,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:32Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "eaac8592992ca95b19024781f0eb5910": {
       "cache_key": "eaac8592992ca95b19024781f0eb5910",
@@ -12983,7 +12983,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:36Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "46307ef1eeee8d0c22ae0931f015fc78": {
       "cache_key": "46307ef1eeee8d0c22ae0931f015fc78",
@@ -13030,7 +13030,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:46Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b0859dd4c0ee90db317b0678f0014f3c": {
       "cache_key": "b0859dd4c0ee90db317b0678f0014f3c",
@@ -13078,7 +13078,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:01:56Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a4d76e57e85c10bce58a2eaf5b8c5317": {
       "cache_key": "a4d76e57e85c10bce58a2eaf5b8c5317",
@@ -13101,7 +13101,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:02:00Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "be7cf4368c01e71c14aeb14cbe5b7a70": {
       "cache_key": "be7cf4368c01e71c14aeb14cbe5b7a70",
@@ -13125,7 +13125,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:02:08Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "04fc27ecbfc874b9155347fc3b05fa69": {
       "cache_key": "04fc27ecbfc874b9155347fc3b05fa69",
@@ -13148,7 +13148,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:02:09Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a055a5684cde8a07789d3fea9ca0826f": {
       "cache_key": "a055a5684cde8a07789d3fea9ca0826f",
@@ -13162,17 +13162,17 @@
       "source": "Infineon - Press / Press Releases / Media",
       "published_at": "2026-08-31T00:00:00Z",
       "target_technology": "위성통신 및 레이다용 RF 반도체",
-      "ai_summary_ko": "인피니언과 Tack One은 싱가포르국제상공회의소(SICC)의 ‘최우수 기술협력’ 상을 수상한 것으로 제시된다. 공개된 본문에는 양사의 협력 대상 기술, 제품 구조 및 적용 시장에 관한 구체적 설명이 포함되지 않는다. GaN 키워드가 언급되나 위성통신·레이다용 RF 반도체와의 직접적 연관성, 개발·공급 활동 및 고객 정보는 확인되지 않는다.",
+      "ai_summary_ko": "인피니언과 Tack One은 싱가포르 국제상공회의소(SICC) 최우수 기술협력상을 공동 수상한 것으로 제시된다. 제공된 본문에는 GaN 키워드가 포함돼 있으나, 해당 기술의 제품 사양·적용처·고객 정보는 확인되지 않는다. 위성통신 및 레이다용 RF 반도체와의 직접적인 사업 연계 내용도 제시되지 않는다.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.42,
-      "ai_summary_reason": "제공된 본문은 수상 사실과 GaN 키워드 외에 위성통신·레이다용 RF 반도체 관련 기술 사양, 적용처, 사업 활동을 뒷받침하는 내용이 부족하다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.35,
+      "ai_summary_reason": "제공된 본문은 수상 및 이미지·로그인 안내가 대부분이며, GaN의 구체적 기술 적용이나 위성통신·레이다 RF 반도체 사업 관련 근거가 부족하다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Infineon과 Tack One이 기술 협력 성과를 인정받아 싱가포르 국제상공회의소(SICC)의 ‘Best Technological Collaboration’ 상을 수상한 내용이 제시된다. 양사는 싱가포르에서 기술 협력을 추진한 기업으로 소개되며, 본문에서 GaN 관련 키워드가 확인된다. 이에 따라 질화갈륨 기반 반도체 기술 협력과의 연관성이 나타난다. 다만 위성통신·레이다용 RF 반도체의 구체적 제품, 적용 고객 및 사업 확대 계획은 제공된 자료에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "Infineon과 Tack One이 기술 협력 성과를 인정받아 싱가포르국제상공회의소(SICC)의 ‘최우수 기술 협력’ 상을 수상한 사실이 2026년 8월 31일 발표된다. 해당 협력 활동에는 Infineon 아시아태평양 조직과 Tack One 경영진이 참여한 것으로 확인된다. 시상식에는 싱가포르 무역·산업부 관계자와 회계 전문기관 관계자 등이 참석해 양사의 협력 성과를 함께 조명한 것으로 제시된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-02T07:52:31Z",
+      "ai_summary_created_at": "2026-09-03T02:36:00Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "af5b2d777b3c92372cbd991a9594c16d": {
       "cache_key": "af5b2d777b3c92372cbd991a9594c16d",
@@ -13221,7 +13221,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:26Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b8b7675b1a8030e12225fd67ce001f14": {
       "cache_key": "b8b7675b1a8030e12225fd67ce001f14",
@@ -13246,7 +13246,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:26Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "d12531acf2a07eb69fec3489c9c7e3ad": {
       "cache_key": "d12531acf2a07eb69fec3489c9c7e3ad",
@@ -13271,7 +13271,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:31Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "80e54fc9994394ff5b5e2aad4cf3e665": {
       "cache_key": "80e54fc9994394ff5b5e2aad4cf3e665",
@@ -13296,7 +13296,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:33Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "47efab17e736ff31aa543acfe238cbec": {
       "cache_key": "47efab17e736ff31aa543acfe238cbec",
@@ -13347,7 +13347,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:37Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "c78f8d37bc0c1e5a1015f4168612ccaf": {
       "cache_key": "c78f8d37bc0c1e5a1015f4168612ccaf",
@@ -13372,7 +13372,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:42Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "544fd6496f47a5eaf4bbae695c9dbe7f": {
       "cache_key": "544fd6496f47a5eaf4bbae695c9dbe7f",
@@ -13423,7 +13423,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:46Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "9e233e825a1c141635ee8dc6eda78317": {
       "cache_key": "9e233e825a1c141635ee8dc6eda78317",
@@ -13449,7 +13449,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:50:55Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "fb21a50cc3f19b83ea3959a0674ca2a1": {
       "cache_key": "fb21a50cc3f19b83ea3959a0674ca2a1",
@@ -13500,7 +13500,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:05Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "cefe865cc7c4ec1962f7f34d6aa230e3": {
       "cache_key": "cefe865cc7c4ec1962f7f34d6aa230e3",
@@ -13526,7 +13526,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:08Z",
       "prompt_version": "signal-summary-ko-v2",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a0645a41f922ff96709892912517fe9c": {
       "cache_key": "a0645a41f922ff96709892912517fe9c",
@@ -13599,7 +13599,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:18Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "a0678553e4950039fc400f9d338ae909": {
       "cache_key": "a0678553e4950039fc400f9d338ae909",
@@ -13645,7 +13645,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:25Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "b84f9f1b7777964ed882a2f8338c141c": {
       "cache_key": "b84f9f1b7777964ed882a2f8338c141c",
@@ -13692,7 +13692,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:30Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "6162bdc4e0c5b2637d26b7a99e47262d": {
       "cache_key": "6162bdc4e0c5b2637d26b7a99e47262d",
@@ -13716,7 +13716,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:53Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "d477fac21e2303deae84e27bca4cc259": {
       "cache_key": "d477fac21e2303deae84e27bca4cc259",
@@ -13740,7 +13740,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:51:57Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
     },
     "db6644753b85008eec259768c8ee34dd": {
       "cache_key": "db6644753b85008eec259768c8ee34dd",
@@ -13764,7 +13764,232 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-02T07:52:23Z",
       "prompt_version": "business-summary-ko-v5",
-      "cached_at": "2026-09-02T07:52:51Z"
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "4e5661b4dae5a34aadc8407945016ee6": {
+      "cache_key": "4e5661b4dae5a34aadc8407945016ee6",
+      "row_identity": "24|Ouster|1|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 1,
+      "relevance_decision": "",
+      "title": "Earnings Release",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - Investor Relations / Investor Relations",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "핵심 외부 공급업체 의존·통상 규제 리스크 - Benchmark Electronics·Fabrinet 등 주요 공급업체 의존과 공급망 제약, 관세·수출입 규제 변화에 따른 사업 영향 우려",
+      "ai_summary_headline_ko": "핵심 외부 공급업체 의존·통상 규제 리스크",
+      "ai_summary_detail_ko": "Benchmark Electronics·Fabrinet 등 주요 공급업체 의존과 공급망 제약, 관세·수출입 규제 변화에 따른 사업 영향 우려",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "주요 외부 공급업체 의존, 공급망 제약, 관세 및 수출입 규제 리스크가 본문에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:05Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "9e96247fe63b88ed23988497330eedb2": {
+      "cache_key": "9e96247fe63b88ed23988497330eedb2",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "GeoCue Elevates Survey-Grade Drone Mapping with Ouster's BABA-Compliant Native Color Rev8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-09-02T11:00:23Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "미국산 드론 측량용 고성능 라이다 공급 확대 - 256채널 Rev8 OS1 Max를 GeoCue 드론 매핑 제품군에 통합, BABA 준수 국내 생산 수요 대응",
+      "ai_summary_headline_ko": "미국산 드론 측량용 고성능 라이다 공급 확대",
+      "ai_summary_detail_ko": "256채널 Rev8 OS1 Max를 GeoCue 드론 매핑 제품군에 통합, BABA 준수 국내 생산 수요 대응",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "APAC 시설 확장이나 생산기지 타당성 조사 관련 사실은 본문에 없으며, 미국산·BABA 준수 제품의 드론 측량 솔루션 통합 내용만 확인됨",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "BABA 준수 라이다 기반 드론 측량 제품 확대 - Ouster 256채널 Rev8 OS1 Max를 GeoCue TrueView 라인업에 통합, 미국 내 생산요건 대응형 제품 옵션 확대",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:05Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "de5f083a3d1210f1700e847742c20460": {
+      "cache_key": "de5f083a3d1210f1700e847742c20460",
+      "row_identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 2,
+      "relevance_decision": "",
+      "title": "Earnings Release",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - Investor Relations / Investor Relations",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇·피지컬 AI용 라이다·카메라 출하 확대 - 2026년 2분기 라이다·카메라 센서 1만7000대 이상 출하, Rev8 및 ZED X Nano 제품 출시",
+      "ai_summary_headline_ko": "로봇·피지컬 AI용 라이다·카메라 출하 확대",
+      "ai_summary_detail_ko": "2026년 2분기 라이다·카메라 센서 1만7000대 이상 출하, Rev8 및 ZED X Nano 제품 출시",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.9,
+      "ai_summary_reason": "제공 본문에 APAC 신규 시설 확장, 생산기지 타당성 조사 등 생산 확대·다변화 의지를 뒷받침하는 구체적 사실 부재",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "APAC 생산기지 확대·다변화 검토 신호 - 본문 확인 범위에서 APAC 시설 확장·생산기지 타당성 조사 세부 근거 부족, 라이다·카메라 1, 7만대 이상 출하만 확인",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:10Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "ccf78ab38aa93814a62023823693c681": {
+      "cache_key": "ccf78ab38aa93814a62023823693c681",
+      "row_identity": "55|EVG|4|https://www.evgroup.com/company/news/detail/ev-group-highlights-hybrid-bonding-layer-transfer-and-maskless-lithography-technologies-for-heterogeneous-integration-and-advanced-packaging-at-ectc-2026",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "19.05.2026 EV Group Highlights Hybrid Bonding, Layer Transfer and Maskless Lithography Technologies for Heterogeneous Integration and Advanced Packaging at ECTC 2026 Read more",
+      "url": "https://www.evgroup.com/company/news/detail/ev-group-highlights-hybrid-bonding-layer-transfer-and-maskless-lithography-technologies-for-heterogeneous-integration-and-advanced-packaging-at-ectc-2026",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "2026-05-19T00:00:00Z",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "첨단 패키징용 W2W 하이브리드 본딩 기술 공개 - 차세대 3D NAND·DRAM 고수율 양산을 위한 서브마이크론 정렬·본딩 공정 및 생태계 협력 강조",
+      "ai_summary_headline_ko": "첨단 패키징용 W2W 하이브리드 본딩 기술 공개",
+      "ai_summary_detail_ko": "차세대 3D NAND·DRAM 고수율 양산을 위한 서브마이크론 정렬·본딩 공정 및 생태계 협력 강조",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.96,
+      "ai_summary_reason": "W2W 하이브리드 본딩의 적용 분야와 요구 정밀도, 생태계 파트너십 및 협력 필요성이 본문에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:14Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "237d1393840fd5bc660f85b6efa89b93": {
+      "cache_key": "237d1393840fd5bc660f85b6efa89b93",
+      "row_identity": "55|EVG|4|https://www.evgroup.com/company/news/detail/xanadu-and-ev-group-partner-to-build-industrial-scale-photonic-quantum-hardware",
+      "company": "EVG",
+      "target_no": 55,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "05.05.2026 Xanadu and EV Group partner to build industrial-scale photonic quantum hardware Read more",
+      "url": "https://www.evgroup.com/company/news/detail/xanadu-and-ev-group-partner-to-build-industrial-scale-photonic-quantum-hardware",
+      "source": "EVG - Press Center / News / Newsroom / News",
+      "published_at": "",
+      "target_technology": "nm급 W2W 하이브리드 본딩 장비",
+      "ai_summary_ko": "광자 양자컴퓨팅용 이종집적·웨이퍼 본딩 공정 공동개발 - Xanadu와 전략적 파트너십을 통해 광자 양자시스템 확장성 확보를 위한 핵심 이종집적 및 웨이퍼 본딩 공정 개발 추진",
+      "ai_summary_headline_ko": "광자 양자컴퓨팅용 이종집적·웨이퍼 본딩 공정 공동개발",
+      "ai_summary_detail_ko": "Xanadu와 전략적 파트너십을 통해 광자 양자시스템 확장성 확보를 위한 핵심 이종집적 및 웨이퍼 본딩 공정 개발 추진",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.78,
+      "ai_summary_reason": "웨이퍼 본딩 공정 공동개발은 확인되나, nm급 W2W 하이브리드 본딩 장비의 직접적 언급은 제공 본문에 없음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "포토닉 양자 하드웨어용 웨이퍼 본딩 협력 - Xanadu·EVG, 광자 양자 시스템 확장 위한 이종집적·웨이퍼 본딩 공정 공동개발",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:18Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "f709309edfd7d997d21dc70e728764c0": {
+      "cache_key": "f709309edfd7d997d21dc70e728764c0",
+      "row_identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "GeoCue Elevates Survey-Grade Drone Mapping with Ouster's BABA-Compliant Native Color Rev8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-09-02T11:00:23Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "GeoCue 드론 매핑에 Rev8 라이다 통합 협력 - Ouster Rev8 OS1 Max 디지털 라이다를 TrueView 제품군에 통합, 공동 비행시험·펌웨어 튜닝으로 측량급 데이터 구현",
+      "ai_summary_headline_ko": "GeoCue 드론 매핑에 Rev8 라이다 통합 협력",
+      "ai_summary_detail_ko": "Ouster Rev8 OS1 Max 디지털 라이다를 TrueView 제품군에 통합, 공동 비행시험·펌웨어 튜닝으로 측량급 데이터 구현",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "Ouster와 GeoCue 간 전략적 파트너십, 라이다 통합 및 공동 비행시험·펌웨어 튜닝 내용이 공식 보도자료에 명시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:21Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "c562bf352eacf155ef2879be0c65fd14": {
+      "cache_key": "c562bf352eacf155ef2879be0c65fd14",
+      "row_identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": 4,
+      "relevance_decision": "",
+      "title": "Earnings Release",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - Investor Relations / Investor Relations",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "로봇용 라이다·카메라 통합 센싱 플랫폼 고도화 - 신제품 상용화 및 시스템 통합 간소화를 위한 연구개발 비용 지속 투입, 생태계 협력·공동연구 근거 미확인",
+      "ai_summary_headline_ko": "로봇용 라이다·카메라 통합 센싱 플랫폼 고도화",
+      "ai_summary_detail_ko": "신제품 상용화 및 시스템 통합 간소화를 위한 연구개발 비용 지속 투입, 생태계 협력·공동연구 근거 미확인",
+      "ai_summary_quality": "needs_review",
+      "ai_summary_confidence": 0.88,
+      "ai_summary_reason": "본문의 research and development는 신제품 개발·상용화 비용 관련 위험요인으로만 언급됐으며, 공동연구·기술 라이선싱·PoC·지분투자 등 기술 생태계 밀착 활동의 구체적 사실은 확인되지 않음",
+      "ai_summary_model": "gpt-5.6-terra",
+      "ai_summary_tier": "terra",
+      "ai_summary_luna_draft": "신제품 상용화를 위한 연구개발 투자 부담 - 신제품 개발·상용화를 위한 상당한 연구개발 비용을 주요 리스크로 제시, 로봇용 라이다 협력 수요는 직접 확인되지 않음",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:25Z",
+      "prompt_version": "signal-summary-ko-v2",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "c5d4beedc03786881a889e3abc9b0da0": {
+      "cache_key": "c5d4beedc03786881a889e3abc9b0da0",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "GeoCue Elevates Survey-Grade Drone Mapping with Ouster's BABA-Compliant Native Color Rev8 Digital Lidar",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "source": "Ouster - News Releases / Press Releases",
+      "published_at": "2026-09-02T11:00:23Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster는 드론 매핑 payload·소프트웨어 기업 GeoCue와 협력해 네이티브 컬러 Rev8 OS1 Max 디지털 라이다를 TrueView 제품군에 통합한다. 256채널 센서와 TrueView 1 payload, LP360 소프트웨어를 결합해 유틸리티·인프라 분야에 측량급 데이터를 제공하는 구조다. BABA 요건을 충족하는 제품 옵션을 확대해 미국 내 생산 요건을 보유한 고객에게 고성능 라이다 솔루션을 제시한다. 공동 비행시험과 펌웨어 튜닝을 거쳐 인프라 모니터링 및 대규모 매핑 시장 적용을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "Ouster의 Rev8 OS1 Max 디지털 라이다가 GeoCue 드론 매핑 제품에 통합되고 유틸리티·인프라 시장에 적용되는 내용이 공식 보도자료에 구체적으로 제시됨.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:40Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-03T02:36:18Z"
+    },
+    "6de6f95010388a7c8661025b67bc023c": {
+      "cache_key": "6de6f95010388a7c8661025b67bc023c",
+      "row_identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "target_no": 24,
+      "investment_signal_no": "",
+      "relevance_decision": "relevant",
+      "title": "Earnings Release",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source": "Ouster - Investor Relations / Investor Relations",
+      "published_at": "2026-08-06T20:06:06Z",
+      "target_technology": "로봇용 라이다",
+      "ai_summary_ko": "Ouster는 2026년 2분기 매출 5,500만 달러를 기록하며 전년 동기 대비 56% 성장했고, 라이다·카메라 센서 1만7,000대 이상을 출하해 14분기 연속 제품 매출 증가를 이어간 것으로 확인된다. 출하량 중 라이다 비중은 약 53%로, 물리적 AI 시장에서 통합 센싱·인지 플랫폼에 대한 고객 투자가 확대되는 흐름이 제시된다. 네이티브 컬러와 성능을 강화한 Rev8 라이다가 주요 고객과의 관계를 심화하고 있으며, Stereolabs의 ZED X Nano도 출시 이후 높은 시장 반응을 확보한 것으로 나타난다. Ouster는 시스템 통합을 단순화하고 자율화 기술의 실제 적용 확대를 지원하는 제품·솔루션 공급을 추진한다.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "라이다 출하량, 제품 성능·출시, 고객 투자 확대 및 사업 실적이 공식 IR 본문에 구체적으로 제시됨",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
+      "ai_summary_source": "openai_responses_api",
+      "ai_summary_created_at": "2026-09-03T02:35:40Z",
+      "prompt_version": "business-summary-ko-v5",
+      "cached_at": "2026-09-03T02:36:18Z"
     }
   }
 }

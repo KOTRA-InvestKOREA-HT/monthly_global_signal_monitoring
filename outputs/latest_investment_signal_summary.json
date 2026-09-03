@@ -1,23 +1,23 @@
 {
-  "run_started_at": "2026-09-02T07:50:26Z",
+  "run_started_at": "2026-09-03T02:35:05Z",
   "input_signal_count": 425,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 125,
+  "technology_gate_pass_count": 129,
   "technology_gate_counts": {
-    "not_relevant": 300,
-    "passed": 72,
-    "relevance_exempt": 53
+    "not_relevant": 296,
+    "relevance_exempt": 53,
+    "passed": 76
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 79,
-  "companies_with_investment_signals": 19,
+  "investment_signal_count": 84,
+  "companies_with_investment_signals": 21,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
       "no": 1,
       "label_ko": "공급망·지정학 리스크 대응",
-      "count": 21,
+      "count": 20,
       "companies": [
         "HyproMag",
         "Applied Materials",
@@ -42,9 +42,9 @@
         "Nexeon",
         "Applied Materials",
         "Amkor Technology",
+        "Ouster",
         "HyproMag",
         "Infineon",
-        "Ouster",
         "West Pharmaceutical",
         "Arkema",
         "EVG",
@@ -57,20 +57,22 @@
     "investment_financing": {
       "no": 3,
       "label_ko": "투자 재원 확보",
-      "count": 7,
+      "count": 10,
       "companies": [
         "Amkor Technology",
         "Cytiva",
         "Albemarle",
         "Applied Materials",
         "Arkema",
-        "West Pharmaceutical"
+        "West Pharmaceutical",
+        "EMM(Umicore)",
+        "Umicore"
       ]
     },
     "technology_ecosystem_rd": {
       "no": 4,
       "label_ko": "기술 생태계 밀착(R&D)",
-      "count": 28,
+      "count": 31,
       "companies": [
         "Charles River",
         "EVG",
@@ -85,6 +87,8 @@
         "Ouster",
         "West Pharmaceutical",
         "3M",
+        "EMM(Umicore)",
+        "Umicore",
         "ASML"
       ]
     },
