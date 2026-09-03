@@ -213,6 +213,11 @@ SIGNAL_DESCRIPTIONS = {
     5: "핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등",
 }
 
+ITEM_TREND_NOTE_TEMPLATE = (
+    "5대 시그널에는 미포착되었으나, {month}월중 투자유치 필요 품목·기술과 직접 연계되는 "
+    "글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함."
+)
+
 
 def load_json(path, fallback):
     try:
@@ -280,6 +285,11 @@ def matrix_period_label(summary):
     start, end = report_period(summary)
     end_text = compact_date(end, include_year=start.year != end.year)
     return f"{start.month}월({compact_date(start)}~{end_text})"
+
+
+def report_month_label(summary):
+    start, _ = report_period(summary)
+    return str(start.month)
 
 
 def filter_rows_by_report_period(rows, summary):
@@ -988,6 +998,26 @@ def summary_line_count(report, row, width, size, max_lines):
     return max(1, min(len(lines), max_lines))
 
 
+def summary_render_line_count(report, row, width, size, max_lines):
+    """Mirrors draw_summary_text's branching so a flowed layout can be measured first."""
+    parts = summary_parts(row)
+    if not parts:
+        return summary_line_count(report, row, width, size, max_lines)
+
+    headline = parts["headline"]
+    detail = parts["detail"]
+    headline_font = report.fonts["semibold"]
+    detail_font = report.fonts["demilight"]
+    dash = " - " if detail else ""
+    headline_width = report.canvas.stringWidth(headline, headline_font, size)
+    dash_width = report.canvas.stringWidth(dash, detail_font, size)
+    detail_width = report.canvas.stringWidth(detail, detail_font, size)
+
+    if not detail or headline_width + dash_width + detail_width <= width or max_lines <= 1:
+        return 1
+    return min(max_lines, 1 + len(wrap_text(report.canvas, detail, width, detail_font, size)))
+
+
 def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=3):
     parts = summary_parts(row)
     line_height = size + line_gap
@@ -1286,6 +1316,193 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.footer()
 
 
+ITEM_SECTION_TOP = PAGE_H - 114
+ITEM_SECTION_FIRST_TOP = PAGE_H - 158
+ITEM_SECTION_BOTTOM = 56
+ITEM_CARD_GAP = 14
+ITEM_CARD_TITLE_TOP = 25
+ITEM_CARD_TITLE_TO_META = 17
+ITEM_CARD_META_TO_RULE = 10
+ITEM_CARD_RULE_TO_NAME = 16
+ITEM_NAME_TO_BODY = 14
+ITEM_BODY_SIZE = 8.8
+ITEM_BODY_GAP = 1.8
+ITEM_BODY_MAX_LINES = 2
+ITEM_BODY_TO_SOURCE = 11
+ITEM_SOURCE_SIZE = 7.1
+ITEM_SOURCE_TO_SEP = 10
+ITEM_SEP_TO_NAME = 15
+ITEM_CARD_BOTTOM_PAD = 14
+ITEM_MAX_ENTRIES_PER_CARD = 6
+ITEM_RULE_LINE = colors.HexColor("#C6E7E2")
+ITEM_ACCENT = colors.HexColor("#087A70")
+ITEM_MUTED_ACCENT = colors.HexColor("#4E8E88")
+
+
+def build_item_trend_groups(profiles, signal_index, relevant_rows):
+    """5대 시그널 미포착 + 타겟 품목·기술 연관 사업동향 포착 기업을 품목 단위로 묶는다."""
+    grouped = {}
+    for profile in profiles:
+        company = profile["company"]
+        if any(signal_index.get(company, {}).values()):
+            continue
+        candidates = [row for row in relevant_rows if row.get("company") == company]
+        if not candidates:
+            continue
+        target_text = str(profile.get("target_technology") or "").strip()
+        if not target_text:
+            continue
+        group_key = profile.get("technology_group") or target_text
+        group = grouped.setdefault(
+            group_key,
+            {
+                "title": target_text,
+                "industry": DETAILED_INDUSTRY_BY_GROUP.get(
+                    profile.get("technology_group", ""), profile.get("industry", "")
+                ),
+                "entries": [],
+            },
+        )
+        group["entries"].append({"profile": profile, "row": sort_signal_rows(candidates)[0]})
+    return [group for group in grouped.values() if group["entries"]]
+
+
+def split_item_cards(groups):
+    cards = []
+    for group in groups:
+        entries = group["entries"]
+        for start in range(0, len(entries), ITEM_MAX_ENTRIES_PER_CARD):
+            chunk = entries[start : start + ITEM_MAX_ENTRIES_PER_CARD]
+            cards.append(
+                {
+                    "title": group["title"] if start == 0 else f"{group['title']} (계속)",
+                    "industry": group["industry"],
+                    "company_count": len(entries),
+                    "entries": chunk,
+                }
+            )
+    return cards
+
+
+def item_card_layout(report, card, width):
+    body_width = width - 32
+    line_height = ITEM_BODY_SIZE + ITEM_BODY_GAP
+    rule_offset = ITEM_CARD_TITLE_TOP + ITEM_CARD_TITLE_TO_META + ITEM_CARD_META_TO_RULE
+    offset = rule_offset + ITEM_CARD_RULE_TO_NAME
+    entries = []
+    last_index = len(card["entries"]) - 1
+    for index, entry in enumerate(card["entries"]):
+        line_count = summary_render_line_count(report, entry["row"], body_width, ITEM_BODY_SIZE, ITEM_BODY_MAX_LINES)
+        body_offset = offset + ITEM_NAME_TO_BODY
+        source_offset = body_offset + ((line_count - 1) * line_height) + ITEM_BODY_TO_SOURCE
+        separator_offset = source_offset + ITEM_SOURCE_TO_SEP if index < last_index else None
+        entries.append(
+            {
+                **entry,
+                "name_offset": offset,
+                "body_offset": body_offset,
+                "source_offset": source_offset,
+                "separator_offset": separator_offset,
+            }
+        )
+        offset = separator_offset + ITEM_SEP_TO_NAME if separator_offset is not None else source_offset + ITEM_CARD_BOTTOM_PAD
+    return {"entries": entries, "rule_offset": rule_offset, "height": offset, "body_width": body_width}
+
+
+def draw_item_card(report, card, layout, x, top, width):
+    c = report.canvas
+    height = layout["height"]
+    c.setStrokeColor(TEAL_LINE)
+    c.setFillColor(TEAL_BG)
+    c.setLineWidth(0.9)
+    c.roundRect(x, top - height, width, height, 10, fill=1, stroke=1)
+
+    title_y = top - ITEM_CARD_TITLE_TOP
+    draw_target_marker(c, x + 23, title_y + 3)
+    title = short_text_to_width(c, card["title"], width - 100, report.fonts["semibold"], 10.5)
+    report.text(x + 34, title_y, title, 10.5, ITEM_ACCENT, weight="semibold")
+
+    meta_y = title_y - ITEM_CARD_TITLE_TO_META
+    industry = card.get("industry") or ""
+    if industry:
+        badge_w = min(150, c.stringWidth(industry, report.fonts["semibold"], 8) + 16)
+        c.setFillColor(colors.HexColor("#DDF0EE"))
+        c.roundRect(x + 34, meta_y - 5, badge_w, 15, 3, fill=1, stroke=0)
+        report.text(x + 42, meta_y, industry, 8, ITEM_ACCENT, weight="semibold")
+    report.text(x + width - 16, meta_y, f"{card['company_count']}개사", 8, ITEM_MUTED_ACCENT, align="right", weight="semibold")
+
+    rule_y = top - layout["rule_offset"]
+    c.setStrokeColor(TEAL_LINE)
+    c.setLineWidth(0.7)
+    c.line(x + 16, rule_y, x + width - 16, rule_y)
+
+    for entry in layout["entries"]:
+        profile = entry["profile"]
+        row = entry["row"]
+        name_y = top - entry["name_offset"]
+        report.text(x + 16, name_y, profile["company"], 10, TEXT, weight="semibold")
+        report.text(x + width - 16, name_y, profile.get("country", ""), 9, ITEM_MUTED_ACCENT, align="right", weight="semibold")
+        draw_summary_text(
+            report,
+            row,
+            x + 16,
+            top - entry["body_offset"],
+            layout["body_width"],
+            ITEM_BODY_SIZE,
+            max_lines=ITEM_BODY_MAX_LINES,
+            line_gap=ITEM_BODY_GAP,
+        )
+        source_text = short_text_to_width(c, source_line(row), layout["body_width"], report.fonts["demilight"], ITEM_SOURCE_SIZE)
+        report.text(x + 16, top - entry["source_offset"], source_text, ITEM_SOURCE_SIZE, MUTED)
+        if entry["separator_offset"] is not None:
+            separator_y = top - entry["separator_offset"]
+            c.setStrokeColor(ITEM_RULE_LINE)
+            c.setLineWidth(0.6)
+            c.line(x + 16, separator_y, x + width - 16, separator_y)
+
+
+def paginate_item_cards(report, cards, width):
+    pages = []
+    current = []
+    cursor = ITEM_SECTION_FIRST_TOP
+    for card in cards:
+        layout = item_card_layout(report, card, width)
+        if current and cursor - layout["height"] < ITEM_SECTION_BOTTOM:
+            pages.append(current)
+            current = []
+            cursor = ITEM_SECTION_TOP
+        current.append({"card": card, "layout": layout, "top": cursor})
+        cursor -= layout["height"] + ITEM_CARD_GAP
+    if current:
+        pages.append(current)
+    return pages
+
+
+def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
+    groups = build_item_trend_groups(profiles, signal_index, relevant_rows)
+    if not groups:
+        return {"item_count": 0, "company_count": 0, "pages": 0}
+
+    x = 30
+    width = PAGE_W - 60
+    pages = paginate_item_cards(report, split_item_cards(groups), width)
+    note = ITEM_TREND_NOTE_TEMPLATE.format(month=report_month_label(summary))
+    for index, page in enumerate(pages, start=1):
+        report.new_page()
+        report.header("I T E M   T R E N D S", "품목별 글로벌 사업동향", f"{index}/{len(pages)}")
+        if index == 1:
+            report.wrapped(note, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
+        for placed in page:
+            draw_item_card(report, placed["card"], placed["layout"], x, placed["top"], width)
+        report.footer()
+
+    return {
+        "item_count": len(groups),
+        "company_count": sum(len(group["entries"]) for group in groups),
+        "pages": len(pages),
+    }
+
+
 def build_report(args):
     targets = load_json(args.targets, [])
     tech_map = load_json(args.technology_map, {"companies": []})
@@ -1313,6 +1530,7 @@ def build_report(args):
 
     draw_cover(report, summary, indicators)
     draw_matrix(report, profiles, signal_index, summary)
+    item_trends = draw_item_trends(report, profiles, signal_index, relevant, summary)
     total_details = len(detail_profiles)
     for idx, profile in enumerate(detail_profiles, start=1):
         draw_detail_page(report, profile, signal_index, relevant, investment_signals, signals, idx, total_details)
@@ -1325,6 +1543,9 @@ def build_report(args):
                 "pages": report.page_no,
                 "company_count": len(profiles),
                 "detail_company_count": total_details,
+                "item_trend_item_count": item_trends["item_count"],
+                "item_trend_company_count": item_trends["company_count"],
+                "item_trend_pages": item_trends["pages"],
                 "investment_signal_count": investment_summary.get("investment_signal_count", len(investment_signals)),
             },
             ensure_ascii=False,
