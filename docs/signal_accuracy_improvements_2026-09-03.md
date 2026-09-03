@@ -216,3 +216,83 @@ git diff --check                                         통과
 - 수집 상세 본문 상한 전에 후보를 자르는 순서가 월간 기사를 누락시키는지 검증
 - 스케줄 실행과 실패 알림 추가
 - Next.js 의존성 설치 후 프로덕션 빌드 검증
+
+## 9. 2026-09-03 GitHub Actions 실패 분석
+
+### 9.1 확인한 실행
+
+- Workflow run: `33732882509`
+- URL: `https://github.com/KOTRA-InvestKOREA-HT/monthly_global_signal_monitoring/actions/runs/33732882509`
+- 대상 커밋: `0dfe79589923ba0e2ffdb01c857969170c37343f`
+- 실행 시각: 2026-09-03 17:21~17:41 KST
+- 결론: `failure`
+
+이 실행은 **크롤러에서 실패한 것이 아니다**. 단계별 결과와 시간은 다음과 같다.
+
+| 단계 | 결과 | 소요시간 |
+|---|---:|---:|
+| 보고 기간 계산 | 성공 | 0초 |
+| 회사 자료 수집 | 성공 | 299초(4분 59초) |
+| 기술 관련성 필터 | 성공 | 1초 |
+| 투자 시그널 분류 | 성공 | 10초 |
+| AI 근거 평가 | 성공 | 885초(14분 45초) |
+| 게시 입력 검증 | **실패** | 1초 미만 |
+| 한글·영문 PDF 및 결과 커밋 | 실행 안 됨 | - |
+
+체감상 오래 걸린 주된 원인은 크롤링보다 AI 근거 평가였다. 프롬프트 버전을 v6/v8로 올려
+기존 캐시가 모두 무효화됐고, 투자 109행과 사업동향 65행 등 총 174행이 cache miss로 전량
+재평가됐다. 이 중 일부는 Terra 재시도까지 수행했다. 다음 실행에서 동일 입력과 정상 캐시가
+유지되면 이 비용은 반복되지 않아야 한다. 그러나 이번 실행은 검증 실패로 자동 커밋 단계가
+건너뛰어졌으므로 새 캐시도 저장소에 보존되지 않았다. 현재 상태에서 다시 실행하면 174행 전량
+평가가 반복된다. 한 번 정상 완료되어 새 캐시가 커밋된 이후부터 동일 입력의 캐시 재사용이 가능하다.
+
+### 9.2 실제 오류
+
+실패 단계는 `Validate report inputs (fail closed)`이며 다음 5개 사업동향 행에서 동일한 계약 위반이
+발견됐다.
+
+```text
+West Pharmaceutical
+  west-completes-sale-and-transfer-manufacturing-and-supply-rights
+
+Umicore
+  strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance
+
+EMM(Umicore)
+  strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance
+
+Norsk Hydro
+  hydro-at-a-glance
+
+Norsk Hydro
+  on-the-agenda
+```
+
+각 행의 오류는 다음과 같다.
+
+```text
+supported row is not quality=pass
+```
+
+즉 각 행에서 `ai_signal_supported=true`였지만 `ai_summary_quality=needs_review`여서, 승인된 행은
+반드시 `quality=pass`여야 한다는 게시 규칙을 위반했다. 검증기는 오류 5건을 출력한 뒤 의도대로
+종료 코드 1을 반환했다. GitHub의 `Process completed with exit code 1`은 이 결과를 표시한 마지막
+문구이며 근본 오류 메시지가 아니다.
+
+### 9.3 코드상 원인
+
+`scripts/summarize_signal_evidence.mjs`의 모델 응답 처리 시점에는 `quality=pass`를 포함해
+`ai_signal_supported`가 계산된다. 이후 사업동향 요약이 목표 분량에 미달하거나 Terra 재요약이
+실패하면 `summarizeRow()`가 다음 값만 사후 변경한다.
+
+```text
+ai_summary_quality = needs_review
+ai_summary_reason  = ...목표 분량 미달 또는 Terra 재요약 실패
+```
+
+이 사후 변경 시 `ai_signal_supported`를 false로 다시 계산하지 않아 `supported=true`와
+`quality=needs_review`가 동시에 남을 수 있다. 이번 5건이 그 상태다. 따라서 오류 종류는
+**크롤링·네트워크 실패가 아니라 AI 재시도 후 판정 상태 불일치**다.
+
+게시 전 검증기가 이 불일치를 발견했기 때문에 잘못된 PDF와 JSON은 커밋·배포되지 않았다.
+사용자 지시에 따라 이 분석에서는 원인만 기록했으며 코드는 수정하지 않았다.
