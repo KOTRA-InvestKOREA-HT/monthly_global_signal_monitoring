@@ -1569,12 +1569,15 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         draw_target_marker(c, target_label_x + 13, header_y + 2)
         report.text(target_label_x + 25, header_y, target_label, 8.5, colors.HexColor("#087A70"), weight="semibold")
         # 글자 수(45자)가 아니라 남은 폭으로 잘라야 청록 박스 밖으로 나가지 않는다.
-        # 폭이 모자라면 한 단계 작은 글자로 먼저 시도해 잘려나가는 내용을 줄인다.
+        # 통째로 들어가는 가장 큰 크기를 먼저 찾고, 그래도 안 되면 마지막 크기에서 자른다.
         target_value_x = target_label_x + target_label_w + 9
         target_value_width = (x + width - 16) - target_value_x
-        target_size = 9.5
-        if c.stringWidth(target_text, report.fonts["semibold"], target_size) > target_value_width:
-            target_size = 8.5
+        target_sizes = [9.5, 9.0, 8.5, 8.0]
+        target_size = target_sizes[-1]
+        for size in target_sizes:
+            if c.stringWidth(target_text, report.fonts["semibold"], size) <= target_value_width:
+                target_size = size
+                break
         target_value = short_text_to_width(c, target_text, target_value_width, report.fonts["semibold"], target_size)
         report.text(target_value_x, header_y, target_value, target_size, colors.HexColor("#087A70"), weight="semibold")
 
