@@ -1,34 +1,39 @@
 {
-  "run_started_at": "2026-09-03T04:52:41Z",
-  "input_signal_count": 425,
+  "run_started_at": "2026-09-03T06:31:33Z",
+  "input_signal_count": 435,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 129,
+  "technology_gate_pass_count": 118,
   "technology_gate_counts": {
-    "not_relevant": 296,
+    "not_relevant": 317,
     "relevance_exempt": 53,
-    "passed": 76
+    "passed": 65
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 92,
-  "companies_with_investment_signals": 22,
+  "investment_signal_count": 109,
+  "companies_with_investment_signals": 21,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
       "no": 1,
       "label_ko": "공급망·지정학 리스크 대응",
-      "count": 20,
+      "count": 32,
       "companies": [
         "HyproMag",
         "Applied Materials",
         "Ouster",
         "Amkor Technology",
         "3M",
+        "Air Liquide",
         "Charles River",
+        "Evonik Industries",
         "Cytiva",
+        "West Pharmaceutical",
         "Prodrive",
+        "Vestas",
         "Albemarle",
-        "Arkema",
+        "Umicore",
+        "Merck",
         "Australian Strategic Metals",
         "Nexeon",
         "Maxon"
@@ -41,25 +46,23 @@
       "companies": [
         "Applied Materials",
         "Amkor Technology",
+        "Air Liquide",
         "Nexeon",
+        "Merck",
         "Ouster",
         "Infineon",
         "West Pharmaceutical",
         "Prodrive",
         "HyproMag",
-        "Arkema",
-        "EVG",
-        "Vestas",
         "Maxon",
-        "Cytiva",
-        "NXP",
-        "Airbus"
+        "Evonik Industries",
+        "Cytiva"
       ]
     },
     "investment_financing": {
       "no": 3,
       "label_ko": "투자 재원 확보",
-      "count": 12,
+      "count": 14,
       "companies": [
         "Amkor Technology",
         "Cytiva",
@@ -68,34 +71,33 @@
         "Albemarle",
         "Charles River",
         "3M",
-        "Arkema",
-        "EMM(Umicore)",
-        "Umicore"
+        "Umicore",
+        "EMM(Umicore)"
       ]
     },
     "technology_ecosystem_rd": {
       "no": 4,
       "label_ko": "기술 생태계 밀착(R&D)",
-      "count": 34,
+      "count": 37,
       "companies": [
         "Charles River",
         "Prodrive",
         "Applied Materials",
         "Amkor Technology",
-        "EVG",
+        "Merck",
         "Ouster",
         "West Pharmaceutical",
         "3M",
+        "Siemens-Gamesa",
+        "Vestas",
         "Nexeon",
         "Albemarle",
-        "Airbus",
         "Maxon",
-        "Arkema",
         "Infineon",
         "Cytiva",
+        "Air Liquide",
         "EMM(Umicore)",
-        "Umicore",
-        "ASML"
+        "Umicore"
       ]
     },
     "strategic_people_movement": {
