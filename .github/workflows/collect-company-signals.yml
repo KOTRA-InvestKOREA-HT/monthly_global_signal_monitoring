@@ -96,10 +96,25 @@ jobs:
           --indicator-config config/investment_signal_indicators.json
           --font assets/fonts/NOTOSANSKR-VF.TTF
           --issue-number ${{ inputs.issue_number || '2' }}
+          --lang ko
           --out public/reports/latest_report.pdf
+      - name: Build English report
+        run: >
+          python scripts/build_pdf_report.py
+          --signals outputs/latest_company_signals.json
+          --summary outputs/latest_collection_summary.json
+          --relevant outputs/latest_relevant_signals.json
+          --relevance-summary outputs/latest_relevance_summary.json
+          --investment-signals outputs/latest_investment_signals.json
+          --investment-summary outputs/latest_investment_signal_summary.json
+          --indicator-config config/investment_signal_indicators.json
+          --font assets/fonts/NOTOSANSKR-VF.TTF
+          --issue-number ${{ inputs.issue_number || '2' }}
+          --lang en
+          --out public/reports/latest_report_en.pdf
       - name: Sync latest main before committing generated outputs
         run: git pull --rebase --autostash origin main
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update company signal data and signal filters"
-          file_pattern: outputs/latest_*.json outputs/latest_*.csv outputs/ai_summary_cache.json public/reports/latest_report.pdf
+          file_pattern: outputs/latest_*.json outputs/latest_*.csv outputs/ai_summary_cache.json public/reports/latest_report.pdf public/reports/latest_report_en.pdf

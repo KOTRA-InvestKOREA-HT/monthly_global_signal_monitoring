@@ -213,10 +213,158 @@ SIGNAL_DESCRIPTIONS = {
     5: "핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등",
 }
 
-ITEM_TREND_NOTE_TEMPLATE = (
-    "5대 시그널에는 미포착되었으나, {month}월중 투자유치 필요 품목·기술과 직접 연계되는 "
-    "글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함."
-)
+SIGNAL_DESCRIPTIONS_EN = {
+    1: "Supply chain & geopolitical risk response · supply chain shifts, risk events and countermeasures",
+    2: "Production expansion & diversification · capacity additions, site diversification, feasibility studies",
+    3: "Investment financing secured · bonds, equity raises, large-scale credit facilities",
+    4: "Technology ecosystem engagement (R&D) · joint research, licensing, PoC, equity interest",
+    5: "Movement of key strategic personnel · C-level moves, confidential visits, due diligence",
+}
+
+INDICATOR_DESCRIPTION_EN = {
+    1: "Supply chain shifts, geopolitical risk events and responses",
+    2: "Capacity additions, site diversification, feasibility studies",
+    3: "Bonds, equity raises and large-scale credit facilities",
+    4: "Joint research, licensing, PoC and equity interest",
+    5: "C-level moves, confidential visits and due diligence",
+}
+
+COUNTRY_EN = {
+    "호주": "Australia",
+    "미국": "USA",
+    "네덜란드": "Netherlands",
+    "노르웨이": "Norway",
+    "덴마크": "Denmark",
+    "독일": "Germany",
+    "벨기에": "Belgium",
+    "스웨덴": "Sweden",
+    "스위스": "Switzerland",
+    "스페인": "Spain",
+    "영국": "UK",
+    "오스트리아": "Austria",
+    "프랑스": "France",
+    "일본": "Japan",
+    "대만": "Taiwan",
+    "중국": "China",
+}
+
+DETAILED_INDUSTRY_EN = {
+    "rare_earth_magnet_recycling": "Rare-earth magnet recycling",
+    "3d_vision_sensor": "Machine vision & sensors",
+    "euv_blank_mask": "Semiconductor mask materials",
+    "virus_validation_mcb_wcb": "Bioanalysis & safety testing",
+    "bioprocess_culture_purification": "Bioprocess equipment & materials",
+    "gene_cell_therapy_delivery_gmp": "Cell & gene therapy",
+    "autoinjector_pfs_fill_finish": "Drug delivery & fill-finish",
+    "ag_al_paste": "Solar cell electrode materials",
+    "lithium_cathode_materials": "Battery cathode materials",
+    "nonferrous_scrap_recycling": "Non-ferrous metal recycling",
+    "hexamethylenediamine_hmd": "Chemical platform feedstock",
+    "ion_exchange_membrane": "Advanced membranes",
+    "autonomous_imu_rf_baseband": "Autonomous driving semiconductors",
+    "semiconductor_thermal_material": "Semiconductor packaging",
+    "autonomous_camera_isp": "Autonomous driving sensing",
+    "aerospace_electric_propulsion": "Aircraft & clean propulsion",
+    "robot_lidar": "Robotics LiDAR",
+    "hybrid_bonding_w2w": "Advanced packaging equipment",
+    "euv_lithography": "Semiconductor lithography",
+    "satellite_radar_rf_semiconductor": "Aerospace RF semiconductors",
+    "offshore_wind_turbine": "Offshore wind turbines",
+    "linear_scale": "Precision position metrology",
+    "robot_reducer": "Robot precision drives",
+    "pharma_excipient": "Pharmaceutical materials",
+    "precipitated_silica_tire": "Eco-friendly silica",
+    "silicon_anode_sic": "Battery anode materials",
+    "pvdf": "Battery binder materials",
+    "metal_target_ti_ta": "Semiconductor metal targets",
+    "fine_metal_mask": "Display materials",
+    "tgv_glass_substrate": "Glass substrates for semiconductors",
+}
+
+MONTH_NAMES_EN = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+]
+
+TEXTS = {
+    "ko": {
+        "footer": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
+        "cover_title_1": "타겟기업",
+        "cover_title_2": "글로벌 투자시그널",
+        "cover_title_3": "모니터링",
+        "cover_line_1": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
+        "cover_line_2": "기업별 5대 시그널(전조현상) 포착 · 투자 확정 전 선행 징후 기반",
+        "cover_indicator_heading": "5대 투자동향 지표",
+        "matrix_title": "이번 달 시그널 매트릭스",
+        "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (투자 확정 ˙ 발표 완료 등 후행 데이터 제외).",
+        "matrix_company": "기업",
+        "matrix_legend_on": "시그널 포착",
+        "matrix_legend_off": "무신호",
+        "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
+        "matrix_footnote": "당월 시그널 포착 {on}개사 · 시그널 미포착 {off}개사 | 상세는 다음 장",
+        "detail_title": "기업별 시그널 상세",
+        "no_signal": "이번 달 해당 신호 없음",
+        "business_heading": "글로벌 사업현황",
+        "business_empty": "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않는다.",
+        "target_item": "타겟품목",
+        "target_tech": "타겟기술",
+        "source_prefix": "출처",
+        "source_fallback": "수집 출처",
+        "source_empty": "출처  -",
+        "item_title": "품목별 글로벌 사업동향",
+        "item_target_label": "투자유치 필요 품목·기술",
+        "item_trend_label": "{month} 글로벌 사업동향",
+        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함.",
+    },
+    "en": {
+        "footer": "Invest KOREA · Global Investment Signal Monitoring · {issue}",
+        "cover_title_1": "Target Companies",
+        "cover_title_2": "Global Investment Signals",
+        "cover_title_3": "Monitoring",
+        "cover_line_1": "30 priority investment projects selected by MOTIE · 77 target companies",
+        "cover_line_2": "Five leading signals per company · early indicators ahead of an investment decision",
+        "cover_indicator_heading": "Five investment trend indicators",
+        "matrix_title": "Signal Matrix of the Month",
+        "matrix_desc": "Global investment signals (leading indicators) across 77 target companies for {period}. A filled cell marks a signal captured during the month; confirmed or already announced investments are excluded.",
+        "matrix_company": "Company",
+        "matrix_legend_on": "Signal captured",
+        "matrix_legend_off": "No signal",
+        "matrix_indicators": "① Supply chain & geopolitical risk · ② Production expansion & diversification · ③ Investment financing · ④ Technology ecosystem (R&D) · ⑤ Movement of key personnel",
+        "matrix_footnote": "{on} companies with a signal · {off} companies without one | details follow",
+        "detail_title": "Company Signal Detail",
+        "no_signal": "No signal in this category this month",
+        "business_heading": "GLOBAL BUSINESS STATUS",
+        "business_empty": "No global business activity could be summarised from official sources for this period.",
+        "target_item": "Target item",
+        "target_tech": "Target technology",
+        "source_prefix": "Source",
+        "source_fallback": "Collected source",
+        "source_empty": "Source  -",
+        "item_title": "Global Business Trends by Item",
+        "item_target_label": "Target item / technology",
+        "item_trend_label": "Global business trend, {month}",
+        "item_note": "Companies with no signal among the five indicators this month, but with global business activity in {month} directly tied to their target item or technology. Monitored for potential escalation into a signal.",
+    },
+}
+
+LANG = "ko"
+
+
+def set_language(lang):
+    global LANG
+    LANG = "en" if str(lang or "").strip().lower() in ("en", "eng", "english") else "ko"
+    return LANG
+
+
+def t(key, **kwargs):
+    text = TEXTS.get(LANG, TEXTS["ko"]).get(key) or TEXTS["ko"].get(key, "")
+    return text.format(**kwargs) if kwargs else text
+
+
+def summary_field(row, name):
+    """언어별 AI 요약 필드를 고른다. 영문판에서 영문 요약이 없으면 국문으로 대체하지 않는다."""
+    suffix = "en" if LANG == "en" else "ko"
+    return row.get(f"{name}_{suffix}") or ""
 
 
 def load_json(path, fallback):
@@ -284,12 +432,16 @@ def compact_date(dt, include_year=True):
 def matrix_period_label(summary):
     start, end = report_period(summary)
     end_text = compact_date(end, include_year=start.year != end.year)
+    if LANG == "en":
+        return f"{MONTH_NAMES_EN[start.month - 1]} ({compact_date(start)}~{end_text})"
     return f"{start.month}월({compact_date(start)}~{end_text})"
 
 
 def report_month_label(summary):
     start, _ = report_period(summary)
-    return str(start.month)
+    if LANG == "en":
+        return MONTH_NAMES_EN[start.month - 1]
+    return f"{start.month}월"
 
 
 def filter_rows_by_report_period(rows, summary):
@@ -437,6 +589,9 @@ def phrase_ending_text(value):
 
 
 def phraseify_summary_text(value, row=None):
+    # 아래 규칙은 한국어 조사·종결어미 정리용이라 영문에는 적용하지 않는다.
+    if LANG != "ko":
+        return clean_text(value)
     connector_map = {
         "구축하고": "구축",
         "확보하고": "확보",
@@ -521,40 +676,42 @@ def compact_summary_phrase(value, limit=90, row=None):
 
 
 def summary_parts(row):
-    headline = compact_summary_phrase(row.get("ai_summary_headline_ko"), 58, row)
-    detail = compact_summary_phrase(row.get("ai_summary_detail_ko"), 120, row)
+    headline_limit = 110 if LANG == "en" else 58
+    detail_limit = 240 if LANG == "en" else 120
+    headline = compact_summary_phrase(summary_field(row, "ai_summary_headline"), headline_limit, row)
+    detail = compact_summary_phrase(summary_field(row, "ai_summary_detail"), detail_limit, row)
     if headline or detail:
         return {
-            "headline": headline or compact_summary_phrase(row.get("ai_summary_ko"), 58, row),
+            "headline": headline or compact_summary_phrase(summary_field(row, "ai_summary"), headline_limit, row),
             "detail": detail,
         }
 
-    text = normalize_summary_text(row.get("ai_summary_ko"))
+    text = normalize_summary_text(summary_field(row, "ai_summary"))
     if not text:
         return None
 
     dashed = re.split(r"\s[-–—]\s", text)
     if len(dashed) >= 2:
         return {
-            "headline": compact_summary_phrase(dashed[0], 58, row),
-            "detail": compact_summary_phrase(" - ".join(dashed[1:]), 120, row),
+            "headline": compact_summary_phrase(dashed[0], headline_limit, row),
+            "detail": compact_summary_phrase(" - ".join(dashed[1:]), detail_limit, row),
         }
 
     sentences = [item for item in re.split(r"(?<=[.!?。])\s+", text) if item]
     if len(sentences) >= 2:
         return {
-            "headline": compact_summary_phrase(sentences[0], 58, row),
-            "detail": compact_summary_phrase(" ".join(sentences[1:]), 120, row),
+            "headline": compact_summary_phrase(sentences[0], headline_limit, row),
+            "detail": compact_summary_phrase(" ".join(sentences[1:]), detail_limit, row),
         }
 
     clauses = [item for item in re.split(r",\s*", text) if item]
     if len(clauses) >= 2:
         return {
-            "headline": compact_summary_phrase(clauses[0], 58, row),
-            "detail": compact_summary_phrase(", ".join(clauses[1:]), 120, row),
+            "headline": compact_summary_phrase(clauses[0], headline_limit, row),
+            "detail": compact_summary_phrase(", ".join(clauses[1:]), detail_limit, row),
         }
 
-    return {"headline": compact_summary_phrase(text, 58, row), "detail": ""}
+    return {"headline": compact_summary_phrase(text, headline_limit, row), "detail": ""}
 
 
 def summary_plain_text(row):
@@ -776,7 +933,7 @@ class SlideReport:
         c.setStrokeColor(TABLE_LINE)
         c.setLineWidth(0.7)
         c.line(0, 38, PAGE_W, 38)
-        self.text(42, 16, f"Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {self.issue_no}", 8, MUTED)
+        self.text(42, 16, t("footer", issue=self.issue_no), 8, MUTED)
         self.text(PAGE_W - 42, 16, f"{self.page_no:02d}", 8, TEXT, align="right", weight="semibold")
 
     def header(self, kicker, title, page_fraction=""):
@@ -806,28 +963,37 @@ def draw_cover(report, summary, indicators):
 
     y = PAGE_H - 208
     report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD, weight="medium")
+    title_size = 30 if LANG == "en" else 36
     y -= 56
-    report.text(43, y, "타겟기업", 36, WHITE, weight="semibold")
+    report.text(43, y, t("cover_title_1"), title_size, WHITE, weight="semibold")
     y -= 45
-    report.text(43, y, "글로벌 투자시그널", 36, GOLD, weight="semibold")
+    report.text(43, y, t("cover_title_2"), title_size, GOLD, weight="semibold")
     y -= 45
-    report.text(43, y, "모니터링", 36, WHITE, weight="semibold")
+    report.text(43, y, t("cover_title_3"), title_size, WHITE, weight="semibold")
 
     y -= 42
-    report.text(43, y, "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업", 12, WHITE)
+    report.text(43, y, t("cover_line_1"), 12, WHITE)
     y -= 20
-    report.text(43, y, "기업별 5대 시그널(전조현상) 포착 · 투자 확정 전 선행 징후 기반", 12, WHITE)
+    report.text(43, y, t("cover_line_2"), 12, WHITE)
 
     y -= 45
-    report.text(43, y, "5대 투자동향 지표", 9, colors.HexColor("#C8D2DF"))
+    report.text(43, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
     y -= 29
     for item in indicators:
         c.setStrokeColor(GOLD)
         c.setLineWidth(1.2)
         c.circle(46, y + 4, 10, stroke=1, fill=0)
         report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
-        report.text(67, y - 1, item["label_ko"], 12, WHITE, weight="semibold")
-        report.text(PAGE_W - 43, y - 1, item["description_ko"], 8, colors.HexColor("#C8D2DF"), align="right")
+        if LANG == "en":
+            label = item.get("label_en") or item["label_ko"]
+            description = INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
+        else:
+            label = item["label_ko"]
+            description = item["description_ko"]
+        report.text(67, y - 1, label, 12, WHITE, weight="semibold")
+        label_w = c.stringWidth(label, report.fonts["semibold"], 12)
+        description = short_text_to_width(c, description, max(60, PAGE_W - 43 - (67 + label_w + 14)), report.fonts["demilight"], 8)
+        report.text(PAGE_W - 43, y - 1, description, 8, colors.HexColor("#C8D2DF"), align="right")
         y -= 32
 
     c.setStrokeColor(colors.HexColor("#D6DEE9"))
@@ -850,14 +1016,22 @@ def build_profiles(targets, tech_map):
         company = target["company"]
         tech = tech_rows.get(company, {})
         group = tech.get("technology_group", "")
+        country = COUNTRY_BY_COMPANY.get(company, "")
+        industry = DETAILED_INDUSTRY_BY_GROUP.get(group, tech.get("industry", ""))
+        target_technology = tech.get("target_technology", "")
+        if LANG == "en":
+            country = COUNTRY_EN.get(country, country)
+            industry = DETAILED_INDUSTRY_EN.get(group, industry)
+            target_technology = tech.get("target_technology_en") or target_technology
         profiles.append(
             {
                 **target,
                 **tech,
                 "target_no": target.get("target_no", tech.get("target_no")),
                 "company": company,
-                "country": COUNTRY_BY_COMPANY.get(company, ""),
-                "detailed_industry": DETAILED_INDUSTRY_BY_GROUP.get(group, tech.get("industry", "")),
+                "country": country,
+                "detailed_industry": industry,
+                "target_technology": target_technology,
                 "exempt_from_relevance": bool(tech.get("excluded_from_relevance")) or company in EXEMPT_COMPANIES,
             }
         )
@@ -902,7 +1076,7 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
 
     c.setFillColor(NAVY)
     c.rect(x, y_top - header_h, table_w, header_h, fill=1, stroke=0)
-    report.text(x + 7, y_top - 11, "기업", 8, WHITE, weight="semibold")
+    report.text(x + 7, y_top - 11, t("matrix_company"), 8, WHITE, weight="semibold")
     for idx, signal_no in enumerate(["①", "②", "③", "④", "⑤"]):
         report.text(signal_xs[idx] + 4, y_top - 10.5, signal_no, 7, WHITE, align="center", weight="semibold")
 
@@ -922,13 +1096,10 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
 
 def draw_matrix(report, profiles, signal_index, summary):
     report.new_page()
-    report.header("S I G N A L   M A T R I X", "이번 달 시그널 매트릭스")
+    report.header("S I G N A L   M A T R I X", t("matrix_title"))
     signal_companies = [p for p in profiles if any(signal_index.get(p["company"], {}).values())]
 
-    desc = (
-        f"77개 타겟기업의 {matrix_period_label(summary)} 글로벌 투자 시그널(전조현상). "
-        "활성화된 셀 = 당월 포착된 시그널 (투자 확정 ˙ 발표 완료 등 후행 데이터 제외)."
-    )
+    desc = t("matrix_desc", period=matrix_period_label(summary))
     report.wrapped(desc, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
 
     draw_matrix_table(report, profiles[:39], signal_index, 25, PAGE_H - 145)
@@ -938,25 +1109,28 @@ def draw_matrix(report, profiles, signal_index, summary):
     c = report.canvas
     c.setFillColor(GOLD)
     c.roundRect(32, y + 9, 8, 8, 2, fill=1, stroke=0)
-    report.text(45, y + 9, "시그널 포착", 8, colors.HexColor("#596579"))
+    legend_on = t("matrix_legend_on")
+    report.text(45, y + 9, legend_on, 8, colors.HexColor("#596579"))
+    legend_off_x = 45 + c.stringWidth(legend_on, report.fonts["demilight"], 8) + 18
     c.setFillColor(LIGHT)
-    c.roundRect(98, y + 9, 8, 8, 2, fill=1, stroke=0)
-    report.text(111, y + 9, "무신호", 8, colors.HexColor("#596579"))
+    c.roundRect(legend_off_x, y + 9, 8, 8, 2, fill=1, stroke=0)
+    report.text(legend_off_x + 13, y + 9, t("matrix_legend_off"), 8, colors.HexColor("#596579"))
+    report.text(32, y - 6, t("matrix_indicators"), 7, MUTED)
+    no_signal = len(profiles) - len(signal_companies)
     report.text(
         32,
-        y - 6,
-        "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        7,
-        MUTED,
+        y - 24,
+        t("matrix_footnote", on=len(signal_companies), off=no_signal),
+        8,
+        colors.HexColor("#4B5870"),
+        weight="extrabold",
     )
-    no_signal = len(profiles) - len(signal_companies)
-    report.text(32, y - 24, f"당월 시그널 포착 {len(signal_companies)}개사 · 시그널 미포착 {no_signal}개사 | 상세는 다음 장", 8, colors.HexColor("#4B5870"), weight="extrabold")
     report.footer()
 
 
 def source_line(row):
-    source = row.get("source") or row.get("collector") or "수집 출처"
-    return short_text(f"출처  {source} {format_date(row.get('published_at'))}", 120)
+    source = row.get("source") or row.get("collector") or t("source_fallback")
+    return short_text(f"{t('source_prefix')}  {source} {format_date(row.get('published_at'))}", 120)
 
 
 def detail_text(row, limit=260):
@@ -983,9 +1157,9 @@ def expand_business_summary(row, text):
 
 def business_text(rows):
     if not rows:
-        return "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않는다."
+        return t("business_empty")
     row = sort_signal_rows(rows)[0]
-    ai_summary = normalize_summary_text(row.get("ai_summary_ko"))
+    ai_summary = normalize_summary_text(summary_field(row, "ai_summary"))
     if ai_summary:
         return short_text(expand_business_summary(row, ai_summary), 430)
     return short_text(expand_business_summary(row, detail_text(row, 360)), 430)
@@ -1187,8 +1361,8 @@ def target_section_for_profile(profile):
     target_text = str(profile.get("target_technology") or "").strip()
     if not target_text:
         return "", ""
-    label = "타겟기술" if normalize_company_key(profile.get("company")) in TARGET_TECH_LABEL_COMPANIES else "타겟품목"
-    return label, target_text
+    is_technology = normalize_company_key(profile.get("company")) in TARGET_TECH_LABEL_COMPANIES
+    return t("target_tech") if is_technology else t("target_item"), target_text
 
 
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
@@ -1196,14 +1370,14 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     c = report.canvas
     draw_badge(report, x, y, no, active)
     label_x = x + 31
-    label = SIGNAL_DESCRIPTIONS[no]
+    label = SIGNAL_DESCRIPTIONS_EN[no] if LANG == "en" else SIGNAL_DESCRIPTIONS[no]
     label_w = min(width - 190, report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14)
     c.setFillColor(LIGHT)
     c.roundRect(label_x, y - 9, label_w, 16, 3, fill=1, stroke=0)
     report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), weight="semibold")
 
     if not active:
-        report.text(label_x + label_w + 18, y - 4, "이번 달 해당 신호 없음", 10, colors.HexColor("#B5B9BF"))
+        report.text(label_x + label_w + 18, y - 4, t("no_signal"), 10, colors.HexColor("#B5B9BF"))
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
@@ -1235,7 +1409,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
 
 def draw_detail_page(report, profile, signal_index, relevant_rows, investment_rows, all_signal_rows, idx, total):
     report.new_page()
-    report.header("C O M P A N Y   S I G N A L S", "기업별 시그널 상세", f"{idx}/{total}")
+    report.header("C O M P A N Y   S I G N A L S", t("detail_title"), f"{idx}/{total}")
     company = profile["company"]
     rows_by_signal = signal_index.get(company, {})
     x = 30
@@ -1288,12 +1462,14 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
     top = bottom_y + bottom_h
     header_y = top - 25
-    report.spaced_text(x + 16, header_y, "글로벌 사업현황", 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
+    heading = t("business_heading")
+    report.spaced_text(x + 16, header_y, heading, 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
     target_label, target_text = target_section_for_profile(profile)
     if target_text:
+        heading_w = report.canvas.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
         c.setFillColor(colors.HexColor("#DDF0EE"))
-        target_label_x = x + 98
-        target_label_w = 68
+        target_label_x = x + 16 + heading_w + 18
+        target_label_w = report.canvas.stringWidth(target_label, report.fonts["semibold"], 8.5) + 38
         target_label_y = top - 32
         c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
         draw_target_marker(c, target_label_x + 13, header_y + 2)
@@ -1312,7 +1488,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         source_text = short_text_to_width(report.canvas, source_line(business_row), source_width, report.fonts["demilight"], 8)
         report.text(x + 16, source_y, source_text, 8, MUTED)
     else:
-        report.text(x + 16, source_y, "출처  -", 8, MUTED)
+        report.text(x + 16, source_y, t("source_empty"), 8, MUTED)
     report.footer()
 
 
@@ -1408,14 +1584,14 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     c.line(x + 17, rule_y, x + width - 17, rule_y)
 
     target_y = top - layout["target_offset"]
-    target_pill_w = draw_label_pill(report, x + 17, target_y, "투자유치 필요 품목·기술")
+    target_pill_w = draw_label_pill(report, x + 17, target_y, t("item_target_label"))
     target_x = x + 17 + target_pill_w + 10
     target_text = short_text_to_width(
         c, str(profile.get("target_technology") or ""), x + width - 17 - target_x, report.fonts["semibold"], 9.5
     )
     report.text(target_x, target_y, target_text, 9.5, TEXT, weight="semibold")
 
-    draw_label_pill(report, x + 17, top - layout["trend_offset"], f"{month_label}월 글로벌 사업동향")
+    draw_label_pill(report, x + 17, top - layout["trend_offset"], t("item_trend_label", month=month_label))
 
     draw_summary_text(
         report,
@@ -1457,10 +1633,10 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
     width = PAGE_W - 60
     month_label = report_month_label(summary)
     pages = paginate_item_cards(report, entries, width)
-    note = ITEM_TREND_NOTE_TEMPLATE.format(month=month_label)
+    note = t("item_note", month=month_label)
     for index, page in enumerate(pages, start=1):
         report.new_page()
-        report.header("I T E M   T R E N D S", "품목별 글로벌 사업동향", f"{index}/{len(pages)}")
+        report.header("I T E M   T R E N D S", t("item_title"), f"{index}/{len(pages)}")
         if index == 1:
             report.wrapped(note, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
         for placed in page:
@@ -1475,6 +1651,7 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
 
 
 def build_report(args):
+    set_language(args.lang)
     targets = load_json(args.targets, [])
     tech_map = load_json(args.technology_map, {"companies": []})
     signals = load_json(args.signals, [])
@@ -1511,6 +1688,7 @@ def build_report(args):
         json.dumps(
             {
                 "output": str(out_path),
+                "lang": LANG,
                 "pages": report.page_no,
                 "company_count": len(profiles),
                 "detail_company_count": total_details,
@@ -1538,6 +1716,7 @@ def main():
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", required=True)
     parser.add_argument("--issue-number", default=DEFAULT_ISSUE_NUMBER)
+    parser.add_argument("--lang", default="ko", choices=["ko", "en"])
     parser.add_argument("--ignored-signals", default="")
     parser.add_argument("--from-date", default="")
     parser.add_argument("--to-date", default="")

@@ -31,6 +31,10 @@ def first_param(params, name, default=""):
     return values[0] if values else default
 
 
+def clean_lang(value):
+    return "en" if (value or "").strip().lower() == "en" else "ko"
+
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
@@ -39,6 +43,7 @@ class handler(BaseHTTPRequestHandler):
             ignored = first_param(params, "ignored", "")
             from_date = clean_date(first_param(params, "from", ""))
             to_date = clean_date(first_param(params, "to", ""))
+            lang = clean_lang(first_param(params, "lang", "ko"))
             out_path = Path(tempfile.gettempdir()) / f"global-signal-report-{uuid.uuid4().hex}.pdf"
 
             args = SimpleNamespace(
@@ -53,6 +58,7 @@ class handler(BaseHTTPRequestHandler):
                 indicator_config=str(ROOT / "config" / "investment_signal_indicators.json"),
                 font=str(ROOT / "assets" / "fonts" / "NOTOSANSKR-VF.TTF"),
                 issue_number=issue,
+                lang=lang,
                 ignored_signals=ignored,
                 from_date=from_date,
                 to_date=to_date,
@@ -66,7 +72,10 @@ class handler(BaseHTTPRequestHandler):
             out_path.unlink(missing_ok=True)
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
-            self.send_header("Content-Disposition", f'attachment; filename="global-signal-monitor-issue-{issue}.pdf"')
+            self.send_header(
+                "Content-Disposition",
+                f'attachment; filename="global-signal-monitor-issue-{issue}{"-en" if lang == "en" else ""}.pdf"',
+            )
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(payload)))
             self.end_headers()

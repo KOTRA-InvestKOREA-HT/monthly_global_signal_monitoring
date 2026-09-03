@@ -4,13 +4,19 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CACHE_VERSION = 1;
-const INVESTMENT_PROMPT_VERSION = "signal-summary-ko-v2";
-const RELEVANT_PROMPT_VERSION = "business-summary-ko-v5";
+const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v3";
+const RELEVANT_PROMPT_VERSION = "business-summary-koen-v6";
 const BUSINESS_SUMMARY_MIN_CHARS = 220;
+const BUSINESS_SUMMARY_MIN_CHARS_EN = 260;
+const KOREAN_TEXT_FIELDS = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"];
+const ENGLISH_TEXT_FIELDS = ["ai_summary_en", "ai_summary_headline_en", "ai_summary_detail_en"];
 const SUMMARY_FIELDS = [
   "ai_summary_ko",
   "ai_summary_headline_ko",
   "ai_summary_detail_ko",
+  "ai_summary_en",
+  "ai_summary_headline_en",
+  "ai_summary_detail_en",
   "ai_summary_quality",
   "ai_summary_confidence",
   "ai_summary_reason",
@@ -297,6 +303,26 @@ function shortText(value, limit) {
   return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
 }
 
+// 영문은 한국어 조사/종결어미 정리 규칙을 적용하지 않고 공백 정리만 한다.
+function englishHeadlineDetail({ headline, detail, summary }) {
+  const normalizedHeadline = shortText(headline, 110);
+  const normalizedDetail = shortText(detail, 240);
+  if (normalizedHeadline || normalizedDetail) {
+    return { headline: normalizedHeadline || shortText(summary, 110), detail: normalizedDetail };
+  }
+
+  const text = cleanText(summary);
+  const dashed = text.split(/\s[-–—]\s/);
+  if (dashed.length >= 2) {
+    return { headline: shortText(dashed[0], 110), detail: shortText(dashed.slice(1).join(" - "), 240) };
+  }
+  const sentences = text.split(/(?<=[.!?])\s+/).filter(Boolean);
+  if (sentences.length >= 2) {
+    return { headline: shortText(sentences[0], 110), detail: shortText(sentences.slice(1).join(" "), 240) };
+  }
+  return { headline: shortText(text, 110), detail: "" };
+}
+
 function sourceEvidence(row) {
   const snippets = [
     ...(Array.isArray(row.evidence_snippets) ? row.evidence_snippets : []),
@@ -356,9 +382,9 @@ function summaryFromRow(row) {
   const summary = {};
   for (const field of SUMMARY_FIELDS) {
     if (row[field] !== undefined && row[field] !== null && row[field] !== "") {
-      summary[field] = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"].includes(field)
-        ? normalizeKoreanSummaryText(row[field])
-        : row[field];
+      if (KOREAN_TEXT_FIELDS.includes(field)) summary[field] = normalizeKoreanSummaryText(row[field]);
+      else if (ENGLISH_TEXT_FIELDS.includes(field)) summary[field] = cleanText(row[field]);
+      else summary[field] = row[field];
     }
   }
   return summary;
@@ -501,6 +527,10 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
+    "한국어 요약과 함께 같은 내용의 영문 요약도 작성한다. 영문은 한국어를 직역한 것이 아니라, 같은 사실을 영어 보고서 문체로 자연스럽게 쓴 것이어야 한다. 두 언어의 사실관계는 반드시 일치해야 한다.",
+    isBusinessSummary
+      ? "summary_en은 summary_ko와 같은 내용을 담은 3~4문장, 총 300~460자 내외의 영문 단락으로 쓴다. summary_headline_en과 summary_detail_en은 빈 문자열로 둔다."
+      : "summary_headline_en은 명사구 중심의 짧은 영문 표제(40~90자)로 쓰고, summary_detail_en은 영문 보고서 캡션체(70~180자)로 쓴다. 둘 다 마침표로 끝내지 않는다. summary_en은 'summary_headline_en - summary_detail_en' 형식으로 합쳐서 쓴다.",
   ].join("\n");
 
   const response = await fetch("https://api.openai.com/v1/responses", {
@@ -531,11 +561,24 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               summary_ko: { type: "string" },
               summary_headline_ko: { type: "string" },
               summary_detail_ko: { type: "string" },
+              summary_en: { type: "string" },
+              summary_headline_en: { type: "string" },
+              summary_detail_en: { type: "string" },
               quality: { type: "string", enum: ["pass", "needs_review"] },
               confidence: { type: "number" },
               reason: { type: "string" },
             },
-            required: ["summary_ko", "summary_headline_ko", "summary_detail_ko", "quality", "confidence", "reason"],
+            required: [
+              "summary_ko",
+              "summary_headline_ko",
+              "summary_detail_ko",
+              "summary_en",
+              "summary_headline_en",
+              "summary_detail_en",
+              "quality",
+              "confidence",
+              "reason",
+            ],
           },
         },
       },
@@ -559,6 +602,9 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
       ai_summary_headline_ko: "",
       ai_summary_detail_ko: "",
+      ai_summary_en: cleanText(parsed.summary_en),
+      ai_summary_headline_en: "",
+      ai_summary_detail_en: "",
       ai_summary_quality: parsed.quality,
       ai_summary_confidence: Number(parsed.confidence) || 0,
       ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -571,10 +617,18 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     detail: parsed.summary_detail_ko,
     summary: parsed.summary_ko,
   });
+  const englishParts = englishHeadlineDetail({
+    headline: parsed.summary_headline_en,
+    detail: parsed.summary_detail_en,
+    summary: parsed.summary_en,
+  });
   return {
     ai_summary_ko: normalizeKoreanSummaryText(`${parts.headline}${parts.detail ? ` - ${parts.detail}` : ""}`),
     ai_summary_headline_ko: parts.headline,
     ai_summary_detail_ko: parts.detail,
+    ai_summary_en: cleanText(`${englishParts.headline}${englishParts.detail ? ` - ${englishParts.detail}` : ""}`),
+    ai_summary_headline_en: englishParts.headline,
+    ai_summary_detail_en: englishParts.detail,
     ai_summary_quality: parsed.quality,
     ai_summary_confidence: Number(parsed.confidence) || 0,
     ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -605,14 +659,18 @@ function needsBusinessSummaryRefresh(row) {
   if (text.length < BUSINESS_SUMMARY_MIN_CHARS) return true;
   if (cleanText(row.ai_summary_headline_ko) || cleanText(row.ai_summary_detail_ko)) return true;
   if (/습니다|합니다|했습니다|보여줍니다|분류했습니다|보완합니다/.test(text)) return true;
+  const english = cleanText(row.ai_summary_en);
+  if (!english || english.length < BUSINESS_SUMMARY_MIN_CHARS_EN) return true;
   return false;
 }
 
 function needsTerra(summary, kind) {
   const text = cleanText(summary.ai_summary_ko);
+  const english = cleanText(summary.ai_summary_en);
   const koreanChars = (text.match(/[가-힣]/g) || []).length;
   const latinChars = (text.match(/[A-Za-z]/g) || []).length;
   if (!text || text.length < 35) return true;
+  if (!english || english.length < 30) return true;
   if (kind === "relevant" && text.length < BUSINESS_SUMMARY_MIN_CHARS) return true;
   if (koreanChars < 15) return true;
   if (latinChars > koreanChars * 1.8) return true;
@@ -693,7 +751,11 @@ async function writeCsv(filePath, rows) {
 async function summarizeRows(rows, args, apiKey, kind) {
   const targetRows = rows.map((row) => ({
     row,
-    shouldSummarize: !args.onlyMissing || !cleanText(row.ai_summary_ko) || (kind === "relevant" && needsBusinessSummaryRefresh(row)),
+    shouldSummarize:
+      !args.onlyMissing ||
+      !cleanText(row.ai_summary_ko) ||
+      !cleanText(row.ai_summary_en) ||
+      (kind === "relevant" && needsBusinessSummaryRefresh(row)),
   }));
   const targetCount = targetRows.filter((item) => item.shouldSummarize).length;
   let completed = 0;

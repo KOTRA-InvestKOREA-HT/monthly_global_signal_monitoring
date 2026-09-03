@@ -26,6 +26,7 @@ const nextConfig = {
     "/api/report": [
       ...latestOutputFiles,
       "./public/reports/latest_report.pdf",
+      "./public/reports/latest_report_en.pdf",
       "./assets/fonts/*.ttf",
       "./scripts/build_pdf_report.py",
       "./config/investment_signal_indicators.json",

@@ -25,6 +25,10 @@ function dateParam(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : "";
 }
 
+function langParam(value) {
+  return String(value || "").trim().toLowerCase() === "en" ? "en" : "ko";
+}
+
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(path.join(process.cwd(), filePath), "utf8"));
 }
@@ -82,10 +86,12 @@ function runPython(command, args) {
   });
 }
 
-async function buildDynamicReport(issue, ignored, fromDate, toDate) {
+async function buildDynamicReport(issue, ignored, fromDate, toDate, lang) {
   const outPath = path.join(tmpdir(), `global-signal-report-${randomUUID()}.pdf`);
   const args = [
     "scripts/build_pdf_report.py",
+    "--lang",
+    lang,
     "--signals",
     "outputs/latest_company_signals.json",
     "--summary",
@@ -133,9 +139,10 @@ async function buildDynamicReport(issue, ignored, fromDate, toDate) {
   throw new Error(`선택 조건을 반영한 보고서 생성에 실패했습니다. ${errors.join(" | ") || lastError?.message || ""}`.trim());
 }
 
-async function buildDynamicReportViaPythonFunction(requestUrl, issue, ignored, fromDate, toDate) {
+async function buildDynamicReportViaPythonFunction(requestUrl, issue, ignored, fromDate, toDate, lang) {
   const endpoint = new URL("/api/report-dynamic", requestUrl.origin);
   endpoint.searchParams.set("issue", issue);
+  endpoint.searchParams.set("lang", lang);
   if (ignored.length) endpoint.searchParams.set("ignored", ignored.join(","));
   if (fromDate) endpoint.searchParams.set("from", fromDate);
   if (toDate) endpoint.searchParams.set("to", toDate);
@@ -172,20 +179,28 @@ export async function GET(request) {
     const ignored = ignoredSignalKeys(url.searchParams.get("ignored"));
     const fromDate = dateParam(url.searchParams.get("from"));
     const toDate = dateParam(url.searchParams.get("to"));
+    const lang = langParam(url.searchParams.get("lang"));
     const useStaticReport = await shouldUseStaticReport(ignored, fromDate, toDate);
-    const sourcePath = path.join(process.cwd(), "public", "reports", "latest_report.pdf");
+    const sourcePath = path.join(process.cwd(), "public", "reports", lang === "en" ? "latest_report_en.pdf" : "latest_report.pdf");
     const fontDir = path.join(process.cwd(), "assets", "fonts");
     const semiBoldPath = path.join(fontDir, "NotoSansKR-SemiBold.ttf");
     const demiLightPath = path.join(fontDir, "NotoSansKR-DemiLight.ttf");
     const dynamicSource = async () => {
-      if (useStaticReport) return fs.readFile(sourcePath);
+      if (useStaticReport) {
+        try {
+          return await fs.readFile(sourcePath);
+        } catch (error) {
+          // 영문 정적 보고서는 크롤이 한 번 돌아야 생기므로, 없으면 즉석 생성으로 넘어간다.
+          if (error.code !== "ENOENT") throw error;
+        }
+      }
       try {
-        return await buildDynamicReport(issue, ignored, fromDate, toDate);
+        return await buildDynamicReport(issue, ignored, fromDate, toDate, lang);
       } catch (error) {
         const canUseVercelPythonFunction = process.env.VERCEL === "1" || /ENOENT/i.test(error.message || "");
         if (!canUseVercelPythonFunction) throw error;
         try {
-          return await buildDynamicReportViaPythonFunction(url, issue, ignored, fromDate, toDate);
+          return await buildDynamicReportViaPythonFunction(url, issue, ignored, fromDate, toDate, lang);
         } catch (pythonFunctionError) {
           throw new Error(`${error.message} | ${pythonFunctionError.message}`);
         }
@@ -229,7 +244,11 @@ export async function GET(request) {
         height: 18,
         color: footerBg,
       });
-      page.drawText(`Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · ${issueText}`, {
+      const footerText =
+        lang === "en"
+          ? `Invest KOREA · Global Investment Signal Monitoring · ${issueText}`
+          : `Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · ${issueText}`;
+      page.drawText(footerText, {
         x: 42,
         y: 16,
         size: 8,
@@ -241,7 +260,7 @@ export async function GET(request) {
     const output = await pdf.save();
     const headers = {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}.pdf"`,
+        "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}${lang === "en" ? "-en" : ""}.pdf"`,
         "Cache-Control": "no-store",
     };
     return new Response(output, { headers });

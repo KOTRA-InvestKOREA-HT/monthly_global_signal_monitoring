@@ -366,6 +366,7 @@ export default function HomePage() {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [ignoreDialogOpen, setIgnoreDialogOpen] = useState(false);
   const [issueNumber, setIssueNumber] = useState("2");
+  const [reportLang, setReportLang] = useState("ko");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
   const [investmentSignals, setInvestmentSignals] = useState([]);
@@ -405,6 +406,7 @@ export default function HomePage() {
     setIssueNumber(safeIssue);
     const params = new URLSearchParams({
       issue: safeIssue,
+      lang: reportLang,
       month: monthValue,
       from: selectedPeriod.fromDate,
       to: selectedPeriod.toDate,
@@ -431,7 +433,7 @@ export default function HomePage() {
       const objectUrl = window.URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
-      anchor.download = `global-signal-monitor-issue-${safeIssue}.pdf`;
+      anchor.download = `global-signal-monitor-issue-${safeIssue}${reportLang === "en" ? "-en" : ""}.pdf`;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -658,7 +660,7 @@ export default function HomePage() {
           <section className="modal compactModal" role="dialog" aria-modal="true" aria-labelledby="report-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
             <div className="modalHeader">
               <h2 id="report-dialog-title">보고서 다운로드</h2>
-              <p>표지에 표시할 Issue 번호를 선택합니다.</p>
+              <p>표지에 표시할 Issue 번호와 보고서 언어를 선택합니다.</p>
             </div>
             <label className="modalField">
               <span>Issue 번호</span>
@@ -668,6 +670,13 @@ export default function HomePage() {
                 value={issueNumber}
                 onChange={(event) => setIssueNumber(event.target.value)}
               />
+            </label>
+            <label className="modalField">
+              <span>언어</span>
+              <select value={reportLang} onChange={(event) => setReportLang(event.target.value)}>
+                <option value="ko">국문</option>
+                <option value="en">영문 (English)</option>
+              </select>
             </label>
             <div className="modalActions">
               <button className="secondary" type="button" onClick={() => setReportDialogOpen(false)}>
