@@ -1120,15 +1120,25 @@ def is_press_release(row):
     return bool(PRESS_RELEASE_PATTERN.search(haystack))
 
 
+def signal_supported(row):
+    """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
+
+    분류는 키워드 일치만 보므로 위험고지 상용문구에 키워드가 한 번 스친 보도자료도 시그널로 올라온다.
+    필드가 없는 과거 데이터는 판정 자체가 없었던 것이므로 그대로 살린다(없다고 단정하지 않는다).
+    """
+    return (row or {}).get("ai_signal_supported") is not False
+
+
 def sort_signal_rows(rows):
     def key(row):
+        supported = 0 if signal_supported(row) else 1
         press = 0 if is_press_release(row) else 1
         official = 0 if row.get("source_type") == "official" else 1
         technology_score = -(row.get("technology_relevance_score") or row.get("relevance_score") or 0)
         signal_score = -(row.get("investment_signal_score") or 0)
         dt = parse_datetime(row.get("published_at"))
         timestamp = -dt.timestamp() if dt else 0
-        return (press, official, technology_score, signal_score, timestamp)
+        return (supported, press, official, technology_score, signal_score, timestamp)
 
     return sorted(rows, key=key)
 
@@ -1136,6 +1146,10 @@ def sort_signal_rows(rows):
 def index_investment_signals(rows):
     index = defaultdict(lambda: defaultdict(list))
     for row in rows:
+        # 매트릭스의 켜진 칸은 '당월 포착된 시그널'을 뜻한다. 근거가 확인되지 않은 행이 칸을 켜면
+        # 문서가 스스로 정의한 뜻과 어긋난다.
+        if not signal_supported(row):
+            continue
         company = row.get("company")
         try:
             no = int(row.get("investment_signal_no"))
@@ -1679,7 +1693,9 @@ def build_item_trend_entries(profiles, signal_index, relevant_rows):
         company = profile["company"]
         if any(signal_index.get(company, {}).values()):
             continue
-        candidates = [row for row in relevant_rows if row.get("company") == company]
+        # 이 카드의 존재 이유가 '타겟 품목·기술과 직접 연계된 사업동향'이므로,
+        # 그 연계가 확인되지 않은 행으로는 카드를 만들지 않는다.
+        candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
         if not candidates:
             continue
         if not str(profile.get("target_technology") or "").strip():

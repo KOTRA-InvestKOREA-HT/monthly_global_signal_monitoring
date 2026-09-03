@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CACHE_VERSION = 1;
-const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v3";
-const RELEVANT_PROMPT_VERSION = "business-summary-koen-v6";
+const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v5";
+const RELEVANT_PROMPT_VERSION = "business-summary-koen-v7";
 const BUSINESS_SUMMARY_MIN_CHARS = 220;
 const BUSINESS_SUMMARY_MIN_CHARS_EN = 260;
 const KOREAN_TEXT_FIELDS = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"];
@@ -17,6 +17,7 @@ const SUMMARY_FIELDS = [
   "ai_summary_en",
   "ai_summary_headline_en",
   "ai_summary_detail_en",
+  "ai_signal_supported",
   "ai_summary_quality",
   "ai_summary_confidence",
   "ai_summary_reason",
@@ -527,6 +528,12 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
+    // 분류 단계는 키워드 일치만 보므로, 위험고지 상용문구에 'tariff'가 한 번 스친 보도자료도 시그널로 올라온다.
+    // 본문을 실제로 읽는 것은 이 단계뿐이다. 여기서 아니라고 판정하면 보고서에서 시그널로 세지 않는다.
+    isBusinessSummary
+      ? "signal_supported는 본문이 해당 기업의 유치필요 품목/기술과 직접 연결되는 구체적 사업 활동을 담고 있으면 true, 그런 활동이 확인되지 않으면 false로 둔다."
+      : "signal_supported는 본문이 위 '시그널'에 해당하는 사건이 실제로 일어났음을 보여주면 true로 둔다. 키워드만 스쳐 지나가거나, 위험고지·전망 상용문구에 언급만 있거나, 해당 사건의 근거가 확인되지 않으면 false로 둔다.",
+    "signal_supported가 false여도 요약문은 본문에 있는 사실 그대로 작성한다. 요약을 비우거나 지어내지 않는다.",
     "한국어 요약과 함께 같은 내용의 영문 요약도 작성한다. 영문은 한국어를 직역한 것이 아니라, 같은 사실을 영어 보고서 문체로 자연스럽게 쓴 것이어야 한다. 두 언어의 사실관계는 반드시 일치해야 한다.",
     isBusinessSummary
       ? "summary_en은 summary_ko와 같은 내용을 담은 3~4문장, 총 300~460자 내외의 영문 단락으로 쓴다. summary_headline_en과 summary_detail_en은 빈 문자열로 둔다."
@@ -564,6 +571,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               summary_en: { type: "string" },
               summary_headline_en: { type: "string" },
               summary_detail_en: { type: "string" },
+              signal_supported: { type: "boolean" },
               quality: { type: "string", enum: ["pass", "needs_review"] },
               confidence: { type: "number" },
               reason: { type: "string" },
@@ -575,6 +583,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               "summary_en",
               "summary_headline_en",
               "summary_detail_en",
+              "signal_supported",
               "quality",
               "confidence",
               "reason",
@@ -605,6 +614,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       ai_summary_en: cleanText(parsed.summary_en),
       ai_summary_headline_en: "",
       ai_summary_detail_en: "",
+      ai_signal_supported: parsed.signal_supported !== false,
       ai_summary_quality: parsed.quality,
       ai_summary_confidence: Number(parsed.confidence) || 0,
       ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -629,6 +639,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     ai_summary_en: cleanText(`${englishParts.headline}${englishParts.detail ? ` - ${englishParts.detail}` : ""}`),
     ai_summary_headline_en: englishParts.headline,
     ai_summary_detail_en: englishParts.detail,
+    ai_signal_supported: parsed.signal_supported !== false,
     ai_summary_quality: parsed.quality,
     ai_summary_confidence: Number(parsed.confidence) || 0,
     ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),

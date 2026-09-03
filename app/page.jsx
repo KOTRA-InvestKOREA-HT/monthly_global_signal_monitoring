@@ -53,6 +53,13 @@ function isUndated(item) {
   return !String(item?.published_at || "").trim();
 }
 
+// 분류는 키워드 일치만 보므로, 위험고지 상용문구에 키워드가 한 번 스친 보도자료도 시그널로 올라온다.
+// 요약 단계에서 본문을 읽고 근거가 없다고 판정한 항목은 보고서에서 빠지고 화면에만 남는다.
+// 판정 필드가 없는 과거 데이터는 판정 자체가 없었던 것이므로 근거 있음으로 본다.
+function isUnsupportedSignal(item) {
+  return item?.ai_signal_supported === false;
+}
+
 function PublishedDate({ item }) {
   if (isUndated(item)) {
     return <span className="undatedBadge" title="게시일을 확인하지 못해 월간 보고서에서는 제외됩니다">게시일 미상</span>;
@@ -390,10 +397,11 @@ function investmentSortKey(item, mode) {
   const company = String(item.company || "");
   const published = new Date(item.published_at || 0).getTime() || 0;
   const press = isPressRelease(item) ? 0 : 1;
+  const unsupported = isUnsupportedSignal(item) ? 1 : 0;
   if (mode === "company") {
-    return [targetNo, company, signalNo, press, -published];
+    return [targetNo, company, unsupported, signalNo, press, -published];
   }
-  return [signalNo, targetNo, company, press, -published];
+  return [unsupported, signalNo, targetNo, company, press, -published];
 }
 
 function compareSortKeys(left, right) {
@@ -632,6 +640,7 @@ export default function HomePage() {
   const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
   const pressReleaseCount = displayedSignals.filter((item) => isPressRelease(item)).length;
   const undatedCount = displayedSignals.filter((item) => isUndated(item)).length;
+  const unsupportedSignalCount = displayedInvestmentSignals.filter((item) => isUnsupportedSignal(item)).length;
 
   return (
     <main className="shell">
@@ -821,6 +830,10 @@ export default function HomePage() {
           <strong className={undatedCount ? "statusWarning" : ""}>{undatedCount}</strong>
         </div>
         <div>
+          <span>근거 미확인 시그널</span>
+          <strong className={unsupportedSignalCount ? "statusWarning" : ""}>{unsupportedSignalCount}</strong>
+        </div>
+        <div>
           <span>기술 관련 후보</span>
           <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
         </div>
@@ -896,6 +909,11 @@ export default function HomePage() {
                     <div className="signalStack">
                       <span className="signalNo">{item.investment_signal_no}</span>
                       <strong>{item.investment_signal_label}</strong>
+                      {isUnsupportedSignal(item) ? (
+                        <span className="undatedBadge" title="본문에서 이 시그널의 근거를 확인하지 못해 월간 보고서에서는 제외됩니다">
+                          근거 미확인
+                        </span>
+                      ) : null}
                     </div>
                   </td>
                   <td>{item.company}</td>

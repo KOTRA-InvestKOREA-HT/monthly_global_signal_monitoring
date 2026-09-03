@@ -212,6 +212,12 @@ function scoreMatch(signal, terms, fields) {
   return terms.length + officialBoost + pressBoost + contentBoost + specificBoost;
 }
 
+// 한 기사가 다섯 지표에 모두 걸리는 병리적 경우만 막는 방어선이다.
+// 중복을 실제로 정리하는 것은 요약 단계의 ai_signal_supported 판정이고(측정: 중복 33건 -> 24건,
+// 4중복은 전부 소멸), 여기서 점수순으로 미리 잘라내면 그 판정을 받아보기도 전에 진짜 시그널을
+// 지울 수 있다. 실제로 한 기사가 공급망·증설·R&D를 함께 알리는 경우가 있어 3중복은 정상이다.
+const MAX_SIGNALS_PER_ARTICLE = 4;
+
 function classifySignal(signal, indicators, threshold) {
   const text = signalText(signal);
   const matches = [];
@@ -239,6 +245,15 @@ function classifySignal(signal, indicators, threshold) {
     });
   }
 
+  if (matches.length > MAX_SIGNALS_PER_ARTICLE) {
+    matches.sort(
+      (a, b) =>
+        b.investment_signal_score - a.investment_signal_score ||
+        b.matched_terms.length - a.matched_terms.length ||
+        a.investment_signal_no - b.investment_signal_no,
+    );
+    return matches.slice(0, MAX_SIGNALS_PER_ARTICLE);
+  }
   return matches;
 }
 
