@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-03T02:31:53Z",
+  "run_started_at": "2026-09-03T02:50:16Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,10 +20,10 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 695,
-  "result_count": 425,
+  "request_count": 696,
+  "result_count": 426,
   "official_result_count": 391,
-  "fallback_result_count": 34,
+  "fallback_result_count": 35,
   "companies_with_results": 71,
   "companies_with_official_results": 64,
   "companies_without_results": [
@@ -80,7 +80,7 @@
     "EMM(Umicore)": 9,
     "Umicore": 10,
     "Solvay": 4,
-    "Syensqo": 3,
+    "Syensqo": 4,
     "Hexagon AB": 8,
     "ABB": 1,
     "Maxon": 10,
@@ -192,7 +192,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 70,
+  "error_count": 69,
   "errors": [
     {
       "target_no": 2,
@@ -345,14 +345,6 @@
       "source_url": "https://www.gehealthcare.com/en/about/newsroom/press-releases",
       "source_name": "GE Healthcare - Corporate Press Releases / Press Releases",
       "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 21,
-      "company": "GE Healthcare",
-      "source": "official_pages",
-      "source_url": "https://investor.gehealthcare.com/financial-information/sec-filings",
-      "source_name": "GE Healthcare - SEC Filings / Regulatory Filings",
-      "error": "fetch failed"
     },
     {
       "target_no": 22,
@@ -756,9 +748,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260903T023153Z.json",
-    "csv": "outputs/company_signals_20260903T023153Z.csv",
-    "summary": "outputs/collection_summary_20260903T023153Z.json",
+    "json": "outputs/company_signals_20260903T025016Z.json",
+    "csv": "outputs/company_signals_20260903T025016Z.csv",
+    "summary": "outputs/collection_summary_20260903T025016Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"

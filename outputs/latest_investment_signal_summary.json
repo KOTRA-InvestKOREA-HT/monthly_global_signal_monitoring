@@ -1,11 +1,11 @@
 {
-  "run_started_at": "2026-09-03T02:35:05Z",
-  "input_signal_count": 425,
+  "run_started_at": "2026-09-03T02:53:19Z",
+  "input_signal_count": 426,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
   "technology_gate_pass_count": 129,
   "technology_gate_counts": {
-    "not_relevant": 296,
+    "not_relevant": 297,
     "relevance_exempt": 53,
     "passed": 76
   },
