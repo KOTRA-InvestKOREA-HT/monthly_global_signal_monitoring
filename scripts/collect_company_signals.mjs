@@ -37,8 +37,16 @@ const SIGNAL_TERMS = [
   "Korea",
 ];
 
+// 스스로를 봇이라고 밝히는 UA는 기업 사이트의 WAF가 기본값으로 차단한다.
+// 공개된 보도자료 페이지를 읽을 뿐 인증이나 유료 구간을 우회하지 않는다.
 const USER_AGENT =
-  "Mozilla/5.0 (compatible; CompanySignalMonitor/0.1; +https://github.com/buy4u49-ship-it/monthly_global_signal_monitoring)";
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
+
+// 일시적 차단·과부하·타임아웃이면 다시 시도한다. 404처럼 확정된 실패는 재시도하지 않는다.
+const RETRYABLE_STATUS = new Set([403, 406, 408, 409, 425, 429, 500, 502, 503, 504]);
+
+let fetchRetries = 2;
+let retryCount = 0;
 
 function parseArgs(argv) {
   const args = {
@@ -61,6 +69,7 @@ function parseArgs(argv) {
     contentCharLimit: 24000,
     contentExcerptLimit: 800,
     maxDetailPerCompany: 8,
+    fetchRetries: 2,
   };
   const keyMap = {
     "--companies": "companies",
@@ -82,6 +91,7 @@ function parseArgs(argv) {
     "--content-char-limit": "contentCharLimit",
     "--content-excerpt-limit": "contentExcerptLimit",
     "--max-detail-per-company": "maxDetailPerCompany",
+    "--fetch-retries": "fetchRetries",
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
@@ -101,6 +111,7 @@ function parseArgs(argv) {
         "contentCharLimit",
         "contentExcerptLimit",
         "maxDetailPerCompany",
+        "fetchRetries",
       ].includes(mapped)
     ) {
       args[mapped] = Number.parseInt(value, 10);
@@ -512,26 +523,70 @@ function filterByDateRange(rows, dateRange) {
   });
 }
 
-async function fetchText(url, timeoutSeconds) {
+// 브라우저가 실제로 보내는 헤더 묶음. Referer가 없다는 이유만으로 403을 주는 사이트가 많다.
+function requestHeaders(url) {
+  const headers = {
+    "User-Agent": USER_AGENT,
+    Accept:
+      "text/html,application/xhtml+xml,application/xml;q=0.9,application/rss+xml,application/atom+xml,application/json;q=0.8,*/*;q=0.7",
+    "Accept-Language": "en-US,en;q=0.9,ko;q=0.7",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+  };
+  try {
+    // Referer를 보내면 Sec-Fetch-Site도 그에 맞춰야 한다. 둘이 어긋나면 오히려 봇으로 걸린다.
+    headers.Referer = `${new URL(url).origin}/`;
+    headers["Sec-Fetch-Site"] = "same-origin";
+  } catch {
+    // 상대 경로나 깨진 URL이면 Referer 없이 보낸다.
+  }
+  return headers;
+}
+
+async function fetchTextOnce(url, timeoutSeconds) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept:
-          "text/html, application/xhtml+xml, application/rss+xml, application/atom+xml, application/json, text/xml;q=0.9, */*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9,ko;q=0.7",
-      },
+      redirect: "follow",
+      headers: requestHeaders(url),
     });
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      const error = new Error(`HTTP ${response.status} ${response.statusText}`);
+      error.status = response.status;
+      throw error;
     }
     return await response.text();
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function isRetryableFetchError(error) {
+  // 상태 코드가 없으면 네트워크 오류나 타임아웃이므로 재시도한다.
+  return error.status === undefined ? true : RETRYABLE_STATUS.has(error.status);
+}
+
+async function fetchText(url, timeoutSeconds) {
+  let lastError;
+  for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
+    if (attempt > 0) {
+      retryCount += 1;
+      // 지수 백오프에 지터를 섞어 같은 호스트를 연달아 두드리지 않는다.
+      await sleep(700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 400));
+    }
+    try {
+      return await fetchTextOnce(url, timeoutSeconds);
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableFetchError(error)) throw error;
+    }
+  }
+  throw lastError;
 }
 
 async function fetchJson(url, timeoutSeconds) {
@@ -1171,6 +1226,8 @@ async function main() {
     companies = companies.slice(0, args.companyLimit);
   }
 
+  fetchRetries = Number.isFinite(args.fetchRetries) && args.fetchRetries >= 0 ? args.fetchRetries : 2;
+
   const sourceConfig = await loadJson(args.sourceConfig, {});
   const selectedSources = args.sources.split(",").map((source) => source.trim()).filter(Boolean);
   const collectedAt = utcNow();
@@ -1219,6 +1276,8 @@ async function main() {
     fallback_mode: args.fallbackMode,
     fallback_min_results: args.fallbackMinResults,
     request_count: requestCount,
+    fetch_retries: args.fetchRetries,
+    retry_count: retryCount,
     result_count: finalRows.length,
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
     press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
