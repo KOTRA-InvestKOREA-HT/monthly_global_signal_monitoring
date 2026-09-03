@@ -50,6 +50,16 @@ const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 let fetchRetries = 2;
 let retryCount = 0;
 
+// 기사가 아니라고 판단해 제외한 링크. 필터가 과했는지 사후에 검증할 수 있어야 한다.
+const excludedRows = [];
+const EXCLUDED_SAMPLE_LIMIT = 120;
+
+function recordExclusion(company, title, url, reason) {
+  if (excludedRows.length < EXCLUDED_SAMPLE_LIMIT) {
+    excludedRows.push({ company, title: cleanText(title).slice(0, 120), url, reason });
+  }
+}
+
 function parseArgs(argv) {
   const args = {
     companies: "data/target_companies.json",
@@ -190,31 +200,146 @@ function isHttpUrl(value) {
   return /^https?:\/\//i.test(String(value || "").trim());
 }
 
+// 목록 페이지 URL에 흔히 붙는 로케일 세그먼트. en-us, ko_KR, zh-hans 형태를 모두 받는다.
+const LOCALE_SEGMENT = /^[a-z]{2}([-_][a-z0-9]{2,5})?$/;
+
+// 코드 대신 언어 이름을 쓰는 사이트도 많다. sumitomo-chem.co.jp/english/news/ 같은 경우.
+const LOCALE_WORDS = new Set([
+  "english",
+  "japanese",
+  "korean",
+  "chinese",
+  "deutsch",
+  "german",
+  "french",
+  "francais",
+  "spanish",
+  "espanol",
+  "italiano",
+  "portugues",
+]);
+
+function isLocaleSegment(segment) {
+  return LOCALE_SEGMENT.test(segment) || LOCALE_WORDS.has(segment);
+}
+
+// 기사 한 건이 아니라 기사 묶음을 가리키는 경로 조각.
+const INDEX_SEGMENTS = new Set([
+  "en",
+  "global",
+  "corporate",
+  "company",
+  "about",
+  "about-us",
+  "news",
+  "news-events",
+  "news-and-events",
+  "news-and-insights",
+  "news-insights",
+  "newsroom",
+  "news-room",
+  "newsreleases",
+  "news-release",
+  "news-releases",
+  "media",
+  "media-center",
+  "media-centre",
+  "mediacenter",
+  "media-gallery",
+  "media-library",
+  "medialibrary",
+  "social-media",
+  "video-center",
+  "video-centre",
+  "press",
+  "pressroom",
+  "press-room",
+  "press-kit",
+  "press-kits",
+  "press-release",
+  "press-releases",
+  "pressreleases",
+  "releases",
+  "stories",
+  "featured-stories",
+  "blog",
+  "blogs",
+  "events",
+  "insights",
+  "publications",
+  "library",
+  "resources",
+  "investor",
+  "investors",
+  "investor-relations",
+  "ir",
+  "announcements",
+  "announcement",
+  "annual-general-meeting",
+  "financial-results",
+  "results",
+  "reports",
+  "sustainability",
+  "esg",
+  "responsibility",
+  "overview",
+  "archive",
+  "archives",
+  "all",
+  "latest",
+  "index",
+  "home",
+  "default",
+]);
+
+// 목록 페이지임을 확정적으로 드러내는 경로. 카테고리·태그·페이지네이션은 기사 URL이 될 수 없다.
+function hasIndexOnlyPathMarker(parsed) {
+  const pathname = parsed.pathname.toLowerCase();
+  if (/\/(category|categories|kategorie|tag|tags|topic|topics|subject|filter|search|page)\//.test(pathname)) return true;
+  if (/\/page[/-]\d+\/?$/.test(pathname)) return true;
+  for (const key of parsed.searchParams.keys()) {
+    // ?p=123 은 워드프레스에서 개별 글을 가리키므로 페이지네이션으로 보지 않는다.
+    if (/^(page|paged|offset|start|category|cat|tag|topic|filter|label)$/i.test(key)) return true;
+  }
+  return false;
+}
+
+// 치환되지 않은 템플릿 자리표시자나 앵커 문법이 남은 URL. 유효한 문서가 아니다.
+function looksLikeBrokenUrl(value) {
+  const text = String(value || "");
+  if (/\.(cta|href|link)\.url(\?|#|$)/i.test(text)) return true;
+  if (/[/:][A-Z][A-Z0-9_-]{3,}$/.test(text.replace(/^https?:\/\//i, ""))) return true;
+  if (/\$\{|\{\{|%7b/i.test(text)) return true;
+  return false;
+}
+
+function stripPageExtension(segment) {
+  return segment.replace(/\.(html?|aspx?|php|jsp|cfm)$/i, "");
+}
+
 function looksLikeSourceIndexUrl(value) {
   if (!isHttpUrl(value)) return false;
   try {
-    const pathname = new URL(value).pathname.replace(/\/+$/, "").toLowerCase();
+    const parsed = new URL(value);
+    const pathname = parsed.pathname.replace(/\/+$/, "").toLowerCase();
     if (!pathname || pathname === "") return true;
     if (/(\/|^)(rss|feed|atom)(\/|$)/i.test(pathname)) return true;
-    const genericSegments = new Set([
-      "en",
-      "global",
-      "news",
-      "news-events",
-      "newsroom",
-      "media",
-      "press",
-      "press-release",
-      "press-releases",
-      "releases",
-      "investor",
-      "investors",
-      "investor-relations",
-      "ir",
-      "announcements",
-    ]);
-    const segments = pathname.split("/").filter(Boolean);
-    return segments.length > 0 && segments.length <= 3 && segments.every((segment) => genericSegments.has(segment));
+    if (hasIndexOnlyPathMarker(parsed)) return true;
+    // 확장자와 로케일 세그먼트를 걷어낸 뒤 남은 조각이 전부 목록용 단어면 기사 URL이 아니다.
+    const segments = pathname
+      .split("/")
+      .filter(Boolean)
+      .map(stripPageExtension)
+      .filter((segment) => segment && !isLocaleSegment(segment));
+    if (segments.length === 0) return true;
+    if (segments.length <= 4 && segments.every((segment) => INDEX_SEGMENTS.has(segment))) return true;
+    // /company/newsroom/featured-stories/automotive 처럼 상위 경로가 전부 목록이고
+    // 마지막 조각이 짧은 낱말이면 기사가 아니라 카테고리 탭이다.
+    // 실제 기사 슬러그는 보통 단어 3개 이상이거나 날짜·번호를 포함한다.
+    const last = segments[segments.length - 1];
+    const parents = segments.slice(0, -1);
+    const lastLooksLikeCategory = !/\d/.test(last) && last.split("-").length <= 2 && last.length <= 24;
+    return parents.length > 0 && parents.every((segment) => INDEX_SEGMENTS.has(segment)) && lastLooksLikeCategory;
   } catch {
     return false;
   }
@@ -696,13 +821,103 @@ function parseAnchors(html, baseUrl) {
   return anchors;
 }
 
+// 기사 제목이 아니라 링크 라벨이나 메뉴 이름인 문자열.
+// 보고서 헤드라인으로 쓸 수 없으므로 제목 복구 대상으로 넘긴다.
+const GENERIC_TITLE_PATTERN = new RegExp(
+  `^(?:${[
+    "read more",
+    "see more\\b.*",
+    "learn more",
+    "find out more",
+    "more information",
+    "more info",
+    "more",
+    "details?",
+    "view details",
+    "view all",
+    "show all",
+    "see all",
+    "all news",
+    "load more",
+    "download(?:s)?",
+    "share price info",
+    "news",
+    "news ?& ?insights",
+    "news ?& ?events",
+    "news release(?:s)?",
+    "press release(?:s)?",
+    "media release(?:s)?",
+    "press kit(?:s)?",
+    "corporate press kit",
+    "press office",
+    "press room|pressroom",
+    "newsroom|news room",
+    "media (?:center|centre|gallery|library|relations)",
+    "video (?:center|centre)",
+    "social media",
+    "featured stories",
+    "stories",
+    "blog",
+    "events",
+    "presentation(?:s)?",
+    "publication(?:s)?",
+    "announcement(?:s)?",
+    "sustainability",
+    "business ?& ?products",
+    "overview",
+    "archive(?:s)?",
+    "subscribe",
+    "contact(?: us)?",
+    "rules of disclosure",
+    "wind turbine orders",
+    "\\(opens in new tab\\)",
+    "opens in new tab",
+    "are you human",
+    "&nbsp;",
+  ].join("|")})$`,
+  "i",
+);
+
 function isGenericOfficialTitle(title) {
-  return /^(read more|see more\b.*|learn more|more|news release|press release|share price info|view details)$/i.test(title);
+  const text = cleanText(title).trim();
+  if (!text) return true;
+  return GENERIC_TITLE_PATTERN.test(text);
+}
+
+// 제목이 회사명 그 자체이면(사이트 <title>이 회사명뿐인 경우) 기사 제목으로 쓸 수 없다.
+function isCompanyNameOnlyTitle(title, company) {
+  const text = cleanText(title).toLowerCase().replace(/[^a-z0-9가-힣]+/g, " ").trim();
+  if (!text) return true;
+  const names = [company?.company, ...(company?.query_aliases || [])].filter(Boolean);
+  return names.some((name) => {
+    const normalized = String(name).toLowerCase().replace(/[^a-z0-9가-힣]+/g, " ").trim();
+    return normalized && text === normalized;
+  });
+}
+
+// 보고서 헤드라인으로 쓸 수 있는 제목인지. 여기서 걸러진 행은 기사로 인정하지 않는다.
+function isUsableTitle(title, company) {
+  const text = cleanText(title).trim();
+  if (text.length < 8) return false;
+  if (isGenericOfficialTitle(text)) return false;
+  if (isCompanyNameOnlyTitle(text, company)) return false;
+  return true;
 }
 
 function titleFromUrl(url) {
   try {
     const parsed = new URL(url);
+    // 문서 링크는 경로가 난수 ID이고 실제 이름이 fileName 같은 쿼리에 담기는 경우가 많다.
+    for (const key of ["fileName", "filename", "file", "name"]) {
+      const value = parsed.searchParams.get(key);
+      if (!value) continue;
+      const fromParam = decodeURIComponent(value)
+        .replace(/\.(pdf|xlsx?|pptx?|docx?|html?|aspx|php)$/i, "")
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (fromParam.length >= 16) return fromParam;
+    }
     const segments = parsed.pathname.split("/").filter(Boolean);
     const last = segments.reverse().find((segment) => !/^(default|index|news|press|releases?|details?|en|global|ir)$/i.test(segment));
     if (!last) return "";
@@ -751,10 +966,13 @@ function isRelevantOfficialLink(anchor, pageUrl) {
   const direct = `${title} ${anchor.url}`.toLowerCase();
   const detectedDate = extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`);
   if (looksLikeSourceIndexUrl(anchor.url)) return false;
+  if (looksLikeBrokenUrl(anchor.url)) return false;
   const pathLooksDetailed =
     /\/(news-release-details|press-releases?|newsroom|news|media|article|announcements?)\//i.test(anchor.url) ||
     /\b20\d{2}\b/.test(anchor.url);
-  if (title.length < 8) return false;
+  // 링크 텍스트가 "More information" 같은 라벨이면 title이 비는데, 목적지가 상세 페이지로 보이면
+  // 여기서 버리지 않고 통과시킨다. 진짜 제목은 상세 페이지를 받아본 뒤 확정한다.
+  if (title.length < 8 && !pathLooksDetailed) return false;
   if (!detectedDate && !pathLooksDetailed) return false;
   if (/\.(jpg|jpeg|png|gif|svg|webp|mp4|zip)$/i.test(anchor.url)) return false;
   if (/privacy|cookie|terms|subscribe|contact|career|linkedin|facebook|twitter|youtube|instagram/i.test(direct)) {
@@ -896,7 +1114,16 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, error: error.message });
         }
       }
-      const anchors = parseAnchors(html, page.url).filter((anchor) => isRelevantOfficialLink(anchor, page.url));
+      const anchors = parseAnchors(html, page.url).filter((anchor) => {
+        if (isRelevantOfficialLink(anchor, page.url)) return true;
+        // 목록·카테고리 페이지와 깨진 링크는 제외 사유를 남긴다. 나머지 무관한 링크는 기록하지 않는다.
+        if (looksLikeSourceIndexUrl(anchor.url)) {
+          recordExclusion(company.company, anchor.title, anchor.url, "index_or_category_page");
+        } else if (looksLikeBrokenUrl(anchor.url)) {
+          recordExclusion(company.company, anchor.title, anchor.url, "broken_url");
+        }
+        return false;
+      });
       const sourceRows = dedupeRows(
         anchors.map((anchor) => {
           const listingDate = resolveListingDate(anchor);
@@ -929,15 +1156,18 @@ function canFetchDetailContent(url) {
   return !/\.(pdf|xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
 }
 
-function chooseBetterTitle(currentTitle, pageTitle, url) {
-  if (!pageTitle) return currentTitle;
-  if (!currentTitle || currentTitle.length < 16 || isGenericOfficialTitle(currentTitle)) return pageTitle;
+function chooseBetterTitle(currentTitle, pageTitle, url, company) {
+  // 사이트 <title>이 회사명뿐이거나 메뉴 이름이면 링크 텍스트보다 나을 게 없다.
+  // onsemi 뉴스룸의 <title>이 "onsemi"라서 제목이 회사명으로 덮이던 문제를 막는다.
+  const usablePageTitle = pageTitle && isUsableTitle(pageTitle, company) ? pageTitle : "";
+  if (!usablePageTitle) return currentTitle;
+  if (!currentTitle || currentTitle.length < 16 || isGenericOfficialTitle(currentTitle)) return usablePageTitle;
   const urlTitle = titleFromUrl(url);
-  if (urlTitle && currentTitle.toLowerCase() === urlTitle.toLowerCase()) return pageTitle;
+  if (urlTitle && currentTitle.toLowerCase() === urlTitle.toLowerCase()) return usablePageTitle;
   return currentTitle;
 }
 
-async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
+async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
   if (!args.fetchOfficialContent) {
     return { rows, requestCount: 0, errors: [] };
   }
@@ -953,25 +1183,22 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
       continue;
     }
 
-    if (detailCount >= args.maxDetailPerCompany) {
-      const limitUrlDate = row.published_at ? null : extractDateFromUrl(row.url);
-      enriched.push({
-        ...row,
-        published_at: row.published_at || limitUrlDate,
-        published_at_source: row.published_at ? row.published_at_source : limitUrlDate ? "url" : row.published_at_source,
-        content_fetch_status: "skipped_detail_limit",
-      });
-      continue;
-    }
-
-    if (!canFetchDetailContent(row.url)) {
+    // 본문을 받아오지 않는 두 경로에서는 링크 텍스트와 URL만으로 제목을 확보해야 한다.
+    if (detailCount >= args.maxDetailPerCompany || !canFetchDetailContent(row.url)) {
+      const skipStatus = detailCount >= args.maxDetailPerCompany ? "skipped_detail_limit" : "skipped_non_html";
+      const skipTitle = isUsableTitle(row.title, company) ? row.title : titleFromUrl(row.url);
+      if (!isUsableTitle(skipTitle, company)) {
+        recordExclusion(row.company, row.title, row.url, "no_article_title");
+        continue;
+      }
       // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다.
-      const urlDate = row.published_at ? null : extractDateFromUrl(row.url);
+      const skipUrlDate = row.published_at ? null : extractDateFromUrl(row.url);
       enriched.push({
         ...row,
-        published_at: row.published_at || urlDate,
-        published_at_source: row.published_at ? row.published_at_source : urlDate ? "url" : row.published_at_source,
-        content_fetch_status: "skipped_non_html",
+        title: skipTitle,
+        published_at: row.published_at || skipUrlDate,
+        published_at_source: row.published_at ? row.published_at_source : skipUrlDate ? "url" : row.published_at_source,
+        content_fetch_status: skipStatus,
       });
       continue;
     }
@@ -986,9 +1213,16 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
       const htmlDate = row.published_at ? { date: null, source: "" } : resolveHtmlDate(html, row.url);
       const bodyDate = row.published_at || htmlDate.date ? null : extractDateFromText(content.slice(0, 4000));
       const publishedAt = row.published_at || htmlDate.date || bodyDate;
+      const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
+      // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
+      // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
+      if (!isUsableTitle(resolvedTitle, company)) {
+        recordExclusion(row.company, resolvedTitle || row.title, row.url, "no_article_title");
+        continue;
+      }
       enriched.push({
         ...row,
-        title: chooseBetterTitle(row.title, pageTitle, row.url),
+        title: resolvedTitle,
         published_at: publishedAt,
         published_at_source: row.published_at
           ? row.published_at_source
@@ -1212,7 +1446,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
   }
 
   const selectedCompanyRows = sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany);
-  const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt);
+  const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company);
   return {
     rows: enriched.rows,
     requestCount: requestCount + enriched.requestCount,
@@ -1287,6 +1521,12 @@ async function main() {
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
     press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
     undated_result_count: finalRows.filter((row) => !row.published_at).length,
+    excluded_non_article_count: excludedRows.length,
+    excluded_non_article_reasons: excludedRows.reduce((counts, row) => {
+      counts[row.reason] = (counts[row.reason] || 0) + 1;
+      return counts;
+    }, {}),
+    excluded_non_article_samples: excludedRows,
     published_at_source_counts: finalRows.reduce((counts, row) => {
       const key = row.published_at_source || "none";
       counts[key] = (counts[key] || 0) + 1;
