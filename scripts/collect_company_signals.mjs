@@ -42,8 +42,10 @@ const SIGNAL_TERMS = [
 const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
 
-// 일시적 차단·과부하·타임아웃이면 다시 시도한다. 404처럼 확정된 실패는 재시도하지 않는다.
-const RETRYABLE_STATUS = new Set([403, 406, 408, 409, 425, 429, 500, 502, 503, 504]);
+// 일시적 실패만 재시도한다.
+// 403(거부)과 404(없음)는 서버가 내린 결정이므로 헤더를 바꿔가며 다시 두드리지 않는다.
+// 406도 같은 요청을 반복해봐야 결과가 달라지지 않는다.
+const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 let fetchRetries = 2;
 let retryCount = 0;
@@ -558,6 +560,7 @@ async function fetchTextOnce(url, timeoutSeconds) {
     if (!response.ok) {
       const error = new Error(`HTTP ${response.status} ${response.statusText}`);
       error.status = response.status;
+      error.retryAfterSeconds = Number.parseInt(response.headers.get("retry-after") || "", 10) || 0;
       throw error;
     }
     return await response.text();
@@ -576,8 +579,10 @@ async function fetchText(url, timeoutSeconds) {
   for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
     if (attempt > 0) {
       retryCount += 1;
-      // 지수 백오프에 지터를 섞어 같은 호스트를 연달아 두드리지 않는다.
-      await sleep(700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 400));
+      // 서버가 Retry-After로 대기 시간을 지정했으면 그 값을 따른다.
+      const backoffMs = 700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 400);
+      const retryAfterMs = (lastError?.retryAfterSeconds || 0) * 1000;
+      await sleep(Math.min(Math.max(backoffMs, retryAfterMs), 30000));
     }
     try {
       return await fetchTextOnce(url, timeoutSeconds);
