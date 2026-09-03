@@ -1,24 +1,25 @@
 {
-  "run_started_at": "2026-09-03T04:33:53Z",
-  "input_signal_count": 427,
+  "run_started_at": "2026-09-03T04:52:41Z",
+  "input_signal_count": 425,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 130,
+  "technology_gate_pass_count": 129,
   "technology_gate_counts": {
-    "not_relevant": 297,
+    "not_relevant": 296,
     "relevance_exempt": 53,
-    "passed": 77
+    "passed": 76
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 90,
-  "companies_with_investment_signals": 21,
+  "investment_signal_count": 92,
+  "companies_with_investment_signals": 22,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
       "no": 1,
       "label_ko": "공급망·지정학 리스크 대응",
-      "count": 19,
+      "count": 20,
       "companies": [
+        "HyproMag",
         "Applied Materials",
         "Ouster",
         "Amkor Technology",
@@ -36,7 +37,7 @@
     "production_expansion_diversification": {
       "no": 2,
       "label_ko": "생산 확대 및 다변화 의지",
-      "count": 23,
+      "count": 24,
       "companies": [
         "Applied Materials",
         "Amkor Technology",
@@ -45,6 +46,7 @@
         "Infineon",
         "West Pharmaceutical",
         "Prodrive",
+        "HyproMag",
         "Arkema",
         "EVG",
         "Vestas",

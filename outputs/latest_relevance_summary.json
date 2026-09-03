@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-09-03T04:33:43Z",
-  "input_signal_count": 427,
+  "run_started_at": "2026-09-03T04:52:32Z",
+  "input_signal_count": 425,
   "technology_company_count": 77,
   "analyzed_company_count": 68,
   "excluded_company_count": 9,
@@ -16,7 +16,7 @@
     "Toray"
   ],
   "threshold": 1,
-  "relevant_signal_count": 77,
+  "relevant_signal_count": 76,
   "companies_with_relevant_signals": 25,
   "companies_without_relevant_signals": [
     "Cognex",
@@ -119,7 +119,7 @@
     "Renishaw": 0,
     "Nexeon": 2,
     "Rio Tinto": 1,
-    "HyproMag": 3,
+    "HyproMag": 2,
     "EVG": 6,
     "Plansee": 0,
     "Texcell": 0,
@@ -168,7 +168,7 @@
     "lithium_cathode_materials": 8,
     "pvdf": 4,
     "nonferrous_scrap_recycling": 3,
-    "rare_earth_magnet_recycling": 5,
+    "rare_earth_magnet_recycling": 4,
     "ion_exchange_membrane": 0,
     "precipitated_silica_tire": 0,
     "hexamethylenediamine_hmd": 0

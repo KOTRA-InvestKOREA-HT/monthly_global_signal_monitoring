@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-09-03T04:36:09Z",
+  "updated_at": "2026-09-03T04:53:46Z",
   "entries": {
     "075817baf59716c6310cee84ff92abe0": {
       "cache_key": "075817baf59716c6310cee84ff92abe0",
@@ -14017,7 +14017,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:08:56Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:19:59Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "e5caf632558780134013299d10213eff": {
       "cache_key": "e5caf632558780134013299d10213eff",
@@ -14046,7 +14046,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:08:56Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b0f21ec1927d842bcabccd08a9a1a403": {
       "cache_key": "b0f21ec1927d842bcabccd08a9a1a403",
@@ -14074,7 +14074,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:02Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "22a7145374ca914cfbc00e432847ba27": {
       "cache_key": "22a7145374ca914cfbc00e432847ba27",
@@ -14103,7 +14103,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:08Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b454d22ecac7468236590f02fc4b7add": {
       "cache_key": "b454d22ecac7468236590f02fc4b7add",
@@ -14132,7 +14132,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:09Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7f69083b31d6806f5d3df780710cd534": {
       "cache_key": "7f69083b31d6806f5d3df780710cd534",
@@ -14161,7 +14161,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:18Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "70180478c5fe301c519c8a0a472ba496": {
       "cache_key": "70180478c5fe301c519c8a0a472ba496",
@@ -14190,7 +14190,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:18Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "961f30f96f740d3db7859b93f48f0950": {
       "cache_key": "961f30f96f740d3db7859b93f48f0950",
@@ -14218,7 +14218,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:28Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "4b06ee5768a4881ebab8ea4379c1e59c": {
       "cache_key": "4b06ee5768a4881ebab8ea4379c1e59c",
@@ -14247,7 +14247,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:29Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b68d9aebdce59ac6bddb4a01c79e52fd": {
       "cache_key": "b68d9aebdce59ac6bddb4a01c79e52fd",
@@ -14275,7 +14275,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:33Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "75ddf7ab4c2ebaac1054deddcec98540": {
       "cache_key": "75ddf7ab4c2ebaac1054deddcec98540",
@@ -14303,7 +14303,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:37Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "9c10e951be20f1a2c54ce99da78fb5d7": {
       "cache_key": "9c10e951be20f1a2c54ce99da78fb5d7",
@@ -14332,7 +14332,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:41Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a0d4beee27a55a294de6e56420bbbc21": {
       "cache_key": "a0d4beee27a55a294de6e56420bbbc21",
@@ -14361,7 +14361,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:43Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "12dfc593139f5f9e5ab4b83ca7b5a07e": {
       "cache_key": "12dfc593139f5f9e5ab4b83ca7b5a07e",
@@ -14390,7 +14390,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:50Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "97f4b2c144cdc6b969b571b20d028765": {
       "cache_key": "97f4b2c144cdc6b969b571b20d028765",
@@ -14419,7 +14419,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:09:53Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "47789b16612374fdd634c8b64e43db9a": {
       "cache_key": "47789b16612374fdd634c8b64e43db9a",
@@ -14448,7 +14448,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:00Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "37d9cb89bda45e7a0bcba9226dbcfaf0": {
       "cache_key": "37d9cb89bda45e7a0bcba9226dbcfaf0",
@@ -14477,7 +14477,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:02Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "30591ff7a0118fff8cbd1791ec23695c": {
       "cache_key": "30591ff7a0118fff8cbd1791ec23695c",
@@ -14506,7 +14506,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:10Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a23110ea9101ec8c97f89ea2f16876e2": {
       "cache_key": "a23110ea9101ec8c97f89ea2f16876e2",
@@ -14535,7 +14535,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:13Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "dbcbe7ef12cf1b23c79dabcc447dfbd0": {
       "cache_key": "dbcbe7ef12cf1b23c79dabcc447dfbd0",
@@ -14564,7 +14564,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:19Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "2174cb2a538335d1d1982719622f159f": {
       "cache_key": "2174cb2a538335d1d1982719622f159f",
@@ -14592,7 +14592,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:24Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "0ceda24abfee6b863219d3bf86915304": {
       "cache_key": "0ceda24abfee6b863219d3bf86915304",
@@ -14620,7 +14620,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:28Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "16d9535584975a510143c3c1ba4ab829": {
       "cache_key": "16d9535584975a510143c3c1ba4ab829",
@@ -14648,7 +14648,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:31Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "0a34eaa76e9f3d828959096667a3f5f2": {
       "cache_key": "0a34eaa76e9f3d828959096667a3f5f2",
@@ -14677,7 +14677,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:33Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "6235fa9355aad1b72c01745dad579868": {
       "cache_key": "6235fa9355aad1b72c01745dad579868",
@@ -14706,7 +14706,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:37Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "fac4f82f3cf7e046cb9f3b4dd7d48394": {
       "cache_key": "fac4f82f3cf7e046cb9f3b4dd7d48394",
@@ -14734,7 +14734,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:41Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:19:59Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8f1612106ce1fae7a1bab13b742dd558": {
       "cache_key": "8f1612106ce1fae7a1bab13b742dd558",
@@ -14763,7 +14763,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:45Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3d5524ef0a54860c94dbc24e6e37e54f": {
       "cache_key": "3d5524ef0a54860c94dbc24e6e37e54f",
@@ -14792,7 +14792,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:46Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f31193bde280bb3c640c6fb5f23a910d": {
       "cache_key": "f31193bde280bb3c640c6fb5f23a910d",
@@ -14821,7 +14821,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:10:55Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "9b59a642940399538883f20d42d3a777": {
       "cache_key": "9b59a642940399538883f20d42d3a777",
@@ -14850,7 +14850,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:00Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "51ccceda74992623d619c4f05febeab6": {
       "cache_key": "51ccceda74992623d619c4f05febeab6",
@@ -14879,7 +14879,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:03Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "03d1d5951ed273e8fd1904b02494dfd1": {
       "cache_key": "03d1d5951ed273e8fd1904b02494dfd1",
@@ -14908,7 +14908,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:08Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "72607379d84577c3cc9c5ef0b971f7da": {
       "cache_key": "72607379d84577c3cc9c5ef0b971f7da",
@@ -14936,7 +14936,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:13Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f58279b605273082c20202257dbd29e7": {
       "cache_key": "f58279b605273082c20202257dbd29e7",
@@ -14965,7 +14965,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:18Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "804f87d3c7c992e0bf9b8cc3a7a7b0b6": {
       "cache_key": "804f87d3c7c992e0bf9b8cc3a7a7b0b6",
@@ -14994,7 +14994,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:19Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "fb3a9418492187db9743194398a82bfb": {
       "cache_key": "fb3a9418492187db9743194398a82bfb",
@@ -15023,7 +15023,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:27Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "63edd7c586c076a632e86174d4c560ce": {
       "cache_key": "63edd7c586c076a632e86174d4c560ce",
@@ -15052,7 +15052,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:28Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "2ce93aab78ef31a5d2b9a5857ac3326e": {
       "cache_key": "2ce93aab78ef31a5d2b9a5857ac3326e",
@@ -15081,7 +15081,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:36Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "22709058d5dc3fa8ee37ee9887c82676": {
       "cache_key": "22709058d5dc3fa8ee37ee9887c82676",
@@ -15109,7 +15109,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:38Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "613a766c59b07a72ac9ca510ca770958": {
       "cache_key": "613a766c59b07a72ac9ca510ca770958",
@@ -15137,7 +15137,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:43Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "14d1fa4947e88d82393df218d74223db": {
       "cache_key": "14d1fa4947e88d82393df218d74223db",
@@ -15166,7 +15166,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:44Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "1aca5740b4178edfd93d42fa1c520bfa": {
       "cache_key": "1aca5740b4178edfd93d42fa1c520bfa",
@@ -15195,7 +15195,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:48Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "dcce9c334b6abb20101aeca153cabd6e": {
       "cache_key": "dcce9c334b6abb20101aeca153cabd6e",
@@ -15224,7 +15224,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:53Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "9f63a31c2f1cb258baa5bc823be981c6": {
       "cache_key": "9f63a31c2f1cb258baa5bc823be981c6",
@@ -15253,7 +15253,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:11:59Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c28822ad5d070f947b0ab15abc34cf39": {
       "cache_key": "c28822ad5d070f947b0ab15abc34cf39",
@@ -15282,7 +15282,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:02Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "d6bddd1517e93a55a5409b1abc5bac14": {
       "cache_key": "d6bddd1517e93a55a5409b1abc5bac14",
@@ -15311,7 +15311,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:11Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5c36d90ddbeca8cda4981a0e698a5002": {
       "cache_key": "5c36d90ddbeca8cda4981a0e698a5002",
@@ -15339,7 +15339,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:15Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "53ef7c0ded0ef1fac273ec4a0cda6339": {
       "cache_key": "53ef7c0ded0ef1fac273ec4a0cda6339",
@@ -15368,7 +15368,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:20Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5c2ad597333dde268da998a172e187d9": {
       "cache_key": "5c2ad597333dde268da998a172e187d9",
@@ -15396,7 +15396,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:20Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "169a255a08126645d19bbb3ccd8d64e8": {
       "cache_key": "169a255a08126645d19bbb3ccd8d64e8",
@@ -15425,7 +15425,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:25Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "76daca1cfee7a63254891739b8f06df8": {
       "cache_key": "76daca1cfee7a63254891739b8f06df8",
@@ -15453,7 +15453,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:32Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "58430e748fb1ac26abb7ebbde0c69d7a": {
       "cache_key": "58430e748fb1ac26abb7ebbde0c69d7a",
@@ -15482,7 +15482,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:36Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "65baa4633e2559acb10fd5a2d1d6e0ce": {
       "cache_key": "65baa4633e2559acb10fd5a2d1d6e0ce",
@@ -15511,7 +15511,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:39Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "56cadc669cc9a123d59e2a107ac0c31e": {
       "cache_key": "56cadc669cc9a123d59e2a107ac0c31e",
@@ -15540,7 +15540,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:46Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "37a1d0ceb4c94ed66d14e26bf9bb4464": {
       "cache_key": "37a1d0ceb4c94ed66d14e26bf9bb4464",
@@ -15568,7 +15568,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:50Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "af89b2d290689b64feb6118f661fc13d": {
       "cache_key": "af89b2d290689b64feb6118f661fc13d",
@@ -15597,7 +15597,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:54Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "bfcffb91e2eabdc6c1fe1ba20b1f5ecd": {
       "cache_key": "bfcffb91e2eabdc6c1fe1ba20b1f5ecd",
@@ -15626,7 +15626,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:12:55Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "07c790421edb57ce0ced1c731f6617e4": {
       "cache_key": "07c790421edb57ce0ced1c731f6617e4",
@@ -15655,7 +15655,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:03Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "d68a60fe8425cb765a45fb4e6a799b8e": {
       "cache_key": "d68a60fe8425cb765a45fb4e6a799b8e",
@@ -15684,7 +15684,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:05Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "d40244c797fd2c7dceab45a0e557f6f0": {
       "cache_key": "d40244c797fd2c7dceab45a0e557f6f0",
@@ -15713,7 +15713,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:13Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "be9088c5340892de8f475a60bb3706a8": {
       "cache_key": "be9088c5340892de8f475a60bb3706a8",
@@ -15742,7 +15742,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:14Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "9db42aa76bd706754f70ae2da4512433": {
       "cache_key": "9db42aa76bd706754f70ae2da4512433",
@@ -15770,7 +15770,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:23Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8b2c96ced1a05ad6f93a4a8cd956b29f": {
       "cache_key": "8b2c96ced1a05ad6f93a4a8cd956b29f",
@@ -15799,7 +15799,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:23Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "937161a0c3b2c328250d07d51325573c": {
       "cache_key": "937161a0c3b2c328250d07d51325573c",
@@ -15828,7 +15828,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:28Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "22ab00d448b9859d040aace77009cc60": {
       "cache_key": "22ab00d448b9859d040aace77009cc60",
@@ -15857,7 +15857,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:33Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "deca4976086a7d6848222d557114df56": {
       "cache_key": "deca4976086a7d6848222d557114df56",
@@ -15885,7 +15885,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:38Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c2401ee9f81dfd108ca9949daa80c042": {
       "cache_key": "c2401ee9f81dfd108ca9949daa80c042",
@@ -15914,7 +15914,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:42Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "80bbc0bd145c631c925c2b4933b3f3aa": {
       "cache_key": "80bbc0bd145c631c925c2b4933b3f3aa",
@@ -15943,7 +15943,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:43Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a133dba3c5b07a2801dec0e2aa3d09eb": {
       "cache_key": "a133dba3c5b07a2801dec0e2aa3d09eb",
@@ -15971,7 +15971,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:51Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "df7bb6690fa94679bff4f1c4c4e93a90": {
       "cache_key": "df7bb6690fa94679bff4f1c4c4e93a90",
@@ -16000,7 +16000,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:52Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "221bfe0694c7eb5002729bc4eebb926a": {
       "cache_key": "221bfe0694c7eb5002729bc4eebb926a",
@@ -16029,7 +16029,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:13:55Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3296894eed0f1e4347a8ca7032ea7840": {
       "cache_key": "3296894eed0f1e4347a8ca7032ea7840",
@@ -16058,7 +16058,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:01Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "703957c1a9aa7da90fa0e3d05f2c8b09": {
       "cache_key": "703957c1a9aa7da90fa0e3d05f2c8b09",
@@ -16087,7 +16087,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:05Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "6dceea1b43f6254d3da28cb3536707b8": {
       "cache_key": "6dceea1b43f6254d3da28cb3536707b8",
@@ -16116,7 +16116,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:13Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "03816ab1d714efb42f566b900929f939": {
       "cache_key": "03816ab1d714efb42f566b900929f939",
@@ -16145,7 +16145,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:17Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8a93664125f82e88daba27191d664888": {
       "cache_key": "8a93664125f82e88daba27191d664888",
@@ -16173,7 +16173,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:22Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "170660fc4ec6a861ab035e3f3dea3a11": {
       "cache_key": "170660fc4ec6a861ab035e3f3dea3a11",
@@ -16201,7 +16201,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:26Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f31bce65113dad8abd251086a3c269c7": {
       "cache_key": "f31bce65113dad8abd251086a3c269c7",
@@ -16230,7 +16230,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:26Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "4699bbe9eb31edaa7d1e09b1e9dc7ce8": {
       "cache_key": "4699bbe9eb31edaa7d1e09b1e9dc7ce8",
@@ -16258,7 +16258,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:30Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "bb3f5bfdb401c3bc505f7fbdcec1c9e2": {
       "cache_key": "bb3f5bfdb401c3bc505f7fbdcec1c9e2",
@@ -16286,7 +16286,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:34Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f24a6047fb49d455ebc1c8a64b7bb2cf": {
       "cache_key": "f24a6047fb49d455ebc1c8a64b7bb2cf",
@@ -16315,7 +16315,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:35Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "4efcc28872fc2f422f832dadf4559cce": {
       "cache_key": "4efcc28872fc2f422f832dadf4559cce",
@@ -16343,7 +16343,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:39Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "52fac6ebbc7ba4d4b112968c752d2347": {
       "cache_key": "52fac6ebbc7ba4d4b112968c752d2347",
@@ -16371,7 +16371,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:44Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c8f8c72c1e7310d17afe6d8dea534bd6": {
       "cache_key": "c8f8c72c1e7310d17afe6d8dea534bd6",
@@ -16399,7 +16399,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:46Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "08bec12f0f3f53e1cbeaa15b05bcb8be": {
       "cache_key": "08bec12f0f3f53e1cbeaa15b05bcb8be",
@@ -16423,7 +16423,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:51Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f92aeb5eab7e2f2e8c40d8e72693bdb3": {
       "cache_key": "f92aeb5eab7e2f2e8c40d8e72693bdb3",
@@ -16447,7 +16447,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:51Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "0ad6020e7782464b36bc7504e1648880": {
       "cache_key": "0ad6020e7782464b36bc7504e1648880",
@@ -16471,7 +16471,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:56Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:19:59Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a1975308840ede028d6994b8f41dda67": {
       "cache_key": "a1975308840ede028d6994b8f41dda67",
@@ -16495,7 +16495,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:14:59Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a5f28e41f86c3f0dc54aa4491fff762e": {
       "cache_key": "a5f28e41f86c3f0dc54aa4491fff762e",
@@ -16519,7 +16519,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:01Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "52aa0987f923161398def91058e127a2": {
       "cache_key": "52aa0987f923161398def91058e127a2",
@@ -16543,7 +16543,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:05Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5b6ba4480dedd3f06b496c45924888f2": {
       "cache_key": "5b6ba4480dedd3f06b496c45924888f2",
@@ -16567,7 +16567,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:06Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "021c55db8f4b31b6314290d4c370c7dd": {
       "cache_key": "021c55db8f4b31b6314290d4c370c7dd",
@@ -16591,7 +16591,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:10Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b57df08578e16322d7d950bdf87d0bd4": {
       "cache_key": "b57df08578e16322d7d950bdf87d0bd4",
@@ -16615,7 +16615,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:12Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3241fb0a6e0b15391c4520d967947e0b": {
       "cache_key": "3241fb0a6e0b15391c4520d967947e0b",
@@ -16639,7 +16639,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:15Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "da17f8e4f9051e50cc6ce4029d22df03": {
       "cache_key": "da17f8e4f9051e50cc6ce4029d22df03",
@@ -16663,7 +16663,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:17Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3ab4495411607edcc5fdab945dd31f67": {
       "cache_key": "3ab4495411607edcc5fdab945dd31f67",
@@ -16687,7 +16687,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:20Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3c1448a839caf1339045f99cbda02099": {
       "cache_key": "3c1448a839caf1339045f99cbda02099",
@@ -16712,7 +16712,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:35:11Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "98ca7ede9b72912391e52788a5518f76": {
       "cache_key": "98ca7ede9b72912391e52788a5518f76",
@@ -16736,7 +16736,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:26Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "193bc578af9da187c33030ca2be1af86": {
       "cache_key": "193bc578af9da187c33030ca2be1af86",
@@ -16761,7 +16761,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:30Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "d5905ad0c1690886f7aa1e78ef6da2fd": {
       "cache_key": "d5905ad0c1690886f7aa1e78ef6da2fd",
@@ -16775,18 +16775,18 @@
       "source": "HyproMag - Mkango 2026 News / News Archive RSS",
       "published_at": "2026-08-03T14:43:04Z",
       "target_technology": "사용후 영구자석 고순도 희토류 추출",
-      "ai_summary_ko": "Mkango Resources는 2026년 8월 3일 주요 보유지분 변동(TR-1) 공시를 게시했다. Spreadex LTD의 의결권 보유 비율은 2026년 7월 31일 기준 주식 직접 보유분 0.6459%와 금융상품을 통한 보유분 2.3454%를 합쳐 2.9913%로 집계된다. 총 의결권 수는 1,160만473주이며, 직전 신고 비율 3.1903%에서 변동된 내용이 제시된다.",
-      "ai_summary_en": "Mkango Resources published a TR-1 major holdings notification on 3 August 2026. As of 31 July 2026, Spreadex LTD held 0.6459% of voting rights through shares and 2.3454% through financial instruments, for a combined 2.9913%. The filing reports 11,600,473 voting rights, compared with a 3.1903% position in the previous notification.",
+      "ai_summary_ko": "Mkango Resources는 2026년 7월 31일 기준 Spreadex의 의결권 및 금융상품 보유 변동을 공시했다. Spreadex의 총 보유 비중은 3.1903%에서 2.9913%로 감소했으며, 의결권 주식 비중은 0.6459%, 금융상품을 통한 의결권 비중은 2.3454%로 집계된다. 공시에는 사용후 영구자석 재활용, 고순도 희토류 추출 또는 희토류 분리 기술의 사업 활동·설비·고객 관련 내용이 제시되지 않는다.",
+      "ai_summary_en": "Mkango Resources disclosed changes in Spreadex’s holdings of voting rights and financial instruments as of 31 July 2026. Spreadex’s combined position declined from 3.1903% to 2.9913%, comprising 0.6459% in share-based voting rights and 2.3454% through financial instruments. The filing provides no operational, facility, customer, or technology information on end-of-life permanent-magnet recycling, high-purity rare-earth extraction, or rare-earth separation.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.98,
-      "ai_summary_reason": "본문은 Mkango Resources의 주주 의결권 보유 변동 공시이며, HyproMag의 사용후 영구자석 고순도 희토류 추출 기술·사업 활동에 관한 사실을 제공하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "제공된 본문은 주요 보유지분 변동 공시이며, 유치필요 기술과 관련된 사업·기술 적용 사실을 담고 있지 않다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Mkango Resources가 2026년 8월 3일 Spreadex Ltd의 주요 지분 보유 변동을 공시한 TR-1 문서를 게시한 사실이 확인된다. Spreadex의 의결권 및 금융상품 관련 지분 합산 보유율은 기준일 현재 2.9913%로, 직전 신고의 3.1903%에서 감소한 것으로 제시된다. 해당 공시는 지분 변동 통지에 관한 내용으로, 사용후 영구자석에서 고순도 희토류를 추출·분리하는 사업 활동이나 기술 적용, 고객 및 시장 흐름에 관한 구체적 정보는 확인되지 않는다.",
+      "ai_summary_luna_draft": "2026년 8월 3일 공개된 Mkango Resources의 TR-1 공시는 Spreadex Ltd의 의결권 및 금융상품 보유 변동을 다룬 자료로, 2026년 7월 31일 기준 총 보유비율은 2.9913%, 보유 의결권은 11,600,473주로 확인된다. 공시상 보유비율은 직전 신고의 3.1903%에서 하락했으며, 사용후 영구자석에서 고순도 희토류를 추출하는 사업 활동이나 관련 기술 적용·고객·시장 흐름에 대한 내용은 제시되지 않는다. Mkango 웹사이트에는 희토류 분리 플랜트와 희토류 재활용 프로젝트가 사업 항목으로 표시되나, 본 공시와의 구체적 연계 내용은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:15:31Z",
+      "ai_summary_created_at": "2026-09-03T04:53:12Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:19:59Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "d7174733e1990aca89986923774f8eb6": {
       "cache_key": "d7174733e1990aca89986923774f8eb6",
@@ -16810,7 +16810,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:41Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7a82f3c0df60dfe02e6944499446e640": {
       "cache_key": "7a82f3c0df60dfe02e6944499446e640",
@@ -16834,7 +16834,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:42Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "935f561041dd3004c02e21c0d610033e": {
       "cache_key": "935f561041dd3004c02e21c0d610033e",
@@ -16859,7 +16859,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:32Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "93f7eb2bfce55b1dd677a5fa30ed697c": {
       "cache_key": "93f7eb2bfce55b1dd677a5fa30ed697c",
@@ -16884,7 +16884,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:48Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "841055714965274230fc4771b9a02348": {
       "cache_key": "841055714965274230fc4771b9a02348",
@@ -16909,7 +16909,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:55Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "71d689117169c9b704cb6b1899131773": {
       "cache_key": "71d689117169c9b704cb6b1899131773",
@@ -16934,7 +16934,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:15:59Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "aafa0686c6553aa985ba568d4e67caf4": {
       "cache_key": "aafa0686c6553aa985ba568d4e67caf4",
@@ -16959,7 +16959,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:08Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "0026e82daf77c34e1376d9b91ba320b8": {
       "cache_key": "0026e82daf77c34e1376d9b91ba320b8",
@@ -16984,7 +16984,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:09Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7712422f8016ec94c46af4dbd29d2d3c": {
       "cache_key": "7712422f8016ec94c46af4dbd29d2d3c",
@@ -17009,7 +17009,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:18Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "4029dc93cb2d84067c50c98c96985e2d": {
       "cache_key": "4029dc93cb2d84067c50c98c96985e2d",
@@ -17034,7 +17034,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:35:13Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "955e904a8dac0c2ad599c6e46d69a55b": {
       "cache_key": "955e904a8dac0c2ad599c6e46d69a55b",
@@ -17059,7 +17059,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:28Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "04c43c12cde08925546479c9a791f3b0": {
       "cache_key": "04c43c12cde08925546479c9a791f3b0",
@@ -17084,7 +17084,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:28Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "4404097124ba7d190a049173982e43be": {
       "cache_key": "4404097124ba7d190a049173982e43be",
@@ -17109,7 +17109,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:38Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "21598cd496f6b084c5bbcf23cbf43e38": {
       "cache_key": "21598cd496f6b084c5bbcf23cbf43e38",
@@ -17123,18 +17123,18 @@
       "source": "Umicore - Newsroom / Newsroom / News",
       "published_at": "",
       "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-      "ai_summary_ko": "Umicore 뉴스룸의 비디오 센터는 고리튬망간(HLM) 배터리, 전고체 배터리 및 충전식 배터리 소재 관련 영상을 제공한다. 콘텐츠에는 코발트 및 특수 소재, 자원 희소성, 재활용과 배터리 소재가 함께 포함된다. 다만 수산화리튬·탄산리튬의 생산, 공급 또는 고객·투자 활동에 관한 구체적 정보는 제시되지 않는다.",
-      "ai_summary_en": "Umicore’s newsroom video center features content on High Lithium Manganese batteries, solid-state batteries, and rechargeable battery materials. The content also covers cobalt and specialty materials, resource scarcity, and recycling. However, it provides no specific information on the production, supply, customers, or investment activities related to lithium hydroxide or lithium carbonate.",
+      "ai_summary_ko": "Umicore 뉴스룸 비디오 센터는 고리튬망간(HLM) 배터리, 전고체 배터리, 충전식 배터리 소재를 주제로 한 영상을 제공한다. 배터리 소재와 리튬 관련 기술이 콘텐츠의 주요 소개 분야로 제시된다. 다만 제공된 본문에는 수산화리튬·탄산리튬의 생산, 조달, 공급 계약 또는 양극재 적용 현황에 관한 구체적 사업 정보는 확인되지 않는다.",
+      "ai_summary_en": "Umicore’s newsroom video center features content on high-lithium manganese (HLM) batteries, solid-state batteries, and rechargeable battery materials. Battery-material and lithium-related technologies are presented as key content areas. However, the provided text contains no specific information on lithium hydroxide or lithium carbonate production, sourcing, supply agreements, or cathode-material applications.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.83,
-      "ai_summary_reason": "본문은 영상 제목 목록 수준으로 배터리 소재 관련성을 확인할 수 있으나, 수산화리튬·탄산리튬의 구체적 사업·기술·고객·투자 사실은 확인되지 않음 / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.89,
+      "ai_summary_reason": "본문은 배터리 소재 및 리튬 관련 영상 제목만 제시하며, 유치필요 품목인 수산화리튬·탄산리튬의 구체적 사업 활동이나 공급·기술 적용 근거가 부족하다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Umicore 뉴스룸의 영상 자료에서 고망간계 배터리(HLM), 전고체 배터리, 충전식 배터리 소재 등 배터리 관련 기술 주제가 제시된다. 배터리 소재와 리튬 관련 내용이 포함돼 양극재 소재 및 수산화리튬·탄산리튬과의 연관성이 확인된다. 다만 해당 자료는 영상 목록과 쿠키 차단 안내 중심으로 구성돼 구체적인 소재 조달, 생산 확대, 고객 적용 또는 투자 추진 내용은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Umicore 뉴스룸의 영상 자료에서 리튬·배터리 소재와 관련된 고니켈 리튬망간(HLM) 배터리, 전고체 배터리, 재충전형 배터리 소재가 주요 기술 주제로 제시된다. 양극재 소재를 포함한 배터리 소재 분야와 함께 전기광학 소재, 특수소재, 자원 부족 대응 및 재활용 사업이 소개된다. 또한 자동차·정지형 촉매, 귀금속 화학, 코발트 및 특수소재 등 Umicore의 사업 영역과 기술 적용 분야가 영상 콘텐츠로 제시되나, 수산화리튬·탄산리튬의 조달이나 투자·생산 계획은 본문에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:15Z",
+      "ai_summary_created_at": "2026-09-03T04:53:21Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c9e8f89f4de4e8a69ae3a9a250f62a21": {
       "cache_key": "c9e8f89f4de4e8a69ae3a9a250f62a21",
@@ -17159,7 +17159,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:47Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5c466271af4a38f799ccbe971371e4b7": {
       "cache_key": "5c466271af4a38f799ccbe971371e4b7",
@@ -17183,7 +17183,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:47Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "9389dde7227cdc20582d1397f11ed2f6": {
       "cache_key": "9389dde7227cdc20582d1397f11ed2f6",
@@ -17208,7 +17208,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:16:52Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "18db3a54392ea4af2cc35443327b8b89": {
       "cache_key": "18db3a54392ea4af2cc35443327b8b89",
@@ -17233,7 +17233,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:35:17Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b92cca24e9ac14e3331cbf729b787a84": {
       "cache_key": "b92cca24e9ac14e3331cbf729b787a84",
@@ -17257,7 +17257,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:02Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "2e2ec453ac02f4c0f8b1e098c83d1f98": {
       "cache_key": "2e2ec453ac02f4c0f8b1e098c83d1f98",
@@ -17281,7 +17281,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:10Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "45bdbf0064b1d345ccc768b43f06bd18": {
       "cache_key": "45bdbf0064b1d345ccc768b43f06bd18",
@@ -17305,7 +17305,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:12Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "947a6b6ae455bf437e5db808ae00a944": {
       "cache_key": "947a6b6ae455bf437e5db808ae00a944",
@@ -17330,7 +17330,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:15Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "725cea527ea6ae0141a6874c0f8e38b9": {
       "cache_key": "725cea527ea6ae0141a6874c0f8e38b9",
@@ -17344,18 +17344,18 @@
       "source": "West Pharmaceutical - Press Releases / Press Releases",
       "published_at": "2026-08-26T20:00:36Z",
       "target_technology": "Autoinjector/PFS 의약품 완충전 및 제조기술",
-      "ai_summary_ko": "웨스트 파마슈티컬은 주사제 투여용 혁신 솔루션을 제공하며, 기존 및 신흥 의약품 개발사의 의약품 안전 보관과 효과적 전달을 지원한다. 전 세계 50개 사업장과 26개 제조시설에서 1만명 이상을 운영하고 연간 410억개 이상의 부품 및 디바이스를 공급한다. 2025회계연도 순매출은 30억7천만달러이며, 2026년 9월 헬스케어 투자자 콘퍼런스 발표를 예정한다.",
-      "ai_summary_en": "West Pharmaceutical provides innovative injectable drug-administration solutions, supporting the safe containment and effective delivery of medicines for established and emerging drug developers. It operates more than 50 sites, including 26 manufacturing facilities, and supplies over 41 billion components and devices annually. FY2025 net sales were $3.07 billion, and the company plans to present at healthcare investor conferences in September 2026.",
-      "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "본문은 주사제 투여 솔루션 및 제조 거점에 대한 일반적 기업 현황만 제시하며, Autoinjector/PFS 또는 의약품 완충전·제조기술의 구체적 사업 활동은 확인되지 않는다. / Terra 결과도 목표 분량 미달",
-      "ai_summary_model": "gpt-5.6-terra",
-      "ai_summary_tier": "terra",
+      "ai_summary_ko": "West Pharmaceutical은 주사제 투여를 위한 혁신적 솔루션과 서비스를 제공하는 기업으로, 기존 및 신흥 의약품 개발사의 의약품 안전한 보관·전달을 지원하는 사업을 수행한다. 전 세계 50개 사업장과 26개 제조시설에서 1만 명 이상의 인력을 기반으로 연간 410억 개 이상의 부품 및 디바이스를 공급하며, 주사제 완충전·투여 관련 제조 역량과 글로벌 고객 기반이 확인된다. 2025 회계연도 매출은 30억7,000만 달러로, 2026년 9월 글로벌 헬스케어 투자자 컨퍼런스에서 사업 현황을 공유할 예정이다.",
+      "ai_summary_en": "West Pharmaceutical provides innovative solutions and services for injectable drug administration, supporting established and emerging drug developers with the safe containment and delivery of medicines. The company operates through more than 10,000 employees across 50 sites, including 26 manufacturing facilities worldwide, and supplies over 41 billion components and devices annually, confirming broad manufacturing capabilities and a global customer base relevant to injectable drug delivery. West generated $3.07 billion in fiscal 2025 net sales and plans to present its business outlook at global healthcare investor conferences in September 2026.",
+      "ai_summary_quality": "pass",
+      "ai_summary_confidence": 0.94,
+      "ai_summary_reason": "공식 보도자료에서 주사제 투여 솔루션, 의약품 보관·전달 지원, 제조시설 및 부품·디바이스 공급 규모가 확인되며 유치필요 기술과의 관련성이 명확함.",
+      "ai_summary_model": "gpt-5.6-luna",
+      "ai_summary_tier": "luna",
       "ai_summary_luna_draft": "West Pharmaceutical은 주사제 투여를 위한 혁신적 솔루션과 서비스를 제공하며, 의약품의 안전한 보관·포장과 환자 대상 전달을 지원하는 사업을 수행한다. 전 세계 50개 사업장과 26개 제조시설에서 연간 410억 개 이상의 부품·디바이스를 공급하며, 기존 및 신흥 의약품 개발사를 고객으로 확보하고 있다. 2025 회계연도 순매출은 30억7,000만 달러로, 2026년 9월 예정된 글로벌 헬스케어 투자자 콘퍼런스에서 사업 현황을 공유할 예정이다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:34:32Z",
+      "ai_summary_created_at": "2026-09-03T04:52:41Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "898aefbdd60ead0fb45c68ab604e1e7c": {
       "cache_key": "898aefbdd60ead0fb45c68ab604e1e7c",
@@ -17379,7 +17379,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:25Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f389fd8e0ca5d280e34494ef9c885694": {
       "cache_key": "f389fd8e0ca5d280e34494ef9c885694",
@@ -17403,7 +17403,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:27Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "1f6e88cf629da632ed9a9c47d2f8d927": {
       "cache_key": "1f6e88cf629da632ed9a9c47d2f8d927",
@@ -17427,7 +17427,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:31Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "46112942550d95821d784b4ab68be4b2": {
       "cache_key": "46112942550d95821d784b4ab68be4b2",
@@ -17451,7 +17451,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:32Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "eda7740c37805d9bbcf85f487d359309": {
       "cache_key": "eda7740c37805d9bbcf85f487d359309",
@@ -17475,7 +17475,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:36Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "55aced2e869e3bfa34fb3120215730f1": {
       "cache_key": "55aced2e869e3bfa34fb3120215730f1",
@@ -17489,18 +17489,18 @@
       "source": "Airbus - Newsroom / Newsroom / News",
       "published_at": "2026-07-24T00:00:00Z",
       "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
-      "ai_summary_ko": "Airbus는 2026년 7월 판버러 국제에어쇼에서 연료 효율이 높은 상용항공기와 국가 안보를 위한 방산 혁신 기술을 소개할 계획이다. 행사 프로그램에는 항공우주 지속가능성 패널, CTO 패널, 지구관측의 상업화와 수요 확대를 다루는 세션이 포함된다. 제공된 본문에는 항공용 전기모터 또는 고출력 배터리 추진 모듈의 개발·조달·적용 계획은 구체적으로 제시되지 않는다.",
-      "ai_summary_en": "At the 2026 Farnborough International Airshow, Airbus plans to showcase fuel-efficient commercial aircraft and defence innovations aimed at protecting national security. Its agenda includes sessions on aerospace sustainability, technology leadership, and the commercialisation of Earth observation to address scaled demand. The provided material does not specify development, sourcing, or deployment plans for aviation electric motors or high-power battery propulsion modules.",
+      "ai_summary_ko": "에어버스는 2026년 판버러 국제에어쇼에서 혁신 기술을 통해 세계를 연결하고 보호하며 차세대에 영감을 주는 비전을 제시할 예정이다. 행사에서는 연료 효율이 높은 상용 항공기와 국가 안보를 지원하는 방산 혁신 기술을 소개한다. 제공된 본문에는 항공용 전기모터 또는 고출력 배터리 추진 모듈의 개발·적용·조달 계획은 구체적으로 확인되지 않는다.",
+      "ai_summary_en": "Airbus plans to present its vision of connecting the world, protecting what matters and inspiring the next generation through innovative technologies at the 2026 Farnborough International Airshow. The programme highlights fuel-efficient commercial aircraft and defence innovations supporting national security. The provided text does not specify development, deployment or sourcing plans for aviation electric motors or high-power battery propulsion modules.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.84,
-      "ai_summary_reason": "본문의 hybrid-electric 언급은 행사 페이지 내 연관 보도자료 제목에 그치며, 항공용 전기모터·고출력 배터리 추진 모듈 관련 구체적 사업 활동이나 기술 적용 사실이 확인되지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.93,
+      "ai_summary_reason": "본문의 hybrid-electric 언급은 페이지 내 다른 보도자료 제목으로 보이며, 대상 품목·기술의 구체적 개발·적용·조달 사실이 확인되지 않음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Airbus는 2026년 판버러 국제 에어쇼에서 항공우주 분야의 혁신 기술과 미래 비전을 소개하고, 연결·방호·차세대 항공을 중심으로 전시와 프로그램을 추진한다. 연료효율이 향상된 상용항공기와 지속가능한 항공 기술을 주요 활동으로 제시하며, 상용·방산 분야의 기술 적용 확대를 추진한다. 뉴스룸에는 하이브리드 전기 통합을 다루는 LEIA 프로젝트 관련 자료가 노출되지만, 전기모터 또는 고출력 배터리 추진 모듈의 구체적 개발·조달 계획은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Airbus는 2026년 판버러 국제 에어쇼에서 차세대 항공우주 기술과 산업 혁신 동향을 소개할 예정이다. 전시·논의 범위에는 연료 효율이 향상된 상용 항공기와 지속가능한 항공, 국방·우주 분야 기술이 포함된다. 관련 자료에서 하이브리드 전기 추진 통합 프로젝트가 언급돼 항공용 전기모터 및 고출력 배터리 추진 모듈과의 연계 가능성이 확인되나, 해당 부품의 구체적 사양이나 조달 계획은 제시되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:24Z",
+      "ai_summary_created_at": "2026-09-03T04:53:27Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "dc73b3939ea3382da91910f8d4b83262": {
       "cache_key": "dc73b3939ea3382da91910f8d4b83262",
@@ -17525,7 +17525,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:41Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f974251892f4c0b079eeb4f12e47d956": {
       "cache_key": "f974251892f4c0b079eeb4f12e47d956",
@@ -17550,7 +17550,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:47Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f3e5a1a4825590ef961d5cf7f59bd17c": {
       "cache_key": "f3e5a1a4825590ef961d5cf7f59bd17c",
@@ -17574,7 +17574,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:53Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7ee0e067c65aea463c4a10f29fd805a8": {
       "cache_key": "7ee0e067c65aea463c4a10f29fd805a8",
@@ -17598,7 +17598,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:17:58Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8bd50d70915d022c2b42f84a7f535bce": {
       "cache_key": "8bd50d70915d022c2b42f84a7f535bce",
@@ -17612,18 +17612,18 @@
       "source": "Jenoptik - News / Newsroom / News",
       "published_at": "2026-06-09T00:00:00Z",
       "target_technology": "3D 비전센서",
-      "ai_summary_ko": "Jenoptik은 2024년 Control 전시회에서 자동차 산업의 통합 품질보증을 위한 계측 및 광학 검사 솔루션을 계열 브랜드와 함께 공개했다. 해당 솔루션은 생산 공정의 품질관리 수요를 대상으로 한다. 제공된 자료에는 3D 비전센서의 제품 사양, 적용 고객 또는 신규 수주 내용은 구체적으로 제시되지 않는다.",
-      "ai_summary_en": "At Control 2024, Jenoptik and its associated brands presented metrology and optical inspection solutions for integrated quality assurance in the automotive industry. The solutions target quality-control requirements in production processes. The provided material does not specify 3D vision sensor specifications, customer deployments, or new orders.",
+      "ai_summary_ko": "Jenoptik은 Control 2024에서 자동차 산업의 통합 품질보증을 위한 계측 및 광학 검사 솔루션을 계열 브랜드와 함께 선보였다. 해당 솔루션은 자동차 제조 공정의 품질검사 적용을 대상으로 제시된다. 2026년 상반기에는 특히 OEM 사업에서 수주 모멘텀이 강하게 나타났다. 미국 광학·포토닉스 사업은 운영 효율화와 전략 개발, 지속 가능한 성장을 추진한다.",
+      "ai_summary_en": "At Control 2024, Jenoptik and its associated brands presented metrology and optical inspection solutions for integrated quality assurance in the automotive industry. The solutions were positioned for quality inspection applications in automotive manufacturing. Order momentum was particularly strong in OEM businesses in the first half of 2026. Its U.S. optics and photonics business is pursuing operational efficiency, strategic development, and sustainable growth.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.62,
-      "ai_summary_reason": "본문은 자동차용 계측·광학 검사 솔루션 전시 사실만 제시하며, 3D 비전센서 관련 구체적 제품·기술·사업 활동 근거가 부족하다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "본문은 광학 검사 솔루션과 OEM 수주 동향을 언급하지만, 3D 비전센서의 구체적 제품 사양·적용 사례·투자유치 활동은 제시하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Jenoptik은 자동차 산업의 통합 품질보증을 지원하기 위해 계측 및 광학검사 솔루션을 선보였다. 관련 솔루션은 2024년 Control 전시회에서 Jenoptik 및 관계사 브랜드를 통해 공개됐으며, 자동차 제조공정의 품질관리 적용을 대상으로 제시된다. 제공 자료에서는 해당 기술의 구체적인 3D 비전센서 사양, 고객사 도입 현황 또는 공급계획은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Jenoptik과 관계 브랜드는 Control 2024에서 자동차 산업의 통합 품질보증을 지원하는 계측 및 광학검사 솔루션을 선보인 것으로 확인된다. 해당 솔루션은 생산·검사 공정에 광학 기반 품질관리 기능을 적용하는 사업 활동으로 제시된다. 다만 제공된 본문에는 3D 비전센서의 구체적 사양, 적용 사례, 고객 계약 또는 공급 확대 계획이 직접적으로 제시되지 않아 관련 기술 유치 근거는 제한적으로 확인된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:34:42Z",
+      "ai_summary_created_at": "2026-09-03T04:52:41Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "f213ed168896e636a8a334a9b00bf4f7": {
       "cache_key": "f213ed168896e636a8a334a9b00bf4f7",
@@ -17647,7 +17647,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:03Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "16d37f53f60d9ade3fc0030da15272ab": {
       "cache_key": "16d37f53f60d9ade3fc0030da15272ab",
@@ -17672,7 +17672,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:07Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "ffc36c9905d0973b02843489c19d8003": {
       "cache_key": "ffc36c9905d0973b02843489c19d8003",
@@ -17696,7 +17696,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:09Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3ce0edee202e6e29573dcdb8dbe4ba83": {
       "cache_key": "3ce0edee202e6e29573dcdb8dbe4ba83",
@@ -17710,18 +17710,18 @@
       "source": "Safran - Pressroom / Newsroom / Press",
       "published_at": "",
       "target_technology": "항공용 전기모터/고출력 배터리 추진 모듈",
-      "ai_summary_ko": "Safran 뉴스룸에 ‘Tomorrow's electric aircraft’라는 제목의 콘텐츠가 게시된 것으로 확인된다. 제공된 본문은 ‘See more’ 외에 세부 설명을 포함하지 않아 항공용 전기모터, 고출력 배터리 또는 추진 모듈의 개발·적용 내용은 확인되지 않는다. 대상 기술의 사양, 사업 단계, 고객 및 시장 관련 정보도 제시되지 않는다.",
-      "ai_summary_en": "Safran’s newsroom lists content titled “Tomorrow’s electric aircraft.” The supplied text contains no information beyond “See more,” and does not substantiate development or deployment of aircraft electric motors, high-power batteries, or propulsion modules. No technical specifications, program stage, customer, or market information is provided.",
+      "ai_summary_ko": "Safran 뉴스룸에는 ‘Tomorrow’s electric aircraft’라는 제목의 콘텐츠와 ‘See more’ 링크가 제시된다. 제공된 본문에는 항공용 전기모터의 출력, 사양, 개발 단계, 적용 기체 또는 고객 관련 정보가 포함되지 않는다. 고출력 배터리 추진 모듈의 기술 구성, 성능, 생산·공급 계획 및 사업화 일정도 확인되지 않는다. 따라서 전기항공기 관련 제목 외 유치필요 품목·기술의 구체적 사업 활동은 제시되지 않는다.",
+      "ai_summary_en": "Safran’s newsroom presents content titled “Tomorrow’s electric aircraft” with a “See more” link. The supplied text contains no information on electric-motor output, specifications, development stage, aircraft application, or customers. It also provides no details on high-power battery propulsion-module architecture, performance, production or supply plans, or commercialization timing. Beyond the electric-aircraft title, no specific activity concerning the target technologies is disclosed.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.2,
-      "ai_summary_reason": "본문이 제목과 ‘See more’로만 구성돼 유치필요 기술 관련 사업·기술 사실을 확인할 근거가 부족하다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.25,
+      "ai_summary_reason": "제공된 본문은 제목과 링크 문구뿐으로, 항공용 전기모터 및 고출력 배터리 추진 모듈 관련 사업·기술 사실을 확인할 근거가 부족함. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Safran이 미래 항공 분야의 전기항공기 관련 사업 방향을 제시한 자료를 공개한 것으로 확인된다. 전기항공기 개발과 연계된 항공용 전기모터 및 고출력 배터리 추진 모듈의 적용 가능성이 언급되나, 구체적인 기술 사양과 사업 추진 일정은 본문에서 확인되지 않는다. 관련 기술 및 시장 동향에 대한 추가 정보 확인이 필요하다.",
+      "ai_summary_luna_draft": "Safran이 ‘Tomorrow’s electric aircraft’라는 제목의 항공 전기화 관련 자료를 자사 Pressroom에 게시한 사실이 확인된다. 자료 제목에서 전기항공기 관련 사업·기술 주제가 제시되며, 항공용 전기모터 및 고출력 배터리 추진 모듈과의 연관성이 일부 확인된다. 다만 제공된 근거가 제목에 한정돼 전기추진 시스템의 적용 현황, 개발 사양, 고객 및 시장 확대 계획은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:34:44Z",
+      "ai_summary_created_at": "2026-09-03T04:52:47Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5cd4af4792c1f80734a7dce2ef828948": {
       "cache_key": "5cd4af4792c1f80734a7dce2ef828948",
@@ -17735,18 +17735,18 @@
       "source": "ASML - ASML News / Newsroom / News",
       "published_at": "",
       "target_technology": "EUV 노광장비",
-      "ai_summary_ko": "ASML은 반도체 제조사가 미세회로 패턴을 정밀하게 구현하도록 노광장비, 계측·검사 시스템 및 컴퓨테이셔널 리소그래피 소프트웨어를 제공한다. 노광 및 계측·검사 시스템은 초청정 클린룸 환경에서 조립한다. 네덜란드 펠트호번 본사는 연구개발·엔지니어링·운영의 중심지이며 전체 직원의 절반 이상이 근무한다.",
-      "ai_summary_en": "ASML supplies lithography machines, metrology and inspection systems, and computational lithography software that enable chipmakers to accurately print microchip patterns. Its lithography, metrology and inspection systems are assembled in ultraclean cleanroom environments. The Veldhoven, Netherlands headquarters serves as the hub for R&D, engineering and operations and employs more than half of the company’s workforce.",
+      "ai_summary_ko": "ASML은 반도체 제조사가 미세 회로 패턴을 정밀하게 구현할 수 있도록 리소그래피 장비, 계측·검사 시스템 및 컴퓨테이셔널 리소그래피 소프트웨어를 제공한다. 리소그래피 시스템과 계측·검사 시스템은 초청정 클린룸 환경에서 조립한다. 네덜란드 펠트호번 본사는 연구개발, 엔지니어링 및 운영의 중심 거점이며 전체 직원의 절반 이상이 근무한다.",
+      "ai_summary_en": "ASML supplies lithography machines, metrology and inspection systems, and computational lithography software that enable chipmakers to accurately print microchip patterns. Its lithography, metrology and inspection systems are assembled in ultraclean cleanroom environments. The Veldhoven headquarters in the Netherlands serves as the main hub for R&D, engineering and operations and employs more than half of its workforce.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.72,
-      "ai_summary_reason": "본문은 ASML의 일반 리소그래피·계측·검사 사업 활동을 제시하지만, 유치필요 기술인 EUV 노광장비를 특정하는 내용은 포함하지 않는다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "본문은 ASML의 리소그래피 장비 및 관련 시스템 사업을 설명하지만, 유치필요 기술인 EUV 장비를 명시하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "ASML은 반도체 제조사가 미세 회로 패턴을 정밀하게 형성할 수 있도록 노광장비와 계측·검사 시스템, 컴퓨테이셔널 리소그래피 소프트웨어를 제공하는 기술 포트폴리오를 보유한다. 노광 시스템과 계측·검사 시스템은 네덜란드 벨트호벤 본사를 포함한 글로벌 사업장에서 조립되며, 벨트호벤은 연구개발·엔지니어링·운영의 중심지로 기능한다. 글로벌 사업은 전 세계 거점과 클린룸 기반 생산·운영 체계로 수행되는 것으로 제시된다.",
+      "ai_summary_luna_draft": "ASML은 반도체 제조사가 미세 회로 패턴을 정밀하게 구현할 수 있도록 노광장비와 계측·검사 시스템, 컴퓨테이셔널 리소그래피 소프트웨어를 제공한다. 네덜란드 펠트호번 본사는 연구개발·엔지니어링·운영의 중심지이며 전체 임직원의 절반 이상이 근무하는 핵심 거점으로 제시된다. 전 세계 사업장에서 초청정 환경의 노광·계측·검사 시스템 조립이 수행되며, 관련 기술과 글로벌 운영 기반이 확인된다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:26Z",
+      "ai_summary_created_at": "2026-09-03T04:53:31Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "64caa8e574d38386c7337e8d8a3aa160": {
       "cache_key": "64caa8e574d38386c7337e8d8a3aa160",
@@ -17760,18 +17760,18 @@
       "source": "Vestas - Company News / Company News",
       "published_at": "",
       "target_technology": "해상풍력터빈",
-      "ai_summary_ko": "제공된 본문은 Vestas의 기업 연혁 및 미디어 연락처를 안내한다. Vestas는 덴마크의 대장간 기업에서 출발해 세계 최대 풍력터빈 제조사로 성장한 이력을 제시한다. 아시아태평양·북미·북중부 유럽 지역의 마케팅·커뮤니케이션 담당 연락처를 운영한다. 해상풍력터빈의 제품 사양, 수주, 생산, 기술 적용 또는 투자 활동은 본문에서 확인되지 않는다.",
-      "ai_summary_en": "The provided text presents Vestas’ corporate history and media contact information. It identifies Vestas as having evolved from a Danish blacksmith company into the world’s largest wind turbine manufacturer. Marketing and communications contacts are listed for Asia Pacific, North America, and Northern and Central Europe. No offshore wind turbine specifications, orders, manufacturing, technology deployment, or investment activity is disclosed.",
+      "ai_summary_ko": "제공된 본문은 Vestas의 기업 뉴스·미디어 연락처 페이지로, 본사 및 아시아태평양·북미·유럽 지역의 홍보·커뮤니케이션 담당자 정보를 제시한다. 회사 연혁 소개에서는 덴마크 대장장이 기업에서 출발해 세계 최대 풍력터빈 제조사로 성장한 이력을 언급한다. 다만 해상풍력터빈의 제품 사양, 기술 적용, 수주·고객 또는 투자·사업 추진 현황은 확인되지 않는다.",
+      "ai_summary_en": "The provided content is a Vestas news and media contact page, listing corporate and regional communications contacts across Asia Pacific, North America, and Europe. Its corporate history notes the company’s evolution from a Danish blacksmith business into the world’s largest wind turbine manufacturer. No offshore turbine specifications, technology deployment, orders, customers, or investment activities are disclosed.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.97,
-      "ai_summary_reason": "본문은 기업 연혁과 미디어 연락처 정보에 국한되며, 해상풍력터빈 관련 사업·기술·투자 활동의 구체적 근거가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.98,
+      "ai_summary_reason": "본문은 연락처 및 일반 기업 연혁 중심이며, 해상풍력터빈 관련 구체적 사업 활동·기술·시장 정보가 없다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Vestas는 덴마크 대장장이 기업으로 출발해 세계 최대 풍력터빈 제조사로 성장한 기업 연혁을 공식 페이지에서 소개한다. 해당 자료는 풍력터빈 제조 역량과 기업의 사업 정체성을 제시하지만, 해상풍력터빈의 신규 수주·기술 적용·생산 확대 또는 고객 및 시장 진입 계획에 관한 구체적 내용은 확인되지 않는다. 본문에는 본사 및 아시아태평양·북미·북유럽·중부유럽 지역의 언론 문의 담당자와 연락처가 안내되어 있으며, 관련 사업 협력이나 투자유치 추진 내용은 제시되지 않는다.",
+      "ai_summary_luna_draft": "Vestas는 덴마크 대장장이 기업으로 출발한 이후 세계 최대 규모의 풍력터빈 제조기업으로 성장한 사업 이력을 소개한다. 회사는 풍력터빈 제조를 핵심 사업으로 운영하며 관련 제품과 기업 연혁 정보를 공식 채널을 통해 제공한다. 본문에는 해상풍력터빈의 구체적인 적용 사례, 고객·시장 흐름 또는 신규 투자·사업 추진 계획은 제시되지 않아 추가 확인이 필요하다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:35Z",
+      "ai_summary_created_at": "2026-09-03T04:53:38Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "2557205f1ad975af9ee28c3577a1bc3e": {
       "cache_key": "2557205f1ad975af9ee28c3577a1bc3e",
@@ -17796,7 +17796,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:35:36Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "b182782919d96b1f366e8ae5a5b7e799": {
       "cache_key": "b182782919d96b1f366e8ae5a5b7e799",
@@ -17821,7 +17821,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:35:45Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "83a7280744ac358aa6b45e374b176279": {
       "cache_key": "83a7280744ac358aa6b45e374b176279",
@@ -17846,7 +17846,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:38Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "78c4f1a84d02eae73b7ea7216bfcb9b2": {
       "cache_key": "78c4f1a84d02eae73b7ea7216bfcb9b2",
@@ -17870,7 +17870,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:45Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8be6d32bccad872e9ab4771edc7e89ef": {
       "cache_key": "8be6d32bccad872e9ab4771edc7e89ef",
@@ -17894,7 +17894,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:18:50Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "822e59936202de1eaed4d207f8da2ef1": {
       "cache_key": "822e59936202de1eaed4d207f8da2ef1",
@@ -17919,7 +17919,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:50Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c1eb197ae6ade234d63b10516d9573f5": {
       "cache_key": "c1eb197ae6ade234d63b10516d9573f5",
@@ -17933,18 +17933,18 @@
       "source": "Infineon - Press / Press Releases / Media",
       "published_at": "2026-08-31T00:00:00Z",
       "target_technology": "위성통신 및 레이다용 RF 반도체",
-      "ai_summary_ko": "인피니언과 Tack One은 싱가포르국제상공회의소(SICC) ‘최우수 기술 협력’ 상을 공동 수상한 것으로 제시된다. 제공된 본문에는 양사의 구체적 협력 내용, 적용 제품 및 기술 사양이 포함돼 있지 않다. GaN 언급은 판정 근거에만 제시되며, 위성통신·레이다용 RF 반도체와의 직접적 연계나 사업화 현황은 확인되지 않는다.",
-      "ai_summary_en": "Infineon and Tack One are identified as joint recipients of the Singapore International Chamber of Commerce’s Best Technological Collaboration award. The supplied text contains no details on the partners’ collaboration scope, products, or technical specifications. Although GaN is cited in the screening rationale, no direct link to satellite communications or radar RF semiconductors, or to commercialization activity, is established.",
+      "ai_summary_ko": "인피니언과 Tack One은 싱가포르국제상공회의소(SICC)로부터 ‘최우수 기술 협력’ 상을 공동 수상했다. 공개된 본문에는 양사의 협력 대상 제품, 적용 기술, 고객 또는 시장별 사업 내용이 제시되지 않았다. 위성통신·레이다용 RF 반도체 및 GaN 기술과의 직접적 연계도 확인되지 않는다.",
+      "ai_summary_en": "Infineon and Tack One jointly received the Singapore International Chamber of Commerce (SICC) Award for Best Technological Collaboration. The disclosed text does not identify the products, technologies, customers, or market applications covered by the partnership. A direct connection to RF semiconductors for satellite communications or radar, including GaN technology, is not established.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.94,
-      "ai_summary_reason": "본문은 수상 사실 외 협력 기술·제품·시장 정보가 없고, GaN 및 위성통신·레이다 RF 반도체 연계는 제공된 근거에서 확인되지 않음 / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.2,
+      "ai_summary_reason": "제공 본문에는 수상 사실 외 협력 기술·제품·시장에 관한 실질적 내용이 없으며, GaN 및 위성통신·레이다 RF 반도체와의 직접 연계 근거가 확인되지 않음 / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Infineon과 Tack One이 싱가포르 국제상공회의소(SICC)로부터 최우수 기술협력상을 수상한 사실이 확인된다. 양사는 기술협력 성과를 바탕으로 공동 활동을 전개한 것으로 제시되며, 시상식에는 양사 및 싱가포르 통상산업부 관계자가 참석한 것으로 나타난다. 다만 제공된 본문에는 GaN 반도체의 위성통신·레이다 적용, 제품 사양, 고객 및 시장 확대와 관련한 구체적 내용이 확인되지 않는다.",
+      "ai_summary_luna_draft": "Infineon과 Tack One의 기술 협력이 싱가포르 국제상공회의소(SICC)로부터 최우수 기술협력상을 수상한 사실이 확인된다. 시상식에는 양사 관계자와 싱가포르 무역산업부 장관 겸 부총리 등이 참석해 협력 성과를 조명한 것으로 제시된다. 다만 제공된 본문에서는 해당 협력의 구체적인 적용 분야, GaN 기반 RF 반도체 기술, 위성통신·레이다 고객 및 시장 활동에 관한 세부 내용은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:34:53Z",
+      "ai_summary_created_at": "2026-09-03T04:52:52Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7fc8a45c124408a89bdbb7a1a5ac509e": {
       "cache_key": "7fc8a45c124408a89bdbb7a1a5ac509e",
@@ -17968,7 +17968,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:06Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "2268eb4521be363bea5cfc9d46e833ac": {
       "cache_key": "2268eb4521be363bea5cfc9d46e833ac",
@@ -17992,7 +17992,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:10Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "6c96a9e24d7ff7bcbb203066b887023c": {
       "cache_key": "6c96a9e24d7ff7bcbb203066b887023c",
@@ -18006,18 +18006,18 @@
       "source": "Cytiva - Danaher Investor Relations / Investor Relations RSS",
       "published_at": "2026-08-03T20:15:00Z",
       "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
-      "ai_summary_ko": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 임명했다. 공개된 본문에는 회사의 성장 기회와 향후 실적, 관례적 종결 조건 충족을 전제로 한 StatLab 인수 진행 관련 전망 진술이 포함된다. ‘resin’ 키워드는 추출 본문에서 바이오의약품 생산용 배양·정제 시스템의 제품, 기술 적용, 고객 또는 시장 활동과 연결된 구체적 맥락을 제시하지 않는다.",
-      "ai_summary_en": "Danaher appointed Julie Sawyer Montgomery as President and Chief Executive Officer. The available text includes forward-looking statements on growth opportunities, future performance, and the pending StatLab acquisition, subject to customary closing conditions. The extracted reference to “resin” provides no specific context on biopharmaceutical culture or purification systems, technology deployment, customers, or market activity.",
+      "ai_summary_ko": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 임명했다. 공시는 회사의 성장 기회와 향후 예상 실적에 관한 전망진술을 포함한다. StatLab 인수는 통상적인 종결 조건 충족을 전제로 진행 중인 것으로 제시된다.",
+      "ai_summary_en": "Danaher appointed Julie Sawyer Montgomery as President and Chief Executive Officer. The release includes forward-looking statements regarding the company’s growth opportunities and anticipated future performance. The pending acquisition of StatLab remains subject to customary closing conditions.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.95,
-      "ai_summary_reason": "본문은 경영진 인사와 일반적 전망 진술 중심이며, resin 키워드만으로는 유치필요 기술 관련 사업 사실을 확인할 수 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "제공 본문은 경영진 인사와 StatLab 인수 관련 전망진술 위주이며, 바이오의약품 생산용 배양·정제 시스템 또는 resin 관련 사업·기술 활동의 구체적 근거가 확인되지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "Danaher가 Julie Sawyer Montgomery를 사장 겸 최고경영자로 선임한 내용이 제시된다. 자료는 회사의 성장 및 사업기회, 향후 실적에 관한 전망과 함께 StatLab 인수 추진을 언급하며, 해당 인수는 관례적 종결 조건 충족을 전제로 진행될 예정이다. 다만 바이오의약품 생산용 배양·정제 시스템이나 관련 수지 기술의 적용, 생산 확대, 고객 및 시장 동향에 관한 구체적 사업 활동은 확인되지 않는다.",
+      "ai_summary_luna_draft": "Danaher는 Julie Sawyer Montgomery를 사장 겸 최고경영자로 선임한다고 발표했다. 보도자료에는 회사의 성장 및 사업 기회, 향후 실적과 관련한 일반적인 전망이 포함됐으나, 바이오의약품 생산용 배양·정제 시스템이나 수지 기술의 사업 활동 및 적용 사례는 확인되지 않는다. 따라서 해당 품목·기술의 유치 필요성을 뒷받침하는 고객·시장 흐름과 투자 계획에 관한 구체적 정보는 제시되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:19:11Z",
+      "ai_summary_created_at": "2026-09-03T04:52:59Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:19:59Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "6dda2d01e22de4c34710390fb3188b04": {
       "cache_key": "6dda2d01e22de4c34710390fb3188b04",
@@ -18042,7 +18042,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:15Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "5f427aa9c2ab44b05b1e62ef2eb025ea": {
       "cache_key": "5f427aa9c2ab44b05b1e62ef2eb025ea",
@@ -18066,7 +18066,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:23Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "55bbbde3bc7ebfc41d06cc748fadeebf": {
       "cache_key": "55bbbde3bc7ebfc41d06cc748fadeebf",
@@ -18090,7 +18090,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:28Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "207846a96d1d24b776f20ed83869e893": {
       "cache_key": "207846a96d1d24b776f20ed83869e893",
@@ -18104,18 +18104,18 @@
       "source": "NXP - Press Releases / Press Releases",
       "published_at": "",
       "target_technology": "위성통신 및 레이다용 RF 반도체",
-      "ai_summary_ko": "NXP는 제품·핵심 기술·행사 관련 동영상, 보도자료, 뉴스 브리프 및 자료를 제공하는 프레스 키트 페이지를 운영한다. 자동차 레이다 프레스 키트에서는 레이다 프로세서가 안전성과 편의성 향상 및 자율주행 구현을 위한 핵심 ADAS 기술로 제시된다. 제공 본문에는 위성통신용 RF 반도체의 제품, 기술 적용, 고객 또는 사업 추진 내용은 확인되지 않는다.",
-      "ai_summary_en": "NXP maintains a press-kit page providing videos, press releases, news briefs and related materials on its products, enabling technologies and events. Its Automotive Radar press kit identifies radar processors as a core ADAS technology for improving safety and convenience and enabling automated driving. The supplied text contains no product, deployment, customer or business information on RF semiconductors for satellite communications.",
+      "ai_summary_ko": "NXP는 제품·기술·행사 관련 동영상, 보도자료, 뉴스 브리프 및 기사에 접근할 수 있는 프레스 키트를 제공한다. 자동차 레이다 프레스 키트에서 레이다 프로세서를 안전성과 편의성 향상 및 자율주행 구현을 위한 핵심 ADAS 기술로 제시한다. 해당 페이지는 자동차 레이다 외에도 전동화, 보안, 스마트팩토리, 초광대역통신, 차량 아키텍처, Wi‑Fi 6 관련 프레스 키트를 포함한다.",
+      "ai_summary_en": "NXP provides press kits containing videos, press releases, news briefs and articles on its products, enabling technologies and events. Its Automotive Radar press kit identifies radar processors as a core ADAS technology for improving safety and convenience and enabling automated driving. The page also lists press kits covering electrification, security, smart factory, ultra-wideband, vehicle architecture and Wi-Fi 6.",
       "ai_summary_quality": "needs_review",
-      "ai_summary_confidence": 0.94,
-      "ai_summary_reason": "본문은 프레스 키트 색인과 자동차 레이다의 일반적 설명만 포함하며, 위성통신용 RF 반도체 관련 사업·제품 근거가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_confidence": 0.45,
+      "ai_summary_reason": "본문은 프레스 키트 목록과 자동차 레이다의 ADAS 용도만 제시하며, 위성통신용 또는 RF 반도체 관련 사업·제품 정보는 확인되지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "NXP의 공식 Press Kits 페이지에서 자동차 레이더 관련 자료와 제품·기술 정보가 제공되는 것으로 확인된다. 해당 자료는 레이더 프로세서를 첨단 운전자 보조 시스템(ADAS)의 핵심 기술로 제시하며, 차량 안전성과 편의성 향상 및 자동주행 구현을 지원하는 적용 방향을 담고 있다. 다만 위성통신용 RF 반도체 또는 레이더용 RF 반도체의 세부 사양, 고객 적용 사례와 사업 확대 계획은 본문에서 확인되지 않는다.",
+      "ai_summary_luna_draft": "NXP의 Press Kits 페이지에서 Automotive Radar 관련 자료가 제공되는 것으로 확인된다. 해당 자료는 레이다 프로세서를 첨단 운전자 보조 시스템(ADAS)의 핵심 기술로 소개하며, 차량 안전성과 편의성 향상 및 자동주행 구현을 지원하는 기술로 제시된다. 다만 위성통신용 RF 반도체나 관련 사업 활동, 고객·시장 확대 및 투자유치 계획에 관한 구체적 내용은 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:02Z",
+      "ai_summary_created_at": "2026-09-03T04:53:04Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c1aa68043eb45cc2cc95aa63a69fd7ec": {
       "cache_key": "c1aa68043eb45cc2cc95aa63a69fd7ec",
@@ -18129,18 +18129,18 @@
       "source": "NXP - Press Releases / Press Releases",
       "published_at": "",
       "target_technology": "위성통신 및 레이다용 RF 반도체",
-      "ai_summary_ko": "NXP의 Corporate Press Kit은 경영진, 네덜란드 에인트호번 본사 및 글로벌 사업장 사진과 로고 파일을 제공하는 미디어 자료로 구성된다. 페이지에는 Automotive Radar Press Kit가 별도 항목으로 열거된다. 다만 위성통신·레이다용 RF 반도체의 제품 사양, 기술 적용, 고객 또는 사업 추진 내용은 제시되지 않는다.",
-      "ai_summary_en": "NXP’s Corporate Press Kit is a media resource providing photographs of its leadership team, Eindhoven headquarters, global locations, and logo files. The page separately lists an Automotive Radar Press Kit. However, it provides no product specifications, technology applications, customers, or business activities for RF semiconductors used in satellite communications or radar.",
+      "ai_summary_ko": "NXP 기업 프레스 키트는 회사 로고와 경영진, 네덜란드 에인트호번 본사 및 글로벌 사업장 사진 자료를 제공한다. 경영진 사진 12건, 본사 사진 5건, 글로벌 사업장 사진 7건과 RGB 로고 파일을 포함한다. 제품별 자료는 별도 보안 인증을 거쳐 접근하도록 안내한다.",
+      "ai_summary_en": "NXP’s corporate press kit provides corporate logo assets and photographs of its leadership team, headquarters in Eindhoven, the Netherlands, and global locations. The kit includes 12 leadership photos, five headquarters photos, seven global-location photos, and RGB logo files. Access to product-specific materials is indicated as requiring separate secure authentication.",
       "ai_summary_quality": "needs_review",
       "ai_summary_confidence": 0.98,
-      "ai_summary_reason": "본문은 기업 이미지·로고 자료와 Automotive Radar Press Kit의 메뉴 항목만 제시하며, 유치필요 기술 관련 RF 반도체 사업·제품 정보가 없다. / Terra 결과도 목표 분량 미달",
+      "ai_summary_reason": "본문은 기업 홍보자료 안내와 사진·로고 자산 정보만 담고 있으며, 위성통신 및 레이다용 RF 반도체의 제품·기술·사업 활동 근거를 제공하지 않는다. / Terra 결과도 목표 분량 미달",
       "ai_summary_model": "gpt-5.6-terra",
       "ai_summary_tier": "terra",
-      "ai_summary_luna_draft": "NXP의 Corporate Press Kit 페이지에서 회사 로고와 경영진·본사·글로벌 사업장 사진 자료를 제공하는 내용이 확인된다. 본문 내 ‘radar’ 키워드는 Automotive Radar Press Kit 안내 과정에서 노출되지만, 위성통신 및 레이다용 RF 반도체의 제품 사양·기술 적용·고객 또는 시장 활동에 관한 구체적 정보는 제시되지 않는다. 관련 유치 품목과의 직접적인 사업 연계는 추가 자료 확인이 필요한 상태이다.",
+      "ai_summary_luna_draft": "NXP의 Corporate Press Kit 페이지 내 관련 항목으로 Automotive Radar Press Kit이 제시되며, 레이다 분야와의 연관성이 확인된다. 해당 페이지는 NXP 로고, 경영진 사진, 본사 및 글로벌 사업장 사진 등 기업 홍보자료 제공을 목적으로 구성된다. 위성통신 및 레이다용 RF 반도체의 제품 사양, 기술 적용, 고객사 또는 시장 확대와 관련된 구체적 사업 활동은 본문에서 확인되지 않는다.",
       "ai_summary_source": "openai_responses_api",
-      "ai_summary_created_at": "2026-09-03T04:35:05Z",
+      "ai_summary_created_at": "2026-09-03T04:53:11Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "3059a1d213c5e0812db6744265f475aa": {
       "cache_key": "3059a1d213c5e0812db6744265f475aa",
@@ -18165,7 +18165,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:37Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c242d5f3d497ecaff3017960011f41c4": {
       "cache_key": "c242d5f3d497ecaff3017960011f41c4",
@@ -18189,7 +18189,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:42Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "a7ba3d35618060cbc1e48649a69847e4": {
       "cache_key": "a7ba3d35618060cbc1e48649a69847e4",
@@ -18214,7 +18214,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:47Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "24f315d42b6a759542aa65c76e5558ca": {
       "cache_key": "24f315d42b6a759542aa65c76e5558ca",
@@ -18238,7 +18238,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:48Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "c3a86911a5a691b4be70c6067c45ec44": {
       "cache_key": "c3a86911a5a691b4be70c6067c45ec44",
@@ -18262,7 +18262,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:19:53Z",
       "prompt_version": "business-summary-koen-v6",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "8b05616c324b6cc88e08058afc22987e": {
       "cache_key": "8b05616c324b6cc88e08058afc22987e",
@@ -18291,7 +18291,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:33:53Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "05bcd65219012707137bd0f11f359fa9": {
       "cache_key": "05bcd65219012707137bd0f11f359fa9",
@@ -18319,7 +18319,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:33:53Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "6ad8195109f22081e5914825add9c264": {
       "cache_key": "6ad8195109f22081e5914825add9c264",
@@ -18348,7 +18348,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:33:59Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "7dfca1f59b9d870c8e5444adf96d1816": {
       "cache_key": "7dfca1f59b9d870c8e5444adf96d1816",
@@ -18377,7 +18377,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:03Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "13e981ec7bbd5a7f349aa44c8b00639b": {
       "cache_key": "13e981ec7bbd5a7f349aa44c8b00639b",
@@ -18406,7 +18406,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:06Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "91d44d881e1d0c816c57119c1fb2d125": {
       "cache_key": "91d44d881e1d0c816c57119c1fb2d125",
@@ -18435,7 +18435,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:13Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "668f080f6a035f8fa441af061b255e19": {
       "cache_key": "668f080f6a035f8fa441af061b255e19",
@@ -18463,7 +18463,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:17Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "e834ef40584d4e37a0ec6c256314a375": {
       "cache_key": "e834ef40584d4e37a0ec6c256314a375",
@@ -18492,7 +18492,7 @@
       "ai_summary_source": "openai_responses_api",
       "ai_summary_created_at": "2026-09-03T04:34:22Z",
       "prompt_version": "signal-summary-koen-v3",
-      "cached_at": "2026-09-03T04:36:09Z"
+      "cached_at": "2026-09-03T04:53:46Z"
     },
     "21485668c845b3401f9444e4f67821af": {
       "cache_key": "21485668c845b3401f9444e4f67821af",

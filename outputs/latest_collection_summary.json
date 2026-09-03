@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-03T04:30:55Z",
+  "run_started_at": "2026-09-03T04:49:45Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,13 +20,13 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 688,
-  "result_count": 427,
-  "official_result_count": 389,
+  "request_count": 696,
+  "result_count": 425,
+  "official_result_count": 391,
   "press_release_result_count": 172,
-  "fallback_result_count": 38,
+  "fallback_result_count": 34,
   "companies_with_results": 71,
-  "companies_with_official_results": 63,
+  "companies_with_official_results": 64,
   "companies_without_results": [
     "TIMET",
     "Magnix",
@@ -89,7 +89,7 @@
     "Renishaw": 7,
     "Nexeon": 2,
     "Rio Tinto": 6,
-    "HyproMag": 4,
+    "HyproMag": 2,
     "EVG": 6,
     "Plansee": 1,
     "Texcell": 0,
@@ -168,7 +168,7 @@
     "Renishaw": 7,
     "Nexeon": 2,
     "Rio Tinto": 6,
-    "HyproMag": 0,
+    "HyproMag": 2,
     "EVG": 6,
     "Plansee": 1,
     "Texcell": 0,
@@ -193,7 +193,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 72,
+  "error_count": 70,
   "errors": [
     {
       "target_no": 2,
@@ -580,22 +580,6 @@
       "error": "This operation was aborted"
     },
     {
-      "target_no": 54,
-      "company": "HyproMag",
-      "source": "official_pages",
-      "source_url": "https://mkango.ca/news/2026",
-      "source_name": "HyproMag - Mkango 2026 News / News Archive",
-      "error": "HTTP 504 Gateway Time-out"
-    },
-    {
-      "target_no": 54,
-      "company": "HyproMag",
-      "source": "official_pages",
-      "source_url": "https://mkango.ca/news/",
-      "source_name": "HyproMag - Mkango News / Newsroom / Regulatory News",
-      "error": "HTTP 504 Gateway Time-out"
-    },
-    {
       "target_no": 57,
       "company": "Texcell",
       "source": "official_pages",
@@ -737,7 +721,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
       "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
-      "error": "fetch failed"
+      "error": "HTTP 521 "
     },
     {
       "target_no": 77,
@@ -745,7 +729,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
       "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
-      "error": "fetch failed"
+      "error": "HTTP 521 "
     },
     {
       "target_no": 77,
@@ -753,7 +737,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
       "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
-      "error": "fetch failed"
+      "error": "HTTP 521 "
     },
     {
       "target_no": 77,
@@ -769,13 +753,13 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
-      "error": "fetch failed"
+      "error": "HTTP 521 "
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260903T043055Z.json",
-    "csv": "outputs/company_signals_20260903T043055Z.csv",
-    "summary": "outputs/collection_summary_20260903T043055Z.json",
+    "json": "outputs/company_signals_20260903T044945Z.json",
+    "csv": "outputs/company_signals_20260903T044945Z.csv",
+    "summary": "outputs/collection_summary_20260903T044945Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
