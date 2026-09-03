@@ -1530,10 +1530,10 @@ def build_report(args):
 
     draw_cover(report, summary, indicators)
     draw_matrix(report, profiles, signal_index, summary)
-    item_trends = draw_item_trends(report, profiles, signal_index, relevant, summary)
     total_details = len(detail_profiles)
     for idx, profile in enumerate(detail_profiles, start=1):
         draw_detail_page(report, profile, signal_index, relevant, investment_signals, signals, idx, total_details)
+    item_trends = draw_item_trends(report, profiles, signal_index, relevant, summary)
 
     report.finish()
     print(
