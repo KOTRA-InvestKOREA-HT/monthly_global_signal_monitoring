@@ -11,6 +11,7 @@ const FIELDNAMES = [
   "collected_at",
   "collector",
   "query",
+  "published_at_source",
   "source_type",
   "source_kind",
   "is_press_release",
@@ -262,11 +263,39 @@ function parseDate(value) {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
+// parseDate는 해석에 실패하면 입력 문자열을 그대로 돌려준다. 날짜로 확신할 수 있을 때만 받고 싶은 곳에서 쓴다.
+function parseStrictDate(value) {
+  const parsed = parseDate(value);
+  return parsed && /^\d{4}-\d{2}-\d{2}T/.test(parsed) ? parsed : null;
+}
+
+function isoDate(year, month, day) {
+  return parseStrictDate(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+}
+
 function extractDateFromText(value = "") {
   const text = cleanText(value);
+  const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*(0?[1-9]|[12]\d|3[01])\s*일/);
+  if (korean) {
+    return isoDate(korean[1], korean[2], korean[3]);
+  }
+  const japanese = text.match(/(20\d{2})\s*年\s*(0?[1-9]|1[0-2])\s*月\s*(0?[1-9]|[12]\d|3[01])\s*日/);
+  if (japanese) {
+    return isoDate(japanese[1], japanese[2], japanese[3]);
+  }
   const numeric = text.match(/\b(20\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
   if (numeric) {
     return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
+  }
+  // 유럽식 점 표기(31.12.2026). 앞자리가 12를 넘으면 일-월 순서가 확정된다.
+  const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.(20\d{2})\b/);
+  if (dayFirst) {
+    return isoDate(dayFirst[3], dayFirst[2], dayFirst[1]);
+  }
+  // 미국식 슬래시 표기(12/31/2026).
+  const monthFirst = text.match(/\b(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/(20\d{2})\b/);
+  if (monthFirst) {
+    return isoDate(monthFirst[3], monthFirst[1], monthFirst[2]);
   }
   const monthName = text.match(
     /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
@@ -280,6 +309,23 @@ function extractDateFromText(value = "") {
   if (dayMonth) {
     return parseDate(`${dayMonth[2].replace(/\.$/, "")} ${dayMonth[1]}, ${dayMonth[3]}`);
   }
+  return null;
+}
+
+// 문서 파일(8-k-12-31-2017-....pdf)처럼 본문을 열 수 없는 링크는 URL이 유일한 날짜 단서다.
+function extractDateFromUrl(url) {
+  let text = String(url || "");
+  try {
+    text = decodeURIComponent(text);
+  } catch {
+    // 잘못 인코딩된 URL은 원문 그대로 본다.
+  }
+  const ymd = text.match(/(?:^|\D)(20\d{2})[/_-](0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])(?:\D|$)/);
+  if (ymd) return isoDate(ymd[1], ymd[2], ymd[3]);
+  const mdy = text.match(/(?:^|\D)(0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])[/_-](20\d{2})(?:\D|$)/);
+  if (mdy) return isoDate(mdy[3], mdy[1], mdy[2]);
+  const compact = text.match(/(?:^|\D)(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?:\D|$)/);
+  if (compact) return isoDate(compact[1], compact[2], compact[3]);
   return null;
 }
 
@@ -306,29 +352,83 @@ function extractTagText(html, tag) {
   return match ? cleanHtmlText(match[1]) : "";
 }
 
-function extractPublishedDateFromHtml(html) {
-  const metaDate = extractMetaContent(html, [
-    "article:published_time",
-    "datePublished",
-    "date",
-    "dc.date",
-    "dc.date.issued",
-    "publishdate",
-    "pubdate",
-    "sailthru.date",
-  ]);
-  if (metaDate) {
-    const parsed = parseDate(metaDate);
+const PUBLISHED_META_NAMES = [
+  "article:published_time",
+  "article:modified_time",
+  "og:published_time",
+  "og:updated_time",
+  "datePublished",
+  "dateModified",
+  "date",
+  "dc.date",
+  "dc.date.issued",
+  "dcterms.date",
+  "dcterms.created",
+  "publishdate",
+  "pubdate",
+  "publish-date",
+  "published-date",
+  "release_date",
+  "parsely-pub-date",
+  "sailthru.date",
+  "cXenseParse:recs:publishtime",
+];
+
+// <time datetime="2026-08-14">는 요즘 가장 흔한 게시일 마크업인데 메타 태그 스캔으로는 잡히지 않는다.
+function extractDateFromTimeTag(html) {
+  for (const match of html.matchAll(/<time\b([^>]*)>([\s\S]*?)<\/time>/gi)) {
+    const attrs = match[1] || "";
+    const parsed = parseStrictDate(extractAttribute(attrs, "datetime")) || extractDateFromText(match[2]);
     if (parsed) return parsed;
   }
-
-  const jsonLdDate = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) || html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
-  if (jsonLdDate) {
-    const parsed = parseDate(jsonLdDate[1]);
+  for (const match of html.matchAll(/<time\b([^>]*)\/>/gi)) {
+    const parsed = parseStrictDate(extractAttribute(match[1] || "", "datetime"));
     if (parsed) return parsed;
   }
+  return null;
+}
 
-  return extractDateFromText(cleanHtmlText(html.slice(0, 5000)));
+// <span itemprop="datePublished" content="...">처럼 meta 태그가 아닌 곳에 실린 값.
+function extractDateFromItemprop(html) {
+  for (const match of html.matchAll(/<[^>]*\bitemprop\s*=\s*["'](?:datePublished|dateCreated)["']([^>]*)>/gi)) {
+    const attrs = match[1] || "";
+    const parsed = parseStrictDate(extractAttribute(attrs, "content")) || parseStrictDate(extractAttribute(attrs, "datetime"));
+    if (parsed) return parsed;
+  }
+  return null;
+}
+
+// 날짜와 함께 그 출처를 돌려준다. published_at_source로 저장해 품질을 추적한다.
+function resolveHtmlDate(html, url = "") {
+  const metaDate = parseStrictDate(extractMetaContent(html, PUBLISHED_META_NAMES));
+  if (metaDate) return { date: metaDate, source: "meta" };
+
+  const jsonLdMatch = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) || html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
+  const jsonLdDate = jsonLdMatch ? parseStrictDate(jsonLdMatch[1]) : null;
+  if (jsonLdDate) return { date: jsonLdDate, source: "jsonld" };
+
+  const timeDate = extractDateFromTimeTag(html);
+  if (timeDate) return { date: timeDate, source: "time_tag" };
+
+  const itempropDate = extractDateFromItemprop(html);
+  if (itempropDate) return { date: itempropDate, source: "itemprop" };
+
+  const headDate = extractDateFromText(cleanHtmlText(html.slice(0, 5000)));
+  if (headDate) return { date: headDate, source: "text" };
+
+  const urlDate = extractDateFromUrl(url);
+  if (urlDate) return { date: urlDate, source: "url" };
+
+  return { date: null, source: "" };
+}
+
+// 목록 페이지의 앵커에서 날짜를 찾는다. 본문 텍스트가 먼저, URL이 마지막이다.
+function resolveListingDate(anchor) {
+  const textDate = extractDateFromText(`${anchor.title} ${anchor.context}`);
+  if (textDate) return { date: textDate, source: "listing" };
+  const urlDate = extractDateFromUrl(anchor.url);
+  if (urlDate) return { date: urlDate, source: "url" };
+  return { date: null, source: "" };
 }
 
 function extractPageTitle(html) {
@@ -480,7 +580,8 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       title: tagText(item, "title"),
       url: itemUrl,
       source: sourceText ? `${defaultSource}: ${sourceText}` : defaultSource,
-      published_at: parseDate(tagText(item, "pubDate")),
+      published_at: parseDate(tagText(item, "pubDate")) || extractDateFromUrl(itemUrl),
+      published_at_source: tagText(item, "pubDate") ? "feed" : extractDateFromUrl(itemUrl) ? "url" : "",
       collected_at: collectedAt,
       collector,
       query,
@@ -497,7 +598,8 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       title: tagText(entry, "title"),
       url: entryUrl,
       source: defaultSource,
-      published_at: parseDate(tagText(entry, "published") || tagText(entry, "updated")),
+      published_at: parseDate(tagText(entry, "published") || tagText(entry, "updated")) || extractDateFromUrl(entryUrl),
+      published_at_source: tagText(entry, "published") || tagText(entry, "updated") ? "feed" : extractDateFromUrl(entryUrl) ? "url" : "",
       collected_at: collectedAt,
       collector,
       query,
@@ -736,20 +838,24 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       }
       const anchors = parseAnchors(html, page.url).filter((anchor) => isRelevantOfficialLink(anchor, page.url));
       const sourceRows = dedupeRows(
-        anchors.map((anchor) => ({
+        anchors.map((anchor) => {
+          const listingDate = resolveListingDate(anchor);
+          return {
           target_no: company.target_no,
           company: company.company,
           title: officialTitle(anchor),
           url: anchor.url,
           source: page.source,
-          published_at: extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`),
+          published_at: listingDate.date,
+          published_at_source: listingDate.source,
           collected_at: collectedAt,
           collector: "official_page",
           query: page.url,
           ...officialSourceFields(page.kind, page.source, page.sourceTypeLabel, page.pageTitle, page.url, anchor.url),
           official_source_url: page.url,
           source_direct_url: directUrlCandidate(anchor.url),
-        })),
+          };
+        }),
       );
       rows.push(...filterByDateRange(sourceRows, dateRange).slice(0, maxPerSource));
     } catch (error) {
@@ -788,12 +894,25 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
     }
 
     if (detailCount >= args.maxDetailPerCompany) {
-      enriched.push({ ...row, content_fetch_status: "skipped_detail_limit" });
+      const limitUrlDate = row.published_at ? null : extractDateFromUrl(row.url);
+      enriched.push({
+        ...row,
+        published_at: row.published_at || limitUrlDate,
+        published_at_source: row.published_at ? row.published_at_source : limitUrlDate ? "url" : row.published_at_source,
+        content_fetch_status: "skipped_detail_limit",
+      });
       continue;
     }
 
     if (!canFetchDetailContent(row.url)) {
-      enriched.push({ ...row, content_fetch_status: "skipped_non_html" });
+      // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다.
+      const urlDate = row.published_at ? null : extractDateFromUrl(row.url);
+      enriched.push({
+        ...row,
+        published_at: row.published_at || urlDate,
+        published_at_source: row.published_at ? row.published_at_source : urlDate ? "url" : row.published_at_source,
+        content_fetch_status: "skipped_non_html",
+      });
       continue;
     }
 
@@ -804,11 +923,16 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt) {
       const content = extractArticleText(html);
       const limitedContent = content.slice(0, args.contentCharLimit);
       const pageTitle = extractPageTitle(html);
-      const publishedAt = row.published_at || extractPublishedDateFromHtml(html) || extractDateFromText(content.slice(0, 4000));
+      const htmlDate = row.published_at ? { date: null, source: "" } : resolveHtmlDate(html, row.url);
+      const bodyDate = row.published_at || htmlDate.date ? null : extractDateFromText(content.slice(0, 4000));
+      const publishedAt = row.published_at || htmlDate.date || bodyDate;
       enriched.push({
         ...row,
         title: chooseBetterTitle(row.title, pageTitle, row.url),
         published_at: publishedAt,
+        published_at_source: row.published_at
+          ? row.published_at_source
+          : htmlDate.source || (bodyDate ? "body_text" : row.published_at_source),
         content_text: limitedContent,
         content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
         content_word_count: content.split(/\s+/).filter(Boolean).length,
@@ -882,6 +1006,7 @@ async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, co
       url: article.url || "",
       source: `GDELT: ${article.domain || article.sourceCountry || "unknown"}`,
       published_at: parseDate(article.seendate),
+      published_at_source: article.seendate ? "feed" : "",
       collected_at: collectedAt,
       collector: "gdelt_doc_api",
       query,
@@ -1097,6 +1222,12 @@ async function main() {
     result_count: finalRows.length,
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
     press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
+    undated_result_count: finalRows.filter((row) => !row.published_at).length,
+    published_at_source_counts: finalRows.reduce((counts, row) => {
+      const key = row.published_at_source || "none";
+      counts[key] = (counts[key] || 0) + 1;
+      return counts;
+    }, {}),
     fallback_result_count: finalRows.filter((row) => row.source_type !== "official").length,
     companies_with_results: Object.values(countsByCompany).filter((count) => count > 0).length,
     companies_with_official_results: Object.values(officialCountsByCompany).filter((count) => count > 0).length,

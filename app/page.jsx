@@ -48,6 +48,18 @@ function isPressRelease(item) {
   return PRESS_RELEASE_PATTERN.test([item?.source, item?.official_source_url, item?.url].filter(Boolean).join(" "));
 }
 
+// 게시일을 확인하지 못한 항목. PDF 보고서에서는 제외되고 화면에서만 미상으로 표시된다.
+function isUndated(item) {
+  return !String(item?.published_at || "").trim();
+}
+
+function PublishedDate({ item }) {
+  if (isUndated(item)) {
+    return <span className="undatedBadge" title="게시일을 확인하지 못해 월간 보고서에서는 제외됩니다">게시일 미상</span>;
+  }
+  return <>{formatDate(item.published_at)}</>;
+}
+
 function sourceBadgeLabel(item) {
   if (item?.source_type !== "official") return "대체";
   return isPressRelease(item) ? "공식보도자료" : "공식";
@@ -619,6 +631,7 @@ export default function HomePage() {
   const collectedCompanyCount = useMemo(() => new Set(displayedSignals.map((item) => item.company).filter(Boolean)).size, [displayedSignals]);
   const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
   const pressReleaseCount = displayedSignals.filter((item) => isPressRelease(item)).length;
+  const undatedCount = displayedSignals.filter((item) => isUndated(item)).length;
 
   return (
     <main className="shell">
@@ -804,6 +817,10 @@ export default function HomePage() {
           <strong>{pressReleaseCount}</strong>
         </div>
         <div>
+          <span>게시일 미상</span>
+          <strong className={undatedCount ? "statusWarning" : ""}>{undatedCount}</strong>
+        </div>
+        <div>
           <span>기술 관련 후보</span>
           <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
         </div>
@@ -921,7 +938,7 @@ export default function HomePage() {
                       <span>{item.source}</span>
                     </div>
                   </td>
-                  <td>{formatDate(item.published_at)}</td>
+                  <td><PublishedDate item={item} /></td>
                   <td>
                     <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 투자 시그널 열기`}>
                       <ExternalLink size={17} />
@@ -1000,7 +1017,7 @@ export default function HomePage() {
                       <span>{item.source}</span>
                     </div>
                   </td>
-                  <td>{formatDate(item.published_at)}</td>
+                  <td><PublishedDate item={item} /></td>
                   <td>
                     <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 관련 후보 열기`}>
                       <ExternalLink size={17} />
@@ -1053,7 +1070,7 @@ export default function HomePage() {
                         <span>{item.source}</span>
                       </div>
                     </td>
-                    <td>{formatDate(item.published_at)}</td>
+                    <td><PublishedDate item={item} /></td>
                     <td>
                       <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 기사 열기`}>
                         <ExternalLink size={17} />

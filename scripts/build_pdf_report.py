@@ -456,7 +456,8 @@ def filter_rows_by_report_period(rows, summary):
     for row in rows:
         published = parse_datetime(row.get("published_at"))
         if not published:
-            filtered.append(row)
+            # 게시일을 확인할 수 없는 항목은 월간 보고서에서 제외한다. 기간이 문서의 전제이기 때문이다.
+            # 웹 화면에서는 '게시일 미상'으로 표시해 그대로 남긴다.
             continue
         if published.tzinfo is None:
             published = published.replace(tzinfo=timezone.utc)
