@@ -213,20 +213,21 @@ SIGNAL_DESCRIPTIONS = {
     5: "핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등",
 }
 
+# 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
 SIGNAL_DESCRIPTIONS_EN = {
-    1: "Supply chain & geopolitical risk response · supply chain shifts, risk events and countermeasures",
-    2: "Production expansion & diversification · capacity additions, site diversification, feasibility studies",
-    3: "Investment financing secured · bonds, equity raises, large-scale credit facilities",
-    4: "Technology ecosystem engagement (R&D) · joint research, licensing, PoC, equity interest",
-    5: "Movement of key strategic personnel · C-level moves, confidential visits, due diligence",
+    1: "Supply chain & geopolitical risk · shifts, risk events, responses",
+    2: "Production expansion · capacity, site diversification, feasibility",
+    3: "Investment financing · bonds, equity raises, credit facilities",
+    4: "Technology ecosystem (R&D) · joint research, licensing, PoC",
+    5: "Key personnel movement · C-level moves, visits, due diligence",
 }
 
 INDICATOR_DESCRIPTION_EN = {
-    1: "Supply chain shifts, geopolitical risk events and responses",
-    2: "Capacity additions, site diversification, feasibility studies",
-    3: "Bonds, equity raises and large-scale credit facilities",
-    4: "Joint research, licensing, PoC and equity interest",
-    5: "C-level moves, confidential visits and due diligence",
+    1: "Supply chain shifts and risk responses",
+    2: "Capacity additions, site diversification",
+    3: "Bonds, equity raises, credit facilities",
+    4: "Joint research, licensing, PoC, equity",
+    5: "C-level moves, visits, due diligence",
 }
 
 COUNTRY_EN = {
@@ -251,24 +252,24 @@ COUNTRY_EN = {
 DETAILED_INDUSTRY_EN = {
     "rare_earth_magnet_recycling": "Rare-earth magnet recycling",
     "3d_vision_sensor": "Machine vision & sensors",
-    "euv_blank_mask": "Semiconductor mask materials",
+    "euv_blank_mask": "EUV mask materials",
     "virus_validation_mcb_wcb": "Bioanalysis & safety testing",
-    "bioprocess_culture_purification": "Bioprocess equipment & materials",
+    "bioprocess_culture_purification": "Bioprocess equipment",
     "gene_cell_therapy_delivery_gmp": "Cell & gene therapy",
     "autoinjector_pfs_fill_finish": "Drug delivery & fill-finish",
-    "ag_al_paste": "Solar cell electrode materials",
+    "ag_al_paste": "Solar electrode materials",
     "lithium_cathode_materials": "Battery cathode materials",
     "nonferrous_scrap_recycling": "Non-ferrous metal recycling",
     "hexamethylenediamine_hmd": "Chemical platform feedstock",
     "ion_exchange_membrane": "Advanced membranes",
-    "autonomous_imu_rf_baseband": "Autonomous driving semiconductors",
+    "autonomous_imu_rf_baseband": "Autonomous driving chips",
     "semiconductor_thermal_material": "Semiconductor packaging",
     "autonomous_camera_isp": "Autonomous driving sensing",
     "aerospace_electric_propulsion": "Aircraft & clean propulsion",
     "robot_lidar": "Robotics LiDAR",
-    "hybrid_bonding_w2w": "Advanced packaging equipment",
+    "hybrid_bonding_w2w": "Advanced packaging",
     "euv_lithography": "Semiconductor lithography",
-    "satellite_radar_rf_semiconductor": "Aerospace RF semiconductors",
+    "satellite_radar_rf_semiconductor": "Aerospace RF chips",
     "offshore_wind_turbine": "Offshore wind turbines",
     "linear_scale": "Precision position metrology",
     "robot_reducer": "Robot precision drives",
@@ -276,9 +277,9 @@ DETAILED_INDUSTRY_EN = {
     "precipitated_silica_tire": "Eco-friendly silica",
     "silicon_anode_sic": "Battery anode materials",
     "pvdf": "Battery binder materials",
-    "metal_target_ti_ta": "Semiconductor metal targets",
+    "metal_target_ti_ta": "Semiconductor targets",
     "fine_metal_mask": "Display materials",
-    "tgv_glass_substrate": "Glass substrates for semiconductors",
+    "tgv_glass_substrate": "Glass core substrates",
 }
 
 MONTH_NAMES_EN = [
@@ -323,18 +324,18 @@ TEXTS = {
         "cover_title_2": "Global Investment Signals",
         "cover_title_3": "Monitoring",
         "cover_line_1": "30 priority investment projects selected by MOTIE · 77 target companies",
-        "cover_line_2": "Five leading signals per company · early indicators ahead of an investment decision",
+        "cover_line_2": "Five leading signals per company · early indicators before an investment decision",
         "cover_indicator_heading": "Five investment trend indicators",
         "matrix_title": "Signal Matrix of the Month",
         "matrix_desc": "Global investment signals (leading indicators) across 77 target companies for {period}. A filled cell marks a signal captured during the month; confirmed or already announced investments are excluded.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal captured",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply chain & geopolitical risk · ② Production expansion & diversification · ③ Investment financing · ④ Technology ecosystem (R&D) · ⑤ Movement of key personnel",
+        "matrix_indicators": "① Supply chain & geopolitical risk · ② Production expansion · ③ Investment financing · ④ Technology ecosystem · ⑤ Key personnel movement",
         "matrix_footnote": "{on} companies with a signal · {off} companies without one | details follow",
         "detail_title": "Company Signal Detail",
-        "no_signal": "No signal in this category this month",
-        "business_heading": "GLOBAL BUSINESS STATUS",
+        "no_signal": "No signal this month",
+        "business_heading": "GLOBAL BUSINESS",
         "business_empty": "No global business activity could be summarised from official sources for this period.",
         "target_item": "Target item",
         "target_tech": "Target technology",
@@ -758,9 +759,13 @@ def wrap_text(canvas_obj, text, max_width, font_name, font_size):
 
 def short_text_to_width(canvas_obj, text, max_width, font_name, font_size):
     text = " ".join(str(text or "").replace("&nbsp;", " ").split())
+    if not text:
+        return ""
     if canvas_obj.stringWidth(text, font_name, font_size) <= max_width:
         return text
     suffix = "..."
+    if canvas_obj.stringWidth(suffix, font_name, font_size) > max_width:
+        return ""
     lo, hi = 0, len(text)
     while lo < hi:
         mid = (lo + hi + 1) // 2
@@ -769,7 +774,14 @@ def short_text_to_width(canvas_obj, text, max_width, font_name, font_size):
             lo = mid
         else:
             hi = mid - 1
-    return text[:lo].rstrip() + suffix
+    head = text[:lo].rstrip()
+    # 영문은 단어 중간에서 끊기면 뜻이 깨지므로 마지막 공백까지 되돌린다.
+    # 한 단어를 통째로 버릴 만큼 많이 잘려나가면 그대로 둔다(한글처럼 공백이 드문 문장 보호).
+    if " " in head and not text[lo : lo + 1].isspace():
+        word_head = head.rsplit(" ", 1)[0].rstrip(" ,;:·-")
+        if word_head and len(word_head) >= len(head) * 0.6:
+            head = word_head
+    return head + suffix if head else suffix
 
 
 def split_sentences(text):
@@ -940,7 +952,12 @@ class SlideReport:
         lines = wrap_text(self.canvas, text, max_width, font_name, size)
         if max_lines and len(lines) > max_lines:
             lines = lines[:max_lines]
-            lines[-1] = short_text(lines[-1], max(8, len(lines[-1]) - 3))
+            # 글자 수가 아니라 실제 폭으로 잘라야 영문에서도 마지막 줄이 폭을 넘지 않는다.
+            last = lines[-1]
+            if self.canvas.stringWidth(f"{last}...", font_name, size) <= max_width:
+                lines[-1] = f"{last}..."
+            else:
+                lines[-1] = short_text_to_width(self.canvas, last, max_width, font_name, size)
         self.set_font(size, color, weight=weight, bold=bold)
         line_height = size + line_gap
         for line in lines:
@@ -993,20 +1010,24 @@ def draw_cover(report, summary, indicators):
     report.text(PAGE_W - 42, PAGE_H - 58, report.issue_no, 18, WHITE, align="right", weight="semibold")
     report.text(PAGE_W - 42, PAGE_H - 78, issue_month(summary), 10, colors.HexColor("#C8D2DF"), align="right", weight="medium")
 
+    text_width = PAGE_W - 86
     y = PAGE_H - 208
     report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD, weight="medium")
+    # 제목은 잘라내면 뜻이 사라지므로, 여백을 넘지 않을 때까지 크기를 줄여서 통째로 싣는다.
     title_size = 30 if LANG == "en" else 36
-    y -= 56
-    report.text(43, y, t("cover_title_1"), title_size, WHITE, weight="semibold")
-    y -= 45
-    report.text(43, y, t("cover_title_2"), title_size, GOLD, weight="semibold")
-    y -= 45
-    report.text(43, y, t("cover_title_3"), title_size, WHITE, weight="semibold")
+    titles = [t("cover_title_1"), t("cover_title_2"), t("cover_title_3")]
+    while title_size > 18 and any(
+        c.stringWidth(title, report.fonts["semibold"], title_size) > text_width for title in titles
+    ):
+        title_size -= 1
+    for index, title in enumerate(titles):
+        y -= 56 if index == 0 else 45
+        report.text(43, y, title, title_size, GOLD if index == 1 else WHITE, weight="semibold")
 
     y -= 42
-    report.text(43, y, t("cover_line_1"), 12, WHITE)
+    report.text(43, y, short_text_to_width(c, t("cover_line_1"), text_width, report.fonts["demilight"], 12), 12, WHITE)
     y -= 20
-    report.text(43, y, t("cover_line_2"), 12, WHITE)
+    report.text(43, y, short_text_to_width(c, t("cover_line_2"), text_width, report.fonts["demilight"], 12), 12, WHITE)
 
     y -= 45
     report.text(43, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
@@ -1022,10 +1043,15 @@ def draw_cover(report, summary, indicators):
         else:
             label = item["label_ko"]
             description = item["description_ko"]
+        # 라벨을 먼저 폭 안에 맞추고, 설명은 남은 자리만큼만 쓴다.
+        # 예전에는 남은 폭에 하한 60pt를 걸어서, 라벨이 길면 설명이 라벨 위로 겹쳐 찍혔다.
+        label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12)
         report.text(67, y - 1, label, 12, WHITE, weight="semibold")
         label_w = c.stringWidth(label, report.fonts["semibold"], 12)
-        description = short_text_to_width(c, description, max(60, PAGE_W - 43 - (67 + label_w + 14)), report.fonts["demilight"], 8)
-        report.text(PAGE_W - 43, y - 1, description, 8, colors.HexColor("#C8D2DF"), align="right")
+        description_width = PAGE_W - 43 - (67 + label_w + 16)
+        if description_width >= 50:
+            description = short_text_to_width(c, description, description_width, report.fonts["demilight"], 8)
+            report.text(PAGE_W - 43, y - 1, description, 8, colors.HexColor("#C8D2DF"), align="right")
         y -= 32
 
     c.setStrokeColor(colors.HexColor("#D6DEE9"))
@@ -1170,7 +1196,13 @@ def draw_matrix(report, profiles, signal_index, summary):
     c.setFillColor(LIGHT)
     c.roundRect(legend_off_x, y + 9, 8, 8, 2, fill=1, stroke=0)
     report.text(legend_off_x + 13, y + 9, t("matrix_legend_off"), 8, colors.HexColor("#596579"))
-    report.text(32, y - 6, t("matrix_indicators"), 7, MUTED)
+    report.text(
+        32,
+        y - 6,
+        short_text_to_width(c, t("matrix_indicators"), PAGE_W - 64, report.fonts["demilight"], 7),
+        7,
+        MUTED,
+    )
     no_signal = len(profiles) - len(signal_companies)
     report.text(
         32,
@@ -1282,6 +1314,22 @@ def draw_badge(report, x, y, value, active):
     c.setFillColor(NAVY if active else colors.HexColor("#D8DADF"))
     c.roundRect(x, y - 9, 16, 16, 3, fill=1, stroke=0)
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
+
+
+def draw_industry_pill(report, x, y, max_width, text, color):
+    """산업 라벨 알약. 글자를 먼저 폭에 맞춘 뒤 알약을 그 글자에 맞춰 그린다.
+
+    예전에는 알약 폭만 132pt로 자르고 글자는 원문 그대로 찍어서, 영문 산업명처럼
+    긴 라벨이 알약 밖으로 튀어나오고 뒤따르는 국가명과 겹쳤다.
+    """
+    text = short_text_to_width(report.canvas, text, max_width - 18, report.fonts["semibold"], 9)
+    if not text:
+        return 0
+    pill_width = report.canvas.stringWidth(text, report.fonts["semibold"], 9) + 18
+    report.canvas.setFillColor(LIGHT)
+    report.canvas.roundRect(x, y - 7, pill_width, 18, 3, fill=1, stroke=0)
+    report.text(x + 9, y - 2, text, 9, color, weight="semibold")
+    return pill_width
 
 
 def draw_target_marker(c, x, y, size=11):
@@ -1410,13 +1458,19 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     draw_badge(report, x, y, no, active)
     label_x = x + 31
     label = SIGNAL_DESCRIPTIONS_EN[no] if LANG == "en" else SIGNAL_DESCRIPTIONS[no]
-    label_w = min(width - 190, report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14)
+    # 알약은 폭 상한이 있으므로 글자를 먼저 그 안에 맞춘다. 예전에는 알약만 잘리고 글자는 그대로 나가서 밖으로 튀어나왔다.
+    label = short_text_to_width(report.canvas, label, width - 190 - 16, report.fonts["semibold"], 7.6)
+    label_w = report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14
     c.setFillColor(LIGHT)
     c.roundRect(label_x, y - 9, label_w, 16, 3, fill=1, stroke=0)
     report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), weight="semibold")
 
     if not active:
-        report.text(label_x + label_w + 18, y - 4, t("no_signal"), 10, colors.HexColor("#B5B9BF"))
+        empty_x = label_x + label_w + 18
+        empty_text = short_text_to_width(
+            report.canvas, t("no_signal"), x + width - 22 - empty_x, report.fonts["demilight"], 10
+        )
+        report.text(empty_x, y - 4, empty_text, 10, colors.HexColor("#B5B9BF"))
         report.text(x + width - 12, y - 4, "-", 10, colors.HexColor("#B5B9BF"), align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
@@ -1473,12 +1527,13 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.text(x + 17, header_y, company, 14, TEXT, weight="semibold")
     name_w = report.canvas.stringWidth(company, report.bold_font, 14)
     industry_x = min(x + 17 + name_w + 14, x + 250)
-    industry_text = profile.get("detailed_industry", "")
-    industry_w = min(132, report.canvas.stringWidth(industry_text, report.fonts["semibold"], 9) + 18)
-    c.setFillColor(LIGHT)
-    c.roundRect(industry_x, header_y - 7, industry_w, 18, 3, fill=1, stroke=0)
-    report.text(industry_x + 9, header_y - 2, industry_text, 9, colors.HexColor("#56687B"), weight="semibold")
-    report.text(industry_x + industry_w + 10, header_y - 2, profile.get("country", ""), 9, colors.HexColor("#B1B6BE"), weight="semibold")
+    country_text = profile.get("country", "")
+    country_w = report.canvas.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0
+    industry_limit = min(190, (x + width - 17) - country_w - 12 - industry_x)
+    industry_w = draw_industry_pill(
+        report, industry_x, header_y, industry_limit, profile.get("detailed_industry", ""), colors.HexColor("#56687B")
+    )
+    report.text(industry_x + industry_w + 10, header_y - 2, country_text, 9, colors.HexColor("#B1B6BE"), weight="semibold")
 
     c.setStrokeColor(colors.black)
     c.setLineWidth(1)
@@ -1513,7 +1568,15 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
         draw_target_marker(c, target_label_x + 13, header_y + 2)
         report.text(target_label_x + 25, header_y, target_label, 8.5, colors.HexColor("#087A70"), weight="semibold")
-        report.text(target_label_x + target_label_w + 9, header_y, short_text(target_text, 45), 9.5, colors.HexColor("#087A70"), weight="semibold")
+        # 글자 수(45자)가 아니라 남은 폭으로 잘라야 청록 박스 밖으로 나가지 않는다.
+        # 폭이 모자라면 한 단계 작은 글자로 먼저 시도해 잘려나가는 내용을 줄인다.
+        target_value_x = target_label_x + target_label_w + 9
+        target_value_width = (x + width - 16) - target_value_x
+        target_size = 9.5
+        if c.stringWidth(target_text, report.fonts["semibold"], target_size) > target_value_width:
+            target_size = 8.5
+        target_value = short_text_to_width(c, target_text, target_value_width, report.fonts["semibold"], target_size)
+        report.text(target_value_x, header_y, target_value, target_size, colors.HexColor("#087A70"), weight="semibold")
 
     body_y = top - BUSINESS_BODY_TOP_PAD
     report.set_font(business_layout["size"], TEXT, weight="demilight")
@@ -1623,13 +1686,13 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     report.text(x + 17, header_y, company, 13, TEXT, weight="semibold")
     name_w = c.stringWidth(company, report.bold_font, 13)
     industry_text = profile.get("detailed_industry", "")
+    country_text = profile.get("country", "")
+    country_w = c.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0
     if industry_text:
         industry_x = min(x + 17 + name_w + 14, x + 250)
-        industry_w = min(132, c.stringWidth(industry_text, report.fonts["semibold"], 9) + 18)
-        c.setFillColor(LIGHT)
-        c.roundRect(industry_x, header_y - 7, industry_w, 18, 3, fill=1, stroke=0)
-        report.text(industry_x + 9, header_y - 2, industry_text, 9, ITEM_LABEL_COLOR, weight="semibold")
-    report.text(x + width - 17, header_y - 2, profile.get("country", ""), 9, GREY_TEXT, align="right", weight="semibold")
+        industry_limit = min(190, (x + width - 17) - country_w - 12 - industry_x)
+        draw_industry_pill(report, industry_x, header_y, industry_limit, industry_text, ITEM_LABEL_COLOR)
+    report.text(x + width - 17, header_y - 2, country_text, 9, GREY_TEXT, align="right", weight="semibold")
 
     rule_y = top - layout["rule_offset"]
     c.setStrokeColor(colors.black)
