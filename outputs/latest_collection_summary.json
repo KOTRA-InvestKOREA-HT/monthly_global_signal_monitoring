@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-03T06:28:51Z",
+  "run_started_at": "2026-09-03T07:19:12Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,17 +20,20 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 717,
+  "request_count": 716,
   "fetch_retries": 2,
-  "retry_count": 8,
-  "result_count": 435,
+  "retry_count": 10,
+  "result_count": 434,
   "official_result_count": 388,
   "press_release_result_count": 180,
   "undated_result_count": 131,
-  "excluded_non_article_count": 120,
+  "excluded_non_article_count": 10016,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 120
+    "index_or_category_page": 9800,
+    "broken_url": 194,
+    "no_article_title": 22
   },
+  "excluded_non_article_sample_count": 120,
   "excluded_non_article_samples": [
     {
       "company": "Corning",
@@ -57,18 +60,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Corning",
-      "title": "Investor Relations",
-      "url": "https://investor.corning.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Corning",
-      "title": "Search Jobs",
-      "url": "https://corningjobs.corning.com/search/?createNewAlert=false&q=&locationsearch=",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Charles River",
       "title": "News Releases",
       "url": "https://ir.criver.com/news-releases",
@@ -89,96 +80,6 @@
     {
       "company": "Charles River",
       "title": "More News",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Current page 1",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=0",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 2",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 3",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=2",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 4",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=3",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 5",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=4",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 6",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=5",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 7",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=6",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 8",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=7",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Page 9",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=8",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Next page Next ›",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Last page Last »",
-      "url": "https://ir.criver.com/sec-filings/?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=0&page=243",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "Kaleidoscope",
-      "url": "https://www.kscope.io/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
       "url": "https://ir.criver.com/news-releases",
       "reason": "index_or_category_page"
     },
@@ -207,279 +108,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Australian Strategic Metals",
-      "title": "Management",
-      "url": "https://asm-au.com/about/management/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Directory",
-      "url": "https://asm-au.com/about/corporate-directory/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Governance",
-      "url": "https://asm-au.com/about/corporate-governance/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Sustainability Expand",
-      "url": "https://asm-au.com/sustainability/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Biodiversity",
-      "url": "https://asm-au.com/sustainability/biodiversity/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Climate Change",
-      "url": "https://asm-au.com/sustainability/climate-change/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Water",
-      "url": "https://asm-au.com/sustainability/water/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Community & Social",
-      "url": "https://asm-au.com/sustainability/community-social/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "People & Culture",
-      "url": "https://asm-au.com/sustainability/people-culture/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Investors Expand",
-      "url": "https://asm-au.com/investors/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Shareholder Information",
-      "url": "https://asm-au.com/investors/shareholder-information/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "ASX Announcements",
-      "url": "https://asm-au.com/investors/asx-announcements/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Company Reports",
-      "url": "https://asm-au.com/investors/company-reports/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Presentations",
-      "url": "https://asm-au.com/investors/corporate-presentations/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Latest Videos",
-      "url": "https://asm-au.com/investors/latest-videos/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "News",
-      "url": "https://asm-au.com/news/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Linkedin",
-      "url": "https://www.linkedin.com/company/asm-au",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
+      "company": "Cytiva",
       "title": "",
-      "url": "https://asm-au.com/",
+      "url": "https://www.danaher.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Australian Strategic Metals",
-      "title": "2",
-      "url": "https://asm-au.com/news/page/2/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "3",
-      "url": "https://asm-au.com/news/page/3/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "20",
-      "url": "https://asm-au.com/news/page/20/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Next Page Next",
-      "url": "https://asm-au.com/news/page/2/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Linkedin",
-      "url": "https://www.linkedin.com/company/asm-au",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "About ASM",
-      "url": "https://asm-au.com/about/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Sustainability",
-      "url": "https://asm-au.com/sustainability/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
+      "company": "Cytiva",
       "title": "Investors",
-      "url": "https://asm-au.com/investors/",
+      "url": "https://investors.danaher.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Australian Strategic Metals",
+      "company": "Cytiva",
+      "title": "Careers",
+      "url": "https://jobs.danaher.com/global/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Cytiva",
       "title": "News",
-      "url": "https://asm-au.com/news/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "About ASM",
-      "url": "https://asm-au.com/about/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Our Values",
-      "url": "https://asm-au.com/about/our-values/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Board",
-      "url": "https://asm-au.com/about/board/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Management",
-      "url": "https://asm-au.com/about/management/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Directory",
-      "url": "https://asm-au.com/about/corporate-directory/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Governance",
-      "url": "https://asm-au.com/about/corporate-governance/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Sustainability",
-      "url": "https://asm-au.com/sustainability/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Biodiversity",
-      "url": "https://asm-au.com/sustainability/biodiversity/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Climate Change",
-      "url": "https://asm-au.com/sustainability/climate-change/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Water",
-      "url": "https://asm-au.com/sustainability/water/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Community & Social",
-      "url": "https://asm-au.com/sustainability/community-social/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "People & Culture",
-      "url": "https://asm-au.com/sustainability/people-culture/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Investors",
-      "url": "https://asm-au.com/investors/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Shareholder Information",
-      "url": "https://asm-au.com/investors/shareholder-information/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "ASX Announcements",
-      "url": "https://asm-au.com/investors/asx-announcements/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Company Reports",
-      "url": "https://asm-au.com/investors/company-reports/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Presentations",
-      "url": "https://asm-au.com/investors/corporate-presentations/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Latest Videos",
-      "url": "https://asm-au.com/investors/latest-videos/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "News",
-      "url": "https://asm-au.com/news/",
+      "url": "https://www.danaher.com/newsroom",
       "reason": "index_or_category_page"
     },
     {
@@ -510,120 +159,6 @@
       "company": "West Pharmaceutical",
       "title": "Home",
       "url": "https://www.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Investors",
-      "url": "https://www.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "News & Events",
-      "url": "https://www.westpharma.com/news-and-events",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Blog",
-      "url": "https://www.westpharma.com/blog",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "",
-      "url": "https://www.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Home",
-      "url": "https://www.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Investors",
-      "url": "https://investor.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Overview",
-      "url": "https://investor.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Press Releases",
-      "url": "https://investor.westpharma.com/press-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Overview",
-      "url": "https://investor.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Press Releases",
-      "url": "https://investor.westpharma.com/press-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Current page 1",
-      "url": "https://investor.westpharma.com/press-releases?page=0",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Page 2",
-      "url": "https://investor.westpharma.com/press-releases?page=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Next page ›",
-      "url": "https://investor.westpharma.com/press-releases?page=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Last page »",
-      "url": "https://investor.westpharma.com/press-releases?page=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "",
-      "url": "https://page.line.me/?accountId=westpharma",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Products",
-      "url": "https://www.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Services and Solutions",
-      "url": "https://www.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Challenges",
-      "url": "https://www.westpharma.com/investors",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Support",
-      "url": "https://www.westpharma.com/investors",
       "reason": "index_or_category_page"
     },
     {
@@ -645,111 +180,579 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Moderna",
+      "company": "Albemarle",
       "title": "",
-      "url": "https://www.modernatx.com/",
+      "url": "https://www.albemarle.com/us/en",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Moderna",
-      "title": "View press releases",
-      "url": "https://news.modernatx.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Investors overview",
-      "url": "https://investors.modernatx.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "",
-      "url": "https://linkedin.com/company/modernatx",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://www.proxyvote.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Investors",
-      "url": "https://investor.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "News & Events",
-      "url": "https://www.westpharma.com/news-and-events",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Blog",
-      "url": "https://www.westpharma.com/blog",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
+      "company": "Albemarle",
       "title": "Home",
-      "url": "https://www.westpharma.com/",
+      "url": "https://www.albemarle.com/us/en",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Investors",
-      "url": "https://www.westpharma.com/investors",
+      "company": "Albemarle",
+      "title": "Sustainability",
+      "url": "https://www.albemarle.com/us/en/sustainability",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "News & Events",
-      "url": "https://www.westpharma.com/news-and-events",
+      "company": "Albemarle",
+      "title": "Overview",
+      "url": "https://www.albemarle.com/us/en/sustainability",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Blog",
-      "url": "https://www.westpharma.com/blog",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "West Pharmaceutical",
+      "company": "TIMET",
       "title": "",
-      "url": "https://www.westpharma.com/",
+      "url": "https://www.timet.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
+      "company": "TIMET",
+      "title": "Precision Castparts Corp.",
+      "url": "https://precast.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "",
+      "url": "https://www.chemours.com/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "Overview",
+      "url": "https://investors.chemours.com/investor-relations",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "News Releases",
+      "url": "https://investors.chemours.com/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "Resources",
+      "url": "https://investors.chemours.com/resources/email-alerts",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Featured Applications",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company chevron-thin-down",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company Overview",
+      "url": "https://www.airproducts.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "go back to BorgWarner home page",
+      "url": "https://www.borgwarner.com/home",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Company",
+      "url": "https://www.borgwarner.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Leadership",
+      "url": "https://www.borgwarner.com/company/leadership",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Locations",
+      "url": "https://www.borgwarner.com/company/locations",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "DOW",
+      "title": "Corporate",
+      "url": "https://corporate.dow.com/en-us.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "DOW",
+      "title": "Products",
+      "url": "https://www.dow.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "DOW",
+      "title": "Investors",
+      "url": "https://investors.dow.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "DOW",
+      "title": "",
+      "url": "https://corporate.dow.com/en-us.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Amkor.com",
+      "url": "https://amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Press Releases",
+      "url": "https://ir.amkor.com/press-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "",
+      "url": "https://ir.amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "",
+      "url": "https://ir.amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "",
+      "url": "https://www.onsemi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "IPS Design Tool",
+      "url": "https://ips-design-tool.onsemi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "About onsemi",
+      "url": "https://www.onsemi.com/company/about-onsemi",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Newsroom",
+      "url": "https://www.onsemi.com/company/newsroom",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/news",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#D52B1E;} .st1{fill:#212121;} OUTLINES -->",
+      "url": "https://investor.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://esg.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "",
+      "url": "https://www.skyworksinc.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "About",
+      "url": "https://www.skyworksinc.com/About-Us",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "About Us",
+      "url": "https://www.skyworksinc.com/About/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "Awards",
+      "url": "https://www.skyworksinc.com/About/Awards",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "GE Healthcare",
+      "title": "GEHealthcare.com",
+      "url": "https://www.gehealthcare.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "GE Healthcare",
+      "title": "Leadership",
+      "url": "https://www.gehealthcare.com/about/leadership",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "GE Healthcare",
+      "title": "Sustainability",
+      "url": "https://www.gehealthcare.com/about/sustainability",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "GE Healthcare",
+      "title": "News",
+      "url": "https://www.gehealthcare.com/about/newsroom",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Boeing",
+      "title": "boeing.com",
+      "url": "https://www.boeing.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Boeing",
+      "title": "Africa",
+      "url": "https://www.boeing.africa/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Boeing",
+      "title": "Australia",
+      "url": "https://www.boeing.com.au/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Boeing",
+      "title": "Brazil",
+      "url": "https://www.boeing.com.br/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "3M",
+      "title": "",
+      "url": "https://www.3m.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "3M",
+      "title": "3M",
+      "url": "https://www.3m.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "3M",
+      "title": "Investor Relations",
+      "url": "https://investors.3m.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "3M",
+      "title": "News & Events",
+      "url": "https://investors.3m.com/news-events",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "-->",
+      "url": "https://ouster.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "Overview",
+      "url": "https://investors.ouster.com/investor-relations",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "News & Events",
+      "url": "https://investors.ouster.com/news-events/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "News Releases",
+      "url": "https://investors.ouster.com/news-events/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Applied Materials",
+      "title": "",
+      "url": "https://www.appliedmaterials.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Applied Materials",
+      "title": "China - 简体中文",
+      "url": "https://www.appliedmaterials.com/cn/zh_cn.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Applied Materials",
+      "title": "Europe - English",
+      "url": "https://www.appliedmaterials.com/eu/en.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Applied Materials",
+      "title": "India - English",
+      "url": "https://www.appliedmaterials.com/in/en.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Magnix",
+      "title": "",
+      "url": "https://www.magnix.aero/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Magnix",
       "title": "Home",
-      "url": "https://www.westpharma.com/",
+      "url": "https://www.magnix.aero/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Overview",
-      "url": "https://investor.westpharma.com/investors",
+      "company": "Magnix",
+      "title": "About Us",
+      "url": "https://www.magnix.aero/about-us",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Press Releases",
-      "url": "https://investor.westpharma.com/press-releases",
+      "company": "Magnix",
+      "title": "News",
+      "url": "https://www.magnix.aero/news",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Overview",
-      "url": "https://investor.westpharma.com/investors",
+      "company": "Prodrive",
+      "title": "Home",
+      "url": "https://prodrive-technologies.com/en/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Press Releases",
-      "url": "https://investor.westpharma.com/press-releases",
+      "company": "Prodrive",
+      "title": "About us",
+      "url": "https://prodrive-technologies.com/en/about-us/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Prodrive",
+      "title": "Company profile",
+      "url": "https://prodrive-technologies.com/en/about-us/company-profile/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Prodrive",
+      "title": "Sustainability",
+      "url": "https://prodrive-technologies.com/en/about-us/sustainability/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "ASML",
+      "title": "ASML Logo",
+      "url": "https://www.asml.com/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "ASML",
+      "title": "Company overview",
+      "url": "https://www.asml.com/en/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "ASML",
+      "title": "About ASML overview",
+      "url": "https://www.asml.com/en/company/about-asml",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "ASML",
+      "title": "Stories",
+      "url": "https://www.asml.com/en/company/stories",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "&nbsp;",
+      "url": "https://www.besi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company",
+      "url": "https://www.besi.com/company/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Profile",
+      "url": "https://www.besi.com/company/company-profile/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Overview",
+      "url": "https://www.besi.com/company/company-overview/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Vestas",
+      "title": "",
+      "url": "https://www.vestas.com/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Vestas",
+      "title": "ShopVestas",
+      "url": "https://shop.vestas.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Vestas",
+      "title": "VestasOnline",
+      "url": "https://vestasonline.vestas.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Vestas",
+      "title": "Global",
+      "url": "https://www.vestas.com/en/media/company-news",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "NXP",
+      "title": "accessibility instructions",
+      "url": "https://www.nxp.com/company/about-nxp/accessibility:ACCESSIBILITY",
+      "reason": "broken_url"
+    },
+    {
+      "company": "NXP",
+      "title": "--> .nxpsvglogoN { fill: #fca600; } .nxpsvglogoP { fill: #69ca00; } .nxpsvglogoX { fill: #0eafe0; } NXP",
+      "url": "https://www.nxp.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "NXP",
+      "title": "Store",
+      "url": "https://www.nxp.com/pages/store:STORE",
+      "reason": "broken_url"
+    },
+    {
+      "company": "NXP",
+      "title": "",
+      "url": "https://www.nxp.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Norsk Hydro",
+      "title": "Insights",
+      "url": "https://www.hydro.com/en/global/insights/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Norsk Hydro",
+      "title": "Contact us",
+      "url": "https://www.hydro.com/en/global/contact-us/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Norsk Hydro",
+      "title": "Global",
+      "url": "https://www.hydro.com/en/en/?ar=1",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Norsk Hydro",
+      "title": "Argentina",
+      "url": "https://www.hydro.com/ar/ar/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "",
+      "url": "https://www.heidenhain.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "HEIDENHAIN SHOP",
+      "url": "https://www.heidenhain.shop/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "DE | Deutsch",
+      "url": "https://www.heidenhain.de/news/presse",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "Contact",
+      "url": "https://www.heidenhain.com/about-us/contact",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "English",
+      "url": "https://www.infineon.com/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "中文",
+      "url": "https://www.infineon.cn/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "日本語",
+      "url": "https://www.infineon.com/ja/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "Deutsch",
+      "url": "https://www.infineon.com/de/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Schmalz",
+      "title": "",
+      "url": "https://www.schmalz.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Schmalz",
+      "title": "Home",
+      "url": "https://www.schmalz.com/",
       "reason": "index_or_category_page"
     }
   ],
@@ -758,13 +761,13 @@
     "jsonld": 64,
     "listing": 93,
     "body_text": 35,
-    "feed": 73,
+    "feed": 72,
     "url": 3,
     "meta": 2,
     "none": 131,
     "text": 1
   },
-  "fallback_result_count": 47,
+  "fallback_result_count": 46,
   "companies_with_results": 71,
   "companies_with_official_results": 62,
   "companies_without_results": [
@@ -821,7 +824,7 @@
     "EMM(Umicore)": 6,
     "Umicore": 10,
     "Solvay": 2,
-    "Syensqo": 4,
+    "Syensqo": 3,
     "Hexagon AB": 4,
     "ABB": 9,
     "Maxon": 10,
@@ -933,7 +936,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 59,
+  "error_count": 60,
   "errors": [
     {
       "target_no": 2,
@@ -1403,15 +1406,23 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
       "error": "fetch failed"
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260903T062851Z.json",
-    "csv": "outputs/company_signals_20260903T062851Z.csv",
-    "summary": "outputs/collection_summary_20260903T062851Z.json",
+    "json": "outputs/company_signals_20260903T071912Z.json",
+    "csv": "outputs/company_signals_20260903T071912Z.csv",
+    "summary": "outputs/collection_summary_20260903T071912Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
