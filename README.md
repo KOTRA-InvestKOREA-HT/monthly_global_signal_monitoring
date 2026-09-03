@@ -1,6 +1,6 @@
 # Company Signal Collector
 
-Stage 1 only: extract the 77 target companies from the Invest KOREA PDF and collect public news, press-release, and IR-like signals into normalized JSON/CSV.
+Collect public news, press releases, and IR material for 77 target companies, classify investment signals, verify report evidence with AI, and publish Korean/English PDF reports plus a dashboard.
 
 ## Files
 
@@ -16,10 +16,15 @@ Stage 1 only: extract the 77 target companies from the Invest KOREA PDF and coll
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
+- `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules.
+- `scripts/summarize_signal_evidence.mjs`: summarizes evidence and performs the semantic support decision used by reports.
+- `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
+- `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
 - `scripts/collect_company_signals.py`: Python equivalent; use it only when the local Python SSL stack supports outbound HTTPS.
 - `outputs/`: generated JSON/CSV results.
 
 See `docs/github_vercel_button_workflow.md` for the GitHub upload, Vercel deployment, and button-trigger workflow.
+The implemented accuracy controls, verification evidence, known limitations, and Codex hook diagnosis are recorded in `docs/signal_accuracy_improvements_2026-09-03.md`.
 
 ## Commands
 
@@ -51,15 +56,27 @@ node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signal
 
 The relevance filter uses broad Korean/English synonyms and excludes these companies from relevance analysis by request: `Prodrive`, `JSR`, `Applied Materials`, `Amkor Technology`, `Heraeus`, `Toray`, `3M`, `Air Liquide`, `Air Products`.
 
-Generate Korean AI summaries for report evidence:
+Classify five investment-signal candidates:
+
+```bash
+node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true
+```
+
+Generate bilingual AI summaries and semantic support decisions for report evidence:
 
 ```bash
 OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
 ```
 
-The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. By default, it summarizes the report-facing rows only: captured investment signal rows in `outputs/latest_investment_signals.json` and technology-relevant candidate rows in `outputs/latest_relevant_signals.json` for the global business status box. It does not summarize every collected item from `outputs/latest_company_signals.json`. It defaults to `gpt-5.6-luna` and `gpt-5.6-terra`, `AI_SUMMARY_REASONING_EFFORT=low`, `AI_SUMMARY_MAX_OUTPUT_TOKENS=1600`, `AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS=3200`, and `AI_SUMMARY_RELEVANT_SIGNALS=true` so reasoning tokens do not consume the entire output budget before visible Korean text is produced. It stores reusable summaries in `outputs/ai_summary_cache.json`; when a later crawl sees the same company/signal/title/URL/evidence fingerprint, the cached Korean summary is reused and no new OpenAI API call is made for that item. If the underlying evidence changes, the fingerprint changes and the item is summarized again. Configure the actual OpenAI model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys to the repository.
+The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. It evaluates entity attribution, target-technology relevance, concrete indicator evidence, leading-indicator timing, and event stage separately. `ai_signal_supported` is true only when every required dimension is true. By default, it summarizes the report-facing rows only: captured investment-signal candidates and technology-relevant candidates for the global business status box. It does not summarize every collected item. Reusable decisions are stored in `outputs/ai_summary_cache.json`; a changed evidence fingerprint or prompt version forces reevaluation. Configure model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys.
 
-If every AI summary request fails, the workflow now exits with `failed_all_ai_summaries` instead of continuing to publish untranslated source excerpts in the web UI or PDF report.
+The report path is fail-closed. If the API key is missing and a required decision is not already cached, or if any requested AI evaluation fails, the summarizer exits unsuccessfully without overwriting the last report inputs. The workflow then validates all decisions before building either PDF:
+
+```bash
+node scripts/validate_report_inputs.mjs
+```
+
+Manual workflow runs use the previous completed calendar month when `from_date` and `to_date` are blank. Supplying only one date, an invalid date, or a reversed range stops the run.
 
 ## Output Schema
 
@@ -88,6 +105,8 @@ The relevance filter also writes:
 - `latest_relevance_summary.json`
 
 Each relevant row includes `target_technology`, `target_technology_en`, `technology_group`, `matched_terms`, `relevance_score`, `relevance_decision`, and `relevance_reason`.
+
+AI-evaluated report rows additionally include `ai_entity_supported`, `ai_target_technology_supported`, `ai_indicator_supported`, `ai_leading_indicator_supported`, `ai_event_stage`, `ai_signal_supported`, `ai_summary_quality`, bilingual summaries, and a decision reason. Older cached rows that lack these fields are invalid report inputs and must be regenerated.
 
 ## Vercel
 

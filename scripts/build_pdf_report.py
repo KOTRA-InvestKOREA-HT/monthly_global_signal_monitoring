@@ -300,11 +300,11 @@ TEXTS = {
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (투자 확정 ˙ 발표 완료 등 후행 데이터 제외).",
         "matrix_company": "기업",
         "matrix_legend_on": "시그널 포착",
-        "matrix_legend_off": "무신호",
+        "matrix_legend_off": "미포착",
         "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        "matrix_footnote": "당월 시그널 포착 {on}개사 · 시그널 미포착 {off}개사 | 상세는 다음 장",
+        "matrix_footnote": "당월 시그널 포착 {on}개사 · 공식자료 확인 후 미포착 {reviewed_off}개사 · 수집근거 부족 {insufficient}개사",
         "detail_title": "기업별 시그널 상세",
-        "no_signal": "이번 달 해당 신호 없음",
+        "no_signal": "이번 달 해당 신호 미포착",
         "business_heading": "글로벌 사업현황",
         "business_empty": "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않는다.",
         "target_item": "타겟품목",
@@ -330,11 +330,11 @@ TEXTS = {
         "matrix_desc": "Global investment signals (leading indicators) across 77 target companies for {period}. A filled cell marks a signal captured during the month; confirmed or already announced investments are excluded.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal captured",
-        "matrix_legend_off": "No signal",
+        "matrix_legend_off": "Not detected",
         "matrix_indicators": "① Supply chain & geopolitical risk · ② Production expansion · ③ Investment financing · ④ Technology ecosystem · ⑤ Key personnel movement",
-        "matrix_footnote": "{on} companies with a signal · {off} companies without one | details follow",
+        "matrix_footnote": "{on} detected · {reviewed_off} not detected after official-source review · {insufficient} insufficient coverage",
         "detail_title": "Company Signal Detail",
-        "no_signal": "No signal this month",
+        "no_signal": "No signal detected this month",
         "business_heading": "GLOBAL BUSINESS",
         "business_empty": "No global business activity could be summarised from official sources for this period.",
         "target_item": "Target item",
@@ -1123,10 +1123,32 @@ def is_press_release(row):
 def signal_supported(row):
     """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
 
-    분류는 키워드 일치만 보므로 위험고지 상용문구에 키워드가 한 번 스친 보도자료도 시그널로 올라온다.
-    필드가 없는 과거 데이터는 판정 자체가 없었던 것이므로 그대로 살린다(없다고 단정하지 않는다).
+    정확성 우선 원칙에 따라 판정 누락과 needs_review는 발행하지 않는다. 새 스키마의 세부 판정이
+    있으면 기업 귀속·타겟 기술·지표·선행성도 모두 참이어야 한다.
     """
-    return (row or {}).get("ai_signal_supported") is not False
+    if not row or row.get("ai_signal_supported") is not True:
+        return False
+    if row.get("ai_summary_quality") != "pass":
+        return False
+    for field in (
+        "ai_entity_supported",
+        "ai_target_technology_supported",
+        "ai_indicator_supported",
+        "ai_leading_indicator_supported",
+    ):
+        if row.get(field) is not True:
+            return False
+    if row.get("ai_event_stage") in {"committed", "completed", "unclear"}:
+        return False
+    reason = clean_text(row.get("ai_summary_reason")).lower()
+    denial_patterns = (
+        r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
+        r"직접 관련.*(?:근거.*제시되지|확인되지)",
+        r"자체는 언급되지",
+        r"not directly (?:related|linked)",
+        r"no direct (?:evidence|link|connection|relevance)",
+    )
+    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns)
 
 
 def sort_signal_rows(rows):
@@ -1191,10 +1213,11 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
             c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
 
 
-def draw_matrix(report, profiles, signal_index, summary):
+def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     report.new_page()
     report.header("S I G N A L   M A T R I X", t("matrix_title"))
     signal_companies = [p for p in profiles if any(signal_index.get(p["company"], {}).values())]
+    signal_company_names = {item["company"] for item in signal_companies}
 
     desc = t("matrix_desc", period=matrix_period_label(summary))
     report.wrapped(desc, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
@@ -1219,11 +1242,28 @@ def draw_matrix(report, profiles, signal_index, summary):
         7,
         MUTED,
     )
-    no_signal = len(profiles) - len(signal_companies)
+    official_covered = {
+        row.get("company")
+        for row in signal_rows
+        if row.get("company") and row.get("source_type") == "official"
+    }
+    reviewed_off = sum(
+        1
+        for profile in profiles
+        if profile["company"] not in signal_company_names
+        and profile["company"] in official_covered
+    )
+    insufficient = len(profiles) - len(signal_companies) - reviewed_off
+    footnote = t(
+        "matrix_footnote",
+        on=len(signal_companies),
+        reviewed_off=reviewed_off,
+        insufficient=insufficient,
+    )
     report.text(
         32,
         y - 24,
-        t("matrix_footnote", on=len(signal_companies), off=no_signal),
+        short_text_to_width(c, footnote, PAGE_W - 64, report.fonts["extrabold"], 8),
         8,
         colors.HexColor("#4B5870"),
         weight="extrabold",
@@ -1317,11 +1357,17 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
 
 
 def best_business_row(company, relevant_rows, investment_rows, all_signal_rows):
-    candidates = [row for row in relevant_rows if row.get("company") == company]
+    candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
     if not candidates:
-        candidates = [row for row in investment_rows if row.get("company") == company]
+        candidates = [row for row in investment_rows if row.get("company") == company and signal_supported(row)]
     if not candidates:
-        candidates = [row for row in all_signal_rows if row.get("company") == company and row.get("source_type") == "official"]
+        candidates = [
+            row
+            for row in all_signal_rows
+            if row.get("company") == company
+            and row.get("source_type") == "official"
+            and signal_supported(row)
+        ]
     return sort_signal_rows(candidates)[0] if candidates else None
 
 
@@ -1870,7 +1916,7 @@ def build_report(args):
     report = SlideReport(out_path, fonts, issue_number)
 
     draw_cover(report, summary, indicators)
-    draw_matrix(report, profiles, signal_index, summary)
+    draw_matrix(report, profiles, signal_index, summary, signals)
     total_details = len(detail_profiles)
     for idx, profile in enumerate(detail_profiles, start=1):
         draw_detail_page(report, profile, signal_index, relevant, investment_signals, signals, idx, total_details)

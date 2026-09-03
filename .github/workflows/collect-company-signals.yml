@@ -8,13 +8,13 @@ on:
         required: false
         default: "45"
       from_date:
-        description: "Collection start date (YYYY-MM-DD)"
+        description: "Collection start date (YYYY-MM-DD); leave empty for previous calendar month"
         required: false
-        default: "2026-07-01"
+        default: ""
       to_date:
-        description: "Collection end date (YYYY-MM-DD)"
+        description: "Collection end date (YYYY-MM-DD); leave empty for previous calendar month"
         required: false
-        default: "2026-07-31"
+        default: ""
       issue_number:
         description: "Report issue number"
         required: false
@@ -41,6 +41,37 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -r requirements-python.txt
+      - name: Resolve reporting period
+        id: report_period
+        shell: bash
+        env:
+          INPUT_FROM_DATE: ${{ inputs.from_date }}
+          INPUT_TO_DATE: ${{ inputs.to_date }}
+          TZ: Asia/Seoul
+        run: |
+          if [[ -n "$INPUT_FROM_DATE" || -n "$INPUT_TO_DATE" ]]; then
+            if [[ -z "$INPUT_FROM_DATE" || -z "$INPUT_TO_DATE" ]]; then
+              echo "from_date and to_date must be supplied together" >&2
+              exit 1
+            fi
+            from_date="$INPUT_FROM_DATE"
+            to_date="$INPUT_TO_DATE"
+          else
+            current_month_start="$(date +%Y-%m-01)"
+            from_date="$(date -d "$current_month_start -1 month" +%F)"
+            to_date="$(date -d "$current_month_start -1 day" +%F)"
+          fi
+
+          if [[ "$(date -d "$from_date" +%F 2>/dev/null)" != "$from_date" ]] ||
+             [[ "$(date -d "$to_date" +%F 2>/dev/null)" != "$to_date" ]] ||
+             [[ "$from_date" > "$to_date" ]]; then
+            echo "invalid reporting period: $from_date .. $to_date" >&2
+            exit 1
+          fi
+
+          echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
+          echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
+          echo "Reporting period: $from_date .. $to_date"
       - run: >
           node scripts/collect_company_signals.mjs
           --companies data/target_companies.json
@@ -48,8 +79,8 @@ jobs:
           --out-dir outputs
           --sources official_feeds,official_pages,google_news
           --days ${{ inputs.days || '45' }}
-          --from-date ${{ inputs.from_date }}
-          --to-date ${{ inputs.to_date }}
+          --from-date ${{ steps.report_period.outputs.from_date }}
+          --to-date ${{ steps.report_period.outputs.to_date }}
           --max-per-source 6
           --max-per-company 10
           --max-detail-per-company 10
@@ -77,6 +108,7 @@ jobs:
           --investment-signals outputs/latest_investment_signals.json
           --relevant-signals outputs/latest_relevant_signals.json
           --out-dir outputs
+          --optional false
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AI_SUMMARY_LUNA_MODEL: ${{ vars.AI_SUMMARY_LUNA_MODEL || 'gpt-5.6-luna' }}
@@ -85,6 +117,8 @@ jobs:
           AI_SUMMARY_MAX_OUTPUT_TOKENS: ${{ vars.AI_SUMMARY_MAX_OUTPUT_TOKENS || '1600' }}
           AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS: ${{ vars.AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS || '3200' }}
           AI_SUMMARY_RELEVANT_SIGNALS: ${{ vars.AI_SUMMARY_RELEVANT_SIGNALS || 'true' }}
+      - name: Validate report inputs (fail closed)
+        run: node scripts/validate_report_inputs.mjs
       - run: >
           python scripts/build_pdf_report.py
           --signals outputs/latest_company_signals.json

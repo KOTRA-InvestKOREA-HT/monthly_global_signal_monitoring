@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const CACHE_VERSION = 1;
-const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v5";
-const RELEVANT_PROMPT_VERSION = "business-summary-koen-v7";
+const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v6";
+const RELEVANT_PROMPT_VERSION = "business-summary-koen-v8";
 const BUSINESS_SUMMARY_MIN_CHARS = 220;
 const BUSINESS_SUMMARY_MIN_CHARS_EN = 260;
 const KOREAN_TEXT_FIELDS = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"];
@@ -18,6 +18,11 @@ const SUMMARY_FIELDS = [
   "ai_summary_headline_en",
   "ai_summary_detail_en",
   "ai_signal_supported",
+  "ai_entity_supported",
+  "ai_target_technology_supported",
+  "ai_indicator_supported",
+  "ai_leading_indicator_supported",
+  "ai_event_stage",
   "ai_summary_quality",
   "ai_summary_confidence",
   "ai_summary_reason",
@@ -43,7 +48,7 @@ const DEFAULTS = {
   failOnAllSummaryFailure: process.env.AI_SUMMARY_FAIL_ON_ALL_FAILURE || "true",
   summarizeRelevant: process.env.AI_SUMMARY_RELEVANT_SIGNALS || "true",
   onlyMissing: true,
-  optional: true,
+  optional: false,
 };
 
 function parseArgs(argv) {
@@ -85,6 +90,17 @@ function cleanText(value) {
     .replace(/\s+/g, " ")
     .replace(/<[^>]+>/g, " ")
     .trim();
+}
+
+function reasonDeniesDirectSupport(value) {
+  const reason = cleanText(value);
+  return [
+    /직접적? (?:연관성|연계).*(?:확인되지|없음)/i,
+    /직접 관련.*(?:근거.*제시되지|확인되지)/i,
+    /자체는 언급되지/i,
+    /not directly (?:related|linked)/i,
+    /no direct (?:evidence|link|connection|relevance)/i,
+  ].some((pattern) => pattern.test(reason));
 }
 
 function normalizeKoreanSummaryText(value) {
@@ -391,6 +407,21 @@ function summaryFromRow(row) {
   return summary;
 }
 
+function hasCompleteSummaryDecision(row) {
+  if (!cleanText(row?.ai_summary_ko) || !cleanText(row?.ai_summary_en) || !cleanText(row?.ai_summary_reason)) return false;
+  if (!["pass", "needs_review"].includes(row?.ai_summary_quality)) return false;
+  if (!["exploratory", "planned", "committed", "completed", "not_applicable", "unclear"].includes(row?.ai_event_stage)) {
+    return false;
+  }
+  return [
+    "ai_signal_supported",
+    "ai_entity_supported",
+    "ai_target_technology_supported",
+    "ai_indicator_supported",
+    "ai_leading_indicator_supported",
+  ].every((field) => typeof row?.[field] === "boolean");
+}
+
 function withoutSummaryFields(row) {
   const next = { ...row };
   for (const field of SUMMARY_FIELDS) delete next[field];
@@ -430,11 +461,12 @@ function applyCachedSummaries(rows, args, cache) {
   const updated = rows.map((row) => {
     const key = cacheKey(row, args);
     const existingSummary = summaryFromRow(row);
-    if (existingSummary && row.ai_summary_cache_key === key) {
+    if (hasCompleteSummaryDecision(row) && row.ai_summary_cache_key === key) {
+      hitCount += 1;
       return { ...row, ai_summary_cache_key: key, ai_summary_cache_status: row.ai_summary_cache_status || "existing" };
     }
     const entry = cache.entries[key];
-    const summary = entry ? summaryFromRow(entry) : null;
+    const summary = entry && hasCompleteSummaryDecision(entry) ? summaryFromRow(entry) : null;
     if (!summary) {
       const baseRow = existingSummary && row.ai_summary_cache_key !== key ? withoutSummaryFields(row) : row;
       return { ...baseRow, ai_summary_cache_key: key, ai_summary_cache_status: existingSummary ? "miss_changed" : "miss" };
@@ -528,11 +560,18 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       : "summary_ko는 'summary_headline_ko - summary_detail_ko' 형식으로 합쳐서 쓴다. 회사명+은/는 형태로 시작하지 않는다. '했다', '한다', '있다', '없다', '보여준다' 같은 문장형 종결은 쓰지 않는다.",
     "성장률 표현은 자연스럽게 번역한다. 예: mid-single-digit=한 자릿수 중반대, low-single-digit=한 자릿수 초반대, high-single-digit=한 자릿수 후반대, mid double-digit=두 자릿수 중반대. '중순수%', '저순수%', '고순수%' 같은 표현은 절대 쓰지 않는다.",
     "근거가 부족하면 quality를 needs_review로 둔다.",
-    // 분류 단계는 키워드 일치만 보므로, 위험고지 상용문구에 'tariff'가 한 번 스친 보도자료도 시그널로 올라온다.
-    // 본문을 실제로 읽는 것은 이 단계뿐이다. 여기서 아니라고 판정하면 보고서에서 시그널로 세지 않는다.
+    "entity_supported는 기사 속 사건이 현재 검토 기업 자체에 귀속될 때만 true다. 모회사·관계사 자료는 본문에 검토 기업명, 해당 사업부, 제품 또는 임원이 명시되어 사건 귀속이 확인될 때만 true다.",
+    "target_technology_supported는 사건이 '유치필요 품목/기술'과 직접 연결될 때만 true다. 같은 기업의 다른 사업부·제품·일반 경영활동이면 false다.",
     isBusinessSummary
-      ? "signal_supported는 본문이 해당 기업의 유치필요 품목/기술과 직접 연결되는 구체적 사업 활동을 담고 있으면 true, 그런 활동이 확인되지 않으면 false로 둔다."
-      : "signal_supported는 본문이 위 '시그널'에 해당하는 사건이 실제로 일어났음을 보여주면 true로 둔다. 키워드만 스쳐 지나가거나, 위험고지·전망 상용문구에 언급만 있거나, 해당 사건의 근거가 확인되지 않으면 false로 둔다.",
+      ? "indicator_supported와 leading_indicator_supported는 true로 둔다. signal_supported는 entity_supported와 target_technology_supported가 모두 true일 때만 true다."
+      : "indicator_supported는 본문이 위 '시그널' 정의에 해당하는 구체적 사건을 보여줄 때만 true다. 키워드 언급, 위험고지·전망 상용문구, 일반 재무항목만 있으면 false다.",
+    isBusinessSummary
+      ? "event_stage는 not_applicable로 둔다."
+      : "event_stage는 exploratory, planned, committed, completed, unclear 중 하나다. 이미 확정·발표·계약·자금조달·인수·가동이 끝난 투자 사건 자체만 근거라면 committed 또는 completed로 판정한다.",
+    isBusinessSummary
+      ? "leading_indicator_supported는 true로 둔다."
+      : "leading_indicator_supported는 향후 투자결정의 선행 징후로 볼 근거가 있을 때만 true다. 확정되거나 완료된 투자·인수·자금조달 사실 자체만 근거인 후행 사건이면 false다.",
+    "signal_supported는 위 개별 판정의 논리곱이어야 한다. 하나라도 false이거나 불명확하면 false로 둔다.",
     "signal_supported가 false여도 요약문은 본문에 있는 사실 그대로 작성한다. 요약을 비우거나 지어내지 않는다.",
     "한국어 요약과 함께 같은 내용의 영문 요약도 작성한다. 영문은 한국어를 직역한 것이 아니라, 같은 사실을 영어 보고서 문체로 자연스럽게 쓴 것이어야 한다. 두 언어의 사실관계는 반드시 일치해야 한다.",
     isBusinessSummary
@@ -572,6 +611,14 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               summary_headline_en: { type: "string" },
               summary_detail_en: { type: "string" },
               signal_supported: { type: "boolean" },
+              entity_supported: { type: "boolean" },
+              target_technology_supported: { type: "boolean" },
+              indicator_supported: { type: "boolean" },
+              leading_indicator_supported: { type: "boolean" },
+              event_stage: {
+                type: "string",
+                enum: ["exploratory", "planned", "committed", "completed", "not_applicable", "unclear"],
+              },
               quality: { type: "string", enum: ["pass", "needs_review"] },
               confidence: { type: "number" },
               reason: { type: "string" },
@@ -584,6 +631,11 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               "summary_headline_en",
               "summary_detail_en",
               "signal_supported",
+              "entity_supported",
+              "target_technology_supported",
+              "indicator_supported",
+              "leading_indicator_supported",
+              "event_stage",
               "quality",
               "confidence",
               "reason",
@@ -606,6 +658,30 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
   }
 
   const parsed = parseModelJson(outputText);
+  const entitySupported = parsed.entity_supported === true;
+  const targetTechnologySupported = parsed.target_technology_supported === true;
+  const indicatorSupported = parsed.indicator_supported === true;
+  const leadingIndicatorSupported = parsed.leading_indicator_supported === true;
+  const decisionQualitySupported = parsed.quality === "pass";
+  const eventStageSupported = isBusinessSummary
+    ? parsed.event_stage === "not_applicable"
+    : ["exploratory", "planned"].includes(parsed.event_stage);
+  const reasonSupported = !reasonDeniesDirectSupport(parsed.reason);
+  const computedSignalSupported = isBusinessSummary
+    ? entitySupported &&
+      targetTechnologySupported &&
+      decisionQualitySupported &&
+      eventStageSupported &&
+      reasonSupported &&
+      parsed.signal_supported === true
+    : entitySupported &&
+      targetTechnologySupported &&
+      indicatorSupported &&
+      leadingIndicatorSupported &&
+      decisionQualitySupported &&
+      eventStageSupported &&
+      reasonSupported &&
+      parsed.signal_supported === true;
   if (isBusinessSummary) {
     return {
       ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
@@ -614,7 +690,12 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       ai_summary_en: cleanText(parsed.summary_en),
       ai_summary_headline_en: "",
       ai_summary_detail_en: "",
-      ai_signal_supported: parsed.signal_supported !== false,
+      ai_signal_supported: computedSignalSupported,
+      ai_entity_supported: entitySupported,
+      ai_target_technology_supported: targetTechnologySupported,
+      ai_indicator_supported: indicatorSupported,
+      ai_leading_indicator_supported: leadingIndicatorSupported,
+      ai_event_stage: parsed.event_stage,
       ai_summary_quality: parsed.quality,
       ai_summary_confidence: Number(parsed.confidence) || 0,
       ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -639,7 +720,12 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     ai_summary_en: cleanText(`${englishParts.headline}${englishParts.detail ? ` - ${englishParts.detail}` : ""}`),
     ai_summary_headline_en: englishParts.headline,
     ai_summary_detail_en: englishParts.detail,
-    ai_signal_supported: parsed.signal_supported !== false,
+    ai_signal_supported: computedSignalSupported,
+    ai_entity_supported: entitySupported,
+    ai_target_technology_supported: targetTechnologySupported,
+    ai_indicator_supported: indicatorSupported,
+    ai_leading_indicator_supported: leadingIndicatorSupported,
+    ai_event_stage: parsed.event_stage,
     ai_summary_quality: parsed.quality,
     ai_summary_confidence: Number(parsed.confidence) || 0,
     ai_summary_reason: normalizeKoreanSummaryText(parsed.reason),
@@ -780,6 +866,12 @@ async function summarizeRows(rows, args, apiKey, kind) {
     } catch (error) {
       return {
         ...row,
+        ai_signal_supported: false,
+        ai_entity_supported: false,
+        ai_target_technology_supported: false,
+        ai_indicator_supported: false,
+        ai_leading_indicator_supported: false,
+        ai_event_stage: "unclear",
         ai_summary_quality: "failed",
         ai_summary_reason: error.message,
         ai_summary_created_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
@@ -825,7 +917,9 @@ async function main() {
   if (!apiKey) {
     let investmentOutputs = null;
     let relevantOutputs = null;
-    if (cacheHitCount || changedStaleCount) {
+    const expectedCacheCount = investmentCached.rows.length + (args.summarizeRelevant ? relevantCached.rows.length : 0);
+    const completeCacheCoverage = cacheHitCount === expectedCacheCount && changedStaleCount === 0;
+    if (completeCacheCoverage) {
       investmentOutputs = await writeOutputs(investmentCached.rows, args.investmentSignals, args.outDir, "investment_signals_ai_summary");
       if (args.summarizeRelevant) {
         relevantOutputs = await writeOutputs(relevantCached.rows, args.relevantSignals, args.outDir, "relevant_signals_ai_summary");
@@ -833,24 +927,24 @@ async function main() {
     }
     const summary = {
       run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
-      status: args.optional
-        ? cacheHitCount
-          ? "cache_only_missing_openai_api_key"
-          : "skipped_missing_openai_api_key"
-        : "failed_missing_openai_api_key",
+      status: completeCacheCoverage
+        ? "cache_only_complete_missing_openai_api_key"
+        : args.optional
+          ? "skipped_missing_openai_api_key"
+          : "failed_missing_openai_api_key",
       summarize_relevant_signals: args.summarizeRelevant,
       cache_path: args.cache,
       cache_entry_count: Object.keys(summaryCache.entries || {}).length,
       cache_hit_count: cacheHitCount,
       changed_stale_count: changedStaleCount,
-      note: cacheHitCount
-        ? "OPENAI_API_KEY is missing, so cached Korean summaries were reused and new/changed items were left without AI summaries."
-        : "Set OPENAI_API_KEY in GitHub Secrets or the local environment to enable AI Korean summaries.",
+      note: completeCacheCoverage
+        ? "OPENAI_API_KEY is missing, but every requested row had a complete cache hit."
+        : "OPENAI_API_KEY is missing. Latest report inputs were not overwritten because one or more rows lack a current cached validation.",
       outputs: { investment: investmentOutputs, relevant: relevantOutputs },
     };
     await fs.writeFile(path.join(args.outDir, "latest_ai_summary_summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
     console.log(JSON.stringify(summary, null, 2));
-    if (!args.optional) process.exitCode = 1;
+    if (!completeCacheCoverage && !args.optional) process.exitCode = 1;
     return;
   }
 
@@ -860,6 +954,28 @@ async function main() {
     : relevantCached.rows;
   const allRows = args.summarizeRelevant ? [...investmentUpdated, ...relevantUpdated] : investmentUpdated;
   const cacheUpdate = updateSummaryCache(summaryCache, allRows, args);
+  const investmentFailedCount = investmentUpdated.filter((row) => row.ai_summary_quality === "failed").length;
+  const relevantFailedCount = args.summarizeRelevant
+    ? relevantUpdated.filter((row) => row.ai_summary_quality === "failed").length
+    : 0;
+  if (investmentFailedCount + relevantFailedCount > 0) {
+    await fs.writeFile(args.cache, `${JSON.stringify(cacheUpdate.cache, null, 2)}\n`, "utf8");
+    const failedSummary = {
+      run_started_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+      status: "failed_ai_summaries",
+      investment_signal_count: investmentUpdated.length,
+      relevant_signal_count: relevantUpdated.length,
+      investment_failed_count: investmentFailedCount,
+      relevant_failed_count: relevantFailedCount,
+      failed_count: investmentFailedCount + relevantFailedCount,
+      note: "At least one requested AI validation failed. Latest report inputs were not overwritten.",
+      outputs: { investment: null, relevant: null },
+    };
+    await fs.writeFile(path.join(args.outDir, "latest_ai_summary_summary.json"), `${JSON.stringify(failedSummary, null, 2)}\n`, "utf8");
+    console.log(JSON.stringify(failedSummary, null, 2));
+    process.exitCode = 1;
+    return;
+  }
   const investmentOutputs = await writeOutputs(investmentUpdated, args.investmentSignals, args.outDir, "investment_signals_ai_summary");
   const relevantOutputs = args.summarizeRelevant
     ? await writeOutputs(relevantUpdated, args.relevantSignals, args.outDir, "relevant_signals_ai_summary")
@@ -885,7 +1001,9 @@ async function main() {
     relevant_signal_count: relevantUpdated.length,
     summarized_count: investmentUpdated.filter((row) => cleanText(row.ai_summary_ko)).length,
     terra_retry_count: investmentUpdated.filter((row) => row.ai_summary_tier === "terra").length,
-    failed_count: investmentUpdated.filter((row) => row.ai_summary_quality === "failed").length,
+    investment_failed_count: investmentFailedCount,
+    relevant_failed_count: relevantFailedCount,
+    failed_count: investmentFailedCount + relevantFailedCount,
     outputs: { investment: investmentOutputs, relevant: relevantOutputs },
   };
   if (summary.failed_count && summary.summarized_count === 0) {
