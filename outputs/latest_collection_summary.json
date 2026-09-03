@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-03T02:50:16Z",
+  "run_started_at": "2026-09-03T03:12:03Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,10 +20,10 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 696,
-  "result_count": 426,
+  "request_count": 695,
+  "result_count": 425,
   "official_result_count": 391,
-  "fallback_result_count": 35,
+  "fallback_result_count": 34,
   "companies_with_results": 71,
   "companies_with_official_results": 64,
   "companies_without_results": [
@@ -80,7 +80,7 @@
     "EMM(Umicore)": 9,
     "Umicore": 10,
     "Solvay": 4,
-    "Syensqo": 4,
+    "Syensqo": 3,
     "Hexagon AB": 8,
     "ABB": 1,
     "Maxon": 10,
@@ -192,7 +192,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 69,
+  "error_count": 70,
   "errors": [
     {
       "target_no": 2,
@@ -361,6 +361,14 @@
       "source_url": "https://www.appliedmaterials.com/us/en/newsroom.html",
       "source_name": "Applied Materials - Applied Materials Newsroom / Newsroom / News",
       "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 26,
+      "company": "Magnix",
+      "source": "official_pages",
+      "source_url": "https://www.magnix.aero/news",
+      "source_name": "Magnix - magniX News / Newsroom / News",
+      "error": "fetch failed"
     },
     {
       "target_no": 33,
@@ -712,7 +720,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
       "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     },
     {
       "target_no": 77,
@@ -728,7 +736,7 @@
       "source": "official_pages",
       "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
       "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
-      "error": "HTTP 521 "
+      "error": "fetch failed"
     },
     {
       "target_no": 77,
@@ -748,9 +756,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260903T025016Z.json",
-    "csv": "outputs/company_signals_20260903T025016Z.csv",
-    "summary": "outputs/collection_summary_20260903T025016Z.json",
+    "json": "outputs/company_signals_20260903T031203Z.json",
+    "csv": "outputs/company_signals_20260903T031203Z.csv",
+    "summary": "outputs/collection_summary_20260903T031203Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
