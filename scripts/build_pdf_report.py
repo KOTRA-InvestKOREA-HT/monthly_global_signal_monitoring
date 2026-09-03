@@ -771,6 +771,35 @@ def short_text_to_width(canvas_obj, text, max_width, font_name, font_size):
     return text[:lo].rstrip() + suffix
 
 
+def split_sentences(text):
+    return [sentence.strip() for sentence in re.split(r"(?<=[.!?。])\s+", str(text or "")) if sentence.strip()]
+
+
+def fit_sentences(canvas_obj, text, max_width, font_name, font_size, max_lines):
+    """주어진 줄 수 안에 들어가는 만큼만 문장 단위로 담아 문장 중간에서 잘리지 않게 한다."""
+    text = clean_text(text)
+    if not text:
+        return ""
+    sentences = split_sentences(text)
+    if not sentences:
+        return ""
+
+    picked = ""
+    for sentence in sentences:
+        candidate = sentence if not picked else f"{picked} {sentence}"
+        if len(wrap_text(canvas_obj, candidate, max_width, font_name, font_size)) > max_lines:
+            break
+        picked = candidate
+    if picked:
+        return picked
+
+    # 첫 문장 하나도 줄 수를 넘으면 마지막 줄만 폭에 맞춰 줄인다.
+    lines = wrap_text(canvas_obj, sentences[0], max_width, font_name, font_size)
+    head = " ".join(lines[: max_lines - 1])
+    tail = short_text_to_width(canvas_obj, f"{lines[max_lines - 1]}...", max_width, font_name, font_size)
+    return f"{head} {tail}".strip()
+
+
 def draw_justified_line(canvas_obj, x, y, line, max_width, font_name, font_size):
     words = line.split(" ")
     if len(words) <= 1:
@@ -1199,26 +1228,6 @@ def summary_line_count(report, row, width, size, max_lines):
     return max(1, min(len(lines), max_lines))
 
 
-def summary_render_line_count(report, row, width, size, max_lines):
-    """Mirrors draw_summary_text's branching so a flowed layout can be measured first."""
-    parts = summary_parts(row)
-    if not parts:
-        return summary_line_count(report, row, width, size, max_lines)
-
-    headline = parts["headline"]
-    detail = parts["detail"]
-    headline_font = report.fonts["semibold"]
-    detail_font = report.fonts["demilight"]
-    dash = " - " if detail else ""
-    headline_width = report.canvas.stringWidth(headline, headline_font, size)
-    dash_width = report.canvas.stringWidth(dash, detail_font, size)
-    detail_width = report.canvas.stringWidth(detail, detail_font, size)
-
-    if not detail or headline_width + dash_width + detail_width <= width or max_lines <= 1:
-        return 1
-    return min(max_lines, 1 + len(wrap_text(report.canvas, detail, width, detail_font, size)))
-
-
 def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=3):
     parts = summary_parts(row)
     line_height = size + line_gap
@@ -1359,6 +1368,8 @@ def fitted_business_body(report, text, width, max_lines=BUSINESS_BODY_MAX_LINES)
     font_name = report.fonts["demilight"]
     size = BUSINESS_BODY_SIZE
     line_gap = BUSINESS_BODY_LINE_GAP
+    # 박스에 안 들어가는 요약은 문장 단위로 끊어 마지막 문장이 완결되게 한다.
+    text = fit_sentences(report.canvas, text, width, font_name, size, max_lines)
     lines = wrap_text(report.canvas, text, width, font_name, size)
     visible = lines[:max_lines]
     if len(lines) > max_lines and visible:
@@ -1530,7 +1541,7 @@ ITEM_TARGET_TO_TREND = 24
 ITEM_TREND_LABEL_TO_BODY = 19
 ITEM_BODY_SIZE = 8.8
 ITEM_BODY_GAP = 2.0
-ITEM_BODY_MAX_LINES = 3
+ITEM_BODY_MAX_LINES = 4
 ITEM_BODY_TO_SOURCE = 11
 ITEM_SOURCE_SIZE = 7.1
 ITEM_CARD_BOTTOM_PAD = 16
@@ -1554,9 +1565,23 @@ def build_item_trend_entries(profiles, signal_index, relevant_rows):
     return entries
 
 
+def item_trend_body(report, row, width, size, max_lines):
+    """카드 본문은 명사구 캡션이 아니라 완결된 서술 문장으로 채운다.
+
+    요약문을 문장 단위로 끊어 max_lines 안에 들어가는 데까지만 담기 때문에,
+    문장 중간에서 '...'로 잘리지 않고 '무엇을 했다 / 하고 있다'로 끝난다.
+    """
+    font_name = report.fonts["demilight"]
+    text = normalize_summary_text(summary_field(row, "ai_summary")) or normalize_summary_text(detail_text(row, 400))
+    body = fit_sentences(report.canvas, text, width, font_name, size, max_lines)
+    if not body:
+        return "", 1
+    return body, max(1, min(max_lines, len(wrap_text(report.canvas, body, width, font_name, size))))
+
+
 def item_card_layout(report, entry, width):
     body_width = width - 34
-    line_count = summary_render_line_count(report, entry["row"], body_width, ITEM_BODY_SIZE, ITEM_BODY_MAX_LINES)
+    _, line_count = item_trend_body(report, entry["row"], body_width, ITEM_BODY_SIZE, ITEM_BODY_MAX_LINES)
     rule_offset = ITEM_CARD_TITLE_TOP + ITEM_CARD_TITLE_TO_RULE
     target_offset = rule_offset + ITEM_RULE_TO_TARGET
     trend_offset = target_offset + ITEM_TARGET_TO_TREND
@@ -1620,15 +1645,17 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
 
     draw_label_pill(report, x + 17, top - layout["trend_offset"], t("item_trend_label", month=month_label))
 
-    draw_summary_text(
-        report,
-        row,
+    body, _ = item_trend_body(report, row, layout["body_width"], ITEM_BODY_SIZE, ITEM_BODY_MAX_LINES)
+    report.wrapped(
+        body,
         x + 17,
         top - layout["body_offset"],
         layout["body_width"],
         ITEM_BODY_SIZE,
+        colors.black,
         max_lines=ITEM_BODY_MAX_LINES,
         line_gap=ITEM_BODY_GAP,
+        weight="demilight",
     )
     source_text = short_text_to_width(c, source_line(row), layout["body_width"], report.fonts["demilight"], ITEM_SOURCE_SIZE)
     report.text(x + 17, top - layout["source_offset"], source_text, ITEM_SOURCE_SIZE, MUTED)
