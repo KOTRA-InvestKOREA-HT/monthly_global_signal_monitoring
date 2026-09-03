@@ -51,11 +51,19 @@ let fetchRetries = 2;
 let retryCount = 0;
 
 // 기사가 아니라고 판단해 제외한 링크. 필터가 과했는지 사후에 검증할 수 있어야 한다.
+// 집계는 전량을 세고, 샘플만 상한을 둔다. 예전에는 둘 다 상한에 걸려 총 제외 건수를 알 수 없었다.
 const excludedRows = [];
+const excludedCounts = new Map();
+let excludedTotal = 0;
 const EXCLUDED_SAMPLE_LIMIT = 120;
+const EXCLUDED_SAMPLE_PER_COMPANY = 4;
 
 function recordExclusion(company, title, url, reason) {
-  if (excludedRows.length < EXCLUDED_SAMPLE_LIMIT) {
+  excludedTotal += 1;
+  excludedCounts.set(reason, (excludedCounts.get(reason) || 0) + 1);
+  // 한 회사가 샘플을 다 차지하면 다른 회사의 오제외를 못 본다. 회사당 몇 건씩만 남긴다.
+  const seenForCompany = excludedRows.filter((row) => row.company === company).length;
+  if (excludedRows.length < EXCLUDED_SAMPLE_LIMIT && seenForCompany < EXCLUDED_SAMPLE_PER_COMPANY) {
     excludedRows.push({ company, title: cleanText(title).slice(0, 120), url, reason });
   }
 }
@@ -1521,11 +1529,9 @@ async function main() {
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
     press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
     undated_result_count: finalRows.filter((row) => !row.published_at).length,
-    excluded_non_article_count: excludedRows.length,
-    excluded_non_article_reasons: excludedRows.reduce((counts, row) => {
-      counts[row.reason] = (counts[row.reason] || 0) + 1;
-      return counts;
-    }, {}),
+    excluded_non_article_count: excludedTotal,
+    excluded_non_article_reasons: Object.fromEntries(excludedCounts),
+    excluded_non_article_sample_count: excludedRows.length,
     excluded_non_article_samples: excludedRows,
     published_at_source_counts: finalRows.reduce((counts, row) => {
       const key = row.published_at_source || "none";

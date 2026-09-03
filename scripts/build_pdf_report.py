@@ -681,7 +681,9 @@ def compact_summary_phrase(value, limit=90, row=None):
 
 def summary_parts(row):
     headline_limit = 110 if LANG == "en" else 58
-    detail_limit = 240 if LANG == "en" else 120
+    # 본문이 최대 6줄까지 늘어날 수 있으므로 글자 수 상한이 먼저 걸리지 않게 잡는다.
+    # 실제로 몇 줄을 싣을지는 draw_summary_text가 폭으로 판단한다.
+    detail_limit = 440 if LANG == "en" else 230
     headline = compact_summary_phrase(summary_field(row, "ai_summary_headline"), headline_limit, row)
     detail = compact_summary_phrase(summary_field(row, "ai_summary_detail"), detail_limit, row)
     if headline or detail:
@@ -1250,12 +1252,12 @@ def business_text(rows):
     row = sort_signal_rows(rows)[0]
     ai_summary = normalize_summary_text(summary_field(row, "ai_summary"))
     if ai_summary:
-        return short_text(expand_business_summary(row, ai_summary), 430)
-    return short_text(expand_business_summary(row, detail_text(row, 360)), 430)
+        return short_text(expand_business_summary(row, ai_summary), 950)
+    return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
 
 
 def summary_line_count(report, row, width, size, max_lines):
-    text = summary_plain_text(row) or detail_text(row, 300)
+    text = summary_plain_text(row) or detail_text(row, 560)
     font_name = report.fonts["demilight"]
     lines = wrap_text(report.canvas, text, width, font_name, size)
     return max(1, min(len(lines), max_lines))
@@ -1266,7 +1268,7 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
     line_height = size + line_gap
     if not parts:
         line_count = summary_line_count(report, row, width, size, max_lines)
-        report.wrapped(detail_text(row, 300), x, y, width, size, TEXT, max_lines=max_lines, line_gap=line_gap)
+        report.wrapped(detail_text(row, 560), x, y, width, size, TEXT, max_lines=max_lines, line_gap=line_gap)
         return line_count
 
     headline = parts["headline"]
@@ -1376,6 +1378,19 @@ BUSINESS_SOURCE_BOTTOM_PAD = 15
 BUSINESS_BODY_SIZE = 9.0
 BUSINESS_BODY_LINE_GAP = 1.35
 BUSINESS_BODY_MAX_LINES = 5
+# 상세 페이지가 쓸 수 있는 (시그널 본문 줄 수, 사업현황 본문 줄 수) 조합.
+# 작은 것부터 시도해 페이지에 들어가는 마지막 조합을 쓴다. 첫 항목은 기존 값이라 최소 보장선이 된다.
+DETAIL_GROWTH_STEPS = (
+    (2, 5),
+    (3, 5),
+    (3, 6),
+    (4, 6),
+    (4, 7),
+    (5, 7),
+    (5, 8),
+    (6, 8),
+    (6, 9),
+)
 
 
 def signal_body_line_count(report, row, width, max_lines):
@@ -1426,20 +1441,55 @@ def fitted_business_body(report, text, width, max_lines=BUSINESS_BODY_MAX_LINES)
     return {"lines": visible, "size": size, "line_gap": line_gap, "truncated": len(lines) > max_lines}
 
 
-def business_box_metrics(report, text, width):
+def business_box_metrics(report, text, width, max_lines=BUSINESS_BODY_MAX_LINES, extra_top=0):
     body_width = width - 32
-    body = fitted_business_body(report, text, body_width, max_lines=BUSINESS_BODY_MAX_LINES)
+    body = fitted_business_body(report, text, body_width, max_lines=max_lines)
     line_count = max(1, len(body["lines"]))
     line_height = body["size"] + body["line_gap"]
     height = (
         BUSINESS_BODY_TOP_PAD
+        + extra_top
         + (line_count * line_height)
         + BUSINESS_SOURCE_GAP
         + 8
         + BUSINESS_SOURCE_BOTTOM_PAD
     )
-    body["height"] = max(BUSINESS_MIN_BOX_H, min(BUSINESS_MAX_BOX_H, height))
+    # 줄 수를 늘려 잡은 만큼, 그리고 타겟품목이 아랫줄로 내려간 만큼 박스 높이 상한도 같이 올린다.
+    ceiling = BUSINESS_MAX_BOX_H + extra_top + max(0, max_lines - BUSINESS_BODY_MAX_LINES) * line_height
+    body["height"] = max(BUSINESS_MIN_BOX_H + extra_top, min(ceiling, height))
     return body
+
+
+TARGET_WRAP_HEIGHT = 15
+
+
+def business_target_layout(report, profile, x, width):
+    """청록 박스 머리줄 배치를 미리 계산한다.
+
+    타겟품목 텍스트가 라벨 옆 한 줄에 다 들어가면 예전처럼 옆에 붙이고(국문은 항상 여기),
+    안 들어가면 잘라내는 대신 박스를 한 줄 키워 아랫줄에 통째로 싣는다.
+    """
+    label, text = target_section_for_profile(profile)
+    if not text:
+        return {"text": "", "wrapped": False, "extra_top": 0}
+    c = report.canvas
+    heading = t("business_heading")
+    heading_w = c.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
+    label_x = x + 16 + heading_w + 18
+    label_w = c.stringWidth(label, report.fonts["semibold"], 8.5) + 38
+    value_x = label_x + label_w + 9
+    value_width = (x + width - 16) - value_x
+    fits = c.stringWidth(text, report.fonts["semibold"], 9.5) <= value_width
+    return {
+        "label": label,
+        "text": text,
+        "label_x": label_x,
+        "label_w": label_w,
+        "value_x": value_x,
+        "value_width": value_width,
+        "wrapped": not fits,
+        "extra_top": 0 if fits else TARGET_WRAP_HEIGHT,
+    }
 
 
 def target_section_for_profile(profile):
@@ -1510,10 +1560,21 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     signal_width = width - 38
     business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
     business_body = business_text([business_row] if business_row else [])
-    business_layout = business_box_metrics(report, business_body, width)
+    target_layout = business_target_layout(report, profile, x, width)
+
+    # 페이지 아래가 비어 있는데 2줄에서 끊을 이유가 없다. 들어가는 가장 큰 조합을 고른다.
+    max_lines, signal_positions, top_h, business_layout = None, None, None, None
+    for signal_lines, business_lines in DETAIL_GROWTH_STEPS:
+        positions, candidate_top_h = signal_box_layout(report, rows_by_signal, signal_width, signal_lines)
+        layout = business_box_metrics(
+            report, business_body, width, max_lines=business_lines, extra_top=target_layout["extra_top"]
+        )
+        used = candidate_top_h + DETAIL_BOX_GAP + layout["height"]
+        if max_lines is not None and DETAIL_BOX_TOP - used < DETAIL_BOTTOM_MARGIN:
+            break
+        max_lines, signal_positions, top_h, business_layout = signal_lines, positions, candidate_top_h, layout
+
     bottom_h = business_layout["height"]
-    max_lines = 2
-    signal_positions, top_h = signal_box_layout(report, rows_by_signal, signal_width, max_lines)
     top_y = DETAIL_BOX_TOP - top_h
     bottom_y = top_y - DETAIL_BOX_GAP - bottom_h
     c = report.canvas
@@ -1558,30 +1619,25 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     header_y = top - 25
     heading = t("business_heading")
     report.spaced_text(x + 16, header_y, heading, 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
-    target_label, target_text = target_section_for_profile(profile)
-    if target_text:
-        heading_w = report.canvas.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
+    if target_layout["text"]:
         c.setFillColor(colors.HexColor("#DDF0EE"))
-        target_label_x = x + 16 + heading_w + 18
-        target_label_w = report.canvas.stringWidth(target_label, report.fonts["semibold"], 8.5) + 38
-        target_label_y = top - 32
-        c.roundRect(target_label_x, target_label_y, target_label_w, 20, 3, fill=1, stroke=0)
-        draw_target_marker(c, target_label_x + 13, header_y + 2)
-        report.text(target_label_x + 25, header_y, target_label, 8.5, colors.HexColor("#087A70"), weight="semibold")
-        # 글자 수(45자)가 아니라 남은 폭으로 잘라야 청록 박스 밖으로 나가지 않는다.
-        # 통째로 들어가는 가장 큰 크기를 먼저 찾고, 그래도 안 되면 마지막 크기에서 자른다.
-        target_value_x = target_label_x + target_label_w + 9
-        target_value_width = (x + width - 16) - target_value_x
-        target_sizes = [9.5, 9.0, 8.5, 8.0]
-        target_size = target_sizes[-1]
-        for size in target_sizes:
-            if c.stringWidth(target_text, report.fonts["semibold"], size) <= target_value_width:
-                target_size = size
-                break
-        target_value = short_text_to_width(c, target_text, target_value_width, report.fonts["semibold"], target_size)
-        report.text(target_value_x, header_y, target_value, target_size, colors.HexColor("#087A70"), weight="semibold")
+        c.roundRect(target_layout["label_x"], top - 32, target_layout["label_w"], 20, 3, fill=1, stroke=0)
+        draw_target_marker(c, target_layout["label_x"] + 13, header_y + 2)
+        report.text(
+            target_layout["label_x"] + 25, header_y, target_layout["label"], 8.5, colors.HexColor("#087A70"), weight="semibold"
+        )
+        if target_layout["wrapped"]:
+            # 라벨 옆에 안 들어가는 타겟품목은 잘라내지 않고 박스 폭 전체를 쓰는 아랫줄에 싣는다.
+            wrapped_text = short_text_to_width(c, target_layout["text"], width - 32, report.fonts["semibold"], 9.5)
+            report.text(
+                x + 16, header_y - TARGET_WRAP_HEIGHT, wrapped_text, 9.5, colors.HexColor("#087A70"), weight="semibold"
+            )
+        else:
+            report.text(
+                target_layout["value_x"], header_y, target_layout["text"], 9.5, colors.HexColor("#087A70"), weight="semibold"
+            )
 
-    body_y = top - BUSINESS_BODY_TOP_PAD
+    body_y = top - BUSINESS_BODY_TOP_PAD - target_layout["extra_top"]
     report.set_font(business_layout["size"], TEXT, weight="demilight")
     line_height = business_layout["size"] + business_layout["line_gap"]
     for line in business_layout["lines"]:
