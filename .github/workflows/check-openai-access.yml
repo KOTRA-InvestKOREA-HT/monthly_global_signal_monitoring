@@ -1,0 +1,31 @@
+name: check-openai-access
+
+# 키 교체 뒤에 collect-company-signals를 통째로 돌리면 174행·243회 호출이 나간다.
+# 이 워크플로는 모델 응답 1건만 써서 인증·모델 권한·요청 형태를 먼저 확인한다.
+on:
+  workflow_dispatch:
+    inputs:
+      luna_model:
+        description: Primary model to probe (leave empty for the repository default)
+        required: false
+        default: ''
+      terra_model:
+        description: Retry model to check for availability (leave empty for the repository default)
+        required: false
+        default: ''
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Check OpenAI access
+        run: node scripts/check_openai_access.mjs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_SUMMARY_LUNA_MODEL: ${{ inputs.luna_model || vars.AI_SUMMARY_LUNA_MODEL || 'gpt-5.6-luna' }}
+          AI_SUMMARY_TERRA_MODEL: ${{ inputs.terra_model || vars.AI_SUMMARY_TERRA_MODEL || 'gpt-5.6-terra' }}
+          AI_SUMMARY_REASONING_EFFORT: ${{ vars.AI_SUMMARY_REASONING_EFFORT || 'low' }}
