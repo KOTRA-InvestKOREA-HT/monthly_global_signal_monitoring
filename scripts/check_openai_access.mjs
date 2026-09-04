@@ -6,6 +6,7 @@
 //   1) 키 존재       - 환경변수만 확인, 값은 출력하지 않는다
 //   2) 모델 목록     - GET /v1/models, 토큰을 쓰지 않는다
 //   3) 응답 1건      - POST /v1/responses, 운영과 같은 strict json_schema로 최소 호출
+import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const DEFAULTS = {
@@ -111,14 +112,21 @@ async function probeResponses(apiKey, model, args) {
   };
 }
 
-async function main() {
+// 실행 로그 다운로드는 저장소 admin 권한이 필요하다. 진단이 로그 안에만 있으면 권한 없는
+// 사람은 exit code 1만 보게 되므로, 같은 내용을 실행 요약 페이지에도 남긴다.
+function writeStepSummary(lines) {
+  const target = process.env.GITHUB_STEP_SUMMARY;
+  if (!target) return;
+  try {
+    fs.appendFileSync(target, `## OpenAI 접근 점검\n\n\`\`\`text\n${lines.join("\n")}\n\`\`\`\n`, "utf8");
+  } catch {
+    // 요약 기록 실패가 점검 결과를 뒤집지는 않는다.
+  }
+}
+
+async function runCheck(report) {
   const args = parseArgs(process.argv.slice(2));
   const apiKey = process.env.OPENAI_API_KEY;
-  const lines = [];
-  const report = (line) => {
-    lines.push(line);
-    console.log(line);
-  };
 
   if (!apiKey) {
     report("OPENAI_API_KEY: 미설정");
@@ -166,6 +174,22 @@ async function main() {
     report(`주의: ${missing.join(", ")}이(가) 모델 목록에 없다. 요약 단계가 이 모델에서 막힐 수 있다.`);
   }
   report("결론: 이 키로 수집 파이프라인의 AI 요약 경로를 쓸 수 있다.");
+}
+
+async function main() {
+  const lines = [];
+  const report = (line) => {
+    lines.push(line);
+    console.log(line);
+  };
+  try {
+    await runCheck(report);
+  } catch (error) {
+    report(`점검 중 예외: ${error.message}`);
+    process.exitCode = 1;
+  } finally {
+    writeStepSummary(lines);
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
