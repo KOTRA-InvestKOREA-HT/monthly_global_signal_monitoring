@@ -115,7 +115,40 @@ async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
 }
 
+// 대괄호가 짝을 이루는 최상위 구간을 앞에서부터 찾는다. 문자열 안의 괄호는 세지 않는다.
+function topLevelArrays(text) {
+  const found = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+  let escaped = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+    if (char === '"') inString = true;
+    else if (char === "[") {
+      if (depth === 0) start = index;
+      depth += 1;
+    } else if (char === "]" && depth > 0) {
+      depth -= 1;
+      if (depth === 0) {
+        found.push(text.slice(start, index + 1));
+        start = -1;
+      }
+    }
+  }
+  return found;
+}
+
 // 채팅은 코드펜스나 짧은 머리말을 붙이곤 한다. 배열만 도려낸다.
+//
+// 답변이 끊겨 "계속"으로 이어 받거나, 빠진 판정을 추가로 받아 뒤에 이어붙이면 배열이 여러 개인
+// 파일이 된다. 그때도 사람이 손으로 대괄호를 합치지 않아도 되도록 전부 읽어 이어 붙인다.
 export function parseResponseArray(text) {
   const trimmed = String(text || "").trim();
   if (!trimmed) throw new Error("빈 응답 파일");
@@ -123,9 +156,6 @@ export function parseResponseArray(text) {
   const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fenced) candidates.push(fenced[1].trim());
   candidates.push(trimmed);
-  const start = trimmed.indexOf("[");
-  const end = trimmed.lastIndexOf("]");
-  if (start !== -1 && end > start) candidates.push(trimmed.slice(start, end + 1));
   for (const candidate of candidates) {
     try {
       const parsed = JSON.parse(candidate);
@@ -135,6 +165,18 @@ export function parseResponseArray(text) {
       // 다음 후보를 시도한다.
     }
   }
+
+  const merged = [];
+  for (const block of topLevelArrays(trimmed)) {
+    try {
+      const parsed = JSON.parse(block);
+      if (Array.isArray(parsed)) merged.push(...parsed);
+    } catch {
+      // 잘린 배열은 건너뛴다. 빠진 ref는 뒤에서 누락으로 잡힌다.
+    }
+  }
+  if (merged.length) return merged;
+
   throw new Error("JSON 배열을 찾지 못함");
 }
 

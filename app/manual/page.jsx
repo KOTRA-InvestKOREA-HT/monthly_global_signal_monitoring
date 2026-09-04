@@ -151,6 +151,10 @@ export default function ManualReportPage() {
           <b>2단계에서 복사한 요청서가 아니라, 그것을 AI에 넣고 받은 답변</b>을 붙여넣으세요.
           답변은 <code>[</code> 로 시작하는 JSON입니다. 나눠 받았다면 이어서 모두 붙여넣습니다.
         </p>
+        <p className="hint">
+          빠진 항목이 있으면 어떤 번호가 없는지 바로 알려드립니다. 그 번호를 대화창에 알려주고 받은 답변을
+          아래 내용 <b>맨 뒤에 그대로 이어붙인 뒤</b> 다시 누르시면 됩니다. 대괄호를 손으로 합칠 필요는 없습니다.
+        </p>
         <textarea value={reply} onChange={(event) => setReply(event.target.value)} placeholder='AI 답변(JSON)을 여기에 붙여넣으세요. [{"ref":"INV-001", ... 형태입니다.' rows={10} />
         <div className="row">
           <button

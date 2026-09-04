@@ -250,6 +250,52 @@ export async function GET() {
   return Response.json({ prepare, build });
 }
 
+// 병합은 워크플로에서 fail-closed로 다시 검사하지만, 빠진 항목은 여기서 미리 잡는다.
+// 2분 기다렸다가 실패 로그를 열어보게 하는 대신 누른 자리에서 어떤 ref가 없는지 알려준다.
+async function manifestRefs(config) {
+  const body = await getJson(
+    `https://api.github.com/repos/${config.owner}/${config.repo}/contents/outputs/manual_summary/manifest.json?ref=${encodeURIComponent(config.ref)}`,
+    config.token,
+    6000,
+  );
+  if (!body?.content) return null;
+  try {
+    const manifest = JSON.parse(Buffer.from(body.content, "base64").toString("utf8"));
+    return Array.isArray(manifest?.rows) ? manifest.rows.map((row) => row.ref) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function compareRefs(expected, reply) {
+  const seen = new Map();
+  for (const match of String(reply).matchAll(/"ref"\s*:\s*"([^"]+)"/g)) {
+    seen.set(match[1], (seen.get(match[1]) || 0) + 1);
+  }
+  const expectedSet = new Set(expected);
+  return {
+    missing: expected.filter((ref) => !seen.has(ref)),
+    unknown: [...seen.keys()].filter((ref) => !expectedSet.has(ref)),
+    duplicated: [...seen.entries()].filter(([, count]) => count > 1).map(([ref]) => ref),
+  };
+}
+
+function refProblemMessage({ missing, unknown, duplicated }) {
+  const list = (refs) => refs.slice(0, 12).join(", ") + (refs.length > 12 ? ` 외 ${refs.length - 12}건` : "");
+  if (missing.length) {
+    return [
+      `판정 ${missing.length}건이 빠졌습니다: ${list(missing)}.`,
+      "대화창에 이 번호를 알려주고 해당 항목만 같은 형식으로 더 받은 뒤,",
+      "받은 내용을 지금 붙여넣은 것 뒤에 이어붙여서 다시 눌러 주세요.",
+    ].join(" ");
+  }
+  if (duplicated.length) return `같은 번호가 두 번 있습니다: ${list(duplicated)}. 중복된 쪽을 지우고 다시 눌러 주세요.`;
+  if (unknown.length) {
+    return `자료에 없는 번호가 들어 있습니다: ${list(unknown)}. 답변을 다시 받아 주세요.`;
+  }
+  return "";
+}
+
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
@@ -272,6 +318,13 @@ export async function POST(request) {
 
     const check = looksLikeEvaluation(body.reply);
     if (!check.ok) return Response.json({ error: check.message }, { status: 400 });
+
+    // manifest를 못 읽으면 그냥 넘어간다. 병합 단계가 어차피 같은 검사를 다시 한다.
+    const expected = await manifestRefs(config).catch(() => null);
+    if (expected?.length) {
+      const problem = refProblemMessage(compareRefs(expected, body.reply));
+      if (problem) return Response.json({ error: problem }, { status: 400 });
+    }
 
     const uploaded = await putReply(config, String(body.reply));
     if (!uploaded.ok) return Response.json({ error: humanHint(uploaded.status, config, "upload", uploaded.detail) }, { status: 502 });

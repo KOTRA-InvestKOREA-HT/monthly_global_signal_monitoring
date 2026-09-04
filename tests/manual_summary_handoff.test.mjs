@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { groupByArticle, stripLongDigitRuns, trimToBudget, usefulSentences } from "../scripts/build_report_brief.mjs";
 import { buildSummaryFields, expandEntry, parseResponseArray, validateEntry } from "../scripts/merge_summary_batches.mjs";
+import { compareRefs, looksLikeEvaluation } from "../app/api/manual-report/route.js";
 
 function entry(overrides = {}) {
   return {
@@ -35,6 +36,44 @@ test("a bare array parses, and unparseable text is rejected", () => {
   assert.deepEqual(parseResponseArray('[{"ref":"REL-002"}]'), [{ ref: "REL-002" }]);
   assert.throws(() => parseResponseArray("판정을 완료했습니다"), /JSON 배열/);
   assert.throws(() => parseResponseArray(""), /빈 응답/);
+});
+
+// 빠진 판정은 2~3분 뒤 실패 로그가 아니라 버튼을 누른 자리에서 번호로 알려줘야 고칠 수 있다.
+test("the missing, unknown, and duplicated refs are named before the run starts", () => {
+  const expected = ["INV-001", "INV-002", "REL-043"];
+  const reply = '[{"ref":"INV-001"},{"ref":"INV-002"},{"ref":"INV-002"},{"ref":"XXX-999"}]';
+  assert.deepEqual(compareRefs(expected, reply), {
+    missing: ["REL-043"],
+    unknown: ["XXX-999"],
+    duplicated: ["INV-002"],
+  });
+});
+
+test("a complete reply reports nothing to fix", () => {
+  const expected = ["INV-001", "REL-043"];
+  const reply = '[{"ref":"REL-043"},{"ref": "INV-001"}]';
+  assert.deepEqual(compareRefs(expected, reply), { missing: [], unknown: [], duplicated: [] });
+});
+
+test("pasting the brief back instead of the answer is caught by name", () => {
+  assert.equal(looksLikeEvaluation('# 월간 글로벌 투자시그널 판정 요청\n판정 대상:\n- `INV-001` "ref"').ok, false);
+  assert.equal(looksLikeEvaluation("").ok, false);
+});
+
+// 답변이 끊겨 이어 받거나 빠진 판정을 추가로 받으면 한 파일에 배열이 여러 개가 된다.
+test("several arrays pasted one after another are read as one list", () => {
+  const text = '[{"ref":"INV-001"}, {"ref":"INV-002"}]\n\n빠진 항목입니다.\n\n[{"ref":"REL-043"}]';
+  assert.deepEqual(parseResponseArray(text).map((entry) => entry.ref), ["INV-001", "INV-002", "REL-043"]);
+});
+
+test("brackets inside strings do not split the reply", () => {
+  const text = '[{"ref":"INV-001","why":"공시 [원문] 기준"}]\n[{"ref":"REL-043","why":"a \\" ] b"}]';
+  assert.deepEqual(parseResponseArray(text).map((entry) => entry.ref), ["INV-001", "REL-043"]);
+});
+
+test("a truncated trailing array is skipped rather than failing the whole reply", () => {
+  const text = '[{"ref":"INV-001"}]\n[{"ref":"REL-043","why":"잘림';
+  assert.deepEqual(parseResponseArray(text), [{ ref: "INV-001" }]);
 });
 
 test("a complete entry passes validation", () => {
