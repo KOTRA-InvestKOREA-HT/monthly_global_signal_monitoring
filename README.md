@@ -16,7 +16,8 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
-- `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules.
+- `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules, and records whether the matched indicator sits in the same sentence as the company.
+- `scripts/report_proximity_shadow.mjs`: prints what the indicator-proximity rule would have dropped, for the run summary.
 - `scripts/summarize_signal_evidence.mjs`: summarizes evidence and performs the semantic support decision used by reports.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
@@ -25,6 +26,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 
 See `docs/github_vercel_button_workflow.md` for the GitHub upload, Vercel deployment, and button-trigger workflow.
 The implemented accuracy controls, verification evidence, known limitations, and Codex hook diagnosis are recorded in `docs/signal_accuracy_improvements_2026-09-03.md`.
+`docs/indicator_proximity_prefilter.md` covers the deterministic prefilter that cuts what the AI step has to judge, and `docs/ai_evaluation_paths.md` compares the API path with the manual chat path.
 
 ## Commands
 
@@ -61,6 +63,21 @@ Classify five investment-signal candidates:
 ```bash
 node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true
 ```
+
+`--indicator-proximity` decides what to do with rows whose matched indicator term never shares a
+sentence with a mention of the company. The score alone does not catch these: in the 2026-09 round a
+company homepage scored 9 while both approved rows scored 5 and 6.
+
+| value | effect |
+| --- | --- |
+| `shadow` (default) | annotate rows, drop nothing, and record what would have been dropped |
+| `enforce` | drop rows where `indicator_near_company` is not true |
+| `off` | skip the check |
+
+It stays in `shadow` until several rounds confirm it never drops an approved row. Print the current
+round's record with `node scripts/report_proximity_shadow.mjs`; `prepare-report-brief.yml` writes it
+to the run summary. See `docs/indicator_proximity_prefilter.md` for the measurements, why it is
+applied to investment signals only, and when to switch it on.
 
 Generate bilingual AI summaries and semantic support decisions for report evidence:
 

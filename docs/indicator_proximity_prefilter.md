@@ -81,7 +81,59 @@ Siemens-Gamesa, Evonik, West Pharmaceutical, Boeing, Umicore, Norsk Hydro 등).
 바꾼다. 판정 기록은 요약 파일의 `indicator_proximity`에, 행별로는
 `indicator_near_company` / `indicator_near_company_sentence` 필드에 남는다.
 
-## 6. 남은 것
+## 6. 회차마다 할 일 (섀도 판독)
+
+수집 워크플로가 끝나면 Actions 실행 요약에 이런 표가 붙는다.
+
+```text
+### 지표 근접 규칙
+
+기록만 함(shadow). 109건 중 **54건(50%)**이 걸러졌을 것이고, 55건이 남습니다.
+
+걸러졌을 행 54건 중 상위 25건입니다.
+이번 회차의 AI 판정에서 이 중 승인된 것이 있으면 규칙이 너무 강한 것이므로 켜면 안 됩니다.
+
+| 기업 | 지표 | 점수 | 기사 |
+| --- | --- | ---: | --- |
+| HyproMag | 공급망·지정학 리스크 대응 | 9 | Welcome to Mkango Resources Ltd. |
+```
+
+**볼 것은 하나다.** 이 목록에 있는 행이 그 회차 AI 판정에서 승인됐는가.
+
+```bash
+node -e '
+const rows = require("./outputs/latest_investment_signals.json");
+// 이 회차가 새 분류기로 돌았는지 먼저 본다. 주석이 없는 파일에서는 모든 행이 "걸러졌을 행"으로
+// 세어져, 규칙이 승인행을 버리는 것처럼 잘못 보인다.
+if (!rows.some((row) => "indicator_near_company" in row)) {
+  console.log("이 파일에는 근접 판정이 없습니다. 새 분류기로 수집을 다시 돌린 뒤 확인하세요.");
+  process.exit(1);
+}
+const dropped = rows.filter((row) => row.indicator_near_company !== true && row.ai_signal_supported === true);
+console.log("걸러졌을 행 중 승인된 것:", dropped.length);
+dropped.forEach((row) => console.log(" -", row.company, "|", row.title));
+'
+```
+
+- **0건이면** 그 회차는 규칙이 안전했다는 뜻이다. 기록해 두고 다음 회차로 넘어간다.
+- **1건이라도 나오면** 켜지 않는다. 그 행을 이 문서에 남기고, 왜 회사 언급을 못 찾았는지
+  (사명 표기 차이, 대명사 지시, 문장 분리 실패) 확인해 규칙을 고친다.
+
+세 회차 연속 0건이면 워크플로의 `--indicator-proximity shadow`를 `enforce`로 바꾼다. 그때부터
+걸러진 행은 `latest_investment_signals.json`에 아예 실리지 않으므로, 위 확인은 더 이상 안 된다.
+되돌리려면 값을 `shadow`로 되돌리기만 하면 된다 — 다른 코드는 손대지 않는다.
+
+### 판독 기록
+
+| 회차 | 걸러졌을 행 | 그중 승인 | 판단 |
+|---|---|---|---|
+| 2026-09 | 54 / 109 | **0** | 유지(shadow) |
+
+2026-09 회차는 규칙을 만들기 전에 수집이 끝나 있었으므로, 저장된 파일에 근접 판정이 없다.
+위 수치는 그 회차의 행에 `indicatorProximity()`를 나중에 걸어 다시 계산한 값이다. 다음 회차부터는
+분류기가 직접 기록하므로 위 명령이 그대로 동작한다.
+
+## 7. 남은 것
 
 **선행성(87건)과 타겟 기술 근거(79건)는 아직 AI가 판정한다.** 이 규칙은 지표 근거(81건)만
 건드린다. 선행성은 시제·양태 판단이라 키워드로 재현하기 어렵고, 타겟 기술 근거는
