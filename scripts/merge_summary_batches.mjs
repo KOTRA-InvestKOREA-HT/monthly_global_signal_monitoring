@@ -37,6 +37,60 @@ const REQUIRED_FIELDS = [
   "reason",
 ];
 
+// 브리프는 응답 길이를 줄이려고 짧은 필드명을 쓴다. 답변이 174건을 한 번에 담아야 해서
+// 필드명 하나하나가 분량이 된다. 여기서 원래 이름으로 되돌린다.
+const SHORT_FIELDS = {
+  ok: "signal_supported",
+  e: "entity_supported",
+  t: "target_technology_supported",
+  i: "indicator_supported",
+  l: "leading_indicator_supported",
+  stage: "event_stage",
+  q: "quality",
+  c: "confidence",
+  why: "reason",
+  ko: "summary_ko",
+  en: "summary_en",
+  hko: "summary_headline_ko",
+  dko: "summary_detail_ko",
+  hen: "summary_headline_en",
+  den: "summary_detail_en",
+};
+
+// 0/1과 "true" 같은 표기도 받아들인다. 모델이 boolean 대신 숫자를 쓰는 일이 잦다.
+function toBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (value === 1 || value === "1" || value === "true") return true;
+  if (value === 0 || value === "0" || value === "false") return false;
+  return value;
+}
+
+export function expandEntry(raw) {
+  const entry = { ...raw };
+  for (const [short, full] of Object.entries(SHORT_FIELDS)) {
+    if (entry[short] !== undefined && entry[full] === undefined) entry[full] = entry[short];
+  }
+  for (const field of REQUIRED_FIELDS.slice(0, 5)) entry[field] = toBoolean(entry[field]);
+  // ok를 생략하고 개별 판정만 준 답변도 받아들인다. 승인값은 어차피 여기서 다시 계산한다.
+  if (entry.signal_supported === undefined) {
+    entry.signal_supported =
+      entry.entity_supported === true &&
+      entry.indicator_supported === true &&
+      entry.leading_indicator_supported === true;
+  }
+  for (const field of ["summary_ko", "summary_en", "summary_headline_ko", "summary_detail_ko", "summary_headline_en", "summary_detail_en"]) {
+    if (entry[field] === undefined) entry[field] = "";
+  }
+  // 투자 시그널 승인 행은 표제와 상세만 오고 합본이 비어 온다. 합본은 그 둘에서 만든다.
+  if (!cleanText(entry.summary_ko) && cleanText(entry.summary_headline_ko)) {
+    entry.summary_ko = [entry.summary_headline_ko, entry.summary_detail_ko].filter((part) => cleanText(part)).join(" - ");
+  }
+  if (!cleanText(entry.summary_en) && cleanText(entry.summary_headline_en)) {
+    entry.summary_en = [entry.summary_headline_en, entry.summary_detail_en].filter((part) => cleanText(part)).join(" - ");
+  }
+  return entry;
+}
+
 const EVENT_STAGES = ["exploratory", "planned", "committed", "completed", "not_applicable", "unclear"];
 
 function parseArgs(argv) {
@@ -208,8 +262,9 @@ async function main() {
         errors.push(`${file}: ref ${ref} 중복`);
         continue;
       }
-      errors.push(...validateEntry(entry, ref));
-      entries.set(ref, entry);
+      const expanded = expandEntry(entry);
+      errors.push(...validateEntry(expanded, ref));
+      entries.set(ref, expanded);
     }
   }
 

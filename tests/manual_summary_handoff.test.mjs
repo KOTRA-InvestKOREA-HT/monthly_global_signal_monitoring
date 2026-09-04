@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { batchRows } from "../scripts/export_summary_batches.mjs";
-import { buildSummaryFields, parseResponseArray, validateEntry } from "../scripts/merge_summary_batches.mjs";
+import { groupByArticle, trimToBudget, usefulSentences } from "../scripts/build_report_brief.mjs";
+import { buildSummaryFields, expandEntry, parseResponseArray, validateEntry } from "../scripts/merge_summary_batches.mjs";
 
 function entry(overrides = {}) {
   return {
@@ -94,21 +94,61 @@ test("business rows keep a single paragraph and drop headline fields", () => {
   assert.ok(fields.ai_summary_ko.length > 0);
 });
 
-test("batching respects the row cap and the character budget", () => {
-  const items = Array.from({ length: 7 }, (_, index) => ({ ref: `R-${index}`, input: "x".repeat(100) }));
-  assert.deepEqual(
-    batchRows(items, { maxRows: 3, maxBatchChars: 100000 }).map((batch) => batch.length),
-    [3, 3, 1],
-  );
-  assert.deepEqual(
-    batchRows(items, { maxRows: 100, maxBatchChars: 250 }).map((batch) => batch.length),
-    [2, 2, 2, 1],
-  );
+test("boilerplate and repeated paragraphs are dropped from the brief", () => {
+  const text = [
+    "Applied plans a new bonding line in Korea next year.",
+    "This press release contains forward-looking statements within the meaning of the Act.",
+    "Skip to main navigation Investor Relations Financials Stock Info",
+    "Applied plans a new bonding line in Korea next year.",
+    "short",
+  ].join(" ");
+  const kept = usefulSentences(text);
+  assert.equal(kept.length, 1);
+  assert.match(kept[0], /bonding line/);
 });
 
-test("a row larger than the budget is still emitted rather than dropped", () => {
-  const items = [{ ref: "R-0", input: "x".repeat(9000) }, { ref: "R-1", input: "y".repeat(10) }];
-  const batches = batchRows(items, { maxRows: 10, maxBatchChars: 1000 });
-  assert.equal(batches.flat().length, 2);
-  assert.equal(batches[0][0].ref, "R-0");
+test("the article budget trims whole sentences rather than mid-word", () => {
+  const sentences = ["a".repeat(50), "b".repeat(50), "c".repeat(50)];
+  const body = trimToBudget(sentences, 110);
+  assert.equal(body, `${"a".repeat(50)} ${"b".repeat(50)}`);
+});
+
+test("one article carries every target that cites it, but its body once", () => {
+  const entries = [
+    { ref: "INV-001", url: "https://example.com/a", title: "A", sentences: ["one two three"] },
+    { ref: "INV-007", url: "https://example.com/a", title: "A", sentences: ["one two three"] },
+    { ref: "REL-002", url: "https://example.com/b", title: "B", sentences: ["four five six"] },
+  ];
+  const articles = groupByArticle(entries);
+  assert.equal(articles.length, 2);
+  assert.deepEqual(articles[0].targets.map((t) => t.ref), ["INV-001", "INV-007"]);
+  assert.equal(articles[0].sentences.length, 1);
+});
+
+test("the brief's short field names expand to the pipeline's field names", () => {
+  const entry = expandEntry({ ref: "INV-001", e: 1, t: 0, i: 1, l: 1, stage: "planned", q: "pass", c: 0.8, why: "근거", ko: "요약", en: "summary" });
+  assert.equal(entry.entity_supported, true);
+  assert.equal(entry.target_technology_supported, false);
+  assert.equal(entry.event_stage, "planned");
+  assert.equal(entry.quality, "pass");
+  assert.equal(entry.reason, "근거");
+  assert.deepEqual(validateEntry(entry, "INV-001"), []);
+});
+
+test("an approved investment reply gives headline and detail, and the combined form is built", () => {
+  const entry = expandEntry({
+    ref: "INV-014", ok: 1, e: 1, t: 1, i: 1, l: 1, stage: "planned", q: "pass", c: 0.9,
+    why: "확장 계획이 구체적", hko: "군산 생산기지 확장 기반", dko: "반응기 증설로 생산능력 확대",
+    hen: "Gunsan site built for expansion", den: "Reactors can be added as demand grows",
+  });
+  assert.equal(entry.summary_ko, "군산 생산기지 확장 기반 - 반응기 증설로 생산능력 확대");
+  assert.equal(entry.summary_en, "Gunsan site built for expansion - Reactors can be added as demand grows");
+  assert.deepEqual(validateEntry(entry, "INV-014"), []);
+});
+
+test("verdicts written as 0 and 1 are read as booleans, not left as numbers", () => {
+  const entry = expandEntry({ ref: "REL-001", e: 1, t: 1, i: 1, l: 1, stage: "not_applicable", q: "pass", c: 0.8, why: "근거", ko: "요약", en: "s" });
+  const fields = buildSummaryFields(entry, { kind: "relevant", relevanceExempt: false, model: "m" });
+  assert.equal(fields.ai_entity_supported, true);
+  assert.equal(fields.ai_signal_supported, true);
 });

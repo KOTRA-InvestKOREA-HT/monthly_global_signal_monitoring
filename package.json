@@ -15,8 +15,8 @@
     "filter:investment": "node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true",
     "summarize:ai": "node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs",
     "validate:report-inputs": "node scripts/validate_report_inputs.mjs",
-    "export:batches": "node scripts/export_summary_batches.mjs",
-    "merge:batches": "node scripts/merge_summary_batches.mjs",
+    "brief": "node scripts/build_report_brief.mjs",
+    "merge:brief": "node scripts/merge_summary_batches.mjs",
     "report:pdf": "python scripts/build_pdf_report.py --signals outputs/latest_company_signals.json --summary outputs/latest_collection_summary.json --relevant outputs/latest_relevant_signals.json --relevance-summary outputs/latest_relevance_summary.json --investment-signals outputs/latest_investment_signals.json --investment-summary outputs/latest_investment_signal_summary.json --indicator-config config/investment_signal_indicators.json --font assets/fonts/NOTOSANSKR-VF.TTF --out public/reports/latest_report.pdf",
     "collect:all": "npm run collect && npm run filter:relevant && npm run filter:investment && npm run summarize:ai && npm run validate:report-inputs && npm run report:pdf"
   },
