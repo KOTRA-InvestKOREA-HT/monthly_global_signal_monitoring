@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-04T00:59:40Z",
+  "run_started_at": "2026-09-04T04:39:06Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,16 +20,16 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 716,
+  "request_count": 688,
   "fetch_retries": 2,
-  "retry_count": 8,
-  "result_count": 431,
-  "official_result_count": 388,
+  "retry_count": 21,
+  "result_count": 433,
+  "official_result_count": 385,
   "press_release_result_count": 180,
-  "undated_result_count": 131,
-  "excluded_non_article_count": 10012,
+  "undated_result_count": 133,
+  "excluded_non_article_count": 9665,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 9796,
+    "index_or_category_page": 9449,
     "broken_url": 194,
     "no_article_title": 22
   },
@@ -84,33 +84,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Australian Strategic Metals",
-      "title": "",
-      "url": "https://asm-au.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "About ASM Expand",
-      "url": "https://asm-au.com/about/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Our Values",
-      "url": "https://asm-au.com/about/our-values/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Board",
-      "url": "https://asm-au.com/about/board/",
+      "company": "Moderna",
+      "title": "Vote here >",
+      "url": "https://www.proxyvote.com/",
       "reason": "index_or_category_page"
     },
     {
       "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://www.proxyvote.com/",
+      "title": "Health Care Professionals",
+      "url": "https://modernapro.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Moderna",
+      "title": "Investors",
+      "url": "https://investors.modernatx.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Moderna",
+      "title": "Clinical Trials",
+      "url": "https://trials.modernatx.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -135,24 +129,6 @@
       "company": "Cytiva",
       "title": "News",
       "url": "https://www.danaher.com/newsroom",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Health Care Professionals",
-      "url": "https://modernapro.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Investors",
-      "url": "https://investors.modernatx.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Clinical Trials",
-      "url": "https://trials.modernatx.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -204,18 +180,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "TIMET",
-      "title": "",
-      "url": "https://www.timet.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "TIMET",
-      "title": "Precision Castparts Corp.",
-      "url": "https://precast.com/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Air Products",
       "title": "",
       "url": "https://www.airproducts.com/",
@@ -237,6 +201,18 @@
       "company": "Air Products",
       "title": "Company Overview",
       "url": "https://www.airproducts.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "TIMET",
+      "title": "",
+      "url": "https://www.timet.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "TIMET",
+      "title": "Precision Castparts Corp.",
+      "url": "https://precast.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -264,30 +240,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "BorgWarner",
-      "title": "go back to BorgWarner home page",
-      "url": "https://www.borgwarner.com/home",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Company",
-      "url": "https://www.borgwarner.com/company",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Leadership",
-      "url": "https://www.borgwarner.com/company/leadership",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Locations",
-      "url": "https://www.borgwarner.com/company/locations",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "DOW",
       "title": "Corporate",
       "url": "https://corporate.dow.com/en-us.html",
@@ -309,6 +261,30 @@
       "company": "DOW",
       "title": "",
       "url": "https://corporate.dow.com/en-us.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "go back to BorgWarner home page",
+      "url": "https://www.borgwarner.com/home",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Company",
+      "url": "https://www.borgwarner.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Leadership",
+      "url": "https://www.borgwarner.com/company/leadership",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Locations",
+      "url": "https://www.borgwarner.com/company/locations",
       "reason": "index_or_category_page"
     },
     {
@@ -360,30 +336,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Skyworks",
-      "title": "",
-      "url": "https://www.skyworksinc.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Skyworks",
-      "title": "About",
-      "url": "https://www.skyworksinc.com/About-Us",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Skyworks",
-      "title": "About Us",
-      "url": "https://www.skyworksinc.com/About/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Skyworks",
-      "title": "Awards",
-      "url": "https://www.skyworksinc.com/About/Awards",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Eli Lilly and Company",
       "title": "",
       "url": "https://www.lilly.com/news",
@@ -405,6 +357,30 @@
       "company": "Eli Lilly and Company",
       "title": "",
       "url": "https://esg.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "",
+      "url": "https://www.skyworksinc.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "About",
+      "url": "https://www.skyworksinc.com/About-Us",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "About Us",
+      "url": "https://www.skyworksinc.com/About/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "Awards",
+      "url": "https://www.skyworksinc.com/About/Awards",
       "reason": "index_or_category_page"
     },
     {
@@ -528,30 +504,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "ASML",
-      "title": "ASML Logo",
-      "url": "https://www.asml.com/en",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "Company overview",
-      "url": "https://www.asml.com/en/company",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "About ASML overview",
-      "url": "https://www.asml.com/en/company/about-asml",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "Stories",
-      "url": "https://www.asml.com/en/company/stories",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Prodrive",
       "title": "Home",
       "url": "https://prodrive-technologies.com/en/",
@@ -576,27 +528,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Besi",
-      "title": "&nbsp;",
-      "url": "https://www.besi.com/",
+      "company": "ASML",
+      "title": "ASML Logo",
+      "url": "https://www.asml.com/en",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Besi",
-      "title": "Company",
-      "url": "https://www.besi.com/company/",
+      "company": "ASML",
+      "title": "Company overview",
+      "url": "https://www.asml.com/en/company",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Besi",
-      "title": "Company Profile",
-      "url": "https://www.besi.com/company/company-profile/",
+      "company": "ASML",
+      "title": "About ASML overview",
+      "url": "https://www.asml.com/en/company/about-asml",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Besi",
-      "title": "Company Overview",
-      "url": "https://www.besi.com/company/company-overview/",
+      "company": "ASML",
+      "title": "Stories",
+      "url": "https://www.asml.com/en/company/stories",
       "reason": "index_or_category_page"
     },
     {
@@ -621,6 +573,30 @@
       "company": "NXP",
       "title": "",
       "url": "https://www.nxp.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "&nbsp;",
+      "url": "https://www.besi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company",
+      "url": "https://www.besi.com/company/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Profile",
+      "url": "https://www.besi.com/company/company-profile/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Overview",
+      "url": "https://www.besi.com/company/company-overview/",
       "reason": "index_or_category_page"
     },
     {
@@ -720,6 +696,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Schmalz",
+      "title": "",
+      "url": "https://www.schmalz.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Schmalz",
+      "title": "Home",
+      "url": "https://www.schmalz.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Schmalz",
+      "title": "",
+      "url": "https://www.linkedin.com/company/schmalz/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Schmalz",
+      "title": "Energy Storage",
+      "url": "https://www.schmalz-energy.com/en",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "Bayer",
       "title": "English (EN)",
       "url": "https://www.bayer.com/en/investors/investor-news",
@@ -758,18 +758,18 @@
   ],
   "published_at_source_counts": {
     "time_tag": 33,
-    "jsonld": 64,
+    "jsonld": 62,
     "listing": 92,
     "body_text": 35,
-    "feed": 70,
+    "feed": 72,
     "url": 3,
     "meta": 2,
-    "none": 131,
+    "none": 133,
     "text": 1
   },
-  "fallback_result_count": 43,
+  "fallback_result_count": 48,
   "companies_with_results": 71,
-  "companies_with_official_results": 62,
+  "companies_with_official_results": 61,
   "companies_without_results": [
     "Magnix",
     "Besi",
@@ -779,7 +779,7 @@
     "Shanghai Electric Wind Power"
   ],
   "counts_by_company": {
-    "Australian Strategic Metals": 3,
+    "Australian Strategic Metals": 6,
     "Cognex": 6,
     "Corning": 6,
     "Charles River": 6,
@@ -816,7 +816,7 @@
     "Schmalz": 0,
     "Bayer": 10,
     "Merck": 10,
-    "Schott Pharma": 4,
+    "Schott Pharma": 3,
     "BASF": 10,
     "Evonik Industries": 10,
     "Heraeus": 6,
@@ -858,7 +858,7 @@
     "Shanghai Electric Wind Power": 0
   },
   "official_counts_by_company": {
-    "Australian Strategic Metals": 3,
+    "Australian Strategic Metals": 0,
     "Cognex": 0,
     "Corning": 6,
     "Charles River": 6,
@@ -936,8 +936,48 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 59,
+  "error_count": 74,
   "errors": [
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "source": "official_pages",
+      "source_url": "https://asm-au.com/news/",
+      "source_name": "Australian Strategic Metals - News / Newsroom / News",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "source": "official_pages",
+      "source_url": "https://asm-au.com/investors/",
+      "source_name": "Australian Strategic Metals - Investor Centre / Investor Relations",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "source": "official_pages",
+      "source_url": "https://asm-au.com/investors/asx-announcements/",
+      "source_name": "Australian Strategic Metals - ASX Announcements / Regulatory Filings / Exchange Announcements",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "source": "official_pages",
+      "source_url": "https://asm-au.com/investors/corporate-presentations/",
+      "source_name": "Australian Strategic Metals - Corporate Presentations / Investor Presentations",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 1,
+      "company": "Australian Strategic Metals",
+      "source": "official_pages",
+      "source_url": "https://asm-au.com/investors/company-reports/",
+      "source_name": "Australian Strategic Metals - Company Reports / Financial Reports",
+      "error": "HTTP 403 Forbidden"
+    },
     {
       "target_no": 2,
       "company": "Cognex",
@@ -1163,6 +1203,22 @@
       "error": "fetch failed"
     },
     {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_pages",
+      "source_url": "https://investors.ouster.com/financial-information/sec-filings",
+      "source_name": "Ouster - SEC Filings / Regulatory Filings",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "source_name": "Ouster - News Releases / Press Releases",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
       "target_no": 33,
       "company": "Heidenhain",
       "source": "official_pages",
@@ -1235,6 +1291,14 @@
       "error": "HTTP 404 Not Found"
     },
     {
+      "target_no": 39,
+      "company": "BASF",
+      "source": "official_detail",
+      "source_url": "https://www.basf.com/global/en/media/news-releases/2026/07/p-26-123",
+      "source_name": "BASF - News Releases / Press Releases",
+      "error": "This operation was aborted"
+    },
+    {
       "target_no": 46,
       "company": "Syensqo",
       "source": "official_pages",
@@ -1297,6 +1361,30 @@
       "source_url": "https://www.syensqo.com/en/investors/financials/statutory-accounts",
       "source_name": "Syensqo - Statutory Accounts / Statutory Accounts",
       "error": "HTTP 406 Not Acceptable"
+    },
+    {
+      "target_no": 54,
+      "company": "HyproMag",
+      "source": "official_pages",
+      "source_url": "https://hypromag.com/news/",
+      "source_name": "HyproMag - HyProMag News / Newsroom / News",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 54,
+      "company": "HyproMag",
+      "source": "official_pages",
+      "source_url": "https://hypromag.com/",
+      "source_name": "HyproMag - HyProMag / Company Website",
+      "error": "HTTP 403 Forbidden"
+    },
+    {
+      "target_no": 54,
+      "company": "HyproMag",
+      "source": "official_pages",
+      "source_url": "https://hypromag.com/about/",
+      "source_name": "HyproMag - About HyProMag / Corporate Information",
+      "error": "HTTP 403 Forbidden"
     },
     {
       "target_no": 57,
@@ -1406,15 +1494,47 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
+      "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
+      "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
+      "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
       "error": "fetch failed"
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260904T005940Z.json",
-    "csv": "outputs/company_signals_20260904T005940Z.csv",
-    "summary": "outputs/collection_summary_20260904T005940Z.json",
+    "json": "outputs/company_signals_20260904T043906Z.json",
+    "csv": "outputs/company_signals_20260904T043906Z.csv",
+    "summary": "outputs/collection_summary_20260904T043906Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
