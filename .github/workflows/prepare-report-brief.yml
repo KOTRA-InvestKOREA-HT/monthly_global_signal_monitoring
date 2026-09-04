@@ -19,9 +19,11 @@ on:
         required: false
         default: "900"
 
+# 실수로 한 번 더 눌러도 돌고 있는 수집을 죽이지 않는다. 5분짜리 크롤링을 취소하면
+# 처음부터 다시 해야 한다.
 concurrency:
   group: manual-report-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   prepare:

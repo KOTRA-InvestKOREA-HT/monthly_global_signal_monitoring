@@ -112,6 +112,71 @@ export function looksLikeEvaluation(text) {
   return { ok: true };
 }
 
+// 진행 상황을 화면에 보여주기 위한 조회. 버튼만 있고 상태가 없으면 사용자는 눌렸는지조차
+// 알 수 없어 계속 다시 누르게 되고, 그러면 실행이 서로를 취소한다.
+const STEP_LABELS = [
+  [/collect_company_signals/, "기업 자료 수집 중"],
+  [/filter_relevant_signals/, "기술 관련성 확인 중"],
+  [/classify_investment_signals/, "투자 시그널 분류 중"],
+  [/Clear replies/, "이전 회차 정리 중"],
+  [/build_report_brief/, "요청서 만드는 중"],
+  [/Merge the pasted|merge_summary_batches/, "판정 반영 중"],
+  [/Validate|validate_report_inputs/, "판정 검증 중"],
+  [/English/, "영문 보고서 만드는 중"],
+  [/build_pdf_report/, "한글 보고서 만드는 중"],
+  [/auto-commit|Sync latest/, "결과 저장 중"],
+];
+
+function describeStep(name) {
+  for (const [pattern, label] of STEP_LABELS) {
+    if (pattern.test(name)) return label;
+  }
+  return "진행 중";
+}
+
+async function latestRun(config, workflowFile) {
+  const url = `https://api.github.com/repos/${config.owner}/${config.repo}/actions/workflows/${workflowFile}/runs?branch=${encodeURIComponent(config.ref)}&per_page=1`;
+  const response = await fetch(url, { headers: githubHeaders(config.token), cache: "no-store" });
+  if (!response.ok) return null;
+  const run = (await response.json().catch(() => null))?.workflow_runs?.[0];
+  if (!run) return null;
+
+  const state =
+    run.status !== "completed"
+      ? "running"
+      : run.conclusion === "success"
+        ? "success"
+        : run.conclusion === "cancelled"
+          ? "cancelled"
+          : "failed";
+  const summary = { state, startedAt: run.run_started_at || run.created_at, updatedAt: run.updated_at, url: run.html_url, step: "" };
+
+  // 실행 중일 때는 지금 어느 단계인지까지 보여준다.
+  if (state === "running") {
+    const jobs = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/actions/runs/${run.id}/jobs`, {
+      headers: githubHeaders(config.token),
+      cache: "no-store",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .catch(() => null);
+    const current = jobs?.jobs?.[0]?.steps?.find((step) => step.status === "in_progress");
+    summary.step = current ? describeStep(current.name) : "시작하는 중";
+  }
+  return summary;
+}
+
+export async function GET() {
+  const { config, missing } = collectEnv();
+  if (missing.length) {
+    return Response.json({ error: `서버 설정이 끝나지 않았습니다(${missing.join(", ")}). 관리자에게 문의해 주세요.` }, { status: 500 });
+  }
+  const [prepare, build] = await Promise.all([
+    latestRun(config, PREPARE_WORKFLOW).catch(() => null),
+    latestRun(config, BUILD_WORKFLOW).catch(() => null),
+  ]);
+  return Response.json({ prepare, build });
+}
+
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
