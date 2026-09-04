@@ -243,11 +243,17 @@ export async function GET() {
   if (missing.length) {
     return Response.json({ error: envHint(missing) }, { status: 500 });
   }
+  // 이 응답이 늦으면 화면은 "진행 상황 확인 중…"에 머문다. 느릴 때 원인이 GitHub 왕복인지
+  // 함수 콜드스타트인지 브라우저에서 바로 구분할 수 있도록 걸린 시간을 헤더로 남긴다.
+  const startedAt = Date.now();
   const [prepare, build] = await Promise.all([
     latestRun(config, PREPARE_WORKFLOW).catch(() => null),
     latestRun(config, BUILD_WORKFLOW).catch(() => null),
   ]);
-  return Response.json({ prepare, build });
+  return Response.json(
+    { prepare, build },
+    { headers: { "Server-Timing": `github;desc="workflow status";dur=${Date.now() - startedAt}` } },
+  );
 }
 
 // 병합은 워크플로에서 fail-closed로 다시 검사하지만, 빠진 항목은 여기서 미리 잡는다.
