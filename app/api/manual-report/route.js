@@ -122,17 +122,40 @@ async function putReply(config, content) {
   return { ok: true };
 }
 
-// 붙여넣은 내용이 판정 결과처럼 보이는지만 본다. 세부 검증은 병합 단계가 fail-closed로 한다.
+// 붙여넣은 내용이 판정 결과처럼 보이는지 본다. 세부 검증은 병합 단계가 fail-closed로 한다.
+//
+// 가장 흔한 실수는 요청서를 그대로 다시 붙여넣는 것이다. 요청서 안에 출력 형식 예시가 들어
+// 있어서 ref와 대괄호만 보고는 통과해버리므로, 요청서 고유의 문구로 먼저 걸러낸다.
+const BRIEF_MARKERS = ["월간 글로벌 투자시그널 판정 요청", "## 판정 규칙", "판정 대상:"];
+
 export function looksLikeEvaluation(text) {
   const trimmed = String(text || "").trim();
   if (!trimmed) return { ok: false, message: "붙여넣은 내용이 없습니다. 채팅 답변을 붙여넣어 주세요." };
-  if (!/\bref\b/.test(trimmed) || !trimmed.includes("[")) {
+
+  if (BRIEF_MARKERS.some((marker) => trimmed.includes(marker))) {
+    return {
+      ok: false,
+      message:
+        "요청서를 그대로 붙여넣으신 것 같습니다. 2단계에서 복사한 요청서를 ChatGPT나 Claude 대화창에 먼저 넣고, " +
+        "거기서 나온 답변(JSON)을 여기에 붙여넣어 주세요.",
+    };
+  }
+
+  const refCount = (trimmed.match(/"ref"/g) || []).length;
+  if (!refCount || !trimmed.includes("[")) {
     return { ok: false, message: "판정 결과로 보이지 않습니다. 채팅이 답한 JSON 부분을 통째로 붙여넣어 주세요." };
   }
   if (!trimmed.includes("]")) {
     return {
       ok: false,
       message: '답변이 중간에 끊긴 것 같습니다. 채팅에 "계속"이라고 입력한 뒤, 이어서 나온 내용까지 함께 붙여넣어 주세요.',
+    };
+  }
+  // 판정 대상은 100건이 넘는다. 몇 건뿐이면 답변의 일부만 가져온 것이다.
+  if (refCount < 20) {
+    return {
+      ok: false,
+      message: `판정이 ${refCount}건뿐입니다. 답변 전체를 붙여넣었는지, 끊겼다면 "계속"으로 받은 뒷부분까지 넣었는지 확인해 주세요.`,
     };
   }
   return { ok: true };

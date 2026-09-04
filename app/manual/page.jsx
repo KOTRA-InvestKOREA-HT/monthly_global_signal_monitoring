@@ -147,8 +147,11 @@ export default function ManualReportPage() {
 
       <section className="step">
         <h2><span className="num">3</span> 답변 붙여넣기</h2>
-        <p>AI가 답한 내용을 그대로 붙여넣으세요. 나눠 받았다면 이어서 모두 붙여넣습니다.</p>
-        <textarea value={reply} onChange={(event) => setReply(event.target.value)} placeholder="AI 답변을 여기에 붙여넣으세요" rows={10} />
+        <p>
+          <b>2단계에서 복사한 요청서가 아니라, 그것을 AI에 넣고 받은 답변</b>을 붙여넣으세요.
+          답변은 <code>[</code> 로 시작하는 JSON입니다. 나눠 받았다면 이어서 모두 붙여넣습니다.
+        </p>
+        <textarea value={reply} onChange={(event) => setReply(event.target.value)} placeholder='AI 답변(JSON)을 여기에 붙여넣으세요. [{"ref":"INV-001", ... 형태입니다.' rows={10} />
         <div className="row">
           <button
             type="button"
@@ -191,6 +194,7 @@ export default function ManualReportPage() {
         button:disabled { background: #98a4b4; cursor: default; }
         .link { color: #122844; text-decoration: underline; font-size: 15px; }
         textarea { width: 100%; box-sizing: border-box; border: 1px solid #d8dde4; border-radius: 7px; padding: 12px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; margin-bottom: 12px; resize: vertical; }
+        code { background: #eef3f7; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
         .hint { color: #8591a3; font-size: 13.5px; margin: 12px 0 0; }
         .small { color: #8591a3; font-size: 13px; }
         .statusLine { margin: 14px 0 0; font-size: 14px; padding-top: 12px; border-top: 1px dashed #e4eaf0; }
