@@ -256,8 +256,5 @@
 
  {"ref":"REL-065","e":1,"t":0,"i":1,"l":1,"stage":"not_applicable","q":"pass","c":0.4,"why":"전달체·GMP 원료기술과 무관한 일반적 회사소개 문구임","ko":"모더나 홍콩 웹페이지는 13년 이상의 연구성과, 파이프라인 제품 45종, 임상시험 36건 등 일반적 회사소개 문구와 mRNA 기술에 대한 일반적 설명만 포함하고 있다.","en":"Moderna's Hong Kong webpage contains only generic corporate boilerplate—13+ years of research progress, 45 pipeline products, 36 clinical trials—along with general mRNA technology descriptions."}
 
-{"ref":"REL-043","e":0,"t":0,"i":1,"l":1,"stage":"not_applicable","q":"pass","c":0.6,
-"why":"사이티바 미언급, 다나허 서밋 관련 일반적 공급망 서술임",
-"ko":"다나허 서밋 관련 기사는 공급업체와의 장기 성과목표 공유가 장기 혁신을 지원하는 회복탄력적 공급망 구축의 일환이라고 소개했을 뿐 사이티바의 사업현황은 서술하지 않았다.",
-"en":"The Danaher Summit article described shared performance targets with suppliers as part of building resilient supply chains to support long-term innovation, without describing Cytiva's business status specifically."}
+ {"ref":"REL-043","e":0,"t":0,"i":1,"l":1,"stage":"not_applicable","q":"pass","c":0.6,"why":"사이티바 미언급, 다나허 서밋 관련 일반적 공급망 서술임","ko":"다나허 서밋 관련 기사는 공급업체와의 장기 성과목표 공유가 장기 혁신을 지원하는 회복탄력적 공급망 구축의 일환이라고 소개했을 뿐 사이티바의 사업현황은 서술하지 않았다.","en":"The Danaher Summit article described shared performance targets with suppliers as part of building resilient supply chains to support long-term innovation, without describing Cytiva's business status specifically."}
 ]
