@@ -1,23 +1,23 @@
 {
-  "run_started_at": "2026-09-04T04:41:55Z",
-  "input_signal_count": 433,
+  "run_started_at": "2026-09-04T04:57:56Z",
+  "input_signal_count": 430,
   "technology_gate_required": true,
   "technology_classification_file": "outputs/latest_signal_relevance_classification.json",
-  "technology_gate_pass_count": 117,
+  "technology_gate_pass_count": 118,
   "technology_gate_counts": {
-    "not_relevant": 316,
+    "not_relevant": 312,
     "relevance_exempt": 53,
-    "passed": 64
+    "passed": 65
   },
   "threshold": 4,
   "indicator_count": 5,
-  "investment_signal_count": 106,
-  "companies_with_investment_signals": 20,
+  "investment_signal_count": 109,
+  "companies_with_investment_signals": 21,
   "counts_by_indicator": {
     "supply_chain_geopolitical_risk": {
       "no": 1,
       "label_ko": "공급망·지정학 리스크 대응",
-      "count": 31,
+      "count": 32,
       "companies": [
         "HyproMag",
         "Applied Materials",
@@ -34,6 +34,7 @@
         "Albemarle",
         "Umicore",
         "Merck",
+        "Australian Strategic Metals",
         "Nexeon",
         "Maxon"
       ]
@@ -41,15 +42,15 @@
     "production_expansion_diversification": {
       "no": 2,
       "label_ko": "생산 확대 및 다변화 의지",
-      "count": 23,
+      "count": 24,
       "companies": [
         "Applied Materials",
         "Amkor Technology",
         "Air Liquide",
         "Nexeon",
         "Merck",
-        "Infineon",
         "Ouster",
+        "Infineon",
         "West Pharmaceutical",
         "Prodrive",
         "HyproMag",
@@ -77,7 +78,7 @@
     "technology_ecosystem_rd": {
       "no": 4,
       "label_ko": "기술 생태계 밀착(R&D)",
-      "count": 36,
+      "count": 37,
       "companies": [
         "Charles River",
         "Prodrive",

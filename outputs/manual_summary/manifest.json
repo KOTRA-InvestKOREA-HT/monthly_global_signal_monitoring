@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-04T04:41:55Z",
+  "generated_at": "2026-09-04T04:57:56Z",
   "rows": [
     {
       "ref": "INV-001",
@@ -177,25 +177,25 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 19,
-      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "1|Australian Strategic Metals|1|https://asm-au.com/energy-fuels-completes-acquisition-of-asm/",
+      "company": "Australian Strategic Metals",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-021",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 20,
-      "identity": "52|Nexeon|1|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
-      "company": "Nexeon",
-      "relevance_exempt": false
+      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
+      "company": "Applied Materials",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-022",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 21,
-      "identity": "52|Nexeon|1|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "identity": "52|Nexeon|1|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
       "company": "Nexeon",
       "relevance_exempt": false
     },
@@ -204,17 +204,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 22,
-      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/blogs/tackling-key-hbm-and-advanced-packaging-bottlenecks-for-ai-era.html",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "52|Nexeon|1|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "company": "Nexeon",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-024",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 23,
-      "identity": "16|Amkor Technology|1|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
-      "company": "Amkor Technology",
+      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/blogs/tackling-key-hbm-and-advanced-packaging-bottlenecks-for-ai-era.html",
+      "company": "Applied Materials",
       "relevance_exempt": true
     },
     {
@@ -222,8 +222,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 24,
-      "identity": "25|Applied Materials|1|https://ir.appliedmaterials.com/events/event-details/q3-2026-applied-materials-earnings-conference-call",
-      "company": "Applied Materials",
+      "identity": "16|Amkor Technology|1|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
+      "company": "Amkor Technology",
       "relevance_exempt": true
     },
     {
@@ -231,17 +231,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 25,
-      "identity": "37|Merck|1|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
-      "company": "Merck",
-      "relevance_exempt": false
+      "identity": "25|Applied Materials|1|https://ir.appliedmaterials.com/events/event-details/q3-2026-applied-materials-earnings-conference-call",
+      "company": "Applied Materials",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-027",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 26,
-      "identity": "5|Cytiva|1|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
-      "company": "Cytiva",
+      "identity": "37|Merck|1|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -249,53 +249,53 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 27,
-      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/media-kit-digital-assets.html",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "5|Cytiva|1|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
+      "company": "Cytiva",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-029",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 28,
-      "identity": "5|Cytiva|1|https://www.danaher.com/top-six-takeaways-2026-danaher-summit-bioprocessing",
-      "company": "Cytiva",
-      "relevance_exempt": false
+      "identity": "25|Applied Materials|1|https://www.appliedmaterials.com/us/en/newsroom/media-kit-digital-assets.html",
+      "company": "Applied Materials",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-030",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 29,
-      "identity": "25|Applied Materials|1|https://ir.appliedmaterials.com/events/event-details/q2-2026-applied-materials-earnings-conference-call",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "5|Cytiva|1|https://www.danaher.com/top-six-takeaways-2026-danaher-summit-bioprocessing",
+      "company": "Cytiva",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-031",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 30,
-      "identity": "49|Maxon|1|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
-      "company": "Maxon",
-      "relevance_exempt": false
+      "identity": "25|Applied Materials|1|https://ir.appliedmaterials.com/events/event-details/q2-2026-applied-materials-earnings-conference-call",
+      "company": "Applied Materials",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-032",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 31,
-      "identity": "25|Applied Materials|2|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "49|Maxon|1|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
+      "company": "Maxon",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-033",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 32,
-      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
-      "company": "Amkor Technology",
+      "identity": "25|Applied Materials|2|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
       "relevance_exempt": true
     },
     {
@@ -303,8 +303,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 33,
-      "identity": "61|Air Liquide|2|https://www.airliquide.com/2025-integrated-annual-report",
-      "company": "Air Liquide",
+      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "company": "Amkor Technology",
       "relevance_exempt": true
     },
     {
@@ -312,17 +312,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 34,
-      "identity": "52|Nexeon|2|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
-      "company": "Nexeon",
-      "relevance_exempt": false
+      "identity": "61|Air Liquide|2|https://www.airliquide.com/2025-integrated-annual-report",
+      "company": "Air Liquide",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-036",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 35,
-      "identity": "37|Merck|2|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
-      "company": "Merck",
+      "identity": "52|Nexeon|2|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+      "company": "Nexeon",
       "relevance_exempt": false
     },
     {
@@ -330,8 +330,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 36,
-      "identity": "34|Infineon|2|https://www.infineon.com/press-release/2026/infpr202608-133",
-      "company": "Infineon",
+      "identity": "37|Merck|2|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -339,7 +339,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 37,
-      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
       "company": "Ouster",
       "relevance_exempt": false
     },
@@ -348,8 +348,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 38,
-      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
-      "company": "Ouster",
+      "identity": "34|Infineon|2|https://www.infineon.com/press-release/2026/infpr202608-133",
+      "company": "Infineon",
       "relevance_exempt": false
     },
     {
@@ -357,7 +357,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 39,
-      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
       "company": "Ouster",
       "relevance_exempt": false
     },
@@ -366,7 +366,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 40,
-      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
       "company": "Ouster",
       "relevance_exempt": false
     },
@@ -375,8 +375,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 41,
-      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
-      "company": "West Pharmaceutical",
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -384,16 +384,16 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 42,
-      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-044",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 43,
-      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
+      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -402,16 +402,16 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 44,
-      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
-      "company": "Ouster",
-      "relevance_exempt": false
+      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership",
+      "company": "Amkor Technology",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-046",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 45,
-      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -420,8 +420,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 46,
-      "identity": "52|Nexeon|2|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
-      "company": "Nexeon",
+      "identity": "24|Ouster|2|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -429,44 +429,44 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 47,
-      "identity": "16|Amkor Technology|2|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "7|West Pharmaceutical|2|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "company": "West Pharmaceutical",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-049",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 48,
-      "identity": "27|Prodrive|2|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-inaugurates-4mw-green-hydrogen-rectifier-test-facility/",
-      "company": "Prodrive",
-      "relevance_exempt": true
+      "identity": "52|Nexeon|2|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "company": "Nexeon",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-050",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 49,
-      "identity": "54|HyproMag|2|https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
-      "company": "HyproMag",
-      "relevance_exempt": false
+      "identity": "16|Amkor Technology|2|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
+      "company": "Amkor Technology",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-051",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 50,
-      "identity": "49|Maxon|2|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
-      "company": "Maxon",
-      "relevance_exempt": false
+      "identity": "27|Prodrive|2|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-inaugurates-4mw-green-hydrogen-rectifier-test-facility/",
+      "company": "Prodrive",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-052",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 51,
-      "identity": "40|Evonik Industries|2|https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
-      "company": "Evonik Industries",
+      "identity": "54|HyproMag|2|https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
+      "company": "HyproMag",
       "relevance_exempt": false
     },
     {
@@ -474,8 +474,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 52,
-      "identity": "5|Cytiva|2|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
-      "company": "Cytiva",
+      "identity": "49|Maxon|2|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
+      "company": "Maxon",
       "relevance_exempt": false
     },
     {
@@ -483,35 +483,35 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 53,
-      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "40|Evonik Industries|2|https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
+      "company": "Evonik Industries",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-055",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 54,
-      "identity": "16|Amkor Technology|3|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "5|Cytiva|2|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "company": "Cytiva",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-056",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 55,
-      "identity": "5|Cytiva|3|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
-      "company": "Cytiva",
-      "relevance_exempt": false
+      "identity": "16|Amkor Technology|2|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-057",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 56,
-      "identity": "25|Applied Materials|3|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
-      "company": "Applied Materials",
+      "identity": "16|Amkor Technology|3|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
       "relevance_exempt": true
     },
     {
@@ -519,7 +519,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 57,
-      "identity": "5|Cytiva|3|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "identity": "5|Cytiva|3|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
       "company": "Cytiva",
       "relevance_exempt": false
     },
@@ -528,17 +528,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 58,
-      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
-      "company": "West Pharmaceutical",
-      "relevance_exempt": false
+      "identity": "25|Applied Materials|3|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-060",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 59,
-      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
-      "company": "West Pharmaceutical",
+      "identity": "5|Cytiva|3|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "company": "Cytiva",
       "relevance_exempt": false
     },
     {
@@ -546,7 +546,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 60,
-      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -555,8 +555,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 61,
-      "identity": "9|Albemarle|3|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
-      "company": "Albemarle",
+      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -564,8 +564,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 62,
-      "identity": "4|Charles River|3|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
-      "company": "Charles River",
+      "identity": "7|West Pharmaceutical|3|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -573,17 +573,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 63,
-      "identity": "23|3M|3|https://investors.3m.com/news-events/press-releases/detail/1938/3m-reports-second-quarter-2026-results-increases-full-year",
-      "company": "3M",
-      "relevance_exempt": true
+      "identity": "9|Albemarle|3|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+      "company": "Albemarle",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-065",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 64,
-      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
-      "company": "Umicore",
+      "identity": "4|Charles River|3|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "company": "Charles River",
       "relevance_exempt": false
     },
     {
@@ -591,16 +591,16 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 65,
-      "identity": "43|EMM(Umicore)|3|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "company": "EMM(Umicore)",
-      "relevance_exempt": false
+      "identity": "23|3M|3|https://investors.3m.com/news-events/press-releases/detail/1938/3m-reports-second-quarter-2026-results-increases-full-year",
+      "company": "3M",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-067",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 66,
-      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
       "company": "Umicore",
       "relevance_exempt": false
     },
@@ -609,8 +609,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 67,
-      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/full-year-results-2025/",
-      "company": "Umicore",
+      "identity": "43|EMM(Umicore)|3|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "EMM(Umicore)",
       "relevance_exempt": false
     },
     {
@@ -618,8 +618,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 68,
-      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
-      "company": "Charles River",
+      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "Umicore",
       "relevance_exempt": false
     },
     {
@@ -627,26 +627,26 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 69,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-takes-40-million-eib-loan-to-boost-rd-in-new-technologies-1/",
-      "company": "Prodrive",
-      "relevance_exempt": true
+      "identity": "44|Umicore|3|https://www.umicore.com/en/media/newsroom/full-year-results-2025/",
+      "company": "Umicore",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-071",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 70,
-      "identity": "25|Applied Materials|4|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
-      "company": "Applied Materials",
-      "relevance_exempt": true
+      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "company": "Charles River",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-072",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 71,
-      "identity": "25|Applied Materials|4|https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip",
-      "company": "Applied Materials",
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-takes-40-million-eib-loan-to-boost-rd-in-new-technologies-1/",
+      "company": "Prodrive",
       "relevance_exempt": true
     },
     {
@@ -654,8 +654,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 72,
-      "identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
-      "company": "Amkor Technology",
+      "identity": "25|Applied Materials|4|https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "company": "Applied Materials",
       "relevance_exempt": true
     },
     {
@@ -663,8 +663,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 73,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-appoints-mark-roeloffzen-as-new-chief-executive-officer/",
-      "company": "Prodrive",
+      "identity": "25|Applied Materials|4|https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip",
+      "company": "Applied Materials",
       "relevance_exempt": true
     },
     {
@@ -672,8 +672,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 74,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-and-fortaegis-technologies-sign-strategic-partnership-agreement/",
-      "company": "Prodrive",
+      "identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026",
+      "company": "Amkor Technology",
       "relevance_exempt": true
     },
     {
@@ -681,7 +681,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 75,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-announces-2025-financial-results/",
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-appoints-mark-roeloffzen-as-new-chief-executive-officer/",
       "company": "Prodrive",
       "relevance_exempt": true
     },
@@ -690,7 +690,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 76,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-inaugurates-4mw-green-hydrogen-rectifier-test-facility/",
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-and-fortaegis-technologies-sign-strategic-partnership-agreement/",
       "company": "Prodrive",
       "relevance_exempt": true
     },
@@ -699,7 +699,7 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 77,
-      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/change-in-executive-management-at-prodrive-technologies/",
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-announces-2025-financial-results/",
       "company": "Prodrive",
       "relevance_exempt": true
     },
@@ -708,26 +708,26 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 78,
-      "identity": "37|Merck|4|https://www.emdgroup.com/en/media-center/press-kits/q4-2025.html",
-      "company": "Merck",
-      "relevance_exempt": false
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-inaugurates-4mw-green-hydrogen-rectifier-test-facility/",
+      "company": "Prodrive",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-080",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 79,
-      "identity": "37|Merck|4|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
-      "company": "Merck",
-      "relevance_exempt": false
+      "identity": "27|Prodrive|4|https://prodrive-technologies.com/en/about-us/news/change-in-executive-management-at-prodrive-technologies/",
+      "company": "Prodrive",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-081",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 80,
-      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
-      "company": "Ouster",
+      "identity": "37|Merck|4|https://www.emdgroup.com/en/media-center/press-kits/q4-2025.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -735,8 +735,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 81,
-      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
-      "company": "Ouster",
+      "identity": "37|Merck|4|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -744,17 +744,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 82,
-      "identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "company": "Ouster",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-084",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 83,
-      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
-      "company": "West Pharmaceutical",
+      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -762,17 +762,17 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 84,
-      "identity": "23|3M|4|https://investors.3m.com/news-events/press-releases/detail/1938/3m-reports-second-quarter-2026-results-increases-full-year",
-      "company": "3M",
-      "relevance_exempt": true
+      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-086",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 85,
-      "identity": "23|3M|4|https://investors.3m.com/news-events/press-releases/detail/1937/3m-and-microsoft-announce-strategic-partnership-to-advance",
-      "company": "3M",
+      "identity": "16|Amkor Technology|4|https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-strategic-partnership-nvidia-expand",
+      "company": "Amkor Technology",
       "relevance_exempt": true
     },
     {
@@ -780,8 +780,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 86,
-      "identity": "50|Siemens-Gamesa|4|https://www.siemens-energy.com/global/en/home/press-releases/omterra-brand-announcement.html",
-      "company": "Siemens-Gamesa",
+      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -789,26 +789,26 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 87,
-      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
-      "company": "Charles River",
-      "relevance_exempt": false
+      "identity": "23|3M|4|https://investors.3m.com/news-events/press-releases/detail/1938/3m-reports-second-quarter-2026-results-increases-full-year",
+      "company": "3M",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-089",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 88,
-      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
-      "company": "West Pharmaceutical",
-      "relevance_exempt": false
+      "identity": "23|3M|4|https://investors.3m.com/news-events/press-releases/detail/1937/3m-and-microsoft-announce-strategic-partnership-to-advance",
+      "company": "3M",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-090",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 89,
-      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
-      "company": "Ouster",
+      "identity": "50|Siemens-Gamesa|4|https://www.siemens-energy.com/global/en/home/press-releases/omterra-brand-announcement.html",
+      "company": "Siemens-Gamesa",
       "relevance_exempt": false
     },
     {
@@ -816,8 +816,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 90,
-      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
-      "company": "West Pharmaceutical",
+      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-provides-ngs-services-arovella-therapeutics",
+      "company": "Charles River",
       "relevance_exempt": false
     },
     {
@@ -825,8 +825,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 91,
-      "identity": "32|Vestas|4|https://www.vestas.com/en/media/mwow-press-releases/2018",
-      "company": "Vestas",
+      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -834,8 +834,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 92,
-      "identity": "52|Nexeon|4|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
-      "company": "Nexeon",
+      "identity": "24|Ouster|4|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -843,8 +843,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 93,
-      "identity": "9|Albemarle|4|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
-      "company": "Albemarle",
+      "identity": "7|West Pharmaceutical|4|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -852,8 +852,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 94,
-      "identity": "37|Merck|4|https://www.emdgroup.com/en/news/cts-darmstadt-opening-16-07-2026.html",
-      "company": "Merck",
+      "identity": "32|Vestas|4|https://www.vestas.com/en/media/mwow-press-releases/2018",
+      "company": "Vestas",
       "relevance_exempt": false
     },
     {
@@ -861,8 +861,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 95,
-      "identity": "49|Maxon|4|https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
-      "company": "Maxon",
+      "identity": "52|Nexeon|4|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+      "company": "Nexeon",
       "relevance_exempt": false
     },
     {
@@ -870,8 +870,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 96,
-      "identity": "34|Infineon|4|https://www.infineon.com/press-release/2026/infpr202608-129",
-      "company": "Infineon",
+      "identity": "9|Albemarle|4|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+      "company": "Albemarle",
       "relevance_exempt": false
     },
     {
@@ -879,8 +879,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 97,
-      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
-      "company": "Charles River",
+      "identity": "37|Merck|4|https://www.emdgroup.com/en/news/cts-darmstadt-opening-16-07-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -888,8 +888,8 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 98,
-      "identity": "5|Cytiva|4|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
-      "company": "Cytiva",
+      "identity": "49|Maxon|4|https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
+      "company": "Maxon",
       "relevance_exempt": false
     },
     {
@@ -897,26 +897,26 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 99,
-      "identity": "61|Air Liquide|4|https://www.airliquide.com/2025-integrated-annual-report",
-      "company": "Air Liquide",
-      "relevance_exempt": true
+      "identity": "34|Infineon|4|https://www.infineon.com/press-release/2026/infpr202608-129",
+      "company": "Infineon",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-101",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 100,
-      "identity": "16|Amkor Technology|4|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
-      "company": "Amkor Technology",
-      "relevance_exempt": true
+      "identity": "4|Charles River|4|https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+      "company": "Charles River",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-102",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 101,
-      "identity": "43|EMM(Umicore)|4|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "company": "EMM(Umicore)",
+      "identity": "5|Cytiva|4|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "company": "Cytiva",
       "relevance_exempt": false
     },
     {
@@ -924,33 +924,60 @@
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 102,
-      "identity": "44|Umicore|4|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "company": "Umicore",
-      "relevance_exempt": false
+      "identity": "61|Air Liquide|4|https://www.airliquide.com/2025-integrated-annual-report",
+      "company": "Air Liquide",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-104",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 103,
-      "identity": "49|Maxon|4|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
-      "company": "Maxon",
-      "relevance_exempt": false
+      "identity": "16|Amkor Technology|4|https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
+      "company": "Amkor Technology",
+      "relevance_exempt": true
     },
     {
       "ref": "INV-105",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 104,
-      "identity": "27|Prodrive|5|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-appoints-mark-roeloffzen-as-new-chief-executive-officer/",
-      "company": "Prodrive",
-      "relevance_exempt": true
+      "identity": "43|EMM(Umicore)|4|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "EMM(Umicore)",
+      "relevance_exempt": false
     },
     {
       "ref": "INV-106",
       "kind": "investment",
       "source": "outputs/latest_investment_signals.json",
       "index": 105,
+      "identity": "44|Umicore|4|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "Umicore",
+      "relevance_exempt": false
+    },
+    {
+      "ref": "INV-107",
+      "kind": "investment",
+      "source": "outputs/latest_investment_signals.json",
+      "index": 106,
+      "identity": "49|Maxon|4|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
+      "company": "Maxon",
+      "relevance_exempt": false
+    },
+    {
+      "ref": "INV-108",
+      "kind": "investment",
+      "source": "outputs/latest_investment_signals.json",
+      "index": 107,
+      "identity": "27|Prodrive|5|https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-appoints-mark-roeloffzen-as-new-chief-executive-officer/",
+      "company": "Prodrive",
+      "relevance_exempt": true
+    },
+    {
+      "ref": "INV-109",
+      "kind": "investment",
+      "source": "outputs/latest_investment_signals.json",
+      "index": 108,
       "identity": "5|Cytiva|5|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
       "company": "Cytiva",
       "relevance_exempt": false
@@ -1032,8 +1059,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 8,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-participate-upcoming-investor-conferences-12",
-      "company": "West Pharmaceutical",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -1041,8 +1068,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 9,
-      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
-      "company": "Ouster",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-participate-upcoming-investor-conferences-12",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -1050,8 +1077,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 10,
-      "identity": "50|Siemens-Gamesa|relevant|https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-is-starting-preparations-for-business-area-transf.html",
-      "company": "Siemens-Gamesa",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -1059,8 +1086,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 11,
-      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
-      "company": "Ouster",
+      "identity": "50|Siemens-Gamesa|relevant|https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-is-starting-preparations-for-business-area-transf.html",
+      "company": "Siemens-Gamesa",
       "relevance_exempt": false
     },
     {
@@ -1068,7 +1095,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 12,
-      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
       "company": "Ouster",
       "relevance_exempt": false
     },
@@ -1077,7 +1104,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 13,
-      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
       "company": "Ouster",
       "relevance_exempt": false
     },
@@ -1086,8 +1113,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 14,
-      "identity": "40|Evonik Industries|relevant|https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
-      "company": "Evonik Industries",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -1095,8 +1122,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 15,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
-      "company": "West Pharmaceutical",
+      "identity": "40|Evonik Industries|relevant|https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
+      "company": "Evonik Industries",
       "relevance_exempt": false
     },
     {
@@ -1104,7 +1131,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 16,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-declares-quarterly-dividend-0",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-reports-second-quarter-2026-results",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -1113,8 +1140,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 17,
-      "identity": "50|Siemens-Gamesa|relevant|https://www.siemens-energy.com/global/en/home/press-releases/omterra-brand-announcement.html",
-      "company": "Siemens-Gamesa",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-declares-quarterly-dividend-0",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -1122,8 +1149,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 18,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-host-second-quarter-2026-conference-call",
-      "company": "West Pharmaceutical",
+      "identity": "50|Siemens-Gamesa|relevant|https://www.siemens-energy.com/global/en/home/press-releases/omterra-brand-announcement.html",
+      "company": "Siemens-Gamesa",
       "relevance_exempt": false
     },
     {
@@ -1131,7 +1158,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 19,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-completes-sale-and-transfer-manufacturing-and-supply-rights",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-host-second-quarter-2026-conference-call",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -1140,7 +1167,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 20,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-appoints-michel-lagarde-be-president-and-chief-executive",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-completes-sale-and-transfer-manufacturing-and-supply-rights",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -1149,7 +1176,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 21,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-appoints-michel-lagarde-be-president-and-chief-executive",
       "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
@@ -1158,8 +1185,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 22,
-      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
-      "company": "Ouster",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-reports-first-quarter-2026-results",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -1167,8 +1194,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 23,
-      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
-      "company": "West Pharmaceutical",
+      "identity": "24|Ouster|relevant|https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "company": "Ouster",
       "relevance_exempt": false
     },
     {
@@ -1176,8 +1203,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 24,
-      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/media-center/press-kits/q4-2025.html",
-      "company": "Merck",
+      "identity": "7|West Pharmaceutical|relevant|https://investor.westpharma.com/news-releases/news-release-details/west-announces-second-quarter-2025-results-and-fourth-quarter",
+      "company": "West Pharmaceutical",
       "relevance_exempt": false
     },
     {
@@ -1185,8 +1212,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 25,
-      "identity": "60|Safran|relevant|https://www.safran-group.com/download/media/431019",
-      "company": "Safran",
+      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/media-center/press-kits/q4-2025.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -1194,8 +1221,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 26,
-      "identity": "34|Infineon|relevant|https://www.infineon.com/press-release/2026/infpr202608-129",
-      "company": "Infineon",
+      "identity": "60|Safran|relevant|https://www.safran-group.com/download/media/431019",
+      "company": "Safran",
       "relevance_exempt": false
     },
     {
@@ -1203,7 +1230,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 27,
-      "identity": "34|Infineon|relevant|https://www.infineon.com/technology-news/2026/inftn202608-132",
+      "identity": "34|Infineon|relevant|https://www.infineon.com/press-release/2026/infpr202608-129",
       "company": "Infineon",
       "relevance_exempt": false
     },
@@ -1212,7 +1239,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 28,
-      "identity": "34|Infineon|relevant|https://www.infineon.com/press-release/2026/infpr202608-133",
+      "identity": "34|Infineon|relevant|https://www.infineon.com/technology-news/2026/inftn202608-132",
       "company": "Infineon",
       "relevance_exempt": false
     },
@@ -1221,8 +1248,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 29,
-      "identity": "22|Boeing|relevant|https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
-      "company": "Boeing",
+      "identity": "34|Infineon|relevant|https://www.infineon.com/press-release/2026/infpr202608-133",
+      "company": "Infineon",
       "relevance_exempt": false
     },
     {
@@ -1230,8 +1257,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 30,
-      "identity": "30|NXP|relevant|https://media.nxp.com/news-releases/news-release-details/nxp-trimension-ultra-wideband-powers-bmw-groups-digital-key-plus",
-      "company": "NXP",
+      "identity": "22|Boeing|relevant|https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+      "company": "Boeing",
       "relevance_exempt": false
     },
     {
@@ -1239,8 +1266,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 31,
-      "identity": "5|Cytiva|relevant|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
-      "company": "Cytiva",
+      "identity": "30|NXP|relevant|https://media.nxp.com/news-releases/news-release-details/nxp-trimension-ultra-wideband-powers-bmw-groups-digital-key-plus",
+      "company": "NXP",
       "relevance_exempt": false
     },
     {
@@ -1248,8 +1275,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 32,
-      "identity": "54|HyproMag|relevant|https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
-      "company": "HyproMag",
+      "identity": "5|Cytiva|relevant|https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "company": "Cytiva",
       "relevance_exempt": false
     },
     {
@@ -1257,8 +1284,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 33,
-      "identity": "52|Nexeon|relevant|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
-      "company": "Nexeon",
+      "identity": "54|HyproMag|relevant|https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
+      "company": "HyproMag",
       "relevance_exempt": false
     },
     {
@@ -1266,8 +1293,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 34,
-      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/full-year-results-2025/",
-      "company": "Umicore",
+      "identity": "52|Nexeon|relevant|https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+      "company": "Nexeon",
       "relevance_exempt": false
     },
     {
@@ -1275,8 +1302,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 35,
-      "identity": "9|Albemarle|relevant|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
-      "company": "Albemarle",
+      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/full-year-results-2025/",
+      "company": "Umicore",
       "relevance_exempt": false
     },
     {
@@ -1284,8 +1311,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 36,
-      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "company": "Umicore",
+      "identity": "9|Albemarle|relevant|https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+      "company": "Albemarle",
       "relevance_exempt": false
     },
     {
@@ -1293,8 +1320,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 37,
-      "identity": "32|Vestas|relevant|https://www.vestas.com/en/investor/announcements/wind-turbines-orders",
-      "company": "Vestas",
+      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "Umicore",
       "relevance_exempt": false
     },
     {
@@ -1302,8 +1329,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 38,
-      "identity": "52|Nexeon|relevant|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
-      "company": "Nexeon",
+      "identity": "32|Vestas|relevant|https://www.vestas.com/en/investor/announcements/wind-turbines-orders",
+      "company": "Vestas",
       "relevance_exempt": false
     },
     {
@@ -1311,8 +1338,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 39,
-      "identity": "54|HyproMag|relevant|https://mkango.ca/news/tr-1-standard-form-for-notification-of-major-holdings-2026-08-03/",
-      "company": "HyproMag",
+      "identity": "52|Nexeon|relevant|https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "company": "Nexeon",
       "relevance_exempt": false
     },
     {
@@ -1320,8 +1347,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 40,
-      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
-      "company": "Umicore",
+      "identity": "54|HyproMag|relevant|https://mkango.ca/news/tr-1-standard-form-for-notification-of-major-holdings-2026-08-03/",
+      "company": "HyproMag",
       "relevance_exempt": false
     },
     {
@@ -1329,8 +1356,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 41,
-      "identity": "5|Cytiva|relevant|https://www.danaher.com/top-six-takeaways-2026-danaher-summit-bioprocessing",
-      "company": "Cytiva",
+      "identity": "44|Umicore|relevant|https://www.umicore.com/en/media/newsroom/half-year-results-2026/",
+      "company": "Umicore",
       "relevance_exempt": false
     },
     {
@@ -1338,8 +1365,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 42,
-      "identity": "43|EMM(Umicore)|relevant|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
-      "company": "EMM(Umicore)",
+      "identity": "5|Cytiva|relevant|https://www.danaher.com/top-six-takeaways-2026-danaher-summit-bioprocessing",
+      "company": "Cytiva",
       "relevance_exempt": false
     },
     {
@@ -1347,8 +1374,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 43,
-      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
-      "company": "Maxon",
+      "identity": "43|EMM(Umicore)|relevant|https://www.umicore.com/en/media/newsroom/strong-start-of-the-year-sets-umicore-up-for-solid-2026-performance/",
+      "company": "EMM(Umicore)",
       "relevance_exempt": false
     },
     {
@@ -1356,8 +1383,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 44,
-      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/hydro-at-a-glance/",
-      "company": "Norsk Hydro",
+      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
+      "company": "Maxon",
       "relevance_exempt": false
     },
     {
@@ -1365,8 +1392,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 45,
-      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/2",
-      "company": "EVG",
+      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/hydro-at-a-glance/",
+      "company": "Norsk Hydro",
       "relevance_exempt": false
     },
     {
@@ -1374,7 +1401,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 46,
-      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/3",
+      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/2",
       "company": "EVG",
       "relevance_exempt": false
     },
@@ -1383,8 +1410,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 47,
-      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/on-the-agenda/",
-      "company": "Norsk Hydro",
+      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/3",
+      "company": "EVG",
       "relevance_exempt": false
     },
     {
@@ -1392,8 +1419,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 48,
-      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/14",
-      "company": "EVG",
+      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/on-the-agenda/",
+      "company": "Norsk Hydro",
       "relevance_exempt": false
     },
     {
@@ -1401,8 +1428,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 49,
-      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/stories-by-hydro/",
-      "company": "Norsk Hydro",
+      "identity": "55|EVG|relevant|https://www.evgroup.com/company/news/14",
+      "company": "EVG",
       "relevance_exempt": false
     },
     {
@@ -1410,8 +1437,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 50,
-      "identity": "44|Umicore|relevant|https://www.umicore.com/en/investor-relations/capital-markets-events/capital-markets-day-2025/",
-      "company": "Umicore",
+      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/stories-by-hydro/",
+      "company": "Norsk Hydro",
       "relevance_exempt": false
     },
     {
@@ -1419,8 +1446,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 51,
-      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
-      "company": "Merck",
+      "identity": "44|Umicore|relevant|https://www.umicore.com/en/investor-relations/capital-markets-events/capital-markets-day-2025/",
+      "company": "Umicore",
       "relevance_exempt": false
     },
     {
@@ -1428,8 +1455,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 52,
-      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/news/2026/hydros-second-quarter-2026-operational-strength-delivering-solid-results/",
-      "company": "Norsk Hydro",
+      "identity": "1|Australian Strategic Metals|relevant|https://asm-au.com/energy-fuels-completes-acquisition-of-asm/",
+      "company": "Australian Strategic Metals",
       "relevance_exempt": false
     },
     {
@@ -1437,8 +1464,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 53,
-      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/news/cts-darmstadt-opening-16-07-2026.html",
-      "company": "Merck",
+      "identity": "1|Australian Strategic Metals|relevant|https://asm-au.com/asm-securityholders-approve-schemes/",
+      "company": "Australian Strategic Metals",
       "relevance_exempt": false
     },
     {
@@ -1446,8 +1473,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 54,
-      "identity": "9|Albemarle|relevant|https://www.albemarle.com/us/en/news/albemarle-publishes-2025-sustainability-report",
-      "company": "Albemarle",
+      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/news/q2-2026-06-08-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -1455,8 +1482,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 55,
-      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
-      "company": "Maxon",
+      "identity": "31|Norsk Hydro|relevant|https://www.hydro.com/en/global/media/news/2026/hydros-second-quarter-2026-operational-strength-delivering-solid-results/",
+      "company": "Norsk Hydro",
       "relevance_exempt": false
     },
     {
@@ -1464,8 +1491,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 56,
-      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
-      "company": "Maxon",
+      "identity": "37|Merck|relevant|https://www.emdgroup.com/en/news/cts-darmstadt-opening-16-07-2026.html",
+      "company": "Merck",
       "relevance_exempt": false
     },
     {
@@ -1473,8 +1500,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 57,
-      "identity": "5|Cytiva|relevant|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
-      "company": "Cytiva",
+      "identity": "9|Albemarle|relevant|https://www.albemarle.com/us/en/news/albemarle-publishes-2025-sustainability-report",
+      "company": "Albemarle",
       "relevance_exempt": false
     },
     {
@@ -1482,7 +1509,7 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 58,
-      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
+      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
       "company": "Maxon",
       "relevance_exempt": false
     },
@@ -1491,8 +1518,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 59,
-      "identity": "6|Moderna|relevant|https://www.modernatx.com/en-AU/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
-      "company": "Moderna",
+      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
+      "company": "Maxon",
       "relevance_exempt": false
     },
     {
@@ -1500,8 +1527,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 60,
-      "identity": "6|Moderna|relevant|https://www.modernatx.com/ja-JP/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
-      "company": "Moderna",
+      "identity": "5|Cytiva|relevant|https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320237260&type=HTML&symbol=DHR&cdn=c898b557e52916ddfb63d5a675223d01&companyName=Danaher+Corporation&formType=8-K&dateFiled=2026-08-03",
+      "company": "Cytiva",
       "relevance_exempt": false
     },
     {
@@ -1509,8 +1536,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 61,
-      "identity": "6|Moderna|relevant|https://www.modernatx.com/zh-HK/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
-      "company": "Moderna",
+      "identity": "49|Maxon|relevant|https://www.maxongroup.com/en/news-and-events/news/maxon-achieves-a-respectable-result-with-chf-594-7-million-revenue-despite-challenging-conditions-283946",
+      "company": "Maxon",
       "relevance_exempt": false
     },
     {
@@ -1518,8 +1545,8 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 62,
-      "identity": "1|Australian Strategic Metals|relevant|https://news.google.com/rss/articles/CBMi1gFBVV95cUxNYm16QWxxMkhXWUd5cW8xeEdjSHFOQ1NNMmxMWWFqX1RhSTdzWkNOLWpwVTBUd2czSUcyQzRwQ3ZSbWNBSW92TkoxQWJfSFV0UXVXZ3dqVGJEZE9PeVBjY3YwanNwVmpMYjA5b3N4aC03N0NJaElnVkJ5UFFNdDFDNmJDaS1RWUhXZTFTY1ZEUkwtcVRKN1M2a25qOVBJN0ZraWVlMHhMQVRRc2ZWR1JMY2JaLWwzV3prNFBuYXpYa1RpUmVCWnJsTDlKWHhOOWJYcmU3OTNB?oc=5",
-      "company": "Australian Strategic Metals",
+      "identity": "6|Moderna|relevant|https://www.modernatx.com/en-AU/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
+      "company": "Moderna",
       "relevance_exempt": false
     },
     {
@@ -1527,8 +1554,17 @@
       "kind": "relevant",
       "source": "outputs/latest_relevant_signals.json",
       "index": 63,
-      "identity": "1|Australian Strategic Metals|relevant|https://news.google.com/rss/articles/CBMi1AFBVV95cUxPY25Dc0Rmak9VaDlzNk9QblJhSnB3UGNadFVEZ0Y3dVJCWHg1N3d0TEtsWEtYbW4wX1luTG5UajQ5ek9TS3NadUd4bGxIZk5MQWhNSUdSRzg2WExaejQ2MkFoTUI5S3M4WEVNcVRiR1FPb2RZZ0M0bTc3Njg1LU04MVZoVE00Q2JuR0VhcmxDeER6ZHZqbmhHOTh4bFUxN1dlbHdHX3Q1NENiVi1xenpRYnFEcUMweXpnQl9sZ3pxV05fQ1JybmZpYTNicG1fX2w0M21WWdIB2gFBVV95cUxNWGctcjd5TWpiSWlVdGU0WTh4OTNYenRTQmdpZTljdDdyeFkzZF80TGlBNFRWVFRDVno0NkJycndKNHRMS1dSeWFjMXdBNWJZM2J6SGU2RkRaZlFEck1jVTZ2dVRqMzZyM0dhZ3pZSEZNbUZrbW5mU1lnSlFCYzNPMG5BcF9CZFBTbFRQRHdENmtxQnJKNnNKMDRVRFVNZFlKcFpkMXdIMkc5LV81NVF3bzAwVFJ1Z1dJeU9WblNJQkwyeVd1bXhTSnJnM1JCcWUzYmxUT3RjQUZ6dw?oc=5",
-      "company": "Australian Strategic Metals",
+      "identity": "6|Moderna|relevant|https://www.modernatx.com/ja-JP/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
+      "company": "Moderna",
+      "relevance_exempt": false
+    },
+    {
+      "ref": "REL-065",
+      "kind": "relevant",
+      "source": "outputs/latest_relevant_signals.json",
+      "index": 64,
+      "identity": "6|Moderna|relevant|https://www.modernatx.com/zh-HK/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
+      "company": "Moderna",
       "relevance_exempt": false
     }
   ]

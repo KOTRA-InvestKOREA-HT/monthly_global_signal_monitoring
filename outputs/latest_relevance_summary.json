@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-09-04T04:41:45Z",
-  "input_signal_count": 433,
+  "run_started_at": "2026-09-04T04:57:45Z",
+  "input_signal_count": 430,
   "technology_company_count": 77,
   "analyzed_company_count": 68,
   "excluded_company_count": 9,
@@ -16,7 +16,7 @@
     "Toray"
   ],
   "threshold": 1,
-  "relevant_signal_count": 64,
+  "relevant_signal_count": 65,
   "companies_with_relevant_signals": 23,
   "companies_without_relevant_signals": [
     "Cognex",
@@ -94,7 +94,7 @@
     "Eli Lilly and Company": 0,
     "GE Healthcare": 0,
     "Boeing": 1,
-    "Ouster": 5,
+    "Ouster": 6,
     "Magnix": 0,
     "ASML": 0,
     "Besi": 0,
@@ -149,7 +149,7 @@
     "euv_blank_mask": 0,
     "fine_metal_mask": 0,
     "robot_reducer": 4,
-    "robot_lidar": 5,
+    "robot_lidar": 6,
     "autonomous_imu_rf_baseband": 0,
     "autonomous_camera_isp": 0,
     "virus_validation_mcb_wcb": 3,
