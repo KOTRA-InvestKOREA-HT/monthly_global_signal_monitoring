@@ -1,0 +1,86 @@
+name: build-report-from-brief
+
+# 두 단계 중 뒤쪽. 채팅에서 받은 판정을 저장소에 올린 뒤 이 워크플로를 실행하면
+# 병합 -> 게시 검증 -> 한글·영문 PDF까지 만든다.
+#
+# 병합은 fail-closed다. 판정이 하나라도 빠지거나 형식이 어긋나면 여기서 멈추고
+# 보고서 입력과 PDF는 바뀌지 않는다.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: manual-report-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-python.txt
+      - name: Merge the pasted evaluation
+        id: merge
+        run: node scripts/merge_summary_batches.mjs
+      - name: Validate report inputs (fail closed)
+        run: node scripts/validate_report_inputs.mjs
+      - run: >
+          python scripts/build_pdf_report.py
+          --signals outputs/latest_company_signals.json
+          --summary outputs/latest_collection_summary.json
+          --relevant outputs/latest_relevant_signals.json
+          --relevance-summary outputs/latest_relevance_summary.json
+          --investment-signals outputs/latest_investment_signals.json
+          --investment-summary outputs/latest_investment_signal_summary.json
+          --indicator-config config/investment_signal_indicators.json
+          --font assets/fonts/NOTOSANSKR-VF.TTF
+          --lang ko
+          --out public/reports/latest_report.pdf
+      - name: Build English report
+        run: >
+          python scripts/build_pdf_report.py
+          --signals outputs/latest_company_signals.json
+          --summary outputs/latest_collection_summary.json
+          --relevant outputs/latest_relevant_signals.json
+          --relevance-summary outputs/latest_relevance_summary.json
+          --investment-signals outputs/latest_investment_signals.json
+          --investment-summary outputs/latest_investment_signal_summary.json
+          --indicator-config config/investment_signal_indicators.json
+          --font assets/fonts/NOTOSANSKR-VF.TTF
+          --lang en
+          --out public/reports/latest_report_en.pdf
+      - name: Sync latest main before committing
+        run: git pull --rebase --autostash origin ${{ github.ref_name }}
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Build report from the manual evaluation"
+          file_pattern: >-
+            outputs/latest_*.json
+            outputs/latest_*.csv
+            public/reports/latest_report.pdf
+            public/reports/latest_report_en.pdf
+      # 실패했을 때 무엇이 잘못됐는지 팀원이 볼 수 있도록 실행 요약에 남긴다.
+      - name: Explain the failure
+        if: failure()
+        run: |
+          {
+            echo "## 보고서를 만들지 못했습니다"
+            echo ""
+            echo "붙여넣은 판정에 문제가 있어 중단했습니다. 기존 보고서는 그대로입니다."
+            echo ""
+            echo "흔한 원인:"
+            echo "- 답변이 중간에 끊겼다 → 채팅에 \"계속\"이라고 한 뒤 이어진 내용까지 다시 붙여넣으세요."
+            echo "- 일부 항목이 빠졌다 → 위 로그의 \"응답이 없는 행\" 목록을 채팅에 알려주고 그 항목만 받으세요."
+            echo ""
+            echo "자료를 새로 수집했다면 브리프도 다시 만들어야 합니다."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -22,6 +22,8 @@ const DEFAULTS = {
   relevantSignals: "outputs/latest_relevant_signals.json",
   collectionSummary: "outputs/latest_collection_summary.json",
   outDir: "outputs/manual_summary",
+  // 팀원이 웹에서 바로 받도록 Vercel이 서비스하는 자리에도 같은 파일을 둔다.
+  publicCopy: "public/brief/report_brief.md",
   maxArticleChars: 900,
   minSentenceChars: 40,
 };
@@ -258,6 +260,10 @@ async function main() {
   const briefPath = path.join(args.outDir, "report_brief.md");
   const text = `${lines.join("\n")}\n`;
   await fs.writeFile(briefPath, text, "utf8");
+  if (args.publicCopy) {
+    await fs.mkdir(path.dirname(args.publicCopy), { recursive: true });
+    await fs.writeFile(args.publicCopy, text, "utf8");
+  }
   await fs.writeFile(path.join(args.outDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
   const summary = {

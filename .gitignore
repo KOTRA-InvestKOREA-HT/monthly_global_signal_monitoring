@@ -10,4 +10,5 @@ outputs/pdf_verify/
 outputs/*_20*.json
 outputs/*_20*.csv
 scripts/__pycache__/
-outputs/manual_summary/
+outputs/manual_summary/report_brief.md
+package-lock.json

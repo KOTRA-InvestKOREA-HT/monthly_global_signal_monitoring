@@ -1,0 +1,112 @@
+name: prepare-report-brief
+
+# API 키 없이 보고서를 만드는 두 단계 중 앞쪽.
+# 수집·필터·분류까지 돌린 뒤 채팅에 넣을 브리프 파일 하나를 만들어 커밋한다.
+# 뒤쪽은 build-report-from-brief.yml이다.
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Collection start date (YYYY-MM-DD); leave empty for previous calendar month"
+        required: false
+        default: ""
+      to_date:
+        description: "Collection end date (YYYY-MM-DD); leave empty for previous calendar month"
+        required: false
+        default: ""
+      max_article_chars:
+        description: "Characters of article text per entry (higher is more evidence, larger file)"
+        required: false
+        default: "900"
+
+concurrency:
+  group: manual-report-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - name: Resolve reporting period
+        id: report_period
+        shell: bash
+        env:
+          INPUT_FROM_DATE: ${{ inputs.from_date }}
+          INPUT_TO_DATE: ${{ inputs.to_date }}
+          TZ: Asia/Seoul
+        run: |
+          if [[ -n "$INPUT_FROM_DATE" || -n "$INPUT_TO_DATE" ]]; then
+            if [[ -z "$INPUT_FROM_DATE" || -z "$INPUT_TO_DATE" ]]; then
+              echo "from_date and to_date must be supplied together" >&2
+              exit 1
+            fi
+            from_date="$INPUT_FROM_DATE"
+            to_date="$INPUT_TO_DATE"
+          else
+            current_month_start="$(date +%Y-%m-01)"
+            from_date="$(date -d "$current_month_start -1 month" +%F)"
+            to_date="$(date -d "$current_month_start -1 day" +%F)"
+          fi
+          if [[ "$(date -d "$from_date" +%F 2>/dev/null)" != "$from_date" ]] ||
+             [[ "$(date -d "$to_date" +%F 2>/dev/null)" != "$to_date" ]] ||
+             [[ "$from_date" > "$to_date" ]]; then
+            echo "invalid reporting period: $from_date .. $to_date" >&2
+            exit 1
+          fi
+          echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
+          echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
+      - run: >
+          node scripts/collect_company_signals.mjs
+          --companies data/target_companies.json
+          --source-config config/company_sources.json
+          --out-dir outputs
+          --sources official_feeds,official_pages,google_news
+          --days 45
+          --from-date ${{ steps.report_period.outputs.from_date }}
+          --to-date ${{ steps.report_period.outputs.to_date }}
+          --max-per-source 6
+          --max-per-company 10
+          --max-detail-per-company 10
+          --fallback-mode missing
+          --fallback-min-results 1
+          --rate-limit-seconds 0.5
+          --company-concurrency 4
+      - run: >
+          node scripts/filter_relevant_signals.mjs
+          --signals outputs/latest_company_signals.json
+          --technology-map data/company_technology_map.json
+          --keyword-config config/technology_keywords.json
+          --out-dir outputs
+          --threshold 1
+      - run: >
+          node scripts/classify_investment_signals.mjs
+          --signals outputs/latest_company_signals.json
+          --technology-classification outputs/latest_signal_relevance_classification.json
+          --indicator-config config/investment_signal_indicators.json
+          --out-dir outputs
+          --threshold 4
+          --require-technology-relevance true
+      # 이전 회차의 답변이 남아 있으면 새 브리프와 섞여 잘못 병합되므로 먼저 비운다.
+      - name: Clear replies from the previous round
+        run: rm -f outputs/manual_summary/responses/*.json
+      - run: node scripts/build_report_brief.mjs --max-article-chars ${{ inputs.max_article_chars || '900' }}
+      - name: Sync latest main before committing
+        run: git pull --rebase --autostash origin ${{ github.ref_name }}
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Prepare report brief for manual evaluation"
+          file_pattern: >-
+            public/brief/report_brief.md
+            outputs/manual_summary/manifest.json
+            outputs/manual_summary/responses
+            outputs/latest_*.json
+            outputs/latest_*.csv
