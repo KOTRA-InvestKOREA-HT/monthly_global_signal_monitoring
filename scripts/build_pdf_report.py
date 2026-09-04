@@ -31,6 +31,8 @@ WHITE = colors.white
 DEFAULT_ISSUE_NUMBER = "2"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TARGET_EMOJI_PATH = PROJECT_ROOT / "assets" / "images" / "emoji_target_1f3af.png"
+KOTRA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "kotra_logo_white.png"
+INVEST_KOREA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "invest_korea_logo_white.png"
 FONT_WEIGHTS = {
     "demilight": 350,
     "medium": 500,
@@ -1001,6 +1003,18 @@ class SlideReport:
         self.canvas.save()
 
 
+# 로고 PNG를 지정한 높이로 원본 비율대로 그리고 실제 폭을 돌려준다.
+# 파일이 없으면 0을 돌려주므로 호출부가 기존 텍스트 표기로 되돌아갈 수 있다.
+def draw_logo(c, path, x, y, height, align="left"):
+    if not path.exists():
+        return 0
+    image = ImageReader(str(path))
+    native_width, native_height = image.getSize()
+    width = native_width * height / native_height
+    c.drawImage(image, x - width if align == "right" else x, y, width=width, height=height, mask="auto")
+    return width
+
+
 def draw_cover(report, summary, indicators):
     report.new_page()
     c = report.canvas
@@ -1059,10 +1073,12 @@ def draw_cover(report, summary, indicators):
     c.setStrokeColor(colors.HexColor("#D6DEE9"))
     c.setLineWidth(0.7)
     c.line(43, 62, PAGE_W - 43, 62)
-    report.text(43, 42, "kotra", 20, WHITE, weight="semibold")
-    report.text(43, 29, "Korea Trade-Investment", 6.5, colors.HexColor("#C8D2DF"))
-    report.text(43, 20, "Promotion Agency", 6.5, colors.HexColor("#C8D2DF"))
-    report.text(PAGE_W - 43, 31, "Invest KOREA", 11, WHITE, align="right", weight="semibold")
+    if not draw_logo(c, KOTRA_LOGO_PATH, 43, 20, 34):
+        report.text(43, 42, "kotra", 20, WHITE, weight="semibold")
+        report.text(43, 29, "Korea Trade-Investment", 6.5, colors.HexColor("#C8D2DF"))
+        report.text(43, 20, "Promotion Agency", 6.5, colors.HexColor("#C8D2DF"))
+    if not draw_logo(c, INVEST_KOREA_LOGO_PATH, PAGE_W - 43, 21, 32, align="right"):
+        report.text(PAGE_W - 43, 31, "Invest KOREA", 11, WHITE, align="right", weight="semibold")
 
 
 def company_sort_key(row):
@@ -1120,26 +1136,40 @@ def is_press_release(row):
     return bool(PRESS_RELEASE_PATTERN.search(haystack))
 
 
+def is_relevance_exempt(row):
+    """분류 단계에서 유치필요 품목(기술) 관련성 검사를 생략한 행인지.
+
+    이런 행에 타겟 기술 근거를 요구하면 분류 단계의 면제가 발행 단계에서 되살아난다.
+    """
+    return row.get("excluded_from_relevance") is True or row.get("technology_gate_decision") == "relevance_exempt"
+
+
 def signal_supported(row):
     """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
 
     정확성 우선 원칙에 따라 판정 누락과 needs_review는 발행하지 않는다. 새 스키마의 세부 판정이
-    있으면 기업 귀속·타겟 기술·지표·선행성도 모두 참이어야 한다.
+    있으면 기업 귀속·지표·선행성도 모두 참이어야 하고, 관련성 면제 대상이 아니면 타겟 기술
+    근거도 함께 요구한다. 요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
     """
     if not row or row.get("ai_signal_supported") is not True:
         return False
     if row.get("ai_summary_quality") != "pass":
         return False
-    for field in (
+    target_technology_required = not is_relevance_exempt(row)
+    required_fields = [
         "ai_entity_supported",
-        "ai_target_technology_supported",
         "ai_indicator_supported",
         "ai_leading_indicator_supported",
-    ):
+    ]
+    if target_technology_required:
+        required_fields.append("ai_target_technology_supported")
+    for field in required_fields:
         if row.get(field) is not True:
             return False
     if row.get("ai_event_stage") in {"committed", "completed", "unclear"}:
         return False
+    if not target_technology_required:
+        return True
     reason = clean_text(row.get("ai_summary_reason")).lower()
     denial_patterns = (
         r"직접적? (?:연관성|연계).*(?:확인되지|없음)",

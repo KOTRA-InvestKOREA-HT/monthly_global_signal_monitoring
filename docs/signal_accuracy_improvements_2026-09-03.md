@@ -386,3 +386,189 @@ python -m py_compile scripts/build_pdf_report.py     통과
 
 분량 미달과 근거 부족을 별도 필드로 분리할지, 아니면 현행 fail-closed를 유지할지는 정책 결정이
 필요하므로 이번 변경에서는 손대지 않았다.
+
+## 11. 2026-09-04 첫 정상 실행과 승인 수율 개선
+
+### 11.1 첫 정상 실행 결과
+
+10절의 수정을 반영한 뒤 처음으로 파이프라인이 끝까지 통과했다.
+
+- Workflow run: `33823980180`
+- 대상 커밋: `0f766454`
+- 보고 기간: 2026-08-01~2026-08-31
+- 결론: `success`
+
+| 단계 | 결과 | 소요시간 |
+|---|---:|---:|
+| 회사 자료 수집 | 성공 | 149초 |
+| AI 근거 평가 | 성공 | 708초 |
+| 게시 입력 검증 | **성공** | 1초 미만 |
+| 한글·영문 PDF·커밋 | 성공 | 5초 |
+| 캐시 보존(실패 시) | 건너뜀 | - |
+
+투자 109행·사업동향 65행 전수에서 `supported=true`이면서 `quality!=pass`인 행은 0건이다.
+10.1의 수정이 의도대로 동작했다. 캐시 174건이 저장·커밋됐고, 성공한 실행이므로 10.4의 보존
+단계는 건너뛰어 커밋이 중복되지 않았다.
+
+### 11.2 확인된 문제: 투자 시그널 승인 1건
+
+정상 통과했지만 투자 시그널 승인은 109행 중 1건(Nexeon, S2)이다. 매트릭스에 표시되는 기업은
+1개사, 칸은 1개다. 사업동향은 23행·11개사가 승인됐다.
+
+기술 관련성을 통과한 70행의 누적 탈락 지점은 다음과 같다.
+
+```text
+entity           59
++ target_tech    21
++ indicator      10
++ leading         4
++ quality=pass    3
++ stage(선행)     1
+```
+
+원인을 세 가지로 분리했다.
+
+### 11.3 event_stage 스키마와 프롬프트 불일치
+
+프롬프트는 투자 행에 `exploratory`, `planned`, `committed`, `completed`, `unclear` 중 하나를
+쓰라고 지시하지만, JSON 스키마의 enum에는 사업동향용 `not_applicable`도 함께 열려 있었다.
+모델은 투자 행 109건 중 22건에 `not_applicable`을 반환했고, 이 값은 선행 단계가 아니므로 전부
+자동 탈락했다. 단계 판정 자체를 건너뛴 것이다.
+
+`scripts/summarize_signal_evidence.mjs`의 enum을 종류별로 나눴다.
+
+| 종류 | 허용 값 |
+|---|---|
+| 투자 시그널 | `exploratory`, `planned`, `committed`, `completed`, `unclear` |
+| 사업동향 | `not_applicable` |
+
+### 11.4 관련성 면제와 AI 판정의 정책 모순
+
+투자 후보 109행 중 39행은 `technology_gate_decision=relevance_exempt`로 들어온다. 분류 단계가
+남긴 사유는 다음과 같다.
+
+```text
+사용자 요청에 따라 유치필요 품목(기술) 관련성 검사는 생략하고 5대 투자동향 시그널만 판단합니다.
+```
+
+그런데 AI 판정과 게시 검증은 예외 없이 `ai_target_technology_supported=true`를 요구했다. 그
+결과 이 39행의 타겟 기술 판정 통과율은 0%였고, 승인도 0건이었다. 분류 단계의 면제가 판정
+단계에서 되살아나 어떤 행도 통과할 수 없는 구조였다.
+
+| 유입 경로 | 행 수 | 타겟 기술 통과 | 승인 |
+|---|---:|---:|---:|
+| relevant | 70 | 22 (31%) | 1 |
+| relevance_exempt | 39 | 0 (0%) | 0 |
+
+해당 기업은 Applied Materials, Amkor Technology, 3M, Air Liquide, Prodrive다.
+
+면제를 판정 단계까지 일관되게 적용했다. 면제 행에서는 타겟 기술 근거를 승인 조건으로 요구하지
+않고, 사유가 타겟 기술과의 연계 부재를 말하는 것도 모순으로 보지 않는다. 기업 귀속·지표·선행성·
+품질·사건 단계 요건은 그대로 유지된다. 프롬프트에도 같은 규칙을 넣어 모델이 스스로 계산하는
+`signal_supported`의 논리곱에서 이 항목만 빼도록 했다.
+
+같은 규칙을 세 곳에 모두 반영했다.
+
+| 파일 | 반영 내용 |
+|---|---|
+| `scripts/summarize_signal_evidence.mjs` | `isRelevanceExempt()` 및 프롬프트·승인 계산 |
+| `scripts/validate_report_inputs.mjs` | 면제 행의 타겟 기술·사유 검사 제외 |
+| `scripts/build_pdf_report.py` | `is_relevance_exempt()` 및 발행 게이트 |
+
+### 11.5 서술 품질과 근거 품질 분리
+
+10.7에서 남겨둔 정책 항목을 실행 데이터로 판단해 처리했다. 이번 실행의 사업동향
+`needs_review` 26건은 10.2에서 도입한 사유 기록 덕분에 다음과 같이 나뉘었다.
+
+| 사유 | 건수 |
+|---|---:|
+| 요약문이 근거 부족을 명시 | 16 |
+| 한국어 요약 목표 분량 미달 | 10 |
+
+투자 행의 `needs_review` 30건은 전부 모델 자체 판정이며 사후 강등이 아니었다.
+
+분량 미달 10건은 근거 문제가 아니라 서술 문제다. 이 때문에 근거가 확인된 행이 요약문이 짧다는
+이유로 글로벌 사업현황 박스에서 빠지는 것은 조용한 누락이다. 따라서 `terraReason()`이 재요약
+사유를 `format`과 `evidence`로 구분해 돌려주도록 바꾸고, 다음과 같이 처리한다.
+
+- `evidence`(근거 부족 명시, 모델 품질 판정, 확신도 미달): 기존대로 `downgradeSummaryQuality()`로
+  `quality=needs_review`, `ai_signal_supported=false`
+- `format`(분량·한국어 비중·영문 과다): `ai_summary_format_status`에만 기록하고 `quality`와
+  승인값은 건드리지 않음
+
+`ai_summary_quality`가 모델의 근거 판정만 담고, 파이프라인의 서술 판정은 별도 필드로 분리됐다.
+10절에서 만든 불변식은 사후 강등 자체가 사라졌으므로 구조적으로 유지된다.
+
+### 11.6 검증 결과
+
+```text
+node --check scripts/summarize_signal_evidence.mjs   통과
+node --check scripts/validate_report_inputs.mjs      통과
+node --test                                          15/15 통과
+python -m py_compile scripts/build_pdf_report.py     통과
+node scripts/validate_report_inputs.mjs              passed, 오류 0건
+한글·영문 PDF 재생성                                 각 5페이지
+```
+
+테스트 6개를 추가했다. 서술 강등이 승인을 유지하는지, `terraReason()`이 두 성격을 구분하는지,
+면제 행이 타겟 기술 없이 승인될 수 있는지, 면제가 아닌 행은 그 여지를 받지 못하는지, 면제 행도
+기업 귀속·지표·선행성은 그대로 요구받는지를 확인한다.
+
+기존 산출물에 새 발행 게이트만 적용하면 승인은 여전히 1건이다. 면제 행은 v6 프롬프트를 쓴 모델이
+스스로 `signal_supported=false`로 계산해 두었기 때문이며, 회수는 새 프롬프트로 재평가해야
+반영된다. 재평가 시 회수 후보는 다음 3건으로, 타겟 기술 외 모든 축을 이미 충족하고 있다.
+
+```text
+Amkor Technology  S1  exploratory
+Amkor Technology  S2  exploratory
+Prodrive          S4  planned
+```
+
+사업동향은 분량 미달 10건 중 근거 두 축이 모두 참인 3건이 회수 대상이다(23건 → 26건).
+
+### 11.7 프롬프트 버전과 캐시
+
+스키마와 프롬프트가 바뀌었으므로 버전을 올렸다.
+
+| 종류 | 이전 | 현재 |
+|---|---|---|
+| 투자 시그널 | `signal-summary-koen-v6` | `signal-summary-koen-v7` |
+| 사업동향 | `business-summary-koen-v8` | `business-summary-koen-v9` |
+
+따라서 다음 실행은 캐시가 전량 무효화되어 174행을 다시 평가한다. 약 12분이 소요된다. 그 실행이
+성공하면 새 캐시가 커밋되고, 이후 동일 입력에서는 재사용된다.
+
+### 11.8 이번 변경에서 다루지 않은 것
+
+선행성 요건은 완화하지 않았다. 표지가 명시하는 보고서의 근거는 "투자 확정 전 선행 징후"이므로
+`committed`·`completed` 사건을 승인하면 보고서가 표방하는 내용 자체가 달라진다.
+
+`ai_leading_indicator_supported`와 `ai_event_stage`는 109행 중 93행에서 일치했고, 어긋난 16행도
+지표 판정 근거로 갈린 것이지 두 축의 중복 때문이 아니었다. 따라서 둘 중 하나를 제거할 근거는
+확인되지 않았다.
+
+선행성 기준을 바꾸려면 표지 문구와 지표 정의를 함께 조정해야 하므로, 이는 정책 결정 사항으로
+남긴다.
+
+## 12. 보고서 표지 로고 반영
+
+표지 하단의 발행기관 표기는 그동안 실제 로고가 아니라 텍스트였다. `kotra`와 `Invest KOREA`를
+글자로 그려 넣고 있었다.
+
+전달받은 원본(`docs/IK 로고.png`, `docs/kotra 로고.png`)에서 표지용 자산을 만들었다.
+
+| 자산 | 내용 |
+|---|---|
+| `assets/images/invest_korea_logo_white.png` | 원본의 네 변형 중 최상단(흰색 문자 + 컬러 엠블럼) |
+| `assets/images/kotra_logo_white.png` | 파란 워드마크와 회색 태그라인을 흰색으로 변환 |
+
+표지 배경이 네이비(`#122844`)이므로 두 로고 모두 흰색 계열을 쓴다. KOTRA 로고는 알파 채널을
+건드리지 않아 워드마크의 안티에일리어싱이 유지된다.
+
+`scripts/build_pdf_report.py`에 `draw_logo()`를 추가했다. 원본 비율을 유지한 채 지정한 높이로
+그리고 실제 폭을 돌려준다. 기존 `draw_target_marker()`와 같은 방식으로, 자산 파일이 없으면 0을
+돌려주어 호출부가 이전 텍스트 표기로 되돌아간다. 자산을 일시적으로 치우고 빌드해 이 경로도
+확인했다.
+
+본문 페이지 하단 푸터의 `Invest KOREA · ...` 한 줄은 배경이 밝은 회색(`#EFF4F8`)이라 흰색 로고를
+쓸 수 없고 로고보다 크레딧 문구에 가까우므로 변경하지 않았다.

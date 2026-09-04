@@ -39,6 +39,12 @@ const REQUIRED_DECISIONS = [
   "ai_leading_indicator_supported",
 ];
 
+// 분류 단계에서 유치필요 품목(기술) 관련성 검사를 생략한 행.
+// 승인 조건으로 타겟 기술 근거를 요구하면 그 면제가 무효가 되므로 여기서도 동일하게 제외한다.
+function isRelevanceExempt(row) {
+  return row?.excluded_from_relevance === true || row?.technology_gate_decision === "relevance_exempt";
+}
+
 const DENIAL_PATTERNS = [
   /직접적? (?:연관성|연계).*(?:확인되지|없음)/i,
   /직접 관련.*(?:근거.*제시되지|확인되지)/i,
@@ -60,12 +66,15 @@ export function validateRows(rows, kind) {
     if (!cleanText(row.ai_event_stage)) errors.push(`${id}: missing ai_event_stage`);
 
     if (row.ai_signal_supported === true) {
+      const targetTechnologyRequired = !isRelevanceExempt(row);
       if (row.ai_summary_quality !== "pass") errors.push(`${id}: supported row is not quality=pass`);
       if (row.ai_entity_supported !== true) errors.push(`${id}: supported row lacks entity evidence`);
-      if (row.ai_target_technology_supported !== true) errors.push(`${id}: supported row lacks target-technology evidence`);
+      if (targetTechnologyRequired && row.ai_target_technology_supported !== true) {
+        errors.push(`${id}: supported row lacks target-technology evidence`);
+      }
       if (row.ai_indicator_supported !== true) errors.push(`${id}: supported row lacks indicator evidence`);
       if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
-      if (DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
+      if (targetTechnologyRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
         errors.push(`${id}: supported row reason denies direct relevance`);
       }
       if (kind === "investment" && ["committed", "completed", "unclear"].includes(row.ai_event_stage)) {

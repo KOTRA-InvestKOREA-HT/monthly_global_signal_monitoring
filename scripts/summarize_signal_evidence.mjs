@@ -5,8 +5,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 const CACHE_VERSION = 1;
-const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v6";
-const RELEVANT_PROMPT_VERSION = "business-summary-koen-v8";
+const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v7";
+const RELEVANT_PROMPT_VERSION = "business-summary-koen-v9";
 const BUSINESS_SUMMARY_MIN_CHARS = 220;
 const BUSINESS_SUMMARY_MIN_CHARS_EN = 260;
 const KOREAN_TEXT_FIELDS = ["ai_summary_ko", "ai_summary_headline_ko", "ai_summary_detail_ko", "ai_summary_reason", "ai_summary_luna_draft"];
@@ -25,6 +25,7 @@ const SUMMARY_FIELDS = [
   "ai_leading_indicator_supported",
   "ai_event_stage",
   "ai_summary_quality",
+  "ai_summary_format_status",
   "ai_summary_confidence",
   "ai_summary_reason",
   "ai_summary_model",
@@ -91,6 +92,13 @@ function cleanText(value) {
     .replace(/\s+/g, " ")
     .replace(/<[^>]+>/g, " ")
     .trim();
+}
+
+// 유치필요 품목(기술) 관련성 검사를 사용자 요청으로 생략한 기업의 행.
+// 이런 행은 타겟 기술 연결을 승인 조건으로 요구하지 않는다. 요구하면 분류 단계의 면제가
+// AI 판정 단계에서 되살아나 어떤 행도 통과할 수 없다.
+export function isRelevanceExempt(row) {
+  return row?.excluded_from_relevance === true || row?.technology_gate_decision === "relevance_exempt";
 }
 
 function reasonDeniesDirectSupport(value) {
@@ -544,6 +552,7 @@ function shouldRetryModelOutput(error) {
 async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kind }) {
   const input = sourceMaterial(row, args.maxInputChars);
   const isBusinessSummary = kind === "relevant";
+  const relevanceExempt = isRelevanceExempt(row);
   const prompt = [
     "너는 KOTRA 투자유치 모니터링 보고서 편집자다.",
     "주어진 공식 보도자료/IR/뉴스 본문에서 유치필요 품목/기술과 관련된 사실만 골라 한국어로 요약한다.",
@@ -573,12 +582,17 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
       ? "leading_indicator_supported는 true로 둔다."
       : "leading_indicator_supported는 향후 투자결정의 선행 징후로 볼 근거가 있을 때만 true다. 확정되거나 완료된 투자·인수·자금조달 사실 자체만 근거인 후행 사건이면 false다.",
     "signal_supported는 위 개별 판정의 논리곱이어야 한다. 하나라도 false이거나 불명확하면 false로 둔다.",
+    relevanceExempt
+      ? "다만 이 기업은 유치필요 품목(기술) 관련성 검사에서 제외된 대상이다. target_technology_supported는 본문 근거대로 판단해 그대로 보고하되, 이 항목만은 signal_supported의 논리곱에서 제외한다. 판정 사유에 타겟 기술과의 연계 부재를 적더라도 그것만으로 signal_supported를 false로 두지 않는다."
+      : "",
     "signal_supported가 false여도 요약문은 본문에 있는 사실 그대로 작성한다. 요약을 비우거나 지어내지 않는다.",
     "한국어 요약과 함께 같은 내용의 영문 요약도 작성한다. 영문은 한국어를 직역한 것이 아니라, 같은 사실을 영어 보고서 문체로 자연스럽게 쓴 것이어야 한다. 두 언어의 사실관계는 반드시 일치해야 한다.",
     isBusinessSummary
       ? "summary_en은 summary_ko와 같은 내용을 담은 3~4문장, 총 300~460자 내외의 영문 단락으로 쓴다. summary_headline_en과 summary_detail_en은 빈 문자열로 둔다."
       : "summary_headline_en은 명사구 중심의 짧은 영문 표제(40~90자)로 쓰고, summary_detail_en은 영문 보고서 캡션체(70~180자)로 쓴다. 둘 다 마침표로 끝내지 않는다. summary_en은 'summary_headline_en - summary_detail_en' 형식으로 합쳐서 쓴다.",
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -616,9 +630,14 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
               target_technology_supported: { type: "boolean" },
               indicator_supported: { type: "boolean" },
               leading_indicator_supported: { type: "boolean" },
+              // 사업동향은 단계 판정 대상이 아니고, 투자 시그널에는 not_applicable이 성립하지
+              // 않는다. 두 값을 한 enum에 두면 모델이 투자 행에도 not_applicable을 골라
+              // 단계 판정 자체를 건너뛴다.
               event_stage: {
                 type: "string",
-                enum: ["exploratory", "planned", "committed", "completed", "not_applicable", "unclear"],
+                enum: isBusinessSummary
+                  ? ["not_applicable"]
+                  : ["exploratory", "planned", "committed", "completed", "unclear"],
               },
               quality: { type: "string", enum: ["pass", "needs_review"] },
               confidence: { type: "number" },
@@ -667,16 +686,20 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
   const eventStageSupported = isBusinessSummary
     ? parsed.event_stage === "not_applicable"
     : ["exploratory", "planned"].includes(parsed.event_stage);
-  const reasonSupported = !reasonDeniesDirectSupport(parsed.reason);
+  // 관련성 면제 행은 타겟 기술 연결을 요구하지 않으므로, 사유가 그 연결의 부재를 말하는 것도
+  // 모순이 아니다. 따라서 사유 기반 거부도 함께 적용하지 않는다.
+  const targetTechnologyRequired = !relevanceExempt;
+  const targetTechnologySatisfied = targetTechnologySupported || !targetTechnologyRequired;
+  const reasonSupported = !targetTechnologyRequired || !reasonDeniesDirectSupport(parsed.reason);
   const computedSignalSupported = isBusinessSummary
     ? entitySupported &&
-      targetTechnologySupported &&
+      targetTechnologySatisfied &&
       decisionQualitySupported &&
       eventStageSupported &&
       reasonSupported &&
       parsed.signal_supported === true
     : entitySupported &&
-      targetTechnologySupported &&
+      targetTechnologySatisfied &&
       indicatorSupported &&
       leadingIndicatorSupported &&
       decisionQualitySupported &&
@@ -762,24 +785,28 @@ function needsBusinessSummaryRefresh(row) {
   return false;
 }
 
-// 재요약이 필요한 이유를 그대로 돌려준다. 판정 사유에 실제 트리거를 남기기 위해서다.
-function terraReason(summary, kind) {
+// 재요약이 필요한 이유와 그 성격을 함께 돌려준다.
+// kind="format"은 요약문의 분량·문체 문제이고, kind="evidence"는 근거 자체가 약하다는 신호다.
+// 두 가지를 구분해야 분량이 짧다는 이유로 근거가 확인된 행을 보고서에서 빼지 않는다.
+export function terraReason(summary, kind) {
   const text = cleanText(summary.ai_summary_ko);
   const english = cleanText(summary.ai_summary_en);
   const koreanChars = (text.match(/[가-힣]/g) || []).length;
   const latinChars = (text.match(/[A-Za-z]/g) || []).length;
-  if (!text || text.length < 35) return "한국어 요약 분량 미달";
-  if (!english || english.length < 30) return "영문 요약 분량 미달";
+  const format = (message) => ({ kind: "format", message });
+  const evidence = (message) => ({ kind: "evidence", message });
+  if (!text || text.length < 35) return format("한국어 요약 분량 미달");
+  if (!english || english.length < 30) return format("영문 요약 분량 미달");
   if (kind === "relevant" && text.length < BUSINESS_SUMMARY_MIN_CHARS) {
-    return `한국어 요약 목표 분량 미달(${text.length}자 < ${BUSINESS_SUMMARY_MIN_CHARS}자)`;
+    return format(`한국어 요약 목표 분량 미달(${text.length}자 < ${BUSINESS_SUMMARY_MIN_CHARS}자)`);
   }
-  if (koreanChars < 15) return "한국어 문자 비중 부족";
-  if (latinChars > koreanChars * 1.8) return "한국어 요약에 원문 영문이 과다";
+  if (koreanChars < 15) return format("한국어 문자 비중 부족");
+  if (latinChars > koreanChars * 1.8) return format("한국어 요약에 원문 영문이 과다");
   if (/요약할 수 없|확인할 수 없|정보가 부족|needs_review/i.test(`${text} ${summary.ai_summary_quality}`)) {
-    return "요약문이 근거 부족을 명시";
+    return evidence("요약문이 근거 부족을 명시");
   }
-  if (summary.ai_summary_quality !== "pass") return `모델 품질 판정 ${summary.ai_summary_quality}`;
-  if (summary.ai_summary_confidence < 0.72) return `모델 확신도 미달(${summary.ai_summary_confidence})`;
+  if (summary.ai_summary_quality !== "pass") return evidence(`모델 품질 판정 ${summary.ai_summary_quality}`);
+  if (summary.ai_summary_confidence < 0.72) return evidence(`모델 확신도 미달(${summary.ai_summary_confidence})`);
   return null;
 }
 
@@ -798,6 +825,20 @@ export function downgradeSummaryQuality(summary, reason) {
   };
 }
 
+// 분량·문체 문제는 근거 판정이 아니므로 quality와 승인값을 건드리지 않고 별도 필드에만 남긴다.
+// 근거가 확인된 행을 요약문이 짧다는 이유로 보고서에서 빼면 조용한 누락이 된다.
+export function flagSummaryFormat(summary, status) {
+  return { ...summary, ai_summary_format_status: status };
+}
+
+// Terra 재요약 뒤에도 남은 문제를 성격에 따라 다르게 반영한다.
+function applyTerraShortfall(summary, shortfall, context) {
+  if (!shortfall) return { ...summary, ai_summary_format_status: "ok" };
+  const message = `${context}: ${shortfall.message}`;
+  if (shortfall.kind === "format") return flagSummaryFormat(summary, message);
+  return flagSummaryFormat(downgradeSummaryQuality(summary, `${summary.ai_summary_reason} / ${message}`), "ok");
+}
+
 async function summarizeRow(row, args, apiKey, kind) {
   const base = {
     ai_summary_created_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
@@ -805,25 +846,22 @@ async function summarizeRow(row, args, apiKey, kind) {
     ai_summary_cache_status: "new",
   };
   let luna = await callOpenAIWithRetry({ apiKey, model: args.lunaModel, row, args, tier: "luna", kind });
-  if (!needsTerra(luna, kind)) return { ...row, ...base, ...luna };
+  if (!needsTerra(luna, kind)) return { ...row, ...base, ...luna, ai_summary_format_status: "ok" };
 
   try {
     const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra", kind });
     const terraShortfall = kind === "relevant" ? terraReason(terra, kind) : null;
-    if (terraShortfall) {
-      return {
-        ...row,
-        ...base,
-        ...downgradeSummaryQuality(terra, `${terra.ai_summary_reason} / Terra 재요약 후에도 미해결: ${terraShortfall}`),
-        ai_summary_luna_draft: luna.ai_summary_ko,
-      };
-    }
-    return { ...row, ...base, ...terra, ai_summary_luna_draft: luna.ai_summary_ko };
+    return {
+      ...row,
+      ...base,
+      ...applyTerraShortfall(terra, terraShortfall, "Terra 재요약 후에도 미해결"),
+      ai_summary_luna_draft: luna.ai_summary_ko,
+    };
   } catch (error) {
     return {
       ...row,
       ...base,
-      ...downgradeSummaryQuality(luna, `${luna.ai_summary_reason} / Terra 재요약 실패: ${error.message}`),
+      ...applyTerraShortfall(luna, terraReason(luna, kind), `Terra 재요약 실패(${error.message}) 후 Luna 결과 유지`),
     };
   }
 }
