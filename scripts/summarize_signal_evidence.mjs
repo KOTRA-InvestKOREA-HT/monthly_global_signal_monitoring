@@ -2,6 +2,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 const CACHE_VERSION = 1;
 const INVESTMENT_PROMPT_VERSION = "signal-summary-koen-v6";
@@ -761,18 +762,40 @@ function needsBusinessSummaryRefresh(row) {
   return false;
 }
 
-function needsTerra(summary, kind) {
+// 재요약이 필요한 이유를 그대로 돌려준다. 판정 사유에 실제 트리거를 남기기 위해서다.
+function terraReason(summary, kind) {
   const text = cleanText(summary.ai_summary_ko);
   const english = cleanText(summary.ai_summary_en);
   const koreanChars = (text.match(/[가-힣]/g) || []).length;
   const latinChars = (text.match(/[A-Za-z]/g) || []).length;
-  if (!text || text.length < 35) return true;
-  if (!english || english.length < 30) return true;
-  if (kind === "relevant" && text.length < BUSINESS_SUMMARY_MIN_CHARS) return true;
-  if (koreanChars < 15) return true;
-  if (latinChars > koreanChars * 1.8) return true;
-  if (/요약할 수 없|확인할 수 없|정보가 부족|needs_review/i.test(`${text} ${summary.ai_summary_quality}`)) return true;
-  return summary.ai_summary_quality !== "pass" || summary.ai_summary_confidence < 0.72;
+  if (!text || text.length < 35) return "한국어 요약 분량 미달";
+  if (!english || english.length < 30) return "영문 요약 분량 미달";
+  if (kind === "relevant" && text.length < BUSINESS_SUMMARY_MIN_CHARS) {
+    return `한국어 요약 목표 분량 미달(${text.length}자 < ${BUSINESS_SUMMARY_MIN_CHARS}자)`;
+  }
+  if (koreanChars < 15) return "한국어 문자 비중 부족";
+  if (latinChars > koreanChars * 1.8) return "한국어 요약에 원문 영문이 과다";
+  if (/요약할 수 없|확인할 수 없|정보가 부족|needs_review/i.test(`${text} ${summary.ai_summary_quality}`)) {
+    return "요약문이 근거 부족을 명시";
+  }
+  if (summary.ai_summary_quality !== "pass") return `모델 품질 판정 ${summary.ai_summary_quality}`;
+  if (summary.ai_summary_confidence < 0.72) return `모델 확신도 미달(${summary.ai_summary_confidence})`;
+  return null;
+}
+
+function needsTerra(summary, kind) {
+  return terraReason(summary, kind) !== null;
+}
+
+// 판정 이후 quality를 낮출 때는 승인값도 함께 내려야 supported=true와
+// quality=needs_review가 동시에 남는 계약 위반이 생기지 않는다.
+export function downgradeSummaryQuality(summary, reason) {
+  return {
+    ...summary,
+    ai_signal_supported: false,
+    ai_summary_quality: "needs_review",
+    ai_summary_reason: reason,
+  };
 }
 
 async function summarizeRow(row, args, apiKey, kind) {
@@ -786,13 +809,12 @@ async function summarizeRow(row, args, apiKey, kind) {
 
   try {
     const terra = await callOpenAIWithRetry({ apiKey, model: args.terraModel, row, args, tier: "terra", kind });
-    if (kind === "relevant" && needsTerra(terra, kind)) {
+    const terraShortfall = kind === "relevant" ? terraReason(terra, kind) : null;
+    if (terraShortfall) {
       return {
         ...row,
         ...base,
-        ...terra,
-        ai_summary_quality: "needs_review",
-        ai_summary_reason: `${terra.ai_summary_reason} / Terra 결과도 목표 분량 미달`,
+        ...downgradeSummaryQuality(terra, `${terra.ai_summary_reason} / Terra 재요약 후에도 미해결: ${terraShortfall}`),
         ai_summary_luna_draft: luna.ai_summary_ko,
       };
     }
@@ -801,9 +823,7 @@ async function summarizeRow(row, args, apiKey, kind) {
     return {
       ...row,
       ...base,
-      ...luna,
-      ai_summary_quality: "needs_review",
-      ai_summary_reason: `${luna.ai_summary_reason} / Terra 재요약 실패: ${error.message}`,
+      ...downgradeSummaryQuality(luna, `${luna.ai_summary_reason} / Terra 재요약 실패: ${error.message}`),
     };
   }
 }
@@ -1020,7 +1040,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

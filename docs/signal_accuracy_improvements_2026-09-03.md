@@ -296,3 +296,93 @@ ai_summary_reason  = ...목표 분량 미달 또는 Terra 재요약 실패
 
 게시 전 검증기가 이 불일치를 발견했기 때문에 잘못된 PDF와 JSON은 커밋·배포되지 않았다.
 사용자 지시에 따라 이 분석에서는 원인만 기록했으며 코드는 수정하지 않았다.
+
+## 10. 2026-09-04 판정 상태 불일치 수정
+
+### 10.1 수정 내용
+
+파일: `scripts/summarize_signal_evidence.mjs`
+
+9.3에서 기록한 원인을 수정했다. quality를 사후에 낮추는 두 경로가 `ai_summary_quality`만
+바꾸고 `ai_signal_supported`는 그대로 두던 문제다.
+
+`downgradeSummaryQuality(summary, reason)`를 추가하고 두 경로가 모두 이 함수를 거치도록 했다.
+이 함수는 `ai_summary_quality=needs_review`, 새 판정 사유, `ai_signal_supported=false`를 항상 함께
+설정한다. 따라서 `supported=true`와 `quality=needs_review`가 동시에 남을 수 없다.
+
+적용한 두 경로는 다음과 같다.
+
+| 경로 | 상황 |
+|---|---|
+| Terra 재요약 성공 후 재검사 | 사업동향 요약이 재요약 후에도 기준 미달 |
+| Terra 재요약 예외 | Terra 호출 자체가 실패해 Luna 결과로 회귀 |
+
+투자 시그널 경로는 원래 `quality=pass`를 승인 조건에 포함해 계산하므로 이미 일관됐고, 이번
+변경으로 달라지지 않는다.
+
+### 10.2 판정 사유 정확성 수정
+
+같은 파일에서 `needsTerra()`를 `terraReason()`으로 분리했다. 기존에는 재요약이 필요한 이유가
+분량·한국어 비중·품질·확신도 등 여러 가지인데도 다운그레이드 사유를 항상
+`Terra 결과도 목표 분량 미달`로 기록했다.
+
+현재 저장된 산출물의 `needs_review` 28건은 전부 이 문구를 달고 있으나, 그중 한국어 요약이
+220자 기준을 넘는 행이 14건이다. 즉 실제 트리거는 분량이 아니라 모델 확신도 또는 품질 판정인데
+사유가 분량 미달로 잘못 기록돼 있었다. 이제 사유에 실제 트리거가 그대로 남는다.
+
+### 10.3 테스트 실행 가능하게 변경
+
+`scripts/summarize_signal_evidence.mjs` 하단의 `main()` 호출에 `validate_report_inputs.mjs`와 같은
+`import.meta.url === pathToFileURL(process.argv[1]).href` 가드를 씌웠다. 이전에는 import만 해도
+`main()`이 실행돼 단위 테스트를 붙일 수 없었다. CLI 동작은 바뀌지 않는다.
+
+### 10.4 실패한 실행의 AI 판정 캐시 보존
+
+파일: `.github/workflows/collect-company-signals.yml`
+
+기존에는 자동 커밋 단계가 게시 검증과 한글·영문 PDF 생성까지 모두 성공해야 실행됐다. 그런데
+커밋 대상에 `outputs/ai_summary_cache.json`이 포함돼 있어서, 검증에서 멈추면 이미 계산을 마친
+AI 판정 캐시가 함께 버려졌다. 9.1에서 기록한 14분 45초짜리 174행 평가 결과가 이렇게 사라졌고,
+같은 상태로 재실행하면 동일 비용이 그대로 반복된다.
+
+`if: failure()` 조건의 캐시 보존 단계 두 개를 잡 마지막에 추가했다. 실패한 실행에서도
+`outputs/ai_summary_cache.json`만 따로 커밋한다. 성공한 실행은 기존 단계가 캐시까지 함께
+커밋하므로 이 단계가 돌지 않고, 커밋이 중복되지 않는다.
+
+보고서 입력 JSON과 PDF는 보존 대상이 아니다. 검증을 통과하지 못한 산출물을 게시하지 않는다는
+기존 fail-closed 원칙은 그대로 유지된다.
+
+### 10.5 검증 결과
+
+로컬에 Node가 없어 이전 기록에서 실행하지 못한 검증을 이번에는 수행했다. Node v24.20.0을
+`C:\Users\926264\AppData\Local\Programs\nodejs`에 설치하고 사용자 PATH에 등록했다.
+
+```text
+node --check scripts/summarize_signal_evidence.mjs   통과
+node --check scripts/validate_report_inputs.mjs      통과
+node --test                                          9/9 통과
+python -m py_compile scripts/build_pdf_report.py     통과
+```
+
+`tests/summary_quality_downgrade.test.mjs`를 추가했다(3개). 다운그레이드가 승인값을 함께
+내리는지, 다운그레이드된 사업동향 행이 게시 검증을 통과하는지 확인한다.
+
+실제 실패 데이터로도 재현·확인했다. `outputs/latest_relevant_signals.json`에서
+`ai_signal_supported=true`이면서 `quality!=pass`인 행은 7건이며, 이 행들에
+`downgradeSummaryQuality()`를 적용하면 `supported row is not quality=pass` 오류가 7건에서 0건이 된다.
+
+### 10.6 아직 확인되지 않은 것
+
+- 저장된 산출물은 여전히 구형 v5/v7 판정이라 검증기 전체 실행은 계속 실패한다(오류 1,207건).
+  이는 6절의 조건대로 `OPENAI_API_KEY`가 있는 정상 실행에서 전량 재평가해야 해소된다.
+- 이번 변경은 판정 상태 일관성만 보장한다. 실제 AI 응답 품질은 여전히 미검증이다.
+- Next.js 프로덕션 빌드는 의존성을 설치하지 않아 이번에도 검증하지 않았다.
+
+### 10.7 후속 판단이 필요한 사항
+
+현재 계약상 `quality=needs_review`인 행은 승인될 수 없다. 그런데 저장된 산출물의
+`needs_review` 28건은 모두 근거 부족이 아니라 요약 분량·확신도 같은 서술 품질 사유다. 이
+정책을 그대로 두면 근거가 확인된 행도 요약이 짧다는 이유로 글로벌 사업현황 박스에서 빠진다.
+
+분량 미달과 근거 부족을 별도 필드로 분리할지, 아니면 현행 fail-closed를 유지할지는 정책 결정이
+필요하므로 이번 변경에서는 손대지 않았다.
