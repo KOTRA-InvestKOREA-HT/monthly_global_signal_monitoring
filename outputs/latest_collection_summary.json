@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-04T04:55:31Z",
+  "run_started_at": "2026-09-04T05:09:02Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -23,13 +23,13 @@
   "request_count": 715,
   "fetch_retries": 2,
   "retry_count": 10,
-  "result_count": 430,
+  "result_count": 431,
   "official_result_count": 388,
   "press_release_result_count": 180,
   "undated_result_count": 131,
-  "excluded_non_article_count": 10008,
+  "excluded_non_article_count": 9985,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 9792,
+    "index_or_category_page": 9769,
     "broken_url": 194,
     "no_article_title": 22
   },
@@ -114,6 +114,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Cytiva",
+      "title": "",
+      "url": "https://www.danaher.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Cytiva",
+      "title": "Investors",
+      "url": "https://investors.danaher.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Cytiva",
+      "title": "Careers",
+      "url": "https://jobs.danaher.com/global/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Cytiva",
+      "title": "News",
+      "url": "https://www.danaher.com/newsroom",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "Moderna",
       "title": "Health Care Professionals",
       "url": "https://modernapro.com/",
@@ -180,30 +204,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Cytiva",
-      "title": "",
-      "url": "https://www.danaher.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Cytiva",
-      "title": "Investors",
-      "url": "https://investors.danaher.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Cytiva",
-      "title": "Careers",
-      "url": "https://jobs.danaher.com/global/en",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Cytiva",
-      "title": "News",
-      "url": "https://www.danaher.com/newsroom",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "TIMET",
       "title": "",
       "url": "https://www.timet.com/",
@@ -264,30 +264,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "BorgWarner",
-      "title": "go back to BorgWarner home page",
-      "url": "https://www.borgwarner.com/home",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Company",
-      "url": "https://www.borgwarner.com/company",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Leadership",
-      "url": "https://www.borgwarner.com/company/leadership",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Locations",
-      "url": "https://www.borgwarner.com/company/locations",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "DOW",
       "title": "Corporate",
       "url": "https://corporate.dow.com/en-us.html",
@@ -312,6 +288,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "BorgWarner",
+      "title": "go back to BorgWarner home page",
+      "url": "https://www.borgwarner.com/home",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Company",
+      "url": "https://www.borgwarner.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Leadership",
+      "url": "https://www.borgwarner.com/company/leadership",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Locations",
+      "url": "https://www.borgwarner.com/company/locations",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "Amkor Technology",
       "title": "Amkor.com",
       "url": "https://amkor.com/",
@@ -333,6 +333,30 @@
       "company": "Amkor Technology",
       "title": "",
       "url": "https://ir.amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "",
+      "url": "https://www.onsemi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "IPS Design Tool",
+      "url": "https://ips-design-tool.onsemi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "About onsemi",
+      "url": "https://www.onsemi.com/company/about-onsemi",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Newsroom",
+      "url": "https://www.onsemi.com/company/newsroom",
       "reason": "index_or_category_page"
     },
     {
@@ -384,27 +408,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Onsemi",
-      "title": "",
-      "url": "https://www.onsemi.com/",
+      "company": "GE Healthcare",
+      "title": "GEHealthcare.com",
+      "url": "https://www.gehealthcare.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Onsemi",
-      "title": "IPS Design Tool",
-      "url": "https://ips-design-tool.onsemi.com/",
+      "company": "GE Healthcare",
+      "title": "Leadership",
+      "url": "https://www.gehealthcare.com/about/leadership",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Onsemi",
-      "title": "About onsemi",
-      "url": "https://www.onsemi.com/company/about-onsemi",
+      "company": "GE Healthcare",
+      "title": "Sustainability",
+      "url": "https://www.gehealthcare.com/about/sustainability",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Onsemi",
-      "title": "Newsroom",
-      "url": "https://www.onsemi.com/company/newsroom",
+      "company": "GE Healthcare",
+      "title": "News",
+      "url": "https://www.gehealthcare.com/about/newsroom",
       "reason": "index_or_category_page"
     },
     {
@@ -429,30 +453,6 @@
       "company": "Boeing",
       "title": "Brazil",
       "url": "https://www.boeing.com.br/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "GEHealthcare.com",
-      "url": "https://www.gehealthcare.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Leadership",
-      "url": "https://www.gehealthcare.com/about/leadership",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Sustainability",
-      "url": "https://www.gehealthcare.com/about/sustainability",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "News",
-      "url": "https://www.gehealthcare.com/about/newsroom",
       "reason": "index_or_category_page"
     },
     {
@@ -600,6 +600,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Besi",
+      "title": "&nbsp;",
+      "url": "https://www.besi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company",
+      "url": "https://www.besi.com/company/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Profile",
+      "url": "https://www.besi.com/company/company-profile/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Overview",
+      "url": "https://www.besi.com/company/company-overview/",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "NXP",
       "title": "accessibility instructions",
       "url": "https://www.nxp.com/company/about-nxp/accessibility:ACCESSIBILITY",
@@ -645,30 +669,6 @@
       "company": "Norsk Hydro",
       "title": "Argentina",
       "url": "https://www.hydro.com/ar/ar/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "&nbsp;",
-      "url": "https://www.besi.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company",
-      "url": "https://www.besi.com/company/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company Profile",
-      "url": "https://www.besi.com/company/company-profile/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company Overview",
-      "url": "https://www.besi.com/company/company-overview/",
       "reason": "index_or_category_page"
     },
     {
@@ -761,13 +761,13 @@
     "jsonld": 64,
     "listing": 92,
     "body_text": 35,
-    "feed": 69,
+    "feed": 70,
     "url": 3,
     "meta": 2,
     "none": 131,
     "text": 1
   },
-  "fallback_result_count": 42,
+  "fallback_result_count": 43,
   "companies_with_results": 71,
   "companies_with_official_results": 62,
   "companies_without_results": [
@@ -816,7 +816,7 @@
     "Schmalz": 0,
     "Bayer": 10,
     "Merck": 10,
-    "Schott Pharma": 3,
+    "Schott Pharma": 4,
     "BASF": 10,
     "Evonik Industries": 10,
     "Heraeus": 6,
@@ -1163,11 +1163,11 @@
       "error": "fetch failed"
     },
     {
-      "target_no": 24,
-      "company": "Ouster",
+      "target_no": 21,
+      "company": "GE Healthcare",
       "source": "official_pages",
-      "source_url": "https://investors.ouster.com/financial-information/sec-filings",
-      "source_name": "Ouster - SEC Filings / Regulatory Filings",
+      "source_url": "https://investor.gehealthcare.com/financial-information/sec-filings",
+      "source_name": "GE Healthcare - SEC Filings / Regulatory Filings",
       "error": "fetch failed"
     },
     {
@@ -1420,9 +1420,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260904T045531Z.json",
-    "csv": "outputs/company_signals_20260904T045531Z.csv",
-    "summary": "outputs/collection_summary_20260904T045531Z.json",
+    "json": "outputs/company_signals_20260904T050902Z.json",
+    "csv": "outputs/company_signals_20260904T050902Z.csv",
+    "summary": "outputs/collection_summary_20260904T050902Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
