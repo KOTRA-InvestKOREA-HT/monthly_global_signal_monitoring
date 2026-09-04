@@ -318,7 +318,7 @@ rtification demonstrates the strength of the systems we have put in place to ach
 판정 대상:
 - `INV-024` Applied Materials | 유치필요 기술: nm급 W2W 하이브리드 본딩 장비 | S1 공급망·지정학 리스크 대응 | **면제**
 
-cr:content_root_container_globalfooter_text-67850" class="cmp-text"> ©2026 Applied Materials, Inc. \r\n"}}" id="_content_experience-fragments_applied-materials_us_en_site_blog-subscription-block_master_jcr:content_root_container_columncontainer_container_copy_text_copy-35711" class="cmp-text"> Stay updated on our content. Subscribe Share via Facebook Share via Twitter Share via Linkedin Share via Email Tackling Key HBM and Advanced Packaging Bottlenecks for the AI Era August 18, 2026 \r\nBy Jinho An, Ph.D. and Kyla Zhao \r\n"}}" id="root_container_container_container_1955866749_columncontainer_column1_container_1630550081_2100365834_text-50306" class="cmp-text"> August 18, 2026 By Jinho An, Ph.D. and Kyla Zhao Today's advanced AI processors deliver extraordinary performance but are increasingly limited by how quickly data can move between compute and memory....
+cr:content_root_container_globalfooter_text-67850" class="cmp-text"> ©2026 Applied Materials, Inc. \r\n"}}" id="_content_experience-fragments_applied-materials_us_en_site_blog-subscription-block_master_jcr:content_root_container_columncontainer_container_copy_text_copy-35711" class="cmp-text"> Stay updated on our content. Subscribe Share via Facebook Share via Twitter Share via Linkedin Share via Email Tackling Key HBM and Advanced Packaging Bottlenecks for the AI Era August 18, 2026 \r\nBy Jinho An, Ph.D. and Kyla Zhao \r\n"}}" id="root_container_container_container_ _columncontainer_column1_container_ _ _text-50306" class="cmp-text"> August 18, 2026 By Jinho An, Ph.D. and Kyla Zhao Today's advanced AI processors deliver extraordinary performance but are increasingly limited by how quickly data can move between compute and memory....
 
 ### 25. Arizona-Korea Semiconductor Delegation
 출처: Amkor Technology - Corporate News / Newsroom / News · 게시일: 2026-08-13
@@ -743,7 +743,7 @@ ments with a base in sustainable industries. Hydro is through its businesses pre
 판정 대상:
 - `REL-047` EVG | 유치필요 기술: nm급 W2W 하이브리드 본딩 장비 | 글로벌 사업현황
 
-cas Catalyst Award Read more 02.10.2025 Innovation Engine: EV Group Wins 2025 Upper Austria Innovation Award Read more 23.09.2025 EV Group Highlights Hybrid Bonding, Lithography, and Support for U.S. Semiconductor Onshoring at SEMICON West 2025 Read more 08.09.2025 EV Group Achieves Breakthrough in Hybrid Bonding Overlay Control for Chiplet Integration Read more 02.09.2025 EV Group pport for U.S. EN English (EN) Choose your language EN English (EN) Deutsch (DE) 日本語 (JA) 中文 (ZH) Services Contact EV Group Company News Press Center 14.10.2025 EVG receives “Grand Achievement Award” for nanoimprint technology Read more 08.10.2025 SEMI Honors EV Group’s Erich Thallner with Inaugural SEMI Americas Catalyst Award Read more 02.10.2025 Innovation Engine: EV Group Wins 2025 Upper Austria Innovation Award Read more 23.09.2025 EV Group Highlights Hybrid Bonding, Lithography, and Support for U.S.
+cas Catalyst Award Read more Innovation Engine: EV Group Wins 2025 Upper Austria Innovation Award Read more EV Group Highlights Hybrid Bonding, Lithography, and Support for U.S. Semiconductor Onshoring at SEMICON West 2025 Read more EV Group Achieves Breakthrough in Hybrid Bonding Overlay Control for Chiplet Integration Read more EV Group pport for U.S. EN English (EN) Choose your language EN English (EN) Deutsch (DE) 日本語 (JA) 中文 (ZH) Services Contact EV Group Company News Press Center EVG receives “Grand Achievement Award” for nanoimprint technology Read more SEMI Honors EV Group’s Erich Thallner with Inaugural SEMI Americas Catalyst Award Read more Innovation Engine: EV Group Wins 2025 Upper Austria Innovation Award Read more EV Group Highlights Hybrid Bonding, Lithography, and Support for U.S.
 
 ### 73. Press Center
 출처: EVG - Press Center / News / Newsroom / News · 게시일: 2025-06-26
@@ -751,7 +751,7 @@ cas Catalyst Award Read more 02.10.2025 Innovation Engine: EV Group Wins 2025 Up
 판정 대상:
 - `REL-048` EVG | 유치필요 기술: nm급 W2W 하이브리드 본딩 장비 | 글로벌 사업현황
 
-ns with LITHOSCALE® XT Read more 19.05.2025 EV Group Forms Subsidiary in Singapore to Strengthen Local Customer Support Read more 14.05.2025 EV Group Hybrid Bonding, Maskless Lithography and Layer Transfer Solutions for Heterogeneous Integration to be Highlighted at ECTC 2025 Read more 30.04.2025 EV Group Appoints Dr. Thomas Uhrmann Vice President of Sales Read more 26.03.2025 EV G etnam's Semiconductor Capabilities Read more 18.03.2025 EV Group Advances 300-mm MEMS Manufacturing with Next-Generation GEMINI® Automated Production Wafer Bonding System Read more 18.02.2025 EV Group Highlights Revolutionary Temporary Wafer Bonding and Debonding Solution for HBM and 3D DRAM at SEMICON Korea Read more Previous 1 2 3 4 ...
+ns with LITHOSCALE® XT Read more EV Group Forms Subsidiary in Singapore to Strengthen Local Customer Support Read more EV Group Hybrid Bonding, Maskless Lithography and Layer Transfer Solutions for Heterogeneous Integration to be Highlighted at ECTC 2025 Read more EV Group Appoints Dr. Thomas Uhrmann Vice President of Sales Read more EV G etnam's Semiconductor Capabilities Read more EV Group Advances 300-mm MEMS Manufacturing with Next-Generation GEMINI® Automated Production Wafer Bonding System Read more EV Group Highlights Revolutionary Temporary Wafer Bonding and Debonding Solution for HBM and 3D DRAM at SEMICON Korea Read more Previous 1 2 3 4 ...
 
 ### 74. Topics on the agenda
 출처: Norsk Hydro - News Subscription / Investor News Subscription · 게시일: 2019-03-19
@@ -767,7 +767,7 @@ In order to reach net-zero by 2050, Hydro needs to phase out fossil fuel consump
 판정 대상:
 - `REL-050` EVG | 유치필요 기술: nm급 W2W 하이브리드 본딩 장비 | 글로벌 사업현황
 
-nt Lithography for Semiconductor Advanced Packaging Read more 19.01.2017 Imec and EVG demonstrate for the first time 1.8µm pitch overlay accuracy for wafer bonding Read more 26.09.2016 EV Group Extends Volume Manufacturing Expertise to Biotechnology and Medical Device Applications Read more 11.07.2016 EV Group Rolls Out Automated Metrology System for Advanced Packaging, MEMS and P As Most Innovative Company in Austria Read more 08.03.2017 EV Group Breaks Speed and Accuracy Barrier in Mask Alignment Lithography for Semiconductor Advanced Packaging Read more 19.01.2017 Imec and EVG demonstrate for the first time 1.8µm pitch overlay accuracy for wafer bonding Read more 26.09.2016 EV Group Extends Volume Manufacturing Expertise to Biotechnology and Medical Device Ap EN English (EN) Choose your language EN English (EN) Deutsch (DE) 日本語 (JA) 中文 (ZH) Services Contact EV Group Company News Press
+nt Lithography for Semiconductor Advanced Packaging Read more Imec and EVG demonstrate for the first time 1.8µm pitch overlay accuracy for wafer bonding Read more EV Group Extends Volume Manufacturing Expertise to Biotechnology and Medical Device Applications Read more EV Group Rolls Out Automated Metrology System for Advanced Packaging, MEMS and P As Most Innovative Company in Austria Read more EV Group Breaks Speed and Accuracy Barrier in Mask Alignment Lithography for Semiconductor Advanced Packaging Read more Imec and EVG demonstrate for the first time 1.8µm pitch overlay accuracy for wafer bonding Read more EV Group Extends Volume Manufacturing Expertise to Biotechnology and Medical Device Ap EN English (EN) Choose your language EN English (EN) Deutsch (DE) 日本語 (JA) 中文 (ZH) Services Contact EV Group Company News Press Center EV Group Unveils Breakthrough Low-Temperature Laser Debond
 
 ### 76. Stories by Hydro
 출처: Norsk Hydro - News Subscription / Investor News Subscription · 게시일: 미상
@@ -831,7 +831,7 @@ oderna Australia 13+ Years of progress 45 Products in pipeline 36 Ongoing clinic
 판정 대상:
 - `REL-064` Moderna | 유치필요 기술: 유전자/세포치료제 전달체 및 GMP 원료기술 | 글로벌 사업현황
 
-;min-height:100%;max-height:100%;object-fit:cover;object-position:32.84023668639053% 26.304106548279687%"/> 1 / 2 13+ 年にわたる成長 45 のパイプライン 36 の臨床試験が進行中 mRNA(メッセンジャーRNA）医薬で人々に最大の可能性を 創薬と初期開発の加速から、急速に拡大するパイプライン、そして世界クラスのチームまで、私たちはmRNA（メッセンジャーRNA）の約束を実現していきます。 モデルナのミッションについて モデルナで医薬品の世界に変革をもたらしませんか。 モデルナでの仕事を探す Homepage > So, what is mRNA" id="mrna" class="Wrapper-sc-s3066g-0 Skip to main content これはモデルナの日本のウェブサイトです あなたの地域には適用されない内容が含まれている可能性があります 国を変更する 新型コロナワクチン情報サイト 本サイトでは、モデルナの新型コロナウイ ルスワクチンを適正にご使用いただくための情報提供を行っています。 新型コロナワクチン情報サイト Homepage > Hero-slide 1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" decoding="async" style="position:absolute;top:0;left:0;bottom:0;right:0;box-sizing:border-box;padding:0;border:none;margin:auto;display:block;width:0;height:0;min-width:100%;max-width:100%;min-height:100%;max-height:100%;object-fit:cover;object-position
+(본문 없음)
 
 ### 84. Pioneering mRNA technology - Moderna
 출처: Moderna - News and Media / Newsroom / News · 게시일: 미상

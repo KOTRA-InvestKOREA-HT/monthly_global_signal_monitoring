@@ -82,6 +82,17 @@ function rowEvidence(row) {
   return cleanText([snippets.join(" "), row.content_excerpt, row.content_text].filter(Boolean).join(" "));
 }
 
+// 수집 본문에는 CSS·스크립트 조각이 섞여 들어온다. 판정에 쓸모가 없을 뿐 아니라, 거기 박힌
+// 긴 소수 좌표가 카드번호처럼 보여 기업 DLP가 붙여넣기를 차단한다. 실제로 한 기사에서
+// object-position 좌표 두 개가 그렇게 잡혔다.
+const MARKUP_NOISE = /[{;]\s*[a-z-]+\s*:\s*[^;{}]*(?:%|px|rem|em|vh|vw)\s*[;}]|object-(?:fit|position)|max-height|min-height|<\/?[a-z][^>]*>/i;
+
+// 판정 근거가 되는 숫자는 금액·비율·연도 정도이고 자릿수가 길지 않다. 9자리를 넘는 연속
+// 숫자는 스크래핑 잡음이므로 지운다.
+export function stripLongDigitRuns(text) {
+  return String(text || "").replace(/\d[\d.,]{8,}/g, (run) => (/^\d[\d.,]*$/.test(run) ? " " : run));
+}
+
 // 판정에 쓸 만한 문장만 남긴다. 짧은 조각, 상용문구, 같은 문단 반복을 버린다.
 export function usefulSentences(text, { minSentenceChars = DEFAULTS.minSentenceChars } = {}) {
   const seen = new Set();
@@ -90,10 +101,13 @@ export function usefulSentences(text, { minSentenceChars = DEFAULTS.minSentenceC
     const sentence = raw.trim();
     if (sentence.length < minSentenceChars) continue;
     if (BOILERPLATE.test(sentence)) continue;
-    const fingerprint = sentence.slice(0, 60).toLowerCase();
+    if (MARKUP_NOISE.test(sentence)) continue;
+    const cleaned = stripLongDigitRuns(sentence).replace(/\s+/g, " ").trim();
+    if (cleaned.length < minSentenceChars) continue;
+    const fingerprint = cleaned.slice(0, 60).toLowerCase();
     if (seen.has(fingerprint)) continue;
     seen.add(fingerprint);
-    kept.push(sentence);
+    kept.push(cleaned);
   }
   return kept;
 }

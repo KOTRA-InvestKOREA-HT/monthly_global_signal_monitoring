@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { groupByArticle, trimToBudget, usefulSentences } from "../scripts/build_report_brief.mjs";
+import { groupByArticle, stripLongDigitRuns, trimToBudget, usefulSentences } from "../scripts/build_report_brief.mjs";
 import { buildSummaryFields, expandEntry, parseResponseArray, validateEntry } from "../scripts/merge_summary_batches.mjs";
 
 function entry(overrides = {}) {
@@ -151,4 +151,21 @@ test("verdicts written as 0 and 1 are read as booleans, not left as numbers", ()
   const fields = buildSummaryFields(entry, { kind: "relevant", relevanceExempt: false, model: "m" });
   assert.equal(fields.ai_entity_supported, true);
   assert.equal(fields.ai_signal_supported, true);
+});
+
+test("long digit runs are stripped so DLP filters do not see card numbers", () => {
+  const css = "object-position:32.84023668639053% 26.304106548279687% and more text here to pass";
+  assert.doesNotMatch(stripLongDigitRuns(css), /\d{9,}/);
+  // 판정에 쓰이는 짧은 수치는 그대로 남아야 한다.
+  assert.match(stripLongDigitRuns("2026년 매출 9.12 billion, 25 percent 증가"), /9\.12 billion/);
+});
+
+test("markup fragments never reach the brief", () => {
+  const text = [
+    "Nexeon plans to add reactors at the Gunsan plant as demand grows.",
+    'style="min-height:100%;max-height:100%;object-fit:cover;object-position:32.8402% 26.3041%"',
+  ].join(" ");
+  const kept = usefulSentences(text);
+  assert.equal(kept.length, 1);
+  assert.doesNotMatch(kept[0], /object-position/);
 });
