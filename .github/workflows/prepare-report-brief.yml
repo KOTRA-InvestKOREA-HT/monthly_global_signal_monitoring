@@ -97,6 +97,12 @@ jobs:
           --out-dir outputs
           --threshold 4
           --require-technology-relevance true
+          --indicator-proximity shadow
+      # 지표 근접 규칙은 아직 적용하지 않고 판정만 기록한다(shadow). 한 회차만 보고 거르기
+      # 시작하면 걸러진 것이 정말 버려도 되는 것이었는지 확인할 방법이 없다. 몇 회차 모아
+      # 실제 AI 판정과 대조한 뒤 enforce로 바꾼다.
+      - name: Report what the indicator-proximity rule would drop
+        run: node scripts/report_proximity_shadow.mjs >> "$GITHUB_STEP_SUMMARY"
       # 이전 회차의 답변이 남아 있으면 새 브리프와 섞여 잘못 병합되므로 먼저 비운다.
       - name: Clear replies from the previous round
         run: rm -f outputs/manual_summary/responses/*.json

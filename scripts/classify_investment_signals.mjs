@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 const DEFAULT_ARGS = {
   signals: "outputs/latest_company_signals.json",
@@ -8,6 +9,9 @@ const DEFAULT_ARGS = {
   outDir: "outputs",
   threshold: 0,
   requireTechnologyRelevance: true,
+  // shadow가 기본값이다. 한 회차만 보고 거르기 시작하면, 걸러진 것이 정말 버려도 되는 것이었는지
+  // 확인할 방법이 사라진다. shadow는 판정만 기록하고 행은 그대로 둔다.
+  indicatorProximity: "shadow",
 };
 
 function parseArgs(argv) {
@@ -22,6 +26,12 @@ function parseArgs(argv) {
       args[normalized] = Number(value);
     } else if (normalized === "requireTechnologyRelevance") {
       args[normalized] = !["0", "false", "no"].includes(String(value).toLowerCase());
+    } else if (normalized === "indicatorProximity") {
+      const mode = String(value).toLowerCase();
+      if (!PROXIMITY_MODES.has(mode)) {
+        throw new Error(`--indicator-proximity는 ${[...PROXIMITY_MODES].join(", ")} 중 하나여야 합니다 (받은 값: ${value})`);
+      }
+      args[normalized] = mode;
     } else {
       args[normalized] = value;
     }
@@ -204,6 +214,47 @@ function isPressRelease(signal) {
   return signal.source_type === "official" && Boolean(signal.is_press_release);
 }
 
+// 지표 용어가 기사 어딘가에 있기만 하면 점수가 붙는다. 그래서 네비게이션이나 상용문구에 섞인
+// "expansion" 하나로도 시그널이 만들어지고, 그걸 요약 단계의 AI가 다시 버린다. 2026-09 회차에서
+// 투자 시그널 109건 중 107건이 거절됐고 그중 81건의 사유가 "지표 근거 없음"이었다.
+//
+// 그 판정의 상당 부분은 AI 없이도 확인된다. 지표 용어가 회사를 가리키는 문장 안에 있는지 보면
+// 된다. 같은 회차 데이터에 걸어보니 109건이 42건으로 줄고 승인된 2건은 모두 남았다.
+//
+// 다만 투자 시그널 전용이다. 사업동향에 걸면 승인 35건 중 17건을 잘못 버린다. 사업동향은
+// 지표 동시출현을 요구하지 않기 때문이다.
+const PROXIMITY_MODES = new Set(["shadow", "enforce", "off"]);
+
+function sentencesOf(text) {
+  return String(text || "")
+    .split(/(?<=[.!?。])\s+|\n+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+// 회사를 가리키는 표현은 넓게 잡는다. 좁게 잡아 놓치면 진짜 시그널이 사라지지만, 넓게 잡아
+// 남는 것은 어차피 뒤에서 판정을 받는다. 틀릴 때 남는 쪽으로 틀려야 한다.
+function companyMentions(company) {
+  const full = normalizeText(company);
+  if (!full) return [];
+  const tokens = full.split(/[^a-z0-9가-힣]+/i).filter((token) => token.length >= 3);
+  return unique([full, ...tokens]);
+}
+
+export function indicatorProximity(signal, terms) {
+  const mentions = companyMentions(signal.company);
+  if (!mentions.length || !terms?.length) return { near: false, sentence: "" };
+
+  const text = `${signal.title || ""}\n${signal.content_text || signal.content_excerpt || ""}`;
+  for (const sentence of sentencesOf(text)) {
+    const normalized = normalizeText(sentence);
+    if (!mentions.some((mention) => normalized.includes(mention))) continue;
+    if (!terms.some((term) => includesKeyword(sentence, term))) continue;
+    return { near: true, sentence: sentence.slice(0, 300) };
+  }
+  return { near: false, sentence: "" };
+}
+
 function scoreMatch(signal, terms, fields) {
   const officialBoost = signal.source_type === "official" ? 1 : 0;
   const pressBoost = isPressRelease(signal) ? 1 : 0;
@@ -242,6 +293,10 @@ function classifySignal(signal, indicators, threshold) {
       matched_fields: fields,
       evidence_snippets: extractEvidence(signal, terms),
       investment_signal_reason: `${indicator.label_ko} 관련 표현이 ${fields.join(", ") || "수집 텍스트"}에서 발견되었습니다: ${terms.slice(0, 8).join(", ")}`,
+      ...(() => {
+        const { near, sentence } = indicatorProximity(signal, terms);
+        return { indicator_near_company: near, indicator_near_company_sentence: sentence };
+      })(),
     });
   }
 
@@ -290,6 +345,7 @@ async function writeCsv(filePath, rows) {
     "matched_fields",
     "evidence_snippets",
     "investment_signal_score",
+    "indicator_near_company",
     "investment_signal_reason",
   ];
   const lines = [headers.join(",")];
@@ -346,7 +402,27 @@ async function main() {
   }));
 
   const eligibleSignals = gatedSignals.filter((signal) => signal.passed);
-  const investmentSignals = eligibleSignals.flatMap((signal) => classifySignal(signal, indicators, threshold)).sort(sortRows);
+  const scored = eligibleSignals.flatMap((signal) => classifySignal(signal, indicators, threshold)).sort(sortRows);
+  const farFromCompany = scored.filter((row) => row.indicator_near_company !== true);
+  const investmentSignals = args.indicatorProximity === "enforce" ? scored.filter((row) => row.indicator_near_company === true) : scored;
+  const proximity = {
+    mode: args.indicatorProximity,
+    evaluated: scored.length,
+    near_company: scored.length - farFromCompany.length,
+    far_from_company: farFromCompany.length,
+    // shadow에서는 무엇이 걸러졌을지 회사별로 남긴다. 한 회차만으로 규칙을 확정할 수 없으므로
+    // 몇 회차를 모아 실제 AI 판정과 대조할 수 있어야 한다.
+    would_drop:
+      args.indicatorProximity === "shadow"
+        ? farFromCompany.map((row) => ({
+            company: row.company,
+            indicator: row.investment_signal_label,
+            score: row.investment_signal_score,
+            title: row.title,
+            url: row.url,
+          }))
+        : [],
+  };
   const companiesWithInvestmentSignals = new Set(investmentSignals.map((row) => row.company));
   const gateCounts = CounterLike(gatedSignals.map((signal) => signal.technology_gate_decision));
   const countsByIndicator = Object.fromEntries(
@@ -375,6 +451,7 @@ async function main() {
     threshold,
     indicator_count: indicators.length,
     investment_signal_count: investmentSignals.length,
+    indicator_proximity: proximity,
     companies_with_investment_signals: companiesWithInvestmentSignals.size,
     counts_by_indicator: countsByIndicator,
     method: args.requireTechnologyRelevance
@@ -417,7 +494,11 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+// 직접 실행할 때만 분류를 돌린다. 이 가드가 없으면 규칙 하나를 import하는 것만으로 전체 분류가
+// 실행되어 outputs가 덮어써진다.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}
