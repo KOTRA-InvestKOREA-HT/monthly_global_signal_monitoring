@@ -71,6 +71,25 @@ test("brackets inside strings do not split the reply", () => {
   assert.deepEqual(parseResponseArray(text).map((entry) => entry.ref), ["INV-001", "REL-043"]);
 });
 
+// 빠진 판정을 배열 안에 끼워 넣으면서 쉼표를 빠뜨리는 일이 흔하다. 그 한 글자 때문에
+// 174건을 다시 받게 할 수는 없다.
+test("a verdict inserted without the separating comma is still read", () => {
+  const text = '[\n{"ref":"INV-001","q":"pass"}\n\n{"ref":"REL-043","q":"pass"}\n]';
+  assert.deepEqual(parseResponseArray(text).map((entry) => entry.ref), ["INV-001", "REL-043"]);
+});
+
+test("a verdict left outside the closing bracket is still read", () => {
+  const text = '[{"ref":"INV-001"}]\n{"ref":"REL-043"}';
+  assert.deepEqual(parseResponseArray(text).map((entry) => entry.ref), ["INV-001", "REL-043"]);
+});
+
+test("object recovery keeps nested objects whole and skips fragments without a ref", () => {
+  const text = '[{"ref":"INV-001","meta":{"src":"a"}}\n{"note":"머리말"}\n{"ref":"REL-043"}]';
+  const parsed = parseResponseArray(text);
+  assert.deepEqual(parsed.map((entry) => entry.ref), ["INV-001", "REL-043"]);
+  assert.deepEqual(parsed[0].meta, { src: "a" });
+});
+
 test("a truncated trailing array is skipped rather than failing the whole reply", () => {
   const text = '[{"ref":"INV-001"}]\n[{"ref":"REL-043","why":"잘림';
   assert.deepEqual(parseResponseArray(text), [{ ref: "INV-001" }]);

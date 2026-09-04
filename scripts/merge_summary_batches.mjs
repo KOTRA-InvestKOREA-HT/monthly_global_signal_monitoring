@@ -115,8 +115,8 @@ async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
 }
 
-// 대괄호가 짝을 이루는 최상위 구간을 앞에서부터 찾는다. 문자열 안의 괄호는 세지 않는다.
-function topLevelArrays(text) {
+// 괄호가 짝을 이루는 최상위 구간을 앞에서부터 찾는다. 문자열 안의 괄호는 세지 않는다.
+function balancedBlocks(text, open, close) {
   const found = [];
   let depth = 0;
   let start = -1;
@@ -131,13 +131,13 @@ function topLevelArrays(text) {
       continue;
     }
     if (char === '"') inString = true;
-    else if (char === "[") {
+    else if (char === open) {
       if (depth === 0) start = index;
       depth += 1;
-    } else if (char === "]" && depth > 0) {
+    } else if (char === close && depth > 0) {
       depth -= 1;
       if (depth === 0) {
-        found.push(text.slice(start, index + 1));
+        found.push({ text: text.slice(start, index + 1), start, end: index + 1 });
         start = -1;
       }
     }
@@ -167,12 +167,32 @@ export function parseResponseArray(text) {
   }
 
   const merged = [];
-  for (const block of topLevelArrays(trimmed)) {
+  const arrays = balancedBlocks(trimmed, "[", "]");
+  let rest = trimmed;
+  for (const block of arrays) {
     try {
-      const parsed = JSON.parse(block);
-      if (Array.isArray(parsed)) merged.push(...parsed);
+      const parsed = JSON.parse(block.text);
+      if (Array.isArray(parsed)) {
+        merged.push(...parsed);
+        // 읽어낸 구간은 지워 둔다. 아래 객체 줍기에서 같은 판정을 두 번 세지 않기 위해서다.
+        rest = `${rest.slice(0, block.start)}${" ".repeat(block.end - block.start)}${rest.slice(block.end)}`;
+      }
     } catch {
       // 잘린 배열은 건너뛴다. 빠진 ref는 뒤에서 누락으로 잡힌다.
+    }
+  }
+
+  // 배열에 담기지 않은 판정을 하나씩 줍는다.
+  //
+  // 빠진 판정을 이어붙이면서 쉼표를 빠뜨리거나 대괄호 밖에 두는 일이 흔하다. 쉼표 한 글자
+  // 때문에 174건을 다시 받게 할 이유는 없으므로, 짝이 맞는 최상위 객체를 각각 읽는다.
+  // 여기서 느슨하게 읽어도 판정값 검사와 누락 검사는 그대로 하므로 게시 기준은 달라지지 않는다.
+  for (const block of balancedBlocks(rest, "{", "}")) {
+    try {
+      const parsed = JSON.parse(block.text);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed) && parsed.ref) merged.push(parsed);
+    } catch {
+      // 읽히지 않는 조각은 건너뛴다. 그 ref는 뒤에서 누락으로 잡힌다.
     }
   }
   if (merged.length) return merged;
