@@ -134,11 +134,25 @@ function describeStep(name) {
   return "진행 중";
 }
 
+// GitHub이 느릴 때 화면 전체가 그만큼 멈추지 않도록 상한을 둔다. 상태 조회는 못 해도
+// 페이지는 계속 동작해야 한다.
+async function getJson(url, token, timeoutMs = 4000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { headers: githubHeaders(token), cache: "no-store", signal: controller.signal });
+    if (!response.ok) return null;
+    return await response.json().catch(() => null);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function latestRun(config, workflowFile) {
   const url = `https://api.github.com/repos/${config.owner}/${config.repo}/actions/workflows/${workflowFile}/runs?branch=${encodeURIComponent(config.ref)}&per_page=1`;
-  const response = await fetch(url, { headers: githubHeaders(config.token), cache: "no-store" });
-  if (!response.ok) return null;
-  const run = (await response.json().catch(() => null))?.workflow_runs?.[0];
+  const run = (await getJson(url, config.token))?.workflow_runs?.[0];
   if (!run) return null;
 
   const state =
@@ -151,14 +165,12 @@ async function latestRun(config, workflowFile) {
           : "failed";
   const summary = { state, startedAt: run.run_started_at || run.created_at, updatedAt: run.updated_at, url: run.html_url, step: "" };
 
-  // 실행 중일 때는 지금 어느 단계인지까지 보여준다.
+  // 단계 이름은 실행 중일 때만 필요하다. 끝난 실행까지 조회하면 왕복이 두 배가 된다.
   if (state === "running") {
-    const jobs = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}/actions/runs/${run.id}/jobs`, {
-      headers: githubHeaders(config.token),
-      cache: "no-store",
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .catch(() => null);
+    const jobs = await getJson(
+      `https://api.github.com/repos/${config.owner}/${config.repo}/actions/runs/${run.id}/jobs`,
+      config.token,
+    );
     const current = jobs?.jobs?.[0]?.steps?.find((step) => step.status === "in_progress");
     summary.step = current ? describeStep(current.name) : "시작하는 중";
   }

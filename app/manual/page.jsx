@@ -11,7 +11,9 @@ import { useCallback, useEffect, useState } from "react";
 const BRIEF_URL = "/brief/report_brief.md";
 const REPORT_URL = "/reports/latest_report.pdf";
 const REPORT_EN_URL = "/reports/latest_report_en.pdf";
-const POLL_MS = 6000;
+// 돌고 있을 때만 자주 확인한다. 대기 중에도 6초마다 GitHub을 부르면 느리기만 하고 얻는 게 없다.
+const POLL_RUNNING_MS = 6000;
+const POLL_IDLE_MS = 30000;
 
 const STATE_TEXT = {
   running: "진행 중",
@@ -27,7 +29,8 @@ function elapsed(startedAt) {
   return `${Math.floor(seconds / 60)}분 ${seconds % 60}초째`;
 }
 
-function RunStatus({ title, run, runningHint }) {
+function RunStatus({ title, run, runningHint, checked }) {
+  if (!checked) return <p className="statusLine muted">진행 상황 확인 중…</p>;
   if (!run) return <p className="statusLine muted">아직 실행한 적이 없습니다.</p>;
   return (
     <p className={`statusLine ${run.state}`}>
@@ -47,6 +50,7 @@ export default function ManualReportPage() {
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState(null);
   const [statusError, setStatusError] = useState("");
+  const [checked, setChecked] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -60,17 +64,20 @@ export default function ManualReportPage() {
       setStatusError("");
     } catch (caught) {
       setStatusError(`서버에 연결하지 못했습니다: ${caught.message}`);
+    } finally {
+      setChecked(true);
     }
   }, []);
 
-  useEffect(() => {
-    refresh();
-    const timer = setInterval(refresh, POLL_MS);
-    return () => clearInterval(timer);
-  }, [refresh]);
-
   const preparing = status?.prepare?.state === "running";
   const building = status?.build?.state === "running";
+
+  useEffect(() => {
+    refresh();
+    const interval = preparing || building ? POLL_RUNNING_MS : POLL_IDLE_MS;
+    const timer = setInterval(refresh, interval);
+    return () => clearInterval(timer);
+  }, [refresh, preparing, building]);
 
   async function send(payload, label) {
     setBusy(label);
@@ -125,7 +132,7 @@ export default function ManualReportPage() {
         <button type="button" onClick={() => send({ action: "prepare" }, "prepare")} disabled={busy === "prepare" || preparing}>
           {busy === "prepare" ? "시작하는 중…" : preparing ? "진행 중…" : "자료 준비 시작"}
         </button>
-        <RunStatus title="자료 준비" run={status?.prepare} runningHint="끝날 때까지 기다려 주세요" />
+        <RunStatus title="자료 준비" run={status?.prepare} runningHint="끝날 때까지 기다려 주세요" checked={checked} />
       </section>
 
       <section className="step">
@@ -152,7 +159,7 @@ export default function ManualReportPage() {
           </button>
           <span className="hint">{reply.trim() ? `${reply.trim().length.toLocaleString()}자 붙여넣음` : ""}</span>
         </div>
-        <RunStatus title="보고서 생성" run={status?.build} runningHint="2~3분 걸립니다" />
+        <RunStatus title="보고서 생성" run={status?.build} runningHint="2~3분 걸립니다" checked={checked} />
       </section>
 
       <section className="step">
