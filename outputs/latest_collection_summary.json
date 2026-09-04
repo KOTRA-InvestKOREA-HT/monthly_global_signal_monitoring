@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-04T05:09:02Z",
+  "run_started_at": "2026-09-04T05:17:17Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -20,16 +20,16 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 715,
+  "request_count": 716,
   "fetch_retries": 2,
-  "retry_count": 10,
-  "result_count": 431,
+  "retry_count": 8,
+  "result_count": 432,
   "official_result_count": 388,
   "press_release_result_count": 180,
   "undated_result_count": 131,
-  "excluded_non_article_count": 9985,
+  "excluded_non_article_count": 10022,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 9769,
+    "index_or_category_page": 9806,
     "broken_url": 194,
     "no_article_title": 22
   },
@@ -600,30 +600,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Besi",
-      "title": "&nbsp;",
-      "url": "https://www.besi.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company",
-      "url": "https://www.besi.com/company/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company Profile",
-      "url": "https://www.besi.com/company/company-profile/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Besi",
-      "title": "Company Overview",
-      "url": "https://www.besi.com/company/company-overview/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "NXP",
       "title": "accessibility instructions",
       "url": "https://www.nxp.com/company/about-nxp/accessibility:ACCESSIBILITY",
@@ -645,6 +621,30 @@
       "company": "NXP",
       "title": "",
       "url": "https://www.nxp.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "&nbsp;",
+      "url": "https://www.besi.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company",
+      "url": "https://www.besi.com/company/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Profile",
+      "url": "https://www.besi.com/company/company-profile/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company Overview",
+      "url": "https://www.besi.com/company/company-overview/",
       "reason": "index_or_category_page"
     },
     {
@@ -761,13 +761,13 @@
     "jsonld": 64,
     "listing": 92,
     "body_text": 35,
-    "feed": 70,
+    "feed": 71,
     "url": 3,
     "meta": 2,
     "none": 131,
     "text": 1
   },
-  "fallback_result_count": 43,
+  "fallback_result_count": 44,
   "companies_with_results": 71,
   "companies_with_official_results": 62,
   "companies_without_results": [
@@ -816,7 +816,7 @@
     "Schmalz": 0,
     "Bayer": 10,
     "Merck": 10,
-    "Schott Pharma": 4,
+    "Schott Pharma": 5,
     "BASF": 10,
     "Evonik Industries": 10,
     "Heraeus": 6,
@@ -936,7 +936,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 60,
+  "error_count": 59,
   "errors": [
     {
       "target_no": 2,
@@ -1160,14 +1160,6 @@
       "source": "official_pages",
       "source_url": "https://www.lilly.com/news/media",
       "source_name": "Eli Lilly and Company - Media / Media Center",
-      "error": "fetch failed"
-    },
-    {
-      "target_no": 21,
-      "company": "GE Healthcare",
-      "source": "official_pages",
-      "source_url": "https://investor.gehealthcare.com/financial-information/sec-filings",
-      "source_name": "GE Healthcare - SEC Filings / Regulatory Filings",
       "error": "fetch failed"
     },
     {
@@ -1420,9 +1412,9 @@
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260904T050902Z.json",
-    "csv": "outputs/company_signals_20260904T050902Z.csv",
-    "summary": "outputs/collection_summary_20260904T050902Z.json",
+    "json": "outputs/company_signals_20260904T051717Z.json",
+    "csv": "outputs/company_signals_20260904T051717Z.csv",
+    "summary": "outputs/collection_summary_20260904T051717Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
