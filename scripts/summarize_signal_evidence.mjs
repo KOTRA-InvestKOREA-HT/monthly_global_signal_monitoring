@@ -87,7 +87,7 @@ async function readJson(filePath, fallback = []) {
   }
 }
 
-function cleanText(value) {
+export function cleanText(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
     .replace(/<[^>]+>/g, " ")
@@ -101,6 +101,47 @@ export function isRelevanceExempt(row) {
   return row?.excluded_from_relevance === true || row?.technology_gate_decision === "relevance_exempt";
 }
 
+// 모델이 돌려준 판정에서 보고서 승인값을 계산한다.
+// API 경로와 수동 반입 경로가 같은 규칙을 쓰도록 여기 한 곳에만 둔다. 규칙이 두 벌이 되면
+// 어느 경로로 만든 보고서냐에 따라 승인 기준이 달라진다.
+export function computeSignalSupport({ parsed, isBusinessSummary, relevanceExempt }) {
+  const entitySupported = parsed.entity_supported === true;
+  const targetTechnologySupported = parsed.target_technology_supported === true;
+  const indicatorSupported = parsed.indicator_supported === true;
+  const leadingIndicatorSupported = parsed.leading_indicator_supported === true;
+  const decisionQualitySupported = parsed.quality === "pass";
+  const eventStageSupported = isBusinessSummary
+    ? parsed.event_stage === "not_applicable"
+    : ["exploratory", "planned"].includes(parsed.event_stage);
+  // 관련성 면제 행은 타겟 기술 연결을 요구하지 않으므로, 사유가 그 연결의 부재를 말하는 것도
+  // 모순이 아니다. 따라서 사유 기반 거부도 함께 적용하지 않는다.
+  const targetTechnologyRequired = !relevanceExempt;
+  const targetTechnologySatisfied = targetTechnologySupported || !targetTechnologyRequired;
+  const reasonSupported = !targetTechnologyRequired || !reasonDeniesDirectSupport(parsed.reason);
+  const computedSignalSupported = isBusinessSummary
+    ? entitySupported &&
+      targetTechnologySatisfied &&
+      decisionQualitySupported &&
+      eventStageSupported &&
+      reasonSupported &&
+      parsed.signal_supported === true
+    : entitySupported &&
+      targetTechnologySatisfied &&
+      indicatorSupported &&
+      leadingIndicatorSupported &&
+      decisionQualitySupported &&
+      eventStageSupported &&
+      reasonSupported &&
+      parsed.signal_supported === true;
+  return {
+    entitySupported,
+    targetTechnologySupported,
+    indicatorSupported,
+    leadingIndicatorSupported,
+    computedSignalSupported,
+  };
+}
+
 function reasonDeniesDirectSupport(value) {
   const reason = cleanText(value);
   return [
@@ -112,7 +153,7 @@ function reasonDeniesDirectSupport(value) {
   ].some((pattern) => pattern.test(reason));
 }
 
-function normalizeKoreanSummaryText(value) {
+export function normalizeKoreanSummaryText(value) {
   return cleanText(value)
     .replace(/중순수%/g, "한 자릿수 중반대")
     .replace(/저순수%/g, "한 자릿수 초반대")
@@ -286,7 +327,7 @@ function conciseSummaryPhrase(value, limit = 80) {
   return shortText(text, limit);
 }
 
-function summaryHeadlineDetail({ headline, detail, summary }) {
+export function summaryHeadlineDetail({ headline, detail, summary }) {
   const normalizedHeadline = conciseSummaryPhrase(headline, 58);
   const normalizedDetail = conciseSummaryPhrase(detail, 105);
   if (normalizedHeadline || normalizedDetail) {
@@ -330,7 +371,7 @@ function shortText(value, limit) {
 }
 
 // 영문은 한국어 조사/종결어미 정리 규칙을 적용하지 않고 공백 정리만 한다.
-function englishHeadlineDetail({ headline, detail, summary }) {
+export function englishHeadlineDetail({ headline, detail, summary }) {
   const normalizedHeadline = shortText(headline, 110);
   const normalizedDetail = shortText(detail, 240);
   if (normalizedHeadline || normalizedDetail) {
@@ -357,7 +398,7 @@ function sourceEvidence(row) {
   return cleanText([snippets.join(" "), row.content_excerpt, row.content_text].filter(Boolean).join(" "));
 }
 
-function rowIdentity(row) {
+export function rowIdentity(row) {
   return [
     row.target_no,
     row.company,
@@ -368,7 +409,7 @@ function rowIdentity(row) {
     .join("|");
 }
 
-function sourceMaterial(row, maxInputChars) {
+export function sourceMaterial(row, maxInputChars) {
   const body = [
     `기업: ${row.company || ""}`,
     `유치필요 품목/기술: ${row.target_technology || ""}`,
@@ -678,34 +719,13 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
   }
 
   const parsed = parseModelJson(outputText);
-  const entitySupported = parsed.entity_supported === true;
-  const targetTechnologySupported = parsed.target_technology_supported === true;
-  const indicatorSupported = parsed.indicator_supported === true;
-  const leadingIndicatorSupported = parsed.leading_indicator_supported === true;
-  const decisionQualitySupported = parsed.quality === "pass";
-  const eventStageSupported = isBusinessSummary
-    ? parsed.event_stage === "not_applicable"
-    : ["exploratory", "planned"].includes(parsed.event_stage);
-  // 관련성 면제 행은 타겟 기술 연결을 요구하지 않으므로, 사유가 그 연결의 부재를 말하는 것도
-  // 모순이 아니다. 따라서 사유 기반 거부도 함께 적용하지 않는다.
-  const targetTechnologyRequired = !relevanceExempt;
-  const targetTechnologySatisfied = targetTechnologySupported || !targetTechnologyRequired;
-  const reasonSupported = !targetTechnologyRequired || !reasonDeniesDirectSupport(parsed.reason);
-  const computedSignalSupported = isBusinessSummary
-    ? entitySupported &&
-      targetTechnologySatisfied &&
-      decisionQualitySupported &&
-      eventStageSupported &&
-      reasonSupported &&
-      parsed.signal_supported === true
-    : entitySupported &&
-      targetTechnologySatisfied &&
-      indicatorSupported &&
-      leadingIndicatorSupported &&
-      decisionQualitySupported &&
-      eventStageSupported &&
-      reasonSupported &&
-      parsed.signal_supported === true;
+  const {
+    entitySupported,
+    targetTechnologySupported,
+    indicatorSupported,
+    leadingIndicatorSupported,
+    computedSignalSupported,
+  } = computeSignalSupport({ parsed, isBusinessSummary, relevanceExempt });
   if (isBusinessSummary) {
     return {
       ai_summary_ko: normalizeKoreanSummaryText(parsed.summary_ko),
