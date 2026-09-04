@@ -35,13 +35,6 @@ const SUMMARY_FIELDS = [
   "ai_summary_created_at",
 ];
 
-// OpenAI 호환 게이트웨이(대학·기관이 여러 모델을 한 주소로 묶어 제공하는 경우)를 쓰려면
-// 주소를 바꿔야 한다. 키 형식이 OpenAI와 달라도 엔드포인트만 맞으면 같은 코드로 동작한다.
-export function apiBaseUrl() {
-  const base = process.env.OPENAI_BASE_URL || process.env.OPENAI_API_BASE || "https://api.openai.com/v1";
-  return String(base).replace(/\/+$/, "");
-}
-
 const DEFAULTS = {
   investmentSignals: "outputs/latest_investment_signals.json",
   relevantSignals: "outputs/latest_relevant_signals.json",
@@ -601,7 +594,7 @@ async function callOpenAI({ apiKey, model, row, args, tier, maxOutputTokens, kin
     .filter(Boolean)
     .join("\n");
 
-  const response = await fetch(`${apiBaseUrl()}/responses`, {
+  const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
