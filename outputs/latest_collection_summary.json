@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-03T07:19:12Z",
+  "run_started_at": "2026-09-04T00:59:40Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -11,7 +11,7 @@
   "date_range_mode": "explicit",
   "from_date": "2026-08-01",
   "to_date": "2026-08-31",
-  "lookback_days": 36,
+  "lookback_days": 37,
   "max_per_source": 6,
   "max_per_company": 10,
   "company_concurrency": 4,
@@ -22,14 +22,14 @@
   "fallback_min_results": 1,
   "request_count": 716,
   "fetch_retries": 2,
-  "retry_count": 10,
-  "result_count": 434,
+  "retry_count": 8,
+  "result_count": 431,
   "official_result_count": 388,
   "press_release_result_count": 180,
   "undated_result_count": 131,
-  "excluded_non_article_count": 10016,
+  "excluded_non_article_count": 10012,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 9800,
+    "index_or_category_page": 9796,
     "broken_url": 194,
     "no_article_title": 22
   },
@@ -108,6 +108,12 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Moderna",
+      "title": "Vote here >",
+      "url": "https://www.proxyvote.com/",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "Cytiva",
       "title": "",
       "url": "https://www.danaher.com/",
@@ -133,8 +139,20 @@
     },
     {
       "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://www.proxyvote.com/",
+      "title": "Health Care Professionals",
+      "url": "https://modernapro.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Moderna",
+      "title": "Investors",
+      "url": "https://investors.modernatx.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Moderna",
+      "title": "Clinical Trials",
+      "url": "https://trials.modernatx.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -159,24 +177,6 @@
       "company": "West Pharmaceutical",
       "title": "Home",
       "url": "https://www.westpharma.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Health Care Professionals",
-      "url": "https://modernapro.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Investors",
-      "url": "https://investors.modernatx.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Moderna",
-      "title": "Clinical Trials",
-      "url": "https://trials.modernatx.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -216,30 +216,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Chemours",
-      "title": "",
-      "url": "https://www.chemours.com/en",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Chemours",
-      "title": "Overview",
-      "url": "https://investors.chemours.com/investor-relations",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Chemours",
-      "title": "News Releases",
-      "url": "https://investors.chemours.com/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Chemours",
-      "title": "Resources",
-      "url": "https://investors.chemours.com/resources/email-alerts",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Air Products",
       "title": "",
       "url": "https://www.airproducts.com/",
@@ -261,6 +237,30 @@
       "company": "Air Products",
       "title": "Company Overview",
       "url": "https://www.airproducts.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "",
+      "url": "https://www.chemours.com/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "Overview",
+      "url": "https://investors.chemours.com/investor-relations",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "News Releases",
+      "url": "https://investors.chemours.com/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "Resources",
+      "url": "https://investors.chemours.com/resources/email-alerts",
       "reason": "index_or_category_page"
     },
     {
@@ -360,30 +360,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/news",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#D52B1E;} .st1{fill:#212121;} OUTLINES -->",
-      "url": "https://investor.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://esg.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Skyworks",
       "title": "",
       "url": "https://www.skyworksinc.com/",
@@ -405,6 +381,30 @@
       "company": "Skyworks",
       "title": "Awards",
       "url": "https://www.skyworksinc.com/About/Awards",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/news",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#D52B1E;} .st1{fill:#212121;} OUTLINES -->",
+      "url": "https://investor.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://esg.lilly.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -528,27 +528,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Magnix",
-      "title": "",
-      "url": "https://www.magnix.aero/",
+      "company": "ASML",
+      "title": "ASML Logo",
+      "url": "https://www.asml.com/en",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Magnix",
-      "title": "Home",
-      "url": "https://www.magnix.aero/",
+      "company": "ASML",
+      "title": "Company overview",
+      "url": "https://www.asml.com/en/company",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Magnix",
-      "title": "About Us",
-      "url": "https://www.magnix.aero/about-us",
+      "company": "ASML",
+      "title": "About ASML overview",
+      "url": "https://www.asml.com/en/company/about-asml",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Magnix",
-      "title": "News",
-      "url": "https://www.magnix.aero/news",
+      "company": "ASML",
+      "title": "Stories",
+      "url": "https://www.asml.com/en/company/stories",
       "reason": "index_or_category_page"
     },
     {
@@ -576,30 +576,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "ASML",
-      "title": "ASML Logo",
-      "url": "https://www.asml.com/en",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "Company overview",
-      "url": "https://www.asml.com/en/company",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "About ASML overview",
-      "url": "https://www.asml.com/en/company/about-asml",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "ASML",
-      "title": "Stories",
-      "url": "https://www.asml.com/en/company/stories",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Besi",
       "title": "&nbsp;",
       "url": "https://www.besi.com/",
@@ -621,30 +597,6 @@
       "company": "Besi",
       "title": "Company Overview",
       "url": "https://www.besi.com/company/company-overview/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Vestas",
-      "title": "",
-      "url": "https://www.vestas.com/en",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Vestas",
-      "title": "ShopVestas",
-      "url": "https://shop.vestas.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Vestas",
-      "title": "VestasOnline",
-      "url": "https://vestasonline.vestas.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Vestas",
-      "title": "Global",
-      "url": "https://www.vestas.com/en/media/company-news",
       "reason": "index_or_category_page"
     },
     {
@@ -696,27 +648,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Heidenhain",
+      "company": "Vestas",
       "title": "",
-      "url": "https://www.heidenhain.com/",
+      "url": "https://www.vestas.com/en",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Heidenhain",
-      "title": "HEIDENHAIN SHOP",
-      "url": "https://www.heidenhain.shop/en",
+      "company": "Vestas",
+      "title": "ShopVestas",
+      "url": "https://shop.vestas.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Heidenhain",
-      "title": "DE | Deutsch",
-      "url": "https://www.heidenhain.de/news/presse",
+      "company": "Vestas",
+      "title": "VestasOnline",
+      "url": "https://vestasonline.vestas.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Heidenhain",
-      "title": "Contact",
-      "url": "https://www.heidenhain.com/about-us/contact",
+      "company": "Vestas",
+      "title": "Global",
+      "url": "https://www.vestas.com/en/media/company-news",
       "reason": "index_or_category_page"
     },
     {
@@ -744,30 +696,78 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Schmalz",
+      "company": "Heidenhain",
       "title": "",
-      "url": "https://www.schmalz.com/",
+      "url": "https://www.heidenhain.com/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Schmalz",
-      "title": "Home",
-      "url": "https://www.schmalz.com/",
+      "company": "Heidenhain",
+      "title": "HEIDENHAIN SHOP",
+      "url": "https://www.heidenhain.shop/en",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "DE | Deutsch",
+      "url": "https://www.heidenhain.de/news/presse",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "Contact",
+      "url": "https://www.heidenhain.com/about-us/contact",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Bayer",
+      "title": "English (EN)",
+      "url": "https://www.bayer.com/en/investors/investor-news",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Bayer",
+      "title": "",
+      "url": "https://www.bayer.com/en/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Bayer",
+      "title": "This is Bayer",
+      "url": "https://www.bayer.com/en/about-us",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Bayer",
+      "title": "",
+      "url": "https://www.bayer.com/en/about-us",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Merck",
+      "title": "upgrade your browser",
+      "url": "http://browsehappy.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Merck",
+      "title": "https://www.emdgroup.com",
+      "url": "https://www.emdgroup.com/",
       "reason": "index_or_category_page"
     }
   ],
   "published_at_source_counts": {
     "time_tag": 33,
     "jsonld": 64,
-    "listing": 93,
+    "listing": 92,
     "body_text": 35,
-    "feed": 72,
+    "feed": 70,
     "url": 3,
     "meta": 2,
     "none": 131,
     "text": 1
   },
-  "fallback_result_count": 46,
+  "fallback_result_count": 43,
   "companies_with_results": 71,
   "companies_with_official_results": 62,
   "companies_without_results": [
@@ -816,7 +816,7 @@
     "Schmalz": 0,
     "Bayer": 10,
     "Merck": 10,
-    "Schott Pharma": 6,
+    "Schott Pharma": 4,
     "BASF": 10,
     "Evonik Industries": 10,
     "Heraeus": 6,
@@ -824,7 +824,7 @@
     "EMM(Umicore)": 6,
     "Umicore": 10,
     "Solvay": 2,
-    "Syensqo": 3,
+    "Syensqo": 2,
     "Hexagon AB": 4,
     "ABB": 9,
     "Maxon": 10,
@@ -936,7 +936,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 60,
+  "error_count": 59,
   "errors": [
     {
       "target_no": 2,
@@ -1406,23 +1406,15 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
-      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
-      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
-      "error": "fetch failed"
-    },
-    {
-      "target_no": 77,
-      "company": "Shanghai Electric Wind Power",
-      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
       "error": "fetch failed"
     }
   ],
   "outputs": {
-    "json": "outputs/company_signals_20260903T071912Z.json",
-    "csv": "outputs/company_signals_20260903T071912Z.csv",
-    "summary": "outputs/collection_summary_20260903T071912Z.json",
+    "json": "outputs/company_signals_20260904T005940Z.json",
+    "csv": "outputs/company_signals_20260904T005940Z.csv",
+    "summary": "outputs/collection_summary_20260904T005940Z.json",
     "latest_json": "outputs/latest_company_signals.json",
     "latest_csv": "outputs/latest_company_signals.csv",
     "latest_summary": "outputs/latest_collection_summary.json"
