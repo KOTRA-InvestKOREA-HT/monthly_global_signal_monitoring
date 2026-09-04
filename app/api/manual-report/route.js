@@ -165,10 +165,22 @@ async function latestRun(config, workflowFile) {
   return summary;
 }
 
+// Vercel 환경변수는 배포 시점에 주입된다. 값을 추가하거나 적용 환경을 바꿔도 이미 만들어진
+// 배포에는 반영되지 않으므로, 값이 비어 보이면 재배포가 필요한 경우가 대부분이다.
+function envHint(missing) {
+  const where = process.env.VERCEL_ENV ? `현재 배포 환경: ${process.env.VERCEL_ENV}` : "로컬 실행";
+  return [
+    `서버 설정을 읽지 못했습니다(${missing.join(", ")}).`,
+    `${where}.`,
+    "Vercel Settings → Environment Variables에서 이 환경에도 값이 켜져 있는지 확인하고,",
+    "값을 추가·변경했다면 반드시 재배포해야 적용됩니다. 기존 배포에는 반영되지 않습니다.",
+  ].join(" ");
+}
+
 export async function GET() {
   const { config, missing } = collectEnv();
   if (missing.length) {
-    return Response.json({ error: `서버 설정이 끝나지 않았습니다(${missing.join(", ")}). 관리자에게 문의해 주세요.` }, { status: 500 });
+    return Response.json({ error: envHint(missing) }, { status: 500 });
   }
   const [prepare, build] = await Promise.all([
     latestRun(config, PREPARE_WORKFLOW).catch(() => null),
@@ -182,12 +194,7 @@ export async function POST(request) {
     const body = await request.json().catch(() => ({}));
     const action = body.action === "build" ? "build" : "prepare";
     const { config, missing } = collectEnv();
-    if (missing.length) {
-      return Response.json(
-        { error: `서버 설정이 끝나지 않았습니다(${missing.join(", ")}). 관리자에게 문의해 주세요.` },
-        { status: 500 },
-      );
-    }
+    if (missing.length) return Response.json({ error: envHint(missing) }, { status: 500 });
 
     if (action === "prepare") {
       const result = await dispatchWorkflow(config, PREPARE_WORKFLOW, {
