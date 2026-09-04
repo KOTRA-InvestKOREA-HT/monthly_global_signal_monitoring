@@ -40,14 +40,40 @@ function githubHeaders(token) {
 }
 
 // 팀원이 읽고 스스로 고칠 수 있는 문장으로 바꾼다. 상태코드만 보여주면 막힌다.
-function humanHint(status, config) {
-  if (status === 401) return "GitHub 토큰이 만료되었습니다. 관리자에게 Vercel의 GITHUB_TOKEN 교체를 요청해 주세요.";
-  if (status === 403) return "GitHub 토큰 권한이 부족합니다. 관리자에게 Actions 쓰기 권한 확인을 요청해 주세요.";
-  if (status === 404) {
-    return `워크플로 또는 브랜치를 찾지 못했습니다(${config.owner}/${config.repo} · ${config.ref}). 관리자에게 문의해 주세요.`;
+// 어느 단계에서 거부됐는지(파일 저장 / 실행 요청) 함께 알려야 어느 권한을 손볼지 알 수 있다.
+const NEEDED_PERMISSION = {
+  upload: "저장소 내용 쓰기(Contents: Read and write)",
+  dispatch: "워크플로 실행(Actions: Read and write)",
+};
+
+function githubMessage(detail) {
+  try {
+    const parsed = JSON.parse(detail);
+    return parsed.message || "";
+  } catch {
+    return "";
   }
-  if (status === 422) return "GitHub이 요청을 거부했습니다. 잠시 후 다시 시도해 주세요.";
-  return `GitHub이 ${status} 응답을 반환했습니다. 잠시 후 다시 시도해 주세요.`;
+}
+
+function humanHint(status, config, stage = "dispatch", detail = "") {
+  const what = stage === "upload" ? "답변 파일을 저장하는 중" : "워크플로를 실행하는 중";
+  const message = githubMessage(detail);
+  const suffix = message ? ` GitHub 응답: "${message}"` : "";
+  if (status === 401) return `${what} GitHub 토큰이 거부됐습니다. 토큰이 만료되었을 수 있습니다.${suffix}`;
+  if (status === 403) {
+    return [
+      `${what} 권한이 거부됐습니다.`,
+      `이 단계에는 ${NEEDED_PERMISSION[stage]} 권한이 필요합니다.`,
+      `대상: ${config.owner}/${config.repo} · 브랜치 ${config.ref}.`,
+      "조직 저장소면 토큰의 SSO 승인 여부도 확인해 주세요.",
+      suffix,
+    ].join(" ");
+  }
+  if (status === 404) {
+    return `${what} 대상을 찾지 못했습니다(${config.owner}/${config.repo} · ${config.ref}).${suffix}`;
+  }
+  if (status === 422) return `${what} GitHub이 요청을 거부했습니다.${suffix}`;
+  return `${what} GitHub이 ${status} 응답을 반환했습니다.${suffix}`;
 }
 
 async function dispatchWorkflow(config, workflowFile, inputs = {}) {
@@ -214,7 +240,7 @@ export async function POST(request) {
         to_date: typeof body.toDate === "string" ? body.toDate : "",
         max_article_chars: String(body.maxArticleChars || "900"),
       });
-      if (!result.ok) return Response.json({ error: humanHint(result.status, config) }, { status: 502 });
+      if (!result.ok) return Response.json({ error: humanHint(result.status, config, "dispatch", result.detail) }, { status: 502 });
       return Response.json({
         status: "started",
         message: "자료를 준비하고 있습니다. 5~10분 뒤에 아래 자료 받기 버튼이 열립니다.",
@@ -225,10 +251,10 @@ export async function POST(request) {
     if (!check.ok) return Response.json({ error: check.message }, { status: 400 });
 
     const uploaded = await putReply(config, String(body.reply));
-    if (!uploaded.ok) return Response.json({ error: humanHint(uploaded.status, config) }, { status: 502 });
+    if (!uploaded.ok) return Response.json({ error: humanHint(uploaded.status, config, "upload", uploaded.detail) }, { status: 502 });
 
     const started = await dispatchWorkflow(config, BUILD_WORKFLOW);
-    if (!started.ok) return Response.json({ error: humanHint(started.status, config) }, { status: 502 });
+    if (!started.ok) return Response.json({ error: humanHint(started.status, config, "dispatch", started.detail) }, { status: 502 });
 
     return Response.json({
       status: "started",
