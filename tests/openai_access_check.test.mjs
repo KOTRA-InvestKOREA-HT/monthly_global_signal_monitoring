@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { classifyFailure } from "../scripts/check_openai_access.mjs";
+import { apiBaseUrl, classifyFailure, describeKeyShape } from "../scripts/check_openai_access.mjs";
 
 test("an unusable key is told apart from a key without permission", () => {
   assert.equal(classifyFailure(401, "Incorrect API key provided").cause, "invalid_key");
@@ -30,4 +30,28 @@ test("every classification carries advice on what to do next", () => {
   for (const [status, message] of [[401, "x"], [403, "x"], [404, "x"], [429, "x"], [400, "schema"], [0, "x"], [500, "x"]]) {
     assert.ok(classifyFailure(status, message).advice.length > 0);
   }
+});
+
+test("a gateway key sent to OpenAI is reported as an address mismatch", () => {
+  const shape = describeKeyShape("jXGFBGct".padEnd(32, "x"), "https://api.openai.com/v1");
+  assert.equal(shape.looksOpenAI, false);
+  assert.equal(shape.mismatch, true);
+  assert.match(shape.note, /OPENAI_BASE_URL/);
+});
+
+test("the same key against its own gateway is not flagged", () => {
+  const shape = describeKeyShape("jXGFBGct".padEnd(32, "x"), "https://gateway.example.ac.kr/v1");
+  assert.equal(shape.mismatch, false);
+});
+
+test("a real OpenAI key is recognised and never treated as a mismatch", () => {
+  const shape = describeKeyShape(`sk-${"a".repeat(60)}`, "https://api.openai.com/v1");
+  assert.equal(shape.looksOpenAI, true);
+  assert.equal(shape.mismatch, false);
+});
+
+test("a trailing slash on the base URL does not double up the path", () => {
+  process.env.OPENAI_BASE_URL = "https://gateway.example.ac.kr/v1/";
+  assert.equal(apiBaseUrl(), "https://gateway.example.ac.kr/v1");
+  delete process.env.OPENAI_BASE_URL;
 });

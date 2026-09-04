@@ -9,6 +9,29 @@
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 
+// 기관 게이트웨이는 OpenAI 호환 API를 다른 주소로 제공한다. 주소가 맞지 않으면
+// 키가 멀쩡해도 401이 돌아오므로, 점검에서 주소를 가장 먼저 드러낸다.
+export function apiBaseUrl() {
+  const base = process.env.OPENAI_BASE_URL || process.env.OPENAI_API_BASE || "https://api.openai.com/v1";
+  return String(base).replace(/\/+$/, "");
+}
+
+// 키 값 자체는 절대 남기지 않되, 형식만으로 알 수 있는 것은 알려준다.
+// OpenAI 키는 sk- 로 시작하고 40자를 넘는다. 그렇지 않으면 게이트웨이 키일 가능성이 높다.
+export function describeKeyShape(apiKey, baseUrl) {
+  const looksOpenAI = /^sk-/.test(apiKey) && apiKey.length > 40;
+  const isOpenAIHost = /(^|\/\/)api\.openai\.com/.test(baseUrl);
+  if (looksOpenAI) return { looksOpenAI, mismatch: false, note: "OpenAI 발급 키 형식이다." };
+  if (isOpenAIHost) {
+    return {
+      looksOpenAI,
+      mismatch: true,
+      note: "OpenAI 키 형식이 아닌데 요청 주소는 api.openai.com이다. 기관 게이트웨이 키라면 OPENAI_BASE_URL을 그 주소로 지정해야 한다.",
+    };
+  }
+  return { looksOpenAI, mismatch: false, note: "OpenAI 키 형식은 아니지만 게이트웨이 주소를 쓰고 있다." };
+}
+
 const DEFAULTS = {
   lunaModel: process.env.AI_SUMMARY_LUNA_MODEL || "gpt-5.6-luna",
   terraModel: process.env.AI_SUMMARY_TERRA_MODEL || "gpt-5.6-terra",
@@ -59,7 +82,7 @@ export function classifyFailure(status, message = "") {
 }
 
 async function listModels(apiKey) {
-  const response = await fetch("https://api.openai.com/v1/models", {
+  const response = await fetch(`${apiBaseUrl()}/models`, {
     headers: { Authorization: `Bearer ${apiKey}` },
   });
   const body = await response.json().catch(() => ({}));
@@ -71,7 +94,7 @@ async function listModels(apiKey) {
 
 // 운영 코드와 같은 요청 형태를 쓴다. 여기서 통과하면 요약 단계가 형태 때문에 실패하지는 않는다.
 async function probeResponses(apiKey, model, args) {
-  const response = await fetch("https://api.openai.com/v1/responses", {
+  const response = await fetch(`${apiBaseUrl()}/responses`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
@@ -135,20 +158,31 @@ async function runCheck(report) {
     return;
   }
   // 값은 절대 출력하지 않는다. 자리 확인용으로 길이만 남긴다.
+  const baseUrl = apiBaseUrl();
+  report(`요청 주소: ${baseUrl}`);
   report(`OPENAI_API_KEY: 설정됨 (길이 ${apiKey.length})`);
+  const shape = describeKeyShape(apiKey, baseUrl);
+  report(`  ${shape.note}`);
 
   const models = await listModels(apiKey).catch((error) => ({ ok: false, status: 0, message: error.message, ids: [] }));
   if (!models.ok) {
     const { cause, advice } = classifyFailure(models.status, models.message);
     report(`모델 목록 조회 실패: HTTP ${models.status} (${cause})`);
-    report(`  ${advice}`);
+    report(`  ${shape.mismatch ? "주소가 키 발급처와 다르다. 이 경우 401은 키가 아니라 주소 문제다." : advice}`);
     report(`  raw: ${models.message}`);
     process.exitCode = 1;
     return;
   }
   report(`모델 목록 조회: 성공 (${models.ids.length}개 접근 가능)`);
 
+  // 게이트웨이는 모델명이 OpenAI와 다르다. 어떤 이름을 써야 하는지 여기서 바로 확인한다.
+  const shown = models.ids.slice().sort();
+  report(`사용 가능한 모델:`);
+  for (const id of shown.slice(0, 80)) report(`  - ${id}`);
+  if (shown.length > 80) report(`  ...외 ${shown.length - 80}개`);
+
   const wanted = [args.lunaModel, args.terraModel];
+  report("설정된 모델:");
   for (const model of wanted) {
     report(`  ${model}: ${models.ids.includes(model) ? "목록에 있음" : "목록에 없음"}`);
   }
@@ -163,6 +197,12 @@ async function runCheck(report) {
     const { cause, advice } = classifyFailure(probe.status, probe.message);
     report(`응답 호출 실패: HTTP ${probe.status} (${cause})`);
     report(`  ${advice}`);
+    // 모델은 목록에 있는데 404가 나면 모델이 아니라 /responses 자체가 없는 것이다.
+    // 게이트웨이 상당수는 구형 /chat/completions만 구현한다.
+    if (probe.status === 404 && models.ids.includes(args.lunaModel)) {
+      report(`  모델은 목록에 있으므로 ${baseUrl}/responses 엔드포인트가 없을 가능성이 높다.`);
+      report("  이 게이트웨이가 Responses API를 지원하는지 확인이 필요하다.");
+    }
     report(`  raw: ${probe.message}`);
     process.exitCode = 1;
     return;
