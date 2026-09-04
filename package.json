@@ -18,7 +18,9 @@
     "brief": "node scripts/build_report_brief.mjs",
     "merge:brief": "node scripts/merge_summary_batches.mjs",
     "report:pdf": "python scripts/build_pdf_report.py --signals outputs/latest_company_signals.json --summary outputs/latest_collection_summary.json --relevant outputs/latest_relevant_signals.json --relevance-summary outputs/latest_relevance_summary.json --investment-signals outputs/latest_investment_signals.json --investment-summary outputs/latest_investment_signal_summary.json --indicator-config config/investment_signal_indicators.json --font assets/fonts/NOTOSANSKR-VF.TTF --out public/reports/latest_report.pdf",
-    "collect:all": "npm run collect && npm run filter:relevant && npm run filter:investment && npm run summarize:ai && npm run validate:report-inputs && npm run report:pdf"
+    "collect:all": "npm run collect && npm run filter:relevant && npm run filter:investment && npm run summarize:ai && npm run validate:report-inputs && npm run report:pdf",
+    "report:pdf:en": "python scripts/build_pdf_report.py --signals outputs/latest_company_signals.json --summary outputs/latest_collection_summary.json --relevant outputs/latest_relevant_signals.json --relevance-summary outputs/latest_relevance_summary.json --investment-signals outputs/latest_investment_signals.json --investment-summary outputs/latest_investment_signal_summary.json --indicator-config config/investment_signal_indicators.json --font assets/fonts/NOTOSANSKR-VF.TTF --out public/reports/latest_report_en.pdf",
+    "report:from-brief": "npm run merge:brief && npm run validate:report-inputs && npm run report:pdf && npm run report:pdf:en"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",

@@ -9,8 +9,17 @@ npm run brief                    # 파일 하나 생성
 #  outputs/manual_summary/report_brief.md 를 채팅에 붙여넣거나 첨부
 #  받은 JSON 배열을 outputs/manual_summary/responses/reply.json 으로 저장
 
-npm run merge:brief              # 되돌려 넣기
-npm run validate:report-inputs && npm run report:pdf
+npm run report:from-brief        # 병합 → 검증 → 한글·영문 PDF
+```
+
+`report:from-brief`는 병합, 게시 입력 검증, 한글·영문 PDF를 차례로 실행한다. 앞 단계가 실패하면
+뒤 단계는 돌지 않으므로, 검증을 통과하지 못한 판정으로 PDF가 만들어지는 일은 없다.
+
+결과물은 다음 두 파일이다.
+
+```text
+public/reports/latest_report.pdf
+public/reports/latest_report_en.pdf
 ```
 
 붙여넣기 **한 번**, 응답 **한 번**이다. 브리프 안에 판정 규칙과 출력 형식이 모두 들어 있으므로
