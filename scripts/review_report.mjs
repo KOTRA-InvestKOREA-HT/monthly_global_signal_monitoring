@@ -26,13 +26,15 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
   const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 400);
   const delayMs = Number(env[`${prefix}_DELAY_MS`] || env.REPORT_DELAY_MS || provider.defaultDelayMs);
+  const concurrency = Number(env.REPORT_CONCURRENCY || 3);
+  if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 8) throw new Error('REPORT_CONCURRENCY must be 1..8');
   // 대기 하한은 프로바이더의 관측 RPM 에서 온다(60000 / RPM). 429 가 나도 저장 후 멈추고
   // 다음 실행이 이어간다. 400 상한은 한 회차 전체를 한 번에 덮는다.
   if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > 400) throw new Error(`${prefix}_MAX_REQUESTS must be 1..400`);
   if (!Number.isFinite(delayMs) || delayMs < provider.minDelayMs || delayMs > 60000) {
     throw new Error(`${prefix}_DELAY_MS must be ${provider.minDelayMs}..60000`);
   }
-  return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs };
+  return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs, concurrency };
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
@@ -160,7 +162,61 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   return review;
 }
 
-export async function reviewArticles({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random }) {
+export async function reviewArticles(options) {
+  const { articles, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)) } = options;
+  const concurrency = config.concurrency ?? 1;
+  if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 8) throw new Error('REPORT_CONCURRENCY must be 1..8');
+  if (concurrency === 1) return reviewArticlesSerial(options);
+  // One start-time gate for all workers AND retries. Waiting for a response
+  // does not hold this gate. The existing per-article validator/cache is reused.
+  let queue = Promise.resolve(), nextStart = 0, requests = 0, index = 0;
+  let stopped = null, fatal = null;
+  const results = [];
+  const gatedFetch = async (...args) => {
+    const slot = queue.then(async () => {
+      if (stopped || fatal) return false;
+      if (requests >= config.maxRequests) {
+        stopped = { status: 'paused', reason: 'request_budget' };
+        return false;
+      }
+      while (nextStart > performance.now()) await sleep(nextStart - performance.now());
+      if (stopped || fatal) return false;
+      requests++;
+      nextStart = performance.now() + config.delayMs;
+      return true;
+    });
+    queue = slot.then(() => {}, () => {});
+    if (!await slot) throw Object.assign(new Error('Request scheduling stopped'), { scheduling_stopped: true });
+    const response = await fetchImpl(args[0], { ...args[1], signal: AbortSignal.timeout(120000) });
+    // Stop queued requests promptly on quota/auth errors, but let in-flight
+    // successful responses finish validation and durable cache writes.
+    if (response.status === 429) stopped = { status: 'paused', reason: 'quota', http_status: 429 };
+    else if (!response.ok && response.status < 500) stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
+    return response;
+  };
+  await Promise.all(Array.from({ length: Math.min(concurrency, articles.length) }, async () => {
+    while (index < articles.length && !fatal) {
+      const article = articles[index++];
+      try {
+        const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch });
+        results.push(result);
+        if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped'].includes(result.reason)) {
+          if (!stopped || stopped.reason === 'request_budget') stopped = result;
+        }
+      } catch (error) { fatal ??= error; }
+    }
+  }));
+  if (fatal) throw fatal;
+  const failed_articles = results.flatMap(r => r.failed_articles);
+  const completed = results.reduce((n, r) => n + r.completed, 0);
+  return {
+    ...(completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
+    requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
+    failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
+  };
+}
+
+async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random }) {
   let requests = 0, cached = 0, completed = 0;
   const failed = [];
   const diagnostics = [];
@@ -187,6 +243,7 @@ export async function reviewArticles({ articles, reviewDir, policy, config, fetc
         review = await requestReview(article, policy, config.apiKey, fetchImpl, attempt > 0);
       } catch (error) {
         // Outage retries and invalid-output retries share the run request budget.
+        if (error.scheduling_stopped) return state({ status: 'paused', reason: 'scheduling_stopped' });
         if ((error.status >= 500 || error.transport_error) && providerRetries < 2) {
           waitMs = Math.max(config.delayMs, 15000 * 2 ** providerRetries + Math.floor(random() * 1000));
           providerRetries++;
