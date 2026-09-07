@@ -1,6 +1,6 @@
 # NVIDIA 기사 분석 병렬 실행
 
-Actions 실행 입력 `concurrency` 기본값은 3이며 1~8로 조절할 수 있다.
+Actions 실행 입력 `concurrency` 기본값은 12이며 1~12로 조절할 수 있다.
 로컬에서는 `REPORT_CONCURRENCY`를 사용한다. 1은 기존 순차 처리다.
 
 병렬 처리 수는 동시에 응답을 기다리는 기사 수다. 모든 작업자가 공유하는 요청 시작
