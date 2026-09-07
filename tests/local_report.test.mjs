@@ -62,7 +62,7 @@ test("rejects missing, duplicated, stale and ungrounded reviews", () => {
   assert.throws(() => importReview(multi, review(multi, [decision(), decision()])), /duplicate/);
 });
 
-test('not_applicable investment stages require explicit rejection and still validate evidence and fields', () => {
+test('not_applicable investment stages record a rejection and still validate evidence and fields', () => {
   const a = article();
   const rejected = decision({ event_stage: 'not_applicable', indicator_supported: false,
     leading_indicator_supported: false, evidence_quotes: [], summary_ko: '', summary_en: '' });
@@ -71,9 +71,21 @@ test('not_applicable investment stages require explicit rejection and still vali
     assert.equal(result[0].supported, false);
     assert.equal(result[0].row, null);
   }
-  for (const flags of [{ indicator_supported: true }, { leading_indicator_supported: true }, { indicator_supported: 'false' }]) {
-    assert.throws(() => importReview(a, review(a, [{ ...rejected, ...flags }])));
+  // A decision that falls short on any approval field has nothing to stage, so
+  // not_applicable is an honest answer rather than a contradiction. Observed
+  // shape: the model matched the indicator but found no leading-indicator
+  // evidence. Rejecting these discarded the whole article, other candidates
+  // included, over a field that cannot approve anything.
+  for (const flags of [{ indicator_supported: true }, { leading_indicator_supported: true },
+    { indicator_supported: true, quality: 'needs_review' }, { target_technology_supported: false }]) {
+    const result = importReview(a, review(a, [{ ...rejected, ...flags }]));
+    assert.equal(result[0].supported, false);
+    assert.equal(result[0].row, null);
   }
+  // The stage is the only thing blocking approval here: that contradiction is
+  // what the retry exists to resolve, so it must stay loud.
+  assert.throws(() => importReview(a, review(a, [decision({ event_stage: 'not_applicable' })])), /invalid event_stage/);
+  assert.throws(() => importReview(a, review(a, [{ ...rejected, indicator_supported: 'false' }])), /missing boolean/);
   assert.throws(() => importReview(a, review(a, [{ ...rejected, evidence_quotes: ['Fabricated quote'] }])), /exact passages/);
   assert.throws(() => importReview(a, review(a, [{ ...rejected, reason_ko: '' }])), /reason_ko/);
 });
