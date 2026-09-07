@@ -7,7 +7,7 @@
     "source": "Ouster - News Releases / Press Releases",
     "published_at": "2026-08-26T11:00:31Z",
     "published_at_source": "jsonld",
-    "collected_at": "2026-09-07T05:57:41Z",
+    "collected_at": "2026-09-07T07:41:14Z",
     "collector": "official_page",
     "query": "https://investors.ouster.com/news-events/news-releases",
     "source_type": "official",
@@ -21,7 +21,7 @@
     "content_excerpt": "Skip to main navigation Ouster acquires StereoLabs. Learn More GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar August 26, 2026 PDF Version Unlocking Precision and Safety in Autonomous Agriculture: GUSS Plans Deployment of Rev8 to Revolutionize Orchard Operations SAN FRANCISCO --(BUSINESS WIRE)--Aug. 26, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next...",
     "content_word_count": 1280,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-07T05:57:41Z",
+    "content_fetched_at": "2026-09-07T07:41:14Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -68,7 +68,7 @@
     "source": "Charles River - News Releases / Press Releases",
     "published_at": "2026-08-20T12:00:33Z",
     "published_at_source": "jsonld",
-    "collected_at": "2026-09-07T05:57:41Z",
+    "collected_at": "2026-09-07T07:41:14Z",
     "collector": "official_page",
     "query": "https://ir.criver.com/news-releases/",
     "source_type": "official",
@@ -82,7 +82,7 @@
     "content_excerpt": "Skip to main navigation Investor Relations Charles River provides essential products and services to help pharmaceutical and biotechnology companies, government agencies and leading academic institutions around the globe accelerate their research and drug development efforts. Our dedicated employees are focused on providing clients with exactly what they need to improve and expedite the discovery, early-stage development and safe manufacture of new therapies for the patients who need them. News Release &nbsp;View printer-friendly version Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing PDF Version Collaboration leverages NGS technologies to accelerate high-quality vaccine development, su...",
     "content_word_count": 1081,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-07T05:57:41Z",
+    "content_fetched_at": "2026-09-07T07:41:14Z",
     "query_aliases": [
       "Charles River Laboratories"
     ],
@@ -130,7 +130,7 @@
     "source": "HyproMag - Mkango 2026 News / News Archive RSS",
     "published_at": "2026-08-31T12:33:45Z",
     "published_at_source": "feed",
-    "collected_at": "2026-09-07T05:57:41Z",
+    "collected_at": "2026-09-07T07:41:14Z",
     "collector": "official_feed_discovered",
     "query": "https://mkango.ca/rss",
     "source_type": "official",
@@ -144,7 +144,7 @@
     "content_excerpt": "News Mkango Completes Acquisition Of Remloy August 31, 2026 View PDF (530 kB) London / Vancouver: 31 August 2026 – Mkango Resources Ltd. ( AIM/TSX-V: MKA) (“Mkango” or the “Company”) is pleased to announce that following the announcement on 20 May 2026, the Company has completed the acquisition of the Remloy rare earth magnet recycling business (“Remloy”) from Heraeus Amloy Technologies GmbH for €8 million (US$9.3 million [1] ) in cash of which €5 million (US$5.8 million 1 ) was settled by Mkango on closing (the “Transaction”). The balance of €3 million (US$3.5 million 1 ) is payable in cash on 28 August 2028, being the second anniversary of completion. Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop recy...",
     "content_word_count": 2881,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-07T05:57:41Z",
+    "content_fetched_at": "2026-09-07T07:41:14Z",
     "query_aliases": [
       "HyProMag"
     ],

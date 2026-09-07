@@ -1,9 +1,9 @@
 {
   "status": "completed",
-  "requests": 1,
-  "cached": 292,
-  "completed": 293,
-  "total": 293,
+  "requests": 25,
+  "cached": 231,
+  "completed": 254,
+  "total": 254,
   "failed_articles": [],
   "diagnostics": [],
   "concurrency": 8,
