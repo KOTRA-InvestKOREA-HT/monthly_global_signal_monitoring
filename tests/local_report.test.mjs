@@ -78,6 +78,17 @@ test('not_applicable investment stages require explicit rejection and still vali
   assert.throws(() => importReview(a, review(a, [{ ...rejected, reason_ko: '' }])), /reason_ko/);
 });
 
+test('Albemarle table quotes accept currency and percent padding without changing numbers', () => {
+  const a = article();
+  a.evidence = ['Sales Volume (kT LCE) (a) 65 59 6 11.0&nbsp;% Avg. Realized Price ($/kg LCE) (a) $&nbsp;&nbsp;19.53 $&nbsp;&nbsp;12.17 $&nbsp;7.36 60.5&nbsp;%'];
+  const quotes = ['Sales Volume (kT LCE) (a) 65 59 6 11.0%', 'Avg. Realized Price ($/kg LCE) (a) $19.53 $12.17 $7.36 60.5%'];
+  assert.equal(importReview(a, review(a, [decision({ evidence_quotes: quotes })]))[0].supported, true);
+  for (const quote of [quotes[0].replace('65 59', '6559'), quotes[0].replace('11.0', '110'),
+    quotes[1].replace('$19.53', '$19.35'), quotes[1].replace('$19.53', '€19.53'), quotes[1].replace('$7.36', '$-7.36')]) {
+    assert.throws(() => importReview(a, review(a, [decision({ evidence_quotes: [quote] })])), /exact passages/);
+  }
+});
+
 test("only supported decisions need bilingual prose; rejection does not become a report row", () => {
   const a = article();
   assert.throws(() => importReview(a, review(a, [decision({ summary_en: "" })])), /missing ai_summary_en/);

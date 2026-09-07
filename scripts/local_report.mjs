@@ -19,7 +19,11 @@ export function normalizeQuote(value) {
     const code = /^#x/i.test(entity) ? parseInt(entity.slice(2), 16) : Number(entity.slice(1));
     return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : match;
   }).normalize('NFC').replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-')
-    .replace(/[₀-₉]/g, digit => String(digit.charCodeAt(0) - 0x2080)));
+    .replace(/[₀-₉]/g, digit => String(digit.charCodeAt(0) - 0x2080)))
+    // Financial tables pad currency prefixes and percent suffixes with NBSP.
+    // Do not collapse spaces between numbers or otherwise alter numeric values.
+    .replace(/([$€£¥₩]) +(?=\d)/g, '$1')
+    .replace(/(\d) +%/g, '$1%');
 }
 const hash = (value) => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 24);
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));

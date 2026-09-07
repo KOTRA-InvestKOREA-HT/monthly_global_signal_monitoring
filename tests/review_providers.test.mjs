@@ -74,7 +74,7 @@ test('an NVIDIA HTTP failure is labelled without leaking the response body', asy
 test('NVIDIA needs no free-tier confirmation and reads the single shared key secret', () => {
   assert.deepEqual(
     configuration({ REPORT_PROVIDER: 'nvidia', OPENAI_API_KEY: 'k' }, NVIDIA),
-    { apiKey: 'k', maxRequests: 400, delayMs: 1600, concurrency: 12 },
+    { apiKey: 'k', maxRequests: 400, delayMs: 1600, concurrency: 8 },
   );
   // 40 RPM 이면 1500ms 가 한도다.
   assert.throws(() => configuration({ REPORT_PROVIDER: 'nvidia', OPENAI_API_KEY: 'k', NVIDIA_DELAY_MS: '1499' }, NVIDIA), /1500\.\.60000/);
