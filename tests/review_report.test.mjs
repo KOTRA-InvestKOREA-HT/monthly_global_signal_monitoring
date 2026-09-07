@@ -11,6 +11,28 @@ const decisions = [{ candidate_id: 'investment:2', entity_supported: true, targe
 const response = (ds = decisions, finish_reason = 'stop') => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: {} }));
 const config = { apiKey: 'test-key', maxRequests: 40, delayMs: 15000 };
 
+test('DeepSeek no-investment responses validate on first request and are reused from cache', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'deepseek-rejected-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const row = article('Infineon').candidates[0].row;
+  const a = groupArticles([1, 2, 3, 4, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row],
+    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const ds = a.candidates.map(c => ({ ...decisions[0], candidate_id: c.id, event_stage: 'not_applicable',
+    target_technology_supported: false, indicator_supported: false, leading_indicator_supported: false,
+    evidence_quotes: [], summary_ko: '', summary_en: '', reason_ko: '기사에 해당 투자 활동이 없음' }));
+  const args = { articles: [a], reviewDir, policy: '', config };
+  const first = await reviewArticles({ ...args, fetchImpl: async () => response(ds) });
+  assert.equal(first.status, 'completed');
+  assert.equal(first.requests, 1);
+  assert.deepEqual(first.diagnostics, []);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.decisions[0].event_stage, 'not_applicable');
+  assert.equal(stored.decisions[0].indicator_supported, false);
+  const resumed = await reviewArticles({ ...args, fetchImpl: async () => { throw new Error('must use cached review'); } });
+  assert.equal(resumed.cached, 1);
+  assert.equal(resumed.requests, 0);
+});
+
 // Actual failed HyproMag investment:2 quote: the model omitted the middle sentence.
 const remloyPlant = 'Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop recycling) to produce neodymium-iron-boron (“NdFeB”) alloy powders for the bonded and hot deformed magnet markets.';
 const remloyMiddle = 'The Remloy process is complementary to HyProMag’s short loop recycling process to produce sintered magnets, and to Mkango Rare Earths UK’s long loop recycling process, to produce mixed rare earth carbonates and oxides.';
