@@ -1,21 +1,16 @@
 {
-  "requests": 2,
-  "cached": 293,
-  "completed": 294,
-  "total": 294,
-  "failed_articles": [],
-  "diagnostics": [
-    {
-      "article_id": "36d9a61515eb0be863c981c9",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/36d9a61515eb0be863c981c9/f08a181f-532d-4225-9335-dc9bca3138aa-attempt-1.json"
-    }
-  ],
   "status": "completed",
+  "requests": 1,
+  "cached": 292,
+  "completed": 293,
+  "total": 293,
+  "failed_articles": [],
+  "diagnostics": [],
+  "concurrency": 8,
   "period": {
     "from_date": "2026-08-01",
     "to_date": "2026-08-31"
   },
-  "model": "gemini-3.5-flash-lite"
+  "provider": "nvidia",
+  "model": "deepseek-ai/deepseek-v4-flash-0731"
 }
