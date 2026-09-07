@@ -130,7 +130,12 @@ export function importReview(article, review) {
       if (typeof decision[field] !== "boolean") throw new Error(`${context}: missing boolean ${field}`);
     }
     const stages = candidate.kind === "relevant" ? ["not_applicable"] : ["exploratory", "planned", "precursor", "committed", "completed", "unclear"];
-    if (!stages.includes(decision.event_stage)) throw new Error(`${context}: invalid event_stage`);
+    // The provider schema includes not_applicable for both candidate kinds.
+    // An explicitly rejected investment has no event to stage. Accept that
+    // representation without turning it into an approved or uncertain signal.
+    const noInvestmentEvent = candidate.kind === "investment" && decision.event_stage === "not_applicable" &&
+      decision.indicator_supported === false && decision.leading_indicator_supported === false;
+    if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
     if (!["pass", "needs_review"].includes(decision.quality)) throw new Error(`${context}: invalid quality`);
     if (!clean(decision.reason_ko)) throw new Error(`${context}: reason_ko is required`);
     if (candidate.kind === "relevant" && !decision.leading_indicator_supported) {

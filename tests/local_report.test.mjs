@@ -62,6 +62,22 @@ test("rejects missing, duplicated, stale and ungrounded reviews", () => {
   assert.throws(() => importReview(multi, review(multi, [decision(), decision()])), /duplicate/);
 });
 
+test('not_applicable investment stages require explicit rejection and still validate evidence and fields', () => {
+  const a = article();
+  const rejected = decision({ event_stage: 'not_applicable', indicator_supported: false,
+    leading_indicator_supported: false, evidence_quotes: [], summary_ko: '', summary_en: '' });
+  for (const quality of ['pass', 'needs_review']) {
+    const result = importReview(a, review(a, [{ ...rejected, quality }]));
+    assert.equal(result[0].supported, false);
+    assert.equal(result[0].row, null);
+  }
+  for (const flags of [{ indicator_supported: true }, { leading_indicator_supported: true }, { indicator_supported: 'false' }]) {
+    assert.throws(() => importReview(a, review(a, [{ ...rejected, ...flags }])));
+  }
+  assert.throws(() => importReview(a, review(a, [{ ...rejected, evidence_quotes: ['Fabricated quote'] }])), /exact passages/);
+  assert.throws(() => importReview(a, review(a, [{ ...rejected, reason_ko: '' }])), /reason_ko/);
+});
+
 test("only supported decisions need bilingual prose; rejection does not become a report row", () => {
   const a = article();
   assert.throws(() => importReview(a, review(a, [decision({ summary_en: "" })])), /missing ai_summary_en/);
