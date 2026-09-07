@@ -170,7 +170,7 @@ export async function reviewArticles(options) {
   // One start-time gate for all workers AND retries. Waiting for a response
   // does not hold this gate. The existing per-article validator/cache is reused.
   let queue = Promise.resolve(), nextStart = 0, requests = 0, index = 0;
-  let stopped = null, fatal = null;
+  let stopped = null, fatal = null, progressCompleted = 0;
   const results = [];
   const gatedFetch = async (...args) => {
     const slot = queue.then(async () => {
@@ -198,8 +198,10 @@ export async function reviewArticles(options) {
     while (index < articles.length && !fatal) {
       const article = articles[index++];
       try {
-        const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch });
+        const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch, logReviewed: false });
         results.push(result);
+        progressCompleted += result.completed;
+        if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
         if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped'].includes(result.reason)) {
           if (!stopped || stopped.reason === 'request_budget') stopped = result;
         }
@@ -216,7 +218,7 @@ export async function reviewArticles(options) {
   };
 }
 
-async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random }) {
+async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true }) {
   let requests = 0, cached = 0, completed = 0;
   const failed = [];
   const diagnostics = [];
@@ -268,7 +270,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       }
       await write(file, review);
       completed++;
-      console.log(`Reviewed ${completed}/${articles.length}: ${article.company}`);
+      if (logReviewed) console.log(`Reviewed ${completed}/${articles.length}: ${article.company}`);
       break;
     }
   }
