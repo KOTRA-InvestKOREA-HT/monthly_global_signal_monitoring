@@ -1409,10 +1409,16 @@ async function mapWithConcurrency(items, concurrency, worker) {
   return results;
 }
 
+// Coverage for the Google News fallback decision only. A dated in-month row
+// counts whether or not its body could be fetched: a press release we could
+// only reach as a PDF is still real coverage for that month, and calling it
+// absent sends the company to Google News instead. That trade is a bad one.
+// Short target names ("EVG", "JSR", "Besi") match unrelated articles there, so
+// the fallback replaces a press release we merely could not parse with one
+// about a different company entirely.
 export function usableMonthlySource(row, dateRange) {
   const published = Date.parse(row.published_at || "");
-  return Number.isFinite(published) && published >= dateRange.fromMs && published <= dateRange.toMs &&
-    (row.source_type !== "official" || (row.content_fetch_status === "fetched" && Boolean(row.content_text?.trim())));
+  return Number.isFinite(published) && published >= dateRange.fromMs && published <= dateRange.toMs;
 }
 
 async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
@@ -1470,8 +1476,12 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       const fallback = await collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       requestCount += fallback.requestCount;
       if (fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
-      // Keep useful monthly evidence and supplement it before filling slots with undated/failed links.
-      rows = dedupeRows([...usable, ...fallback.rows, ...rows]).slice(0, args.maxPerCompany);
+      // Dated monthly evidence first, then the rest of what this company's own
+      // sources returned, and only then the fallback. Ranking Google News above
+      // an undated or unfetched official row let it push real press releases
+      // out of maxPerCompany: 26 official rows were lost that way in the
+      // 2026-08 run while fallback rows grew from 37 to 142.
+      rows = dedupeRows([...usable, ...rows, ...fallback.rows]).slice(0, args.maxPerCompany);
     } catch (error) {
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
