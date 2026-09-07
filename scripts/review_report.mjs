@@ -136,7 +136,14 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     const message = String(detail.error?.message || '').toLowerCase();
     error.provider_reason = /overload|high demand|capacity/.test(message) ? 'capacity'
       : /model.*not found|model.*not supported/.test(message) ? 'model_unavailable'
-      : /api key/.test(message) ? 'api_key' : 'unspecified';
+      : /api key/.test(message) ? 'api_key'
+      // A 429 is either a burst this run can wait out or an exhausted account.
+      // One costs a minute and the other costs a day, so name which it was.
+      : /credit|quota|balance|exceeded your current/.test(message) ? 'credits_exhausted'
+      : /per (minute|second)|rate limit|too many requests/.test(message) ? 'rate_limit'
+      : 'unspecified';
+    const retryAfter = response.headers.get('retry-after');
+    if (retryAfter) error.retry_after = retryAfter;
     throw error;
   }
   const payload = await response.json().catch(() => { throw invalid('invalid_json'); });
@@ -203,7 +210,13 @@ export async function reviewArticles(options) {
         progressCompleted += result.completed;
         if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
         if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped'].includes(result.reason)) {
-          if (!stopped || stopped.reason === 'request_budget') stopped = result;
+          // The gate stops queued work knowing only the status code; the worker
+          // also read the provider's own explanation. Preferring the gate's
+          // report discarded provider_reason on every 429, which is exactly
+          // what separates "retry in a minute" from "the account is out".
+          const lessInformative = !stopped || stopped.reason === 'request_budget' ||
+            (stopped.http_status === result.http_status && !stopped.provider_reason && result.provider_reason);
+          if (lessInformative) stopped = result;
         }
       } catch (error) { fatal ??= error; }
     }
@@ -252,7 +265,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           console.log(`Article ${article.id}: transient provider error; retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
-        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason });
+        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
         if (error.transport_error) return state({ status: 'paused', reason: 'transport_error' });
         if (!error.response_code) throw error;
         const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-attempt-${attempt + 1}.json`;
@@ -315,7 +328,12 @@ async function main() {
   console.log(JSON.stringify(state));
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached.\n` +
-    (state.status === 'paused' ? `Reason: ${state.reason}. Saved progress; rerun the same dates with refresh=false. For quota/provider errors, wait for recovery first. Existing published PDFs are unchanged.\n` : '') +
+    (state.status === 'paused' ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
+      'Saved progress; rerun the same dates with refresh=false. ' +
+      // A burst limit clears in a minute; an exhausted account does not.
+      (state.provider_reason === 'credits_exhausted' ? 'The account is out of credits, so an immediate rerun will only 429 again. ' : '') +
+      (state.provider_reason === 'rate_limit' ? 'This was a burst limit, so a rerun shortly should continue. ' : '') +
+      'Existing published PDFs are unchanged.\n' : '') +
     state.failed_articles.map(item => `- Article ${item.article_id}: ${item.reason}\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
   if (state.status !== 'completed') { process.exitCode = 75; return; }
