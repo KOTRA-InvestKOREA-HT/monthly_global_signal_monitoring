@@ -30,6 +30,7 @@ const nextConfig = {
       "./assets/fonts/*.ttf",
       "./scripts/build_pdf_report.py",
       "./config/investment_signal_indicators.json",
+      "./config/date_evidence_sources.json",
     ],
   },
 };

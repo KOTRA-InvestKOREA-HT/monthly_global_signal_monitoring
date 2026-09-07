@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
+import { periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 
 const period = monthPeriod("2026-08");
 const source = {
@@ -34,7 +35,7 @@ test("month filtering matches UTC boundaries, leap years, and unknown dates", ()
 
 test("groups indicators for one company/article, preserves distinct companies and filters before review", () => {
   const groups = groupArticles([source, { ...source, investment_signal_no: 4 },
-    { ...source, company: "Subsidiary", target_no: 2 }, { ...source, published_at: null }], [source], period);
+    { ...source, company: "Subsidiary", target_no: 2 }], [source], period);
   assert.equal(groups.length, 2);
   assert.equal(groups[0].candidates.length, 3);
   assert.equal(groups[0].evidence.filter((text) => text === source.content_text).length, 1);
@@ -205,4 +206,39 @@ test("technology-exempt business rows still require concrete activity", () => {
   const a = groupArticles([], [{...source, excluded_from_relevance:true}], period)[0];
   const result = importReview(a, review(a, [decision({candidate_id:"relevant", event_stage:"not_applicable", target_technology_supported:false, indicator_supported:false, evidence_quotes:[]})]));
   assert.equal(result[0].supported, false);
+});
+
+
+test("date state separates report eligibility from review eligibility", () => {
+  const undated = { ...source, published_at: null, published_at_source: "" };
+  // 게시일이 없어도 본문이 있으면 검토는 한다. 다만 보고서 본문에는 들어가지 않는다.
+  assert.equal(reviewCandidate(undated, period).included, true);
+  assert.equal(inPeriod(undated, period), false);
+  assert.equal(periodPlacement(undated, period).placement, "date_pending");
+  // 근거도 본문도 없는 링크는 수집 보완 대상이지 검토 대상이 아니다.
+  assert.equal(reviewCandidate({ ...undated, content_text: "" }, period).included, false);
+  // 공식 자료로 게시월까지 확인되면 일자가 없어도 그 달 보고서 후보다.
+  const monthOnly = { ...source, published_at: null, published_month: "2026-08", published_at_source: "listing" };
+  assert.equal(inPeriod(monthOnly, period), true);
+  // 같은 게시월이라도 선택 기간이 월 전체가 아니면 포함 여부를 확인해야 한다.
+  assert.equal(inPeriod(monthOnly, { from_date: "2026-08-10", to_date: "2026-08-20" }), false);
+  // 본문에서 처음 찾은 날짜는 사건 발생일일 수 있으므로 게시일로 확정하지 않는다.
+  assert.equal(inPeriod({ ...source, published_at_source: "body_text" }, period), false);
+  assert.equal(reviewCandidate({ ...source, published_at_source: "body_text" }, period).included, true);
+  // 수정일만 있는 7월 기사를 8월 신규 기사로 잡지 않는다.
+  const modifiedOnly = { ...source, published_at: "2026-08-20T00:00:00Z", published_at_source: "modified_meta" };
+  assert.equal(inPeriod(modifiedOnly, period), false);
+  // 확정 근거끼리 어긋나면 날짜를 확인하기 전까지 본문에 넣지 않는다.
+  assert.equal(inPeriod({ ...source, published_at_source: "listing", date_conflict: true }, period), false);
+  // 확인된 근거가 기간 밖이면 검토 대상도 아니다.
+  assert.equal(reviewCandidate({ ...source, published_at: "2026-07-10T00:00:00Z" }, period).included, false);
+});
+
+test("review identity survives a recovered date so a corrected article is not reviewed twice", () => {
+  const undated = { ...source, published_at: null, published_at_source: "" };
+  const before = groupArticles([undated], [], period)[0];
+  const after = groupArticles([{ ...undated, published_at: source.published_at, published_at_source: "meta" }], [], period)[0];
+  assert.equal(before.id, after.id);
+  assert.equal(before.date_status, "unknown");
+  assert.equal(after.date_placement, "in_period");
 });

@@ -7,9 +7,10 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { validateRows, investmentStageSupported } from "./validate_report_inputs.mjs";
+import { dateLabelKo, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const POLICY_VERSION = "local-report-v2";
+const POLICY_VERSION = "local-report-v3";
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 // Compare typographic equivalents only; preserve words, numbers and block boundaries.
 export function normalizeQuote(value) {
@@ -37,14 +38,22 @@ export function monthPeriod(month) {
   return { from_date: start, to_date: new Date(next.getTime() - 86400000).toISOString().slice(0, 10) };
 }
 
+// 보고서 본문에 쓸 수 있는 기사인지 본다. 게시월까지 확정된 기사만 참이다.
+// 검토 대상 여부는 이보다 넓다. reviewCandidate가 그 판단을 맡는다.
 export function inPeriod(row, period) {
-  if (!row.published_at) return false;
-  // The PDF renderer interprets timestamps without an offset as UTC.
-  let date = String(row.published_at).trim();
-  if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(date)) date += "Z";
-  const time = Date.parse(date);
-  return Number.isFinite(time) && time >= Date.parse(`${period.from_date}T00:00:00Z`) &&
-    time < Date.parse(`${period.to_date}T00:00:00Z`) + 86400000;
+  return reportEligible(row, period);
+}
+
+function dateFields(row, period) {
+  const placement = periodPlacement(row, period);
+  return {
+    published_at: row.published_at || null,
+    published_month: placement.state.month,
+    date_status: placement.state.status,
+    date_placement: placement.placement,
+    date_note: placement.reason,
+    date_label: dateLabelKo(row),
+  };
 }
 
 function withoutAI(row) {
@@ -55,12 +64,14 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
   const groups = new Map();
   for (const [kind, rows] of [["investment", investment], ["relevant", relevant]]) {
     for (const original of rows) {
-      if (!inPeriod(original, period)) continue;
+      // 날짜가 확정되지 않아도 내용 판정 기회는 준다. 보고서 반영 여부는 date_placement가 따로 들고 있다.
+      if (!reviewCandidate(original, period).included) continue;
       const row = withoutAI(original);
       const key = JSON.stringify([row.target_no, row.company, row.url || row.title]);
       if (!groups.has(key)) groups.set(key, {
         company: row.company, target_no: row.target_no, url: row.url, title: row.title,
-        published_at: row.published_at, source: row.source, source_type: row.source_type,
+        source: row.source, source_type: row.source_type,
+        ...dateFields(row, period),
         evidence: [], candidates: [],
       });
       const article = groups.get(key);
@@ -85,16 +96,25 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
   return [...groups.values()].map((article) => {
     article.evidence.sort();
     article.candidates.sort((a, b) => a.id.localeCompare(b.id));
-    const material = { ...article, policy, candidates: article.candidates.map(({ row, ...item }) => item) };
-    return { ...material, id: hash(material), candidates: article.candidates };
+    // 기사 ID에는 날짜를 넣지 않는다. 날짜를 보강했다고 이미 끝난 내용 판정을 버리면
+    // 한정된 검토 호출을 같은 기사에 두 번 쓰게 된다.
+    const { published_at, published_month, date_status, date_placement, date_note, date_label, ...content } = article;
+    const material = { ...content, policy, candidates: article.candidates.map(({ row, ...item }) => item) };
+    return { ...material, published_at, published_month, date_status, date_placement, date_note, date_label,
+      id: hash(material), candidates: article.candidates };
   });
 }
 
 // Every in-month source reaches the agent, including keyword/technology filter misses.
 export function sourceCandidates(signals, technology, indicators, period) {
-  const investment = [], relevant = [], seen = new Set();
+  const investment = [], relevant = [], seen = new Set(), deferred = [];
   for (const signal of signals) {
-    if (!inPeriod(signal, period)) continue;
+    const placement = reviewCandidate(signal, period);
+    if (!placement.included) {
+      // 근거도 본문도 없어 검토를 미룬 기사는 세어 둔다. 수집 보완 대상이지 판정이 끝난 기사가 아니다.
+      if (placement.placement === "date_pending") deferred.push({ company: signal.company, url: signal.url, title: signal.title, reason: placement.reason });
+      continue;
+    }
     const key = JSON.stringify([signal.target_no, signal.company, signal.url || signal.title]);
     if (seen.has(key)) throw new Error(`Duplicate source article: ${signal.company} ${signal.url}`);
     seen.add(key);
@@ -102,7 +122,8 @@ export function sourceCandidates(signals, technology, indicators, period) {
     if (!tech) throw new Error(`Missing target technology: ${signal.company}`);
     const row = { ...withoutAI(signal), ...tech, company: signal.company,
       technology_gate_decision: tech.excluded_from_relevance ? "relevance_exempt" : "agent_review",
-      candidate_origin: "all_month_sources" };
+      candidate_origin: "all_month_sources",
+      date_status: placement.state.status, date_placement: placement.placement, date_note: placement.reason };
     relevant.push(row);
     for (const indicator of indicators.indicators) investment.push({ ...row,
       investment_signal_no: indicator.no, investment_signal_id: indicator.id,
@@ -110,7 +131,7 @@ export function sourceCandidates(signals, technology, indicators, period) {
       investment_signal_description: indicator.description_ko,
     });
   }
-  return { investment, relevant };
+  return { investment, relevant, deferred };
 }
 
 const BOOLEANS = ["entity_supported", "target_technology_supported", "indicator_supported", "leading_indicator_supported"];
@@ -125,6 +146,17 @@ export function importReview(article, review) {
   }
   const seen = new Set();
   const evidence = article.evidence.map(normalizeQuote);
+  // 검토자가 날짜를 제안하면 근거 문구를 함께 받는다. 인용이 확인돼도 게시일을 확정으로 올리지는 않는다.
+  // 본문에서 처음 보이는 날짜는 사건 발생일일 수 있기 때문이다. 보강 단서로만 남긴다.
+  if (clean(review.published_date) || clean(review.published_date_quote)) {
+    if (!/^\d{4}-\d{2}(-\d{2})?$/.test(clean(review.published_date))) {
+      throw new Error(`${article.company}: published_date must be YYYY-MM-DD or YYYY-MM`);
+    }
+    const quote = normalizeQuote(review.published_date_quote);
+    if (!quote || !evidence.some((text) => text.includes(quote))) {
+      throw new Error(`${article.company}: published_date_quote must be an exact passage from this article`);
+    }
+  }
   return review.decisions.map((decision) => {
     const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
     if (!candidate || seen.has(decision.candidate_id)) throw new Error(`${article.company}: unknown or duplicate candidate_id`);
@@ -178,6 +210,21 @@ export function importReview(article, review) {
   });
 }
 
+// 날짜 보류 기사에 대해 검토자가 제안한 게시일과 그 근거 문구. 다음 수집·확인 작업의 출발점이다.
+function dateHints(snapshot, reviews) {
+  const articles = new Map(snapshot.articles.map((article) => [article.id, article]));
+  return reviews
+    .filter((review) => clean(review.published_date) && articles.get(review.article_id)?.date_placement === "date_pending")
+    .map((review) => ({
+      article_id: review.article_id,
+      company: articles.get(review.article_id).company,
+      url: articles.get(review.article_id).url,
+      published_date: clean(review.published_date),
+      published_date_quote: clean(review.published_date_quote),
+      status: "estimated",
+    }));
+}
+
 function execute(command, args) {
   const result = spawnSync(command, args, { cwd: ROOT, stdio: "inherit" });
   if (result.error) throw result.error;
@@ -212,7 +259,8 @@ async function prepare(args) {
   const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology])}`;
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
-  const snapshot = { policy, period, summary, signals: signals.map(withoutAI), articles, targets, technology, indicators };
+  const snapshot = { policy, period, summary, signals: signals.map(withoutAI), articles, targets, technology, indicators,
+    date_deferred: candidates.deferred };
   const runDir = path.join(outDir, `${month}-${hash(snapshot)}`);
   await fs.mkdir(path.join(runDir, "articles"), { recursive: true });
   await fs.mkdir(path.join(outDir, "reviews"), { recursive: true });
@@ -230,7 +278,13 @@ async function prepare(args) {
   await fs.writeFile(path.join(runDir, "REVIEW.md"), policyText);
   console.log(JSON.stringify({ run_dir: runDir, review_dir: path.join(outDir, "reviews"),
     collection_rows: signals.length, excluded_from_month: signals.length - articles.length,
-    candidate_rows: articles.reduce((n, article) => n + article.candidates.length, 0), articles: articles.length }, null, 2));
+    candidate_rows: articles.reduce((n, article) => n + article.candidates.length, 0), articles: articles.length,
+    // 날짜 확정분과 날짜 보류분을 나눠 보여준다. 보류분도 검토는 하되 본문에는 날짜 보강 뒤에 들어간다.
+    report_ready_articles: articles.filter((article) => article.date_placement === "in_period").length,
+    date_pending_articles: articles.filter((article) => article.date_placement === "date_pending").length,
+    date_pending_reasons: articles.filter((article) => article.date_placement === "date_pending")
+      .reduce((counts, article) => ({ ...counts, [article.date_note]: (counts[article.date_note] || 0) + 1 }), {}),
+    collection_gap_rows: candidates.deferred.length }, null, 2));
   await status(runDir);
 }
 
@@ -273,8 +327,12 @@ export async function build(args) {
   if (pending.length || invalid.length) {
     throw new Error(`Report blocked: ${pending.length} pending articles, ${invalid.length} invalid reviews. Run status --run-dir ${runDir}`);
   }
-  const investment = results.filter((item) => item.supported && item.kind === "investment").map((item) => item.row);
-  const relevant = results.filter((item) => item.supported && item.kind === "relevant").map((item) => item.row);
+  // 승인된 판정은 날짜 상태와 무관하게 모두 남긴다. 게시월이 확정된 행만 PDF 본문에 들어가고,
+  // 날짜 보류 행은 같은 파일에 남아 대시보드의 검토 후보가 된다. PDF 생성기가 같은 기준으로 거른다.
+  const approved = (kind) => results.filter((item) => item.supported && item.kind === kind).map((item) => item.row);
+  const investment = approved("investment");
+  const relevant = approved("relevant");
+  const datePending = (rows) => rows.filter((row) => !reportEligible(row, snapshot.period));
   const errors = [...validateRows(investment, "investment"), ...validateRows(relevant, "relevant")];
   if (errors.length) throw new Error(errors.join("\n"));
   // A failed build never overwrites an earlier PDF, either here or in public/reports.
@@ -284,16 +342,22 @@ export async function build(args) {
     const coverage = snapshot.targets.map((target) => {
       const articles = snapshot.articles.filter((article) => article.company === target.company);
       const incomplete = articles.filter((article) => reviewByArticle.get(article.id).decisions.some((d) => d.quality === "needs_review"));
+      const datePending = articles.filter((article) => article.date_placement === "date_pending");
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
+        date_pending_articles: datePending.length,
         status: !articles.length ? "no_monthly_sources" : incomplete.length ? "incomplete_evidence" : "reviewed",
-        follow_up: incomplete.map((article) => ({ url: article.url, title: article.title })) };
+        follow_up: incomplete.map((article) => ({ url: article.url, title: article.title })),
+        // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
+        date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
     });
     const files = {
       "signals.json": snapshot.signals, "summary.json": { ...snapshot.summary, review_coverage: coverage },
       "coverage.json": coverage,
       "investment.json": investment, "relevant.json": relevant,
-      "investment-summary.json": { investment_signal_count: investment.length },
+      "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },
+      "date-pending.json": { investment: datePending(investment), relevant: datePending(relevant),
+        deferred: snapshot.date_deferred || [], hints: dateHints(snapshot, reviews) },
       "targets.json": snapshot.targets, "technology.json": snapshot.technology, "indicators.json": snapshot.indicators,
       "reviews.json": reviews,
       "decisions.json": results.map(({ row, ...item }) => item),
@@ -310,6 +374,7 @@ export async function build(args) {
     }
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
       reviewed_candidates: results.length, approved_investment: investment.length, approved_business: relevant.length,
+      date_pending_investment: datePending(investment).length, date_pending_business: datePending(relevant).length,
       incomplete_companies: coverage.filter((item) => item.status !== "reviewed").length,
       rejected_candidates: results.filter((item) => !item.supported).length }, null, 2));
     return buildDir;
