@@ -33,9 +33,9 @@ on:
         type: boolean
         default: false
       concurrency:
-        description: "Concurrent article requests (1-8); shared RPM limit still applies"
+        description: "Concurrent article requests (1-12); shared RPM limit still applies"
         type: string
-        default: "3"
+        default: "12"
 
 concurrency:
   group: collect-company-signals-${{ github.ref }}
@@ -103,7 +103,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '400' }}
           REPORT_DELAY_MS: ${{ inputs.delay_ms || vars.REPORT_DELAY_MS || '' }}
-          REPORT_CONCURRENCY: ${{ inputs.concurrency || vars.REPORT_CONCURRENCY || '3' }}
+          REPORT_CONCURRENCY: ${{ inputs.concurrency || vars.REPORT_CONCURRENCY || '12' }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
           REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '2' }}
