@@ -26,7 +26,7 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
   const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 400);
   const delayMs = Number(env[`${prefix}_DELAY_MS`] || env.REPORT_DELAY_MS || provider.defaultDelayMs);
-  const concurrency = Number(env.REPORT_CONCURRENCY || 12);
+  const concurrency = Number(env.REPORT_CONCURRENCY || 8);
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 12) throw new Error('REPORT_CONCURRENCY must be 1..12');
   // 대기 하한은 프로바이더의 관측 RPM 에서 온다(60000 / RPM). 429 가 나도 저장 후 멈추고
   // 다음 실행이 이어간다. 400 상한은 한 회차 전체를 한 번에 덮는다.
