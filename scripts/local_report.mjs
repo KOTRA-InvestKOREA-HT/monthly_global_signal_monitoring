@@ -133,20 +133,26 @@ export function importReview(article, review) {
     for (const field of BOOLEANS) {
       if (typeof decision[field] !== "boolean") throw new Error(`${context}: missing boolean ${field}`);
     }
-    const stages = candidate.kind === "relevant" ? ["not_applicable"] : ["exploratory", "planned", "precursor", "committed", "completed", "unclear"];
-    // The provider schema includes not_applicable for both candidate kinds.
-    // An explicitly rejected investment has no event to stage. Accept that
-    // representation without turning it into an approved or uncertain signal.
-    const noInvestmentEvent = candidate.kind === "investment" && decision.event_stage === "not_applicable" &&
-      decision.indicator_supported === false && decision.leading_indicator_supported === false;
-    if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
     if (!["pass", "needs_review"].includes(decision.quality)) throw new Error(`${context}: invalid quality`);
     if (!clean(decision.reason_ko)) throw new Error(`${context}: reason_ko is required`);
     if (candidate.kind === "relevant" && !decision.leading_indicator_supported) {
       throw new Error(`${context}: business rows use true for the non-applicable leading indicator field`);
     }
-    const supported = decision.entity_supported && (candidate.relevance_exempt || decision.target_technology_supported) &&
-      decision.indicator_supported && decision.leading_indicator_supported && decision.quality === "pass" &&
+    // Everything an approval needs except the investment event stage.
+    const approvableExceptStage = decision.entity_supported && (candidate.relevance_exempt || decision.target_technology_supported) &&
+      decision.indicator_supported && decision.leading_indicator_supported && decision.quality === "pass";
+    const stages = candidate.kind === "relevant" ? ["not_applicable"] : ["exploratory", "planned", "precursor", "committed", "completed", "unclear"];
+    // The provider schema offers not_applicable to both kinds, and a rejected
+    // investment candidate has no event to stage. Accept that representation:
+    // investmentStageSupported() never approves it, so it only records the
+    // rejection the decision already made. Keep rejecting it when the stage is
+    // the one thing standing between this decision and approval, because that
+    // contradiction is what the retry exists to resolve and letting it through
+    // would silently drop a supported signal.
+    const noInvestmentEvent = candidate.kind === "investment" &&
+      decision.event_stage === "not_applicable" && !approvableExceptStage;
+    if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
+    const supported = approvableExceptStage &&
       (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row.investment_signal_no));
     const quotes = decision.evidence_quotes;
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
