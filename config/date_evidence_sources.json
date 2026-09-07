@@ -1,0 +1,43 @@
+{
+  "comment": "게시일 근거의 등급. 기사가 스스로 밝힌 게시일만 확정이고, 정황으로 미루어 짐작한 날짜는 추정이다. 수집(JS)·검토(JS)·PDF 생성(Python)이 같은 파일을 읽어 같은 기준을 쓴다.",
+  "confirmed": [
+    "feed",
+    "meta",
+    "jsonld",
+    "time_tag",
+    "itemprop",
+    "listing"
+  ],
+  "estimated": [
+    "url",
+    "text",
+    "body_text",
+    "modified_meta",
+    "modified_jsonld",
+    "gdelt_seen",
+    "model_quote"
+  ],
+  "priority": [
+    "meta",
+    "jsonld",
+    "time_tag",
+    "itemprop",
+    "feed",
+    "listing",
+    "url",
+    "text",
+    "body_text",
+    "model_quote",
+    "gdelt_seen",
+    "modified_meta",
+    "modified_jsonld"
+  ],
+  "notes": {
+    "feed": "공식 RSS/Atom의 pubDate·published. 발행처가 구조화해 제공한 게시일이다.",
+    "listing": "공식 보도자료 목록에서 해당 기사 항목에 붙은 날짜.",
+    "body_text": "본문에서 처음 찾은 날짜. 사건 발생일일 수 있어 게시일로 확정하지 않는다.",
+    "modified_meta": "수정일. 7월 기사에 붙은 8월 수정일을 8월 신규 기사로 잡지 않으려고 따로 둔다.",
+    "gdelt_seen": "GDELT가 기사를 수집한 시각. 수집일은 게시일을 대신하지 않는다.",
+    "model_quote": "모델이 본문 인용과 함께 제안한 날짜. 인용이 확인돼도 확정으로 올리지 않는다."
+  }
+}

@@ -1,6 +1,7 @@
 import { pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
 
 const FIELDNAMES = [
   "target_no",
@@ -9,6 +10,11 @@ const FIELDNAMES = [
   "url",
   "source",
   "published_at",
+  "published_month",
+  "published_at_precision",
+  "published_at_status",
+  "modified_at",
+  "date_conflict",
   "collected_at",
   "collector",
   "query",
@@ -410,10 +416,58 @@ function parseDate(value) {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
+const MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+function monthNumberFromName(name) {
+  const key = String(name || "").toLowerCase().replace(/\.$/, "");
+  const index = MONTH_NAMES.findIndex((month) => month === key || (key.length >= 3 && month.startsWith(key)));
+  return index === -1 ? 0 : index + 1;
+}
+
+const MONTH_NAME_PATTERN = "January|February|March|April|May|June|July|August|September|October|November|December|Jan\\.?|Feb\\.?|Mar\\.?|Apr\\.?|Jun\\.?|Jul\\.?|Aug\\.?|Sept?\\.?|Oct\\.?|Nov\\.?|Dec\\.?";
+
+function isoMonth(year, month) {
+  return `${year}-${String(month).padStart(2, "0")}`;
+}
+
+// "2026-08"이나 "August 2026"처럼 일자가 없는 값. Date는 이런 값을 그 달 1일로 읽어버리므로
+// 게시일로 쓰기 전에 걸러내고 월 단위 근거로만 남긴다.
+function parseMonthOnly(value) {
+  const text = cleanText(String(value ?? ""));
+  if (!text) return "";
+  const iso = text.match(/^(20\d{2})[-/](0?[1-9]|1[0-2])$/);
+  if (iso) return isoMonth(iso[1], iso[2]);
+  const korean = text.match(/^(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월$/);
+  if (korean) return isoMonth(korean[1], korean[2]);
+  const named = text.match(new RegExp(`^(${MONTH_NAME_PATTERN}),?\\s+(20\\d{2})$`, "i"));
+  const namedNumber = named ? monthNumberFromName(named[1]) : 0;
+  return namedNumber ? isoMonth(named[2], namedNumber) : "";
+}
+
+// 일자까지 적히지 않은 본문 표기. 게시월 근거로만 쓰고 임의로 1일을 채우지 않는다.
+function extractMonthFromText(value = "") {
+  const text = cleanText(String(value ?? ""));
+  const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월/);
+  if (korean) return isoMonth(korean[1], korean[2]);
+  const named = text.match(new RegExp(`\\b(${MONTH_NAME_PATTERN}),?\\s+(20\\d{2})\\b`, "i"));
+  const namedNumber = named ? monthNumberFromName(named[1]) : 0;
+  return namedNumber ? isoMonth(named[2], namedNumber) : "";
+}
+
 // parseDate는 해석에 실패하면 입력 문자열을 그대로 돌려준다. 날짜로 확신할 수 있을 때만 받고 싶은 곳에서 쓴다.
 function parseStrictDate(value) {
+  // Date는 "2026"을 1월 1일로 읽는다. 연도만 적힌 값은 게시일 근거가 아니다.
+  if (/^\s*20\d{2}\s*$/.test(String(value || "")) || parseMonthOnly(value)) return null;
   const parsed = parseDate(value);
   return parsed && /^\d{4}-\d{2}-\d{2}T/.test(parsed) ? parsed : null;
+}
+
+// 근거 하나를 {날짜, 정밀도, 출처, 종류}로 만든다. 종류를 남겨야 게시일과 수정일·사건일이 섞이지 않는다.
+export function dateEvidence(value, source, kind = "published") {
+  const date = parseStrictDate(value);
+  if (date) return { date, month: date.slice(0, 7), source, kind, precision: "day" };
+  const month = parseMonthOnly(value);
+  return month ? { date: null, month, source, kind, precision: "month" } : null;
 }
 
 function isoDate(year, month, day) {
@@ -448,13 +502,14 @@ function extractDateFromText(value = "") {
     /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
   );
   if (monthName) {
-    return parseDate(`${monthName[1].replace(/\.$/, "")} ${monthName[2]}, ${monthName[3]}`);
+    // 월 이름 표기를 Date에 그대로 넘기면 현지 시간대로 읽혀 하루가 밀린다.
+    return isoDate(monthName[3], monthNumberFromName(monthName[1]), monthName[2]);
   }
   const dayMonth = text.match(
     /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+(20\d{2})\b/i,
   );
   if (dayMonth) {
-    return parseDate(`${dayMonth[2].replace(/\.$/, "")} ${dayMonth[1]}, ${dayMonth[3]}`);
+    return isoDate(dayMonth[3], monthNumberFromName(dayMonth[2]), dayMonth[1]);
   }
   return null;
 }
@@ -499,13 +554,12 @@ function extractTagText(html, tag) {
   return match ? cleanHtmlText(match[1]) : "";
 }
 
+// 게시일과 수정일을 다른 목록으로 읽는다. 7월 기사에 붙은 8월 수정일을 8월 신규 기사로 잡지 않으려면
+// 두 값이 같은 필드로 합쳐지기 전에 갈라놓아야 한다.
 const PUBLISHED_META_NAMES = [
   "article:published_time",
-  "article:modified_time",
   "og:published_time",
-  "og:updated_time",
   "datePublished",
-  "dateModified",
   "date",
   "dc.date",
   "dc.date.issued",
@@ -521,16 +575,26 @@ const PUBLISHED_META_NAMES = [
   "cXenseParse:recs:publishtime",
 ];
 
+const MODIFIED_META_NAMES = [
+  "article:modified_time",
+  "og:updated_time",
+  "dateModified",
+  "dcterms.modified",
+  "lastmod",
+];
+
 // <time datetime="2026-08-14">는 요즘 가장 흔한 게시일 마크업인데 메타 태그 스캔으로는 잡히지 않는다.
 function extractDateFromTimeTag(html) {
   for (const match of html.matchAll(/<time\b([^>]*)>([\s\S]*?)<\/time>/gi)) {
     const attrs = match[1] || "";
-    const parsed = parseStrictDate(extractAttribute(attrs, "datetime")) || extractDateFromText(match[2]);
-    if (parsed) return parsed;
+    const parsed = extractAttribute(attrs, "datetime") || match[2];
+    if (dateEvidence(parsed, "time_tag")) return parsed;
+    const text = extractDateFromText(match[2]);
+    if (text) return text;
   }
   for (const match of html.matchAll(/<time\b([^>]*)\/>/gi)) {
-    const parsed = parseStrictDate(extractAttribute(match[1] || "", "datetime"));
-    if (parsed) return parsed;
+    const parsed = extractAttribute(match[1] || "", "datetime");
+    if (dateEvidence(parsed, "time_tag")) return parsed;
   }
   return null;
 }
@@ -539,43 +603,38 @@ function extractDateFromTimeTag(html) {
 function extractDateFromItemprop(html) {
   for (const match of html.matchAll(/<[^>]*\bitemprop\s*=\s*["'](?:datePublished|dateCreated)["']([^>]*)>/gi)) {
     const attrs = match[1] || "";
-    const parsed = parseStrictDate(extractAttribute(attrs, "content")) || parseStrictDate(extractAttribute(attrs, "datetime"));
-    if (parsed) return parsed;
+    for (const value of [extractAttribute(attrs, "content"), extractAttribute(attrs, "datetime")]) {
+      if (dateEvidence(value, "itemprop")) return value;
+    }
   }
   return null;
 }
 
-// 날짜와 함께 그 출처를 돌려준다. published_at_source로 저장해 품질을 추적한다.
-function resolveHtmlDate(html, url = "") {
-  const metaDate = parseStrictDate(extractMetaContent(html, PUBLISHED_META_NAMES));
-  if (metaDate) return { date: metaDate, source: "meta" };
-
-  const jsonLdMatch = html.match(/"datePublished"\s*:\s*"([^"]+)"/i) || html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
-  const jsonLdDate = jsonLdMatch ? parseStrictDate(jsonLdMatch[1]) : null;
-  if (jsonLdDate) return { date: jsonLdDate, source: "jsonld" };
-
-  const timeDate = extractDateFromTimeTag(html);
-  if (timeDate) return { date: timeDate, source: "time_tag" };
-
-  const itempropDate = extractDateFromItemprop(html);
-  if (itempropDate) return { date: itempropDate, source: "itemprop" };
-
-  const headDate = extractDateFromText(cleanHtmlText(html.slice(0, 5000)));
-  if (headDate) return { date: headDate, source: "text" };
-
-  const urlDate = extractDateFromUrl(url);
-  if (urlDate) return { date: urlDate, source: "url" };
-
-  return { date: null, source: "" };
+// 찾은 근거를 하나로 줄이지 않고 모두 돌려준다. 어느 하나를 고르는 판단과 근거끼리
+// 어긋나는지 보는 판단이 chooseDateEvidence 한 곳에서 이뤄져야 하기 때문이다.
+export function collectHtmlDateEvidence(html, url = "") {
+  const jsonLdPublished = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
+  const jsonLdModified = html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
+  const headText = cleanHtmlText(html.slice(0, 5000));
+  return [
+    dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
+    dateEvidence(jsonLdPublished?.[1], "jsonld", "published"),
+    dateEvidence(extractDateFromTimeTag(html), "time_tag", "published"),
+    dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
+    dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
+    dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),
+    dateEvidence(extractDateFromText(headText) || extractMonthFromText(headText), "text", "context"),
+    dateEvidence(extractDateFromUrl(url), "url", "context"),
+  ].filter(Boolean);
 }
 
-// 목록 페이지의 앵커에서 날짜를 찾는다. 본문 텍스트가 먼저, URL이 마지막이다.
-function resolveListingDate(anchor) {
-  const textDate = extractDateFromText(`${anchor.title} ${anchor.context}`);
-  if (textDate) return { date: textDate, source: "listing" };
-  const urlDate = extractDateFromUrl(anchor.url);
-  if (urlDate) return { date: urlDate, source: "url" };
-  return { date: null, source: "" };
+// 목록 페이지의 앵커에서 날짜를 찾는다. 목록 날짜는 기사 항목에 붙은 게시일이고 URL 날짜는 정황이다.
+function collectListingDateEvidence(anchor) {
+  const text = `${anchor.title} ${anchor.context}`;
+  return [
+    dateEvidence(extractDateFromText(text) || extractMonthFromText(text), "listing", "published"),
+    dateEvidence(extractDateFromUrl(anchor.url), "url", "context"),
+  ].filter(Boolean);
 }
 
 function extractPageTitle(html) {
@@ -634,6 +693,8 @@ function buildDateRange(args, collectedAt) {
       mode: "explicit",
       fromDate,
       toDate,
+      from_date: fromDate,
+      to_date: toDate,
       fromMs,
       toMs,
       lookbackDays: Math.max(1, Math.ceil(Math.max(0, collectedMs - fromMs) / DAY_MS) + 2),
@@ -645,18 +706,26 @@ function buildDateRange(args, collectedAt) {
     mode: "lookback",
     fromDate: "",
     toDate: "",
+    from_date: new Date(collectedMs - days * DAY_MS).toISOString().slice(0, 10),
+    to_date: new Date(collectedMs + DAY_MS).toISOString().slice(0, 10),
     fromMs: collectedMs - days * DAY_MS,
     toMs: collectedMs + DAY_MS,
     lookbackDays: days,
   };
 }
 
+// 수집 단계는 기간 밖이라고 확인된 기사만 버린다. 날짜 미상·추정·충돌 기사는 그대로 보관해
+// 이후 단계에서 날짜를 보강하거나 검토 후보로 쓸 수 있게 한다.
+function dateRangePeriod(dateRange) {
+  return {
+    from_date: dateRange.from_date || new Date(dateRange.fromMs).toISOString().slice(0, 10),
+    to_date: dateRange.to_date || new Date(dateRange.toMs).toISOString().slice(0, 10),
+  };
+}
+
 function filterByDateRange(rows, dateRange) {
-  return rows.filter((row) => {
-    if (!row.published_at) return true;
-    const published = Date.parse(row.published_at);
-    return Number.isNaN(published) || (published >= dateRange.fromMs && published <= dateRange.toMs);
-  });
+  const period = dateRangePeriod(dateRange);
+  return rows.filter((row) => periodPlacement(row, period).placement !== "out_of_period");
 }
 
 // 브라우저가 실제로 보내는 헤더 묶음. Referer가 없다는 이유만으로 403을 주는 사이트가 많다.
@@ -774,8 +843,10 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       title: tagText(item, "title"),
       url: itemUrl,
       source: sourceText ? `${defaultSource}: ${sourceText}` : defaultSource,
-      published_at: parseDate(tagText(item, "pubDate")) || extractDateFromUrl(itemUrl),
-      published_at_source: tagText(item, "pubDate") ? "feed" : extractDateFromUrl(itemUrl) ? "url" : "",
+      ...chooseDateEvidence([
+        dateEvidence(tagText(item, "pubDate"), "feed", "published"),
+        dateEvidence(extractDateFromUrl(itemUrl), "url", "context"),
+      ]),
       collected_at: collectedAt,
       collector,
       query,
@@ -792,8 +863,11 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       title: tagText(entry, "title"),
       url: entryUrl,
       source: defaultSource,
-      published_at: parseDate(tagText(entry, "published") || tagText(entry, "updated")) || extractDateFromUrl(entryUrl),
-      published_at_source: tagText(entry, "published") || tagText(entry, "updated") ? "feed" : extractDateFromUrl(entryUrl) ? "url" : "",
+      ...chooseDateEvidence([
+        dateEvidence(tagText(entry, "published"), "feed", "published"),
+        dateEvidence(tagText(entry, "updated"), "modified_meta", "modified"),
+        dateEvidence(extractDateFromUrl(entryUrl), "url", "context"),
+      ]),
       collected_at: collectedAt,
       collector,
       query,
@@ -1134,24 +1208,20 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
         return false;
       });
       const sourceRows = dedupeRows(
-        anchors.map((anchor) => {
-          const listingDate = resolveListingDate(anchor);
-          return {
+        anchors.map((anchor) => ({
           target_no: company.target_no,
           company: company.company,
           title: officialTitle(anchor),
           url: anchor.url,
           source: page.source,
-          published_at: listingDate.date,
-          published_at_source: listingDate.source,
+          ...chooseDateEvidence(collectListingDateEvidence(anchor)),
           collected_at: collectedAt,
           collector: "official_page",
           query: page.url,
           ...officialSourceFields(page.kind, page.source, page.sourceTypeLabel, page.pageTitle, page.url, anchor.url),
           official_source_url: page.url,
           source_direct_url: directUrlCandidate(anchor.url),
-          };
-        }),
+        })),
       );
       rows.push(...filterByDateRange(sourceRows, dateRange).slice(0, maxPerSource));
     } catch (error) {
@@ -1200,13 +1270,14 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
         recordExclusion(row.company, row.title, row.url, "no_article_title");
         continue;
       }
-      // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다.
-      const skipUrlDate = row.published_at ? null : extractDateFromUrl(row.url);
+      // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다. 다만 URL 날짜는 정황 근거다.
       enriched.push({
         ...row,
         title: skipTitle,
-        published_at: row.published_at || skipUrlDate,
-        published_at_source: row.published_at ? row.published_at_source : skipUrlDate ? "url" : row.published_at_source,
+        ...chooseDateEvidence([
+          ...(row.date_candidates || []),
+          dateEvidence(extractDateFromUrl(row.url), "url", "context"),
+        ]),
         content_fetch_status: skipStatus,
       });
       continue;
@@ -1219,9 +1290,14 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       const content = extractArticleText(html);
       const limitedContent = content.slice(0, args.contentCharLimit);
       const pageTitle = extractPageTitle(html);
-      const htmlDate = row.published_at ? { date: null, source: "" } : resolveHtmlDate(html, row.url);
-      const bodyDate = row.published_at || htmlDate.date ? null : extractDateFromText(content.slice(0, 4000));
-      const publishedAt = row.published_at || htmlDate.date || bodyDate;
+      // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
+      // 상세 페이지를 보고 나서야 알 수 있다.
+      const bodyHead = content.slice(0, 4000);
+      const dates = chooseDateEvidence([
+        ...(row.date_candidates || []),
+        ...collectHtmlDateEvidence(html, row.url),
+        dateEvidence(extractDateFromText(bodyHead) || extractMonthFromText(bodyHead), "body_text", "context"),
+      ]);
       const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
       // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
       // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
@@ -1232,10 +1308,7 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       enriched.push({
         ...row,
         title: resolvedTitle,
-        published_at: publishedAt,
-        published_at_source: row.published_at
-          ? row.published_at_source
-          : htmlDate.source || (bodyDate ? "body_text" : row.published_at_source),
+        ...dates,
         content_text: limitedContent,
         content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
         content_word_count: content.split(/\s+/).filter(Boolean).length,
@@ -1308,8 +1381,7 @@ async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, co
       title: cleanText(article.title || ""),
       url: article.url || "",
       source: `GDELT: ${article.domain || article.sourceCountry || "unknown"}`,
-      published_at: parseDate(article.seendate),
-      published_at_source: article.seendate ? "feed" : "",
+      ...chooseDateEvidence([dateEvidence(parseDate(article.seendate), "gdelt_seen", "context")]),
       collected_at: collectedAt,
       collector: "gdelt_doc_api",
       query,
@@ -1416,9 +1488,10 @@ async function mapWithConcurrency(items, concurrency, worker) {
 // Short target names ("EVG", "JSR", "Besi") match unrelated articles there, so
 // the fallback replaces a press release we merely could not parse with one
 // about a different company entirely.
+// 다만 그 날짜는 확정된 것이어야 한다. URL·본문에서 미루어 짐작한 날짜 하나로 대체 수집을
+// 멈추면 그 달 취재를 확인되지 않은 자료가 대신하게 된다.
 export function usableMonthlySource(row, dateRange) {
-  const published = Date.parse(row.published_at || "");
-  return Number.isFinite(published) && published >= dateRange.fromMs && published <= dateRange.toMs;
+  return reportEligible(row, dateRangePeriod(dateRange));
 }
 
 async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
@@ -1555,7 +1628,16 @@ async function main() {
     result_count: finalRows.length,
     official_result_count: finalRows.filter((row) => row.source_type === "official").length,
     press_release_result_count: finalRows.filter((row) => row.is_press_release).length,
-    undated_result_count: finalRows.filter((row) => !row.published_at).length,
+    undated_result_count: finalRows.filter((row) => resolveDateState(row).status === "unknown").length,
+    // 날짜 상태별 집계. 복구한 건수와 보류 중인 건수를 회차마다 비교할 수 있어야 기준 변경의 효과를 본다.
+    date_status_counts: finalRows.reduce((counts, row) => {
+      const status = resolveDateState(row).status;
+      counts[status] = (counts[status] || 0) + 1;
+      return counts;
+    }, {}),
+    month_only_result_count: finalRows.filter((row) => resolveDateState(row).precision === "month").length,
+    date_conflict_result_count: finalRows.filter((row) => row.date_conflict === true).length,
+    undated_with_body_count: finalRows.filter((row) => resolveDateState(row).status === "unknown" && hasArticleBody(row)).length,
     excluded_non_article_count: excludedTotal,
     excluded_non_article_reasons: Object.fromEntries(excludedCounts),
     excluded_non_article_sample_count: excludedRows.length,

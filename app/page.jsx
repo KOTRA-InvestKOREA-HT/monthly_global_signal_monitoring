@@ -3,6 +3,11 @@
 import { Calendar, Download, ExternalLink, Eye, EyeOff, ListChecks, Play, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+// 게시일 근거의 등급은 수집(JS)·검토(JS)·PDF 생성(Python)과 같은 파일을 읽는다.
+import dateEvidenceSources from "../config/date_evidence_sources.json";
+
+const CONFIRMED_DATE_SOURCES = new Set(dateEvidenceSources.confirmed);
+
 const SIGNAL_IGNORE_STORAGE_KEY = "global-signal-monitor.ignored-signals.v2";
 
 function formatDate(value) {
@@ -48,9 +53,45 @@ function isPressRelease(item) {
   return PRESS_RELEASE_PATTERN.test([item?.source, item?.official_source_url, item?.url].filter(Boolean).join(" "));
 }
 
-// 게시일을 확인하지 못한 항목. PDF 보고서에서는 제외되고 화면에서만 미상으로 표시된다.
+const MONTH_ONLY = /^(20\d{2})-(0[1-9]|1[0-2])$/;
+
+// 게시월만 확인된 항목의 월. 일자가 있는 항목은 그 일자가 우선이다.
+function monthOnlyValue(item) {
+  const published = String(item?.published_at || "").trim();
+  if (published) return MONTH_ONLY.test(published) ? published : "";
+  const month = String(item?.published_month || "").trim();
+  return MONTH_ONLY.test(month) ? month : "";
+}
+
+// 게시일 상태. 수집 단계가 남긴 근거 등급을 그대로 읽는다.
+// 확정만 월간 보고서 본문에 들어가고, 추정·충돌·미상은 화면에 검토 후보로 남는다.
+function dateStatus(item) {
+  if (!String(item?.published_at || "").trim() && !monthOnlyValue(item)) return "unknown";
+  if (item?.date_conflict === true) return "conflicting";
+  // 근거 추적 이전에 모은 자료는 출처 필드가 없다. 그때의 날짜는 피드 게시일이었다.
+  if (!item || !("published_at_source" in item)) return "confirmed";
+  return CONFIRMED_DATE_SOURCES.has(String(item.published_at_source || "")) ? "confirmed" : "estimated";
+}
+
+const DATE_HOLD_LABEL = {
+  estimated: "게시일 추정",
+  conflicting: "게시일 근거 충돌",
+  unknown: "게시일 미상",
+};
+
+const DATE_HOLD_TITLE = {
+  estimated: "URL·본문·수정일에서 미루어 짐작한 날짜입니다. 게시일을 확인하기 전에는 월간 보고서 본문에서 제외됩니다",
+  conflicting: "공식 목록과 기사 게시일이 서로 어긋납니다. 확인 전에는 월간 보고서 본문에서 제외됩니다",
+  unknown: "게시일 근거를 찾지 못했습니다. 내용 검토 대상으로는 남지만 월간 보고서 본문에서는 제외됩니다",
+};
+
+// 날짜 때문에 보고서 본문에 넣지 못한 항목. 내용 판정과는 무관하다.
+function isDateHeld(item) {
+  return dateStatus(item) !== "confirmed";
+}
+
 function isUndated(item) {
-  return !String(item?.published_at || "").trim();
+  return dateStatus(item) === "unknown";
 }
 
 // 분류는 키워드 일치만 보므로, 위험고지 상용문구에 키워드가 한 번 스친 보도자료도 시그널로 올라온다.
@@ -61,10 +102,19 @@ function isUnsupportedSignal(item) {
 }
 
 function PublishedDate({ item }) {
-  if (isUndated(item)) {
-    return <span className="undatedBadge" title="게시일을 확인하지 못해 월간 보고서에서는 제외됩니다">게시일 미상</span>;
+  const status = dateStatus(item);
+  if (status === "unknown") {
+    return <span className="undatedBadge" title={DATE_HOLD_TITLE.unknown}>게시일 미상</span>;
   }
-  return <>{formatDate(item.published_at)}</>;
+  // 일자를 임의로 1일로 채우지 않고 게시월까지만 밝힌다.
+  const month = monthOnlyValue(item);
+  const text = month ? `${month.slice(0, 4)}년 ${Number(month.slice(5))}월 · 일자 미상` : formatDate(item.published_at);
+  if (status === "confirmed") return <>{text}</>;
+  return (
+    <span className="undatedBadge" title={DATE_HOLD_TITLE[status]}>
+      {text} · {DATE_HOLD_LABEL[status]}
+    </span>
+  );
 }
 
 function sourceBadgeLabel(item) {
@@ -366,6 +416,9 @@ function dateOnly(value) {
 }
 
 function isWithinPeriod(item, period) {
+  // 게시월만 확인된 항목은 그 달이 조회 기간과 겹치면 남긴다.
+  const month = monthOnlyValue(item);
+  if (month) return month >= period.fromDate.slice(0, 7) && month <= period.toDate.slice(0, 7);
   const published = dateOnly(item?.published_at);
   if (!published) return true;
   return published >= period.fromDate && published <= period.toDate;
@@ -640,6 +693,7 @@ export default function HomePage() {
   const officialCount = displayedSignals.filter((item) => item.source_type === "official").length;
   const pressReleaseCount = displayedSignals.filter((item) => isPressRelease(item)).length;
   const undatedCount = displayedSignals.filter((item) => isUndated(item)).length;
+  const dateHeldCount = displayedSignals.filter((item) => isDateHeld(item)).length;
   const unsupportedSignalCount = displayedInvestmentSignals.filter((item) => isUnsupportedSignal(item)).length;
 
   return (
@@ -828,6 +882,10 @@ export default function HomePage() {
         <div>
           <span>게시일 미상</span>
           <strong className={undatedCount ? "statusWarning" : ""}>{undatedCount}</strong>
+        </div>
+        <div title="게시일이 확정되지 않아 월간 보고서 본문에서 보류된 항목입니다. 내용 검토는 그대로 진행됩니다">
+          <span>날짜 보류</span>
+          <strong className={dateHeldCount ? "statusWarning" : ""}>{dateHeldCount}</strong>
         </div>
         <div>
           <span>근거 미확인 시그널</span>

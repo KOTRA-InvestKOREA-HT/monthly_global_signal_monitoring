@@ -10,6 +10,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `data/company_technology_map.csv`: spreadsheet-friendly version of the technology mapping.
 - `config/company_sources.json`: official Newsroom/Press/IR source catalog by company.
 - `config/technology_keywords.json`: broad Korean/English synonym keyword catalog for relevance filtering.
+- `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
 - `.github/workflows/collect-company-signals.yml`: manual GitHub Actions workflow for on-demand collection.
 - `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.
 - `scripts/extract_pdf_companies.py`: validates PDF page 2 against the canonical list.
@@ -19,11 +20,13 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules.
 - `scripts/summarize_signal_evidence.mjs`: summarizes evidence and performs the semantic support decision used by reports.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
+- `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
 - `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
 - `scripts/collect_company_signals.py`: Python equivalent; use it only when the local Python SSL stack supports outbound HTTPS.
 - `outputs/`: generated JSON/CSV results.
 
 See `docs/github_vercel_button_workflow.md` for the GitHub upload, Vercel deployment, and button-trigger workflow.
+Publication-date handling — how a date is graded and what a date hold means for review and for the PDF — is recorded in `docs/date_criteria_2026-09-07.md`.
 The implemented accuracy controls, verification evidence, known limitations, and Codex hook diagnosis are recorded in `docs/signal_accuracy_improvements_2026-09-03.md`.
 
 ## Commands

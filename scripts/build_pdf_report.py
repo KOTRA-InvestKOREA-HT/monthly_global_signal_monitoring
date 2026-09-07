@@ -4,7 +4,7 @@ import re
 import sys
 import tempfile
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from reportlab.lib import colors
@@ -405,6 +405,84 @@ def format_date(value):
     return str(value or "-")[:10]
 
 
+# 게시일 근거의 등급은 config/date_evidence_sources.json에서 수집·검토 경로(JS)와 공유한다.
+# 같은 기사가 화면과 보고서에서 다르게 취급되지 않으려면 기준이 한 곳에 있어야 한다.
+try:
+    with open(PROJECT_ROOT / "config" / "date_evidence_sources.json", encoding="utf-8") as _handle:
+        CONFIRMED_DATE_SOURCES = set(json.load(_handle)["confirmed"])
+except OSError as error:
+    # 빈 목록으로 넘어가면 모든 행이 추정으로 밀려 보고서가 조용히 비어버린다. 여기서 멈추는 편이 낫다.
+    raise RuntimeError(f"config/date_evidence_sources.json is required to grade publication dates: {error}") from error
+
+MONTH_ONLY = re.compile(r"^(20\d{2})-(0[1-9]|1[0-2])$")
+
+
+def date_day(value):
+    text = str(value or "").strip()
+    if not text or MONTH_ONLY.match(text):
+        return None
+    dt = parse_datetime(text)
+    if not dt:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).date()
+
+
+def date_month(row):
+    day = date_day(row.get("published_at"))
+    if day:
+        return f"{day.year:04d}-{day.month:02d}"
+    for value in (row.get("published_month"), row.get("published_at")):
+        text = str(value or "").strip()
+        if MONTH_ONLY.match(text):
+            return text
+    return ""
+
+
+# 확정: 기사 자신이 밝힌 게시일이나 기사 항목에 붙은 공식 목록 날짜.
+# 추정: URL·본문·수정일처럼 게시일을 미루어 짐작한 근거. 충돌: 확정 근거끼리 어긋남. 미상: 근거 없음.
+# 근거 추적 이전에 모은 자료는 published_at_source 필드가 없고 그때의 날짜는 피드 게시일뿐이었다.
+def date_state(row):
+    day = date_day(row.get("published_at"))
+    month = date_month(row)
+    if not day and not month:
+        return {"status": "unknown", "precision": "none", "day": None, "month": ""}
+    tracked = "published_at_source" in row
+    source = str(row.get("published_at_source") or "")
+    grade = "confirmed" if (not tracked or source in CONFIRMED_DATE_SOURCES) else "estimated"
+    status = "conflicting" if row.get("date_conflict") is True else grade
+    return {"status": status, "precision": "day" if day else "month", "day": day, "month": month}
+
+
+def month_bounds(month):
+    start = date(int(month[:4]), int(month[5:7]), 1)
+    end = date(start.year + (1 if start.month == 12 else 0), 1 if start.month == 12 else start.month + 1, 1)
+    return start, end - timedelta(days=1)
+
+
+# 월간 보고서 본문에 쓸 수 있는 행인지 본다. 게시월까지 확정된 행만 통과한다.
+# 추정·충돌·미상 행은 원본과 웹 화면에 남아 검토 후보가 되고, 날짜를 보강한 뒤에 본문에 들어온다.
+def row_in_report_period(row, start, end):
+    state = date_state(row)
+    if state["status"] != "confirmed":
+        return False
+    if state["precision"] == "day":
+        return start.date() <= state["day"] <= end.date()
+    month_start, month_end = month_bounds(state["month"])
+    return start.date() <= month_start and month_end <= end.date()
+
+
+def format_row_date(row):
+    state = date_state(row)
+    if state["precision"] != "month":
+        return format_date(row.get("published_at"))
+    year, month = state["month"].split("-")
+    if LANG == "en":
+        return f"{MONTH_NAMES_EN[int(month) - 1]} {year} (day unknown)"
+    return f"{year}.{int(month)}. 일자 미상"
+
+
 def issue_month(summary):
     to_date = parse_date_only(summary.get("to_date"))
     if to_date:
@@ -458,20 +536,7 @@ def filter_rows_by_report_period(rows, summary):
     if not summary.get("from_date") or not summary.get("to_date"):
         return rows
     start, end = report_period(summary)
-    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-    end = end.replace(hour=23, minute=59, second=59, microsecond=999999)
-    filtered = []
-    for row in rows:
-        published = parse_datetime(row.get("published_at"))
-        if not published:
-            # 게시일을 확인할 수 없는 항목은 월간 보고서에서 제외한다. 기간이 문서의 전제이기 때문이다.
-            # 웹 화면에서는 '게시일 미상'으로 표시해 그대로 남긴다.
-            continue
-        if published.tzinfo is None:
-            published = published.replace(tzinfo=timezone.utc)
-        if start <= published.astimezone(timezone.utc) <= end:
-            filtered.append(row)
-    return filtered
+    return [row for row in rows if row_in_report_period(row, start, end)]
 
 
 def short_text(value, limit):
@@ -1220,8 +1285,10 @@ def sort_signal_rows(rows):
         official = 0 if row.get("source_type") == "official" else 1
         technology_score = -(row.get("technology_relevance_score") or row.get("relevance_score") or 0)
         signal_score = -(row.get("investment_signal_score") or 0)
-        dt = parse_datetime(row.get("published_at"))
-        timestamp = -dt.timestamp() if dt else 0
+        # 일자 미상 기사는 그 달 1일로 놓고 정렬한다. 정렬 때문에 날짜가 채워지지는 않는다.
+        state = date_state(row)
+        day = state["day"] or (month_bounds(state["month"])[0] if state["month"] else None)
+        timestamp = -datetime(day.year, day.month, day.day, tzinfo=timezone.utc).timestamp() if day else 0
         return (supported, press, official, technology_score, signal_score, timestamp)
 
     return sorted(rows, key=key)
@@ -1341,7 +1408,7 @@ def source_line(row):
     source = row.get("source") or row.get("collector") or t("source_fallback")
     if is_press_release(row):
         source = f"{t('source_press_release')} · {source}"
-    return short_text(f"{t('source_prefix')}  {source} {format_date(row.get('published_at'))}", 120)
+    return short_text(f"{t('source_prefix')}  {source} {format_row_date(row)}", 120)
 
 
 def detail_text(row, limit=260):
