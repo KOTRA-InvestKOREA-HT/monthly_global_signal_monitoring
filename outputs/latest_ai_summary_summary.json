@@ -1,7 +1,7 @@
 {
   "status": "completed",
-  "requests": 25,
-  "cached": 231,
+  "requests": 0,
+  "cached": 254,
   "completed": 254,
   "total": 254,
   "failed_articles": [],
