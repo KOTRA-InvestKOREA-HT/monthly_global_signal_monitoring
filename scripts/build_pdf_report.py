@@ -789,7 +789,7 @@ def summary_parts(row):
             "detail": compact_summary_phrase(", ".join(clauses[1:]), detail_limit, row),
         }
 
-    return {"headline": compact_summary_phrase(text, headline_limit, row), "detail": ""}
+    return {"headline": compact_summary_phrase(text, detail_limit, row), "detail": ""}
 
 
 def summary_plain_text(row):
@@ -1443,50 +1443,44 @@ def business_text(rows):
     return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
 
 
+def summary_text_layout(report, row, width, size, max_lines):
+    """Measure the same styled lines used for painting and source/box placement."""
+    parts = summary_parts(row)
+    if not parts:
+        sections = [(detail_text(row, 560), "demilight", TEXT)]
+    else:
+        sections = [(parts["headline"], "semibold", TEXT)]
+        if parts["detail"]:
+            inline = sections + [(" — " + parts["detail"], "demilight", colors.black)]
+            if sum(report.canvas.stringWidth(text, report.fonts[weight], size)
+                   for text, weight, _ in inline) <= width:
+                return [inline]
+            sections.append(("— " + parts["detail"], "demilight", colors.black))
+    lines = []
+    for text, weight, color in sections:
+        for line in wrap_text(report.canvas, text, width, report.fonts[weight], size):
+            lines.append([(line, weight, color)])
+    if max_lines and len(lines) > max_lines:
+        lines = lines[:max_lines]
+        text, weight, color = lines[-1][0]
+        text = short_text_to_width(report.canvas, text + "...", width, report.fonts[weight], size)
+        lines[-1] = [(text, weight, color)]
+    return lines
+
+
 def summary_line_count(report, row, width, size, max_lines):
-    text = summary_plain_text(row) or detail_text(row, 560)
-    font_name = report.fonts["demilight"]
-    lines = wrap_text(report.canvas, text, width, font_name, size)
-    return max(1, min(len(lines), max_lines))
+    return max(1, len(summary_text_layout(report, row, width, size, max_lines)))
 
 
 def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=3):
-    parts = summary_parts(row)
-    line_height = size + line_gap
-    if not parts:
-        line_count = summary_line_count(report, row, width, size, max_lines)
-        report.wrapped(detail_text(row, 560), x, y, width, size, TEXT, max_lines=max_lines, line_gap=line_gap)
-        return line_count
-
-    headline = parts["headline"]
-    detail = parts["detail"]
-    headline_font = report.fonts["semibold"]
-    detail_font = report.fonts["demilight"]
-    dash = " — " if detail else ""
-    headline_width = report.canvas.stringWidth(headline, headline_font, size)
-    dash_width = report.canvas.stringWidth(dash, detail_font, size)
-    detail_width = report.canvas.stringWidth(detail, detail_font, size)
-
-    if not detail or headline_width + dash_width + detail_width <= width or max_lines <= 1:
-        available_detail_width = max(0, width - headline_width - dash_width)
-        detail_to_draw = detail
-        if detail and detail_width > available_detail_width:
-            detail_lines = wrap_text(report.canvas, detail, available_detail_width, detail_font, size)
-            detail_to_draw = detail_lines[0] if detail_lines else ""
-        report.text(x, y, headline, size, TEXT, weight="semibold")
-        cursor = x + headline_width
-        if detail_to_draw:
-            report.text(cursor, y, dash, size, colors.black, weight="demilight")
-            report.text(cursor + dash_width, y, detail_to_draw, size, colors.black, weight="demilight")
-        return 1
-
-    report.wrapped(headline, x, y, width, size, TEXT, max_lines=1, line_gap=line_gap, weight="semibold")
-    detail_lines = wrap_text(report.canvas, detail, width, detail_font, size)
-    detail_text_value = f"— {detail}"
-    if len(detail_lines) > max_lines - 1:
-        detail_text_value = f"— {' '.join(detail_lines[: max_lines - 1])}"
-    report.wrapped(detail_text_value, x, y - line_height, width, size, colors.black, max_lines=max_lines - 1, line_gap=line_gap, weight="demilight")
-    return min(max_lines, 1 + len(detail_lines))
+    lines = summary_text_layout(report, row, width, size, max_lines)
+    for line in lines:
+        cursor = x
+        for text, weight, color in line:
+            report.text(cursor, y, text, size, color, weight=weight)
+            cursor += report.canvas.stringWidth(text, report.fonts[weight], size)
+        y -= size + line_gap
+    return max(1, len(lines))
 
 
 def best_business_row(company, relevant_rows, investment_rows, all_signal_rows):
@@ -1925,6 +1919,12 @@ def draw_label_pill(report, x, y, label):
     return pill_width
 
 
+def item_target_text(profile):
+    text = str(profile.get("target_technology") or "").strip()
+    # Sentence initial only: preserve internal acronyms such as GMP, RF and LiDAR.
+    return text[:1].upper() + text[1:] if LANG == "en" else text
+
+
 def draw_item_card(report, entry, layout, x, top, width, month_label):
     c = report.canvas
     profile = entry["profile"]
@@ -1957,7 +1957,7 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     target_pill_w = draw_label_pill(report, x + 17, target_y, t("item_target_label"))
     target_x = x + 17 + target_pill_w + 10
     target_text = short_text_to_width(
-        c, str(profile.get("target_technology") or ""), x + width - 17 - target_x, report.fonts["semibold"], 9.5,
+        c, item_target_text(profile), x + width - 17 - target_x, report.fonts["semibold"], 9.5,
         "item_target_tech",
     )
     report.text(target_x, target_y, target_text, 9.5, TEXT, weight="semibold")
