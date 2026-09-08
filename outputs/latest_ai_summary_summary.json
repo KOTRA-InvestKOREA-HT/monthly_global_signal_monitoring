@@ -1,16 +1,17 @@
 {
   "status": "completed",
-  "requests": 0,
-  "cached": 254,
-  "completed": 254,
-  "total": 254,
+  "requests": 3,
+  "cached": 301,
+  "completed": 302,
+  "total": 302,
+  "date_hints": 0,
   "failed_articles": [],
   "diagnostics": [],
-  "concurrency": 8,
+  "concurrency": 4,
   "period": {
     "from_date": "2026-08-01",
     "to_date": "2026-08-31"
   },
-  "provider": "nvidia",
-  "model": "deepseek-ai/deepseek-v4-flash-0731"
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite"
 }

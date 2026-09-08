@@ -1,5 +1,5 @@
 {
-  "investment_signal_count": 3,
-  "companies_with_investment_signals": 3,
-  "provider": "nvidia"
+  "investment_signal_count": 13,
+  "companies_with_investment_signals": 8,
+  "provider": "gemini"
 }
