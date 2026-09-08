@@ -1,0 +1,146 @@
+{
+  "month": "2026-08",
+  "source": "docs/ai_review_recall_investigation_2026-08.md 7절",
+  "articles": [
+    {
+      "company": "Applied Materials",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "expect": "unknown",
+      "baseline_article_id": "219d8b0d592f616cb1b56a58",
+      "note": "Applied Q3 실적 — R 승인, S4 precursor; 완료된 싱가포르 시설 자체로 S2 승인 금지"
+    },
+    {
+      "company": "Applied Materials",
+      "url": "https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
+      "expect": "unknown",
+      "baseline_article_id": "281cf43bd98c17134e49238e",
+      "note": "Applied CD-SEM — R 승인, T=false/면제 유지; 단독 제품 개발만으로 S4 금지"
+    },
+    {
+      "company": "Amkor Technology",
+      "url": "https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
+      "expect": "unknown",
+      "baseline_article_id": "aa2f449804dba3ee4e9006fb",
+      "note": "Amkor 한국 사절단 — R 승인, Q=pass; CEO의 직접 방한·실사를 인용 없이 만들지 않음"
+    },
+    {
+      "company": "Applied Materials",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip",
+      "expect": "unknown",
+      "baseline_article_id": "d44c9c800f8fb06a55fc9701",
+      "note": "Applied–UC Berkeley — R 유지, S4 precursor"
+    },
+    {
+      "company": "Nexeon",
+      "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+      "expect": "unknown",
+      "baseline_article_id": "14c94ba7b4cb44dd0aa5d068",
+      "note": "Nexeon £100m — R 유지, S3/S4 precursor; S2 후속 pilot 계획 별도 판독"
+    },
+    {
+      "company": "NXP",
+      "url": "https://media.nxp.com/news-releases/news-release-details/nxp-trimension-ultra-wideband-powers-bmw-groups-digital-key-plus",
+      "expect": "unknown",
+      "baseline_article_id": "2c8b096122bf8350a19e4aa5",
+      "note": "NXP UWB/BMW — 레이다 기능을 읽되 우주항공 범위 미확정 상태로 자동 승인 금지"
+    },
+    {
+      "company": "Charles River",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "expect": "unknown",
+      "baseline_article_id": "d04371d8505d4221ebe47169",
+      "note": "Charles River Q2 — NGS 과제의 바이러스/세포은행 목적 없이는 R/S4 보류"
+    },
+    {
+      "company": "Evonik Industries",
+      "url": "https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
+      "expect": "unknown",
+      "baseline_article_id": "c980fa0dd5f86c302b0bb343",
+      "note": "Evonik Q2 — 침강실리카와 타이어 용도 연결 확인; 경쟁사 병목 수혜를 S1로 승인 금지"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "expect": "unknown",
+      "baseline_article_id": "c9b69b447972f66c3812f46e",
+      "note": "Ouster BlueCity — 교통 인프라와 로봇 용도를 동일시하지 않음; 영업 계약을 R&D로 변환 금지"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "expect": "unknown",
+      "baseline_article_id": "a148981f689392d25a2ba1bf",
+      "note": "Ouster Q2 / ATM — R 유지; 사업 확장 자금 용도 없이 S3 승인 금지"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "expect": "unknown",
+      "baseline_article_id": "ca32ab44533e46fb169d76ae",
+      "note": "Ouster–GUSS — 기존 R/S4 양성 유지; 로봇 적용·구체적 통합 계획"
+    },
+    {
+      "company": "Charles River",
+      "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+      "expect": "unknown",
+      "baseline_article_id": "dcb954c492651c37999f9ebe",
+      "note": "Charles River–Medigen — 기존 R/S4 양성 유지; 바이러스 시드 뱅크 특성분석 명시"
+    },
+    {
+      "company": "HyproMag",
+      "url": "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
+      "expect": "unknown",
+      "baseline_article_id": "f0e21debb717a307f35cee05",
+      "note": "HyProMag / Remloy — R/S4 유지; 완료 인수·확보시설을 S2 전조로 우회 금지"
+    },
+    {
+      "company": "Nexeon",
+      "url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "expect": "unknown",
+      "baseline_article_id": "75bf7e11137933e19bd45a98",
+      "note": "Nexeon Gunsan ISO 9001 — R 유지; 확장 가능한 설계만으로 S2 계획 승인 금지"
+    },
+    {
+      "company": "Albemarle",
+      "url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+      "expect": "unknown",
+      "baseline_article_id": "ba535126a61bdbbe816c4ece",
+      "note": "Albemarle Q2 — R 유지; 현금·부채 감축·capex 전망을 S3 조달로 승인 금지"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+      "expect": "unknown",
+      "baseline_article_id": "d337176310b62c74a7bc467b",
+      "note": "Ouster/Stereolabs–Trossen — 기업 귀속은 인정, 스테레오 카메라를 라이다 기술로 승인 금지"
+    },
+    {
+      "company": "Evonik Industries",
+      "url": "https://www.evonik.com/en/news/press-releases/2026/08/evonik-expands-lipid-based-drug-delivery-capabilities-with-new-gmp-manufacturing-facility-in-vancouver-canada.html?owner=evonik%3Aorganization%2FF%2FF-IR&type=evonik%3Anews-type%2Fpress-release---ir-news%2Finvestor-relations-news",
+      "expect": "unknown",
+      "baseline_article_id": "39578b8ea9ece8ccd17d3442",
+      "note": "Evonik Vancouver GMP — 실제 투자라도 지질 의약 사업을 타이어 실리카로 승인 금지"
+    },
+    {
+      "company": "Cytiva",
+      "url": "https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "expect": "unknown",
+      "baseline_article_id": "c9337ee3091d380aac2eb0a5",
+      "note": "Cytiva에 매핑된 Danaher CEO — Cytiva 명시적 연결 없는 모회사 인사: entity 게이트 유지"
+    },
+    {
+      "company": "Moderna",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPY2pBcUVGVElRdDU3MjRnZDE0TEZsalhCeVFXT293ZERfaDBBTEhfYzZyQXU0U2dSNmk3RWxMaDJ2NFNNT3k4N29Ud1Rra3hsLUtuMnAxc1BJT2ZZYkxFU3JfaGVNQ0J0UlpmTTlWSm92RnZXaEpSTS1XbXl0N2twc05VVzZNeXdtalVzUndRemhtTlpfcmJnblBmc2t0S04yQ0VJa3FFdXpySms4U1VqN0liYXk5ME5mVjJicXU3dVo3ZTdwVm9R?oc=5",
+      "expect": "unknown",
+      "baseline_article_id": "a8b2ba39d95bf6df054576d2",
+      "note": "Moderna/BioSpace — 현재 R 승인도 재검토: 제목만 있고 전달체/GMP 근거 없음. R/S4 승인 보류, quality 과신 방지"
+    },
+    {
+      "company": "3M",
+      "url": "https://investors.3m.com/news-events/press-releases/detail/1939/3m-board-declares-quarterly-dividend",
+      "expect": "unknown",
+      "baseline_article_id": "4255205cb4d265a95ea97086",
+      "note": "3M Quarterly Dividend — 기술 면제 기업이라도 배당은 R/S1~S5 탈락 유지; 면제 적용 교정의 오승인 방지"
+    }
+  ]
+}

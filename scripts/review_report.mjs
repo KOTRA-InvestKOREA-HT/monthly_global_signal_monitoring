@@ -67,6 +67,18 @@ export function rateLimitHeaders(headers, apiKey) {
   return found;
 }
 
+// 모델에 보내는 판정 계약 구간. 로컬 CLI 작업 지침은 제외한다.
+export function policySection(doc) {
+  return doc.split('## 판정 기준')[1].split('## 기사별 응답 형식')[0];
+}
+
+// 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
+// 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
+// golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
+export function reviewPolicy({ policyText, technology, indicators, provider = PROVIDER }) {
+  return `${VERSION}:${digest([provider.id, provider.model, policyText, technology, indicators])}`;
+}
+
 function invalidResponse(code, label = PROVIDER.label) {
   return Object.assign(new Error(`${label} invalid response: ${code}`), { response_code: code });
 }
@@ -420,11 +432,11 @@ async function main() {
   await write(path.join(root, 'status.json'), startingStatus(period));
   const policyDoc = await fs.readFile('docs/local_report_review.md', 'utf8');
   // Share the reviewed judgement contract, excluding instructions for the local CLI workflow.
-  const policyText = policyDoc.split('## 판정 기준')[1].split('## 기사별 응답 형식')[0];
+  const policyText = policySection(policyDoc);
   const [targets, technology, indicators] = await Promise.all([
     read('data/target_companies.json'), read('data/company_technology_map.json'), read('config/investment_signal_indicators.json'),
   ]);
-  const policy = `${VERSION}:${digest([PROVIDER.id, MODEL, policyText, technology, indicators])}`;
+  const policy = reviewPolicy({ policyText, technology, indicators });
   const inputDir = path.join(root, `${from}_${to}`);
   const sourceFile = path.join(inputDir, 'latest_company_signals.json');
   if (process.env.REPORT_REFRESH === 'true') await fs.rm(inputDir, { recursive: true, force: true });
