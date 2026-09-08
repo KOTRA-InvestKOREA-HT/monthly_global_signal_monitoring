@@ -22,6 +22,11 @@ const write = async (file, value) => {
 
 export function configuration(env = process.env, provider = resolveProvider(env)) {
   const prefix = provider.id.toUpperCase();
+  // Gemini 는 API 가 무료 티어를 강제하지 못하므로 사람이 확인했다는 표시를 요구한다.
+  // NVIDIA 무료 키는 선불 크레딧이라 같은 위험이 없다.
+  if (provider.requiresFreeTierConfirmation && env[`${prefix}_FREE_TIER_CONFIRMED`] !== 'true') {
+    throw new Error(`Set ${prefix}_FREE_TIER_CONFIRMED=true only after confirming this key belongs to a project with no paid billing. The API cannot enforce free-tier billing.`);
+  }
   const keyEnv = provider.keyEnv.find(name => env[name]);
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
   const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 400);
