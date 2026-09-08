@@ -86,3 +86,14 @@ test('independence never means asserting a field without evidence', () => {
   // 사유가 근거 부재를 말하면서 같은 필드를 true 로 두는 모순을 금지한다.
   assert.match(CRITERIA, /사유에 그 근거가 없다고 적으면서 같은 필드를 true로 두지 않는다/);
 });
+
+test('the policy digest does not depend on how the checkout stores line endings', () => {
+  // Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받는다. 정규화하지 않으면 같은 커밋이
+  // 플랫폼마다 다른 기사 id 를 만들고, 로컬에서 돌린 golden 평가가 운영과 다른 정책을 재게 된다.
+  const inputs = { technology: { companies: [] }, indicators: { indicators: [] } };
+  const lf = ['기준 한 줄', '다음 줄', ''].join('\n');
+  const crlf = ['기준 한 줄', '다음 줄', ''].join('\r\n');
+  assert.equal(reviewPolicy({ policyText: crlf, ...inputs }), reviewPolicy({ policyText: lf, ...inputs }));
+  // 줄바꿈만 같게 볼 뿐, 내용이 바뀌면 여전히 달라져야 한다.
+  assert.notEqual(reviewPolicy({ policyText: lf, ...inputs }), reviewPolicy({ policyText: '다른 기준', ...inputs }));
+});
