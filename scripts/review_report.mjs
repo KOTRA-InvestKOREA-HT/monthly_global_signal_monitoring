@@ -52,6 +52,16 @@ export function startingStatus(period) {
     provider: PROVIDER.id, model: MODEL, ...runIdentity() };
 }
 
+// 429 가 왜 났는지는 본문보다 헤더에 있을 때가 많다. 한도·잔량·리셋 시각을 보내주는
+// 게이트웨이라면 여기 있고, 아무것도 안 보낸다면 빈 객체가 그 사실 자체를 기록한다.
+// 본문이 아니라 이 메타데이터만 남긴다. date 는 리셋 시각을 서버 시간 기준으로 읽으려고 함께 받는다.
+const RATE_LIMIT_HEADER = /^(retry-after|date|x-request-id|x-requestid|(x-)?rate-?limit-)/i;
+export function rateLimitHeaders(headers, apiKey) {
+  const found = {};
+  for (const [name, value] of headers) if (RATE_LIMIT_HEADER.test(name)) found[name] = providerMessage(value, apiKey);
+  return found;
+}
+
 function invalidResponse(code, label = PROVIDER.label) {
   return Object.assign(new Error(`${label} invalid response: ${code}`), { response_code: code });
 }
@@ -180,6 +190,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     // 분류에 성공하면 프로바이더 본문은 남기지 않는다. 분류가 실패했을 때만, 무엇을 받았길래
     // 알아보지 못했는지 남긴다. 그게 없으면 1분 기다릴 일인지 계정이 빈 것인지 알아낼 방법이 없다.
     if (error.provider_reason === 'unspecified') error.provider_message = providerMessage(stated, apiKey) || '(빈 응답 본문)';
+    error.rate_limit = rateLimitHeaders(response.headers, apiKey);
     const retryAfter = response.headers.get('retry-after');
     if (retryAfter) error.retry_after = retryAfter;
     throw error;
@@ -364,7 +375,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           console.log(`Article ${article.id}: transient provider error (${error.transport_reason || `HTTP ${error.status}`}${error.transport_message ? `: ${error.transport_message}` : ''}); retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
-        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
+        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
         if (error.transport_error) return state({ status: 'paused', reason: 'transport_error',
           ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}),
           ...(error.transport_message ? { transport_message: error.transport_message } : {}) });
@@ -437,6 +448,11 @@ async function main() {
 ` : '') +
       (state.transport_reason ? `Transport: ${state.transport_reason}${state.transport_message ? ` - ${state.transport_message}` : ''}
 ` : '') +
+      (state.rate_limit ? (Object.keys(state.rate_limit).length
+        ? `Rate-limit headers: ${Object.entries(state.rate_limit).map(([k, v]) => `${k}=${v}`).join(', ')}
+`
+        : `${PROVIDER.label} sent no rate-limit headers with this ${state.http_status}.
+`) : '') +
       'Saved progress; rerun the same dates with refresh=false. ' +
       // A burst limit clears in a minute; an exhausted account does not.
       (state.provider_reason === 'credits_exhausted' ? 'The account is out of credits, so an immediate rerun will only 429 again. ' : '') +
@@ -467,6 +483,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     status: 'failed', reason: error.status ? 'provider_error' : 'validation_or_execution',
     http_status: error.status || null, provider: PROVIDER.id, model: MODEL, ...runIdentity(),
     ...(error.provider_message ? { provider_message: error.provider_message } : {}),
+    ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}),
     ...(error.transport_reason ? { transport_reason: error.transport_reason, transport_message: error.transport_message } : {}),
     period: { from_date: process.env.REPORT_FROM_DATE || null, to_date: process.env.REPORT_TO_DATE || null },
   }).catch(() => {});
