@@ -109,3 +109,31 @@ test('a failed date-hint supplement never stops the other workers reviewing unca
   assert.equal(state.requests, 5);
   for (const a of articles.slice(1)) await fs.access(path.join(reviewDir, `${a.id}.json`));
 });
+
+test('one failed supplement stops the whole run supplementing, not just its own article', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'parallel-supplement-stop-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  // 캐시된 미상 기사 셋, 판정이 필요한 기사 둘.
+  const pending = ['A', 'B', 'C'].map(pendingArticle);
+  const fresh = ['D', 'E'].map(article);
+  await Promise.all(pending.map(a => fs.writeFile(path.join(reviewDir, `${a.id}.json`),
+    JSON.stringify({ article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: [rejection] }))));
+  let supplements = 0, contentCalls = 0;
+  const state = await reviewArticles({ articles: [...pending, ...fresh], reviewDir, policy: '',
+    config: { apiKey: 'test', maxRequests: 40, delayMs: 30, concurrency: 3 },
+    fetchImpl: async (url, init) => {
+      const company = JSON.parse(JSON.parse(init.body).messages[1].content).company;
+      if (['A', 'B', 'C'].includes(company)) { supplements++; return new Response('', { status: 429 }); }
+      contentCalls++; return ok();
+    } });
+  // 보강 중단은 실행 전체가 공유해야 한다. 기사마다 다시 시도하면 할당량이 끝난 뒤에도 계속 두드린다.
+  assert.equal(supplements, 1);
+  // 그러면서도 판정 요청은 그대로 나간다.
+  assert.equal(contentCalls, 2);
+  assert.equal(state.status, 'completed');
+  assert.equal(state.completed, 5);
+  assert.equal(state.cached, 3);
+  assert.equal(state.date_hints, 0);
+  assert.equal(state.requests, 3);
+  for (const a of fresh) await fs.access(path.join(reviewDir, `${a.id}.json`));
+});

@@ -164,12 +164,26 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     date_hint_version: DATE_HINT_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
-  try { importReview(article, review); } catch (error) {
-    const failure = invalid(/published_date/.test(error.message) ? 'date_evidence_mismatch'
-      : /evidence_quotes/.test(error.message) ? 'evidence_mismatch'
-      : /needs an evidence quote/.test(error.message) ? 'missing_evidence' : 'review_validation');
+  let problem = null;
+  try { importReview(article, review); } catch (error) { problem = error; }
+  // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다. 첫 실패는 기존 재시도에 맡기되, 재시도에서도
+  // 인용이 그 날짜를 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는
+  // 날짜 하나 때문에 잃으면 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
+  // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않는다.
+  if (problem && retry && /published_date/.test(problem.message)) {
+    const withoutHint = { ...review, published_date: '', published_date_quote: '' };
+    try {
+      importReview(article, withoutHint);
+      console.log(`Article ${article.id}: unusable publication date discarded, content review kept`);
+      return withoutHint;
+    } catch (error) { problem = error; }
+  }
+  if (problem) {
+    const failure = invalid(/published_date/.test(problem.message) ? 'date_evidence_mismatch'
+      : /evidence_quotes/.test(problem.message) ? 'evidence_mismatch'
+      : /needs an evidence quote/.test(problem.message) ? 'missing_evidence' : 'review_validation');
     // importReview 의 메시지는 우리가 만든 문구다. 회사명과 후보 id 만 담고 모델 출력은 담지 않는다.
-    failure.diagnostic = quoteDiagnostics(article, parsed.decisions, apiKey, error.message);
+    failure.diagnostic = quoteDiagnostics(article, parsed.decisions, apiKey, problem.message);
     throw failure;
   }
   return review;
@@ -184,19 +198,22 @@ export async function reviewArticles(options) {
   // does not hold this gate. The existing per-article validator/cache is reused.
   let queue = Promise.resolve(), nextStart = 0, requests = 0, index = 0;
   let stopped = null, fatal = null, progressCompleted = 0;
+  // 보강 중단은 실행 전체가 공유한다. 기사마다 따로 판단하면 할당량이 끝난 뒤에도 남은 미상 기사
+  // 수만큼 계속 두드린다. 판정 중단(stopped)과는 별개다: 보강이 멈춰도 판정은 계속 나간다.
+  const supplementStop = { stopped: false };
   const results = [];
-  const gatedFetch = async (url, init) => {
-    // 날짜 보강은 보조 작업이다. 실패해도 남은 판정 요청을 멈추지 않고, 예산이 바닥나면
-    // 스스로 물러난다. 할당량이 정말 끝났다면 다음 판정 요청이 같은 응답으로 알아낸다.
-    const supplement = init?.supplement === true;
+  // 보조 요청인지는 어느 게이트를 통해 왔는지로 정한다. 이 구분은 게이트 안에만 있고
+  // RequestInit 으로 새어나가지 않는다.
+  const gate = supplement => async (url, init) => {
     const slot = queue.then(async () => {
-      if (stopped || fatal) return false;
+      if (stopped || fatal || (supplement && supplementStop.stopped)) return false;
       if (requests >= config.maxRequests) {
+        // 날짜 보강은 보조 작업이다. 예산이 바닥나면 실행을 멈추지 않고 스스로 물러난다.
         if (!supplement) stopped = { status: 'paused', reason: 'request_budget' };
         return false;
       }
       while (nextStart > performance.now()) await sleep(nextStart - performance.now());
-      if (stopped || fatal) return false;
+      if (stopped || fatal || (supplement && supplementStop.stopped)) return false;
       requests++;
       nextStart = performance.now() + config.delayMs;
       return true;
@@ -206,17 +223,20 @@ export async function reviewArticles(options) {
     const response = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(120000) });
     // Stop queued requests promptly on quota/auth errors, but let in-flight
     // successful responses finish validation and durable cache writes.
+    // 보강의 실패로는 판정 요청을 멈추지 않는다. 할당량이 정말 끝났다면 다음 판정 요청이 같은 응답으로 알아낸다.
     if (!supplement) {
       if (response.status === 429) stopped = { status: 'paused', reason: 'quota', http_status: 429 };
       else if (!response.ok && response.status < 500) stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
     }
     return response;
   };
+  const gatedFetch = gate(false), supplementFetch = gate(true);
   await Promise.all(Array.from({ length: Math.min(concurrency, articles.length) }, async () => {
     while (index < articles.length && !fatal) {
       const article = articles[index++];
       try {
-        const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch, logReviewed: false });
+        const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch,
+          supplementFetchImpl: supplementFetch, supplementStop, logReviewed: false });
         results.push(result);
         progressCompleted += result.completed;
         if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
@@ -250,8 +270,9 @@ function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
-async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true }) {
-  let requests = 0, cached = 0, completed = 0, dateHints = 0, dateHintsStopped = false;
+async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
+  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false } }) {
+  let requests = 0, cached = 0, completed = 0, dateHints = 0;
   const failed = [];
   const diagnostics = [];
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics, ...extra });
@@ -265,14 +286,13 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
       // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.
-      if (needsDateHint(article, review) && !dateHintsStopped && requests < config.maxRequests) {
+      if (needsDateHint(article, review) && !supplementStop.stopped && requests < config.maxRequests) {
         if (requests) await sleep(config.delayMs);
         requests++;
         try {
-          // 보강 요청임을 공유 스케줄러에 알린다. 표시가 없으면 이 실패가 게이트를 멈춰 아직
-          // 판정받지 못한 기사들이 날짜와 무관한 이유로 판정 없이 끝난다.
-          const supplementFetch = (url, init) => fetchImpl(url, { ...init, supplement: true });
-          const fresh = await requestReview(article, policy, config.apiKey, supplementFetch);
+          // 보강 전용 게이트로 보낸다. 이 실패가 공유 스케줄러를 멈추면 아직 판정받지 못한
+          // 기사들이 날짜와 무관한 이유로 판정 없이 끝난다.
+          const fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl);
           // 새 응답의 판정은 버리고 날짜만 옮긴다. 이미 검증된 판정을 재현성 없는 재판정으로 덮지 않는다.
           await write(file, { ...review, date_hint_version: DATE_HINT_VERSION,
             published_date: fresh.published_date, published_date_quote: fresh.published_date_quote });
@@ -280,7 +300,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         } catch (error) {
           // 힌트는 보조 정보다. 실패해도 캐시된 판정과 실행 상태는 건드리지 않는다. 다만 할당량·
           // 전송 오류라면 남은 기사에서 반복해도 결과가 같으므로 이번 실행에서는 보강을 멈춘다.
-          if (error.status || error.transport_error || error.scheduling_stopped) dateHintsStopped = true;
+          if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
           console.log(`Article ${article.id}: date hint unavailable (${error.response_code || error.status || 'error'})`);
         }
       }

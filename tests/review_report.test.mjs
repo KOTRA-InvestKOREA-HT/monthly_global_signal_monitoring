@@ -89,6 +89,41 @@ test('a failed or unavailable date hint never costs the cached decision or the r
   assert.equal('published_date' in JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8')), false);
 });
 
+test('a date hint that is still unusable on retry is discarded so the content review survives', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-discard-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = pendingArticle('Undated');
+  let calls = 0;
+  // 인용문은 8월 14일을 말하는데 제안은 8월 15일이다. 판정 자체는 두 번 다 정상이다.
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return dated('2026-08-15', datedQuote); } });
+  // 첫 실패는 기존 재시도를 쓴다. 두 번째에도 날짜만 어긋나면 힌트를 버린다.
+  assert.equal(calls, 2);
+  assert.equal(state.status, 'completed');
+  assert.equal(state.completed, 1);
+  assert.deepEqual(state.failed_articles, []);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  // 날짜는 보조 정보다. 근거 없는 날짜는 버리되 판정은 남는다.
+  assert.equal(stored.published_date, '');
+  assert.equal(stored.published_date_quote, '');
+  assert.deepEqual(stored.decisions, pendingDecisions);
+  // 버린 것도 물어본 것이다. 규칙이 바뀌기 전까지 다시 묻지 않는다.
+  assert.equal(stored.date_hint_version, DATE_HINT_VERSION);
+});
+
+test('discarding the date hint never hides a decision that failed its own validation', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-discard-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = pendingArticle('Undated');
+  // 날짜도 인용도 어긋난 응답. 날짜를 버린 뒤 판정을 다시 검증하면 인용 위조가 그대로 드러난다.
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => dated('2026-08-15', datedQuote, [{ ...pendingDecisions[0], evidence_quotes: ['Invented quote'] }]) });
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'invalid_responses');
+  assert.deepEqual(state.failed_articles, [{ article_id: a.id, reason: 'evidence_mismatch' }]);
+  await assert.rejects(fs.access(path.join(reviewDir, `${a.id}.json`)));
+});
+
 test('bumping only the date hint version re-asks the date and keeps every content decision cached', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-version-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
