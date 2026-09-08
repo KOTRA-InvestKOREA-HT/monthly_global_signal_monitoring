@@ -20,12 +20,17 @@ on:
         required: false
         default: "2"
 
+      provider:
+        description: "Review provider"
+        type: choice
+        options: [gemini, nvidia]
+        default: gemini
       max_requests:
         description: "Maximum API requests including retries (1-400)"
         type: string
         default: "400"
       delay_ms:
-        description: "Delay between requests in ms. Leave empty for the 40 RPM default (1600)"
+        description: "Delay between requests in ms. Leave empty for the provider default (gemini 4500, nvidia 1600)"
         type: string
         default: ""
       refresh:
@@ -99,6 +104,10 @@ jobs:
       - name: Review articles and build both PDFs
         id: review
         env:
+          REPORT_PROVIDER: ${{ inputs.provider || vars.REPORT_PROVIDER || 'gemini' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다.
+          GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '400' }}

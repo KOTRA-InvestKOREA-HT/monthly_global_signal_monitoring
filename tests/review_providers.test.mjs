@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as provider_module from '../scripts/review_providers.mjs';
-const { NVIDIA, resolveProvider, toJsonSchema, decisionProperties } = provider_module;
+const { GEMINI, NVIDIA, PROVIDERS, resolveProvider, toJsonSchema, toGeminiSchema, decisionProperties } = provider_module;
 import { configuration, requestReview } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 
@@ -146,4 +146,62 @@ test('a non-quote validation failure records what actually broke', async t => {
   assert.equal(detail.decisions[0].reason_ko_length, 2);
   // 자유 텍스트 본문은 길이만 남고 내용은 남지 않는다.
   assert.equal(JSON.stringify(detail).includes('요약문'), false);
+});
+
+test('the Gemini request uses its own dialect and carries the same one schema', () => {
+  const body = GEMINI.body({ article: article('Acme'), policy: 'POLICY', retry: false, model: GEMINI.model });
+  assert.equal(GEMINI.url(GEMINI.model), 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent');
+  assert.equal(GEMINI.headers('AIzaTest')['x-goog-api-key'], 'AIzaTest');
+  assert.match(body.systemInstruction.parts[0].text, /POLICY$/);
+  assert.equal(body.generationConfig.temperature, 0);
+  assert.equal(body.generationConfig.responseMimeType, 'application/json');
+  const schema = body.generationConfig.responseSchema;
+  // 날짜 힌트 두 필드는 여기에도 루트로 실린다. 스키마 정의가 한 곳이므로 자동으로 따라온다.
+  assert.deepEqual(schema.required, ['decisions', 'published_date', 'published_date_quote']);
+  assert.equal(schema.properties.published_date.type, 'STRING');
+  // Gemini 방언은 대문자 타입을 쓰고 additionalProperties 를 받지 않는다.
+  assert.equal(schema.properties.decisions.items.type, 'OBJECT');
+  assert.equal(schema.properties.decisions.items.additionalProperties, undefined);
+  assert.deepEqual(schema.properties.decisions.items.required, Object.keys(decisionProperties));
+  assert.deepEqual(schema.properties.decisions.items.properties.quality.enum, ['pass', 'needs_review']);
+  // 원본 수집 행은 모델에 보내지 않는다.
+  assert.equal(JSON.parse(body.contents[0].parts[0].text).candidates.every(c => c.row === undefined), true);
+  assert.equal(GEMINI.body({ article: article('Acme'), policy: '', retry: true, model: GEMINI.model }).contents[0].parts.length, 2);
+});
+
+test('Gemini responses drop reasoning parts and reject truncation', () => {
+  const invalid = code => Object.assign(new Error(code), { response_code: code });
+  const ok = GEMINI.parse({ candidates: [{ finishReason: 'STOP', content: { parts: [
+    { thought: true, text: 'internal reasoning' }, { text: '{"decisions"' }, { text: ':[]}' }] } }],
+    usageMetadata: { totalTokenCount: 9 } }, invalid);
+  assert.equal(ok.text, '{"decisions":[]}');
+  assert.deepEqual(ok.usage, { totalTokenCount: 9 });
+  assert.throws(() => GEMINI.parse({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [] } }] }, invalid), /incomplete_response/);
+  assert.throws(() => GEMINI.parse({ candidates: [{ finishReason: 'STOP', content: {} }] }, invalid), /invalid_parts/);
+});
+
+test('the provider is selected by name and each keeps its own key, model and pacing', () => {
+  assert.deepEqual(Object.keys(PROVIDERS), ['gemini', 'nvidia']);
+  // 코드 기본값은 nvidia 다. 워크플로가 디스패치 입력이나 저장소 변수로 덮는다.
+  assert.equal(resolveProvider({}).id, 'nvidia');
+  assert.equal(resolveProvider({ REPORT_PROVIDER: ' Gemini ' }).id, 'gemini');
+  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini' }).model, 'gemini-3.5-flash-lite');
+  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini', GEMINI_MODEL: 'gemini-3.5-flash' }).model, 'gemini-3.5-flash');
+  // 다른 프로바이더의 모델 변수는 서로 넘보지 않는다.
+  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini', NVIDIA_MODEL: 'x' }).model, 'gemini-3.5-flash-lite');
+  assert.throws(() => resolveProvider({ REPORT_PROVIDER: 'openai' }), /Unknown REPORT_PROVIDER: openai. Use one of gemini, nvidia/);
+  assert.deepEqual(GEMINI.keyEnv, ['GEMINI_API_KEY']);
+  assert.equal(GEMINI.minDelayMs, 4000);
+});
+
+test('Gemini needs a human free-tier confirmation that NVIDIA does not', () => {
+  const env = { REPORT_PROVIDER: 'gemini', GEMINI_API_KEY: 'AIzaKey' };
+  // API 가 무료 티어를 강제하지 못하므로, 확인 표시 없이는 한 번도 호출하지 않는다.
+  assert.throws(() => configuration(env, GEMINI), /GEMINI_FREE_TIER_CONFIRMED=true/);
+  assert.deepEqual(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI),
+    { apiKey: 'AIzaKey', maxRequests: 400, delayMs: 4500, concurrency: 8 });
+  assert.throws(() => configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '3999' }, GEMINI), /4000\.\.60000/);
+  assert.throws(() => configuration({ REPORT_PROVIDER: 'gemini', GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI), /GEMINI_API_KEY is required/);
+  // 선불 크레딧인 NVIDIA 는 같은 위험이 없어 확인을 요구하지 않는다.
+  assert.equal(configuration({ OPENAI_API_KEY: 'k' }, NVIDIA).delayMs, 1600);
 });

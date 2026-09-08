@@ -72,6 +72,19 @@ export const articleDateProperties = {
   published_date_quote: { type: 'STRING' },
 };
 
+// Gemini 는 자체 스키마 방언을 쓴다. 대문자 타입은 그대로 두고 required 만 채운다.
+// additionalProperties 는 받지 않으므로 넣지 않는다.
+export function toGeminiSchema(node) {
+  const out = { type: node.type };
+  if (node.enum) out.enum = node.enum;
+  if (node.items) out.items = toGeminiSchema(node.items);
+  if (node.properties) {
+    out.properties = Object.fromEntries(Object.entries(node.properties).map(([k, v]) => [k, toGeminiSchema(v)]));
+    out.required = Object.keys(node.properties);
+  }
+  return out;
+}
+
 const decisionsEnvelope = {
   type: 'OBJECT',
   properties: {
@@ -82,6 +95,61 @@ const decisionsEnvelope = {
 
 const articleText = article => JSON.stringify({ ...article, candidates: article.candidates.map(({ row, ...c }) => c) });
 
+export const GEMINI = {
+  id: 'gemini',
+  label: 'Gemini',
+  model: 'gemini-3.5-flash-lite',
+  keyEnv: ['GEMINI_API_KEY'],
+  // 관측된 무료 티어 15 RPM. 4500ms가 안전값, 4000이 한도다.
+  minDelayMs: 4000,
+  defaultDelayMs: 4500,
+  // API 가 무료 티어를 강제하지 못한다. 결제 계정이 붙은 키면 조용히 과금되므로 사람의 확인을 받는다.
+  requiresFreeTierConfirmation: true,
+  expectedKeyPrefix: 'AIza',
+  url(model) {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  },
+  headers(apiKey) {
+    return { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey };
+  },
+  body({ article, policy, retry }) {
+    return {
+      systemInstruction: { parts: [{ text: `${SYSTEM_INSTRUCTION}
+${policy}` }] },
+      contents: [{ role: 'user', parts: [
+        { text: articleText(article) },
+        ...(retry ? [{ text: RETRY_INSTRUCTION }] : []),
+      ] }],
+      generationConfig: {
+        // 판정은 재현 가능해야 하므로 표집을 끈다.
+        temperature: 0,
+        maxOutputTokens: 16384, responseMimeType: 'application/json',
+        responseSchema: toGeminiSchema(decisionsEnvelope),
+      },
+    };
+  },
+  // 판정 본문만 돌려준다. thought 파트는 추론 흔적이라 버린다.
+  parse(payload, invalid) {
+    const candidate = payload?.candidates?.[0];
+    if (candidate?.finishReason !== 'STOP') throw invalid('incomplete_response');
+    if (!Array.isArray(candidate.content?.parts)) throw invalid('invalid_parts');
+    return {
+      text: candidate.content.parts.filter(p => p && !p.thought).map(p => p.text || '').join(''),
+      usage: payload.usageMetadata || {},
+    };
+  },
+  async listModels(apiKey) {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+      headers: { 'x-goog-api-key': apiKey }, signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return (payload.models || [])
+      .filter(m => m.name?.includes('flash') && m.supportedGenerationMethods?.includes('generateContent'))
+      .map(m => m.name);
+  },
+};
+
 export const NVIDIA = {
   id: 'nvidia',
   label: 'NVIDIA',
@@ -91,6 +159,7 @@ export const NVIDIA = {
   // (summarize_signal_evidence.mjs, check_openai_access.mjs)는 더 이상 동작하지 않는다.
   keyEnv: ['OPENAI_API_KEY'],
   // 40 RPM 관측치. 무료 티어 확인 플래그는 필요 없다. 선불 크레딧이라 조용히 과금되지 않는다.
+  requiresFreeTierConfirmation: false,
   // 40 RPM 이면 1500ms 다. 1600ms 를 기본값으로 두어 여유를 둔다.
   minDelayMs: 1500,
   defaultDelayMs: 1600,
@@ -163,8 +232,16 @@ export function describeKeyShape(rawKey) {
   };
 }
 
-// 모델은 NVIDIA_MODEL 로만 바꾼다. 캐시 식별자에 들어가므로 바뀌면 재판정된다.
+export const PROVIDERS = { gemini: GEMINI, nvidia: NVIDIA };
+
+// 판정을 어디로 보낼지는 REPORT_PROVIDER 가 정한다. 코드 기본값은 nvidia 이고, 워크플로가
+// 디스패치 입력이나 저장소 변수로 덮는다. 저장된 판정에는 provider 가 함께 적혀 있어,
+// 프로바이더를 바꾸면 그 판정들은 캐시에서 거부되고 다시 판정된다.
 export function resolveProvider(env = process.env) {
-  const override = env.NVIDIA_MODEL;
-  return override ? { ...NVIDIA, model: override.trim() } : NVIDIA;
+  const name = String(env.REPORT_PROVIDER || 'nvidia').trim().toLowerCase();
+  const provider = PROVIDERS[name];
+  if (!provider) throw new Error(`Unknown REPORT_PROVIDER: ${name}. Use one of ${Object.keys(PROVIDERS).join(', ')}`);
+  // 모델은 프로바이더별 환경변수로만 바꾼다. 캐시 식별자에 들어가므로 바뀌면 재판정된다.
+  const override = env[`${provider.id.toUpperCase()}_MODEL`];
+  return override ? { ...provider, model: override.trim() } : provider;
 }
