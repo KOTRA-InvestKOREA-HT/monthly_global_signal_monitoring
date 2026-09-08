@@ -37,6 +37,13 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs, concurrency };
 }
 
+// 아티팩트만 보고 어느 실행·어느 커밋의 결과인지 알 수 있어야 한다. 로컬 실행에서는 비어 있다.
+export function runIdentity(env = process.env) {
+  const run = { id: env.GITHUB_RUN_ID, attempt: env.GITHUB_RUN_ATTEMPT, sha: env.GITHUB_SHA, ref: env.GITHUB_REF_NAME };
+  const named = Object.entries(run).filter(([, value]) => value);
+  return named.length ? { run: Object.fromEntries(named) } : {};
+}
+
 function invalidResponse(code, label = PROVIDER.label) {
   return Object.assign(new Error(`${label} invalid response: ${code}`), { response_code: code });
 }
@@ -133,7 +140,12 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     });
   } catch (error) {
     if (error.name === 'TimeoutError' || error.name === 'AbortError' || error instanceof TypeError) {
-      throw Object.assign(new Error(`${provider.label} transport error`), { transport_error: true });
+      // 이름과 사유를 함께 남긴다. TimeoutError(프로바이더가 120초 안에 답하지 않음)와
+      // TypeError(DNS·TLS·연결 실패, 또는 fetch 호출 안에서 난 우리 코드의 결함)는 서로 다른
+      // 문제인데 예전에는 둘 다 이름 없는 "transport error" 하나로 뭉뚱그려졌다.
+      throw Object.assign(new Error(`${provider.label} transport error`), { transport_error: true,
+        transport_reason: error.name || 'Error',
+        transport_message: providerMessage(error.cause?.message || error.message, apiKey) });
     }
     throw error;
   }
@@ -159,7 +171,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
       : 'unspecified';
     // 분류에 성공하면 프로바이더 본문은 남기지 않는다. 분류가 실패했을 때만, 무엇을 받았길래
     // 알아보지 못했는지 남긴다. 그게 없으면 1분 기다릴 일인지 계정이 빈 것인지 알아낼 방법이 없다.
-    if (error.provider_reason === 'unspecified') error.provider_message = providerMessage(stated, apiKey);
+    if (error.provider_reason === 'unspecified') error.provider_message = providerMessage(stated, apiKey) || '(빈 응답 본문)';
     const retryAfter = response.headers.get('retry-after');
     if (retryAfter) error.retry_after = retryAfter;
     throw error;
@@ -341,11 +353,13 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         if ((error.status >= 500 || error.transport_error) && providerRetries < 2) {
           waitMs = Math.max(config.delayMs, 15000 * 2 ** providerRetries + Math.floor(random() * 1000));
           providerRetries++;
-          console.log(`Article ${article.id}: transient provider error; retry ${providerRetries}/2 after ${waitMs}ms`);
+          console.log(`Article ${article.id}: transient provider error (${error.transport_reason || `HTTP ${error.status}`}${error.transport_message ? `: ${error.transport_message}` : ''}); retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
         if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
-        if (error.transport_error) return state({ status: 'paused', reason: 'transport_error' });
+        if (error.transport_error) return state({ status: 'paused', reason: 'transport_error',
+          ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}),
+          ...(error.transport_message ? { transport_message: error.transport_message } : {}) });
         if (!error.response_code) throw error;
         const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-attempt-${attempt + 1}.json`;
         await write(path.join(path.dirname(reviewDir), diagnosticPath), {
@@ -403,13 +417,15 @@ async function main() {
   const runDir = path.join(root, `${from.slice(0, 7)}-${digest(snapshot)}`);
   await write(path.join(runDir, 'snapshot.json'), snapshot);
   const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
-  await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL });
+  await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL, ...runIdentity() });
   console.log(JSON.stringify(state));
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
     (state.status === 'paused' ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
       (state.provider_message ? `${PROVIDER.label} said: ${state.provider_message}
+` : '') +
+      (state.transport_reason ? `Transport: ${state.transport_reason}${state.transport_message ? ` - ${state.transport_message}` : ''}
 ` : '') +
       'Saved progress; rerun the same dates with refresh=false. ' +
       // A burst limit clears in a minute; an exhausted account does not.
@@ -439,8 +455,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.error(error.message);
   await write(path.resolve('outputs/review_work/status.json'), {
     status: 'failed', reason: error.status ? 'provider_error' : 'validation_or_execution',
-    http_status: error.status || null, provider: PROVIDER.id, model: MODEL,
+    http_status: error.status || null, provider: PROVIDER.id, model: MODEL, ...runIdentity(),
     ...(error.provider_message ? { provider_message: error.provider_message } : {}),
+    ...(error.transport_reason ? { transport_reason: error.transport_reason, transport_message: error.transport_message } : {}),
     period: { from_date: process.env.REPORT_FROM_DATE || null, to_date: process.env.REPORT_TO_DATE || null },
   }).catch(() => {});
   if (error.provider_message) console.error(`${PROVIDER.label} 응답: ${error.provider_message}`);

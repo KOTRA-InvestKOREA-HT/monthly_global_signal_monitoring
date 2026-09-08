@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, MODEL } from '../scripts/review_report.mjs';
+import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, runIdentity, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
@@ -438,4 +438,48 @@ test('a provider message never carries the key and never runs unbounded', () => 
   assert.equal(long.length, 301);
   assert.equal(long.endsWith('…'), true);
   assert.equal(providerMessage(undefined, 'k'), '');
+});
+
+test('a transport failure names itself instead of pausing anonymously', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'transport-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const args = { articles: [article('A')], reviewDir, policy: '', config, sleep: async () => {}, random: () => 0 };
+  // 프로바이더가 120초 안에 답하지 않는 경우.
+  const timeout = await reviewArticles({ ...args, fetchImpl: async () => {
+    throw Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' }); } });
+  assert.equal(timeout.reason, 'transport_error');
+  assert.equal(timeout.transport_reason, 'TimeoutError');
+  assert.match(timeout.transport_message, /timeout/);
+  // 연결 자체가 안 되는 경우. fetch 는 원인을 cause 에 담는다.
+  const refused = await reviewArticles({ ...args, fetchImpl: async () => {
+    throw Object.assign(new TypeError('fetch failed'), { cause: new Error('getaddrinfo ENOTFOUND integrate.api.nvidia.com') }); } });
+  assert.equal(refused.transport_reason, 'TypeError');
+  assert.match(refused.transport_message, /ENOTFOUND/);
+  // fetch 호출 안에서 난 우리 코드의 결함은 전송 오류로 위장돼 왔다. 이제 문구가 남는다.
+  const ourBug = await reviewArticles({ ...args, fetchImpl: async () => { null.missing(); } });
+  assert.equal(ourBug.transport_reason, 'TypeError');
+  assert.match(ourBug.transport_message, /null/);
+  // 키는 어느 경로로도 새지 않는다.
+  const leak = await reviewArticles({ ...args, fetchImpl: async () => {
+    throw new TypeError(`connect failed for key ${config.apiKey}`); } });
+  assert.equal(leak.transport_message.includes(config.apiKey), false);
+  assert.match(leak.transport_message, /\[REDACTED\]/);
+});
+
+test('an empty error body is reported as empty rather than vanishing', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'empty-body-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const state = await reviewArticles({ articles: [article('A')], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => new Response('', { status: 429 }) });
+  assert.equal(state.provider_reason, 'unspecified');
+  // 예전에는 빈 문자열이라 필드가 통째로 사라졌고, 본문이 없었다는 사실조차 남지 않았다.
+  assert.equal(state.provider_message, '(빈 응답 본문)');
+});
+
+test('a run stamps which workflow run and commit produced it', () => {
+  assert.deepEqual(runIdentity({}), {});
+  assert.deepEqual(runIdentity({ GITHUB_RUN_ID: '34179775899', GITHUB_RUN_ATTEMPT: '1', GITHUB_SHA: 'abc123', GITHUB_REF_NAME: 'feat/local-monthly-report' }),
+    { run: { id: '34179775899', attempt: '1', sha: 'abc123', ref: 'feat/local-monthly-report' } });
+  // 로컬 실행은 아무것도 붙이지 않는다.
+  assert.deepEqual(runIdentity({ GITHUB_RUN_ID: '', GITHUB_SHA: undefined }), {});
 });
