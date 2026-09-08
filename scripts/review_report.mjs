@@ -44,6 +44,14 @@ export function runIdentity(env = process.env) {
   return named.length ? { run: Object.fromEntries(named) } : {};
 }
 
+// status.json 은 캐시(outputs/review_work) 안에 있어 지난 실행의 것이 복원된다. 이번 실행이
+// 중단되면 아티팩트에는 남의 실행 결과만 남고, 그것이 이번 실행의 결과로 읽힌다.
+// 그래서 긴 작업을 시작하기 전에 이번 실행의 표시로 먼저 덮어쓴다.
+export function startingStatus(period) {
+  return { status: 'running', started_at: new Date().toISOString(), period,
+    provider: PROVIDER.id, model: MODEL, ...runIdentity() };
+}
+
 function invalidResponse(code, label = PROVIDER.label) {
   return Object.assign(new Error(`${label} invalid response: ${code}`), { response_code: code });
 }
@@ -392,6 +400,8 @@ async function main() {
   if (from > to) throw new Error('Invalid reporting period');
   const period = { from_date: from, to_date: to };
   const root = path.resolve('outputs/review_work');
+  // 수집·판정보다 먼저 쓴다. 여기서부터 죽더라도 아티팩트는 이번 실행을 말한다.
+  await write(path.join(root, 'status.json'), startingStatus(period));
   const policyDoc = await fs.readFile('docs/local_report_review.md', 'utf8');
   // Share the reviewed judgement contract, excluding instructions for the local CLI workflow.
   const policyText = policyDoc.split('## 판정 기준')[1].split('## 기사별 응답 형식')[0];
