@@ -41,6 +41,15 @@ function invalidResponse(code, label = PROVIDER.label) {
   return Object.assign(new Error(`${label} invalid response: ${code}`), { response_code: code });
 }
 
+// 실패 응답에서 프로바이더가 한 말만 남긴다. 키는 지우고 길이는 자른다.
+// 성공 응답 본문은 기사 본문이 섞여 있으므로 여기서도 다루지 않는다.
+const PROVIDER_MESSAGE_LIMIT = 300;
+export function providerMessage(text, apiKey) {
+  const collapsed = String(text || '').replace(/\s+/g, ' ').trim();
+  const safe = apiKey ? collapsed.split(apiKey).join('[REDACTED]') : collapsed;
+  return safe.length > PROVIDER_MESSAGE_LIMIT ? `${safe.slice(0, PROVIDER_MESSAGE_LIMIT)}…` : safe;
+}
+
 // A quote array can contain separate passages. Split joined sentences only
 // when EVERY sentence independently matches the SAME source block in order.
 // Never fill omitted text, remove ellipses, or use fuzzy/semantic matching.
@@ -132,8 +141,14 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   if (!response.ok) {
     const error = new Error(`${provider.label} HTTP ${response.status}`);
     error.status = response.status;
-    const detail = await response.json().catch(() => ({}));
-    const message = String(detail.error?.message || '').toLowerCase();
+    // 본문은 한 번만 읽을 수 있다. 텍스트로 받아 두고 JSON 이면 거기서 메시지를 꺼낸다.
+    // 게이트웨이가 JSON 이 아닌 본문이나 다른 필드명을 쓰면 예전 코드는 빈 문자열만 봤고,
+    // 그래서 모든 분류가 unspecified 로 떨어졌다.
+    const body = await response.text().catch(() => '');
+    let detail = null;
+    try { detail = JSON.parse(body); } catch { /* JSON 이 아니면 본문 그대로 본다 */ }
+    const stated = String(detail?.error?.message || detail?.detail || detail?.message || body || '');
+    const message = stated.toLowerCase();
     error.provider_reason = /overload|high demand|capacity/.test(message) ? 'capacity'
       : /model.*not found|model.*not supported/.test(message) ? 'model_unavailable'
       : /api key/.test(message) ? 'api_key'
@@ -142,6 +157,9 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
       : /credit|quota|balance|exceeded your current/.test(message) ? 'credits_exhausted'
       : /per (minute|second)|rate limit|too many requests/.test(message) ? 'rate_limit'
       : 'unspecified';
+    // 분류에 성공하면 프로바이더 본문은 남기지 않는다. 분류가 실패했을 때만, 무엇을 받았길래
+    // 알아보지 못했는지 남긴다. 그게 없으면 1분 기다릴 일인지 계정이 빈 것인지 알아낼 방법이 없다.
+    if (error.provider_reason === 'unspecified') error.provider_message = providerMessage(stated, apiKey);
     const retryAfter = response.headers.get('retry-after');
     if (retryAfter) error.retry_after = retryAfter;
     throw error;
@@ -326,7 +344,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           console.log(`Article ${article.id}: transient provider error; retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
-        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
+        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
         if (error.transport_error) return state({ status: 'paused', reason: 'transport_error' });
         if (!error.response_code) throw error;
         const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-attempt-${attempt + 1}.json`;
@@ -391,6 +409,8 @@ async function main() {
     `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
     (state.status === 'paused' ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
+      (state.provider_message ? `${PROVIDER.label} said: ${state.provider_message}
+` : '') +
       'Saved progress; rerun the same dates with refresh=false. ' +
       // A burst limit clears in a minute; an exhausted account does not.
       (state.provider_reason === 'credits_exhausted' ? 'The account is out of credits, so an immediate rerun will only 429 again. ' : '') +
@@ -420,8 +440,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   await write(path.resolve('outputs/review_work/status.json'), {
     status: 'failed', reason: error.status ? 'provider_error' : 'validation_or_execution',
     http_status: error.status || null, provider: PROVIDER.id, model: MODEL,
+    ...(error.provider_message ? { provider_message: error.provider_message } : {}),
     period: { from_date: process.env.REPORT_FROM_DATE || null, to_date: process.env.REPORT_TO_DATE || null },
   }).catch(() => {});
+  if (error.provider_message) console.error(`${PROVIDER.label} 응답: ${error.provider_message}`);
   if (error.status === 401 || error.status === 403) {
     const apiKey = PROVIDER.keyEnv.map(name => process.env[name]).find(Boolean);
     const shape = describeKeyShape(apiKey);

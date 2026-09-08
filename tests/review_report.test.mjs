@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, MODEL } from '../scripts/review_report.mjs';
+import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
@@ -404,4 +404,38 @@ test('business non-applicable fields are constants without bypassing the activit
   assert.equal(review.decisions[0].event_stage, 'not_applicable');
   assert.equal(review.decisions[0].leading_indicator_supported, true);
   assert.equal(review.decisions[0].indicator_supported, false);
+});
+
+test('an unclassifiable 429 reports what the provider actually said, redacted and bounded', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'quota-message-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const args = { articles: [article('A')], reviewDir, policy: '', config, sleep: async () => {} };
+  // 관측된 형태: 429 인데 우리 패턴 어디에도 걸리지 않는 문구. 이때만 본문을 남긴다.
+  const state = await reviewArticles({ ...args, fetchImpl: async () =>
+    new Response(JSON.stringify({ error: { message: 'Daily allowance for this deployment is used up' } }), { status: 429 }) });
+  assert.equal(state.reason, 'quota');
+  assert.equal(state.provider_reason, 'unspecified');
+  assert.match(state.provider_message, /Daily allowance for this deployment is used up/);
+  // JSON 이 아니거나 error.message 가 아닌 본문도 읽는다. 예전에는 빈 문자열만 봤다.
+  const plain = await reviewArticles({ ...args, fetchImpl: async () => new Response('Deployment allowance used up', { status: 429 }) });
+  assert.equal(plain.provider_message, 'Deployment allowance used up');
+  const nested = await reviewArticles({ ...args, fetchImpl: async () =>
+    new Response(JSON.stringify({ detail: 'Account has no remaining allowance' }), { status: 429 }) });
+  assert.equal(nested.provider_message, 'Account has no remaining allowance');
+  // 알아본 실패는 예전대로 분류만 남기고 본문은 남기지 않는다.
+  const classified = await reviewArticles({ ...args, fetchImpl: async () =>
+    new Response(JSON.stringify({ error: { message: 'Rate limit reached; private provider detail' } }), { status: 429 }) });
+  assert.equal(classified.provider_reason, 'rate_limit');
+  assert.equal(classified.provider_message, undefined);
+  assert.equal(JSON.stringify(classified).includes('private provider detail'), false);
+});
+
+test('a provider message never carries the key and never runs unbounded', () => {
+  assert.equal(providerMessage('key test-key was rejected', 'test-key'), 'key [REDACTED] was rejected');
+  assert.equal(providerMessage(`  spread   over
+  lines  `, ''), 'spread over lines');
+  const long = providerMessage('x'.repeat(500), '');
+  assert.equal(long.length, 301);
+  assert.equal(long.endsWith('…'), true);
+  assert.equal(providerMessage(undefined, 'k'), '');
 });
