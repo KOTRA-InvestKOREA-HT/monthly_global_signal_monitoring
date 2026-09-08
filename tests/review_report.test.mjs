@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
+import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
 const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: 'The company plans a pilot plant.' }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason_ko: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
@@ -86,6 +87,31 @@ test('a failed or unavailable date hint never costs the cached decision or the r
   assert.equal(rejected.status, 'completed');
   assert.equal(rejected.date_hints, 0);
   assert.equal('published_date' in JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8')), false);
+});
+
+test('bumping only the date hint version re-asks the date and keeps every content decision cached', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-version-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = pendingArticle('Undated'), b = article('Dated');
+  const cache = (article, ds, date_hint_version) => fs.writeFile(path.join(reviewDir, `${article.id}.json`),
+    JSON.stringify({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
+      decisions: ds, date_hint_version, published_date: '', published_date_quote: '' }));
+  // 이전 규칙으로 물어봐 빈 답을 받은 기사. 프롬프트·파서가 바뀌었으므로 날짜만 다시 묻는다.
+  await cache(a, pendingDecisions, 'date-hint-v0');
+  await cache(b, decisions, 'date-hint-v0');
+  let calls = 0;
+  const state = await reviewArticles({ articles: [a, b], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return dated('2026-08-14', datedQuote); } });
+  // 날짜가 이미 확정된 기사는 버전을 올려도 다시 묻지 않는다. 미상 기사 하나만 호출한다.
+  assert.equal(calls, 1);
+  assert.equal(state.cached, 2);
+  assert.equal(state.completed, 2);
+  assert.equal(state.date_hints, 1);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.date_hint_version, DATE_HINT_VERSION);
+  assert.equal(stored.published_date, '2026-08-14');
+  // 힌트 버전을 올려도 내용 판정은 캐시된 그대로다. 이것이 VERSION 과 분리한 목적이다.
+  assert.deepEqual(stored.decisions, pendingDecisions);
 });
 
 test('DeepSeek no-investment responses validate on first request and are reused from cache', async t => {
