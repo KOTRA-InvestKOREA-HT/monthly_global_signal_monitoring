@@ -22,6 +22,30 @@ test('the decision schema converts to a strict JSON Schema without losing enums'
   assert.equal(item.additionalProperties, false);
 });
 
+test('the publication date is one article-level pair of required strings, not a per-candidate field', () => {
+  const { articleDateProperties, DATE_INSTRUCTION, SYSTEM_INSTRUCTION, RETRY_INSTRUCTION } = provider_module;
+  const schema = toJsonSchema({ type: 'OBJECT', properties: { decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties: decisionProperties } }, ...articleDateProperties } });
+  assert.equal(schema.properties.published_date.type, 'string');
+  assert.equal(schema.properties.published_date_quote.type, 'string');
+  // strict 모드라 optional 이 없다. 제안이 없으면 빈 문자열이어야 하고, 그 규칙은 프롬프트에 있다.
+  assert.deepEqual(schema.required, ['decisions', 'published_date', 'published_date_quote']);
+  assert.equal(schema.properties.decisions.items.properties.published_date, undefined);
+  assert.match(DATE_INSTRUCTION, /only when this article has date_placement "date_pending"/);
+  assert.match(DATE_INSTRUCTION, /return "" for both/);
+  assert.equal(SYSTEM_INSTRUCTION.includes(DATE_INSTRUCTION), true);
+  // 거부된 날짜는 재시도에서 고칠 수 있어야 한다. 재시도 지시가 날짜를 언급하지 않으면 같은 값이 다시 온다.
+  assert.match(RETRY_INSTRUCTION, /published_date/);
+});
+
+test('the request carries the article date placement the date rule refers to', () => {
+  const pending = groupArticles([{ company: 'Undated', target_no: 1, url: 'https://example.com/u', title: 'Pilot plant',
+    published_at: null, published_at_source: '', investment_signal_no: 2, target_technology: 'material',
+    content_text: 'The company plans a pilot plant.' }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const body = NVIDIA.body({ article: pending, policy: '', retry: false, model: NVIDIA.model });
+  assert.equal(JSON.parse(body.messages[1].content).date_placement, 'date_pending');
+  assert.equal(JSON.parse(NVIDIA.body({ article: article('Acme'), policy: '', retry: false, model: NVIDIA.model }).messages[1].content).date_placement, 'in_period');
+});
+
 test('the NVIDIA request disables reasoning and pins deterministic structured output', () => {
   const body = NVIDIA.body({ article: article('Acme'), policy: 'POLICY', retry: false, model: NVIDIA.model });
   // 추론 토큰이 출력 예산을 먹으면 JSON 이 잘려 응답 전체가 폐기된다.

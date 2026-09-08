@@ -445,7 +445,9 @@ function parseMonthOnly(value) {
 }
 
 // 일자까지 적히지 않은 본문 표기. 게시월 근거로만 쓰고 임의로 1일을 채우지 않는다.
-function extractMonthFromText(value = "") {
+// 판정 단계의 날짜 검증(local_report.mjs)도 이 파서를 그대로 쓴다. 단계마다 날짜 문법이
+// 다르면 수집에서 못 읽은 날짜를 판정에서 받아들이는 일이 생긴다.
+export function extractMonthFromText(value = "") {
   const text = cleanText(String(value ?? ""));
   const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월/);
   if (korean) return isoMonth(korean[1], korean[2]);
@@ -474,7 +476,7 @@ function isoDate(year, month, day) {
   return parseStrictDate(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
 }
 
-function extractDateFromText(value = "") {
+export function extractDateFromText(value = "") {
   const text = cleanText(value);
   const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*(0?[1-9]|[12]\d|3[01])\s*일/);
   if (korean) {

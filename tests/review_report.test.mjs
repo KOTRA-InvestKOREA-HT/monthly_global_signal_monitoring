@@ -11,6 +11,83 @@ const decisions = [{ candidate_id: 'investment:2', entity_supported: true, targe
 const response = (ds = decisions, finish_reason = 'stop') => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: {} }));
 const config = { apiKey: 'test-key', maxRequests: 40, delayMs: 15000 };
 
+// 게시일 미상 기사. 본문 안에 게시일이 문장으로 적혀 있다.
+const datedQuote = 'Published on August 14, 2026.';
+const pendingBody = `The company plans a pilot plant. ${datedQuote}`;
+const pendingArticle = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: null, published_at_source: '', investment_signal_no: 2, target_technology: 'material', content_text: pendingBody }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+const pendingDecisions = [{ ...decisions[0], evidence_quotes: [pendingBody] }];
+const dated = (published_date, published_date_quote, ds = pendingDecisions) =>
+  new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ decisions: ds, published_date, published_date_quote }) } }], usage: {} }));
+
+test('the article-level date reaches the review object, and a date it cannot quote is rejected', async () => {
+  const a = pendingArticle('Undated');
+  assert.equal(a.date_placement, 'date_pending');
+  const review = await requestReview(a, '', 'key', async () => dated('2026-08-14', datedQuote));
+  assert.equal(review.published_date, '2026-08-14');
+  assert.equal(review.published_date_quote, datedQuote);
+  // 스키마에 없던 옛 응답은 제안 없음으로 읽는다. 날짜가 확정된 기사도 빈 값으로 지나간다.
+  const empty = await requestReview(article('Dated'), '', 'key', async () => response());
+  assert.equal(empty.published_date, '');
+  assert.equal(empty.published_date_quote, '');
+  const emptyPair = await requestReview(a, '', 'key', async () => dated('', ''));
+  assert.equal(emptyPair.published_date, '');
+  // 인용문이 그 날짜를 말하지 않으면 거부한다. 인용이 기사에 있다는 것만으로는 부족하다.
+  for (const [date, quote] of [['2026-08-15', datedQuote], ['2026-08-14', 'The company plans a pilot plant.'],
+    ['2026-08-14', 'Published on August 14, 2026 by staff.'], ['August 14, 2026', datedQuote]]) {
+    await assert.rejects(requestReview(a, '', 'key', async () => dated(date, quote)), /date_evidence_mismatch/);
+  }
+});
+
+test('a cached review gains a date hint once without re-deciding the article', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = pendingArticle('Undated');
+  const file = path.join(reviewDir, `${a.id}.json`);
+  // 날짜 스키마 이전에 저장된 판정: 두 필드가 아예 없다.
+  const before = { article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: pendingDecisions };
+  await fs.writeFile(file, JSON.stringify(before));
+  const args = { articles: [a], reviewDir, policy: '', config, sleep: async () => {} };
+  const topped = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-14', datedQuote, [{ ...pendingDecisions[0], summary_ko: '재판정된 다른 요약' }]) });
+  assert.equal(topped.status, 'completed');
+  assert.equal(topped.cached, 1);
+  assert.equal(topped.requests, 1);
+  assert.equal(topped.date_hints, 1);
+  const stored = JSON.parse(await fs.readFile(file, 'utf8'));
+  assert.equal(stored.published_date, '2026-08-14');
+  // 보강 호출의 판정은 버린다. 캐시된 내용 판정이 날짜 때문에 흔들리면 안 된다.
+  assert.deepEqual(stored.decisions, before.decisions);
+  // 한 번 물어본 기사는 다시 묻지 않는다. 빈 답도 물어본 것이다.
+  const again = await reviewArticles({ ...args, fetchImpl: async () => { throw new Error('must not ask twice'); } });
+  assert.equal(again.requests, 0);
+  assert.equal(again.cached, 1);
+});
+
+test('a failed or unavailable date hint never costs the cached decision or the run', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = pendingArticle('Undated'), b = article('Dated');
+  const cache = article => fs.writeFile(path.join(reviewDir, `${article.id}.json`),
+    JSON.stringify({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
+      decisions: article === a ? pendingDecisions : decisions }));
+  await Promise.all([cache(a), cache(b)]);
+  const args = { articles: [a, b], reviewDir, policy: '', config, sleep: async () => {}, random: () => 0 };
+  // 날짜가 확정된 기사는 보강 대상이 아니므로 호출은 미상 기사 하나에만 쓰인다.
+  let calls = 0;
+  const state = await reviewArticles({ ...args, fetchImpl: async () => { calls++; return new Response('', { status: 429 }); } });
+  assert.equal(calls, 1);
+  assert.equal(state.status, 'completed');
+  assert.equal(state.cached, 2);
+  assert.equal(state.date_hints, 0);
+  // 실패한 보강은 캐시를 건드리지 않는다. 다음 실행이 다시 시도한다.
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal('published_date' in stored, false);
+  assert.deepEqual(stored.decisions, pendingDecisions);
+  const rejected = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-15', datedQuote) });
+  assert.equal(rejected.status, 'completed');
+  assert.equal(rejected.date_hints, 0);
+  assert.equal('published_date' in JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8')), false);
+});
+
 test('DeepSeek no-investment responses validate on first request and are reused from cache', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'deepseek-rejected-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));

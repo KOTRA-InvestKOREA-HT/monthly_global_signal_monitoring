@@ -157,10 +157,15 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     article.candidates.some(c => c.id === decision.candidate_id && c.kind === 'relevant')
       ? { ...decision, leading_indicator_supported: true, event_stage: 'not_applicable' } : decision);
   const separated = separateVerifiedQuotes(article, parsed.decisions);
+  // 게시일 제안은 기사 단위 필드다. 여기서 review 로 옮기지 않으면 스키마를 고쳐도 dateHints 는
+  // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
+  const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
+    published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   try { importReview(article, review); } catch (error) {
-    const failure = invalid(/evidence_quotes/.test(error.message) ? 'evidence_mismatch'
+    const failure = invalid(/published_date/.test(error.message) ? 'date_evidence_mismatch'
+      : /evidence_quotes/.test(error.message) ? 'evidence_mismatch'
       : /needs an evidence quote/.test(error.message) ? 'missing_evidence' : 'review_validation');
     // importReview 의 메시지는 우리가 만든 문구다. 회사명과 후보 id 만 담고 모델 출력은 담지 않는다.
     failure.diagnostic = quoteDiagnostics(article, parsed.decisions, apiKey, error.message);
@@ -227,15 +232,22 @@ export async function reviewArticles(options) {
   return {
     ...(completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
     requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
+    date_hints: results.reduce((n, r) => n + (r.date_hints || 0), 0),
     failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
   };
 }
 
+// 날짜 스키마 이전에 저장된 판정에는 이 필드 자체가 없다. 빈 문자열은 물어봤고 답이 없었다는
+// 뜻이므로 다시 묻지 않는다. 기사당 최대 한 번만 보강한다.
+function needsDateHint(article, review) {
+  return article.date_placement === 'date_pending' && !('published_date' in review);
+}
+
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true }) {
-  let requests = 0, cached = 0, completed = 0;
+  let requests = 0, cached = 0, completed = 0, dateHints = 0, dateHintsStopped = false;
   const failed = [];
   const diagnostics = [];
-  const state = extra => ({ requests, cached, completed, total: articles.length, failed_articles: failed, diagnostics, ...extra });
+  const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics, ...extra });
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
     try {
@@ -243,6 +255,24 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
       cached++; completed++;
+      // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
+      // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
+      // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.
+      if (needsDateHint(article, review) && !dateHintsStopped && requests < config.maxRequests) {
+        if (requests) await sleep(config.delayMs);
+        requests++;
+        try {
+          const fresh = await requestReview(article, policy, config.apiKey, fetchImpl);
+          // 새 응답의 판정은 버리고 날짜만 옮긴다. 이미 검증된 판정을 재현성 없는 재판정으로 덮지 않는다.
+          await write(file, { ...review, published_date: fresh.published_date, published_date_quote: fresh.published_date_quote });
+          if (fresh.published_date) dateHints++;
+        } catch (error) {
+          // 힌트는 보조 정보다. 실패해도 캐시된 판정과 실행 상태는 건드리지 않는다. 다만 할당량·
+          // 전송 오류라면 남은 기사에서 반복해도 결과가 같으므로 이번 실행에서는 보강을 멈춘다.
+          if (error.status || error.transport_error || error.scheduling_stopped) dateHintsStopped = true;
+          console.log(`Article ${article.id}: date hint unavailable (${error.response_code || error.status || 'error'})`);
+        }
+      }
       continue;
     } catch (error) {
       if (error.code !== 'ENOENT') console.log(`Rechecking invalid cache: ${article.id}`);
@@ -327,7 +357,8 @@ async function main() {
   await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL });
   console.log(JSON.stringify(state));
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
-    `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached.\n` +
+    `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
+    `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
     (state.status === 'paused' ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
       'Saved progress; rerun the same dates with refresh=false. ' +
       // A burst limit clears in a minute; an exhausted account does not.

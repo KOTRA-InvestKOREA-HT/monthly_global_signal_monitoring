@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
+import { dateHints, groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
 import { periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 
 const period = monthPeriod("2026-08");
@@ -232,6 +232,53 @@ test("date state separates report eligibility from review eligibility", () => {
   assert.equal(inPeriod({ ...source, published_at_source: "listing", date_conflict: true }, period), false);
   // 확인된 근거가 기간 밖이면 검토 대상도 아니다.
   assert.equal(reviewCandidate({ ...source, published_at: "2026-07-10T00:00:00Z" }, period).included, false);
+});
+
+// 게시일 미상 기사. 본문 안에 게시일이 문장으로 적혀 있는 흔한 형태다.
+const datedQuote = "Published on August 14, 2026.";
+const undatedSource = { ...source, published_at: null, published_at_source: "",
+  content_text: `Example is considering a new pilot plant for its target material. ${datedQuote}` };
+const pendingArticle = () => groupArticles([undatedSource], [], period)[0];
+const pendingDecision = (overrides = {}) => decision({ evidence_quotes: [undatedSource.content_text], ...overrides });
+const withDate = (a, published_date, published_date_quote) =>
+  ({ ...review(a, [pendingDecision()]), published_date, published_date_quote });
+
+test("a proposed publication date is accepted only when the quote itself states that date", () => {
+  const a = pendingArticle();
+  assert.equal(a.date_placement, "date_pending");
+  // 판정은 그대로 통과하고, 날짜는 그 위에 얹히는 보조 정보다.
+  assert.equal(importReview(a, withDate(a, "2026-08-14", datedQuote))[0].supported, true);
+  // 월만 제안하는 것은 정밀도를 낮춰 잡는 쪽이므로 같은 인용으로 받는다.
+  assert.equal(importReview(a, withDate(a, "2026-08", datedQuote))[0].supported, true);
+  // 두 필드가 모두 비어 있으면 제안이 없다는 뜻이고, 날짜 검사도 하지 않는다.
+  assert.equal(importReview(a, withDate(a, "", ""))[0].supported, true);
+  assert.equal(importReview(a, review(a, [pendingDecision()]))[0].supported, true);
+  assert.throws(() => importReview(a, withDate(a, "2026/08/14", datedQuote)), /published_date must be YYYY-MM-DD or YYYY-MM/);
+  assert.throws(() => importReview(a, withDate(a, "", datedQuote)), /published_date must be YYYY-MM-DD or YYYY-MM/);
+  // 기사에 없는 문장은 인용이 아니다. 한 단어만 덧붙여도 마찬가지다.
+  assert.throws(() => importReview(a, withDate(a, "2026-08-14", "Published on August 14, 2026 by staff.")), /exact passage/);
+  assert.throws(() => importReview(a, withDate(a, "2026-08-14", "")), /exact passage/);
+  // 인용은 기사에 있지만 날짜를 말하지 않는 문장. 인용 검증만으로는 이것이 통과한다.
+  assert.throws(() => importReview(a, withDate(a, "2026-08-14", "Example is considering a new pilot plant")), /does not state 2026-08-14/);
+  // 인용은 8월 14일을 말하는데 제안은 다른 날짜인 경우.
+  assert.throws(() => importReview(a, withDate(a, "2026-08-15", datedQuote)), /does not state 2026-08-15/);
+  assert.throws(() => importReview(a, withDate(a, "2026-07", datedQuote)), /does not state 2026-07/);
+});
+
+test("a verified date is only ever an estimated hint for a pending article", () => {
+  const a = pendingArticle(), b = article();
+  const hints = dateHints({ articles: [a, b] }, [
+    withDate(a, "2026-08-14", datedQuote),
+    // 날짜가 이미 확정된 기사에 모델이 날짜를 붙여도 힌트가 되지 않는다.
+    { ...review(b), published_date: "2026-08-14", published_date_quote: datedQuote },
+  ]);
+  assert.equal(hints.length, 1);
+  assert.equal(hints[0].article_id, a.id);
+  assert.equal(hints[0].published_date, "2026-08-14");
+  assert.equal(hints[0].published_date_quote, datedQuote);
+  // 확정으로 승격되지 않는다. 힌트가 있어도 그 기사는 다음 수집이 근거를 찾기 전까지 본문 밖이다.
+  assert.equal(hints[0].status, "estimated");
+  assert.equal(inPeriod(undatedSource, period), false);
 });
 
 test("review identity survives a recovered date so a corrected article is not reviewed twice", () => {
