@@ -69,3 +69,20 @@ test('a criteria change gives every article a new id, so stored reviews are not 
   // 같은 기준이면 같은 식별자여야 재개가 동작한다.
   assert.equal(reviewPolicy({ policyText: '옛 판정 기준', ...inputs }), before);
 });
+
+test('committed and completed are reserved for the final investment itself', () => {
+  // 완화가 아니라 구별이다. 최종 투자 자체는 그대로 탈락하고, 그것을 향한 중간 활동만 전조로 내려온다.
+  assert.match(CRITERIA, /이 단계는 후보 지표의 사건이 최종 투자 그 자체일 때만 쓴다/);
+  assert.match(CRITERIA, /조달·임명·협약·인증처럼 최종 투자를 향한 중간 활동이 끝난 것은/);
+  assert.match(CRITERIA, /그 활동이 완료된 것이지 최종 투자가 완료된 것이 아니며/);
+  assert.match(CRITERIA, /그런 후보의 단계는 해당 지표의 precursor다\(지표 2 제외\)/);
+  // 지표 2 의 precursor 금지는 두 곳 모두에서 살아 있어야 한다.
+  assert.match(CRITERIA, /생산 증설 지표 2에는 이 단계를 쓸 수 없다/);
+});
+
+test('independence never means asserting a field without evidence', () => {
+  assert.match(CRITERIA, /독립성은 근거 없이 true를 주라는 뜻이 아니다/);
+  assert.match(CRITERIA, /그 필드의 근거가 확인되지 않으면 false/);
+  // 사유가 근거 부재를 말하면서 같은 필드를 true 로 두는 모순을 금지한다.
+  assert.match(CRITERIA, /사유에 그 근거가 없다고 적으면서 같은 필드를 true로 두지 않는다/);
+});
