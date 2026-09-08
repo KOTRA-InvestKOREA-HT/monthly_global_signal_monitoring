@@ -8,6 +8,9 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { validateRows, investmentStageSupported } from "./validate_report_inputs.mjs";
 import { dateLabelKo, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
+// 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
+// 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
+import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const POLICY_VERSION = "local-report-v3";
@@ -136,6 +139,15 @@ export function sourceCandidates(signals, technology, indicators, period) {
 
 const BOOLEANS = ["entity_supported", "target_technology_supported", "indicator_supported", "leading_indicator_supported"];
 
+// 인용문이 실제로 말하고 있는 날짜. 일자까지 적혔으면 일자와 월을, 월만 적혔으면 월만 돌려준다.
+// 아무 날짜도 읽히지 않으면 null 이고, 그때 제안은 근거 없는 날짜다.
+function dateStatedInQuote(quote) {
+  const day = extractDateFromText(quote);
+  if (day) return { day: day.slice(0, 10), month: day.slice(0, 7) };
+  const month = extractMonthFromText(quote);
+  return month ? { day: "", month } : null;
+}
+
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
 export function importReview(article, review) {
@@ -149,12 +161,21 @@ export function importReview(article, review) {
   // 검토자가 날짜를 제안하면 근거 문구를 함께 받는다. 인용이 확인돼도 게시일을 확정으로 올리지는 않는다.
   // 본문에서 처음 보이는 날짜는 사건 발생일일 수 있기 때문이다. 보강 단서로만 남긴다.
   if (clean(review.published_date) || clean(review.published_date_quote)) {
-    if (!/^\d{4}-\d{2}(-\d{2})?$/.test(clean(review.published_date))) {
+    const proposed = clean(review.published_date);
+    if (!/^\d{4}-\d{2}(-\d{2})?$/.test(proposed)) {
       throw new Error(`${article.company}: published_date must be YYYY-MM-DD or YYYY-MM`);
     }
     const quote = normalizeQuote(review.published_date_quote);
     if (!quote || !evidence.some((text) => text.includes(quote))) {
       throw new Error(`${article.company}: published_date_quote must be an exact passage from this article`);
+    }
+    // 인용 검증은 그 문장이 기사에 있었다는 것만 증명한다. 그 문장이 이 날짜를 말한다는 것은
+    // 증명하지 않으므로, 파서가 인용문에서 같은 날짜를 다시 뽑아낼 때만 제안을 받는다.
+    // 제안한 정밀도로 대조한다. 일자까지 제안했으면 인용문에도 일자가 있어야 하고, 월만
+    // 제안했으면 인용문의 날짜가 그 달이기만 하면 된다(정밀도를 낮춰 잡는 쪽은 안전하다).
+    const stated = dateStatedInQuote(quote);
+    if (!stated || (proposed.length === 10 ? stated.day !== proposed : stated.month !== proposed)) {
+      throw new Error(`${article.company}: published_date_quote does not state ${proposed}`);
     }
   }
   return review.decisions.map((decision) => {
@@ -211,7 +232,9 @@ export function importReview(article, review) {
 }
 
 // 날짜 보류 기사에 대해 검토자가 제안한 게시일과 그 근거 문구. 다음 수집·확인 작업의 출발점이다.
-function dateHints(snapshot, reviews) {
+// status 는 언제나 estimated 다. 모델이 읽어낸 날짜는 공식 근거가 아니므로 confirmed 로 올리지
+// 않는다. 올리는 순간 인용 하나로 그 기사가 보고서 본문에 들어간다.
+export function dateHints(snapshot, reviews) {
   const articles = new Map(snapshot.articles.map((article) => [article.id, article]));
   return reviews
     .filter((review) => clean(review.published_date) && articles.get(review.article_id)?.date_placement === "date_pending")
