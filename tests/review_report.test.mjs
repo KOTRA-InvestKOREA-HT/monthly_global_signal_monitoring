@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, runIdentity, MODEL } from '../scripts/review_report.mjs';
+import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
@@ -482,4 +482,37 @@ test('a run stamps which workflow run and commit produced it', () => {
     { run: { id: '34179775899', attempt: '1', sha: 'abc123', ref: 'feat/local-monthly-report' } });
   // 로컬 실행은 아무것도 붙이지 않는다.
   assert.deepEqual(runIdentity({ GITHUB_RUN_ID: '', GITHUB_SHA: undefined }), {});
+});
+
+test('a 429 keeps whatever the provider said about the limit, and records saying nothing', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'rate-limit-headers-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const args = { articles: [article('A')], reviewDir, policy: '', config, sleep: async () => {} };
+  const limited = await reviewArticles({ ...args, fetchImpl: async () => new Response('', { status: 429, headers: {
+    'x-ratelimit-limit-requests': '40', 'x-ratelimit-remaining-requests': '0',
+    'x-ratelimit-reset-requests': '58s', 'retry-after': '58', 'x-request-id': 'req_abc',
+    // 한도와 무관한 헤더는 가져오지 않는다.
+    'content-type': 'application/json', 'set-cookie': 'session=secret',
+  } }) });
+  assert.equal(limited.rate_limit['x-ratelimit-limit-requests'], '40');
+  assert.equal(limited.rate_limit['x-ratelimit-remaining-requests'], '0');
+  assert.equal(limited.rate_limit['x-ratelimit-reset-requests'], '58s');
+  assert.equal(limited.rate_limit['x-request-id'], 'req_abc');
+  assert.equal(limited.retry_after, '58');
+  assert.equal(limited.rate_limit['set-cookie'], undefined);
+  assert.equal(limited.rate_limit['content-type'], undefined);
+  assert.equal(JSON.stringify(limited).includes('session=secret'), false);
+  // 아무 헤더도 안 보내면 빈 객체가 남는다. "확인했고 아무것도 없었다"와 "확인 안 했다"는 다르다.
+  const silent = await reviewArticles({ ...args, fetchImpl: async () => new Response('', { status: 429 }) });
+  assert.deepEqual(silent.rate_limit, {});
+});
+
+test('rate-limit header capture is name-based and redacts the key', () => {
+  const headers = new Headers({ 'RateLimit-Reset': '30', 'x-rate-limit-limit': '40',
+    'authorization': 'Bearer test-key', 'x-detail': `used by test-key` });
+  const found = rateLimitHeaders(headers, 'test-key');
+  assert.deepEqual(Object.keys(found).sort(), ['ratelimit-reset', 'x-rate-limit-limit']);
+  assert.equal(found['x-detail'], undefined);
+  assert.equal(found.authorization, undefined);
+  assert.equal(rateLimitHeaders(new Headers({ 'x-ratelimit-key': 'test-key' }), 'test-key')['x-ratelimit-key'], '[REDACTED]');
 });
