@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { reviewArticles } from '../scripts/review_report.mjs';
+import { reviewArticles, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -75,4 +75,37 @@ test('authentication failure waits for in-flight cache writes before rejecting',
   } }), /HTTP 403/);
   assert.equal(calls, 2);
   await fs.access(path.join(args.reviewDir, `${args.articles[0].id}.json`));
+});
+
+// 게시일 미상 기사. 본문은 있으나 날짜 근거가 없어 date_pending 으로 들어온다.
+const rejection = { candidate_id: 'investment:2', entity_supported: true, target_technology_supported: false,
+  indicator_supported: false, leading_indicator_supported: false, event_stage: 'not_applicable',
+  quality: 'pass', reason_ko: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '' };
+const pendingArticle = company => groupArticles([{ company, target_no: 1, title: company, published_at: null,
+  published_at_source: '', investment_signal_no: 2, content_text: 'Body without a date.' }], [],
+  { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+
+test('a failed date-hint supplement never stops the other workers reviewing uncached articles', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'parallel-supplement-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const pending = pendingArticle('Undated');
+  const articles = [pending, ...Array.from({ length: 4 }, (_, i) => article(`Company${i}`))];
+  await fs.writeFile(path.join(reviewDir, `${pending.id}.json`), JSON.stringify({ article_id: pending.id,
+    reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: [rejection] }));
+  let supplements = 0;
+  const state = await reviewArticles({ articles, reviewDir, policy: '',
+    config: { apiKey: 'test', maxRequests: 40, delayMs: 30, concurrency: 3 },
+    fetchImpl: async (url, init) => {
+      // 보강 요청은 캐시된 미상 기사에만 나간다. 그것만 429 로 떨어뜨린다.
+      if (JSON.parse(init.body).messages[1].content.includes('Undated')) { supplements++; return new Response('', { status: 429 }); }
+      return ok();
+    } });
+  assert.equal(supplements, 1);
+  // 보강 실패가 공유 스케줄러를 멈추면 뒤에 남은 기사들이 판정 없이 끝난다.
+  assert.equal(state.status, 'completed');
+  assert.equal(state.completed, 5);
+  assert.equal(state.cached, 1);
+  assert.equal(state.date_hints, 0);
+  assert.equal(state.requests, 5);
+  for (const a of articles.slice(1)) await fs.access(path.join(reviewDir, `${a.id}.json`));
 });

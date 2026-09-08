@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, importReview, normalizeQuote, build } from './local_report.mjs';
-import { resolveProvider, describeKeyShape } from './review_providers.mjs';
+import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
 
 // 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보낸다. 모델은 NVIDIA_MODEL 로 바꾼다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
@@ -161,6 +161,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
+    date_hint_version: DATE_HINT_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   try { importReview(article, review); } catch (error) {
@@ -184,11 +185,14 @@ export async function reviewArticles(options) {
   let queue = Promise.resolve(), nextStart = 0, requests = 0, index = 0;
   let stopped = null, fatal = null, progressCompleted = 0;
   const results = [];
-  const gatedFetch = async (...args) => {
+  const gatedFetch = async (url, init) => {
+    // 날짜 보강은 보조 작업이다. 실패해도 남은 판정 요청을 멈추지 않고, 예산이 바닥나면
+    // 스스로 물러난다. 할당량이 정말 끝났다면 다음 판정 요청이 같은 응답으로 알아낸다.
+    const supplement = init?.supplement === true;
     const slot = queue.then(async () => {
       if (stopped || fatal) return false;
       if (requests >= config.maxRequests) {
-        stopped = { status: 'paused', reason: 'request_budget' };
+        if (!supplement) stopped = { status: 'paused', reason: 'request_budget' };
         return false;
       }
       while (nextStart > performance.now()) await sleep(nextStart - performance.now());
@@ -199,11 +203,13 @@ export async function reviewArticles(options) {
     });
     queue = slot.then(() => {}, () => {});
     if (!await slot) throw Object.assign(new Error('Request scheduling stopped'), { scheduling_stopped: true });
-    const response = await fetchImpl(args[0], { ...args[1], signal: AbortSignal.timeout(120000) });
+    const response = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(120000) });
     // Stop queued requests promptly on quota/auth errors, but let in-flight
     // successful responses finish validation and durable cache writes.
-    if (response.status === 429) stopped = { status: 'paused', reason: 'quota', http_status: 429 };
-    else if (!response.ok && response.status < 500) stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
+    if (!supplement) {
+      if (response.status === 429) stopped = { status: 'paused', reason: 'quota', http_status: 429 };
+      else if (!response.ok && response.status < 500) stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
+    }
     return response;
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, articles.length) }, async () => {
@@ -237,10 +243,11 @@ export async function reviewArticles(options) {
   };
 }
 
-// 날짜 스키마 이전에 저장된 판정에는 이 필드 자체가 없다. 빈 문자열은 물어봤고 답이 없었다는
-// 뜻이므로 다시 묻지 않는다. 기사당 최대 한 번만 보강한다.
+// 같은 날짜 규칙으로 이미 물어본 판정은 다시 묻지 않는다. 빈 문자열도 물어본 것이다.
+// 날짜 프롬프트나 인용문 날짜 파서를 고쳐 DATE_HINT_VERSION 을 올리면, 내용 판정은 그대로 둔 채
+// 이 기사들의 날짜만 다시 묻는다. 그것이 힌트 버전을 판정 캐시 식별자와 분리해 둔 이유다.
 function needsDateHint(article, review) {
-  return article.date_placement === 'date_pending' && !('published_date' in review);
+  return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true }) {
@@ -262,9 +269,13 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         if (requests) await sleep(config.delayMs);
         requests++;
         try {
-          const fresh = await requestReview(article, policy, config.apiKey, fetchImpl);
+          // 보강 요청임을 공유 스케줄러에 알린다. 표시가 없으면 이 실패가 게이트를 멈춰 아직
+          // 판정받지 못한 기사들이 날짜와 무관한 이유로 판정 없이 끝난다.
+          const supplementFetch = (url, init) => fetchImpl(url, { ...init, supplement: true });
+          const fresh = await requestReview(article, policy, config.apiKey, supplementFetch);
           // 새 응답의 판정은 버리고 날짜만 옮긴다. 이미 검증된 판정을 재현성 없는 재판정으로 덮지 않는다.
-          await write(file, { ...review, published_date: fresh.published_date, published_date_quote: fresh.published_date_quote });
+          await write(file, { ...review, date_hint_version: DATE_HINT_VERSION,
+            published_date: fresh.published_date, published_date_quote: fresh.published_date_quote });
           if (fresh.published_date) dateHints++;
         } catch (error) {
           // 힌트는 보조 정보다. 실패해도 캐시된 판정과 실행 상태는 건드리지 않는다. 다만 할당량·
