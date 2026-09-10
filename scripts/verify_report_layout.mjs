@@ -62,6 +62,21 @@ export const EXPECTED = [
   ['.page:nth-of-type(3) .business-body', 448, 'width'],
   ['.page:nth-of-type(3) .signal:nth-child(4) .summary', 378, 'width'],
   ['.page:nth-of-type(3) .business-box .source', 496.4, 'baseline'],
+  ['.page:nth-of-type(3) .detail-head', 47, 'left'],
+  // Item-linked trend page.
+  ['.page:nth-of-type(7) .items .matrix-desc', 128, 'baseline'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1)', 158, 'top'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1)', 30, 'left'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1)', 480, 'width'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1)', 159.6, 'height'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) h3', 187, 'baseline'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .detail-head', 205, 'bottom'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .item-target .pill', 216, 'top'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .item-target .target-text', 226, 'baseline'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .item-trend-label .pill', 240, 'top'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .item-body', 269, 'baseline'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(1) .source', 301.6, 'baseline'],
+  ['.page:nth-of-type(7) .item-card:nth-of-type(2)', 331.6, 'top'],
 ];
 
 const TOLERANCE_PT = 1;

@@ -40,6 +40,10 @@ export const COLORS = {
 export const MATRIX_ROWS_PER_COLUMN = 39;
 const MATRIX_COLUMNS_PER_PAGE = 2;
 
+// Where trend cards may sit: lower on the first sheet, which carries the note,
+// and never past the band the footer keeps.
+export const ITEM_BAND = { firstTop: 158, top: 114, bottom: 724, gap: 14 };
+
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,
   ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
@@ -190,9 +194,45 @@ function detailPages(state, model, assets) {
       </div>`)).join('');
 }
 
+const itemCard = (items, card) => `
+        <article class="item-card">
+          <div class="detail-head">
+            <h3>${escapeHtml(card.company)}</h3>
+            ${card.industry ? `<span class="pill industry">${escapeHtml(card.industry)}</span>` : ''}
+            <span class="country">${escapeHtml(card.country)}</span>
+          </div>
+          <p class="item-target">
+            <span class="pill">${escapeHtml(items.target_label)}</span>
+            <span class="target-text">${escapeHtml(card.target_text)}</span>
+          </p>
+          <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span></p>
+          <p class="item-body">${escapeHtml(card.body)}</p>
+          <p class="source">${escapeHtml(card.source)}</p>
+        </article>`;
+
+// `breaks` holds the card indices that start a new sheet. The builder works
+// them out from the heights Chrome reports, because a card is as tall as its
+// own text and only the engine that laid it out knows how tall that is. With
+// no breaks every card goes on one sheet, which is what the current data needs.
+function itemPages(state, model, breaks = []) {
+  const { items } = model;
+  if (!items || !items.cards.length) return '';
+  const sheets = [];
+  items.cards.forEach((card, index) => {
+    if (!sheets.length || breaks.includes(index)) sheets.push([]);
+    sheets[sheets.length - 1].push(card);
+  });
+  return sheets.map((cards, index) => page(state, `
+      ${header(items.kicker, items.title, `${index + 1}/${sheets.length}`)}
+      <div class="items${index === 0 ? ' first' : ''}">
+        ${index === 0 ? `<p class="matrix-desc">${escapeHtml(items.note)}</p>` : ''}
+        ${cards.map(card => itemCard(items, card)).join('')}
+      </div>`)).join('');
+}
+
 // `assets` is a URL prefix for fonts and images: a file:// directory when
 // printing, a served path when the same markup is a web page.
-export function renderReport(model, { assets = '' } = {}) {
+export function renderReport(model, { assets = '', itemBreaks = [] } = {}) {
   const state = { number: 0, footer: model.footer };
   return `<!doctype html>
 <html lang="${escapeHtml(model.lang)}">
@@ -205,6 +245,7 @@ export function renderReport(model, { assets = '' } = {}) {
 ${coverPage(state, model, assets)}
 ${matrixPages(state, model)}
 ${model.details ? detailPages(state, model, assets) : ''}
+${itemPages(state, model, itemBreaks)}
 </body>
 </html>
 `;
@@ -364,6 +405,52 @@ body {
 .logo-ik { height: 32pt; }
 
 /* ---- matrix ---- */
+/* ---- item-linked business trends ---- */
+/* Cards are as tall as their own text; which sheet each lands on is settled by
+   the builder from measured heights, not by a running total of constants. */
+.items { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
+.items.first { top: 116pt; }
+.items .matrix-desc { margin: 0 0 18pt; }
+.item-card {
+  margin-bottom: 14pt;
+  padding: 0 0 15.2pt;
+  background: #fff;
+  border: 0.9pt solid ${COLORS.boxLine};
+  border-radius: 10pt;
+  break-inside: avoid;
+}
+.item-card .detail-head { padding: 11pt 0 16pt; }
+.item-card .detail-head h3 { font-size: 13pt; }
+.item-card .detail-head .country { margin-left: auto; }
+.item-target, .item-trend-label { display: flex; align-items: baseline; gap: 10pt; margin: 10.7pt 16.1pt 0; }
+.item-target .pill, .item-trend-label .pill { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; }
+.item-target .target-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  /* Tighten the leading so the row's baseline is set close to the pill's own,
+     which is what puts the pill 10pt above the line it shares. */
+  line-height: 1;
+  font-size: 9.5pt;
+  font-weight: 600;
+  color: ${COLORS.text};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-trend-label { margin-top: 10.4pt; }
+.item-body {
+  margin: 4.7pt 16.1pt 0;
+  font-size: 8.8pt;
+  line-height: 10.8pt;
+  color: #000;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+.item-card .source { margin: 2pt 16.1pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+
 /* ---- company detail ---- */
 /* The drawn page decides how many lines of each summary to show by trying a
    ladder of line counts until one fits. Here each row is as tall as its own
@@ -379,7 +466,7 @@ body {
   display: flex;
   align-items: baseline;
   gap: 14pt;
-  margin: 0 17pt;
+  margin: 0 16.3pt;
   padding: 9.5pt 0 17.2pt;
   border-bottom: 1pt solid #000;
 }
