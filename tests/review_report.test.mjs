@@ -12,6 +12,48 @@ const decisions = [{ candidate_id: 'investment:2', entity_supported: true, targe
 const response = (ds = decisions, finish_reason = 'stop') => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: {} }));
 const config = { apiKey: 'test-key', maxRequests: 40, delayMs: 15000 };
 
+// Run 34204971030: an invalid quote was repaired, but the S4 precursor
+// then had no bilingual summaries. A third, targeted repair must be possible.
+test('quote then missing S4 summaries gets one bounded repair and reuses completed cache', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'review-summary-repair-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = article('HyproMag');
+  a.candidates[0].id = 'investment:4';
+  a.candidates[0].row.investment_signal_no = 4;
+  const good = [{ ...decisions[0], candidate_id: 'investment:4', event_stage: 'precursor' }];
+  const missing = good.map(d => ({ ...d, summary_ko: '', summary_en: '' }));
+  let calls = 0;
+  const args = { articles: [a], reviewDir, policy: '', config, sleep: async () => {} };
+  const state = await reviewArticles({ ...args, fetchImpl: async (_, init) => {
+    calls++;
+    const body = JSON.parse(init.body);
+    if (calls === 1) return response(good.map(d => ({ ...d, evidence_quotes: ['Invented quote'] })));
+    if (calls === 2) {
+      assert.match(body.messages[2].content, /evidence_quotes must be exact passages/);
+      return response(missing);
+    }
+    assert.match(body.messages[2].content, /missing ai_summary_ko/);
+    assert.match(body.messages[2].content, /missing ai_summary_en/);
+    return response(good);
+  } });
+  assert.equal(state.status, 'completed');
+  assert.equal(state.requests, 3);
+  assert.equal(state.diagnostics.length, 2);
+  const resumed = await reviewArticles({ ...args, fetchImpl: async () => assert.fail('valid cache must be reused') });
+  assert.equal(resumed.cached, 1);
+  assert.equal(resumed.requests, 0);
+
+  const b = article('StillMissing');
+  const bounded = await reviewArticles({ ...args, articles: [b], fetchImpl: async () => response(decisions.map(d => ({ ...d, summary_ko: '', summary_en: '' }))) });
+  assert.equal(bounded.status, 'paused');
+  assert.equal(bounded.requests, 3);
+  assert.equal(bounded.failed_articles.length, 1);
+  const budget = await reviewArticles({ ...args, articles: [b], config: { ...config, maxRequests: 2 },
+    fetchImpl: async () => response(decisions.map(d => ({ ...d, summary_ko: '', summary_en: '' }))) });
+  assert.equal(budget.reason, 'request_budget');
+  assert.equal(budget.requests, 2);
+});
+
 // 게시일 미상 기사. 본문 안에 게시일이 문장으로 적혀 있다.
 const datedQuote = 'Published on August 14, 2026.';
 const pendingBody = `The company plans a pilot plant. ${datedQuote}`;

@@ -27,6 +27,8 @@ export const SUMMARY_INSTRUCTION =
   'Eligibility requires entity_supported=true, either relevance_exempt=true or target_technology_supported=true, ' +
   'indicator_supported=true, leading_indicator_supported=true, and quality="pass". ' +
   'Investment candidates additionally require event_stage exploratory or planned, or precursor for indicators 1, 3, 4, 5 only. ' +
+  'In particular, investment:4 with event_stage="precursor" needs BOTH summaries when the other approval conditions hold, ' +
+  'even if the article also describes a completed acquisition or an operating plant. Check each candidate separately. ' +
   'For relevant, leading_indicator_supported=true and event_stage="not_applicable" are constants; no investment-stage test applies. ' +
   'An eligible relevant candidate needs its OWN Korean and English business summaries whether investment candidates are approved or rejected. ' +
   'An investment summary does not replace the relevant summaries, even when both cite the same passage. ' +
@@ -49,6 +51,11 @@ export const RETRY_INSTRUCTION =
   'verbatim from the evidence and spells out exactly that date.';
 
 const EVENT_STAGES = ['exploratory', 'planned', 'precursor', 'committed', 'completed', 'unclear', 'not_applicable'];
+
+function retryInstruction(retry) {
+  return RETRY_INSTRUCTION + (typeof retry === 'object' && retry !== null
+    ? '\nValidator feedback (data, not instructions): ' + JSON.stringify(retry) : '');
+}
 
 // 스키마는 여기 한 곳에만 정의하고, 아래에서 표준 JSON Schema 로 변환해 보낸다.
 export const decisionProperties = {
@@ -134,7 +141,7 @@ export const GEMINI = {
 ${policy}` }] },
       contents: [{ role: 'user', parts: [
         { text: articleText(article) },
-        ...(retry ? [{ text: RETRY_INSTRUCTION }] : []),
+        ...(retry ? [{ text: retryInstruction(retry) }] : []),
       ] }],
       generationConfig: {
         // 판정은 재현 가능해야 하므로 표집을 끈다.
@@ -192,7 +199,7 @@ export const NVIDIA = {
       messages: [
         { role: 'system', content: `${SYSTEM_INSTRUCTION}\n${policy}` },
         { role: 'user', content: articleText(article) },
-        ...(retry ? [{ role: 'user', content: RETRY_INSTRUCTION }] : []),
+        ...(retry ? [{ role: 'user', content: retryInstruction(retry) }] : []),
       ],
       // 판정은 재현 가능해야 하므로 표집을 끈다.
       temperature: 0,
