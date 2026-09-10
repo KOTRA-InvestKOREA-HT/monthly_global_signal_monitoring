@@ -1,9 +1,9 @@
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v2';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v3';
 
 const FIELDNAMES = [
   "target_no",
@@ -1297,10 +1297,14 @@ export async function readLimitedPdf(response, limit = 20 * 1024 * 1024) {
   return Buffer.concat(chunks, size);
 }
 
+// 다단 PDF는 줄 단위로 읽으면 두 단이 한 줄씩 번갈아 섞인다. 한 문장이 옆 단 텍스트로
+// 끊기므로, 모델이 제대로 읽고도 원문에 없는 인용을 내고 판정 전체가 검증에서 막힌다.
+// extract_pdf_text.py 가 단을 먼저 나누고 읽는다.
+const PDF_EXTRACTOR = fileURLToPath(new URL('extract_pdf_text.py', import.meta.url));
+
 export function extractPdfText(bytes) {
   return new Promise((resolve, reject) => {
-    const child = spawn('python', ['-X', 'utf8', '-c',
-      'import io,sys,pdfplumber; p=pdfplumber.open(io.BytesIO(sys.stdin.buffer.read())); print("\\n".join((page.extract_text() or "") for page in p.pages[:30]))'],
+    const child = spawn('python', ['-X', 'utf8', PDF_EXTRACTOR],
       { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });
     const chunks = [];
     let size = 0, failure = null;
