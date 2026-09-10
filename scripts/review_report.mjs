@@ -379,14 +379,15 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (error.code !== 'ENOENT') console.log(`Rechecking invalid cache: ${article.id}`);
     }
     let providerRetries = 0, waitMs = config.delayMs;
-    for (let attempt = 0; attempt < 2;) {
+    let maxAttempts = 2, retryFeedback = false;
+    for (let attempt = 0; attempt < maxAttempts;) {
       if (requests >= config.maxRequests) return state({ status: 'paused', reason: 'request_budget' });
       if (requests) await sleep(waitMs);
       waitMs = config.delayMs;
       requests++;
       let review;
       try {
-        review = await requestReview(article, policy, config.apiKey, fetchImpl, attempt > 0);
+        review = await requestReview(article, policy, config.apiKey, fetchImpl, retryFeedback);
       } catch (error) {
         // Outage retries and invalid-output retries share the run request budget.
         if (error.scheduling_stopped) return state({ status: 'paused', reason: 'scheduling_stopped' });
@@ -401,6 +402,12 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}),
           ...(error.transport_message ? { transport_message: error.transport_message } : {}) });
         if (!error.response_code) throw error;
+        retryFeedback = { reason: error.response_code,
+          ...(error.diagnostic?.validation_message ? { validation_message: error.diagnostic.validation_message } : {}) };
+        // A quote repair can expose a separate missing-summary error. Allow one
+        // targeted repair, still subject to the shared request budget and all
+        // validation checks. Never manufacture text or downgrade the decision.
+        if (attempt === 1 && /missing ai_summary_(ko|en)/.test(error.diagnostic?.validation_message || '')) maxAttempts = 3;
         const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-attempt-${attempt + 1}.json`;
         await write(path.join(path.dirname(reviewDir), diagnosticPath), {
           schema_version: 1, article_id: article.id, model: MODEL,
@@ -409,8 +416,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         });
         diagnostics.push({ article_id: article.id, attempt: attempt + 1, reason: error.response_code, file: diagnosticPath });
         const failure = { article_id: article.id, reason: error.response_code };
-        console.log(`Article ${article.id}: ${error.response_code} (attempt ${attempt + 1}/2)`);
-        if (attempt === 1) failed.push(failure);
+        console.log(`Article ${article.id}: ${error.response_code} (attempt ${attempt + 1}/${maxAttempts})`);
+        if (attempt === maxAttempts - 1) failed.push(failure);
         attempt++;
         continue;
       }

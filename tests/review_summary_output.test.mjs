@@ -38,6 +38,11 @@ for (const provider of [GEMINI, NVIDIA]) {
     assert.match(system, /whether investment candidates are approved or rejected/);
     assert.match(system, /either relevance_exempt=true or target_technology_supported=true/);
     assert.match(system, /Do not change evidence-based fields or quality/);
+    assert.match(system, /investment:4 with event_stage="precursor" needs BOTH summaries/);
+    const feedback = { reason: 'review_validation', validation_message: 'S4: missing ai_summary_ko' };
+    const targeted = body(feedback);
+    const targetedText = provider.id === 'gemini' ? targeted.contents[0].parts[1].text : targeted.messages[2].content;
+    assert.ok(targetedText.includes(JSON.stringify(feedback)));
   });
 
   test(`${provider.id}: EPIC-style missing relevant text is rejected; complete retry preserves decisions`, async () => {
