@@ -1,12 +1,61 @@
 {
   "status": "completed",
-  "requests": 3,
-  "cached": 301,
-  "completed": 302,
-  "total": 302,
+  "requests": 305,
+  "cached": 0,
+  "completed": 297,
+  "total": 297,
   "date_hints": 0,
   "failed_articles": [],
-  "diagnostics": [],
+  "diagnostics": [
+    {
+      "article_id": "de631dd3e875754df6fcc3e0",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/de631dd3e875754df6fcc3e0/c9242c11-5998-4bb0-a251-f5893a06ec2e-attempt-1.json"
+    },
+    {
+      "article_id": "8f395ffdbf7e520acd74e92e",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/8f395ffdbf7e520acd74e92e/7ae1685e-ce51-4cee-b910-f6ba1ef4a177-attempt-1.json"
+    },
+    {
+      "article_id": "a4c36d5fc3f10420a7550a0a",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/a4c36d5fc3f10420a7550a0a/cdcf44ab-a10c-45f9-9090-75cc891486f5-attempt-1.json"
+    },
+    {
+      "article_id": "ca1c5fdcbbb87fc40aef3183",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/ca1c5fdcbbb87fc40aef3183/a54811ad-714c-49fd-94a6-4fef0d92fd85-attempt-1.json"
+    },
+    {
+      "article_id": "52f6c4e12345b33fbad4f22c",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/52f6c4e12345b33fbad4f22c/b1bdbd2f-957b-4658-b87e-c93d519d4bf6-attempt-1.json"
+    },
+    {
+      "article_id": "23768f0734b402804ca0f6b6",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/23768f0734b402804ca0f6b6/e8445f02-13fe-4c21-8155-9750f84a66da-attempt-1.json"
+    },
+    {
+      "article_id": "faecc8b69161f0e5b767687e",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/faecc8b69161f0e5b767687e/b8a4a2d2-446c-47f3-8994-3f66492ec328-attempt-1.json"
+    },
+    {
+      "article_id": "8829b03ba003996935503782",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/8829b03ba003996935503782/0e213e14-66a5-4a00-bb04-06febfdcc9e1-attempt-1.json"
+    }
+  ],
   "concurrency": 4,
   "period": {
     "from_date": "2026-08-01",

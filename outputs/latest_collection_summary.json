@@ -1,5 +1,5 @@
 {
-  "run_started_at": "2026-09-07T07:41:14Z",
+  "run_started_at": "2026-09-10T00:10:56Z",
   "company_count": 77,
   "canonical_company_count": 77,
   "sources": [
@@ -11,7 +11,7 @@
   "date_range_mode": "explicit",
   "from_date": "2026-08-01",
   "to_date": "2026-08-31",
-  "lookback_days": 40,
+  "lookback_days": 43,
   "max_per_source": 6,
   "max_per_company": 10,
   "company_concurrency": 4,
@@ -20,21 +20,42 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 732,
+  "request_count": 731,
   "fetch_retries": 2,
-  "retry_count": 10,
-  "result_count": 490,
-  "official_result_count": 388,
-  "press_release_result_count": 180,
-  "undated_result_count": 131,
-  "excluded_non_article_count": 9960,
+  "retry_count": 16,
+  "result_count": 501,
+  "official_result_count": 391,
+  "press_release_result_count": 176,
+  "undated_result_count": 125,
+  "date_status_counts": {
+    "estimated": 56,
+    "confirmed": 316,
+    "conflicting": 4,
+    "unknown": 125
+  },
+  "month_only_result_count": 8,
+  "date_conflict_result_count": 4,
+  "undated_with_body_count": 40,
+  "excluded_non_article_count": 9998,
   "excluded_non_article_reasons": {
-    "index_or_category_page": 9744,
+    "index_or_category_page": 9782,
     "broken_url": 194,
     "no_article_title": 22
   },
   "excluded_non_article_sample_count": 120,
   "excluded_non_article_samples": [
+    {
+      "company": "Charles River",
+      "title": "News Releases",
+      "url": "https://ir.criver.com/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Charles River",
+      "title": "News Releases",
+      "url": "https://ir.criver.com/news-releases",
+      "reason": "index_or_category_page"
+    },
     {
       "company": "Corning",
       "title": "Investor Relations",
@@ -57,18 +78,6 @@
       "company": "Corning",
       "title": "Corning Incorporated",
       "url": "https://www.linkedin.com/company/corning-incorporated",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
       "reason": "index_or_category_page"
     },
     {
@@ -204,6 +213,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Air Products",
+      "title": "",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Featured Applications",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company chevron-thin-down",
+      "url": "https://www.airproducts.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company Overview",
+      "url": "https://www.airproducts.com/company",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "TIMET",
       "title": "",
       "url": "https://www.timet.com/",
@@ -237,30 +270,6 @@
       "company": "Chemours",
       "title": "Resources",
       "url": "https://investors.chemours.com/resources/email-alerts",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "",
-      "url": "https://www.airproducts.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "Featured Applications",
-      "url": "https://www.airproducts.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "Company chevron-thin-down",
-      "url": "https://www.airproducts.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "Company Overview",
-      "url": "https://www.airproducts.com/company",
       "reason": "index_or_category_page"
     },
     {
@@ -312,30 +321,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Amkor Technology",
-      "title": "Amkor.com",
-      "url": "https://amkor.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Press Releases",
-      "url": "https://ir.amkor.com/press-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "",
-      "url": "https://ir.amkor.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "",
-      "url": "https://ir.amkor.com/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Onsemi",
       "title": "",
       "url": "https://www.onsemi.com/",
@@ -357,6 +342,30 @@
       "company": "Onsemi",
       "title": "Newsroom",
       "url": "https://www.onsemi.com/company/newsroom",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Amkor.com",
+      "url": "https://amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Press Releases",
+      "url": "https://ir.amkor.com/press-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "",
+      "url": "https://ir.amkor.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "",
+      "url": "https://ir.amkor.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -384,30 +393,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/news",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#D52B1E;} .st1{fill:#212121;} OUTLINES -->",
-      "url": "https://investor.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://esg.lilly.com/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "GE Healthcare",
       "title": "GEHealthcare.com",
       "url": "https://www.gehealthcare.com/",
@@ -429,6 +414,30 @@
       "company": "GE Healthcare",
       "title": "News",
       "url": "https://www.gehealthcare.com/about/newsroom",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/news",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://www.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": ".st0{fill-rule:evenodd;clip-rule:evenodd;fill:#D52B1E;} .st1{fill:#212121;} OUTLINES -->",
+      "url": "https://investor.lilly.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "",
+      "url": "https://esg.lilly.com/",
       "reason": "index_or_category_page"
     },
     {
@@ -480,30 +489,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Ouster",
-      "title": "-->",
-      "url": "https://ouster.com/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Ouster",
-      "title": "Overview",
-      "url": "https://investors.ouster.com/investor-relations",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Ouster",
-      "title": "News & Events",
-      "url": "https://investors.ouster.com/news-events/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Ouster",
-      "title": "News Releases",
-      "url": "https://investors.ouster.com/news-events/news-releases",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Applied Materials",
       "title": "",
       "url": "https://www.appliedmaterials.com/",
@@ -525,6 +510,30 @@
       "company": "Applied Materials",
       "title": "India - English",
       "url": "https://www.appliedmaterials.com/in/en.html",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "-->",
+      "url": "https://ouster.com/",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "Overview",
+      "url": "https://investors.ouster.com/investor-relations",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "News & Events",
+      "url": "https://investors.ouster.com/news-events/news-releases",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Ouster",
+      "title": "News Releases",
+      "url": "https://investors.ouster.com/news-events/news-releases",
       "reason": "index_or_category_page"
     },
     {
@@ -648,30 +657,6 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Norsk Hydro",
-      "title": "Insights",
-      "url": "https://www.hydro.com/en/global/insights/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Norsk Hydro",
-      "title": "Contact us",
-      "url": "https://www.hydro.com/en/global/contact-us/",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Norsk Hydro",
-      "title": "Global",
-      "url": "https://www.hydro.com/en/en/?ar=1",
-      "reason": "index_or_category_page"
-    },
-    {
-      "company": "Norsk Hydro",
-      "title": "Argentina",
-      "url": "https://www.hydro.com/ar/ar/",
-      "reason": "index_or_category_page"
-    },
-    {
       "company": "Vestas",
       "title": "",
       "url": "https://www.vestas.com/en",
@@ -696,27 +681,27 @@
       "reason": "index_or_category_page"
     },
     {
-      "company": "Infineon",
-      "title": "English",
-      "url": "https://www.infineon.com/about/press",
+      "company": "Norsk Hydro",
+      "title": "Insights",
+      "url": "https://www.hydro.com/en/global/insights/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Infineon",
-      "title": "中文",
-      "url": "https://www.infineon.cn/about/press",
+      "company": "Norsk Hydro",
+      "title": "Contact us",
+      "url": "https://www.hydro.com/en/global/contact-us/",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Infineon",
-      "title": "日本語",
-      "url": "https://www.infineon.com/ja/about/press",
+      "company": "Norsk Hydro",
+      "title": "Global",
+      "url": "https://www.hydro.com/en/en/?ar=1",
       "reason": "index_or_category_page"
     },
     {
-      "company": "Infineon",
-      "title": "Deutsch",
-      "url": "https://www.infineon.com/de/about/press",
+      "company": "Norsk Hydro",
+      "title": "Argentina",
+      "url": "https://www.hydro.com/ar/ar/",
       "reason": "index_or_category_page"
     },
     {
@@ -744,6 +729,30 @@
       "reason": "index_or_category_page"
     },
     {
+      "company": "Infineon",
+      "title": "English",
+      "url": "https://www.infineon.com/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "中文",
+      "url": "https://www.infineon.cn/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "日本語",
+      "url": "https://www.infineon.com/ja/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
+      "company": "Infineon",
+      "title": "Deutsch",
+      "url": "https://www.infineon.com/de/about/press",
+      "reason": "index_or_category_page"
+    },
+    {
       "company": "Schmalz",
       "title": "",
       "url": "https://www.schmalz.com/",
@@ -757,29 +766,26 @@
     }
   ],
   "published_at_source_counts": {
-    "time_tag": 33,
-    "jsonld": 64,
-    "listing": 92,
-    "body_text": 35,
-    "feed": 129,
-    "url": 3,
-    "meta": 2,
-    "none": 131,
-    "text": 1
+    "body_text": 50,
+    "text": 4,
+    "jsonld": 97,
+    "time_tag": 35,
+    "listing": 58,
+    "url": 2,
+    "feed": 126,
+    "meta": 4,
+    "none": 125
   },
-  "fallback_result_count": 102,
-  "companies_with_results": 71,
+  "fallback_result_count": 110,
+  "companies_with_results": 74,
   "companies_with_official_results": 62,
   "companies_without_results": [
     "Magnix",
-    "Schmalz",
-    "Plansee",
-    "Texcell",
     "Cheng Uei Precision",
     "Shanghai Electric Wind Power"
   ],
   "counts_by_company": {
-    "Australian Strategic Metals": 3,
+    "Australian Strategic Metals": 4,
     "Cognex": 6,
     "Corning": 10,
     "Charles River": 6,
@@ -810,13 +816,13 @@
     "Besi": 6,
     "NXP": 5,
     "Norsk Hydro": 8,
-    "Vestas": 8,
+    "Vestas": 10,
     "Heidenhain": 6,
-    "Infineon": 7,
-    "Schmalz": 0,
+    "Infineon": 6,
+    "Schmalz": 1,
     "Bayer": 10,
     "Merck": 10,
-    "Schott Pharma": 5,
+    "Schott Pharma": 6,
     "BASF": 10,
     "Evonik Industries": 10,
     "Heraeus": 6,
@@ -824,7 +830,7 @@
     "EMM(Umicore)": 6,
     "Umicore": 10,
     "Solvay": 2,
-    "Syensqo": 3,
+    "Syensqo": 4,
     "Hexagon AB": 4,
     "ABB": 10,
     "Maxon": 10,
@@ -834,19 +840,19 @@
     "Rio Tinto": 10,
     "HyproMag": 2,
     "EVG": 9,
-    "Plansee": 0,
-    "Texcell": 0,
+    "Plansee": 1,
+    "Texcell": 1,
     "Veolia": 10,
     "Airbus": 6,
-    "Safran": 6,
+    "Safran": 10,
     "Air Liquide": 8,
-    "Arkema": 4,
+    "Arkema": 3,
     "DNP": 8,
     "Hitachi Metals": 2,
     "Toppan Holdings": 6,
     "Nabtesco": 4,
     "Asahi Glass": 3,
-    "JSR": 7,
+    "JSR": 8,
     "Shin-Etsu Chemicals": 10,
     "Tokyo Electron": 7,
     "Tosoh": 6,
@@ -858,7 +864,7 @@
     "Shanghai Electric Wind Power": 0
   },
   "official_counts_by_company": {
-    "Australian Strategic Metals": 3,
+    "Australian Strategic Metals": 4,
     "Cognex": 0,
     "Corning": 6,
     "Charles River": 6,
@@ -891,7 +897,7 @@
     "Norsk Hydro": 8,
     "Vestas": 8,
     "Heidenhain": 6,
-    "Infineon": 7,
+    "Infineon": 6,
     "Schmalz": 0,
     "Bayer": 10,
     "Merck": 10,
@@ -910,7 +916,7 @@
     "Siemens-Gamesa": 8,
     "Renishaw": 7,
     "Nexeon": 2,
-    "Rio Tinto": 6,
+    "Rio Tinto": 10,
     "HyproMag": 2,
     "EVG": 3,
     "Plansee": 0,
@@ -919,7 +925,7 @@
     "Airbus": 0,
     "Safran": 6,
     "Air Liquide": 8,
-    "Arkema": 4,
+    "Arkema": 3,
     "DNP": 8,
     "Hitachi Metals": 2,
     "Toppan Holdings": 6,
@@ -936,7 +942,7 @@
     "Cheng Uei Precision": 0,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 60,
+  "error_count": 63,
   "errors": [
     {
       "target_no": 2,
@@ -1145,14 +1151,6 @@
       "source_url": "https://investor.qualcomm.com/financial-info-sec-filings/investor-kit/default.aspx",
       "source_name": "Qualcomm - Investor Kit / Investor Materials",
       "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 19,
-      "company": "Skyworks",
-      "source": "official_pages",
-      "source_url": "https://investors.skyworksinc.com/financial-information/sec-filings",
-      "source_name": "Skyworks - SEC Filings / Regulatory Filings",
-      "error": "fetch failed"
     },
     {
       "target_no": 20,
@@ -1414,15 +1412,47 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
+      "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
+      "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
+      "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
       "error": "fetch failed"
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260907T074114Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260907T074114Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260907T074114Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260910T001056Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260910T001056Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260910T001056Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -1430,7 +1460,7 @@
   "review_coverage": [
     {
       "company": "Australian Strategic Metals",
-      "monthly_articles": 3,
+      "monthly_articles": 4,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
       "status": "reviewed",
@@ -1676,7 +1706,7 @@
     },
     {
       "company": "Ouster",
-      "monthly_articles": 7,
+      "monthly_articles": 6,
       "needs_review_articles": 0,
       "date_pending_articles": 1,
       "status": "reviewed",
@@ -1691,20 +1721,20 @@
     },
     {
       "company": "Applied Materials",
-      "monthly_articles": 8,
+      "monthly_articles": 7,
       "needs_review_articles": 0,
       "date_pending_articles": 3,
       "status": "reviewed",
       "follow_up": [],
       "date_follow_up": [
         {
-          "url": "https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
-          "title": "Bringing Next-Generation CD-SEM Metrology to the Fab",
-          "reason": "추정 근거(body_text)만 확인됨"
+          "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-report-fiscal-third-quarter-2026-results-aug",
+          "title": "Applied Materials to Report Fiscal Third Quarter 2026 Results on Aug. 13, 2026",
+          "reason": "게시일 근거가 서로 어긋남"
         },
         {
-          "url": "https://www.appliedmaterials.com/us/en/newsroom/blogs/tackling-key-hbm-and-advanced-packaging-bottlenecks-for-ai-era.html",
-          "title": "Tackling Key HBM and Advanced Packaging Bottlenecks for the AI Era",
+          "url": "https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
+          "title": "Bringing Next-Generation CD-SEM Metrology to the Fab",
           "reason": "추정 근거(body_text)만 확인됨"
         },
         {
@@ -1725,35 +1755,15 @@
     },
     {
       "company": "Prodrive",
-      "monthly_articles": 9,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
-      "date_pending_articles": 6,
+      "date_pending_articles": 2,
       "status": "reviewed",
       "follow_up": [],
       "date_follow_up": [
         {
-          "url": "https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-and-fortaegis-technologies-sign-strategic-partnership-agreement/",
-          "title": "20-05-2026 | Press release Prodrive Technologies and Fortaegis Technologies sign strategic partnership agreement",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
           "url": "https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-announces-2025-financial-results/",
           "title": "1-04-2026 | Press release Prodrive Technologies announces 2025 financial results",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-takes-40-million-eib-loan-to-boost-rd-in-new-technologies-1/",
-          "title": "1-12-2025 | Press release Prodrive Technologies takes €40 million EIB loan to boost R&D in new technologies",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-inaugurates-4mw-green-hydrogen-rectifier-test-facility/",
-          "title": "5-11-2025 | Press release Prodrive Technologies inaugurates 4MW green hydrogen rectifier test facility",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://prodrive-technologies.com/en/about-us/news/change-in-executive-management-at-prodrive-technologies/",
-          "title": "23-09-2025 | Press release Change in executive management at Prodrive Technologies",
           "reason": "게시일 근거가 전혀 없음"
         },
         {
@@ -1807,7 +1817,7 @@
     },
     {
       "company": "Vestas",
-      "monthly_articles": 5,
+      "monthly_articles": 7,
       "needs_review_articles": 0,
       "date_pending_articles": 5,
       "status": "reviewed",
@@ -1851,33 +1861,27 @@
     },
     {
       "company": "Infineon",
-      "monthly_articles": 7,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
-      "date_pending_articles": 1,
+      "date_pending_articles": 0,
       "status": "reviewed",
       "follow_up": [],
-      "date_follow_up": [
-        {
-          "url": "https://www.infineon.com/press-release/2026/infpr202608-133",
-          "title": "Infineon and Tack One win SICC Award for Best Technological Collaboration",
-          "reason": "추정 근거(body_text)만 확인됨"
-        }
-      ]
+      "date_follow_up": []
     },
     {
       "company": "Schmalz",
-      "monthly_articles": 0,
+      "monthly_articles": 1,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
-      "status": "no_monthly_sources",
+      "status": "reviewed",
       "follow_up": [],
       "date_follow_up": []
     },
     {
       "company": "Bayer",
-      "monthly_articles": 8,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
-      "date_pending_articles": 1,
+      "date_pending_articles": 2,
       "status": "reviewed",
       "follow_up": [],
       "date_follow_up": [
@@ -1885,21 +1889,21 @@
           "url": "https://www.bayer.com/media/en-us/preview/2c3b85df05117bc879a33f262b1bc07b",
           "title": "Newsroom Bayer",
           "reason": "게시일 근거가 전혀 없음"
+        },
+        {
+          "url": "https://www.bayer.com/en/investors/q2-2026-investor-video-call",
+          "title": "August 04, 2026 Investor Video Call Half-Year Financial Report 2026 read more",
+          "reason": "게시일 근거가 서로 어긋남"
         }
       ]
     },
     {
       "company": "Merck",
       "monthly_articles": 4,
-      "needs_review_articles": 1,
+      "needs_review_articles": 0,
       "date_pending_articles": 2,
-      "status": "incomplete_evidence",
-      "follow_up": [
-        {
-          "url": "https://www.emdgroup.com/content/dam/web/corporate/non-images/investors/reports-and-financials/earnings-materials/2026-q2/us/2026-Q2-Financial-Statement-NA.xlsm",
-          "title": "Financial Statement (XLS)"
-        }
-      ],
+      "status": "reviewed",
+      "follow_up": [],
       "date_follow_up": [
         {
           "url": "https://www.emdgroup.com/en/media-center/press-kits/q4-2025.html",
@@ -1915,7 +1919,7 @@
     },
     {
       "company": "Schott Pharma",
-      "monthly_articles": 5,
+      "monthly_articles": 6,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
       "status": "reviewed",
@@ -1924,12 +1928,18 @@
     },
     {
       "company": "BASF",
-      "monthly_articles": 4,
+      "monthly_articles": 3,
       "needs_review_articles": 0,
-      "date_pending_articles": 0,
+      "date_pending_articles": 1,
       "status": "reviewed",
       "follow_up": [],
-      "date_follow_up": []
+      "date_follow_up": [
+        {
+          "url": "https://www.basf.com/global/en/media/events/2026/full-year-2025-results",
+          "title": "Annual Press Conference",
+          "reason": "게시일 근거가 전혀 없음"
+        }
+      ]
     },
     {
       "company": "Evonik Industries",
@@ -1951,7 +1961,7 @@
     },
     {
       "company": "Jenoptik",
-      "monthly_articles": 4,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
       "date_pending_articles": 1,
       "status": "reviewed",
@@ -2026,7 +2036,7 @@
     },
     {
       "company": "Syensqo",
-      "monthly_articles": 3,
+      "monthly_articles": 4,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
       "status": "reviewed",
@@ -2128,40 +2138,25 @@
     },
     {
       "company": "Rio Tinto",
-      "monthly_articles": 10,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
-      "date_pending_articles": 6,
+      "date_pending_articles": 3,
       "status": "reviewed",
       "follow_up": [],
       "date_follow_up": [
         {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2",
-          "title": "Season 2 podcast",
+          "url": "https://www.riotinto.com/en/news/stories/driving-generational-growth-in-the-pilbara",
+          "title": "Driving generational growth in the Pilbara Our plan to invest in Western Australia’s long-term iron ore legacy",
           "reason": "게시일 근거가 전혀 없음"
         },
         {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2/s2-episode-1",
-          "title": "S2: Adam Rutherford",
+          "url": "https://www.riotinto.com/en/news/stories/giving-materials-a-second-life",
+          "title": "Giving materials a second life How we keep materials in circulation, from extraction to reuse",
           "reason": "게시일 근거가 전혀 없음"
         },
         {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2/s2-episode-2",
-          "title": "Jon Lampley on Trumpet Performances, Outdoor Venues, and AI in Music",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2/s2-episode-3",
-          "title": "S2: Edward Burtynsky",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2/s2-episode-4",
-          "title": "Ruby Wax on Laptop Addiction, Mindfulness, and Community",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.riotinto.com/en/news/podcast/season-2/s2-episode-5",
-          "title": "S2: Mark Mangini",
+          "url": "https://www.riotinto.com/en/news/stories/driving-toward-lower-emissions",
+          "title": "Driving toward lower emissions Haul truck battery swapping technology trials are ramping up at Oyu Tolgoi",
           "reason": "게시일 근거가 전혀 없음"
         }
       ]
@@ -2186,19 +2181,19 @@
     },
     {
       "company": "Plansee",
-      "monthly_articles": 0,
+      "monthly_articles": 1,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
-      "status": "no_monthly_sources",
+      "status": "reviewed",
       "follow_up": [],
       "date_follow_up": []
     },
     {
       "company": "Texcell",
-      "monthly_articles": 0,
+      "monthly_articles": 1,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
-      "status": "no_monthly_sources",
+      "status": "reviewed",
       "follow_up": [],
       "date_follow_up": []
     },
@@ -2222,7 +2217,7 @@
     },
     {
       "company": "Safran",
-      "monthly_articles": 1,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
       "date_pending_articles": 1,
       "status": "reviewed",
@@ -2237,32 +2232,21 @@
     },
     {
       "company": "Air Liquide",
-      "monthly_articles": 2,
+      "monthly_articles": 1,
       "needs_review_articles": 0,
-      "date_pending_articles": 1,
+      "date_pending_articles": 0,
       "status": "reviewed",
       "follow_up": [],
-      "date_follow_up": [
-        {
-          "url": "https://www.airliquide.com/2025-integrated-annual-report",
-          "title": "When tech makes an impact",
-          "reason": "게시일 근거가 전혀 없음"
-        }
-      ]
+      "date_follow_up": []
     },
     {
       "company": "Arkema",
       "monthly_articles": 3,
       "needs_review_articles": 0,
-      "date_pending_articles": 3,
+      "date_pending_articles": 2,
       "status": "reviewed",
       "follow_up": [],
       "date_follow_up": [
-        {
-          "url": "https://www.arkema.com/global/en/media/newslist/news/non-global/countries/americas/20260825-athletics-sponsorship-with-villanova-university/",
-          "title": "Arkema adds three-season athletics sponsorship to strategic relationship with Villanova University.",
-          "reason": "추정 근거(url)만 확인됨"
-        },
         {
           "url": "https://www.arkema.com/global/en/media/newsroom/women-in-industry/",
           "title": "Arkema Newsroom - Women in industry",
@@ -2322,7 +2306,7 @@
     },
     {
       "company": "JSR",
-      "monthly_articles": 4,
+      "monthly_articles": 5,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
       "status": "reviewed",
@@ -2333,10 +2317,21 @@
       "company": "Shin-Etsu Chemicals",
       "monthly_articles": 2,
       "needs_review_articles": 0,
-      "date_pending_articles": 0,
+      "date_pending_articles": 2,
       "status": "reviewed",
       "follow_up": [],
-      "date_follow_up": []
+      "date_follow_up": [
+        {
+          "url": "https://www.shinetsu.co.jp/en/ir/ir-data/ir-annual/",
+          "title": "2026.08.12 IR Uploaded Annual Report 2026",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
+        {
+          "url": "https://www.shinetsu.co.jp/en/ir/ir-data/ir-briefing/",
+          "title": "2026.08.05 IR Summary of Telephone Conference on Financial Results for the First Quarter Ended June 30, 2026",
+          "reason": "게시일 근거가 서로 어긋남"
+        }
+      ]
     },
     {
       "company": "Tokyo Electron",
@@ -2380,18 +2375,12 @@
     },
     {
       "company": "Mitsubishi Chemical",
-      "monthly_articles": 9,
+      "monthly_articles": 8,
       "needs_review_articles": 0,
-      "date_pending_articles": 1,
+      "date_pending_articles": 0,
       "status": "reviewed",
       "follow_up": [],
-      "date_follow_up": [
-        {
-          "url": "https://www.mcgc.com/english/ir/hub/feature/2025/01.html",
-          "title": "Dialogue: Investor × CEO Introducing of Dialogue from Hiroyasu Koike, President and CEO, Nomura Asset Management Co., Ltd. and Manabu Chikumoto.",
-          "reason": "게시일 근거가 전혀 없음"
-        }
-      ]
+      "date_follow_up": []
     },
     {
       "company": "Sumitomo Chemical",
