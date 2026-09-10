@@ -27,6 +27,31 @@ function model(companyCount) {
   };
 }
 
+const silent = no => ({ no, label: `지표 ${no}`, active: false, empty: '이번 달 해당 신호 없음' });
+const firing = (no, extra = {}) => ({
+  no, label: `지표 ${no}`, active: true, headline: '투자 유치 완료',
+  detail: '', plain: '', inline: true, source: '출처 Media 2026.08.31', ...extra,
+});
+
+function withDetails(companies, signalsFor = () => [firing(4)]) {
+  const base = model(77);
+  base.details = {
+    kicker: 'C O M P A N Y   S I G N A L S',
+    title: '기업별 시그널 상세',
+    pages: companies.map(company => ({
+      company,
+      country: '미국',
+      industry: '반도체',
+      signals: [1, 2, 3, 4, 5].map(no => signalsFor(company).find(s => s.no === no) || silent(no)),
+      business: {
+        heading: '글로벌 사업현황', target_label: '타겟품목', target_text: '라이다',
+        body: '본문', source: '출처 Media',
+      },
+    })),
+  };
+  return base;
+}
+
 const pages = html => html.match(/<section class="page/g)?.length ?? 0;
 const occurrences = (html, needle) => html.split(needle).length - 1;
 
@@ -81,4 +106,52 @@ test('company names are escaped, not injected', () => {
 test('without an asset base the logos fall back to text instead of broken images', () => {
   assert.equal(renderReport(model(1)).includes('<img'), false);
   assert.match(renderReport(model(1), { assets: 'file:///x' }), /<img class="logo-kotra"/);
+});
+
+
+test('every company with a signal gets its own detail page, numbered i/n', () => {
+  const html = renderReport(withDetails(['Ouster', 'Nexeon', 'Applied Materials']));
+  // Cover, one matrix page, three detail pages.
+  assert.equal(pages(html), 5);
+  assert.equal(occurrences(html, 'class="signal-box"'), 3);
+  for (const [index, company] of ['Ouster', 'Nexeon', 'Applied Materials'].entries()) {
+    assert.equal(occurrences(html, `<h3>${company}</h3>`), 1);
+    assert.match(html, new RegExp(`C O M P A N Y[^<]*\u00b7 ${index + 1}/3`));
+  }
+});
+
+test('a month with no signal for a company is stated, not left blank', () => {
+  const html = renderReport(withDetails(['Ouster']));
+  assert.equal(occurrences(html, 'class="signal off"'), 4);
+  assert.equal(occurrences(html, 'class="signal on"'), 1);
+  assert.equal(occurrences(html, '이번 달 해당 신호 없음'), 4);
+  // A silent row carries no summary and no source line of its own.
+  assert.equal(occurrences(html, 'class="summary"'), 1);
+  assert.equal(occurrences(html, 'class="source"'), 2); // one signal, one business
+});
+
+test('a headline and its detail share a paragraph only when they fit on a line', () => {
+  const short = renderReport(withDetails(['A'], () => [firing(4, { detail: '짧은 설명', inline: true })]));
+  assert.match(short, /<p class="summary"><strong>투자 유치 완료<\/strong> — 짧은 설명<\/p>/);
+  assert.equal(occurrences(short, 'class="summary continued"'), 0);
+
+  const long = renderReport(withDetails(['A'], () => [firing(4, { detail: '아주 긴 설명', inline: false })]));
+  assert.match(long, /<p class="summary"><strong>투자 유치 완료<\/strong><\/p><p class="summary continued">— 아주 긴 설명<\/p>/);
+});
+
+test('a summary with no headline falls back to the plain text', () => {
+  const html = renderReport(withDetails(['A'], () => [firing(4, { headline: '', detail: '', plain: '평문 요약' })]));
+  assert.match(html, /<p class="summary">평문 요약<\/p>/);
+});
+
+test('detail text is escaped like everything else', () => {
+  const html = renderReport(withDetails(['A'], () => [firing(4, { headline: '<b>x</b>', detail: 'a & b', inline: true })]));
+  assert.equal(html.includes('<strong><b>x</b></strong>'), false);
+  assert.match(html, /&lt;b&gt;x&lt;\/b&gt;.*a &amp; b/);
+});
+
+test('a model without detail pages still renders the cover and matrix', () => {
+  const html = renderReport(model(77));
+  assert.equal(pages(html), 2);
+  assert.equal(occurrences(html, 'class="signal-box"'), 0);
 });
