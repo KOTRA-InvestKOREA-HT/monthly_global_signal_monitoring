@@ -6,12 +6,20 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, importReview, normalizeQuote, build } from './local_report.mjs';
 import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
+import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 
 // 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보낸다. 모델은 NVIDIA_MODEL 로 바꾼다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 const VERSION = 'article-review-v1';
+const STAGE_REVIEW_VERSION = 'candidate-event-v2';
+export function needsStageReview(article, review) {
+  return review.stage_review_version !== STAGE_REVIEW_VERSION && review.decisions.some(d =>
+    d.candidate_id === 'investment:4' && ['committed', 'completed'].includes(d.event_stage) &&
+    d.entity_supported && d.indicator_supported && (d.target_technology_supported ||
+      article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt));
+}
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
 const write = async (file, value) => {
@@ -231,7 +239,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
-    date_hint_version: DATE_HINT_VERSION,
+    date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -352,6 +360,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       const review = await read(file);
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
+      if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
       cached++; completed++;
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
@@ -451,7 +460,11 @@ async function main() {
   const inputDir = path.join(root, `${from}_${to}`);
   const sourceFile = path.join(inputDir, 'latest_company_signals.json');
   if (process.env.REPORT_REFRESH === 'true') await fs.rm(inputDir, { recursive: true, force: true });
-  try { await fs.access(sourceFile); await fs.access(path.join(inputDir, 'latest_collection_summary.json')); }
+  try {
+    await fs.access(sourceFile);
+    const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));
+    if (previous.content_collection_version !== CONTENT_COLLECTION_VERSION) throw new Error('Collection needs article body enrichment');
+  }
   catch {
     const result = spawnSync(process.execPath, ['scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
       '--sources', 'official_feeds,official_pages,google_news', '--from-date', from, '--to-date', to,

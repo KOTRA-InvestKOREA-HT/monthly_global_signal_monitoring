@@ -1,7 +1,9 @@
 import { pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
+export const CONTENT_COLLECTION_VERSION = 'article-body-v2';
 
 const FIELDNAMES = [
   "target_no",
@@ -1234,7 +1236,25 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
 }
 
 function canFetchDetailContent(url) {
-  return !/\.(pdf|xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
+  return !/\.(xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
+}
+
+export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetch) {
+  const response = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
+    redirect: 'follow', headers: requestHeaders(url) });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const resolvedUrl = response.url || url;
+  // Google consent/RSS wrapper text is not publisher evidence.
+  if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) throw new Error('publisher_url_unresolved');
+  const isPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
+  if (!isPdf) return { html: await response.text(), resolvedUrl };
+  const bytes = Buffer.from(await response.arrayBuffer());
+  if (bytes.length > 20 * 1024 * 1024) throw new Error('pdf_too_large');
+  const parsed = spawnSync('python', ['-X', 'utf8', '-c',
+    'import io,sys,pdfplumber; p=pdfplumber.open(io.BytesIO(sys.stdin.buffer.read())); print("\\n".join((page.extract_text() or "") for page in p.pages[:30]))'],
+    { input: bytes, encoding: 'utf8', timeout: 30000, maxBuffer: 4 * 1024 * 1024 });
+  if (parsed.status !== 0) throw new Error('pdf_extraction_failed');
+  return { html: '', content: parsed.stdout.trim(), resolvedUrl };
 }
 
 function chooseBetterTitle(currentTitle, pageTitle, url, company) {
@@ -1259,7 +1279,7 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
   let detailCount = 0;
 
   for (const row of rows) {
-    if (row.source_type !== "official") {
+    if (row.content_text) {
       enriched.push(row);
       continue;
     }
@@ -1286,10 +1306,13 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
     }
 
     try {
-      const html = await fetchText(row.url, args.timeoutSeconds);
       requestCount += 1;
       detailCount += 1;
-      const content = extractArticleText(html);
+      const document = row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(row.url)
+        ? { html: await fetchText(row.url, args.timeoutSeconds), resolvedUrl: row.url }
+        : await fetchArticleDocument(row.url, args.timeoutSeconds);
+      const html = document.html;
+      const content = document.content ?? extractArticleText(html);
       const limitedContent = content.slice(0, args.contentCharLimit);
       const pageTitle = extractPageTitle(html);
       // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
@@ -1312,6 +1335,7 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
         title: resolvedTitle,
         ...dates,
         content_text: limitedContent,
+        content_source_url: document.resolvedUrl,
         content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
         content_word_count: content.split(/\s+/).filter(Boolean).length,
         content_fetch_status: content ? "fetched" : "empty",
@@ -1557,6 +1581,12 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       // out of maxPerCompany: 26 official rows were lost that way in the
       // 2026-08 run while fallback rows grew from 37 to 142.
       rows = dedupeRows([...usable, ...rows, ...fallback.rows]).slice(0, args.maxPerCompany);
+      const fallbackRows = rows.filter(row => row.source_type !== 'official');
+      const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company);
+      requestCount += detailedFallback.requestCount;
+      errors.push(...detailedFallback.errors);
+      const byUrl = new Map(detailedFallback.rows.map(row => [row.url, row]));
+      rows = rows.map(row => byUrl.get(row.url) || row);
     } catch (error) {
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
@@ -1620,6 +1650,7 @@ async function main() {
     max_per_company: args.maxPerCompany,
     company_concurrency: args.companyConcurrency,
     fetch_official_content: args.fetchOfficialContent,
+    content_collection_version: CONTENT_COLLECTION_VERSION,
     content_char_limit: args.contentCharLimit,
     max_detail_per_company: args.maxDetailPerCompany,
     fallback_mode: args.fallbackMode,
