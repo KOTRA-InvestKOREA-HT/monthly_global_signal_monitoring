@@ -1,7 +1,7 @@
 import { pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
 export const CONTENT_COLLECTION_VERSION = 'article-body-v2';
 
@@ -1239,22 +1239,78 @@ function canFetchDetailContent(url) {
   return !/\.(xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
 }
 
+export function detailSourceUrl(row) {
+  const isGoogle = value => {
+    try { return /(^|\.)google\.com$/.test(new URL(value).hostname); } catch { return false; }
+  };
+  if (!isGoogle(row.url)) return row.url;
+  // Keep the RSS evidence; only fetch a known publisher URL, not a wrapper
+  // that this collector cannot decode into the original article.
+  if (row.source_direct_url && /^https?:\/\//i.test(row.source_direct_url) && !isGoogle(row.source_direct_url)) return row.source_direct_url;
+  return null;
+}
+
+export async function readLimitedPdf(response, limit = 20 * 1024 * 1024) {
+  if (Number(response.headers.get('content-length')) > limit) {
+    await response.body?.cancel();
+    throw new Error('pdf_too_large');
+  }
+  const reader = response.body.getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > limit) {
+        await reader.cancel();
+        throw new Error('pdf_too_large');
+      }
+      chunks.push(Buffer.from(value));
+    }
+  } finally { reader.releaseLock(); }
+  return Buffer.concat(chunks, size);
+}
+
+export function extractPdfText(bytes) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('python', ['-X', 'utf8', '-c',
+      'import io,sys,pdfplumber; p=pdfplumber.open(io.BytesIO(sys.stdin.buffer.read())); print("\\n".join((page.extract_text() or "") for page in p.pages[:30]))'],
+      { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });
+    const chunks = [];
+    let size = 0, failure = null;
+    const timer = setTimeout(() => { failure = new Error('pdf_extraction_timeout'); child.kill(); }, 30000);
+    child.on('error', error => { clearTimeout(timer); reject(error); });
+    child.stdout.on('data', chunk => {
+      size += chunk.length;
+      if (size > 4 * 1024 * 1024) { failure = new Error('pdf_text_too_large'); child.kill(); }
+      else chunks.push(chunk);
+    });
+    child.stdin.on('error', () => {}); // close/error determines the extraction result
+    child.on('close', code => {
+      clearTimeout(timer);
+      if (failure || code !== 0) reject(failure || new Error('pdf_extraction_failed'));
+      else resolve(Buffer.concat(chunks).toString('utf8').trim());
+    });
+    child.stdin.end(bytes);
+  });
+}
+
 export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetch) {
   const response = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
     redirect: 'follow', headers: requestHeaders(url) });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const resolvedUrl = response.url || url;
   // Google consent/RSS wrapper text is not publisher evidence.
-  if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) throw new Error('publisher_url_unresolved');
+  if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) {
+    await response.body?.cancel();
+    throw new Error('publisher_url_unresolved');
+  }
   const isPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
   if (!isPdf) return { html: await response.text(), resolvedUrl };
-  const bytes = Buffer.from(await response.arrayBuffer());
-  if (bytes.length > 20 * 1024 * 1024) throw new Error('pdf_too_large');
-  const parsed = spawnSync('python', ['-X', 'utf8', '-c',
-    'import io,sys,pdfplumber; p=pdfplumber.open(io.BytesIO(sys.stdin.buffer.read())); print("\\n".join((page.extract_text() or "") for page in p.pages[:30]))'],
-    { input: bytes, encoding: 'utf8', timeout: 30000, maxBuffer: 4 * 1024 * 1024 });
-  if (parsed.status !== 0) throw new Error('pdf_extraction_failed');
-  return { html: '', content: parsed.stdout.trim(), resolvedUrl };
+  const bytes = await readLimitedPdf(response);
+  return { html: '', content: await extractPdfText(bytes), resolvedUrl };
 }
 
 function chooseBetterTitle(currentTitle, pageTitle, url, company) {
@@ -1283,6 +1339,11 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       enriched.push(row);
       continue;
     }
+    const detailUrl = detailSourceUrl(row);
+    if (!detailUrl) {
+      enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
+      continue;
+    }
 
     // 본문을 받아오지 않는 두 경로에서는 링크 텍스트와 URL만으로 제목을 확보해야 한다.
     if (detailCount >= args.maxDetailPerCompany || !canFetchDetailContent(row.url)) {
@@ -1308,9 +1369,9 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
     try {
       requestCount += 1;
       detailCount += 1;
-      const document = row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(row.url)
-        ? { html: await fetchText(row.url, args.timeoutSeconds), resolvedUrl: row.url }
-        : await fetchArticleDocument(row.url, args.timeoutSeconds);
+      const document = row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)
+        ? { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl }
+        : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
       const html = document.html;
       const content = document.content ?? extractArticleText(html);
       const limitedContent = content.slice(0, args.contentCharLimit);
@@ -1618,7 +1679,14 @@ async function main() {
   const companyResults = await mapWithConcurrency(
     companies,
     args.companyConcurrency,
-    (company) => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt),
+    async (company) => {
+      const started = Date.now();
+      const result = await collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt);
+      result.timing = { company: company.company, elapsed_ms: Date.now() - started,
+        request_count: result.requestCount, result_count: result.rows.length };
+      console.log(`Collected ${company.company}: ${result.rows.length} rows in ${(result.timing.elapsed_ms / 1000).toFixed(1)}s`);
+      return result;
+    },
   );
   for (const result of companyResults) {
     rows.push(...result.rows);
@@ -1638,6 +1706,9 @@ async function main() {
 
   const summary = {
     run_started_at: collectedAt,
+    run_finished_at: utcNow(),
+    company_timings: companyResults.map(result => result.timing),
+    skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,
