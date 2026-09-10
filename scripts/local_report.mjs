@@ -7,7 +7,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { validateRows, investmentStageSupported } from "./validate_report_inputs.mjs";
-import { dateLabelKo, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
+import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
 import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
@@ -344,6 +344,14 @@ async function status(runDir) {
   return pending.length === 0 && invalid.length === 0;
 }
 
+export function coverageStatus(articles, reviewByArticle) {
+  if (!articles.length) return 'no_monthly_sources';
+  return articles.some(article => article.date_placement === 'date_pending' ||
+    !article.candidates.some(candidate => hasArticleBody(candidate.row)) ||
+    reviewByArticle.get(article.id).decisions.some(d => d.quality === 'needs_review'))
+    ? 'incomplete_evidence' : 'reviewed';
+}
+
 export async function build(args) {
   const runDir = path.resolve(args.runDir);
   const { snapshot, pending, invalid, results, reviews } = await loadReviews(runDir);
@@ -364,12 +372,14 @@ export async function build(args) {
     const reviewByArticle = new Map(reviews.map((review) => [review.article_id, review]));
     const coverage = snapshot.targets.map((target) => {
       const articles = snapshot.articles.filter((article) => article.company === target.company);
-      const incomplete = articles.filter((article) => reviewByArticle.get(article.id).decisions.some((d) => d.quality === "needs_review"));
+      const incomplete = articles.filter((article) =>
+        !article.candidates.some((candidate) => hasArticleBody(candidate.row)) ||
+        reviewByArticle.get(article.id).decisions.some((d) => d.quality === "needs_review"));
       const datePending = articles.filter((article) => article.date_placement === "date_pending");
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
         date_pending_articles: datePending.length,
-        status: !articles.length ? "no_monthly_sources" : incomplete.length ? "incomplete_evidence" : "reviewed",
+        status: coverageStatus(articles, reviewByArticle),
         follow_up: incomplete.map((article) => ({ url: article.url, title: article.title })),
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
