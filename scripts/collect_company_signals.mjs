@@ -2,7 +2,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createDomainGuard, collectWithCheckpoint, retryableCollection } from './collection_resilience.mjs';
+import { createDomainGuard, collectWithCheckpoint, retryableCollection, collectionInputDigest } from './collection_resilience.mjs';
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
 import {
   augustRule,
@@ -1710,6 +1710,7 @@ async function main() {
   const summary = {
     run_started_at: collectedAt,
     collection_resume_version: 1,
+    collection_input_digest: collectionInputDigest(companies, sourceConfig),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,

@@ -344,8 +344,8 @@ async function status(runDir) {
   return pending.length === 0 && invalid.length === 0;
 }
 
-export function coverageStatus(articles, reviewByArticle, collectionStatus) {
-  if (collectionStatus === 'incomplete') return 'incomplete_evidence';
+export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0) {
+  if (collectionStatus === 'incomplete' || deferredCount > 0) return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
   return articles.some(article => article.date_placement === 'date_pending' ||
     !article.candidates.some(candidate => hasArticleBody(candidate.row)) ||
@@ -371,7 +371,9 @@ export async function build(args) {
   const buildDir = await fs.mkdtemp(path.join(runDir, "report-"));
   try {
     const reviewByArticle = new Map(reviews.map((review) => [review.article_id, review]));
+    const deferred = snapshot.date_deferred || sourceCandidates(snapshot.signals, snapshot.technology, snapshot.indicators, snapshot.period).deferred;
     const coverage = snapshot.targets.map((target) => {
+      const deferredArticles = deferred.filter(article => article.company === target.company);
       const articles = snapshot.articles.filter((article) => article.company === target.company);
       const incomplete = articles.filter((article) =>
         !article.candidates.some((candidate) => hasArticleBody(candidate.row)) ||
@@ -380,9 +382,10 @@ export async function build(args) {
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
         date_pending_articles: datePending.length,
+        deferred_articles: deferredArticles.length,
         status: coverageStatus(articles, reviewByArticle,
-          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status),
-        follow_up: incomplete.map((article) => ({ url: article.url, title: article.title })),
+          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status, deferredArticles.length),
+        follow_up: [...incomplete.map((article) => ({ url: article.url, title: article.title })), ...deferredArticles],
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
     });
@@ -392,7 +395,7 @@ export async function build(args) {
       "investment.json": investment, "relevant.json": relevant,
       "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },
       "date-pending.json": { investment: datePending(investment), relevant: datePending(relevant),
-        deferred: snapshot.date_deferred || [], hints: dateHints(snapshot, reviews) },
+        deferred, hints: dateHints(snapshot, reviews) },
       "targets.json": snapshot.targets, "technology.json": snapshot.technology, "indicators.json": snapshot.indicators,
       "reviews.json": reviews,
       "decisions.json": results.map(({ row, ...item }) => item),
