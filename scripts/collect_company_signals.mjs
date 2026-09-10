@@ -1239,16 +1239,40 @@ function canFetchDetailContent(url) {
   return !/\.(xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
 }
 
-export function detailSourceUrl(row) {
-  const isGoogle = value => {
-    try { return /(^|\.)google\.com$/.test(new URL(value).hostname); } catch { return false; }
-  };
-  if (!isGoogle(row.url)) return row.url;
-  // Keep the RSS evidence; only fetch a known publisher URL, not a wrapper
-  // that this collector cannot decode into the original article.
-  if (row.source_direct_url && /^https?:\/\//i.test(row.source_direct_url) && !isGoogle(row.source_direct_url)) return row.source_direct_url;
-  return null;
+function isGoogle(value) {
+  try { return /(^|\.)google\.com$/.test(new URL(value).hostname); } catch { return false; }
 }
+
+export function detailSourceUrl(row) {
+  if (!isGoogle(row.url)) return row.url;
+  // Prefer a known publisher URL; otherwise probe the actual redirect.
+  if (row.source_direct_url && /^https?:\/\//i.test(row.source_direct_url) && !isGoogle(row.source_direct_url)) return row.source_direct_url;
+  return row.url;
+}
+
+export function createPublisherProbe(limit = 3) {
+  let failures = 0, queue = Promise.resolve();
+  return async (url, request) => {
+    if (!isGoogle(url)) return request();
+    // Serialize Google probes across company workers so the failure threshold
+    // cannot be exceeded by already queued requests. Other publishers run freely.
+    const result = queue.then(async () => {
+      if (failures >= limit) return null;
+      try {
+        const document = await request();
+        failures = 0;
+        return document;
+      } catch (error) {
+        failures = error.message === 'publisher_url_unresolved' ? failures + 1 : 0;
+        throw error;
+      }
+    });
+    queue = result.catch(() => {});
+    return result;
+  };
+}
+// In-memory only: each collector execution starts with fresh probes.
+const probePublisher = createPublisherProbe();
 
 export async function readLimitedPdf(response, limit = 20 * 1024 * 1024) {
   if (Number(response.headers.get('content-length')) > limit) {
@@ -1340,10 +1364,6 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       continue;
     }
     const detailUrl = detailSourceUrl(row);
-    if (!detailUrl) {
-      enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
-      continue;
-    }
 
     // 본문을 받아오지 않는 두 경로에서는 링크 텍스트와 URL만으로 제목을 확보해야 한다.
     if (detailCount >= args.maxDetailPerCompany || !canFetchDetailContent(row.url)) {
@@ -1367,11 +1387,17 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
     }
 
     try {
-      requestCount += 1;
-      detailCount += 1;
-      const document = row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)
-        ? { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl }
-        : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
+      const document = await probePublisher(detailUrl, async () => {
+        requestCount += 1;
+        detailCount += 1;
+        return row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)
+          ? { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl }
+          : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
+      });
+      if (!document) {
+        enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
+        continue;
+      }
       const html = document.html;
       const content = document.content ?? extractArticleText(html);
       const limitedContent = content.slice(0, args.contentCharLimit);
