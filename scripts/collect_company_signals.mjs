@@ -13,7 +13,7 @@ import {
   looksLikeSourceIndexUrl,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v4-accept-only';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v5-content-scope';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -480,19 +480,23 @@ const MODIFIED_META_NAMES = [
 ];
 
 // <time datetime="2026-08-14">는 요즘 가장 흔한 게시일 마크업인데 메타 태그 스캔으로는 잡히지 않는다.
-function extractDateFromTimeTag(html) {
+function extractDatesFromTimeTags(html) {
+  const evidence = [];
   for (const match of html.matchAll(/<time\b([^>]*)>([\s\S]*?)<\/time>/gi)) {
     const attrs = match[1] || "";
+    const property = extractAttribute(attrs, 'itemprop');
+    if (/startDate|endDate/i.test(property)) continue;
+    const modified = /dateModified/i.test(property) || /modified|updated/i.test(`${extractAttribute(attrs, 'class')} ${extractAttribute(attrs, 'id')}`);
     const parsed = extractAttribute(attrs, "datetime") || match[2];
-    if (dateEvidence(parsed, "time_tag")) return parsed;
-    const text = extractDateFromText(match[2]);
-    if (text) return text;
+    const source = modified ? 'modified_time_tag' : 'time_tag';
+    const kind = modified ? 'modified' : 'published';
+    const item = dateEvidence(parsed, source, kind) || dateEvidence(extractDateFromText(match[2]), source, kind);
+    if (item) evidence.push(item);
   }
   for (const match of html.matchAll(/<time\b([^>]*)\/>/gi)) {
-    const parsed = extractAttribute(match[1] || "", "datetime");
-    if (dateEvidence(parsed, "time_tag")) return parsed;
+    evidence.push(...extractDatesFromTimeTags(`<time ${match[1]}></time>`));
   }
-  return null;
+  return evidence;
 }
 
 // <span itemprop="datePublished" content="...">처럼 meta 태그가 아닌 곳에 실린 값.
@@ -515,7 +519,7 @@ export function collectHtmlDateEvidence(html, url = "") {
   return [
     dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
     dateEvidence(jsonLdPublished?.[1], "jsonld", "published"),
-    dateEvidence(extractDateFromTimeTag(html), "time_tag", "published"),
+    ...extractDatesFromTimeTags(html),
     dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
     dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
     dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),
@@ -542,17 +546,20 @@ function extractPageTitle(html) {
 }
 
 export function extractArticleText(html) {
-  const candidates = [];
+  // Prefer the article itself. Choosing the longest of article/main/body lets
+  // navigation and unrelated product lists become evidence for the AI review.
+  const scoped = html.replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
   for (const pattern of [
-    /<article\b[^>]*>([\s\S]*?)<\/article>/i,
-    /<main\b[^>]*>([\s\S]*?)<\/main>/i,
-    /<div\b[^>]*(?:class|id)=["'][^"']*(?:article|press|release|news|content|body)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i,
-    /<body\b[^>]*>([\s\S]*?)<\/body>/i,
+    /<article\b[^>]*>([\s\S]*?)<\/article>/gi,
+    /<main\b[^>]*>([\s\S]*?)<\/main>/gi,
+    /<body\b[^>]*>([\s\S]*?)<\/body>/gi,
   ]) {
-    const match = html.match(pattern);
-    if (match) candidates.push(cleanHtmlText(match[1]));
+    const candidates = [...scoped.matchAll(pattern)].map(match => cleanHtmlText(
+      pattern.source.startsWith('<article') ? match[1].replace(/<\/?header\b[^>]*>/gi, '') : match[1]
+    )).filter(Boolean);
+    if (candidates.length) return candidates.sort((a, b) => b.length - a.length)[0];
   }
-  return candidates.sort((a, b) => b.length - a.length)[0] || cleanHtmlText(html);
+  return cleanHtmlText(scoped);
 }
 
 function contentExcerpt(text = "", limit = 800) {
