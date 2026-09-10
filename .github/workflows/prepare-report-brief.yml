@@ -18,6 +18,18 @@ on:
         description: "Characters of article text per entry (higher is more evidence, larger file)"
         required: false
         default: "900"
+      link_policy:
+        description: "Link filtering rule: current keeps today's behaviour, proposed also collects links that need the document to decide"
+        required: false
+        default: "current"
+        type: choice
+        options:
+          - current
+          - proposed
+      max_verify_per_company:
+        description: "How many uncertain links per company may be fetched to decide (only used by link_policy=proposed)"
+        required: false
+        default: "2"
 
 concurrency:
   group: manual-report-${{ github.ref }}
@@ -80,6 +92,8 @@ jobs:
           --fallback-min-results 1
           --rate-limit-seconds 0.5
           --company-concurrency 4
+          --link-policy ${{ inputs.link_policy }}
+          --max-verify-per-company ${{ inputs.max_verify_per_company }}
       - run: >
           node scripts/filter_relevant_signals.mjs
           --signals outputs/latest_company_signals.json
