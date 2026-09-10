@@ -1,0 +1,146 @@
+name: link-policy-trial
+
+# 링크 판정 규칙을 바꾸기 전에 수집만 돌려보는 경로.
+#
+# collect-company-signals 는 수집과 AI 검토가 한 덩어리라, 규칙 하나 바꿔보려고 돌리면
+# 검토 요청 400건이 같이 나간다. 여기서는 수집기와 감사 도구만 돌리고 결과를 아티팩트로
+# 올린다. AI 는 부르지 않고 outputs/ 도 커밋하지 않는다.
+#
+# 같은 기간으로 link_policy=current 와 proposed 를 한 번씩 돌려 두 아티팩트를 비교하면
+# 회수량과 소음 증가량이 나온다. 판단이 끝나면 collect-company-signals 쪽에 연결한다.
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Collection start date (YYYY-MM-DD); leave empty for previous calendar month"
+        required: false
+        default: ""
+      to_date:
+        description: "Collection end date (YYYY-MM-DD); leave empty for previous calendar month"
+        required: false
+        default: ""
+      link_policy:
+        description: "Link rule: current is today's behaviour, proposed also keeps links that need the document to decide"
+        type: choice
+        options: [current, proposed]
+        default: current
+      max_verify_per_company:
+        description: "Uncertain links per company that may be fetched to decide (proposed only)"
+        type: string
+        default: "2"
+      company_limit:
+        description: "Companies to collect; 0 means all 77"
+        type: string
+        default: "0"
+      run_audit:
+        description: "Also run the three-rule shadow audit over the listing pages"
+        type: boolean
+        default: true
+
+concurrency:
+  group: link-policy-trial-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trial:
+    runs-on: ubuntu-latest
+    # 아무것도 커밋하지 않는다. 이 워크플로는 읽고 재기만 한다.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      # 수집기가 PDF 본문을 뽑을 때 python 을 부른다. 이게 없으면 PDF 기사가 본문 없이
+      # 남아 두 정책의 비교가 어긋난다.
+      - run: python -m pip install -r requirements-python.txt
+      - name: Resolve reporting period
+        id: report_period
+        shell: bash
+        env:
+          INPUT_FROM_DATE: ${{ inputs.from_date }}
+          INPUT_TO_DATE: ${{ inputs.to_date }}
+          TZ: Asia/Seoul
+        run: |
+          if [[ -n "$INPUT_FROM_DATE" || -n "$INPUT_TO_DATE" ]]; then
+            if [[ -z "$INPUT_FROM_DATE" || -z "$INPUT_TO_DATE" ]]; then
+              echo "from_date and to_date must be supplied together" >&2
+              exit 1
+            fi
+            from_date="$INPUT_FROM_DATE"
+            to_date="$INPUT_TO_DATE"
+          else
+            current_month_start="$(date +%Y-%m-01)"
+            from_date="$(date -d "$current_month_start -1 month" +%F)"
+            to_date="$(date -d "$current_month_start -1 day" +%F)"
+          fi
+          if [[ "$(date -d "$from_date" +%F 2>/dev/null)" != "$from_date" ]] ||
+             [[ "$(date -d "$to_date" +%F 2>/dev/null)" != "$to_date" ]] ||
+             [[ "$from_date" > "$to_date" ]]; then
+            echo "invalid reporting period: $from_date .. $to_date" >&2
+            exit 1
+          fi
+          echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
+          echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
+          echo "Reporting period: $from_date .. $to_date (link_policy=${{ inputs.link_policy }})"
+      - name: Collect
+        run: >
+          node scripts/collect_company_signals.mjs
+          --companies data/target_companies.json
+          --source-config config/company_sources.json
+          --out-dir outputs/link_trial
+          --sources official_feeds,official_pages,google_news
+          --from-date ${{ steps.report_period.outputs.from_date }}
+          --to-date ${{ steps.report_period.outputs.to_date }}
+          --max-per-source 6
+          --max-per-company 10
+          --max-detail-per-company 10
+          --fallback-mode missing
+          --fallback-min-results 1
+          --rate-limit-seconds 0.5
+          --company-concurrency 4
+          --company-limit ${{ inputs.company_limit }}
+          --link-policy ${{ inputs.link_policy }}
+          --max-verify-per-company ${{ inputs.max_verify_per_company }}
+      - name: Shadow audit over the listing pages
+        if: ${{ inputs.run_audit }}
+        run: >
+          node scripts/audit_link_rules.mjs
+          --out-dir outputs/link_trial/audit
+          --cache-dir outputs/link_trial/cache
+          --per-company 2
+      - name: Headline numbers
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          summary=outputs/link_trial/latest_collection_summary.json
+          [[ -f "$summary" ]] || exit 0
+          {
+            echo "### link_policy=${{ inputs.link_policy }}"
+            echo '```'
+            node -e '
+              const s = require("./" + process.argv[1]);
+              const keep = ["link_policy", "result_count", "official_result_count",
+                "press_release_result_count", "request_count", "undated_result_count",
+                "excluded_non_article_count", "link_verdict_counts",
+                "excluded_non_article_reasons", "date_status_counts"];
+              for (const key of keep) console.log(key + ": " + JSON.stringify(s[key]));
+            ' "$summary"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      # 캐시는 감사 도구가 목록 페이지 HTML을 담아둔 것이라 아티팩트에 넣지 않는다.
+      - name: Upload the collection and the audit
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: link-policy-${{ inputs.link_policy }}-${{ github.run_id }}
+          path: |
+            outputs/link_trial
+            !outputs/link_trial/cache
+          retention-days: 14
+          if-no-files-found: warn
