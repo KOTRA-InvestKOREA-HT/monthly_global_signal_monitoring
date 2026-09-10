@@ -2,6 +2,17 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
+export function collectionInputDigest(targets, sourceConfig) {
+  return crypto.createHash('sha256').update(JSON.stringify({ targets, sourceConfig })).digest('hex');
+}
+
+export function collectionNeedsRefresh(summary, { version, inputDigest, now = Date.now() }) {
+  const age = now - Date.parse(summary.run_finished_at || summary.run_started_at);
+  return summary.content_collection_version !== version || summary.collection_resume_version !== 1 ||
+    summary.collection_input_digest !== inputDigest || summary.retryable_company_count > 0 ||
+    !Number.isFinite(age) || age < 0 || age >= 24 * 3600000;
+}
+
 export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 30000 } = {}) {
   const domains = new Map();
   const stats = { attempts: 0, skipped: 0, elapsed_ms: 0 };
@@ -41,7 +52,8 @@ export async function collectWithCheckpoint({ directory, identity, collect, now 
   if (!refresh) {
     try {
       const saved = JSON.parse(await fs.readFile(file, 'utf8'));
-      if (saved.version === 1 && now() - saved.saved_at < 24 * 3600000 && !retryableCollection(saved.result)) {
+      const age = now() - saved.saved_at;
+      if (saved.version === 1 && Number.isFinite(age) && age >= 0 && age < 24 * 3600000 && !retryableCollection(saved.result)) {
         return { ...saved.result, requestCount: 0, cached: true };
       }
     } catch { /* missing/corrupt progress is recollected */ }
