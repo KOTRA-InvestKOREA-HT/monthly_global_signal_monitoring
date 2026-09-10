@@ -11,7 +11,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { renderReport } from './report_html.mjs';
+import { ITEM_BAND, renderReport } from './report_html.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const VIEW_MODEL = path.join(ROOT, 'scripts', 'report_view_model.py');
@@ -75,6 +75,50 @@ async function printPdf(htmlPath, pdfPath) {
   throw new Error(`No usable Chrome or Edge found. Set CHROME_PATH.\n${failures.join('\n')}`);
 }
 
+// Ask the browser how tall each trend card came out. The drawn report adds up
+// line counts and padding constants to predict this; the engine that laid the
+// cards out already knows, so the sheets are cut from measurement instead.
+const CARD_HEIGHTS = `<script>
+document.title = 'CARDS' + JSON.stringify([...document.querySelectorAll('.item-card')]
+  .map(card => card.getBoundingClientRect().height / (96 / 72))) + 'END';
+</script>`;
+
+async function cardHeights(html, near) {
+  const probePath = path.join(path.dirname(near), '.card-probe.html');
+  await fs.writeFile(probePath, html.replace('</body>', `${CARD_HEIGHTS}</body>`), 'utf8');
+  const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-cards-'));
+  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run',
+    `--user-data-dir=${work}`, '--virtual-time-budget=10000', '--dump-dom', pathToFileURL(probePath).href];
+  try {
+    for (const command of browserCandidates()) {
+      const dom = await run(command, args, { capture: true }).catch(() => null);
+      const found = dom && /CARDS(\[.*?\])END/s.exec(dom);
+      if (found) return JSON.parse(found[1]);
+    }
+  } finally {
+    await fs.rm(work, { recursive: true, force: true });
+    await fs.rm(probePath, { force: true });
+  }
+  throw new Error('Could not measure the trend cards.');
+}
+
+// A card that would cross the band's bottom starts the next sheet instead.
+export function itemBreaks(heights) {
+  const breaks = [];
+  let cursor = ITEM_BAND.firstTop;
+  let onSheet = 0;
+  heights.forEach((height, index) => {
+    if (onSheet && cursor + height > ITEM_BAND.bottom) {
+      breaks.push(index);
+      cursor = ITEM_BAND.top;
+      onSheet = 0;
+    }
+    cursor += height + ITEM_BAND.gap;
+    onSheet += 1;
+  });
+  return breaks;
+}
+
 function parseArgs(argv) {
   const args = {};
   for (let i = 0; i < argv.length; i += 2) {
@@ -104,12 +148,20 @@ async function main() {
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   const htmlPath = args.html ? path.resolve(args.html) : `${outPath.replace(/\.pdf$/i, '')}.html`;
   const assets = pathToFileURL(path.join(ROOT, 'assets')).href;
-  await fs.writeFile(htmlPath, renderReport(model, { assets }), 'utf8');
+  let html = renderReport(model, { assets });
+  let breaks = [];
+  if (model.items?.cards?.length > 1) {
+    breaks = itemBreaks(await cardHeights(html, htmlPath));
+    if (breaks.length) html = renderReport(model, { assets, itemBreaks: breaks });
+  }
+  await fs.writeFile(htmlPath, html, 'utf8');
   const browser = await printPdf(htmlPath, outPath);
   console.log(JSON.stringify({
     output: outPath, html: htmlPath, browser, lang: model.lang,
     company_count: model.matrix.rows.length,
     matrix_counts: model.matrix.counts,
+    item_cards: model.items?.cards?.length ?? 0,
+    item_pages: model.items?.cards?.length ? breaks.length + 1 : 0,
   }, null, 2));
 }
 

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT } from '../scripts/report_html.mjs';
+import { renderReport, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
+import { itemBreaks } from '../scripts/build_html_report.mjs';
 
 const row = (no, company, signals = [false, false, false, false, false]) => ({ target_no: no, company, signals });
 
@@ -154,4 +155,63 @@ test('a model without detail pages still renders the cover and matrix', () => {
   const html = renderReport(model(77));
   assert.equal(pages(html), 2);
   assert.equal(occurrences(html, 'class="signal-box"'), 0);
+});
+
+
+const itemCard = company => ({
+  company, industry: '이차전지 핵심소재', country: '미국',
+  target_text: '양극재 소재', body: '본문', source: '출처 Newsroom 2026.08.05',
+});
+
+function withItems(companies) {
+  const base = model(77);
+  base.items = {
+    kicker: 'T A R G E T - I T E M   S I G N A L S',
+    title: '품목별 글로벌 사업동향',
+    note: '5대 시그널에는 미포착되었으나...',
+    target_label: '투자유치 필요 품목·기술',
+    trend_label: '8월 글로벌 사업동향',
+    cards: companies.map(itemCard),
+  };
+  return base;
+}
+
+test('trend cards share one sheet until the builder says otherwise', () => {
+  const html = renderReport(withItems(['Albemarle', 'HyproMag']));
+  assert.equal(pages(html), 3);
+  assert.equal(occurrences(html, 'class="item-card"'), 2);
+  // The note introduces the section once.
+  assert.equal(occurrences(html, '5대 시그널에는 미포착되었으나...'), 1);
+});
+
+test('a break moves the cards after it onto the next sheet', () => {
+  const html = renderReport(withItems(['A', 'B', 'C']), { itemBreaks: [2] });
+  assert.equal(pages(html), 4);
+  assert.match(html, /T A R G E T[^<]*· 1\/2/);
+  assert.match(html, /T A R G E T[^<]*· 2\/2/);
+  // Only the first sheet carries the note and its lower start.
+  assert.equal(occurrences(html, 'class="items first"'), 1);
+});
+
+test('a report with no item trends ends after the detail pages', () => {
+  const html = renderReport(withDetails(['Ouster']));
+  assert.equal(occurrences(html, 'class="item-card"'), 0);
+  assert.equal(pages(html), 3);
+});
+
+test('a card that would cross the band starts the next sheet', () => {
+  const room = ITEM_BAND.bottom - ITEM_BAND.firstTop;
+  // Two cards that just fit the first sheet, then one that cannot.
+  const half = (room - ITEM_BAND.gap) / 2;
+  assert.deepEqual(itemBreaks([half, half, half]), [2]);
+  // A single card taller than the band is not pushed off a sheet of its own.
+  assert.deepEqual(itemBreaks([room + 200]), []);
+  assert.deepEqual(itemBreaks([10, 10, 10]), []);
+});
+
+test('later sheets start higher, because only the first carries the note', () => {
+  assert.equal(ITEM_BAND.top < ITEM_BAND.firstTop, true);
+  const tall = ITEM_BAND.bottom - ITEM_BAND.firstTop - ITEM_BAND.gap + 1;
+  // The same card fits on a later sheet even though it ended the first one.
+  assert.deepEqual(itemBreaks([tall, tall]), [1]);
 });

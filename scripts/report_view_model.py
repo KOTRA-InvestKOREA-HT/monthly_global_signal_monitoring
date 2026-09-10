@@ -6,14 +6,15 @@ country names, industry groups, which cells of the matrix are lit, how the
 footnote counts companies. This imports those decisions rather than restating
 them, and writes only the result.
 
-The cover, matrix and per-company detail pages are modelled; the item-trend
-pages still come from the reportlab path.
+Every page of the report is modelled: cover, matrix, per-company detail and
+the item-linked business trend cards.
 """
 
 import argparse
 import io
 import json
 import sys
+from types import SimpleNamespace
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -121,6 +122,38 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, font):
     return entries
 
 
+# The trend card's body column, from the card's own geometry.
+ITEM_BODY_WIDTH = 446
+
+
+def item_entries(profiles, signal_index, relevant, summary, font):
+    """The companies with no five-signal profile but a target-item trend."""
+    entries = report.build_item_trend_entries(profiles, signal_index, relevant)
+    if not entries:
+        return None
+    report.register_fonts(font)
+    month = report.report_month_label(summary)
+    measure = SimpleNamespace(canvas=report.canvas.Canvas(io.BytesIO()), fonts=report.register_fonts(font))
+    return {
+        "kicker": "T A R G E T - I T E M   S I G N A L S",
+        "title": report.t("item_title"),
+        "note": report.t("item_note", month=month),
+        "target_label": report.t("item_target_label"),
+        "trend_label": report.t("item_trend_label", month=month),
+        "cards": [{
+            "company": entry["profile"]["company"],
+            "industry": entry["profile"].get("detailed_industry", ""),
+            "country": entry["profile"].get("country", ""),
+            "target_text": report.item_target_text(entry["profile"]),
+            # Trimmed to whole sentences rather than cut mid-phrase, which is a
+            # judgement about the text and so belongs on this side.
+            "body": report.item_trend_body(measure, entry["row"], ITEM_BODY_WIDTH,
+                                           report.ITEM_BODY_SIZE, report.ITEM_BODY_MAX_LINES)[0],
+            "source": report.source_line(entry["row"]),
+        } for entry in entries],
+    }
+
+
 def indicator_entries(indicators):
     entries = []
     for item in indicators:
@@ -191,6 +224,7 @@ def build(args):
             "title": report.t("detail_title"),
             "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, args.font),
         },
+        "items": item_entries(profiles, signal_index, relevant, summary, args.font),
     }
 
 
