@@ -14,3 +14,4 @@ outputs/local_reports/
 .DS_Store
 outputs/gemini_work/
 outputs/golden_eval/
+tests/__pycache__/
