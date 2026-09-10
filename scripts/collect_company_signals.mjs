@@ -12,7 +12,9 @@ import {
   looksLikeSourceIndexUrl,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v3';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v4-accept-only';
+export const DEFAULT_LINK_POLICY = 'proposed';
+export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
 const FIELDNAMES = [
   "target_no",
@@ -69,7 +71,7 @@ let fetchRetries = 2;
 let retryCount = 0;
 
 // 링크 판정 규칙과 그 결과 집계. main 이 인자를 읽고 정한다.
-let linkPolicy = "current";
+let linkPolicy = DEFAULT_LINK_POLICY;
 const linkVerdictCounts = new Map();
 
 function countLinkVerdict(verdict) {
@@ -104,7 +106,7 @@ function excludedSamples() {
   return [...excludedByReason.values()].flat();
 }
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const args = {
     companies: "data/target_companies.json",
     sourceConfig: "config/company_sources.json",
@@ -126,10 +128,9 @@ function parseArgs(argv) {
     contentExcerptLimit: 800,
     maxDetailPerCompany: 8,
     fetchRetries: 2,
-    // 링크 판정 규칙. proposed 로 바꾸기 전에 scripts/audit_link_rules.mjs 로 회수량과
-    // 소음 증가량을 먼저 재라. 기본값은 지금 돌고 있는 규칙이다.
-    linkPolicy: "current",
-    maxVerifyPerCompany: 4,
+    // Keep recovered accept links; uncertain document verification is opt-in.
+    linkPolicy: DEFAULT_LINK_POLICY,
+    maxVerifyPerCompany: DEFAULT_MAX_VERIFY_PER_COMPANY,
   };
   const keyMap = {
     "--companies": "companies",
@@ -186,6 +187,8 @@ function parseArgs(argv) {
       args[mapped] = value;
     }
   }
+  if (!['current', 'proposed'].includes(args.linkPolicy)) throw new Error('Invalid --link-policy');
+  if (!Number.isInteger(args.maxVerifyPerCompany) || args.maxVerifyPerCompany < 0) throw new Error('Invalid --max-verify-per-company');
   return args;
 }
 
@@ -1263,9 +1266,10 @@ function chooseBetterTitle(currentTitle, pageTitle, url, company) {
   return currentTitle;
 }
 
-async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
+export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
+  rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
-    return { rows, requestCount: 0, errors: [] };
+    return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
   }
 
   const enriched = [];
@@ -1275,7 +1279,7 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
   let verifyCount = 0;
 
   for (const row of rows) {
-    if (row.content_text) {
+    if (row.content_text && row.link_verdict !== 'fetch_to_verify') {
       enriched.push(row);
       continue;
     }
@@ -1325,6 +1329,10 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
           : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
       });
       if (!document) {
+        if (row.link_verdict === 'fetch_to_verify') {
+          recordExclusion(row.company, row.title, row.url, 'unverified_no_fetch');
+          continue;
+        }
         enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
         continue;
       }
@@ -1372,6 +1380,10 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
         source_name: row.source,
         error: error.message,
       });
+      if (row.link_verdict === 'fetch_to_verify') {
+        recordExclusion(row.company, row.title, row.url, 'unverified_fetch_error');
+        continue;
+      }
       enriched.push({
         ...row,
         content_fetch_status: "error",
@@ -1460,8 +1472,13 @@ function dedupeRows(rows) {
 // maxPerCompany 로 자를 때 무엇을 먼저 버릴지 정한다. link_rank 는 0=지금도 걷던 기사,
 // 1=새로 받아들인 기사, 2=받아봐야 아는 후보다. 표시 순서가 아니라 잘라내는 순서라서,
 // 자른 뒤에 sortRows 로 다시 정렬한다. 기본 정책에서는 모든 행이 0이라 아무것도 달라지지 않는다.
-function trimByRank(rows, limit) {
+export function trimByRank(rows, limit) {
   return [...rows].sort((a, b) => (a.link_rank ?? 0) - (b.link_rank ?? 0)).slice(0, limit);
+}
+
+export function selectDetailRows(rows, maxVerify = DEFAULT_MAX_VERIFY_PER_COMPANY) {
+  return [...rows].filter(row => maxVerify > 0 || row.link_verdict !== 'fetch_to_verify')
+    .sort((a, b) => acceptFirst(a) - acceptFirst(b));
 }
 
 function sortRows(rows) {
@@ -1592,7 +1609,8 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
     }
   }
 
-  const selectedCompanyRows = sortRows(trimByRank(sortRows(dedupeRows(companyRows)), args.maxPerCompany));
+  // Drop disabled probes before the company cap; keep priority through fetching.
+  const selectedCompanyRows = trimByRank(selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany), args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);

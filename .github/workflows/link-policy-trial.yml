@@ -20,14 +20,14 @@ on:
         required: false
         default: ""
       link_policy:
-        description: "Link rule: current is today's behaviour, proposed also keeps links that need the document to decide"
+        description: "Link rule: proposed recovers article links; current is the comparison baseline"
         type: choice
         options: [current, proposed]
-        default: current
+        default: proposed
       max_verify_per_company:
         description: "Uncertain links per company that may be fetched to decide (proposed only)"
         type: string
-        default: "2"
+        default: "0"
       company_limit:
         description: "Companies to collect; 0 means all 77"
         type: string
