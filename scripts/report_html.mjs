@@ -24,6 +24,13 @@ export const COLORS = {
   footerBg: '#EFF4F8',
   divider: '#D6DEE9',
   rowNo: '#737C86',
+  boxLine: '#E4EAF0',
+  tealBg: '#EAF7F4',
+  tealLine: '#9EDCD3',
+  teal: '#087A70',
+  pill: '#56687B',
+  grey: '#B1B6BE',
+  faint: '#B5B9BF',
 };
 
 // Rows per matrix column, from the page geometry: the table starts 145pt down,
@@ -55,9 +62,9 @@ const footer = state => `
         <span class="folio">${String(state.number).padStart(2, '0')}</span>
       </footer>`;
 
-const header = (kicker, title) => `
+const header = (kicker, title, fraction = '') => `
       <header class="header">
-        <p class="kicker">${escapeHtml(kicker)}</p>
+        <p class="kicker">${escapeHtml(kicker)}${fraction ? ` · ${escapeHtml(fraction)}` : ''}</p>
         <h2>${escapeHtml(title)}</h2>
       </header>`;
 
@@ -130,6 +137,59 @@ function matrixPages(state, model) {
       </div>` : ''}`)).join('');
 }
 
+// A signal's summary is one paragraph: the headline in semibold, then the rest
+// after an em dash. Whether the two share a line is settled upstream, because
+// only the side holding the font metrics can measure it.
+const summary = signal => {
+  if (signal.plain) return `<p class="summary">${escapeHtml(signal.plain)}</p>`;
+  const headline = `<strong>${escapeHtml(signal.headline)}</strong>`;
+  if (!signal.detail) return `<p class="summary">${headline}</p>`;
+  return signal.inline
+    ? `<p class="summary">${headline} — ${escapeHtml(signal.detail)}</p>`
+    : `<p class="summary">${headline}</p><p class="summary continued">— ${escapeHtml(signal.detail)}</p>`;
+};
+
+const signalRow = signal => `
+          <li class="signal ${signal.active ? 'on' : 'off'}">
+            <span class="badge">${escapeHtml(signal.no)}</span>
+            <div class="signal-body">
+              <p class="signal-head">
+                <span class="pill">${escapeHtml(signal.label)}</span>
+                ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
+              </p>
+              ${signal.active ? `${summary(signal)}<p class="source">${escapeHtml(signal.source)}</p>` : ''}
+            </div>
+          </li>`;
+
+function detailPages(state, model, assets) {
+  const { details } = model;
+  const marker = assets
+    ? `<img class="marker" src="${assets}/images/emoji_target_1f3af.png" alt="">`
+    : '<span class="marker"></span>';
+  return details.pages.map((entry, index) => page(state, `
+      ${header(details.kicker, details.title, `${index + 1}/${details.pages.length}`)}
+      <div class="detail">
+        <section class="signal-box">
+          <div class="detail-head">
+            <h3>${escapeHtml(entry.company)}</h3>
+            ${entry.industry ? `<span class="pill industry">${escapeHtml(entry.industry)}</span>` : ''}
+            <span class="country">${escapeHtml(entry.country)}</span>
+          </div>
+          <ol class="signals">${entry.signals.map(signalRow).join('')}</ol>
+        </section>
+        <section class="business-box">
+          <p class="business-head">
+            <span class="business-heading">${escapeHtml(entry.business.heading)}</span>
+            ${entry.business.target_text ? `
+            <span class="pill target">${marker}${escapeHtml(entry.business.target_label)}</span>
+            <span class="target-text">${escapeHtml(entry.business.target_text)}</span>` : ''}
+          </p>
+          <p class="business-body">${escapeHtml(entry.business.body)}</p>
+          <p class="source">${escapeHtml(entry.business.source)}</p>
+        </section>
+      </div>`)).join('');
+}
+
 // `assets` is a URL prefix for fonts and images: a file:// directory when
 // printing, a served path when the same markup is a web page.
 export function renderReport(model, { assets = '' } = {}) {
@@ -144,6 +204,7 @@ export function renderReport(model, { assets = '' } = {}) {
 <body>
 ${coverPage(state, model, assets)}
 ${matrixPages(state, model)}
+${model.details ? detailPages(state, model, assets) : ''}
 </body>
 </html>
 `;
@@ -303,6 +364,144 @@ body {
 .logo-ik { height: 32pt; }
 
 /* ---- matrix ---- */
+/* ---- company detail ---- */
+/* The drawn page decides how many lines of each summary to show by trying a
+   ladder of line counts until one fits. Here each row is as tall as its own
+   text and the boxes follow, so there is nothing to search for; the clamps
+   below are the same ceilings that ladder topped out at. */
+.detail { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
+.signal-box, .business-box {
+  border: 0.9pt solid ${COLORS.boxLine};
+  border-radius: 10pt;
+}
+.signal-box { background: #fff; padding: 0 0 24pt; }
+.detail-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14pt;
+  margin: 0 17pt;
+  padding: 9.5pt 0 17.2pt;
+  border-bottom: 1pt solid #000;
+}
+.detail-head h3 { margin: 0; font-size: 14pt; font-weight: 600; white-space: nowrap; }
+.detail-head .country { font-size: 9pt; font-weight: 600; color: ${COLORS.grey}; white-space: nowrap; }
+.pill {
+  display: inline-block;
+  padding: 2pt 9pt;
+  border-radius: 3pt;
+  background: ${COLORS.light};
+  font-size: 9pt;
+  font-weight: 600;
+  color: ${COLORS.pill};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.detail-head .industry { flex: 0 1 auto; min-width: 0; max-width: 190pt; }
+/* The box border sits inside its 480pt, so the padding is short by it and
+   the row separators still span 49pt to 491pt. */
+.signals { margin: 0; padding: 9.6pt 18.1pt 0; list-style: none; }
+.signal { position: relative; display: flex; gap: 15pt; padding-bottom: 10pt; }
+.signal + .signal { padding-top: 6pt; }
+/* Drawn rather than a border: a border would add its own width to the row and
+   walk every row below it down the page. */
+.signal:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 0.9pt solid ${COLORS.boxLine};
+}
+.signal .badge {
+  flex: none;
+  width: 16pt;
+  height: 16pt;
+  border-radius: 3pt;
+  background: ${COLORS.navy};
+  color: #fff;
+  font-size: 9pt;
+  font-weight: 600;
+  line-height: 16pt;
+  text-align: center;
+}
+.signal.off .badge { background: #D8DADF; }
+.signal-body { flex: 1; min-width: 0; }
+/* A silent row still occupies the 21pt the drawn page gives it. */
+.signal.off .signal-body { padding-bottom: 5pt; }
+/* The gap under the last row belongs to the box, not to the row. */
+.signal:last-child { padding-bottom: 0; }
+.signal-head { display: flex; align-items: baseline; gap: 18pt; height: 16pt; margin: 0; }
+.signal-head .pill { flex: 0 1 auto; min-width: 0; padding: 2pt 8pt; font-size: 7.6pt; }
+.signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 10pt; color: ${COLORS.faint}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signal-head .dash { margin-left: auto; margin-right: 12pt; font-size: 10pt; color: ${COLORS.faint}; }
+.summary {
+  margin: 3.6pt 0 0;
+  /* The summary column is narrower than the row: the drawn page reserves the
+     right end of the row for nothing, and the wrapping must match. */
+  max-width: 378pt;
+  font-size: 8.8pt;
+  line-height: 10.4pt;
+  word-break: keep-all;
+  /* The ladder stopped at six lines; past that a summary is cut, not carried. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}
+.summary strong { font-weight: 600; }
+.summary.continued { margin-top: 0; }
+.signal .source, .business-box .source { margin: 2.4pt 0 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+/* The drawn row keeps 2.5pt under the source line before its separator. */
+.signal .source { max-width: 378pt; padding-bottom: 2.6pt; }
+.business-box {
+  margin-top: 15.2pt;
+  min-height: 88pt;
+  padding: 11.2pt 15.3pt 22.2pt;
+  background: ${COLORS.tealBg};
+  border-color: ${COLORS.tealLine};
+}
+/* A target name too long to sit beside its label drops to a line of its own
+   and gets the whole box width, which is what the drawn page arranges by
+   measuring first and growing the box by a fixed 15pt. */
+.business-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 9pt; row-gap: 4.6pt; margin: 0; }
+.business-heading {
+  font-size: 8.5pt;
+  font-weight: 600;
+  color: ${COLORS.teal};
+  letter-spacing: 0.85pt;
+  margin-right: 9pt;
+  white-space: nowrap;
+}
+.business-head .target {
+  display: inline-flex;
+  align-items: center;
+  gap: 5pt;
+  background: #DDF0EE;
+  color: ${COLORS.teal};
+  font-size: 8.5pt;
+}
+.business-head .marker { width: 11pt; height: 11pt; }
+.target-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 9.5pt;
+  font-weight: 600;
+  color: ${COLORS.teal};
+  word-break: keep-all;
+}
+.business-body {
+  margin: 6.4pt 0 0;
+  font-size: 9pt;
+  line-height: 10.35pt;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 9;
+  overflow: hidden;
+}
+.business-box .source { margin-top: 7.1pt; font-size: 8pt; }
+
 .matrix-desc {
   margin: 0 0 5pt;
   font-size: 8pt;

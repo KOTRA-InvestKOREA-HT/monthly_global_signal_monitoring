@@ -6,7 +6,7 @@ country names, industry groups, which cells of the matrix are lit, how the
 footnote counts companies. This imports those decisions rather than restating
 them, and writes only the result.
 
-Only the cover and matrix pages are modelled so far; the detail and item-trend
+The cover, matrix and per-company detail pages are modelled; the item-trend
 pages still come from the reportlab path.
 """
 
@@ -55,6 +55,72 @@ def title_size(titles, font):
     return size
 
 
+# The signal body column, from the detail page's own geometry.
+SIGNAL_BODY_WIDTH = 378
+
+
+def summary_fits_one_line(parts, font):
+    """Whether the headline and its detail are short enough to share a line.
+
+    The drawn page keeps them on one line when they fit and gives the detail its
+    own line when they do not, because reportlab cannot wrap a run that changes
+    weight mid-sentence. CSS wraps such a run without being asked, but it cannot
+    measure, so the decision is made here and travels with the text.
+    """
+    if not parts or not parts.get("detail"):
+        return True
+    fonts = report.register_fonts(font)
+    measure = report.canvas.Canvas(io.BytesIO())
+    size = report.SIGNAL_BODY_SIZE
+    return (measure.stringWidth(parts["headline"], fonts["semibold"], size)
+            + measure.stringWidth(f" — {parts['detail']}", fonts["demilight"], size)) <= SIGNAL_BODY_WIDTH
+
+
+def signal_entry(no, rows, font):
+    """One of the five signal rows: its label, and the summary if it fired."""
+    label = report.SIGNAL_DESCRIPTIONS_EN[no] if report.LANG == "en" else report.SIGNAL_DESCRIPTIONS[no]
+    if not rows:
+        return {"no": no, "label": label, "active": False, "empty": report.t("no_signal")}
+    row = rows[0]
+    parts = report.summary_parts(row)
+    return {
+        "no": no,
+        "label": label,
+        "active": True,
+        # A headline and its detail are one paragraph: bold, an em dash, then the
+        # rest. Whether that fits on one line is the renderer's business.
+        "headline": (parts or {}).get("headline", ""),
+        "detail": (parts or {}).get("detail", ""),
+        "plain": "" if parts else report.detail_text(row, 560),
+        "inline": summary_fits_one_line(parts, font),
+        "source": report.source_line(row),
+    }
+
+
+def detail_entries(profiles, signal_index, relevant, investment, signals, font):
+    entries = []
+    for profile in profiles:
+        rows_by_signal = signal_index.get(profile["company"], {})
+        if not any(rows_by_signal.values()):
+            continue
+        business_row = report.best_business_row(profile["company"], relevant, investment, signals)
+        target_label, target_text = report.target_section_for_profile(profile)
+        entries.append({
+            "company": profile["company"],
+            "country": profile.get("country", ""),
+            "industry": profile.get("detailed_industry", ""),
+            "signals": [signal_entry(no, rows_by_signal.get(no, []), font) for no in range(1, 6)],
+            "business": {
+                "heading": report.t("business_heading"),
+                "target_label": target_label,
+                "target_text": target_text,
+                "body": report.business_text([business_row] if business_row else []),
+                "source": report.source_line(business_row) if business_row else report.t("source_empty"),
+            },
+        })
+    return entries
+
+
 def indicator_entries(indicators):
     entries = []
     for item in indicators:
@@ -74,9 +140,11 @@ def build(args):
     signals = report.load_json(args.signals, [])
     summary = report.override_summary_period(report.load_json(args.summary, {}), args.from_date, args.to_date)
     investment_signals = report.load_json(args.investment_signals, [])
+    relevant = report.load_json(args.relevant, [])
     indicators = report.load_json(args.indicator_config, {}).get("indicators", [])
 
     signals = report.filter_rows_by_report_period(signals, summary)
+    relevant = report.filter_rows_by_report_period(relevant, summary)
     investment_signals = report.filter_rows_by_report_period(investment_signals, summary)
     investment_signals = report.filter_ignored_signals(
         investment_signals, report.parse_ignored_signal_keys(args.ignored_signals))
@@ -118,6 +186,11 @@ def build(args):
                 "signals": [bool(signal_index.get(profile["company"], {}).get(no)) for no in range(1, 6)],
             } for profile in profiles],
         },
+        "details": {
+            "kicker": "C O M P A N Y   S I G N A L S",
+            "title": report.t("detail_title"),
+            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, args.font),
+        },
     }
 
 
@@ -128,6 +201,7 @@ def main():
     parser.add_argument("--signals", required=True)
     parser.add_argument("--summary", required=True)
     parser.add_argument("--investment-signals", required=True)
+    parser.add_argument("--relevant", default="outputs/latest_relevant_signals.json")
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", default="assets/fonts/NOTOSANSKR-VF.TTF")
     parser.add_argument("--issue-number", default=report.DEFAULT_ISSUE_NUMBER)

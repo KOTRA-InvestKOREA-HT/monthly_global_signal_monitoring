@@ -38,6 +38,30 @@ export const EXPECTED = [
   ['.page:nth-of-type(2) .matrix-footnote', 716, 'baseline'],
   ['.page:nth-of-type(2) table.matrix', 25, 'left'],
   ['.page:nth-of-type(2) table.matrix', 242, 'width'],
+  // Detail page. These were read back out of the drawn PDF rather than derived,
+  // so they are what the page actually does, not what its constants suggest.
+  ['.page:nth-of-type(3) .signal-box', 114, 'top'],
+  ['.page:nth-of-type(3) .signal-box', 30, 'left'],
+  ['.page:nth-of-type(3) .signal-box', 480, 'width'],
+  ['.page:nth-of-type(3) .signal-box', 293.7, 'height'],
+  ['.page:nth-of-type(3) .detail-head h3', 143, 'baseline'],
+  ['.page:nth-of-type(3) .signal:nth-child(1) .badge', 171, 'top'],
+  ['.page:nth-of-type(3) .signal:nth-child(1) .pill', 80, 'left'],
+  ['.page:nth-of-type(3) .signal:nth-child(2) .badge', 208, 'top'],
+  ['.page:nth-of-type(3) .signal:nth-child(3) .badge', 245, 'top'],
+  ['.page:nth-of-type(3) .signal:nth-child(4) .badge', 282, 'top'],
+  ['.page:nth-of-type(3) .signal:nth-child(4) .summary', 312, 'baseline'],
+  ['.page:nth-of-type(3) .signal:nth-child(4) .source', 344.2, 'baseline'],
+  ['.page:nth-of-type(3) .signal:nth-child(5) .badge', 362.7, 'top'],
+  ['.page:nth-of-type(3) .detail-head', 161, 'bottom'],
+  ['.page:nth-of-type(3) .business-box', 423.7, 'top'],
+  ['.page:nth-of-type(3) .business-box', 95.7, 'height'],
+  ['.page:nth-of-type(3) .business-heading', 448.7, 'baseline'],
+  ['.page:nth-of-type(3) .business-heading', 46, 'left'],
+  ['.page:nth-of-type(3) .business-body', 467.7, 'baseline'],
+  ['.page:nth-of-type(3) .business-body', 448, 'width'],
+  ['.page:nth-of-type(3) .signal:nth-child(4) .summary', 378, 'width'],
+  ['.page:nth-of-type(3) .business-box .source', 496.4, 'baseline'],
 ];
 
 const TOLERANCE_PT = 1;
@@ -49,6 +73,8 @@ function measure(sel, mode) {
   if (!el) return null;
   const box = el.getBoundingClientRect();
   if (mode === 'width') return +(box.width / PT).toFixed(1);
+  if (mode === 'height') return +(box.height / PT).toFixed(1);
+  if (mode === 'bottom') return +((box.bottom - el.closest('.page').getBoundingClientRect().top) / PT).toFixed(1);
   if (mode === 'left') return +(box.left / PT).toFixed(1);
   const origin = el.closest('.page').getBoundingClientRect().top;
   if (mode === 'top') return +((box.top - origin) / PT).toFixed(1);
