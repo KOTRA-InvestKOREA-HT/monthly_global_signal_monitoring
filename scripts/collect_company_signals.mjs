@@ -2,6 +2,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { createDomainGuard, collectWithCheckpoint, retryableCollection } from './collection_resilience.mjs';
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
 import {
   augustRule,
@@ -69,6 +70,7 @@ const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 let fetchRetries = 2;
 let retryCount = 0;
+const domainGuard = createDomainGuard();
 
 // 링크 판정 규칙과 그 결과 집계. main 이 인자를 읽고 정한다.
 let linkPolicy = DEFAULT_LINK_POLICY;
@@ -111,6 +113,7 @@ export function parseArgs(argv) {
     companies: "data/target_companies.json",
     sourceConfig: "config/company_sources.json",
     outDir: "outputs",
+    refresh: false,
     sources: "official_feeds,official_pages,google_news",
     days: 45,
     fromDate: "",
@@ -136,6 +139,7 @@ export function parseArgs(argv) {
     "--companies": "companies",
     "--source-config": "sourceConfig",
     "--out-dir": "outDir",
+    "--refresh": "refresh",
     "--sources": "sources",
     "--days": "days",
     "--from-date": "fromDate",
@@ -181,7 +185,7 @@ export function parseArgs(argv) {
       args[mapped] = Number.parseInt(value, 10);
     } else if (mapped === "rateLimitSeconds") {
       args[mapped] = Number.parseFloat(value);
-    } else if (mapped === "fetchOfficialContent") {
+    } else if (mapped === "fetchOfficialContent" || mapped === 'refresh') {
       args[mapped] = !["0", "false", "no"].includes(String(value).toLowerCase());
     } else {
       args[mapped] = value;
@@ -665,6 +669,7 @@ async function fetchTextOnce(url, timeoutSeconds) {
 }
 
 function isRetryableFetchError(error) {
+  if (error.noRetry) return false;
   // 상태 코드가 없으면 네트워크 오류나 타임아웃이므로 재시도한다.
   return error.status === undefined ? true : RETRYABLE_STATUS.has(error.status);
 }
@@ -680,7 +685,7 @@ export async function fetchText(url, timeoutSeconds) {
       await sleep(Math.min(Math.max(backoffMs, retryAfterMs), 30000));
     }
     try {
-      return await fetchTextOnce(url, timeoutSeconds);
+      return await domainGuard.run(url, () => fetchTextOnce(url, timeoutSeconds));
     } catch (error) {
       lastError = error;
       if (!isRetryableFetchError(error)) throw error;
@@ -1668,9 +1673,13 @@ async function main() {
     args.companyConcurrency,
     async (company) => {
       const started = Date.now();
-      const result = await collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt);
+      const { outDir, refresh, ...settings } = args;
+      const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
+        identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings,
+          period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh,
+        collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
-        request_count: result.requestCount, result_count: result.rows.length };
+        request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };
       console.log(`Collected ${company.company}: ${result.rows.length} rows in ${(result.timing.elapsed_ms / 1000).toFixed(1)}s`);
       return result;
     },
@@ -1693,6 +1702,13 @@ async function main() {
 
   const summary = {
     run_started_at: collectedAt,
+    collection_resume_version: 1,
+    html_network: domainGuard.stats,
+    cached_company_count: companyResults.filter(result => result.cached).length,
+    retryable_company_count: companyResults.filter(retryableCollection).length,
+    collection_coverage: companies.map((company, index) => ({ company: company.company,
+      status: companyResults[index].errors.length ? 'incomplete' : 'completed',
+      retryable: retryableCollection(companyResults[index]), cached: companyResults[index].cached })),
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
     skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,

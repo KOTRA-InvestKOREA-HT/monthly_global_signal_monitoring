@@ -344,7 +344,8 @@ async function status(runDir) {
   return pending.length === 0 && invalid.length === 0;
 }
 
-export function coverageStatus(articles, reviewByArticle) {
+export function coverageStatus(articles, reviewByArticle, collectionStatus) {
+  if (collectionStatus === 'incomplete') return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
   return articles.some(article => article.date_placement === 'date_pending' ||
     !article.candidates.some(candidate => hasArticleBody(candidate.row)) ||
@@ -379,7 +380,8 @@ export async function build(args) {
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
         date_pending_articles: datePending.length,
-        status: coverageStatus(articles, reviewByArticle),
+        status: coverageStatus(articles, reviewByArticle,
+          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status),
         follow_up: incomplete.map((article) => ({ url: article.url, title: article.title })),
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };

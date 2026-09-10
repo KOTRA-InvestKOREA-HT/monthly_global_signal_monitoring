@@ -464,6 +464,7 @@ async function main() {
     await fs.access(sourceFile);
     const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));
     if (previous.content_collection_version !== CONTENT_COLLECTION_VERSION) throw new Error('Collection needs article body enrichment');
+    if (previous.collection_resume_version !== 1 || previous.retryable_company_count > 0) throw new Error('Resume incomplete company collection');
   }
   catch {
     const result = spawnSync(process.execPath, ['scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
