@@ -2,3 +2,14 @@ outputs/*_20*.json
 outputs/*_20*.csv
 outputs/smoke/
 outputs/official-smoke/
+.cache/
+tests/
+docs/
+scripts/__pycache__/
+outputs/local_reports/
+outputs/review_work/
+outputs/gemini_work/
+outputs/golden_eval/
+outputs/link_audit/
+outputs/link_trial/
+outputs/pdf_verify/

@@ -18,7 +18,9 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
 - `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules.
-- `scripts/summarize_signal_evidence.mjs`: summarizes evidence and performs the semantic support decision used by reports.
+- `scripts/review_report.mjs`: shared automated collection, article review, validation, and bilingual PDF pipeline.
+- `scripts/report_period.mjs`: shared reporting-period resolver for the CLI and Actions.
+- `scripts/summarize_signal_evidence.mjs`: legacy row-based summary tool, outside the monthly report pipeline.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
 - `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
@@ -30,6 +32,59 @@ Publication-date handling — how a date is graded and what a date hold means fo
 The implemented accuracy controls, verification evidence, known limitations, and Codex hook diagnosis are recorded in `docs/signal_accuracy_improvements_2026-09-03.md`.
 
 ## Commands
+
+### Automated monthly report (CLI and GitHub Actions)
+
+`npm run collect:all`, `npm run report:review`, and the
+`collect-company-signals` workflow all execute `scripts/review_report.mjs`:
+
+```text
+Resolve period → collect/resume → review all monthly article candidates
+→ validate decisions → build Korean/English PDFs → update latest report files
+```
+
+Keyword classification does not remove articles from this review queue. Each
+reviewable article is checked against all five investment indicators and business
+activity criteria; articles with insufficient date/body evidence remain deferred.
+
+Set the provider and its credentials in the environment before running. For an
+existing Gemini setup in PowerShell:
+
+```powershell
+$env:REPORT_PROVIDER = 'gemini'
+# GEMINI_API_KEY and GEMINI_FREE_TIER_CONFIRMED must already be configured.
+$env:REPORT_FROM_DATE = '2026-08-01'
+$env:REPORT_TO_DATE = '2026-08-31'
+$env:REPORT_ISSUE_NUMBER = '2'
+npm run collect:all
+```
+
+Both dates omitted means the previous completed calendar month in `Asia/Seoul`.
+One missing date, an impossible date, or a reversed range is rejected. To inspect
+the resolved period without crawling or calling a model:
+
+```sh
+node scripts/report_period.mjs
+```
+
+Provider selection is explicit configuration: the Actions form defaults to Gemini;
+the direct script retains its existing NVIDIA default. Set `REPORT_PROVIDER` to
+the same value for equivalent local/Actions runs. Gemini uses `GEMINI_API_KEY`
+and requires `GEMINI_FREE_TIER_CONFIRMED=true` after the project has been checked;
+NVIDIA uses the existing `OPENAI_API_KEY` secret. Model settings
+are `GEMINI_MODEL` / `NVIDIA_MODEL`.
+
+`REPORT_MAX_REQUESTS` (1–400), `REPORT_CONCURRENCY` (1–12), `REPORT_DELAY_MS`,
+`REPORT_REFRESH`, and `REPORT_ISSUE_NUMBER` use the same implementation in both
+environments. Progress lives in `outputs/review_work`; rerun the same period to
+resume. An incomplete review exits with code 75 and does not publish new PDFs.
+Successful CLI runs update `outputs/latest_*.json` and both `public/reports` PDFs;
+only Actions additionally commits the outputs. Python dependencies from
+`requirements-python.txt` and Chrome/Edge are required to build the reports.
+
+The retired `prepare-report-brief` and `build-report-from-brief` workflows called
+missing scripts and have been removed. Use the automated command above, or the
+API-free local workflow below.
 
 ### Local monthly report without model API calls
 
@@ -54,7 +109,7 @@ Preparation filters the report month before review and groups candidates by targ
 company and article. Reviews are reused only for matching evidence and policy.
 All candidates need decisions; only approved rows need bilingual report prose.
 Build rejects missing, stale, contradictory, or ungrounded approvals and reuses
-the existing report validator and Python PDF renderer. Install
+the existing report validator and HTML/Chrome PDF renderer with a Python data model. Install
 `requirements-python.txt` in the selected Python environment before building.
 Each successful build produces Korean/English PDFs and a complete decision log in
 a new `outputs/local_reports/.../report-*` folder. Existing dashboard outputs and
@@ -81,6 +136,13 @@ Build the company-to-technology mapping from the reference PDF:
 python scripts/build_company_technology_map.py --pdf "C:/Users/buy4u/Downloads/전체 기업 정보_참고용_최종.pdf" --targets data/target_companies.json --keywords config/technology_keywords.json --out-json data/company_technology_map.json --out-csv data/company_technology_map.csv
 ```
 
+### Standalone keyword diagnostics and legacy summaries
+
+The following tools remain available for focused analysis and older datasets.
+They are not steps in `collect:all` or the Actions monthly report pipeline.
+Their default paths overwrite diagnostic/latest files, so use a separate output
+directory when comparing keyword rules against a published report.
+
 Filter the latest collected signals to only target-technology-related candidates:
 
 ```bash
@@ -101,9 +163,14 @@ Generate bilingual AI summaries and semantic support decisions for report eviden
 OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
 ```
 
-The summarizer uses a two-step strategy: Luna model first, then Terra model only for summaries that look too short, too English-heavy, or low-confidence. It evaluates entity attribution, target-technology relevance, concrete indicator evidence, leading-indicator timing, and event stage separately. `ai_signal_supported` is true only when every required dimension is true. By default, it summarizes the report-facing rows only: captured investment-signal candidates and technology-relevant candidates for the global business status box. It does not summarize every collected item. Reusable decisions are stored in `outputs/ai_summary_cache.json`; a changed evidence fingerprint or prompt version forces reevaluation. Configure model names with `AI_SUMMARY_LUNA_MODEL` and `AI_SUMMARY_TERRA_MODEL`. In GitHub Actions, store the API key as the repository secret `OPENAI_API_KEY`; do not commit API keys. That secret currently holds the NVIDIA build key used by the article review step, so this OpenAI path cannot run against it.
+This legacy summarizer uses Luna first and Terra for selected retries, with its
+own `outputs/ai_summary_cache.json`. Its `AI_SUMMARY_*` settings and OpenAI API
+credentials do not configure the monthly article-review pipeline. In particular,
+the repository's existing `OPENAI_API_KEY` secret contains an NVIDIA key and
+cannot be used as an OpenAI credential for this legacy tool.
 
-The report path is fail-closed. If the API key is missing and a required decision is not already cached, or if any requested AI evaluation fails, the summarizer exits unsuccessfully without overwriting the last report inputs. The workflow then validates all decisions before building either PDF:
+The legacy summarizer fails without complete cached decisions or valid API
+results. The shared validator can also be run independently:
 
 ```bash
 node scripts/validate_report_inputs.mjs
@@ -143,7 +210,9 @@ AI-evaluated report rows additionally include `ai_entity_supported`, `ai_target_
 
 ## Vercel
 
-This repository now contains a minimal Next.js app, so Vercel should detect it as a Next.js project. If Vercel previously detected the repository as Python, redeploy after committing the new `package.json`, `app/`, and removed root `requirements.txt`.
+The web app uses Next.js; the separate `api/report-dynamic.py` function uses
+root `requirements.txt`. Monthly collection/review runs in Actions or locally.
+Changing the pipeline does not require resuming a paused Vercel deployment.
 
 
 ### Signal review policy (September 2026 correction)
@@ -156,4 +225,6 @@ A local build writes `coverage.json` alongside its PDFs. Missing monthly sources
 
 ### GitHub Actions로 월간 보고서 실행
 
-`collect-company-signals`는 저장소 시크릿 `OPENAI_API_KEY`(내용은 NVIDIA build 키다)로 기사별 통합 분석과 한·영 PDF 생성을 수행한다. 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보내며 모델은 `NVIDIA_MODEL`로 바꾼다. 한 번에 최대 400건을 처리하고 한도에 도달하면 진행분을 저장한 뒤 중단하며, 같은 기간으로 재실행하면 이어간다.
+`collect-company-signals`에서 제공자와 기간을 선택하면 위 CLI와 같은 통합 검토를
+수행한다. 요청 한도에는 재시도가 포함되며, 한도에 도달하면 진행분을 저장하고
+중단한다. 같은 기간으로 다시 실행하면 유효한 판정을 재사용한다.

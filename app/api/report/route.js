@@ -29,6 +29,14 @@ function langParam(value) {
   return String(value || "").trim().toLowerCase() === "en" ? "en" : "ko";
 }
 
+function pdfResponse(output, issue, lang) {
+  return new Response(output, { headers: {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}${lang === "en" ? "-en" : ""}.pdf"`,
+    "Cache-Control": "no-store",
+  } });
+}
+
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(path.join(process.cwd(), filePath), "utf8"));
 }
@@ -150,11 +158,12 @@ async function buildDynamicReportViaPythonFunction(requestUrl, issue, ignored, f
   const response = await fetch(endpoint, { cache: "no-store" });
   if (!response.ok) {
     let message = "Vercel Python 보고서 함수 호출에 실패했습니다.";
+    const body = await response.text();
     try {
-      const payload = await response.json();
+      const payload = JSON.parse(body);
       message = payload.error || message;
     } catch {
-      message = await response.text();
+      message = body || message;
     }
     throw new Error(message);
   }
@@ -182,17 +191,27 @@ export async function GET(request) {
     const lang = langParam(url.searchParams.get("lang"));
     const useStaticReport = await shouldUseStaticReport(ignored, fromDate, toDate);
     const sourcePath = path.join(process.cwd(), "public", "reports", lang === "en" ? "latest_report_en.pdf" : "latest_report.pdf");
-    const fontDir = path.join(process.cwd(), "assets", "fonts");
-    const semiBoldPath = path.join(fontDir, "NotoSansKR-SemiBold.ttf");
-    const demiLightPath = path.join(fontDir, "NotoSansKR-DemiLight.ttf");
+    // Keep these in their own directory so file tracing cannot sweep in the
+    // full report fonts used by the Python/HTML renderers.
+    const fontDir = path.join(process.cwd(), "assets", "report-overlay");
+    const semiBoldPath = path.join(fontDir, "SemiBold.ttf");
+    const demiLightPath = path.join(fontDir, "DemiLight.ttf");
+    let patchIssue = false;
     const dynamicSource = async () => {
       if (useStaticReport) {
         try {
-          return await fs.readFile(sourcePath);
+          const bytes = await fs.readFile(sourcePath);
+          patchIssue = true;
+          return bytes;
         } catch (error) {
           // 영문 정적 보고서는 크롤이 한 번 돌아야 생기므로, 없으면 즉석 생성으로 넘어간다.
           if (error.code !== "ENOENT") throw error;
         }
+      }
+      // Vercel already has a dedicated Python function. Do not probe local
+      // interpreters or ship Python inputs in the Node download function.
+      if (process.env.VERCEL === "1") {
+        return await buildDynamicReportViaPythonFunction(url, issue, ignored, fromDate, toDate, lang);
       }
       try {
         return await buildDynamicReport(issue, ignored, fromDate, toDate, lang);
@@ -206,10 +225,14 @@ export async function GET(request) {
         }
       }
     };
-    const [sourceBytes, semiBoldBytes, demiLightBytes] = await Promise.all([dynamicSource(), fs.readFile(semiBoldPath), fs.readFile(demiLightPath)]);
+    const sourceBytes = await dynamicSource();
+    // A newly rendered PDF already has the requested issue on every page.
+    if (!patchIssue) return pdfResponse(sourceBytes, issue, lang);
+    const [semiBoldBytes, demiLightBytes] = await Promise.all([fs.readFile(semiBoldPath), fs.readFile(demiLightPath)]);
 
     const pdf = await PDFDocument.load(sourceBytes);
     pdf.registerFontkit(fontkit);
+    // These assets contain only the fixed footer text and arbitrary issue digits.
     const issueFont = await pdf.embedFont(semiBoldBytes, { subset: false });
     const bodyFont = await pdf.embedFont(demiLightBytes, { subset: false });
     const pages = pdf.getPages();
@@ -258,12 +281,7 @@ export async function GET(request) {
     }
 
     const output = await pdf.save();
-    const headers = {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="global-signal-monitor-issue-${issue}${lang === "en" ? "-en" : ""}.pdf"`,
-        "Cache-Control": "no-store",
-    };
-    return new Response(output, { headers });
+    return pdfResponse(output, issue, lang);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

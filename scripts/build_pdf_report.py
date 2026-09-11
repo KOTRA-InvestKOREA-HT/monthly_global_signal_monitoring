@@ -947,7 +947,8 @@ def instantiate_variable_font(font_path, weight, out_dir):
 
 def register_fonts(font_path):
     source = Path(font_path)
-    temp_dir = Path(tempfile.mkdtemp(prefix="noto-sans-kr-"))
+    temp_work = tempfile.TemporaryDirectory(prefix="noto-sans-kr-")
+    temp_dir = Path(temp_work.name)
     fonts = {}
     try:
         for role, weight in FONT_WEIGHTS.items():
@@ -966,6 +967,8 @@ def register_fonts(font_path):
             report_font.face.name = font_name.encode("ascii")
             pdfmetrics.registerFont(report_font)
             fonts[role] = font_name
+    finally:
+        temp_work.cleanup()
     return fonts
 
 

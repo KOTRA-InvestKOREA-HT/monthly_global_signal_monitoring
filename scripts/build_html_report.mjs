@@ -178,14 +178,19 @@ function parseArgs(argv) {
 
 async function viewModel(args) {
   if (args['view-model']) return JSON.parse(await fs.readFile(args['view-model'], 'utf8'));
-  const out = path.join(await fs.mkdtemp(path.join(os.tmpdir(), 'report-vm-')), 'view-model.json');
+  const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-vm-'));
+  const out = path.join(work, 'view-model.json');
   // report_view_model.py 가 받는 것은 전부 넘긴다. 빠뜨리면 호출부가 명시한 경로가
   // 조용히 무시되고 기본값이 쓰인다. --relevant 가 그렇게 빠져 있었다.
   const pass = ['signals', 'summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
     'technology-map', 'font', 'issue-number', 'lang', 'ignored-signals', 'from-date', 'to-date'];
-  await run(process.env.PYTHON || 'python', ['-X', 'utf8', VIEW_MODEL,
-    ...pass.flatMap(name => (args[name] ? [`--${name}`, args[name]] : [])), '--out', out]);
-  return JSON.parse(await fs.readFile(out, 'utf8'));
+  try {
+    await run(process.env.PYTHON || 'python', ['-X', 'utf8', VIEW_MODEL,
+      ...pass.flatMap(name => (args[name] ? [`--${name}`, args[name]] : [])), '--out', out]);
+    return JSON.parse(await fs.readFile(out, 'utf8'));
+  } finally {
+    await fs.rm(work, { recursive: true, force: true });
+  }
 }
 
 async function main() {

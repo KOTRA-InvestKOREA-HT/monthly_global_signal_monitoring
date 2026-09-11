@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { dashboardSignals } from "../../lib/dashboard_signals.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +73,9 @@ export async function GET() {
       readOptionalGitHubJson("outputs/latest_investment_signals.json", []),
       readOptionalGitHubJson("outputs/latest_investment_signal_summary.json", null),
     ]);
-    return Response.json({ signals, summary, relevantSignals, relevanceSummary, investmentSignals, investmentSummary });
+    return Response.json({ signals: dashboardSignals(signals), summary,
+      relevantSignals: dashboardSignals(relevantSignals), relevanceSummary,
+      investmentSignals: dashboardSignals(investmentSignals), investmentSummary });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
