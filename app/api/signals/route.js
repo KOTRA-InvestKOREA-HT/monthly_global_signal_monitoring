@@ -4,9 +4,19 @@ import { dashboardSignals } from "../../lib/dashboard_signals.mjs";
 
 export const dynamic = "force-dynamic";
 
+// 아직 만들어지지 않은 파일과 읽다가 실패한 파일은 다르다. 앞은 빈 결과가 맞고, 뒤는
+// 빈 결과로 위장하면 안 된다. 토큰 만료나 호출 한도로 조회가 깨졌는데 화면에 "투자
+// 시그널 없음"이 뜨면, 실제로 없는 달과 구분할 수가 없다.
+class MissingFile extends Error {}
+
 async function readLocalJson(filePath) {
   const fullPath = path.join(process.cwd(), filePath);
-  return JSON.parse(await fs.readFile(fullPath, "utf8"));
+  try {
+    return JSON.parse(await fs.readFile(fullPath, "utf8"));
+  } catch (error) {
+    if (error.code === "ENOENT") throw new MissingFile(filePath);
+    throw error;
+  }
 }
 
 async function readGitHubJson(filePath) {
@@ -31,8 +41,9 @@ async function readGitHubJson(filePath) {
     },
   );
 
+  if (response.status === 404) throw new MissingFile(filePath);
   if (!response.ok) {
-    throw new Error(`GitHub file read failed: ${response.status}`);
+    throw new Error(`GitHub file read failed: ${response.status} (${filePath})`);
   }
 
   const payload = await response.json();
@@ -58,8 +69,9 @@ async function readGitHubJson(filePath) {
 async function readOptionalGitHubJson(filePath, fallbackValue) {
   try {
     return await readGitHubJson(filePath);
-  } catch {
-    return fallbackValue;
+  } catch (error) {
+    if (error instanceof MissingFile) return fallbackValue;
+    throw error;
   }
 }
 

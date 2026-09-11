@@ -344,11 +344,13 @@ async function prepare(args) {
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
   const snapshot = { policy, period, summary, signals: signals.map(withoutAI), articles, targets, technology, indicators,
     date_deferred: candidates.deferred };
-  const runDir = path.join(outDir, `${month}-${hash(snapshot)}`);
+  // 저장하는 형태로 해시를 낸다. loadSnapshot 이 같은 형태로 변조를 검사하기 때문이다.
+  const stored = packSnapshot(snapshot);
+  const runDir = path.join(outDir, `${month}-${hash(stored)}`);
   await fs.mkdir(path.join(runDir, "articles"), { recursive: true });
   await fs.mkdir(path.join(outDir, "reviews"), { recursive: true });
   // Immutable snapshot: a repeated prepare may repair identical article files but cannot replace a different run.
-  await fs.writeFile(path.join(runDir, "snapshot.json"), `${JSON.stringify(snapshot, null, 2)}\n`, { flag: "wx" })
+  await fs.writeFile(path.join(runDir, "snapshot.json"), `${JSON.stringify(stored, null, 2)}\n`, { flag: "wx" })
     .catch(async (error) => {
       if (error.code !== "EEXIST") throw error;
       await loadSnapshot(runDir);
@@ -371,13 +373,55 @@ async function prepare(args) {
   await status(runDir);
 }
 
+// 한 기사의 후보들은 같은 원문을 공유한다. sourceCandidates 가 지표마다 행을 하나씩
+// 만들기 때문이다. 그대로 저장하면 본문이 후보 수만큼 반복된다. 34546694524 스냅샷은
+// 26.2MB 였고 그중 8.1MB 가 같은 글자의 사본이었다(345기사, 후보 최대 6개).
+// 값이 후보마다 다르면 접지 않는다. 그래야 펴낸 것이 원래와 같다.
+const SHARED_ROW_FIELDS = ["content_text", "content_excerpt"];
+
+export function packArticle(article) {
+  const rows = (article.candidates || []).map((candidate) => candidate.row).filter(Boolean);
+  if (rows.length < 2) return article;
+  const shared = {};
+  for (const field of SHARED_ROW_FIELDS) {
+    const first = rows[0][field];
+    if (first && rows.every((row) => row[field] === first)) shared[field] = first;
+  }
+  if (!Object.keys(shared).length) return article;
+  // 키 순서까지 되돌려야 한다. 펴면서 앞에 붙이면 값은 같아도 JSON 글자가 달라지고,
+  // build 가 이 행을 그대로 outputs 에 쓰므로 뜻 없는 큰 diff 가 커밋된다.
+  return { ...article, shared_row: shared, row_keys: Object.keys(rows[0]),
+    candidates: article.candidates.map((candidate) => (candidate.row
+      ? { ...candidate, row: Object.fromEntries(Object.entries(candidate.row).filter(([key]) => !(key in shared))) }
+      : candidate)) };
+}
+
+export function unpackArticle(article) {
+  const { shared_row: shared, row_keys: order, ...rest } = article;
+  if (!shared) return rest;
+  const restore = (row) => {
+    // 후보가 자기 값을 갖고 있으면 그쪽이 이긴다. 접을 때 같은 값만 뺐으므로 실제로는 없다.
+    const merged = { ...shared, ...row };
+    const keys = order || [];
+    const known = keys.filter((key) => key in merged);
+    const extra = Object.keys(merged).filter((key) => !keys.includes(key));
+    return Object.fromEntries([...known, ...extra].map((key) => [key, merged[key]]));
+  };
+  return { ...rest, candidates: (rest.candidates || []).map((candidate) => (candidate.row
+    ? { ...candidate, row: restore(candidate.row) } : candidate)) };
+}
+
+const packSnapshot = (snapshot) => ({ ...snapshot, articles: (snapshot.articles || []).map(packArticle) });
+const unpackSnapshot = (snapshot) => ({ ...snapshot, articles: (snapshot.articles || []).map(unpackArticle) });
+
 async function loadSnapshot(runDir) {
-  const snapshot = await read(path.join(runDir, "snapshot.json"));
-  const expected = `${snapshot.period.from_date.slice(0, 7)}-${hash(snapshot)}`;
+  const stored = await read(path.join(runDir, "snapshot.json"));
+  // 변조 검사는 저장된 형태 그대로 한다. 펴는 것은 통과한 뒤다.
+  const expected = `${stored.period.from_date.slice(0, 7)}-${hash(stored)}`;
   if (path.basename(runDir) !== expected) {
     throw new Error("Prepared snapshot was modified. Prepare the source again with a different --out-dir.");
   }
-  return snapshot;
+  return unpackSnapshot(stored);
 }
 
 async function loadReviews(runDir) {
