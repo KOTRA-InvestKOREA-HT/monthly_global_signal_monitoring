@@ -493,14 +493,21 @@ export async function build(args) {
       "decisions.json": results.map(({ row, ...item }) => item),
     };
     for (const [name, value] of Object.entries(files)) await write(path.join(buildDir, name), value);
+    // reportlab 캔버스 대신 HTML 을 헤드리스 Chrome 으로 인쇄한다. collect-company-signals
+    // 워크플로(Vercel 크롤링 버튼이 부르는 것)가 이 경로로 PDF 를 만들므로, 여기가 안 바뀌면
+    // 보고서 대부분은 여전히 reportlab 으로 나온다.
+    // HTML 은 이 실행 안에서만 쓰는 중간 형식이라 buildDir 에 두고 나가는 것은 PDF 뿐이다.
+    // build_html_report.mjs 는 --investment-summary 를 쓰지 않으므로 넘기지 않는다.
+    // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다.
+    if (args.python) process.env.PYTHON = args.python;
     for (const lang of ["ko", "en"]) {
-      execute(args.python || process.env.PYTHON || "python3", [path.join(ROOT, "scripts/build_pdf_report.py"),
+      execute(process.execPath, [path.join(ROOT, "scripts/build_html_report.mjs"),
         "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
         "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
-        "--investment-summary", path.join(buildDir, "investment-summary.json"),
         "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
         "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/NOTOSANSKR-VF.TTF"),
-        "--issue-number", args.issueNumber || "2", "--lang", lang, "--out", path.join(buildDir, `report_${lang}.pdf`)]);
+        "--issue-number", args.issueNumber || "2", "--lang", lang,
+        "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)]);
     }
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
       reviewed_candidates: results.length, approved_investment: investment.length, approved_business: relevant.length,
