@@ -15,3 +15,6 @@ outputs/local_reports/
 outputs/gemini_work/
 outputs/golden_eval/
 tests/__pycache__/
+outputs/link_audit/
+.cache/
+outputs/link_trial/

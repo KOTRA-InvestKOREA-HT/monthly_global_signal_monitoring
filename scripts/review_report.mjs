@@ -7,12 +7,21 @@ import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, importReview, normalizeQuote, build } from './local_report.mjs';
 import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
+import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
+import { reportEligible, periodPlacement } from './date_state.mjs';
 
 // 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보낸다. 모델은 NVIDIA_MODEL 로 바꾼다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 const VERSION = 'article-review-v1';
+export function publishedSignalCounts(rows, period) {
+  const published = rows.filter(row => reportEligible(row, period));
+  return { approved_count: rows.length, report_signal_count: published.length,
+    date_pending_count: rows.filter(row => periodPlacement(row, period).placement === 'date_pending').length,
+    out_of_period_count: rows.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
+    companies_in_report: new Set(published.map(row => row.company)).size };
+}
 const STAGE_REVIEW_VERSION = 'candidate-event-v2';
 export function needsStageReview(article, review) {
   return review.stage_review_version !== STAGE_REVIEW_VERSION && review.decisions.some(d =>
@@ -463,7 +472,9 @@ async function main() {
   try {
     await fs.access(sourceFile);
     const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));
-    if (previous.content_collection_version !== CONTENT_COLLECTION_VERSION) throw new Error('Collection needs article body enrichment');
+    const sourceConfig = await read('config/company_sources.json');
+    if (collectionNeedsRefresh(previous, { version: CONTENT_COLLECTION_VERSION,
+      inputDigest: collectionInputDigest(targets, sourceConfig) })) throw new Error('Refresh stale or incomplete collection');
   }
   catch {
     const result = spawnSync(process.execPath, ['scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
@@ -475,7 +486,7 @@ async function main() {
   if (summary.from_date !== from || summary.to_date !== to) throw new Error('Cached collection period mismatch');
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
-  const snapshot = { policy, period, summary, signals, articles, targets, technology, indicators };
+  const snapshot = { policy, period, summary, signals, articles, targets, technology, indicators, date_deferred: candidates.deferred };
   const runDir = path.join(root, `${from.slice(0, 7)}-${digest(snapshot)}`);
   await write(path.join(runDir, 'snapshot.json'), snapshot);
   const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
@@ -509,8 +520,8 @@ async function main() {
   for (const [source, target] of [['signals.json', 'latest_company_signals.json'], ['summary.json', 'latest_collection_summary.json'], ['investment.json', 'latest_investment_signals.json'], ['relevant.json', 'latest_relevant_signals.json']]) {
     await fs.copyFile(path.join(reportDir, source), path.join('outputs', target));
   }
-  await write('outputs/latest_investment_signal_summary.json', { investment_signal_count: investment.length, companies_with_investment_signals: new Set(investment.map(r => r.company)).size, provider: PROVIDER.id });
-  await write('outputs/latest_relevance_summary.json', { relevant_signal_count: relevant.length, companies_with_relevant_signals: new Set(relevant.map(r => r.company)).size, provider: PROVIDER.id });
+  await write('outputs/latest_investment_signal_summary.json', { investment_signal_count: investment.length, companies_with_investment_signals: new Set(investment.map(r => r.company)).size, ...publishedSignalCounts(investment, period), provider: PROVIDER.id });
+  await write('outputs/latest_relevance_summary.json', { relevant_signal_count: relevant.length, companies_with_relevant_signals: new Set(relevant.map(r => r.company)).size, ...publishedSignalCounts(relevant, period), provider: PROVIDER.id });
   await write('outputs/latest_ai_summary_summary.json', { ...state, period, provider: PROVIDER.id, model: MODEL });
   await fs.mkdir('public/reports', { recursive: true });
   await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');

@@ -20,18 +20,22 @@ on:
         required: false
         default: ""
       link_policy:
-        description: "Link rule: current is today's behaviour, proposed also keeps links that need the document to decide"
+        description: "Link rule: proposed recovers article links; current is the comparison baseline"
         type: choice
         options: [current, proposed]
-        default: current
+        default: proposed
       max_verify_per_company:
         description: "Uncertain links per company that may be fetched to decide (proposed only)"
         type: string
-        default: "2"
+        default: "0"
       company_limit:
         description: "Companies to collect; 0 means all 77"
         type: string
         default: "0"
+      refresh:
+        description: "Recollect completed companies instead of reusing progress (up to 24 hours)"
+        type: boolean
+        default: false
       run_audit:
         description: "Also run the three-rule shadow audit over the listing pages"
         type: boolean
@@ -88,6 +92,13 @@ jobs:
           echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
           echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
           echo "Reporting period: $from_date .. $to_date (link_policy=${{ inputs.link_policy }})"
+      - name: Restore company collection progress
+        uses: actions/cache/restore@v5
+        with:
+          path: outputs/link_trial/company_progress
+          key: company-progress-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            company-progress-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-
       - name: Collect
         run: >
           node scripts/collect_company_signals.mjs
@@ -107,6 +118,13 @@ jobs:
           --company-limit ${{ inputs.company_limit }}
           --link-policy ${{ inputs.link_policy }}
           --max-verify-per-company ${{ inputs.max_verify_per_company }}
+          --refresh ${{ inputs.refresh }}
+      - name: Save company collection progress
+        if: always()
+        uses: actions/cache/save@v5
+        with:
+          path: outputs/link_trial/company_progress
+          key: company-progress-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Shadow audit over the listing pages
         if: ${{ inputs.run_audit }}
         run: >
