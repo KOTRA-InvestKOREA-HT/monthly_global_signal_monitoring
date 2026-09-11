@@ -14,6 +14,7 @@
     "body_text",
     "modified_meta",
     "modified_jsonld",
+    "modified_time_tag",
     "gdelt_seen",
     "model_quote"
   ],
@@ -30,7 +31,8 @@
     "model_quote",
     "gdelt_seen",
     "modified_meta",
-    "modified_jsonld"
+    "modified_jsonld",
+    "modified_time_tag"
   ],
   "notes": {
     "feed": "공식 RSS/Atom의 pubDate·published. 발행처가 구조화해 제공한 게시일이다.",

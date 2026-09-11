@@ -2,8 +2,20 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { createDomainGuard, collectWithCheckpoint, retryableCollection, collectionInputDigest } from './collection_resilience.mjs';
 import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v3';
+import {
+  augustRule,
+  classifyOfficialLink,
+  currentRule,
+  isHttpUrl,
+  looksLikeBrokenUrl,
+  looksLikeSourceIndexUrl,
+  verifyFetchedArticle,
+} from "./link_policy.mjs";
+export const CONTENT_COLLECTION_VERSION = 'article-body-v6-headline-scope';
+export const DEFAULT_LINK_POLICY = 'proposed';
+export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
 const FIELDNAMES = [
   "target_no",
@@ -58,30 +70,50 @@ const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 let fetchRetries = 2;
 let retryCount = 0;
+const domainGuard = createDomainGuard();
+
+// 링크 판정 규칙과 그 결과 집계. main 이 인자를 읽고 정한다.
+let linkPolicy = DEFAULT_LINK_POLICY;
+const linkVerdictCounts = new Map();
+
+function countLinkVerdict(verdict) {
+  linkVerdictCounts.set(verdict, (linkVerdictCounts.get(verdict) || 0) + 1);
+}
 
 // 기사가 아니라고 판단해 제외한 링크. 필터가 과했는지 사후에 검증할 수 있어야 한다.
 // 집계는 전량을 세고, 샘플만 상한을 둔다. 예전에는 둘 다 상한에 걸려 총 제외 건수를 알 수 없었다.
-const excludedRows = [];
+//
+// 샘플은 사유별로 따로 담는다. 한 통에 담으면 압도적으로 많은 사유 하나가 표본을 다 먹는다.
+// 실제로 9,998건 제외 중 9,782건이 index_or_category_page 라서, 120건 표본이 전부 그 사유로
+// 채워지고 no_article_title 22건은 한 건도 눈에 띄지 않았다. 확인이 필요한 쪽은 늘 소수 사유다.
+const excludedByReason = new Map();
 const excludedCounts = new Map();
 let excludedTotal = 0;
-const EXCLUDED_SAMPLE_LIMIT = 120;
-const EXCLUDED_SAMPLE_PER_COMPANY = 4;
+const EXCLUDED_SAMPLE_PER_REASON = 24;
+const EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON = 2;
 
 function recordExclusion(company, title, url, reason) {
   excludedTotal += 1;
   excludedCounts.set(reason, (excludedCounts.get(reason) || 0) + 1);
-  // 한 회사가 샘플을 다 차지하면 다른 회사의 오제외를 못 본다. 회사당 몇 건씩만 남긴다.
-  const seenForCompany = excludedRows.filter((row) => row.company === company).length;
-  if (excludedRows.length < EXCLUDED_SAMPLE_LIMIT && seenForCompany < EXCLUDED_SAMPLE_PER_COMPANY) {
-    excludedRows.push({ company, title: cleanText(title).slice(0, 120), url, reason });
-  }
+  if (!excludedByReason.has(reason)) excludedByReason.set(reason, []);
+  const bucket = excludedByReason.get(reason);
+  if (bucket.length >= EXCLUDED_SAMPLE_PER_REASON) return;
+  // 한 회사가 사유별 표본을 다 차지하면 다른 회사의 오제외를 못 본다.
+  const seenForCompany = bucket.filter((row) => row.company === company).length;
+  if (seenForCompany >= EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON) return;
+  bucket.push({ company, title: cleanText(title).slice(0, 120), url, reason });
 }
 
-function parseArgs(argv) {
+function excludedSamples() {
+  return [...excludedByReason.values()].flat();
+}
+
+export function parseArgs(argv) {
   const args = {
     companies: "data/target_companies.json",
     sourceConfig: "config/company_sources.json",
     outDir: "outputs",
+    refresh: false,
     sources: "official_feeds,official_pages,google_news",
     days: 45,
     fromDate: "",
@@ -99,11 +131,15 @@ function parseArgs(argv) {
     contentExcerptLimit: 800,
     maxDetailPerCompany: 8,
     fetchRetries: 2,
+    // Keep recovered accept links; uncertain document verification is opt-in.
+    linkPolicy: DEFAULT_LINK_POLICY,
+    maxVerifyPerCompany: DEFAULT_MAX_VERIFY_PER_COMPANY,
   };
   const keyMap = {
     "--companies": "companies",
     "--source-config": "sourceConfig",
     "--out-dir": "outDir",
+    "--refresh": "refresh",
     "--sources": "sources",
     "--days": "days",
     "--from-date": "fromDate",
@@ -121,6 +157,8 @@ function parseArgs(argv) {
     "--content-excerpt-limit": "contentExcerptLimit",
     "--max-detail-per-company": "maxDetailPerCompany",
     "--fetch-retries": "fetchRetries",
+    "--link-policy": "linkPolicy",
+    "--max-verify-per-company": "maxVerifyPerCompany",
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
@@ -141,17 +179,20 @@ function parseArgs(argv) {
         "contentExcerptLimit",
         "maxDetailPerCompany",
         "fetchRetries",
+        "maxVerifyPerCompany",
       ].includes(mapped)
     ) {
       args[mapped] = Number.parseInt(value, 10);
     } else if (mapped === "rateLimitSeconds") {
       args[mapped] = Number.parseFloat(value);
-    } else if (mapped === "fetchOfficialContent") {
+    } else if (mapped === "fetchOfficialContent" || mapped === 'refresh') {
       args[mapped] = !["0", "false", "no"].includes(String(value).toLowerCase());
     } else {
       args[mapped] = value;
     }
   }
+  if (!['current', 'proposed'].includes(args.linkPolicy)) throw new Error('Invalid --link-policy');
+  if (!Number.isInteger(args.maxVerifyPerCompany) || args.maxVerifyPerCompany < 0) throw new Error('Invalid --max-verify-per-company');
   return args;
 }
 
@@ -210,155 +251,6 @@ function stripTracking(url) {
     return parsed.toString();
   } catch {
     return url;
-  }
-}
-
-function isHttpUrl(value) {
-  return /^https?:\/\//i.test(String(value || "").trim());
-}
-
-// 목록 페이지 URL에 흔히 붙는 로케일 세그먼트. en-us, ko_KR, zh-hans 형태를 모두 받는다.
-const LOCALE_SEGMENT = /^[a-z]{2}([-_][a-z0-9]{2,5})?$/;
-
-// 코드 대신 언어 이름을 쓰는 사이트도 많다. sumitomo-chem.co.jp/english/news/ 같은 경우.
-const LOCALE_WORDS = new Set([
-  "english",
-  "japanese",
-  "korean",
-  "chinese",
-  "deutsch",
-  "german",
-  "french",
-  "francais",
-  "spanish",
-  "espanol",
-  "italiano",
-  "portugues",
-]);
-
-function isLocaleSegment(segment) {
-  return LOCALE_SEGMENT.test(segment) || LOCALE_WORDS.has(segment);
-}
-
-// 기사 한 건이 아니라 기사 묶음을 가리키는 경로 조각.
-const INDEX_SEGMENTS = new Set([
-  "en",
-  "global",
-  "corporate",
-  "company",
-  "about",
-  "about-us",
-  "news",
-  "news-events",
-  "news-and-events",
-  "news-and-insights",
-  "news-insights",
-  "newsroom",
-  "news-room",
-  "newsreleases",
-  "news-release",
-  "news-releases",
-  "media",
-  "media-center",
-  "media-centre",
-  "mediacenter",
-  "media-gallery",
-  "media-library",
-  "medialibrary",
-  "social-media",
-  "video-center",
-  "video-centre",
-  "press",
-  "pressroom",
-  "press-room",
-  "press-kit",
-  "press-kits",
-  "press-release",
-  "press-releases",
-  "pressreleases",
-  "releases",
-  "stories",
-  "featured-stories",
-  "blog",
-  "blogs",
-  "events",
-  "insights",
-  "publications",
-  "library",
-  "resources",
-  "investor",
-  "investors",
-  "investor-relations",
-  "ir",
-  "announcements",
-  "announcement",
-  "annual-general-meeting",
-  "financial-results",
-  "results",
-  "reports",
-  "sustainability",
-  "esg",
-  "responsibility",
-  "overview",
-  "archive",
-  "archives",
-  "all",
-  "latest",
-  "index",
-  "home",
-  "default",
-]);
-
-// 목록 페이지임을 확정적으로 드러내는 경로. 카테고리·태그·페이지네이션은 기사 URL이 될 수 없다.
-function hasIndexOnlyPathMarker(parsed) {
-  const pathname = parsed.pathname.toLowerCase();
-  if (/\/(category|categories|kategorie|tag|tags|topic|topics|subject|filter|search|page)\//.test(pathname)) return true;
-  if (/\/page[/-]\d+\/?$/.test(pathname)) return true;
-  for (const key of parsed.searchParams.keys()) {
-    // ?p=123 은 워드프레스에서 개별 글을 가리키므로 페이지네이션으로 보지 않는다.
-    if (/^(page|paged|offset|start|category|cat|tag|topic|filter|label)$/i.test(key)) return true;
-  }
-  return false;
-}
-
-// 치환되지 않은 템플릿 자리표시자나 앵커 문법이 남은 URL. 유효한 문서가 아니다.
-function looksLikeBrokenUrl(value) {
-  const text = String(value || "");
-  if (/\.(cta|href|link)\.url(\?|#|$)/i.test(text)) return true;
-  if (/[/:][A-Z][A-Z0-9_-]{3,}$/.test(text.replace(/^https?:\/\//i, ""))) return true;
-  if (/\$\{|\{\{|%7b/i.test(text)) return true;
-  return false;
-}
-
-function stripPageExtension(segment) {
-  return segment.replace(/\.(html?|aspx?|php|jsp|cfm)$/i, "");
-}
-
-function looksLikeSourceIndexUrl(value) {
-  if (!isHttpUrl(value)) return false;
-  try {
-    const parsed = new URL(value);
-    const pathname = parsed.pathname.replace(/\/+$/, "").toLowerCase();
-    if (!pathname || pathname === "") return true;
-    if (/(\/|^)(rss|feed|atom)(\/|$)/i.test(pathname)) return true;
-    if (hasIndexOnlyPathMarker(parsed)) return true;
-    // 확장자와 로케일 세그먼트를 걷어낸 뒤 남은 조각이 전부 목록용 단어면 기사 URL이 아니다.
-    const segments = pathname
-      .split("/")
-      .filter(Boolean)
-      .map(stripPageExtension)
-      .filter((segment) => segment && !isLocaleSegment(segment));
-    if (segments.length === 0) return true;
-    if (segments.length <= 4 && segments.every((segment) => INDEX_SEGMENTS.has(segment))) return true;
-    // /company/newsroom/featured-stories/automotive 처럼 상위 경로가 전부 목록이고
-    // 마지막 조각이 짧은 낱말이면 기사가 아니라 카테고리 탭이다.
-    // 실제 기사 슬러그는 보통 단어 3개 이상이거나 날짜·번호를 포함한다.
-    const last = segments[segments.length - 1];
-    const parents = segments.slice(0, -1);
-    const lastLooksLikeCategory = !/\d/.test(last) && last.split("-").length <= 2 && last.length <= 24;
-    return parents.length > 0 && parents.every((segment) => INDEX_SEGMENTS.has(segment)) && lastLooksLikeCategory;
-  } catch {
-    return false;
   }
 }
 
@@ -588,19 +480,23 @@ const MODIFIED_META_NAMES = [
 ];
 
 // <time datetime="2026-08-14">는 요즘 가장 흔한 게시일 마크업인데 메타 태그 스캔으로는 잡히지 않는다.
-function extractDateFromTimeTag(html) {
+function extractDatesFromTimeTags(html) {
+  const evidence = [];
   for (const match of html.matchAll(/<time\b([^>]*)>([\s\S]*?)<\/time>/gi)) {
     const attrs = match[1] || "";
+    const property = extractAttribute(attrs, 'itemprop');
+    if (/startDate|endDate/i.test(property)) continue;
+    const modified = /dateModified/i.test(property) || /modified|updated/i.test(`${extractAttribute(attrs, 'class')} ${extractAttribute(attrs, 'id')}`);
     const parsed = extractAttribute(attrs, "datetime") || match[2];
-    if (dateEvidence(parsed, "time_tag")) return parsed;
-    const text = extractDateFromText(match[2]);
-    if (text) return text;
+    const source = modified ? 'modified_time_tag' : 'time_tag';
+    const kind = modified ? 'modified' : 'published';
+    const item = dateEvidence(parsed, source, kind) || dateEvidence(extractDateFromText(match[2]), source, kind);
+    if (item) evidence.push(item);
   }
   for (const match of html.matchAll(/<time\b([^>]*)\/>/gi)) {
-    const parsed = extractAttribute(match[1] || "", "datetime");
-    if (dateEvidence(parsed, "time_tag")) return parsed;
+    evidence.push(...extractDatesFromTimeTags(`<time ${match[1]}></time>`));
   }
-  return null;
+  return evidence;
 }
 
 // <span itemprop="datePublished" content="...">처럼 meta 태그가 아닌 곳에 실린 값.
@@ -623,7 +519,7 @@ export function collectHtmlDateEvidence(html, url = "") {
   return [
     dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
     dateEvidence(jsonLdPublished?.[1], "jsonld", "published"),
-    dateEvidence(extractDateFromTimeTag(html), "time_tag", "published"),
+    ...extractDatesFromTimeTags(html),
     dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
     dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
     dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),
@@ -649,18 +545,44 @@ function extractPageTitle(html) {
   ).replace(/\s+\|.*$/, "").trim();
 }
 
-function extractArticleText(html) {
-  const candidates = [];
-  for (const pattern of [
-    /<article\b[^>]*>([\s\S]*?)<\/article>/i,
-    /<main\b[^>]*>([\s\S]*?)<\/main>/i,
-    /<div\b[^>]*(?:class|id)=["'][^"']*(?:article|press|release|news|content|body)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i,
-    /<body\b[^>]*>([\s\S]*?)<\/body>/i,
-  ]) {
-    const match = html.match(pattern);
-    if (match) candidates.push(cleanHtmlText(match[1]));
+export function extractArticleText(html) {
+  // An article tag can be a download card or company boilerplate. Advance to
+  // main/body when it cannot supply both the headline and substantive text.
+  const scoped = html.replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  const normalize = text => cleanHtmlText(text).normalize('NFKC').toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const headline = normalize(extractPageTitle(scoped));
+  const levels = [];
+  for (const [index, pattern] of [
+    /<article\b[^>]*>([\s\S]*?)<\/article>/gi,
+    /<main\b[^>]*>([\s\S]*?)<\/main>/gi,
+    /<body\b[^>]*>([\s\S]*?)<\/body>/gi,
+  ].entries()) {
+    const candidates = [...scoped.matchAll(pattern)].map(match => {
+      let fragment = match[1];
+      if (index === 2 && headline) {
+        // Some IR sites keep their menu in plain divs outside the headline.
+        // Only trim at a matching heading, never at a menu link or meta title.
+        const heading = [...fragment.matchAll(/<h[1-2]\b[^>]*>[\s\S]*?<\/h[1-2]>/gi)]
+          .find(item => normalize(item[0]) === headline);
+        if (heading) fragment = fragment.slice(heading.index);
+      }
+      // Preserve headlines wrapped in an article/main header. At body scope,
+      // retain the existing removal of site-wide headers.
+      if (index < 2) fragment = fragment.replace(/<\/?header\b[^>]*>/gi, '');
+      return cleanHtmlText(fragment);
+    }).filter(Boolean).sort((a, b) => b.length - a.length);
+    levels.push(candidates);
+    const substantive = candidates.find(text => text.length >= 300 &&
+      (!headline || normalize(text).includes(headline)));
+    if (substantive) return substantive;
   }
-  return candidates.sort((a, b) => b.length - a.length)[0] || cleanHtmlText(html);
+  // A genuine short notice must survive when no larger usable scope exists.
+  for (const candidates of levels) {
+    const matching = candidates.find(text => headline && normalize(text).includes(headline));
+    if (matching) return matching;
+  }
+  return levels.find(candidates => candidates.length)?.[0] || cleanHtmlText(scoped);
 }
 
 function contentExcerpt(text = "", limit = 800) {
@@ -777,11 +699,12 @@ async function fetchTextOnce(url, timeoutSeconds) {
 }
 
 function isRetryableFetchError(error) {
+  if (error.noRetry) return false;
   // 상태 코드가 없으면 네트워크 오류나 타임아웃이므로 재시도한다.
   return error.status === undefined ? true : RETRYABLE_STATUS.has(error.status);
 }
 
-async function fetchText(url, timeoutSeconds) {
+export async function fetchText(url, timeoutSeconds) {
   let lastError;
   for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
     if (attempt > 0) {
@@ -792,7 +715,7 @@ async function fetchText(url, timeoutSeconds) {
       await sleep(Math.min(Math.max(backoffMs, retryAfterMs), 30000));
     }
     try {
-      return await fetchTextOnce(url, timeoutSeconds);
+      return await domainGuard.run(url, () => fetchTextOnce(url, timeoutSeconds));
     } catch (error) {
       lastError = error;
       if (!isRetryableFetchError(error)) throw error;
@@ -883,7 +806,7 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
   return rows.filter((row) => row.title && row.url);
 }
 
-function parseAnchors(html, baseUrl) {
+export function parseAnchors(html, baseUrl) {
   const anchors = [];
   const anchorRegex = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   for (const match of html.matchAll(anchorRegex)) {
@@ -983,7 +906,7 @@ function isCompanyNameOnlyTitle(title, company) {
 }
 
 // 보고서 헤드라인으로 쓸 수 있는 제목인지. 여기서 걸러진 행은 기사로 인정하지 않는다.
-function isUsableTitle(title, company) {
+export function isUsableTitle(title, company) {
   const text = cleanText(title).trim();
   if (text.length < 8) return false;
   if (isGenericOfficialTitle(text)) return false;
@@ -1048,43 +971,61 @@ function discoverFeedLinks(html, baseUrl) {
   return [...new Set(urls)].slice(0, 3);
 }
 
+// 규칙이 링크 텍스트와 날짜를 보려면 이 파일이 쥔 두 함수가 필요하다. 순환 import 대신
+// 주입해서, link_policy.mjs 는 순수 함수로 남기고 감사 도구와 테스트가 같은 조합을 쓰게 한다.
+const LINK_POLICY_DEPS = {
+  officialTitle,
+  detectDate: (text) => extractDateFromText(text),
+};
+
+// 앵커 하나에 세 규칙을 모두 걸어 결과를 돌려준다. 감사 도구가 쓰는 유일한 입구다.
+// effective 는 --link-policy proposed 로 돌렸을 때 수집 경로가 실제로 내리는 처분이다.
+// 제안 규칙 단독과 다른데, 프로덕션은 지금 걷던 링크를 절대 버리지 않기 때문이다.
+export function judgeLink(anchor, pageUrl) {
+  const proposed = classifyOfficialLink(anchor, pageUrl, LINK_POLICY_DEPS);
+  return {
+    august: augustRule(anchor, pageUrl, LINK_POLICY_DEPS),
+    current: currentRule(anchor, pageUrl, LINK_POLICY_DEPS),
+    proposed,
+    effective: judgeAnchor(anchor, pageUrl, "proposed"),
+  };
+}
+
+export function classifyLink(anchor, pageUrl) {
+  return classifyOfficialLink(anchor, pageUrl, LINK_POLICY_DEPS);
+}
+
 function isRelevantOfficialLink(anchor, pageUrl) {
-  const title = officialTitle(anchor);
-  const direct = `${title} ${anchor.url}`.toLowerCase();
-  const detectedDate = extractDateFromText(`${anchor.title} ${anchor.context} ${anchor.url}`);
-  if (looksLikeSourceIndexUrl(anchor.url)) return false;
-  if (looksLikeBrokenUrl(anchor.url)) return false;
-  const pathLooksDetailed =
-    /\/(news-release-details|press-releases?|newsroom|news|media|article|announcements?)\//i.test(anchor.url) ||
-    /\b20\d{2}\b/.test(anchor.url);
-  // 링크 텍스트가 "More information" 같은 라벨이면 title이 비는데, 목적지가 상세 페이지로 보이면
-  // 여기서 버리지 않고 통과시킨다. 진짜 제목은 상세 페이지를 받아본 뒤 확정한다.
-  if (title.length < 8 && !pathLooksDetailed) return false;
-  if (!detectedDate && !pathLooksDetailed) return false;
-  if (/\.(jpg|jpeg|png|gif|svg|webp|mp4|zip)$/i.test(anchor.url)) return false;
-  if (/privacy|cookie|terms|subscribe|contact|career|linkedin|facebook|twitter|youtube|instagram/i.test(direct)) {
-    return false;
+  return currentRule(anchor, pageUrl, LINK_POLICY_DEPS);
+}
+
+// 앵커 하나의 처분. current 는 지금 돌고 있는 참/거짓 판정을 세 갈래 모양으로 옮겨 담기만 한다.
+// 사유는 현재 기록하는 두 가지 그대로라, 규칙을 바꾸지 않는 한 요약 수치도 그대로다.
+export function judgeAnchor(anchor, pageUrl, policy = linkPolicy) {
+  if (policy === "proposed") {
+    const judged = classifyLink(anchor, pageUrl);
+    // 지금 규칙이 받던 링크는 무슨 일이 있어도 계속 받고, 순위도 맨 앞을 준다.
+    // 이번 작업은 fetch 전에 잘리는 기사를 되찾는 것이지 걷던 것을 정리하는 것이 아니다.
+    // 제안 규칙의 accept 조건은 현재 규칙의 통과 조건을 그대로 담고 있어서 지금은 이 분기가
+    // 판정을 뒤집을 일이 없지만, rank 0 을 다는 일은 trimByRank 가 쓰므로 실제로 필요하다.
+    // 규칙을 더 손댈 때 이 줄이 회수 전용이라는 약속을 지킨다.
+    const alreadyCollected = isRelevantOfficialLink(anchor, pageUrl);
+    if (alreadyCollected) return { verdict: "accept", reason: "article_link", rank: 0 };
+    if (judged.verdict === "hard_reject") return judged;
+    // 새 후보는 기존 기사 뒤에 세운다. maxPerSource 로 잘릴 때 새 후보가 이미 걷던 기사를
+    // 밀어내면 그건 회수가 아니라 교체다. 정렬 없이 돌렸을 때 DOW의 보도자료가 같은 페이지의
+    // 블로그 링크에 밀려 사라졌다.
+    return { ...judged, rank: judged.verdict === "accept" ? 1 : 2 };
   }
-  if (
-    /^(investor relations home|corporate governance|corporate directory|corporate citizenship|management|contact us|about us|products?|solutions?|careers?)$/i.test(
-      title,
-    )
-  ) {
-    return false;
-  }
-  const keywords =
-    /press|release|news|financial|results|earnings|quarter|annual|report|presentation|announcement|acquisition|expansion|partnership|investment|korea|plant|facility|manufactur/i;
-  if (keywords.test(direct)) return true;
-  try {
-    const sourceHost = new URL(pageUrl).hostname.replace(/^www\./, "");
-    const targetHost = new URL(anchor.url).hostname.replace(/^www\./, "");
-    return (
-      sourceHost === targetHost &&
-      /\/(news|press|release|media|investor|ir|financial|results|announcements?)\b/i.test(new URL(anchor.url).pathname)
-    );
-  } catch {
-    return false;
-  }
+  if (isRelevantOfficialLink(anchor, pageUrl)) return { verdict: "accept", reason: "article_link" };
+  if (looksLikeSourceIndexUrl(anchor.url)) return { verdict: "hard_reject", reason: "index_or_category_page" };
+  if (looksLikeBrokenUrl(anchor.url)) return { verdict: "hard_reject", reason: "broken_url" };
+  // 나머지 무관한 링크는 예전처럼 사유를 남기지 않는다.
+  return { verdict: "hard_reject", reason: "" };
+}
+
+function acceptFirst(row) {
+  return row.link_rank ?? 0;
 }
 
 const PRESS_RELEASE_PATTERN =
@@ -1201,18 +1142,18 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, error: error.message });
         }
       }
-      const anchors = parseAnchors(html, page.url).filter((anchor) => {
-        if (isRelevantOfficialLink(anchor, page.url)) return true;
-        // 목록·카테고리 페이지와 깨진 링크는 제외 사유를 남긴다. 나머지 무관한 링크는 기록하지 않는다.
-        if (looksLikeSourceIndexUrl(anchor.url)) {
-          recordExclusion(company.company, anchor.title, anchor.url, "index_or_category_page");
-        } else if (looksLikeBrokenUrl(anchor.url)) {
-          recordExclusion(company.company, anchor.title, anchor.url, "broken_url");
+      const kept = [];
+      for (const anchor of parseAnchors(html, page.url)) {
+        const judged = judgeAnchor(anchor, page.url, linkPolicy);
+        countLinkVerdict(judged.verdict);
+        if (judged.verdict === "hard_reject") {
+          if (judged.reason) recordExclusion(company.company, anchor.title, anchor.url, judged.reason);
+          continue;
         }
-        return false;
-      });
+        kept.push({ anchor, verdict: judged.verdict, reason: judged.reason, rank: judged.rank ?? 0 });
+      }
       const sourceRows = dedupeRows(
-        anchors.map((anchor) => ({
+        kept.map(({ anchor, verdict, reason, rank }) => ({
           target_no: company.target_no,
           company: company.company,
           title: officialTitle(anchor),
@@ -1225,9 +1166,17 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           ...officialSourceFields(page.kind, page.source, page.sourceTypeLabel, page.pageTitle, page.url, anchor.url),
           official_source_url: page.url,
           source_direct_url: directUrlCandidate(anchor.url),
+          link_verdict: verdict,
+          link_reason: reason,
+          link_rank: rank,
         })),
       );
-      rows.push(...filterByDateRange(sourceRows, dateRange).slice(0, maxPerSource));
+      // 확인 대상은 확실한 기사 뒤에 세운다. maxPerSource 로 잘릴 때 밀려나야 할 쪽이 그쪽이다.
+      const ordered = filterByDateRange(sourceRows, dateRange)
+        .map((row, index) => ({ row, index }))
+        .sort((a, b) => acceptFirst(a.row) - acceptFirst(b.row) || a.index - b.index)
+        .map(({ row }) => row);
+      rows.push(...ordered.slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: page.url, source_name: page.source, error: error.message });
     }
@@ -1352,20 +1301,31 @@ function chooseBetterTitle(currentTitle, pageTitle, url, company) {
   return currentTitle;
 }
 
-async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
+export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
+  rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
-    return { rows, requestCount: 0, errors: [] };
+    return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
   }
 
   const enriched = [];
   const errors = [];
   let requestCount = 0;
   let detailCount = 0;
+  let verifyCount = 0;
 
   for (const row of rows) {
-    if (row.content_text) {
+    if (row.content_text && row.link_verdict !== 'fetch_to_verify') {
       enriched.push(row);
       continue;
+    }
+    // 확인 대상은 회사마다 몇 건까지만 받아본다. 확실한 기사가 먼저 줄을 서 있으므로,
+    // 이 상한에 걸리는 것은 언제나 그다음으로 가능성이 낮은 링크다.
+    if (row.link_verdict === "fetch_to_verify") {
+      if (verifyCount >= args.maxVerifyPerCompany) {
+        recordExclusion(row.company, row.title, row.url, "verify_budget_exhausted");
+        continue;
+      }
+      verifyCount += 1;
     }
     const detailUrl = detailSourceUrl(row);
 
@@ -1375,6 +1335,11 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       const skipTitle = isUsableTitle(row.title, company) ? row.title : titleFromUrl(row.url);
       if (!isUsableTitle(skipTitle, company)) {
         recordExclusion(row.company, row.title, row.url, "no_article_title");
+        continue;
+      }
+      // 확인 대상은 문서를 봐야 판정이 끝난다. 못 받아봤으면 링크만 보고 들일 수 없다.
+      if (row.link_verdict === "fetch_to_verify") {
+        recordExclusion(row.company, skipTitle, row.url, "unverified_no_fetch");
         continue;
       }
       // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다. 다만 URL 날짜는 정황 근거다.
@@ -1399,6 +1364,10 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
           : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
       });
       if (!document) {
+        if (row.link_verdict === 'fetch_to_verify') {
+          recordExclusion(row.company, row.title, row.url, 'unverified_no_fetch');
+          continue;
+        }
         enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
         continue;
       }
@@ -1417,8 +1386,13 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
       const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
       // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
       // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
-      if (!isUsableTitle(resolvedTitle, company)) {
-        recordExclusion(row.company, resolvedTitle || row.title, row.url, "no_article_title");
+      // 확인 대상으로 넘어온 링크는 제목에 더해 문서 자체가 목록이 아닌지도 여기서 본다.
+      const usable = isUsableTitle(resolvedTitle, company);
+      const verdict = row.link_verdict === "fetch_to_verify"
+        ? verifyFetchedArticle({ title: resolvedTitle, content, html, usableTitle: usable })
+        : { ok: usable, reason: "no_article_title" };
+      if (!verdict.ok) {
+        recordExclusion(row.company, resolvedTitle || row.title, row.url, verdict.reason);
         continue;
       }
       enriched.push({
@@ -1441,6 +1415,10 @@ async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
         source_name: row.source,
         error: error.message,
       });
+      if (row.link_verdict === 'fetch_to_verify') {
+        recordExclusion(row.company, row.title, row.url, 'unverified_fetch_error');
+        continue;
+      }
       enriched.push({
         ...row,
         content_fetch_status: "error",
@@ -1524,6 +1502,18 @@ function dedupeRows(rows) {
     deduped.push(row);
   }
   return deduped;
+}
+
+// maxPerCompany 로 자를 때 무엇을 먼저 버릴지 정한다. link_rank 는 0=지금도 걷던 기사,
+// 1=새로 받아들인 기사, 2=받아봐야 아는 후보다. 표시 순서가 아니라 잘라내는 순서라서,
+// 자른 뒤에 sortRows 로 다시 정렬한다. 기본 정책에서는 모든 행이 0이라 아무것도 달라지지 않는다.
+export function trimByRank(rows, limit) {
+  return [...rows].sort((a, b) => (a.link_rank ?? 0) - (b.link_rank ?? 0)).slice(0, limit);
+}
+
+export function selectDetailRows(rows, maxVerify = DEFAULT_MAX_VERIFY_PER_COMPANY) {
+  return [...rows].filter(row => maxVerify > 0 || row.link_verdict !== 'fetch_to_verify')
+    .sort((a, b) => acceptFirst(a) - acceptFirst(b));
 }
 
 function sortRows(rows) {
@@ -1654,7 +1644,8 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
     }
   }
 
-  const selectedCompanyRows = sortRows(dedupeRows(companyRows)).slice(0, args.maxPerCompany);
+  // Drop disabled probes before the company cap; keep priority through fetching.
+  const selectedCompanyRows = trimByRank(selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany), args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
@@ -1671,7 +1662,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       // an undated or unfetched official row let it push real press releases
       // out of maxPerCompany: 26 official rows were lost that way in the
       // 2026-08 run while fallback rows grew from 37 to 142.
-      rows = dedupeRows([...usable, ...rows, ...fallback.rows]).slice(0, args.maxPerCompany);
+      rows = trimByRank(dedupeRows([...usable, ...rows, ...fallback.rows]), args.maxPerCompany);
       const fallbackRows = rows.filter(row => row.source_type !== 'official');
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company);
       requestCount += detailedFallback.requestCount;
@@ -1697,6 +1688,7 @@ async function main() {
   }
 
   fetchRetries = Number.isFinite(args.fetchRetries) && args.fetchRetries >= 0 ? args.fetchRetries : 2;
+  linkPolicy = args.linkPolicy === "proposed" ? "proposed" : "current";
 
   const sourceConfig = await loadJson(args.sourceConfig, {});
   const selectedSources = args.sources.split(",").map((source) => source.trim()).filter(Boolean);
@@ -1711,9 +1703,13 @@ async function main() {
     args.companyConcurrency,
     async (company) => {
       const started = Date.now();
-      const result = await collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt);
+      const { outDir, refresh, ...settings } = args;
+      const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
+        identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings,
+          period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh,
+        collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
-        request_count: result.requestCount, result_count: result.rows.length };
+        request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };
       console.log(`Collected ${company.company}: ${result.rows.length} rows in ${(result.timing.elapsed_ms / 1000).toFixed(1)}s`);
       return result;
     },
@@ -1736,6 +1732,14 @@ async function main() {
 
   const summary = {
     run_started_at: collectedAt,
+    collection_resume_version: 1,
+    collection_input_digest: collectionInputDigest(companies, sourceConfig),
+    html_network: domainGuard.stats,
+    cached_company_count: companyResults.filter(result => result.cached).length,
+    retryable_company_count: companyResults.filter(retryableCollection).length,
+    collection_coverage: companies.map((company, index) => ({ company: company.company,
+      status: companyResults[index].errors.length ? 'incomplete' : 'completed',
+      retryable: retryableCollection(companyResults[index]), cached: companyResults[index].cached })),
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
     skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
@@ -1772,10 +1776,16 @@ async function main() {
     month_only_result_count: finalRows.filter((row) => resolveDateState(row).precision === "month").length,
     date_conflict_result_count: finalRows.filter((row) => row.date_conflict === true).length,
     undated_with_body_count: finalRows.filter((row) => resolveDateState(row).status === "unknown" && hasArticleBody(row)).length,
+    link_policy: linkPolicy,
+    link_verdict_counts: Object.fromEntries(linkVerdictCounts),
+    max_verify_per_company: args.maxVerifyPerCompany,
     excluded_non_article_count: excludedTotal,
     excluded_non_article_reasons: Object.fromEntries(excludedCounts),
-    excluded_non_article_sample_count: excludedRows.length,
-    excluded_non_article_samples: excludedRows,
+    excluded_non_article_sample_count: excludedSamples().length,
+    excluded_non_article_samples: excludedSamples(),
+    excluded_non_article_sample_reasons: Object.fromEntries(
+      [...excludedByReason].map(([reason, rows]) => [reason, rows.length]),
+    ),
     published_at_source_counts: finalRows.reduce((counts, row) => {
       const key = row.published_at_source || "none";
       counts[key] = (counts[key] || 0) + 1;

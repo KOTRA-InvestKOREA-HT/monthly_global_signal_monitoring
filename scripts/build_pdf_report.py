@@ -1686,7 +1686,9 @@ def target_section_for_profile(profile):
     if not target_text:
         return "", ""
     is_technology = normalize_company_key(profile.get("company")) in TARGET_TECH_LABEL_COMPANIES
-    return t("target_tech") if is_technology else t("target_item"), target_text
+    # 같은 품목명이 품목별 페이지에서는 대문자로, 상세 페이지에서는 소문자로 나오던 것을 맞춘다.
+    # item_target_text는 첫 글자만 올리므로 LiDAR·GMP 같은 약어는 그대로 남는다.
+    return t("target_tech") if is_technology else t("target_item"), item_target_text(profile)
 
 
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
