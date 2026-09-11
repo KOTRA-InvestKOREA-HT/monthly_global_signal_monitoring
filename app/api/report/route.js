@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { dateParam } from "../../lib/date_range.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -18,11 +19,6 @@ function ignoredSignalKeys(value) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
-}
-
-function dateParam(value) {
-  const text = String(value || "").trim();
-  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : "";
 }
 
 function langParam(value) {

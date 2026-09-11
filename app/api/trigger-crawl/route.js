@@ -1,3 +1,5 @@
+import { dateParam, rangeProblem } from "../../lib/date_range.mjs";
+
 export const dynamic = "force-dynamic";
 
 // GITHUB_WORKFLOW_FILE, GITHUB_REF는 기본값이 있어 필수 항목에서 제외한다.
@@ -48,10 +50,6 @@ function failureHint(status, config) {
   return `GitHub API가 ${status} 응답을 반환했습니다. (대상: ${target})`;
 }
 
-function isIsoDate(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
-}
-
 function previousMonthRange() {
   const now = new Date();
   const year = now.getUTCFullYear();
@@ -67,8 +65,15 @@ export async function POST(request) {
     const body = await request.json().catch(() => ({}));
     const days = String(body.days || envValue("DEFAULT_CRAWL_DAYS", "45"));
     const fallbackRange = previousMonthRange();
-    const fromDate = isIsoDate(body.fromDate) ? body.fromDate : fallbackRange.fromDate;
-    const toDate = isIsoDate(body.toDate) ? body.toDate : fallbackRange.toDate;
+    // 잘못된 기간을 조용히 전월로 바꿔 실행하면, 요청한 기간이 아닌 기간이 돌아간 것을
+    // 부르는 쪽이 알 수 없다. 형식이 틀렸거나 순서가 뒤집혔으면 접수하지 않는다.
+    // 아무것도 주지 않았을 때만 전월 범위로 돈다.
+    const problem = rangeProblem(body.fromDate, body.toDate);
+    if (problem) {
+      return Response.json({ error: problem }, { status: 400 });
+    }
+    const fromDate = dateParam(body.fromDate) || fallbackRange.fromDate;
+    const toDate = dateParam(body.toDate) || fallbackRange.toDate;
     const issueNumber = String(body.issueNumber || "2").replace(/[^\d]/g, "") || "2";
 
     const { config, missing } = collectEnv();

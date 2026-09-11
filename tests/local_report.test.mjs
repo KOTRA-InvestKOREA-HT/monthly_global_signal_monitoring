@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
+import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
@@ -407,4 +407,42 @@ test("the publisher travels with the article without changing its review identit
   assert.equal(withPublisher.publisher, "Pulse 2.0");
   assert.equal(withPublisher.publisher_home_url, "https://pulse2.com/");
   assert.equal(plain.publisher, "");
+});
+
+// 한 기사의 후보들은 같은 원문을 공유한다. 지표마다 행을 하나씩 만들기 때문이다.
+// 34546694524 스냅샷은 24.9MB 였고 그중 8.1MB 가 같은 본문의 사본이었다(345기사, 후보 6개).
+test("a shared article body is stored once and comes back byte-identical", () => {
+  // 반복 문자열이면 한 벌 안에서도 여러 번 매칭돼 셀 수가 없다. 고유한 표시를 넣는다.
+  const marker = "PILOT-SITE-MARKER-7F3A";
+  const body = `Example is considering a new pilot plant. ${marker} ${"More detail. ".repeat(20)}`;
+  const article = groupArticles(
+    [1, 2, 3].map((no) => ({ ...source, investment_signal_no: no, content_text: body })),
+    [{ ...source, content_text: body }], period)[0];
+  assert.equal(article.candidates.length, 4);
+
+  const packed = packArticle(article);
+  assert.equal(packed.shared_row.content_text, body);
+  for (const candidate of packed.candidates) assert.equal(candidate.row.content_text, undefined);
+  // 접힌 형태에 본문이 한 번만 나온다. evidence 의 정규화된 사본까지 세면 두 번이므로
+  // 후보 쪽만 본다.
+  assert.equal(JSON.stringify(packed.candidates).split(marker).length - 1, 0);
+  assert.equal(JSON.stringify(packed.shared_row).split(marker).length - 1, 1);
+
+  // 펴면 글자 하나까지 원래와 같다. 키 순서까지 같아야 build 가 쓰는 outputs 가 안 흔들린다.
+  assert.equal(JSON.stringify(unpackArticle(packed)), JSON.stringify(article));
+});
+
+test("bodies that differ between candidates are left alone", () => {
+  const a = groupArticles([{ ...source, investment_signal_no: 2, content_text: `${source.content_text} one` },
+    { ...source, investment_signal_no: 4, content_text: `${source.content_text} two` }], [], period)[0];
+  const packed = packArticle(a);
+  // 값이 다르면 접지 않는다. 접으면 한쪽 본문이 사라진다.
+  assert.equal(packed.shared_row, undefined);
+  assert.equal(JSON.stringify(unpackArticle(packed)), JSON.stringify(a));
+});
+
+test("an article with a single candidate needs no folding", () => {
+  const a = groupArticles([source], [], period)[0];
+  assert.equal(packArticle(a).shared_row, undefined);
+  assert.equal(JSON.stringify(unpackArticle(packArticle(a))), JSON.stringify(a));
 });
