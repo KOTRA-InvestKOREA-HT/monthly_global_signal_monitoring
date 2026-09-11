@@ -13,7 +13,7 @@ import {
   looksLikeSourceIndexUrl,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v6-headline-scope';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v7-nested-scope';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -221,8 +221,12 @@ function cleanText(value = "") {
   return decodeXml(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+// 주석은 태그를 지우는 정규식에 걸리지 않는다. `<!-- <img src=...> -->` 처럼 주석 안에
+// 태그가 있으면 여는 쪽만 지워지고 닫는 `-->` 가 본문 글자로 남는다.
+const stripComments = (value = "") => String(value).replace(/<!--[\s\S]*?-->/g, " ");
+
 function cleanHtmlText(value = "") {
-  return decodeXml(value)
+  return decodeXml(stripComments(value))
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
     .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, " ")
@@ -298,6 +302,11 @@ function blocks(xml, tag) {
 function tagText(block, tag) {
   const match = block.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
   return match ? cleanText(match[1]) : "";
+}
+
+function tagAttribute(block, tag, name) {
+  const match = block.match(new RegExp(`<${tag}\\b([^>]*)>`, "i"));
+  return match ? extractAttribute(match[1], name) : "";
 }
 
 function parseDate(value) {
@@ -545,32 +554,54 @@ function extractPageTitle(html) {
   ).replace(/\s+\|.*$/, "").trim();
 }
 
+// article/main 은 중첩된다. 여는 태그를 첫 닫는 태그까지만 읽으면 안쪽 조각이 바깥
+// 범위를 끝내 버린다. Infineon 의 보도자료가 그렇다: 페이지 전체가 하나의 <article>
+// 이고, 제목 바로 뒤에 이미지용 <article> 이 열렸다 닫히며, 기사 본문은 그 뒤에 있다.
+// 그래서 첫 닫는 태그까지만 읽으면 앞의 제품 메뉴만 남는다. 깊이를 세어 바깥 조각을 읽는다.
+function scopeFragments(html, tag) {
+  const fragments = [];
+  let depth = 0;
+  let start = 0;
+  for (const match of html.matchAll(new RegExp(`<${tag}\\b[^>]*>|</${tag}\\s*>`, 'gi'))) {
+    if (match[0][1] !== '/') {
+      if (depth === 0) start = match.index + match[0].length;
+      depth += 1;
+    } else if (depth > 0) {
+      depth -= 1;
+      if (depth === 0) fragments.push(html.slice(start, match.index));
+    }
+  }
+  return fragments;
+}
+
 export function extractArticleText(html) {
   // An article tag can be a download card or company boilerplate. Advance to
   // main/body when it cannot supply both the headline and substantive text.
-  const scoped = html.replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  // 주석은 먼저 지운다. 주석 처리된 <article> 이 남으면 깊이 계산이 어긋난다.
+  const scoped = stripComments(html).replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
   const normalize = text => cleanHtmlText(text).normalize('NFKC').toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   const headline = normalize(extractPageTitle(scoped));
+  // og:title 은 잘려 오는 일이 잦아("... support successful | Infineon Technologies")
+  // 실제 제목 heading 이 headline 보다 길 수 있다. 접두 일치까지 같은 제목으로 본다.
+  const carriesHeadline = text => Boolean(headline) &&
+    (text === headline || text.startsWith(`${headline} `));
+  // 제품 메가메뉴는 <nav> 가 아니라 평범한 div/ul 로 되어 있어 위에서 걸러지지 않고,
+  // 페이지 전체를 감싼 <article> 안에 기사보다 앞서 들어온다. 모든 범위에서 제목
+  // heading 부터 자른다. 그래야 뒤에 붙는 글자 수 제한이 메뉴가 아니라 기사에 걸린다.
+  // Only trim at a matching heading, never at a menu link or meta title.
+  const fromHeadline = fragment => {
+    const heading = [...fragment.matchAll(/<h[1-2]\b[^>]*>[\s\S]*?<\/h[1-2]>/gi)]
+      .find(item => carriesHeadline(normalize(item[0])));
+    return heading ? fragment.slice(heading.index) : fragment;
+  };
   const levels = [];
-  for (const [index, pattern] of [
-    /<article\b[^>]*>([\s\S]*?)<\/article>/gi,
-    /<main\b[^>]*>([\s\S]*?)<\/main>/gi,
-    /<body\b[^>]*>([\s\S]*?)<\/body>/gi,
-  ].entries()) {
-    const candidates = [...scoped.matchAll(pattern)].map(match => {
-      let fragment = match[1];
-      if (index === 2 && headline) {
-        // Some IR sites keep their menu in plain divs outside the headline.
-        // Only trim at a matching heading, never at a menu link or meta title.
-        const heading = [...fragment.matchAll(/<h[1-2]\b[^>]*>[\s\S]*?<\/h[1-2]>/gi)]
-          .find(item => normalize(item[0]) === headline);
-        if (heading) fragment = fragment.slice(heading.index);
-      }
+  for (const [index, tag] of ['article', 'main', 'body'].entries()) {
+    const candidates = scopeFragments(scoped, tag).map(fragment => {
       // Preserve headlines wrapped in an article/main header. At body scope,
       // retain the existing removal of site-wide headers.
-      if (index < 2) fragment = fragment.replace(/<\/?header\b[^>]*>/gi, '');
-      return cleanHtmlText(fragment);
+      return cleanHtmlText(fromHeadline(
+        index < 2 ? fragment.replace(/<\/?header\b[^>]*>/gi, '') : fragment));
     }).filter(Boolean).sort((a, b) => b.length - a.length);
     levels.push(candidates);
     const substantive = candidates.find(text => text.length >= 300 &&
@@ -754,7 +785,7 @@ function buildGdeltQuery(company) {
   return `${nameClause} (${terms})`;
 }
 
-function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
+export function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
   const rows = [];
   const isOfficialCollector = collector.startsWith("official_");
   const sourceFieldsFor = (itemUrl) =>
@@ -770,6 +801,11 @@ function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSour
       title: tagText(item, "title"),
       url: itemUrl,
       source: sourceText ? `${defaultSource}: ${sourceText}` : defaultSource,
+      // Google News 의 기사 링크는 본문을 자바스크립트로 받아오는 중계 페이지라 수집기가
+      // 원문 주소를 얻지 못한다. 반면 <source url> 은 발행사 홈페이지를 그대로 준다.
+      // 이 속성을 버리고 표시 이름만 남기던 탓에, 본문을 못 받은 기사의 후속 확인 목록에
+      // "Dealroom" 같은 이름만 남고 어디로 가야 하는지는 남지 않았다.
+      ...publisherFields(sourceText, tagAttribute(item, "source", "url")),
       ...chooseDateEvidence([
         dateEvidence(tagText(item, "pubDate"), "feed", "published"),
         dateEvidence(extractDateFromUrl(itemUrl), "url", "context"),
@@ -1067,6 +1103,11 @@ function officialSourceFields(kind, ...hints) {
     source_label_ko: sourceLabelKo("official", sourceKind),
     source_priority: officialSourcePriority(sourceKind),
   };
+}
+
+// 발행사 이름은 표시용이고 홈페이지 주소는 원문을 찾아갈 출발점이다. 둘을 따로 남긴다.
+function publisherFields(name, homeUrl) {
+  return { publisher: cleanText(name), publisher_home_url: isHttpUrl(homeUrl) ? stripTracking(homeUrl) : "" };
 }
 
 function fallbackSourceFields(priority) {

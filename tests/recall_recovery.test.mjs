@@ -23,9 +23,25 @@ test('only plausible old S4 stage rejections need a new review', () => {
   const d = { candidate_id: 'investment:4', event_stage: 'completed', entity_supported: true,
     indicator_supported: true, target_technology_supported: true };
   assert.equal(needsStageReview(a, { decisions: [d] }), true);
-  assert.equal(needsStageReview(a, { decisions: [d], stage_review_version: 'candidate-event-v2' }), false);
-  for (const change of [{ candidate_id: 'investment:2' }, { event_stage: 'precursor' }, { indicator_supported: false }])
+  assert.equal(needsStageReview(a, { decisions: [d], stage_review_version: 'candidate-event-v3' }), false);
+  for (const change of [{ event_stage: 'precursor' }, { indicator_supported: false }])
     assert.equal(needsStageReview(a, { decisions: [{ ...d, ...change }] }), false);
+});
+
+// 34546694524: Nexeon 의 1억 파운드 조달은 investment:3 이고 네 조건이 모두 true 인데
+// event_stage=completed 하나로 탈락했다. 재검토가 4번만 보던 동안 이 건은 대상이 아니었다.
+test('stage review covers every indicator that precursor is available to', () => {
+  const decision = no => ({ candidate_id: `investment:${no}`, event_stage: 'completed',
+    entity_supported: true, indicator_supported: true, target_technology_supported: true });
+  const article = no => ({ candidates: [{ id: `investment:${no}`, relevance_exempt: false }] });
+  for (const no of [1, 3, 4, 5]) {
+    assert.equal(needsStageReview(article(no), { decisions: [decision(no)] }), true, `indicator ${no}`);
+  }
+  // 생산확대(2)는 정책상 precursor 를 쓸 수 없으므로 다시 물어볼 것이 없다.
+  assert.equal(needsStageReview(article(2), { decisions: [decision(2)] }), false);
+  // 사업동향 행에는 투자 단계 판정 자체가 없다.
+  assert.equal(needsStageReview({ candidates: [{ id: 'relevant' }] },
+    { decisions: [{ ...decision(3), candidate_id: 'relevant' }] }), false);
 });
 
 test('passing AI decisions cannot hide absent bodies or unresolved dates in coverage', () => {

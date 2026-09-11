@@ -7,7 +7,12 @@ import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, p
 import { groupArticles } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
-const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: 'The company plans a pilot plant.' }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+// 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
+const TAIL = "The company said the site would support qualification volumes first, "
+  + "that a final location has not been chosen, and that no construction contract has been signed. "
+  + "It declined to give a timeline, and said the plan stays under review until the board meets.";
+
+const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason_ko: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
 const response = (ds = decisions, finish_reason = 'stop') => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: {} }));
 const config = { apiKey: 'test-key', maxRequests: 40, delayMs: 15000 };
@@ -56,7 +61,7 @@ test('quote then missing S4 summaries gets one bounded repair and reuses complet
 
 // 게시일 미상 기사. 본문 안에 게시일이 문장으로 적혀 있다.
 const datedQuote = 'Published on August 14, 2026.';
-const pendingBody = `The company plans a pilot plant. ${datedQuote}`;
+const pendingBody = `The company plans a pilot plant. ${TAIL} ${datedQuote}`;
 const pendingArticle = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: null, published_at_source: '', investment_signal_no: 2, target_technology: 'material', content_text: pendingBody }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 const pendingDecisions = [{ ...decisions[0], evidence_quotes: [pendingBody] }];
 const dated = (published_date, published_date_quote, ds = pendingDecisions) =>

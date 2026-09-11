@@ -1278,9 +1278,32 @@ def signal_supported(row):
     return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns)
 
 
-def sort_signal_rows(rows):
+# 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독
+# 발표 기사와 실적 공시가 함께 승인되면, 실적 공시 쪽 문안은 지난 분기 사건을 이번 달
+# 시그널로 보이게 만들 수 있다. 34546694524 실행의 Applied Materials S4 가 그랬다:
+# 8월 11일 UC 버클리 EPIC 센터 공동연구가 따로 승인돼 있는데도, 8월 13일 실적 발표문에
+# 하이라이트로 실린 6월 16일 에실로룩소티카 계약이 대표 문안으로 나갔다.
+PERIODIC_DISCLOSURE_PATTERN = re.compile(
+    r"(quarter(ly)?|half[- ]year|full[- ]year|interim|annual|fiscal|"
+    r"Q[1-4]\b|H[12]\b|FY\s?\d|earnings|results|annual report|"
+    r"semiannual|決算|四半期|반기|분기|실적)",
+    re.IGNORECASE,
+)
+
+
+def is_periodic_disclosure(row):
+    """실적·연차 공시처럼 한 기간의 사건을 모아 싣는 문서인지."""
+    if not row:
+        return False
+    return bool(PERIODIC_DISCLOSURE_PATTERN.search(str(row.get("title") or "")))
+
+
+def sort_signal_rows(rows, prefer_single_event=False):
     def key(row):
         supported = 0 if signal_supported(row) else 1
+        # 시그널 칸을 고를 때만 쓴다. 사업현황 상자는 실적 공시가 본래의 근거이므로
+        # best_business_row 는 이 선호를 켜지 않는다.
+        single_event = (1 if prefer_single_event and is_periodic_disclosure(row) else 0)
         press = 0 if is_press_release(row) else 1
         official = 0 if row.get("source_type") == "official" else 1
         technology_score = -(row.get("technology_relevance_score") or row.get("relevance_score") or 0)
@@ -1289,7 +1312,7 @@ def sort_signal_rows(rows):
         state = date_state(row)
         day = state["day"] or (month_bounds(state["month"])[0] if state["month"] else None)
         timestamp = -datetime(day.year, day.month, day.day, tzinfo=timezone.utc).timestamp() if day else 0
-        return (supported, press, official, technology_score, signal_score, timestamp)
+        return (supported, single_event, press, official, technology_score, signal_score, timestamp)
 
     return sorted(rows, key=key)
 
@@ -1309,7 +1332,7 @@ def index_investment_signals(rows):
         index[company][no].append(row)
     for company in index:
         for no in index[company]:
-            index[company][no] = sort_signal_rows(index[company][no])
+            index[company][no] = sort_signal_rows(index[company][no], prefer_single_event=True)
     return index
 
 
