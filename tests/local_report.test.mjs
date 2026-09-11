@@ -4,15 +4,21 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { dateHints, groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
-import { periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
+import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, sourceCandidates } from "../scripts/local_report.mjs";
+import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
+
+// 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
+const TAIL = "The company said the site would support qualification volumes first, "
+  + "that a final location has not been chosen, and that no construction contract has been signed. "
+  + "It declined to give a timeline, and said the plan stays under review until the board meets.";
 
 const period = monthPeriod("2026-08");
 const source = {
   target_no: 1, company: "Example", title: "Example plans a pilot",
   url: "https://example.com/pilot", published_at: "2026-08-10T00:00:00Z",
   target_technology: "target material", investment_signal_no: 2,
-  content_text: "Example is considering a new pilot plant for its target material.",
+  // 본문은 실제 기사만큼 길어야 한다. 목록 페이지나 오류 화면과 구분되는 하한이 있다.
+  content_text: "Example is considering a new pilot plant for its target material. " + TAIL,
 };
 const article = () => groupArticles([source], [], period)[0];
 const decision = (overrides = {}) => ({
@@ -237,7 +243,7 @@ test("date state separates report eligibility from review eligibility", () => {
 // 게시일 미상 기사. 본문 안에 게시일이 문장으로 적혀 있는 흔한 형태다.
 const datedQuote = "Published on August 14, 2026.";
 const undatedSource = { ...source, published_at: null, published_at_source: "",
-  content_text: `Example is considering a new pilot plant for its target material. ${datedQuote}` };
+  content_text: `${source.content_text} ${datedQuote}` };
 const pendingArticle = () => groupArticles([undatedSource], [], period)[0];
 const pendingDecision = (overrides = {}) => decision({ evidence_quotes: [undatedSource.content_text], ...overrides });
 const withDate = (a, published_date, published_date_quote) =>
@@ -288,4 +294,117 @@ test("review identity survives a recovered date so a corrected article is not re
   assert.equal(before.id, after.id);
   assert.equal(before.date_status, "unknown");
   assert.equal(after.date_placement, "in_period");
+});
+
+// 34546694524: Applied Materials S4 의 승인 근거는 "Announced three additional EPIC Center
+// partnerships." 한 줄이었는데, 보고서에 실린 문안은 같은 기사의 분기 하이라이트에 있던
+// 6월 16일 에실로룩소티카 계약이었다. 인용도 요약도 기사 안에 있었지만 서로 다른 사건이다.
+test("a signal summary cannot name a party its evidence quote never mentions", () => {
+  const quote = "Announced three additional EPIC Center partnerships.";
+  const recap = "Announced a long-term joint development agreement with EssilorLuxottica " +
+    "to accelerate the commercialization of next-generation intelligent optical systems.";
+  const earnings = {
+    ...source, company: "Applied Materials", investment_signal_no: 4,
+    title: "Applied Materials Announces Third Quarter 2026 Results",
+    url: "https://example.com/q3-results", content_text: `${quote} ${recap}`,
+  };
+  const a = groupArticles([earnings], [], period)[0];
+  const stage = { candidate_id: "investment:4", event_stage: "precursor", evidence_quotes: [quote] };
+  assert.throws(() => importReview(a, review(a, [decision({
+    ...stage,
+    summary_en: "Applied Materials expanded its EPIC Center partnerships and signed a long-term " +
+      "joint development agreement with EssilorLuxottica.",
+  })])), /summary names EssilorLuxottica/);
+
+  // 인용한 사건만 말하면 통과한다. 같은 기사, 같은 인용이다.
+  assert.doesNotThrow(() => importReview(a, review(a, [decision({
+    ...stage, summary_en: "Applied Materials announced three additional EPIC Center partnerships.",
+  })])));
+});
+
+test("summary grounding survives paraphrase, reads the title, and spares business rows", () => {
+  const quote = "The joint venture backed by Umicore and Volkswagen Group-owned PowerCo announced a plant.";
+  const build = (over = {}) => ({ ...source, company: "Umicore", investment_signal_no: 4,
+    title: "IONWAY plant announcement", url: "https://example.com/ionway", content_text: quote, ...over });
+  const a = groupArticles([build()], [], period)[0];
+  const stage = { candidate_id: "investment:4", event_stage: "precursor", evidence_quotes: [quote] };
+  // 같은 대상을 달리 적었을 뿐이면 막지 않는다. 낱말 단위로 대조하기 때문이다.
+  assert.doesNotThrow(() => importReview(a, review(a, [decision({
+    ...stage, summary_en: "IONWAY, a joint venture backed by Umicore and Volkswagen's PowerCo, announced a plant.",
+  })])));
+  // 기사 제목에 있는 이름도 근거다.
+  assert.doesNotThrow(() => importReview(a, review(a, [decision({
+    ...stage, summary_en: "The venture called IONWAY announced a plant with Umicore and PowerCo.",
+  })])));
+  assert.throws(() => importReview(a, review(a, [decision({
+    ...stage, summary_en: "Umicore announced a plant with Northvolt in Bitterfeld.",
+  })])), /summary names/);
+
+  // 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 같은 기준을 대지 않는다.
+  const b = groupArticles([], [build({ investment_signal_no: undefined })], period)[0];
+  assert.doesNotThrow(() => importReview(b, review(b, [decision({
+    candidate_id: "relevant", event_stage: "not_applicable", evidence_quotes: [quote],
+    summary_en: "Umicore is expanding in Nysa, Poland and across Europe and North America.",
+  })])));
+});
+
+// 34546694524: 글자가 하나라도 있으면 본문으로 셌다. 그래서 "Media Hub" 9자, "ARE YOU HUMAN"
+// 13자, "PAGE NOT FOUND..." 같은 화면이 근거 있는 기사로 집계되고 후속 수집 목록에도 오르지
+// 않았다. 스냅샷 539행에서 본문 200자 미만은 21건이었고 전부 목록·행사·오류 페이지였다.
+test("a listing or bot-wall stub is not an article body, and says so instead of being dropped", () => {
+  const stubs = ["Media Hub\nMedia Hub\nClose", "ARE YOU HUMAN", "Palau Report Insights",
+    "PAGE NOT FOUND\nThe page you are looking for may have moved or is temporarily unavailable."];
+  for (const stub of stubs) assert.equal(hasArticleBody({ content_text: stub }), false, stub.slice(0, 20));
+  assert.equal(hasArticleBody({ content_text: source.content_text }), true);
+
+  // 게시일 근거도 본문도 없으면 검토가 아니라 수집 보완 대상이다. 판정을 내리지 않을 뿐 버리지는 않는다.
+  const undated = { ...source, published_at: null, published_at_source: "", content_text: stubs[0] };
+  const verdict = reviewCandidate(undated, period);
+  assert.equal(verdict.included, false);
+  assert.match(verdict.reason, /수집 보완 대상/);
+  // 게시일이 확정된 기사는 본문이 짧아도 검토에서 빠지지 않는다. 근거 부족으로 표시될 뿐이다.
+  assert.equal(reviewCandidate({ ...source, content_text: stubs[0] }, period).included, true);
+});
+
+// 같은 제목이 매체만 바뀌어 들어오는 중복은 한 줄로 묶고 매체를 안에 모은다. 제목이
+// 서로 다르게 쓰인 중복(Mkango 인수 3건)은 묶지 않는다. 제목 낱말 겹침으로 묶으면 서로
+// 다른 사건까지 합쳐지는 것을 확인했다.
+test("outlets sharing one headline become one follow-up naming each publisher", () => {
+  const relay = (id) => `https://news.google.com/rss/articles/${id}?oc=5`;
+  const events = followUpEvents([
+    { title: "Mkango Acquires Remloy For €8 Million As Rare Earth Recycling Expands - pulse2.com",
+      url: relay("CBMiA"), publisher: "Pulse 2.0", publisher_home_url: "https://pulse2.com/" },
+    { title: "Mkango Acquires Remloy For €8 Million As Rare Earth Recycling Expands - Dealroom",
+      url: relay("CBMiB"), publisher: "Dealroom", publisher_home_url: "https://app.dealroom.co/" },
+    { title: "Nexeon raises £100m led by the National Wealth Fund - Share Talk",
+      url: relay("CBMiC"), publisher: "Share Talk", publisher_home_url: "https://www.share-talk.com/" },
+  ]);
+  assert.equal(events.length, 2);
+  assert.deepEqual(events[0].publishers.map((p) => p.publisher), ["Pulse 2.0", "Dealroom"]);
+  assert.equal(events[0].publishers[1].home_url, "https://app.dealroom.co/");
+  assert.deepEqual(events[1].publishers.map((p) => p.publisher), ["Share Talk"]);
+});
+
+test("a direct source replaces the relay link as the event's address", () => {
+  const [event] = followUpEvents([
+    { title: "Mkango completes acquisition of Remloy - Share Talk", publisher: "Share Talk",
+      url: "https://news.google.com/rss/articles/CBMiA?oc=5", publisher_home_url: "https://www.share-talk.com/" },
+    { title: "Mkango completes acquisition of Remloy", publisher: "",
+      url: "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/", publisher_home_url: "" },
+  ]);
+  // 중계 페이지는 원문이 아니므로 대표 주소가 되지 않는다.
+  assert.equal(event.url, "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/");
+  assert.deepEqual(event.publishers.map((p) => p.publisher), ["Share Talk"]);
+});
+
+// 발행사를 기사 ID 재료에 넣으면 필드가 생긴 것만으로 모든 기사의 ID가 바뀐다. 그러면
+// 34546694524 처럼 173건이 캐시돼 있던 판정을 전부 다시 사게 된다. 후속 확인용 정보일 뿐이다.
+test("the publisher travels with the article without changing its review identity", () => {
+  const plain = groupArticles([source], [], period)[0];
+  const withPublisher = groupArticles([{ ...source, publisher: "Pulse 2.0",
+    publisher_home_url: "https://pulse2.com/" }], [], period)[0];
+  assert.equal(withPublisher.id, plain.id);
+  assert.equal(withPublisher.publisher, "Pulse 2.0");
+  assert.equal(withPublisher.publisher_home_url, "https://pulse2.com/");
+  assert.equal(plain.publisher, "");
 });

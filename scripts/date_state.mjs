@@ -40,8 +40,17 @@ export function evidenceGrade(source) {
   return CONFIRMED_SOURCES.has(String(source || "")) ? "confirmed" : "estimated";
 }
 
+// 글자가 하나라도 있으면 본문으로 세던 탓에, 목록 페이지("Media Hub" 9자)나 봇 차단
+// 화면("ARE YOU HUMAN" 13자), 404 안내가 근거 있는 기사로 집계됐다. 그러면 후속 수집
+// 목록에도 오르지 않아 아무도 다시 받아오지 않는다.
+// 34546694524 스냅샷 539행에서 본문 200자 미만은 21건이고, 하나씩 열어 보니 전부
+// 목록·행사·오류 페이지였다. 확인된 가장 짧은 실제 보도자료는 363자(Tosoh)다. 그 사이는
+// 여전히 목록 페이지가 섞여 있어 길이만으로 가르지 않고, 하한은 200자로 낮게 잡는다.
+// 이 판정은 기사를 버리지 않는다. 본문을 다시 받아오라고 표시할 뿐이다.
+export const ARTICLE_BODY_MIN_CHARS = 200;
+
 export function hasArticleBody(row) {
-  return Boolean(String(row?.content_text || row?.content_excerpt || "").trim());
+  return String(row?.content_text || row?.content_excerpt || "").trim().length >= ARTICLE_BODY_MIN_CHARS;
 }
 
 function rank(item) {

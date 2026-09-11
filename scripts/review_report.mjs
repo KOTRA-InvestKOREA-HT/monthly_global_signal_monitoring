@@ -9,6 +9,7 @@ import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_p
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
+import { investmentStageSupported } from './validate_report_inputs.mjs';
 
 // 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보낸다. 모델은 NVIDIA_MODEL 로 바꾼다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
@@ -22,10 +23,15 @@ export function publishedSignalCounts(rows, period) {
     out_of_period_count: rows.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
     companies_in_report: new Set(published.map(row => row.company)).size };
 }
-const STAGE_REVIEW_VERSION = 'candidate-event-v2';
+const STAGE_REVIEW_VERSION = 'candidate-event-v3';
+// 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
+// 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
+// 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
+// 판정을 자동으로 precursor 로 바꾸지는 않는다. 다시 물어볼 뿐이다.
 export function needsStageReview(article, review) {
   return review.stage_review_version !== STAGE_REVIEW_VERSION && review.decisions.some(d =>
-    d.candidate_id === 'investment:4' && ['committed', 'completed'].includes(d.event_stage) &&
+    investmentStageSupported('precursor', String(d.candidate_id || '').split(':')[1]) &&
+    ['committed', 'completed'].includes(d.event_stage) &&
     d.entity_supported && d.indicator_supported && (d.target_technology_supported ||
       article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt));
 }
@@ -268,6 +274,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   if (problem) {
     const failure = invalid(/published_date/.test(problem.message) ? 'date_evidence_mismatch'
       : /evidence_quotes/.test(problem.message) ? 'evidence_mismatch'
+      : /summary names/.test(problem.message) ? 'summary_ungrounded'
       : /needs an evidence quote/.test(problem.message) ? 'missing_evidence' : 'review_validation');
     // importReview 의 메시지는 우리가 만든 문구다. 회사명과 후보 id 만 담고 모델 출력은 담지 않는다.
     failure.diagnostic = quoteDiagnostics(article, parsed.decisions, apiKey, problem.message);

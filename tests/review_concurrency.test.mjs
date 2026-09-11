@@ -6,6 +6,11 @@ import path from 'node:path';
 import { reviewArticles, MODEL } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 
+// 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
+const TAIL = "The company said the site would support qualification volumes first, "
+  + "that a final location has not been chosen, and that no construction contract has been signed. "
+  + "It declined to give a timeline, and said the plan stays under review until the board meets.";
+
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const article = company => groupArticles([{ company, target_no: 1, title: company, published_at: '2026-08-01', investment_signal_no: 2 }], [],
   { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
@@ -82,7 +87,7 @@ const rejection = { candidate_id: 'investment:2', entity_supported: true, target
   indicator_supported: false, leading_indicator_supported: false, event_stage: 'not_applicable',
   quality: 'pass', reason_ko: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '' };
 const pendingArticle = company => groupArticles([{ company, target_no: 1, title: company, published_at: null,
-  published_at_source: '', investment_signal_no: 2, content_text: 'Body without a date.' }], [],
+  published_at_source: '', investment_signal_no: 2, content_text: `Body without a date. ${TAIL}` }], [],
   { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 
 test('a failed date-hint supplement never stops the other workers reviewing uncached articles', async t => {

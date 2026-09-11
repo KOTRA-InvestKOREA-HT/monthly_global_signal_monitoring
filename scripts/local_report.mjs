@@ -29,6 +29,53 @@ export function normalizeQuote(value) {
     .replace(/([$€£¥₩]) +(?=\d)/g, '$1')
     .replace(/(\d) +%/g, '$1%');
 }
+// 인용 검증은 "이 문장이 기사에 있었다"만 증명한다. 요약이 그 문장에 대해 말하는지는
+// 증명하지 않는다. 34546694524 실행의 Applied Materials S4 가 그 틈으로 나갔다: 승인 근거는
+// "Announced three additional EPIC Center partnerships." 한 줄인데, 보고서에 실린 문안은
+// 같은 기사의 분기 하이라이트 목록에 있던 6월 16일 에실로룩소티카 공동개발 계약이었다.
+// 인용은 원문에 있었고 요약도 기사 안에 있었지만, 둘은 서로 다른 사건이다.
+//
+// 그래서 시그널 문안이 인용문에 없는 제3자를 새로 불러오지 못하게 한다. 이름의 표기 차이
+// ("Volkswagen's PowerCo" 대 "Volkswagen Group-owned PowerCo")로 막히면 안 되므로,
+// 구절 전체가 아니라 이름을 이루는 낱말 단위로 대조한다.
+const NAME_STOPWORDS = new Set(["the", "and", "for", "with", "from", "group", "inc", "corp",
+  "ltd", "llc", "gmbh", "plc", "company", "technologies", "holdings", "limited"]);
+
+// 모델이 붙이는 " - " 앞 머리글은 항목에 이름을 붙이는 말이지 제3자에 대한 주장이 아니다.
+const summaryBody = (text) => {
+  const value = clean(text);
+  const cut = value.indexOf(" - ");
+  return cut >= 0 ? value.slice(cut + 3) : value;
+};
+
+// 문장 첫머리 대문자는 이름의 근거가 되지 못하므로 건너뛴다. 대문자가 두 번 이상 나오거나
+// (UC Berkeley, EssilorLuxottica) 첫 글자만 대문자인 한 낱말(Bitterfeld)을 이름으로 본다.
+export function summaryNames(text) {
+  const names = [];
+  for (const sentence of summaryBody(text).split(/(?<=[.!?])\s+/)) {
+    const pattern = /\b([A-Z][A-Za-z0-9&.-]*(?:'s)?(?:\s+[A-Z][A-Za-z0-9&.-]*(?:'s)?)*)/g;
+    let match;
+    while ((match = pattern.exec(sentence))) {
+      const phrase = match[1].replace(/[.'\s]+$/, "").trim();
+      if (match.index === 0) continue;
+      if (phrase.length < 4) continue;
+      if (!/[A-Z].*[A-Z]/.test(phrase) && !/^[A-Z][a-z]{3,}$/.test(phrase)) continue;
+      names.push(phrase);
+    }
+  }
+  return [...new Set(names)];
+}
+
+// 인용문과 기사 제목에 낱말이 하나도 빠짐없이 남아 있어야 근거 있는 이름이다.
+export function ungroundedSummaryNames(summaryEn, quotes, title) {
+  const grounded = clean([...(quotes || []), title].join(" ")).toLowerCase();
+  return summaryNames(summaryEn).filter((name) => {
+    const words = name.split(/[^A-Za-z0-9]+/)
+      .filter((word) => word.length >= 4 && !NAME_STOPWORDS.has(word.toLowerCase()));
+    return words.length > 0 && words.some((word) => !grounded.includes(word.toLowerCase()));
+  });
+}
+
 const hash = (value) => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 24);
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const write = async (file, value) => fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
@@ -74,6 +121,7 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
       if (!groups.has(key)) groups.set(key, {
         company: row.company, target_no: row.target_no, url: row.url, title: row.title,
         source: row.source, source_type: row.source_type,
+        publisher: row.publisher || "", publisher_home_url: row.publisher_home_url || "",
         ...dateFields(row, period),
         evidence: [], candidates: [],
       });
@@ -100,11 +148,14 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
     article.evidence.sort();
     article.candidates.sort((a, b) => a.id.localeCompare(b.id));
     // 기사 ID에는 날짜를 넣지 않는다. 날짜를 보강했다고 이미 끝난 내용 판정을 버리면
-    // 한정된 검토 호출을 같은 기사에 두 번 쓰게 된다.
-    const { published_at, published_month, date_status, date_placement, date_note, date_label, ...content } = article;
+    // 한정된 검토 호출을 같은 기사에 두 번 쓰게 된다. 발행사도 같은 이유로 넣지 않는다.
+    // 어느 매체가 썼는지는 후속 확인용 정보지 모델이 판정하는 근거가 아니다. 넣으면 필드가
+    // 생긴 것만으로 모든 기사 ID가 바뀌어 캐시된 판정 전부를 다시 사는 셈이 된다.
+    const { published_at, published_month, date_status, date_placement, date_note, date_label,
+      publisher, publisher_home_url, ...content } = article;
     const material = { ...content, policy, candidates: article.candidates.map(({ row, ...item }) => item) };
     return { ...material, published_at, published_month, date_status, date_placement, date_note, date_label,
-      id: hash(material), candidates: article.candidates };
+      publisher, publisher_home_url, id: hash(material), candidates: article.candidates };
   });
 }
 
@@ -212,6 +263,15 @@ export function importReview(article, review) {
       throw new Error(`${context}: evidence_quotes must be exact passages from this article`);
     }
     if (supported && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
+    // 다섯 지표 칸에만 건다. 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이
+    // 인용문 밖에서 나오는 것이 정상이고, 같은 기준을 대면 근거 있는 요약까지 막힌다.
+    if (supported && candidate.kind === "investment") {
+      const ungrounded = ungroundedSummaryNames(decision.summary_en, quotes, article.title);
+      if (ungrounded.length) {
+        throw new Error(`${context}: summary names ${ungrounded.join(", ")} without an evidence quote. ` +
+          `Quote the passage the summary describes, or summarize only the quoted event.`);
+      }
+    }
     let row = null;
     if (supported) {
       row = {
@@ -344,6 +404,38 @@ async function status(runDir) {
   return pending.length === 0 && invalid.length === 0;
 }
 
+// news.google.com 기사 링크는 본문을 자바스크립트로 받아오는 중계 페이지다. 사람이 열어도
+// 원문이 아니므로 사건의 대표 주소로 쓰지 않는다.
+const isNewsRelay = (url) => { try { return new URL(url).hostname === "news.google.com"; } catch { return false; } };
+
+// "제목 - 발행사" 꼬리를 떼고 남는 부분이 사건 이름이다.
+const eventKey = (title) => clean(title).replace(/\s+[-–—|]\s+[^-–—|]{1,40}$/, "")
+  .toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+
+// 후속 확인 목록의 각 줄에 어느 매체가 썼는지와 그 매체 홈페이지를 함께 남긴다. 중계
+// 링크만 적혀 있으면 사람이 어디로 가야 하는지 알 수 없기 때문이다.
+// 묶음은 제목이 같은 행까지만 한다. 제목 낱말 겹침으로 바꿔 쓴 기사까지 묶어 보았지만,
+// 34546694524 의 117행에서 Prodrive 의 서로 다른 두 기록 경신과 Asahi Glass 의 서로 다른
+// 두 시장 보고서가 한 건으로 합쳐졌다. 사건 하나를 가리는 손해가 중복을 줄이는 이득보다
+// 크므로 쓰지 않는다. Mkango 인수처럼 매체마다 제목이 다른 중복은 그대로 남는다.
+export function followUpEvents(articles) {
+  const events = new Map();
+  for (const article of articles) {
+    const key = eventKey(article.title) || article.url;
+    if (!events.has(key)) events.set(key, { title: article.title, url: article.url, publishers: [] });
+    const event = events.get(key);
+    // 중계 링크뿐이던 사건에 직접 주소가 생기면 그쪽을 대표로 올린다.
+    if (isNewsRelay(event.url) && !isNewsRelay(article.url)) {
+      event.url = article.url;
+      event.title = article.title;
+    }
+    if (article.publisher && !event.publishers.some((item) => item.publisher === article.publisher)) {
+      event.publishers.push({ publisher: article.publisher, home_url: article.publisher_home_url || "" });
+    }
+  }
+  return [...events.values()];
+}
+
 export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0) {
   if (collectionStatus === 'incomplete' || deferredCount > 0) return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
@@ -385,7 +477,7 @@ export async function build(args) {
         deferred_articles: deferredArticles.length,
         status: coverageStatus(articles, reviewByArticle,
           snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status, deferredArticles.length),
-        follow_up: [...incomplete.map((article) => ({ url: article.url, title: article.title })), ...deferredArticles],
+        follow_up: [...followUpEvents(incomplete), ...deferredArticles],
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
     });
