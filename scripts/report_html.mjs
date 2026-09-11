@@ -104,6 +104,12 @@ function coverPage(state, model, assets) {
       </div>`, { cover: true });
 }
 
+// 꺼진 칸이 두 가지 뜻을 갖는다. 검토를 끝내고 신호가 없었던 것과, 검토를 못 해서
+// 모르는 것이다. 지금까지 같은 색이라 읽는 사람이 어느 기업을 다시 뒤져야 하는지 알 수
+// 없었다. 34546694524 에서 77개사 중 59개사가 뒤쪽이다. 속을 채운 점은 "보고 없었다",
+// 테두리만 있는 점은 "못 봤다"로 읽힌다.
+const offMark = row => (row.status === 'insufficient' ? 'unknown' : 'off');
+
 const matrixTable = (heading, rows) => `
         <table class="matrix">
           <thead>
@@ -116,7 +122,7 @@ const matrixTable = (heading, rows) => `
             <tr>
               <td class="no">${escapeHtml(row.target_no)}</td>
               <td class="company">${escapeHtml(row.company)}</td>
-              ${row.signals.map(on => `<td class="cell"><i class="${on ? 'on' : 'off'}"></i></td>`).join('')}
+              ${row.signals.map(on => `<td class="cell"><i class="${on ? 'on' : offMark(row)}"></i></td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>`;
@@ -138,6 +144,7 @@ function matrixPages(state, model) {
         <div class="matrix-legend">
           <span><i class="on"></i>${escapeHtml(matrix.legend_on)}</span>
           <span><i class="off"></i>${escapeHtml(matrix.legend_off)}</span>
+          <span><i class="unknown"></i>${escapeHtml(matrix.legend_unknown)}</span>
         </div>
         <p class="matrix-indicators">${escapeHtml(matrix.indicators)}</p>
         <p class="matrix-footnote">${escapeHtml(matrix.footnote)}</p>
@@ -623,9 +630,11 @@ table.matrix td {
 table.matrix td.no { width: 22pt; color: ${COLORS.rowNo}; text-align: center; }
 table.matrix td.cell { text-align: center; }
 table.matrix td.company { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-i.on, i.off { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
+i.on, i.off, i.unknown { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
 i.on { background: ${COLORS.gold}; }
+/* 채운 점: 검토했고 신호가 없었다. 테두리만: 검토를 못 해 모른다. */
 i.off { background: ${COLORS.light}; }
+i.unknown { background: transparent; box-shadow: inset 0 0 0 0.6pt ${COLORS.tableLine}; }
 .matrix-tail { position: absolute; top: 671pt; left: 25pt; right: 17pt; }
 .matrix-legend {
   display: flex;
