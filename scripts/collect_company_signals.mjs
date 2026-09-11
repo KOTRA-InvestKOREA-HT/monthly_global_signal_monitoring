@@ -13,7 +13,7 @@ import {
   looksLikeSourceIndexUrl,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v5-content-scope';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v6-headline-scope';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -546,20 +546,43 @@ function extractPageTitle(html) {
 }
 
 export function extractArticleText(html) {
-  // Prefer the article itself. Choosing the longest of article/main/body lets
-  // navigation and unrelated product lists become evidence for the AI review.
+  // An article tag can be a download card or company boilerplate. Advance to
+  // main/body when it cannot supply both the headline and substantive text.
   const scoped = html.replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
-  for (const pattern of [
+  const normalize = text => cleanHtmlText(text).normalize('NFKC').toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const headline = normalize(extractPageTitle(scoped));
+  const levels = [];
+  for (const [index, pattern] of [
     /<article\b[^>]*>([\s\S]*?)<\/article>/gi,
     /<main\b[^>]*>([\s\S]*?)<\/main>/gi,
     /<body\b[^>]*>([\s\S]*?)<\/body>/gi,
-  ]) {
-    const candidates = [...scoped.matchAll(pattern)].map(match => cleanHtmlText(
-      pattern.source.startsWith('<article') ? match[1].replace(/<\/?header\b[^>]*>/gi, '') : match[1]
-    )).filter(Boolean);
-    if (candidates.length) return candidates.sort((a, b) => b.length - a.length)[0];
+  ].entries()) {
+    const candidates = [...scoped.matchAll(pattern)].map(match => {
+      let fragment = match[1];
+      if (index === 2 && headline) {
+        // Some IR sites keep their menu in plain divs outside the headline.
+        // Only trim at a matching heading, never at a menu link or meta title.
+        const heading = [...fragment.matchAll(/<h[1-2]\b[^>]*>[\s\S]*?<\/h[1-2]>/gi)]
+          .find(item => normalize(item[0]) === headline);
+        if (heading) fragment = fragment.slice(heading.index);
+      }
+      // Preserve headlines wrapped in an article/main header. At body scope,
+      // retain the existing removal of site-wide headers.
+      if (index < 2) fragment = fragment.replace(/<\/?header\b[^>]*>/gi, '');
+      return cleanHtmlText(fragment);
+    }).filter(Boolean).sort((a, b) => b.length - a.length);
+    levels.push(candidates);
+    const substantive = candidates.find(text => text.length >= 300 &&
+      (!headline || normalize(text).includes(headline)));
+    if (substantive) return substantive;
   }
-  return cleanHtmlText(scoped);
+  // A genuine short notice must survive when no larger usable scope exists.
+  for (const candidates of levels) {
+    const matching = candidates.find(text => headline && normalize(text).includes(headline));
+    if (matching) return matching;
+  }
+  return levels.find(candidates => candidates.length)?.[0] || cleanHtmlText(scoped);
 }
 
 function contentExcerpt(text = "", limit = 800) {
