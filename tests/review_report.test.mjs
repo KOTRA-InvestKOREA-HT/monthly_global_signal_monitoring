@@ -252,11 +252,11 @@ test('quote separation rejects altered numbers, ellipses, reversed passages and 
 
 test('requires explicit free-tier confirmation and bounds API requests', () => {
   assert.throws(() => configuration({}), /OPENAI_API_KEY is required/);
-  assert.deepEqual(configuration({ OPENAI_API_KEY: 'key' }), { apiKey: 'key', maxRequests: 400, delayMs: 1600, concurrency: 8 });
+  assert.deepEqual(configuration({ OPENAI_API_KEY: 'key' }), { apiKey: 'key', maxRequests: 400, delayMs: 1600, concurrency: 4 });
   assert.throws(() => configuration({ OPENAI_API_KEY: 'key', REPORT_CONCURRENCY: '13' }), /CONCURRENCY/);
   assert.throws(() => configuration({ OPENAI_API_KEY: 'key', NVIDIA_MAX_REQUESTS: '0' }), /1..400/);
   assert.throws(() => configuration({ OPENAI_API_KEY: 'key', NVIDIA_DELAY_MS: '1499' }), /1500..60000/);
-  assert.deepEqual(configuration({ OPENAI_API_KEY: 'key', NVIDIA_MAX_REQUESTS: '400', NVIDIA_DELAY_MS: '1600' }), { apiKey: 'key', maxRequests: 400, delayMs: 1600, concurrency: 8 });
+  assert.deepEqual(configuration({ OPENAI_API_KEY: 'key', NVIDIA_MAX_REQUESTS: '400', NVIDIA_DELAY_MS: '1600' }), { apiKey: 'key', maxRequests: 400, delayMs: 1600, concurrency: 4 });
 });
 
 test('uses one fixed endpoint, structured output and all article candidates', async () => {

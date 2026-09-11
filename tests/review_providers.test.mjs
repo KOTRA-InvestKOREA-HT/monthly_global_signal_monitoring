@@ -103,7 +103,7 @@ test('an NVIDIA HTTP failure is labelled without leaking the response body', asy
 test('NVIDIA needs no free-tier confirmation and reads the single shared key secret', () => {
   assert.deepEqual(
     configuration({ REPORT_PROVIDER: 'nvidia', OPENAI_API_KEY: 'k' }, NVIDIA),
-    { apiKey: 'k', maxRequests: 400, delayMs: 1600, concurrency: 8 },
+    { apiKey: 'k', maxRequests: 400, delayMs: 1600, concurrency: 4 },
   );
   // 40 RPM 이면 1500ms 가 한도다.
   assert.throws(() => configuration({ REPORT_PROVIDER: 'nvidia', OPENAI_API_KEY: 'k', NVIDIA_DELAY_MS: '1499' }, NVIDIA), /1500\.\.60000/);
@@ -204,7 +204,7 @@ test('Gemini needs a human free-tier confirmation that NVIDIA does not', () => {
   // API 가 무료 티어를 강제하지 못하므로, 확인 표시 없이는 한 번도 호출하지 않는다.
   assert.throws(() => configuration(env, GEMINI), /GEMINI_FREE_TIER_CONFIRMED=true/);
   assert.deepEqual(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI),
-    { apiKey: 'AIzaKey', maxRequests: 400, delayMs: 4500, concurrency: 8 });
+    { apiKey: 'AIzaKey', maxRequests: 400, delayMs: 4500, concurrency: 4 });
   assert.throws(() => configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '3999' }, GEMINI), /4000\.\.60000/);
   assert.throws(() => configuration({ REPORT_PROVIDER: 'gemini', GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI), /GEMINI_API_KEY is required/);
   // 선불 크레딧인 NVIDIA 는 같은 위험이 없어 확인을 요구하지 않는다.
