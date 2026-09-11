@@ -34,30 +34,33 @@ jobs:
         run: node scripts/merge_summary_batches.mjs
       - name: Validate report inputs (fail closed)
         run: node scripts/validate_report_inputs.mjs
-      - run: >
-          python scripts/build_pdf_report.py
+      # HTML 을 거쳐 헤드리스 Chrome 으로 인쇄한다. HTML 은 이 실행 안에서만 쓰는 중간
+      # 형식이라 러너 임시 폴더에 두고, public/reports 에는 PDF 만 남긴다. Vercel 은
+      # 그 PDF 를 그대로 내보내므로 만들어진 방식을 알 필요가 없다.
+      # 러너(ubuntu-latest)에는 google-chrome 이 PATH 에 있다. 없으면 즉시 실패한다.
+      - name: Build Korean report
+        run: >
+          node scripts/build_html_report.mjs
           --signals outputs/latest_company_signals.json
           --summary outputs/latest_collection_summary.json
           --relevant outputs/latest_relevant_signals.json
-          --relevance-summary outputs/latest_relevance_summary.json
           --investment-signals outputs/latest_investment_signals.json
-          --investment-summary outputs/latest_investment_signal_summary.json
           --indicator-config config/investment_signal_indicators.json
           --font assets/fonts/NOTOSANSKR-VF.TTF
           --lang ko
+          --html ${{ runner.temp }}/report_ko.html
           --out public/reports/latest_report.pdf
       - name: Build English report
         run: >
-          python scripts/build_pdf_report.py
+          node scripts/build_html_report.mjs
           --signals outputs/latest_company_signals.json
           --summary outputs/latest_collection_summary.json
           --relevant outputs/latest_relevant_signals.json
-          --relevance-summary outputs/latest_relevance_summary.json
           --investment-signals outputs/latest_investment_signals.json
-          --investment-summary outputs/latest_investment_signal_summary.json
           --indicator-config config/investment_signal_indicators.json
           --font assets/fonts/NOTOSANSKR-VF.TTF
           --lang en
+          --html ${{ runner.temp }}/report_en.html
           --out public/reports/latest_report_en.pdf
       - name: Sync latest main before committing
         run: git pull --rebase --autostash origin ${{ github.ref_name }}

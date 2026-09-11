@@ -115,3 +115,78 @@ class RepresentativeSignalRowTests(unittest.TestCase):
         earnings["company"] = "Albemarle"
         best = pdf.best_business_row("Albemarle", [earnings], [], [])
         self.assertEqual(best["title"], earnings["title"])
+
+
+class SourceLineTests(unittest.TestCase):
+    """34564332764 영문판 9쪽 Renishaw.
+
+    출처 경로가 길어 120자에서 잘리면서 "...laser enco..." 로 단어 중간이 끊기고
+    발행일이 통째로 사라졌다. 재검증에 제일 필요한 것이 날짜인데 날짜부터 버렸다.
+    """
+
+    def setUp(self):
+        pdf.LANG = "en"
+
+    def tearDown(self):
+        pdf.LANG = "ko"
+
+    def row(self, source):
+        return {"source": source, "published_at": "2026-08-20T00:00:00Z",
+                "published_at_status": "confirmed", "source_kind": "news"}
+
+    def test_a_long_source_path_keeps_its_date(self):
+        long_source = ("Renishaw - Latest News / Newsroom / News RSS: Renishaw launches "
+                       "next-generation RLE interferometric laser encoder systems")
+        line = pdf.source_line(self.row(long_source))
+        self.assertLessEqual(len(line), pdf.SOURCE_LINE_LIMIT)
+        self.assertTrue(line.endswith("2026.08.20"), line)
+        self.assertIn("...", line)
+        # 잘린 자리가 낱말 경계인지 원문과 대조한다. 남은 앞부분이 원문의 접두사이고,
+        # 원문에서 그 다음 글자가 공백이어야 낱말이 온전히 끝난 것이다.
+        kept = line[len("Source  "):line.index("...")]
+        self.assertTrue(long_source.startswith(kept), kept)
+        self.assertTrue(long_source[len(kept)].isspace(), repr(long_source[len(kept) - 3:len(kept) + 3]))
+
+    def test_a_short_source_is_left_alone(self):
+        line = pdf.source_line(self.row("Albemarle - Newsroom / News"))
+        self.assertEqual(line, "Source  Albemarle - Newsroom / News 2026.08.20")
+        self.assertNotIn("...", line)
+
+    def test_korean_without_spaces_is_not_emptied_by_the_word_rollback(self):
+        # 공백이 거의 없는 문장까지 낱말 경계로 되돌리면 통째로 사라진다.
+        text = "가" * 200
+        self.assertEqual(len(pdf.short_text(text, 50)), 50)
+
+
+class ItemPageBalanceTests(unittest.TestCase):
+    """34564332764 영문판: 품목 카드 4장이 3+1 로 갈려 마지막 쪽의 70%가 비었다.
+
+    build_html_report.mjs 의 itemBreaks 와 같은 규칙이어야 한다. 정적 PDF 는 HTML 로,
+    시그널 제외·기간 변경 PDF 는 여기로 만들어지므로 둘이 갈라지면 디자인이 어긋난다.
+    """
+
+    def sizes(self, heights):
+        return pdf._item_sheet_sizes(len(heights), pdf.item_breaks(heights))
+
+    def test_a_lone_last_card_is_evened_out(self):
+        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
+        height = (room - pdf.ITEM_CARD_GAP * 2) / 3  # 한 장에 셋까지
+        self.assertEqual(self.sizes([height] * 4), [2, 2])
+        for count in (4, 5, 6):
+            sizes = self.sizes([height] * count)
+            self.assertLessEqual(max(sizes) - min(sizes), 1, f"{count} cards -> {sizes}")
+
+    def test_page_count_never_grows_and_no_sheet_overflows(self):
+        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
+        height = (room - pdf.ITEM_CARD_GAP * 2) / 3
+        for count in range(1, 9):
+            heights = [height] * count
+            balanced = pdf.item_breaks(heights)
+            self.assertEqual(len(balanced), len(pdf.greedy_item_breaks(heights)))
+            self.assertTrue(pdf._item_plan_fits(heights, balanced), f"{count} overflows")
+
+    def test_an_oversized_card_keeps_its_own_sheet(self):
+        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
+        self.assertEqual(pdf.item_breaks([room + 200]), [])
+        # 큰 카드 하나 뒤에 작은 것 셋. 큰 것을 옮기면 들어가지 않으므로 greedy 가 남는다.
+        self.assertEqual(pdf.item_breaks([room - pdf.ITEM_CARD_GAP, 40, 40, 40]), [1])
