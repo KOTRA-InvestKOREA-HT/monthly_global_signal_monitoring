@@ -1,41 +1,47 @@
 {
   "status": "completed",
-  "requests": 70,
-  "cached": 262,
-  "completed": 327,
-  "total": 327,
+  "requests": 178,
+  "cached": 173,
+  "completed": 345,
+  "total": 345,
   "date_hints": 0,
   "failed_articles": [],
   "diagnostics": [
     {
-      "article_id": "df4c151114ec53671bde8b99",
+      "article_id": "cc765b69c607e073e079f959",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/df4c151114ec53671bde8b99/1b71aeda-4a53-4016-ad60-7f720d80cc3a-attempt-1.json"
+      "file": "reviews/diagnostics/cc765b69c607e073e079f959/6f71bc69-70dc-4d2d-9d10-903f68c64945-attempt-1.json"
     },
     {
-      "article_id": "9513fa4174b9678de7d8997e",
+      "article_id": "4841ef7b561fdc4f4f6506c9",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/9513fa4174b9678de7d8997e/2c0cd4ff-7a27-4bff-bae5-4cf330476bd9-attempt-1.json"
+      "file": "reviews/diagnostics/4841ef7b561fdc4f4f6506c9/312cf385-5ff1-4591-9838-a629252c9580-attempt-1.json"
     },
     {
-      "article_id": "59a1bbd86045c362269c4513",
+      "article_id": "5a9385fa6b87e613946e682f",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/59a1bbd86045c362269c4513/4f3053f1-655e-4381-971b-37059771d29a-attempt-1.json"
+      "file": "reviews/diagnostics/5a9385fa6b87e613946e682f/4dd00bd6-05a2-43ce-b2d8-7d6f6a694767-attempt-1.json"
     },
     {
-      "article_id": "cff79ba89461da45dc922fc9",
+      "article_id": "b858d75f7d34763a6b3cd9ea",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/cff79ba89461da45dc922fc9/a8fc9824-24fd-4e86-bac8-10fa281b130e-attempt-1.json"
+      "file": "reviews/diagnostics/b858d75f7d34763a6b3cd9ea/662187bf-7f4e-4ec1-af04-0de2804da38d-attempt-1.json"
     },
     {
-      "article_id": "344bc31bfd31c6f9809297a4",
+      "article_id": "d6a3aadbb371af4e0052104a",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/344bc31bfd31c6f9809297a4/4a732a78-c787-4d8c-9bf7-aaaabbbba242-attempt-1.json"
+      "file": "reviews/diagnostics/d6a3aadbb371af4e0052104a/7555cdcc-a7cf-446c-81cb-4c7b972b0124-attempt-1.json"
+    },
+    {
+      "article_id": "0d682846db0ab91ebaf1c94b",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/0d682846db0ab91ebaf1c94b/c74ee7e2-2260-4c90-b6bd-b399dd0317b4-attempt-1.json"
     }
   ],
   "concurrency": 4,
