@@ -40,18 +40,17 @@ def matrix_counts(profiles, signal_index, summary, signal_rows):
     }
 
 
-def title_size(titles, font):
+def title_size(titles, measure):
     """The size the three cover titles fit at, by the rule the reportlab cover uses.
 
     Shrinking to fit needs text measurement, which CSS cannot do on its own, so
     the decision is made here where the font metrics already live and travels
     with the rest of the view model.
     """
-    fonts = report.register_fonts(font)
-    measure = report.canvas.Canvas(io.BytesIO())
+    fonts = measure.fonts
     width = report.PAGE_W - 86
     size = 30 if report.LANG == "en" else 36
-    while size > 18 and any(measure.stringWidth(title, fonts["semibold"], size) > width for title in titles):
+    while size > 18 and any(measure.canvas.stringWidth(title, fonts["semibold"], size) > width for title in titles):
         size -= 1
     return size
 
@@ -60,7 +59,7 @@ def title_size(titles, font):
 SIGNAL_BODY_WIDTH = 378
 
 
-def summary_fits_one_line(parts, font):
+def summary_fits_one_line(parts, measure):
     """Whether the headline and its detail are short enough to share a line.
 
     The drawn page keeps them on one line when they fit and gives the detail its
@@ -70,14 +69,13 @@ def summary_fits_one_line(parts, font):
     """
     if not parts or not parts.get("detail"):
         return True
-    fonts = report.register_fonts(font)
-    measure = report.canvas.Canvas(io.BytesIO())
+    fonts = measure.fonts
     size = report.SIGNAL_BODY_SIZE
-    return (measure.stringWidth(parts["headline"], fonts["semibold"], size)
-            + measure.stringWidth(f" — {parts['detail']}", fonts["demilight"], size)) <= SIGNAL_BODY_WIDTH
+    return (measure.canvas.stringWidth(parts["headline"], fonts["semibold"], size)
+            + measure.canvas.stringWidth(f" — {parts['detail']}", fonts["demilight"], size)) <= SIGNAL_BODY_WIDTH
 
 
-def signal_entry(no, rows, font):
+def signal_entry(no, rows, measure):
     """One of the five signal rows: its label, and the summary if it fired."""
     label = report.SIGNAL_DESCRIPTIONS_EN[no] if report.LANG == "en" else report.SIGNAL_DESCRIPTIONS[no]
     if not rows:
@@ -93,12 +91,12 @@ def signal_entry(no, rows, font):
         "headline": (parts or {}).get("headline", ""),
         "detail": (parts or {}).get("detail", ""),
         "plain": "" if parts else report.detail_text(row, 560),
-        "inline": summary_fits_one_line(parts, font),
+        "inline": summary_fits_one_line(parts, measure),
         "source": report.source_line(row),
     }
 
 
-def detail_entries(profiles, signal_index, relevant, investment, signals, font):
+def detail_entries(profiles, signal_index, relevant, investment, signals, measure):
     entries = []
     for profile in profiles:
         rows_by_signal = signal_index.get(profile["company"], {})
@@ -110,7 +108,7 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, font):
             "company": profile["company"],
             "country": profile.get("country", ""),
             "industry": profile.get("detailed_industry", ""),
-            "signals": [signal_entry(no, rows_by_signal.get(no, []), font) for no in range(1, 6)],
+            "signals": [signal_entry(no, rows_by_signal.get(no, []), measure) for no in range(1, 6)],
             "business": {
                 "heading": report.t("business_heading"),
                 "target_label": target_label,
@@ -126,14 +124,12 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, font):
 ITEM_BODY_WIDTH = 446
 
 
-def item_entries(profiles, signal_index, relevant, summary, font):
+def item_entries(profiles, signal_index, relevant, summary, measure):
     """The companies with no five-signal profile but a target-item trend."""
     entries = report.build_item_trend_entries(profiles, signal_index, relevant)
     if not entries:
         return None
-    report.register_fonts(font)
     month = report.report_month_label(summary)
-    measure = SimpleNamespace(canvas=report.canvas.Canvas(io.BytesIO()), fonts=report.register_fonts(font))
     return {
         "kicker": "T A R G E T - I T E M   S I G N A L S",
         "title": report.t("item_title"),
@@ -168,6 +164,8 @@ def indicator_entries(indicators):
 
 def build(args):
     report.set_language(args.lang)
+    # One font registration and measurement canvas for the entire report.
+    measure = SimpleNamespace(canvas=report.canvas.Canvas(io.BytesIO()), fonts=report.register_fonts(args.font))
     targets = report.load_json(args.targets, [])
     tech_map = report.load_json(args.technology_map, {"companies": []})
     signals = report.load_json(args.signals, [])
@@ -196,7 +194,7 @@ def build(args):
         "cover": {
             "kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
             "titles": titles,
-            "title_size": title_size(titles, args.font),
+            "title_size": title_size(titles, measure),
             "lines": [report.t("cover_line_1"), report.t("cover_line_2")],
             "indicator_heading": report.t("cover_indicator_heading"),
             "indicators": indicator_entries(indicators),
@@ -225,9 +223,9 @@ def build(args):
         "details": {
             "kicker": "C O M P A N Y   S I G N A L S",
             "title": report.t("detail_title"),
-            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, args.font),
+            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, measure),
         },
-        "items": item_entries(profiles, signal_index, relevant, summary, args.font),
+        "items": item_entries(profiles, signal_index, relevant, summary, measure),
     }
 
 

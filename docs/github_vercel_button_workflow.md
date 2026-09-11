@@ -1,248 +1,109 @@
 # GitHub Actions + Vercel Button Workflow
 
-## Current Local Folder
-
-Current working folder:
+## Monthly report path
 
 ```text
-C:\Users\buy4u\OneDrive\문서\ChatGPT\AX 과제
+Vercel button → POST /api/trigger-crawl → collect-company-signals workflow
+                                            ↓
+                                  scripts/review_report.mjs
+                                            ↑
+                     npm run collect:all / npm run report:review
+
+collect/resume → review all monthly article candidates → validate
+→ Korean/English PDFs → latest JSON/PDF files
 ```
 
-This folder should become the GitHub repository root.
+The automated CLI and Actions use the same collection options, candidate builder,
+review validation, cache, and bilingual PDF builder. Keyword matching does not
+remove articles from the monthly review queue. Provider/model selection remains
+configuration; set the same values when comparing local and Actions results.
 
-## Target Architecture
+`prepare-report-brief` and `build-report-from-brief` were removed because their
+brief/merge scripts no longer exist. For review without a model API, use
+`npm run report:local` with [the local review instructions](local_report_review.md).
+`link-policy-trial` remains an independent collection diagnostic; it does not
+call a model API or publish reports.
+
+## Actions inputs and credentials
+
+Run `.github/workflows/collect-company-signals.yml` with:
+
+- `from_date` and `to_date`: both supplied, or both blank for the previous completed
+  calendar month in `Asia/Seoul`. `scripts/report_period.mjs` validates the dates
+  before the period is used in a cache key.
+- `provider`: `gemini` (the form default) or `nvidia`.
+- `issue_number`: the number on both PDFs.
+- `max_requests`: 1–400 including retries; `concurrency`: 1–12.
+- `delay_ms`: blank uses the provider default; `refresh`: false resumes usable work.
+- `days`: retained for compatibility with the existing dashboard dispatch. The
+  monthly pipeline uses the explicit/resolved date range, not this legacy input.
+
+For Gemini, configure repository secret `GEMINI_API_KEY` and the existing
+`GEMINI_FREE_TIER_CONFIRMED` repository variable. The latter must be `true` only
+once the corresponding project has been checked. For NVIDIA, the existing
+repository secret named `OPENAI_API_KEY` contains the NVIDIA build key.
+
+CLI runs use the same environment-variable names as the workflow's review step.
+The direct script retains its NVIDIA default, so explicitly set
+`REPORT_PROVIDER=gemini` to match the Actions form default. Local model overrides
+are `GEMINI_MODEL` and `NVIDIA_MODEL`; they are not new Actions form inputs.
+See [README commands](../README.md#automated-monthly-report-cli-and-github-actions)
+for the PowerShell example and prerequisites.
+
+## Resume, validation, and publication
+
+Review progress is stored in `outputs/review_work`. Actions restores and saves
+this directory using a cache keyed by reporting period, and uploads progress as
+an artifact even if review stops. Valid decisions are reused only when their
+article evidence and policy/provider identity match.
+
+If the run reaches its request budget or has unresolved review errors, the shared
+script exits with code 75 and leaves the published PDFs in place. A successful
+run validates decisions and builds both PDFs before copying final results to:
 
 ```text
-Vercel dashboard button
-  -> Vercel API route
-  -> GitHub Actions workflow_dispatch
-  -> scripts/collect_company_signals.mjs
-  -> outputs/latest_company_signals.json
-  -> outputs/latest_company_signals.csv
-  -> Vercel dashboard reads latest output
-```
-
-The crawler does not run continuously. It runs only when the user clicks the button.
-
-## What To Upload To GitHub
-
-Upload the whole project folder to GitHub, including:
-
-```text
-.github/workflows/collect-company-signals.yml
-config/company_sources.json
-data/target_companies.json
-data/target_companies.csv
-docs/automation_notes.md
-docs/github_vercel_button_workflow.md
-outputs/latest_collection_summary.json
-outputs/latest_company_signals.csv
 outputs/latest_company_signals.json
-package.json
-README.md
-next.config.mjs
-app/layout.jsx
-app/page.jsx
-app/globals.css
-app/api/signals/route.js
-app/api/trigger-crawl/route.js
-requirements-python.txt
-scripts/collect_company_signals.mjs
-scripts/collect_company_signals.py
-scripts/extract_pdf_companies.py
-```
-
-Do not upload the source PDF unless you explicitly want it in the repository. The verified 77-company list is already stored in `data/target_companies.json` and `data/target_companies.csv`.
-
-Recommended: upload the generated `outputs/latest_*` files so Vercel has data to show before the first button-triggered run completes.
-
-## What To Deploy To Vercel
-
-Deploy the web dashboard application from the same GitHub repository.
-
-Vercel should host the Next.js files in this repository:
-
-```text
-Dashboard UI
-API route that triggers GitHub Actions
-API route or static fetch logic that reads outputs/latest_company_signals.json
-```
-
-Vercel should not be responsible for crawling 77 companies directly in this model. It only starts the GitHub Actions run and displays the latest collected files.
-
-## GitHub Setup Steps
-
-1. Create a new GitHub repository.
-
-2. Upload this folder as the repository root.
-
-3. Confirm this workflow exists in GitHub:
-
-```text
-.github/workflows/collect-company-signals.yml
-```
-
-4. Open GitHub repository settings:
-
-```text
-Settings -> Actions -> General -> Workflow permissions
-```
-
-5. Set workflow permissions to:
-
-```text
-Read and write permissions
-```
-
-This allows the workflow to commit updated `outputs/*.json` and `outputs/*.csv` files back to the repository.
-
-6. Test the workflow manually:
-
-```text
-Actions -> collect-company-signals -> Run workflow
-```
-
-Use `days = 45` for the first test.
-
-7. After the workflow finishes, confirm these files were updated:
-
-```text
 outputs/latest_collection_summary.json
-outputs/latest_company_signals.csv
-outputs/latest_company_signals.json
+outputs/latest_relevant_signals.json
+outputs/latest_relevance_summary.json
+outputs/latest_investment_signals.json
+outputs/latest_investment_signal_summary.json
+outputs/latest_ai_summary_summary.json
+public/reports/latest_report.pdf
+public/reports/latest_report_en.pdf
 ```
 
-## GitHub Token For Vercel Button
+Actions validates the resulting input files again, uploads the PDFs, and commits
+the latest JSON and both PDFs. Local CLI runs update these local files but do not
+commit them. The workflow needs repository Contents write permission for that
+final commit. Article collection also maintains diagnostic CSVs in its work area;
+the workflow does not publish updated top-level CSVs as report artifacts.
 
-To let a Vercel button trigger GitHub Actions, create a GitHub fine-grained personal access token or GitHub App token.
+## Existing Vercel integration
 
-Minimum required access:
-
-```text
-Repository: target repository only
-Actions: Read and write
-Contents: Read
-Metadata: Read
-```
-
-Store the token only in Vercel environment variables. Do not expose it to browser JavaScript.
-
-## Vercel Environment Variables
-
-Add these in Vercel:
+The Next.js button routes use:
 
 ```text
-GITHUB_TOKEN=your_github_token
-GITHUB_OWNER=your_github_username_or_org
-GITHUB_REPO=your_repository_name
+GITHUB_TOKEN
+GITHUB_OWNER
+GITHUB_REPO
 GITHUB_WORKFLOW_FILE=collect-company-signals.yml
 GITHUB_REF=main
 ```
 
-Optional:
+The server-side token needs access to dispatch Actions and read repository data.
+The API sends `days`, `from_date`, `to_date`, and `issue_number` to the existing
+workflow. This input contract is retained by the cleanup.
 
-```text
-DEFAULT_CRAWL_DAYS=45
-```
+`GET /api/signals` reads the latest JSON from GitHub when configured, with local
+files as the unconfigured fallback. PDF delivery still uses files from the web
+app's deployment; shared versioning between dashboard data and PDFs is a separate
+remaining task.
 
-## Vercel API Route Shape
+The web app uses Next.js and the separate Python function `api/report-dynamic.py`.
+Keep root `requirements.txt` for that function; `requirements-python.txt` supplies
+the additional collection/report tools used locally and in Actions.
 
-The future dashboard button should call a server-side API route like:
-
-```text
-POST /api/trigger-crawl
-```
-
-That API route should call GitHub:
-
-```text
-POST https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_file}/dispatches
-```
-
-Request body:
-
-```json
-{
-  "ref": "main",
-  "inputs": {
-    "days": "45"
-  }
-}
-```
-
-Expected GitHub response:
-
-```text
-204 No Content
-```
-
-The button should show a "crawl started" state after receiving 204. The actual crawl result appears after GitHub Actions finishes and commits the updated output files.
-
-## Dashboard Data Loading
-
-The dashboard can read the latest data from:
-
-```text
-outputs/latest_company_signals.json
-outputs/latest_collection_summary.json
-```
-
-The current dashboard uses the Vercel API route `GET /api/signals` to read the latest output files from GitHub at runtime. This avoids needing a Vercel redeploy after every crawl.
-
-If you later change to fully static data loading, use one of these:
-
-1. Trigger a Vercel redeploy after GitHub Actions commits new output files.
-2. Fetch the raw GitHub file at runtime from a Vercel API route.
-3. Store crawl results in a database later.
-
-For this MVP, option 2 is already implemented.
-
-## Recommended Work Order
-
-1. Upload this folder to GitHub.
-2. Enable GitHub Actions write permission.
-3. Run `collect-company-signals` manually in GitHub Actions.
-4. Confirm `outputs/latest_*` files update.
-5. Create the Vercel project from the GitHub repository.
-6. Add the GitHub token and repository environment variables in Vercel.
-7. Deploy the Next.js dashboard.
-8. Click the `크롤링 수행` button in Vercel.
-9. Confirm a new GitHub Actions run starts.
-10. After the run finishes, click `새로고침` in the dashboard.
-11. Later, refine blocked or low-yield official pages in `config/company_sources.json`.
-
-## AI Summary Setup
-
-To show Korean 2-3 line evidence summaries in the dashboard and downloaded PDF, add a fresh OpenAI API key as the GitHub repository secret `OPENAI_API_KEY`.
-
-Optional repository variables:
-
-- `AI_SUMMARY_LUNA_MODEL`: first-pass summary model. Default: `gpt-5.6-luna`.
-- `AI_SUMMARY_TERRA_MODEL`: retry model for low-quality summaries. Default: `gpt-5.6-terra`.
-- `AI_SUMMARY_REASONING_EFFORT`: reasoning effort for the summary model. Default: `low`.
-- `AI_SUMMARY_MAX_OUTPUT_TOKENS`: first-attempt output budget. Default: `1600`.
-- `AI_SUMMARY_RETRY_MAX_OUTPUT_TOKENS`: retry output budget when the first response is empty or runs out of output tokens. Default: `3200`.
-- `AI_SUMMARY_RELEVANT_SIGNALS`: also summarize technology-relevant candidate rows for the global business status box. Default: `true`.
-
-Do not place API keys in source files, workflow files, screenshots, or commit messages. If a key was pasted into a chat or screenshot, revoke it and create a new key before using it in GitHub Secrets.
-
-AI summaries are cached in `outputs/ai_summary_cache.json`. During later monthly runs, the workflow reuses a cached summary when the company, signal, title, URL, and evidence text fingerprint match. If the evidence fingerprint changes, that row is treated as changed and calls the OpenAI API again. Only new or changed signal rows call the OpenAI API again. The workflow auto-commits `outputs/*.json`, so the cache is preserved in GitHub after each run.
-
-The AI summary step defaults to `gpt-5.6-luna` first and `gpt-5.6-terra` only for low-quality summaries. It summarizes only report-facing rows by default: `outputs/latest_investment_signals.json` for captured investment signals and `outputs/latest_relevant_signals.json` for the global business status box, not the full collection output. It uses low reasoning and a larger output token budget to avoid a paid API call returning no visible Korean summary because reasoning consumed the entire output budget. If every AI summary request fails, the workflow stops before publishing a report.
-
-## Vercel Python Entrypoint Error
-
-If Vercel shows this error:
-
-```text
-No python entrypoint found
-```
-
-it means Vercel detected the repository as a Python project. Commit and push the Next.js files in `app/`, the updated `package.json`, and the removal of root `requirements.txt`. Then redeploy. The Python-only dependency list is now named `requirements-python.txt` so Vercel does not treat it as the web app runtime.
-
-## Current Caveats
-
-- The current collector uses Google News RSS by default and avoids search-result HTML scraping.
-- GDELT support exists, but its public API can rate-limit aggressively, so it is not enabled in the default button workflow.
-- Five companies had no recent Google News RSS results in the last full local run: `TIMET`, `Magnix`, `Heidenhain`, `EMM(Umicore)`, and `Shanghai Electric Wind Power`.
-- Official newsroom, press, and IR pages are now listed in `config/company_sources.json`; blocked or low-yield pages should be refined gradually.
+Vercel deployment is currently paused because of storage usage. This workflow
+cleanup does not resume deployment, delete existing deployments, or change the
+account's current storage usage.

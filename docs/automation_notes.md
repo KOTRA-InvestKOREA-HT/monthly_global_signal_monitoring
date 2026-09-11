@@ -1,67 +1,37 @@
 # Automation Notes
 
-This stage is designed to move into an on-demand run button without changing the collector.
+## Supported execution paths
 
-## Recommended Execution Model
+- Automated monthly report: `npm run collect:all`, `npm run report:review`, and
+  `.github/workflows/collect-company-signals.yml` all run `scripts/review_report.mjs`.
+- Local review without model API calls: `npm run report:local`; follow
+  [local_report_review.md](local_report_review.md).
+- Collection diagnostics: `.github/workflows/link-policy-trial.yml` collects and
+  audits links in a separate work directory without model calls or publication.
 
-Use a manual trigger for collection. Keep Vercel for the dashboard/API layer.
+The old brief preparation/merge workflows were removed on 2026-09-11 because the
+scripts they invoked were absent. Do not recreate the old filter → row-summary
+chain as the automated report path: it drops keyword misses before article review.
+The standalone keyword classifiers and old summarizer remain diagnostic tools.
 
-Because collection only needs to run around the beginning of each month for the previous month's issue, a continuously scheduled crawler is unnecessary. A button can either:
+## Shared monthly contract
 
-- trigger a GitHub Actions `workflow_dispatch` run, then read the committed `outputs/latest_*` files after completion; or
-- call a Vercel API route that runs the collector directly, if the run reliably completes within the Vercel Function duration limit.
+`REPORT_FROM_DATE` and `REPORT_TO_DATE` are resolved by `scripts/report_period.mjs`.
+Both blank means the previous completed month in `Asia/Seoul`; partial, impossible,
+or reversed dates fail. The Actions cache step and the report script share this
+resolver. `days` remains an accepted legacy Actions input for the existing button.
 
-The current full Google News RSS run took about 2 minutes locally, so direct Vercel execution may be acceptable for a lightweight on-demand MVP. If official feeds, GDELT enrichment, retries, or more companies are added, prefer GitHub Actions/manual workflow dispatch so the dashboard request does not stay open for the whole crawl.
+Collection runs first or resumes valid cached results. The shared candidate builder
+checks monthly article evidence against all five investment indicators and business
+activity criteria. Approved decisions must pass validation before the shared builder
+produces both Korean and English PDFs. Incomplete review does not publish new PDFs.
 
-## Manual GitHub Actions Shape
+Use the same provider/model and period when comparing CLI and Actions runs. CLI
+retains its NVIDIA default; the Actions form defaults to Gemini. Credentials,
+request budgets, and concurrency are configuration, not separate pipelines.
 
-```yaml
-name: collect-company-signals
-
-on:
-  workflow_dispatch:
-    inputs:
-      days:
-        description: "Lookback window in days"
-        required: false
-        default: "45"
-
-jobs:
-  collect:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - run: >
-          node --use-system-ca scripts/collect_company_signals.mjs
-          --companies data/target_companies.json
-          --source-config config/company_sources.json
-          --out-dir outputs
-          --sources official_feeds,official_pages,google_news
-          --days ${{ inputs.days || '45' }}
-          --max-per-source 3
-          --max-per-company 4
-          --fallback-mode missing
-          --fallback-min-results 1
-          --rate-limit-seconds 0.5
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Update company signal data"
-          file_pattern: outputs/*.json outputs/*.csv
-```
-
-## Collection Policy
-
-- Prefer RSS/Atom, official newsroom/IR feeds, search APIs, and search-engine feeds.
-- Use `official_feeds` and `official_pages` before Google News fallback.
-- Do not scrape search-result HTML.
-- Keep per-request timeouts and a delay between requests.
-- Add official feeds only after manually verifying that they are stable and allowed.
-- Store raw run summaries so missing companies or source errors are visible.
+The monthly report needs no continuously running crawler. Actions handles collection
+and review; Vercel handles the existing dashboard, dispatch, and PDF endpoints.
+See [github_vercel_button_workflow.md](github_vercel_button_workflow.md) for the
+current inputs, cache behavior, and published files. That file and the workflow
+are the maintained instructions; there is no second workflow template here.

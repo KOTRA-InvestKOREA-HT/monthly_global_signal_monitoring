@@ -10,8 +10,9 @@ import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { investmentStageSupported } from './validate_report_inputs.mjs';
+import { resolveReportPeriod } from './report_period.mjs';
 
-// 판정은 NVIDIA build 의 OpenAI 호환 엔드포인트로 보낸다. 모델은 NVIDIA_MODEL 로 바꾼다.
+// REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
@@ -458,13 +459,12 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
 }
 
 async function main() {
+  const period = resolveReportPeriod();
+  const { from_date: from, to_date: to } = period;
+  // Keep failure status and downstream tools tied to the resolved period too.
+  process.env.REPORT_FROM_DATE = from;
+  process.env.REPORT_TO_DATE = to;
   const config = configuration(); // fail before crawling or calling any model
-  const from = process.env.REPORT_FROM_DATE, to = process.env.REPORT_TO_DATE;
-  for (const date of [from, to]) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '') || new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) throw new Error('Valid REPORT_FROM_DATE and REPORT_TO_DATE are required');
-  }
-  if (from > to) throw new Error('Invalid reporting period');
-  const period = { from_date: from, to_date: to };
   const root = path.resolve('outputs/review_work');
   // 수집·판정보다 먼저 쓴다. 여기서부터 죽더라도 아티팩트는 이번 실행을 말한다.
   await write(path.join(root, 'status.json'), startingStatus(period));

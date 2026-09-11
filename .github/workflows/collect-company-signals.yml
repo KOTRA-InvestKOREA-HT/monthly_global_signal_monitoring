@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       days:
-        description: "Fallback lookback window in days"
+        description: "Legacy input for dashboard compatibility; monthly from_date/to_date take precedence"
         required: false
         default: "45"
       from_date:
@@ -65,35 +65,10 @@ jobs:
       - run: python -m pip install -r requirements-python.txt
       - name: Resolve reporting period
         id: report_period
-        shell: bash
         env:
-          INPUT_FROM_DATE: ${{ inputs.from_date }}
-          INPUT_TO_DATE: ${{ inputs.to_date }}
-          TZ: Asia/Seoul
-        run: |
-          if [[ -n "$INPUT_FROM_DATE" || -n "$INPUT_TO_DATE" ]]; then
-            if [[ -z "$INPUT_FROM_DATE" || -z "$INPUT_TO_DATE" ]]; then
-              echo "from_date and to_date must be supplied together" >&2
-              exit 1
-            fi
-            from_date="$INPUT_FROM_DATE"
-            to_date="$INPUT_TO_DATE"
-          else
-            current_month_start="$(date +%Y-%m-01)"
-            from_date="$(date -d "$current_month_start -1 month" +%F)"
-            to_date="$(date -d "$current_month_start -1 day" +%F)"
-          fi
-
-          if [[ "$(date -d "$from_date" +%F 2>/dev/null)" != "$from_date" ]] ||
-             [[ "$(date -d "$to_date" +%F 2>/dev/null)" != "$to_date" ]] ||
-             [[ "$from_date" > "$to_date" ]]; then
-            echo "invalid reporting period: $from_date .. $to_date" >&2
-            exit 1
-          fi
-
-          echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
-          echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
-          echo "Reporting period: $from_date .. $to_date"
+          REPORT_FROM_DATE: ${{ inputs.from_date }}
+          REPORT_TO_DATE: ${{ inputs.to_date }}
+        run: node scripts/report_period.mjs --github-output
       - name: Restore review progress
         uses: actions/cache/restore@v5
         with:
