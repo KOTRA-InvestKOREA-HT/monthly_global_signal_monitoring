@@ -17,7 +17,9 @@ export const COLORS = {
   light: '#EEF3F7',
   tableLine: '#D8DDE4',
   text: '#10243E',
-  muted: '#8591A3',
+  // 출처 줄과 각주가 쓰는 색. 흰 배경에서 #8591A3 은 대비 3.19:1 로 WCAG AA(4.5:1)
+  // 미달이었고, 7.1pt 로 찍히는 출처가 실제로 읽히지 않았다. 4.59:1 로 올린다.
+  muted: '#6B7688',
   onNavy: '#C8D2DF',
   legend: '#596579',
   bodyGrey: '#555F6E',
@@ -29,7 +31,8 @@ export const COLORS = {
   tealLine: '#9EDCD3',
   teal: '#087A70',
   pill: '#56687B',
-  grey: '#B1B6BE',
+  // 국가명 같은 보조 라벨. 2.04:1 은 너무 흐려서 옛 muted 값까지만 올린다.
+  grey: '#8591A3',
   faint: '#B5B9BF',
 };
 

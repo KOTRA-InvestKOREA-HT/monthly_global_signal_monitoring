@@ -25,8 +25,10 @@ BOX_LINE = colors.HexColor("#E4EAF0")
 TEAL_BG = colors.HexColor("#EAF7F4")
 TEAL_LINE = colors.HexColor("#9EDCD3")
 TEXT = colors.HexColor("#10243E")
-MUTED = colors.HexColor("#8591A3")
-GREY_TEXT = colors.HexColor("#B1B6BE")
+# 흰 배경에서 #8591A3 은 대비 3.19:1 로 WCAG AA(4.5:1) 미달이라 7.1pt 출처가 읽히지
+# 않았다. 4.59:1 로 올린다. report_html.mjs 의 COLORS.muted 와 같은 값을 쓴다.
+MUTED = colors.HexColor("#6B7688")
+GREY_TEXT = colors.HexColor("#8591A3")
 WHITE = colors.white
 
 DEFAULT_ISSUE_NUMBER = "2"
@@ -543,7 +545,14 @@ def short_text(value, limit):
     text = " ".join(str(value or "").replace("&nbsp;", " ").split())
     if len(text) <= limit:
         return text
-    return text[: max(0, limit - 3)].rstrip() + "..."
+    head = text[: max(0, limit - 3)].rstrip()
+    # 영문은 단어 중간에서 끊기면 뜻이 깨진다. short_text_to_width 가 이미 하는 일을
+    # 글자 수로 자를 때도 한다. 다만 되돌린 만큼이 너무 크면(한 낱말이 통째로 길면)
+    # 그대로 둔다. 공백이 없는 한국어 문장을 통째로 날리지 않기 위해서다.
+    spaced = head.rsplit(" ", 1)[0].rstrip() if " " in head else head
+    if len(spaced) >= len(head) * 0.6:
+        head = spaced
+    return head + "..."
 
 
 def clean_text(value):
@@ -1427,11 +1436,22 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     report.footer()
 
 
+# 출처 줄은 "출처  <경로> <날짜>" 순서라, 통째로 120자에서 자르면 끝에 있는 날짜부터
+# 사라진다. 34564332764 영문판 9쪽 Renishaw 가 그랬다: 뉴스룸 경로가 길어서 "...laser
+# enco..." 로 단어 중간이 끊기고 발행일 2026.08.xx 가 통째로 없어졌다. 재검증하려면
+# 날짜가 제일 필요한데 날짜부터 버린 것이다. 경로를 줄이고 날짜는 남긴다.
+SOURCE_LINE_LIMIT = 120
+
+
 def source_line(row):
     source = row.get("source") or row.get("collector") or t("source_fallback")
     if is_press_release(row):
         source = f"{t('source_press_release')} · {source}"
-    return short_text(f"{t('source_prefix')}  {source} {format_row_date(row)}", 120)
+    prefix = f"{t('source_prefix')}  "
+    date = format_row_date(row)
+    tail = f" {date}" if date else ""
+    room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
+    return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
 
 
 def detail_text(row, limit=260):
@@ -2005,13 +2025,79 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     report.text(x + 17, top - layout["source_offset"], source_text, ITEM_SOURCE_SIZE, MUTED)
 
 
+def greedy_item_breaks(heights):
+    """띠 아래를 넘기는 카드는 다음 장에서 시작한다. 띠보다 큰 카드 하나는 그대로 둔다."""
+    breaks = []
+    cursor = ITEM_SECTION_FIRST_TOP
+    on_sheet = 0
+    for index, height in enumerate(heights):
+        if on_sheet and cursor - height < ITEM_SECTION_BOTTOM:
+            breaks.append(index)
+            cursor = ITEM_SECTION_TOP
+            on_sheet = 0
+        cursor -= height + ITEM_CARD_GAP
+        on_sheet += 1
+    return breaks
+
+
+def _item_sheet_fits(heights, start, end, first):
+    cursor = ITEM_SECTION_FIRST_TOP if first else ITEM_SECTION_TOP
+    for index in range(start, end):
+        if index > start and cursor - heights[index] < ITEM_SECTION_BOTTOM:
+            return False
+        cursor -= heights[index] + ITEM_CARD_GAP
+    return True
+
+
+def _item_plan_fits(heights, breaks):
+    edges = [0, *breaks, len(heights)]
+    return all(_item_sheet_fits(heights, edges[i], edges[i + 1], i == 0) for i in range(len(edges) - 1))
+
+
+def _item_sheet_sizes(count, breaks):
+    edges = [0, *breaks, count]
+    return [edges[i + 1] - edges[i] for i in range(len(edges) - 1)]
+
+
+def _even_item_breaks(count, sheets):
+    """장수를 고정한 채 카드 수를 고르게 나눈 지점. 첫 장은 안내문 때문에 띠가 좁으므로
+    남는 카드는 뒤쪽 장에 준다."""
+    base, extra = divmod(count, sheets)
+    breaks = []
+    cursor = 0
+    for sheet in range(sheets - 1):
+        cursor += base + (1 if sheet >= sheets - extra else 0)
+        breaks.append(cursor)
+    return breaks
+
+
+def item_breaks(heights):
+    """build_html_report.mjs 의 itemBreaks 와 같은 규칙이다. 두 렌더러가 같은 자리에서
+    갈라져야 정적 PDF 와 즉석 생성 PDF 의 레이아웃이 어긋나지 않는다.
+
+    greedy 는 앞 장을 가득 채우므로 마지막 장에 카드가 하나만 남을 수 있다. 34564332764
+    영문판이 품목 카드 4장을 3+1 로 갈라 마지막 쪽의 70%가 비었다. 장수는 greedy 가 정한
+    대로 두고(쪽수를 늘리지 않는다) 그 안에서 고르게 나눈다. 고른 분할이 띠에 안 들어가면
+    greedy 를 쓴다. greedy 가 이미 고르면 앞 장을 채우는 편이 나으므로 건드리지 않는다.
+    """
+    greedy = greedy_item_breaks(heights)
+    if not greedy:
+        return greedy
+    even = _even_item_breaks(len(heights), len(greedy) + 1)
+    spread = lambda breaks: max(sizes := _item_sheet_sizes(len(heights), breaks)) - min(sizes)
+    if spread(even) >= spread(greedy):
+        return greedy
+    return even if _item_plan_fits(heights, even) else greedy
+
+
 def paginate_item_cards(report, entries, width):
+    layouts = [item_card_layout(report, entry, width) for entry in entries]
+    breaks = item_breaks([layout["height"] for layout in layouts])
     pages = []
     current = []
     cursor = ITEM_SECTION_FIRST_TOP
-    for entry in entries:
-        layout = item_card_layout(report, entry, width)
-        if current and cursor - layout["height"] < ITEM_SECTION_BOTTOM:
+    for index, (entry, layout) in enumerate(zip(entries, layouts)):
+        if index in breaks:
             pages.append(current)
             current = []
             cursor = ITEM_SECTION_TOP

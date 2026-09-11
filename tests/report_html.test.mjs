@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
+import { renderReport, COLORS, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
 import { itemBreaks } from '../scripts/build_html_report.mjs';
 
 const row = (no, company, signals = [false, false, false, false, false]) => ({ target_no: no, company, signals });
@@ -214,4 +214,48 @@ test('later sheets start higher, because only the first carries the note', () =>
   const tall = ITEM_BAND.bottom - ITEM_BAND.firstTop - ITEM_BAND.gap + 1;
   // The same card fits on a later sheet even though it ended the first one.
   assert.deepEqual(itemBreaks([tall, tall]), [1]);
+});
+
+// 34564332764 영문판: 품목 카드 4장이 3+1 로 갈려 마지막 쪽의 70%가 비었다.
+test('a spilled last sheet is evened out instead of carrying a single card', () => {
+  const room = ITEM_BAND.bottom - ITEM_BAND.firstTop;
+  // 4장이 한 장에는 안 들어가고 3장까지는 들어가는 높이. greedy 면 3+1 이다.
+  const height = (room - ITEM_BAND.gap * 2) / 3;
+  assert.deepEqual(itemBreaks([height, height, height, height]), [2]);
+  // 요구사항은 특정 인덱스가 아니라 "한 장만 덜렁 남지 않는 것"이다. 장별 장수 차이를 본다.
+  const counts = (n) => {
+    const edges = [0, ...itemBreaks(Array(n).fill(height)), n];
+    return edges.slice(1).map((edge, i) => edge - edges[i]);
+  };
+  for (const n of [4, 5, 6]) {
+    const sheets = counts(n);
+    assert.ok(Math.max(...sheets) - Math.min(...sheets) <= 1, `${n} cards split ${sheets}`);
+  }
+});
+
+test('evening out never overflows a sheet or adds a page', () => {
+  const room = ITEM_BAND.bottom - ITEM_BAND.firstTop;
+  // 큰 카드 하나와 작은 카드 셋. 큰 것을 뒤로 넘기면 첫 장이 비므로 옮기지 않는다.
+  const big = room - ITEM_BAND.gap;
+  const small = 40;
+  const breaks = itemBreaks([big, small, small, small]);
+  assert.equal(breaks.length, 1, 'still two sheets');
+  assert.equal(breaks[0], 1, 'the oversized card keeps the first sheet to itself');
+  // 띠보다 큰 카드 하나는 여전히 자기 장을 그대로 쓴다.
+  assert.deepEqual(itemBreaks([room + 200]), []);
+});
+
+// 출처 줄은 7.1pt 로 찍힌다. 흰 배경에서 대비가 모자라면 인쇄물에서 사라진다.
+// 34564332764 영문판의 출처와 발행일이 그래서 읽히지 않았다.
+test('body text colours clear the WCAG AA contrast floor on white', () => {
+  const luminance = (hex) => {
+    const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+  };
+  const onWhite = (hex) => 1.05 / (luminance(hex) + 0.05);
+  assert.ok(onWhite(COLORS.muted) >= 4.5, `muted ${COLORS.muted} is ${onWhite(COLORS.muted).toFixed(2)}:1`);
+  assert.ok(onWhite(COLORS.text) >= 4.5, `text ${COLORS.text}`);
+  // 보조 라벨은 AA 까지는 못 가도 이전(2.04:1)보다는 읽혀야 한다.
+  assert.ok(onWhite(COLORS.grey) >= 3, `grey ${COLORS.grey} is ${onWhite(COLORS.grey).toFixed(2)}:1`);
 });

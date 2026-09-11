@@ -103,7 +103,7 @@ async function cardHeights(html, near) {
 }
 
 // A card that would cross the band's bottom starts the next sheet instead.
-export function itemBreaks(heights) {
+function greedyBreaks(heights) {
   const breaks = [];
   let cursor = ITEM_BAND.firstTop;
   let onSheet = 0;
@@ -119,6 +119,54 @@ export function itemBreaks(heights) {
   return breaks;
 }
 
+// 한 장에 들어갈 카드들이 실제로 띠 안에 들어가는지. 띠보다 큰 카드 하나는 greedy 와
+// 같이 그대로 둔다. 저 혼자서는 어느 장에도 들어가지 않기 때문이다.
+function sheetFits(heights, from, to, first) {
+  let cursor = first ? ITEM_BAND.firstTop : ITEM_BAND.top;
+  for (let index = from; index < to; index += 1) {
+    if (index > from && cursor + heights[index] > ITEM_BAND.bottom) return false;
+    cursor += heights[index] + ITEM_BAND.gap;
+  }
+  return true;
+}
+
+const planFits = (heights, breaks) => [0, ...breaks, heights.length]
+  .slice(0, -1).every((from, i) => sheetFits(heights, from, [...breaks, heights.length][i], i === 0));
+
+// 장수를 고정한 채 카드 수를 고르게 나눈 지점. 첫 장은 안내문 때문에 띠가 좁으므로
+// 남는 카드는 뒤쪽 장에 준다.
+function evenBreaks(count, sheets) {
+  const base = Math.floor(count / sheets);
+  const extra = count % sheets;
+  const breaks = [];
+  let cursor = 0;
+  for (let sheet = 0; sheet < sheets - 1; sheet += 1) {
+    cursor += base + (sheet >= sheets - extra ? 1 : 0);
+    breaks.push(cursor);
+  }
+  return breaks;
+}
+
+// greedy 는 앞 장을 가득 채우므로 마지막 장에 카드가 하나만 남을 수 있다. 그 장은 거의
+// 백지가 된다. 34564332764 영문판이 품목 카드 4장을 3+1 로 갈라 마지막 쪽의 70%가 비었다.
+// greedy 가 정한 장수는 그대로 두고(쪽수는 늘리지 않는다) 그 안에서 고르게 나눈다.
+// 고른 분할이 띠에 안 들어가면 greedy 를 쓴다. 카드 높이는 제각각이라 늘 되지는 않는다.
+const sheetSpread = (count, breaks) => {
+  const edges = [...breaks, count];
+  const sizes = edges.map((edge, i) => edge - (i ? edges[i - 1] : 0));
+  return Math.max(...sizes) - Math.min(...sizes);
+};
+
+export function itemBreaks(heights) {
+  const greedy = greedyBreaks(heights);
+  if (!greedy.length) return greedy;
+  const even = evenBreaks(heights.length, greedy.length + 1);
+  // greedy 가 이미 고르게 갈렸으면 그대로 둔다. 앞 장을 채우는 편이 낫고, 같은 고르기를
+  // 위해 카드를 뒤로 미룰 이유가 없다. 더 고를 때만, 그리고 들어갈 때만 바꾼다.
+  if (sheetSpread(heights.length, even) >= sheetSpread(heights.length, greedy)) return greedy;
+  return planFits(heights, even) ? even : greedy;
+}
+
 function parseArgs(argv) {
   const args = {};
   for (let i = 0; i < argv.length; i += 2) {
@@ -131,7 +179,9 @@ function parseArgs(argv) {
 async function viewModel(args) {
   if (args['view-model']) return JSON.parse(await fs.readFile(args['view-model'], 'utf8'));
   const out = path.join(await fs.mkdtemp(path.join(os.tmpdir(), 'report-vm-')), 'view-model.json');
-  const pass = ['signals', 'summary', 'investment-signals', 'indicator-config', 'targets',
+  // report_view_model.py 가 받는 것은 전부 넘긴다. 빠뜨리면 호출부가 명시한 경로가
+  // 조용히 무시되고 기본값이 쓰인다. --relevant 가 그렇게 빠져 있었다.
+  const pass = ['signals', 'summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
     'technology-map', 'font', 'issue-number', 'lang', 'ignored-signals', 'from-date', 'to-date'];
   await run(process.env.PYTHON || 'python', ['-X', 'utf8', VIEW_MODEL,
     ...pass.flatMap(name => (args[name] ? [`--${name}`, args[name]] : [])), '--out', out]);
