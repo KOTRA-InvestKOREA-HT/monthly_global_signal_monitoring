@@ -54,7 +54,9 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
   const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 400);
   const delayMs = Number(env[`${prefix}_DELAY_MS`] || env.REPORT_DELAY_MS || provider.defaultDelayMs);
-  const concurrency = Number(env.REPORT_CONCURRENCY || 8);
+  // 무료 티어의 분당 요청 한도는 동시 실행 수와 무관하게 공유된다. 8 이면 한도에 먼저
+  // 부딪혀 429 재시도로 되돌아오는 낭비가 커서 4 로 낮춘다. REPORT_CONCURRENCY 로 올릴 수 있다.
+  const concurrency = Number(env.REPORT_CONCURRENCY || 4);
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 12) throw new Error('REPORT_CONCURRENCY must be 1..12');
   // 대기 하한은 프로바이더의 관측 RPM 에서 온다(60000 / RPM). 429 가 나도 저장 후 멈추고
   // 다음 실행이 이어간다. 400 상한은 한 회차 전체를 한 번에 덮는다.
