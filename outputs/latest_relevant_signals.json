@@ -35,7 +35,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://investors.ouster.com/news-events/news-releases",
     "source_type": "official",
@@ -53,7 +53,7 @@
     "content_excerpt": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar August 26, 2026 PDF Version Unlocking Precision and Safety in Autonomous Agriculture: GUSS Plans Deployment of Rev8 to Revolutionize Orchard Operations SAN FRANCISCO --(BUSINESS WIRE)--Aug. 26, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet. The integra...",
     "content_word_count": 1269,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -118,7 +118,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://ir.criver.com/news-releases/",
     "source_type": "official",
@@ -136,7 +136,7 @@
     "content_excerpt": "&nbsp;View printer-friendly version Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing PDF Version Collaboration leverages NGS technologies to accelerate high-quality vaccine development, support global regulatory readiness, and help reduce animal testing WILMINGTON, Mass. --(BUSINESS WIRE)--Aug. 20, 2026-- Charles River Laboratories International, Inc. (NYSE: CRL) and Medigen Vaccine Biologics Corp. (MVC) collaborate &nbsp; on the characterization and validation of the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing (NGS), to support critical steps of Chemistry, M...",
     "content_word_count": 966,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Charles River Laboratories"
     ],
@@ -208,7 +208,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://ir.appliedmaterials.com/news-releases/",
     "source_type": "official",
@@ -226,7 +226,7 @@
     "content_excerpt": "Applied Materials Announces Third Quarter 2026 Results Aug 13, 2026 at 4:01 PM EDT PDF Version Record revenue $9.12 billion , up 25 percent year over year GAAP gross margin 50.3 percent and non-GAAP gross margin 50.4 percent GAAP EPS $3.17 and record non-GAAP EPS $3.50 , up 43 percent and 41 percent year over year, respectively EPIC Center R&D partnerships expand to 11 engagements with leading chipmakers, universities and innovation partners SANTA CLARA, Calif. , Aug. 13, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. (NASDAQ: AMAT) today reported results for its third quarter ended July 26, 2026 . Third Quarter Results Applied generated record revenue of $9.12 billion . On a GAAP basis, the company reported gross margin of 50.3 percent, record operating income of $3.08 billion or 33.7 p...",
     "content_word_count": 4512,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -245,19 +245,19 @@
     "date_note": "",
     "ai_signal_supported": true,
     "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
+    "ai_target_technology_supported": true,
     "ai_indicator_supported": true,
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "기업의 실적 및 반도체 장비 관련 사업 동향과 신제품 출시 실적이 포함되어 있음.",
-    "ai_summary_ko": "어플라이드 머티어리얼즈는 2026 회계연도 3분기 동안 매출 91억 2000만 달러를 기록하며 사상 최대 실적을 달성했음. AI 인프라 수요 증가에 힘입어 반도체 시스템 부문의 성장이 가속화되고 있음.",
-    "ai_summary_en": "Applied Materials reported record results for its third quarter of fiscal 2026 with $9.12 billion in revenue, driven by accelerating AI infrastructure demand and robust growth in its semiconductor systems business.",
+    "ai_summary_reason": "어플라이드 머티어리얼즈의 3분기 실적 발표 및 어드밴스드 패키징용 Opta Quad CMP 등 신규 반도체 장비 및 기술 도입 성과가 명시됨",
+    "ai_summary_ko": "어플라이드 머티어리얼즈는 2026년 3분기 실적을 발표하고 어드밴스드 패키징 분야를 겨냥한 Opta Quad CMP 등 신규 반도체 제조 장비 및 기술을 대거 선보임. 해당 장비는 실시간 모니터링과 동적 조정을 통해 하이브리드 본딩에 필수적인 웨이퍼 균일도와 두께 제어 성능을 크게 향상시킴.",
+    "ai_summary_en": "Applied Materials reported its third-quarter 2026 financial results and introduced new semiconductor systems and technologies, including the Opta Quad CMP specifically engineered for advanced packaging. The system continuously monitors wafer conditions and dynamically adjusts in real time to improve uniformity and thickness variation control critical for hybrid bonding.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "4841ef7b561fdc4f4f6506c9",
     "ai_evidence_quotes": [
-      "Applied Materials, Inc. (NASDAQ: AMAT) today reported results for its third quarter ended July 26, 2026 ."
+      "Opta™ Quad CMP: engineered specifically for advanced packaging, the Opta Quad continuously monitors wafer conditions during polish and dynamically adjusts in real time, improving within-wafer uniformity and total thickness variation control, which is particularly critical for hybrid bonding."
     ]
   },
   {
@@ -296,7 +296,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://ir.appliedmaterials.com/news-releases/",
     "source_type": "official",
@@ -314,7 +314,7 @@
     "content_excerpt": "UC Berkeley to Join Applied Materials’ EPIC Center to Speed Chip Innovation Aug 11, 2026 at 9:00 AM EDT PDF Version Collaboration pairs UC Berkeley’s semiconductor research strength with Applied’s state-of-the-art equipment and process integration expertise Located in Silicon Valley , Applied’s EPIC Center provides industry-scale R&D environment with access to cutting-edge chipmaking equipment to enable rapid co-innovation and faster commercialization SANTA CLARA, Calif. , Aug. 11, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. today announced that the University of California, Berkeley will join the company’s EPIC Center in Silicon Valley as a research collaborator. Working side by side with Applied’s scientists and engineers, UC Berkeley faculty and students will pursue high-impact res...",
     "content_word_count": 844,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -385,7 +385,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://investors.ouster.com/news-events/news-releases",
     "source_type": "official",
@@ -403,7 +403,7 @@
     "content_excerpt": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion August 11, 2026 PDF Version Econolite partnership leverages world's first native color digital lidar to expand Ouster BlueCity across 160 intersections with up to 500-foot advance detection for optimized mobility and enhanced safety. SAN FRANCISCO --(BUSINESS WIRE)--Aug. 11, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a global leader in high-performance lidar sensors and intelligent software solutions, powering Physical AI across the automotive, industrial, robotics and smart infrastructure sectors, announced today that Econolite , a leader in mobility operating systems, was awarded an expansion contract from Utah Department of Transportation (UDOT) to deploy Ouster BlueCity, a...",
     "content_word_count": 1575,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -475,7 +475,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://investors.ouster.com/",
     "source_type": "official",
@@ -493,7 +493,7 @@
     "content_excerpt": "Ouster Announces Results for Second Quarter 2026 August 6, 2026 PDF Version Record product revenue, achieving 14th straight quarter of growth Lidar and camera shipments of more than 17,000 units SAN FRANCISCO --(BUSINESS WIRE)--Aug. 6, 2026-- Ouster, Inc . (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, announced financial results for the three months ended June 30, 2026 . “We delivered a strong second quarter, with $55 million in revenue and more than 17,000 total sensors shipped. These results reflect the strength of our unified sensing and perception platform and the continued momentum we have been seeing across our markets. Customers around the world have continued to scale their investments in Physical AI, and Ouster is well positioned t...",
     "content_word_count": 3113,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -519,15 +519,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "2026년 2분기 동안 1만 7천 대 이상의 라이다 및 카메라 센서를 출하하고 제품 매출 5,300만 달러를 기록하는 등 타겟 품목 관련 사업 활동이 확인됨",
-    "ai_summary_ko": "오우스터가 2026년 2분기 동안 1만 7천 대 이상의 라이다 및 카메라 센서를 출하함. 이를 통해 제품 매출 5,300만 달러를 기록하며 전년 동기 대비 51% 증가한 성장을 달성함.",
-    "ai_summary_en": "Ouster announced its second quarter 2026 financial results, reporting product revenue of $53 million and shipments of more than 17,000 lidar and camera sensors, driven by strong adoption in industrial and smart infrastructure markets.",
+    "ai_summary_reason": "오우스터가 2026년 2분기 실적 발표를 통해 5,500만 달러의 매출과 17,000대 이상의 라이다 및 카메라 센서 출하를 기록했다고 밝힘.",
+    "ai_summary_ko": "오우스터는 2026년 2분기 동안 5,500만 달러의 매출을 기록하며 14개 분기 연속 성장을 달성했음. 해당 기간 라이다와 카메라 센서를 포함해 총 17,000대 이상을 출하했으며, 이 중 라이다가 약 53%를 차지했음.",
+    "ai_summary_en": "Ouster announced its financial results for the second quarter of 2026, achieving $55 million in revenue and marking its 14th consecutive quarter of growth. The company shipped over 17,000 lidar and camera sensors during the quarter, with lidar accounting for approximately 53% of the total units.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "cf6f018ae40352d472908218",
     "ai_evidence_quotes": [
-      "Shipped more than 17,000 lidar and camera sensors for revenue, of which lidar was approximately 53% of the total.",
-      "Product revenue of $53 million was an increase of 51% year over year and 9% sequentially"
+      "Ouster delivered second quarter revenue of $55 million , an increase of 56% year over year and 12% sequentially.",
+      "The Company shipped over 17,000 units - of which lidar was approximately 53% of the total."
     ]
   },
   {
@@ -544,7 +544,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://prodrive-technologies.com/en/about-us/news/?label=Press+release",
     "source_type": "official",
@@ -557,12 +557,12 @@
     "link_verdict": "accept",
     "link_reason": "article_link",
     "link_rank": 0,
-    "content_text": "1-04-2026\r\n|\r\nPress release\r\nProdrive Technologies announces 2025 financial results\r\nProdrive Technologies Group B.V. (“Prodrive”) today announced consolidated revenues of €504 million for 2025, compared to €552 million in 2024, and a net profit of €40 million, equal to the prior year.\nCEO Pieter Janssen commented: “2025 was a year in which we delivered strong performance during a transitional phase. We moved from stabilizing the business to laying the foundation for sustainable growth, maintaining solid profitability while continuing to improve quality, efficiency, and operational performance. A major milestone was the successful shift from a functional to a product‑oriented organizational model, positioning us for the next wave of growth.\"\nCFO Karel van Gerven added: “We expect double‑digit growth in 2026 and beyond, driven by strong demand for both existing and newly developed products and technologies. We are deploying our financial resources to invest significantly in areas such as semiconductors, advanced healthcare solutions, and energy‑transition applications. To support our expanding global presence, we will establish a manufacturing facility in Malaysia and a commercial subsidiary in South Korea in 2026.” \nLater in 2026, Pieter Janssen is expected to transition back to his role as CTO following the appointment of a new CEO, a process that is currently nearing completion.\nAbout Prodrive Technologies \nFounded in 1993, Netherlands-based Prodrive designs and manufactures high-tech electronics, software and mechatronic products and systems. In 2025, Prodrive Technologies operated five dedicated Business Lines and three highly automated manufacturing sites. The company owned subsidiaries in Europe, the U.S., China, and Japan.\nRelated articles\r\n20-05-2026\r\n|\r\nPress release\r\nProdrive Technologies and Fortaegis Technologies sign strategic partnership agreement\r\n1-05-2026\r\n|\r\nPress release\r\nProdrive Technologies appoints Mark Roeloffzen as new Chief Executive Officer\r\n1-12-2025\r\n|\r\nPress release\r\nProdrive Technologies takes €40 million EIB loan to boost R&D in new technologies\r\n5-11-2025\r\n|\r\nPress release\r\nProdrive Technologies inaugurates 4MW green hydrogen rectifier test facility\r\n23-09-2025\r\n|\r\nPress release\r\nChange in executive management at Prodrive Technologies\r\n13-05-2025\r\n|\r\nPress release\r\nProdrive Technologies begins shipping ultra-fast 10MPx and 21MPx machine vision cameras\r\n4-04-2025\r\n|\r\nPress release\r\nRelease of financial statements for 2024",
+    "content_text": "Prodrive Technologies announces 2025 financial results\r\nProdrive Technologies Group B.V. (“Prodrive”) today announced consolidated revenues of €504 million for 2025, compared to €552 million in 2024, and a net profit of €40 million, equal to the prior year.\nCEO Pieter Janssen commented: “2025 was a year in which we delivered strong performance during a transitional phase. We moved from stabilizing the business to laying the foundation for sustainable growth, maintaining solid profitability while continuing to improve quality, efficiency, and operational performance. A major milestone was the successful shift from a functional to a product‑oriented organizational model, positioning us for the next wave of growth.\"\nCFO Karel van Gerven added: “We expect double‑digit growth in 2026 and beyond, driven by strong demand for both existing and newly developed products and technologies. We are deploying our financial resources to invest significantly in areas such as semiconductors, advanced healthcare solutions, and energy‑transition applications. To support our expanding global presence, we will establish a manufacturing facility in Malaysia and a commercial subsidiary in South Korea in 2026.” \nLater in 2026, Pieter Janssen is expected to transition back to his role as CTO following the appointment of a new CEO, a process that is currently nearing completion.\nAbout Prodrive Technologies \nFounded in 1993, Netherlands-based Prodrive designs and manufactures high-tech electronics, software and mechatronic products and systems. In 2025, Prodrive Technologies operated five dedicated Business Lines and three highly automated manufacturing sites. The company owned subsidiaries in Europe, the U.S., China, and Japan.\nRelated articles\r\n20-05-2026\r\n|\r\nPress release\r\nProdrive Technologies and Fortaegis Technologies sign strategic partnership agreement\r\n1-05-2026\r\n|\r\nPress release\r\nProdrive Technologies appoints Mark Roeloffzen as new Chief Executive Officer\r\n1-12-2025\r\n|\r\nPress release\r\nProdrive Technologies takes €40 million EIB loan to boost R&D in new technologies\r\n5-11-2025\r\n|\r\nPress release\r\nProdrive Technologies inaugurates 4MW green hydrogen rectifier test facility\r\n23-09-2025\r\n|\r\nPress release\r\nChange in executive management at Prodrive Technologies\r\n13-05-2025\r\n|\r\nPress release\r\nProdrive Technologies begins shipping ultra-fast 10MPx and 21MPx machine vision cameras\r\n4-04-2025\r\n|\r\nPress release\r\nRelease of financial statements for 2024",
     "content_source_url": "https://prodrive-technologies.com/en/about-us/news/prodrive-technologies-announces-2025-financial-results/",
-    "content_excerpt": "1-04-2026 | Press release Prodrive Technologies announces 2025 financial results Prodrive Technologies Group B.V. (“Prodrive”) today announced consolidated revenues of €504 million for 2025, compared to €552 million in 2024, and a net profit of €40 million, equal to the prior year. CEO Pieter Janssen commented: “2025 was a year in which we delivered strong performance during a transitional phase. We moved from stabilizing the business to laying the foundation for sustainable growth, maintaining solid profitability while continuing to improve quality, efficiency, and operational performance. A major milestone was the successful shift from a functional to a product‑oriented organizational model, positioning us for the next wave of growth.\" CFO Karel van Gerven added: “We expect double‑digit...",
-    "content_word_count": 346,
+    "content_excerpt": "Prodrive Technologies announces 2025 financial results Prodrive Technologies Group B.V. (“Prodrive”) today announced consolidated revenues of €504 million for 2025, compared to €552 million in 2024, and a net profit of €40 million, equal to the prior year. CEO Pieter Janssen commented: “2025 was a year in which we delivered strong performance during a transitional phase. We moved from stabilizing the business to laying the foundation for sustainable growth, maintaining solid profitability while continuing to improve quality, efficiency, and operational performance. A major milestone was the successful shift from a functional to a product‑oriented organizational model, positioning us for the next wave of growth.\" CFO Karel van Gerven added: “We expect double‑digit growth in 2026 and beyond,...",
+    "content_word_count": 342,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Prodrive Technologies"
     ],
@@ -588,12 +588,12 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "프로드라이브 테크놀로지스의 2025년 재정 실적 발표 및 2026년 반도체, 헬스케어, 에너지 전환 분야 투자 계획이 보도됨",
-    "ai_summary_ko": "프로드라이브 테크놀로지스가 2025년 연결 기준 매출 5억 400만 유로와 순이익 4,000만 유로의 실적을 발표했음. 반도체, 첨단 헬스케어, 에너지 전환 응용 분야에 대한 대규모 투자를 추진할 계획임. 말레이시아 제조 시설과 한국 상업 자회사 설립을 추진하고 있음.",
-    "ai_summary_en": "Prodrive Technologies announced consolidated revenues of €504 million and a net profit of €40 million for 2025. The company plans to make significant investments in semiconductors, advanced healthcare solutions, and energy-transition applications. Additionally, it will establish a manufacturing facility in Malaysia and a commercial subsidiary in South Korea.",
+    "ai_summary_reason": "2025년 재실적 발표 및 반도체·헬스케어·에너지 전환 분야 투자 확대 계획이 포함됨.",
+    "ai_summary_ko": "프로드라이브 테크놀로지스는 2025년 연결 기준 매출 5억 400만 유로와 순이익 4,000만 유로를 기록함. 반도체, 첨단 헬스케어 솔루션, 에너지 전환 응용 분야에 대규모 투자를 집행할 예정임.",
+    "ai_summary_en": "Prodrive Technologies reported consolidated revenues of €504 million and a net profit of €40 million for 2025. The company plans to deploy financial resources to significantly invest in semiconductors, advanced healthcare solutions, and energy-transition applications.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "ecda8729dcf88047053d99d2",
+    "ai_summary_cache_key": "1f68bf719cb597e84d5b7a7b",
     "ai_evidence_quotes": [
       "Prodrive Technologies Group B.V. (“Prodrive”) today announced consolidated revenues of €504 million for 2025, compared to €552 million in 2024, and a net profit of €40 million, equal to the prior year.",
       "We are deploying our financial resources to invest significantly in areas such as semiconductors, advanced healthcare solutions, and energy‑transition applications."
@@ -613,7 +613,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/media",
     "source_type": "official",
@@ -631,7 +631,7 @@
     "content_excerpt": "MWOW Press Releases 2020 \\r\\n\"}}\" id=\"styledheading-d99bbaa3dd\" class=\"cmp-text\"> 2020 Please find all MHI Vestas Offshore Wind press releases from 2020 here. \\r\\n \\r\\n News \\r\\n 500th V164 nacelle produced at Lindø facility \\r\\n \\r\\n MHI Vestas secures footprint in Taiwan with waterside manufacturing facility \\r\\n \\r\\n Final turbine installed at Borssele III/IV in spite of COVID-19 \\r\\n \\r\\n First ever V164-9.5 MW turbine installed on a floating wind project \\r\\n \\r\\n Triton Knoll pre-assembly hub ramps up activity \\r\\n \\r\\n MHI Vestas and EolMed partner for floating offshore wind farm in France \\r\\n \\r\\n Taiwan’s supply chain gains another link with transformer purchase agreement \\r\\n \\r\\n MHI Vestas to source additional key turbine components locally in Taiwan \\r\\n \\r\\n Tower supply pur...",
     "content_word_count": 620,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -681,7 +681,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/media",
     "source_type": "official",
@@ -699,7 +699,7 @@
     "content_excerpt": "MWOW Press Releases 2019 \\r\\n\"}}\" id=\"styledheading-369601c0c5\" class=\"cmp-text\"> 2019 Please find all MHI Vestas Offshore Wind press releases from 2019 here. \\r\\n \\r\\n News \\r\\n MHI Vestas Celebrates Commissioning of Rampion Offshore Wind Farm \\r\\n \\r\\n MHI Vestas Expands at the Port of Oostende \\r\\n \\r\\n MHI Vestas Achieves Final Turbine Installation at Horns Reef 3 \\r\\n \\r\\n MHI Vestas Installs First Turbine at Norther, soon to be Belgium’s Largest Offshore Wind Park \\r\\n \\r\\n MHI Vestas named as Preferred Supplier for 476 MW Baltic Eagle project in Germany \\r\\n \\r\\n MHI Vestas To Supply Five V164-9.5 MW Turbines for Kincardine Floating Offshore Wind Park in Scotland \\r\\n \\r\\n MHI Vestas Installs Norther Turbines in Record Time \\r\\n \\r\\n MHI Vestas Offshore Wind Celebrates Handover of B...",
     "content_word_count": 568,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -741,6 +741,8 @@
     "title": "Welcome to Mkango Resources Ltd.",
     "url": "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
     "source": "HyproMag - Mkango 2026 News / News Archive RSS",
+    "publisher": "",
+    "publisher_home_url": "",
     "published_at": "2026-08-31T12:33:45Z",
     "published_month": "2026-08",
     "published_at_source": "feed",
@@ -764,7 +766,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_feed_discovered",
     "query": "https://mkango.ca/rss",
     "source_type": "official",
@@ -779,7 +781,7 @@
     "content_excerpt": "News Mkango Completes Acquisition Of Remloy August 31, 2026 View PDF (530 kB) London / Vancouver: 31 August 2026 – Mkango Resources Ltd. ( AIM/TSX-V: MKA) (“Mkango” or the “Company”) is pleased to announce that following the announcement on 20 May 2026, the Company has completed the acquisition of the Remloy rare earth magnet recycling business (“Remloy”) from Heraeus Amloy Technologies GmbH for €8 million (US$9.3 million [1] ) in cash of which €5 million (US$5.8 million 1 ) was settled by Mkango on closing (the “Transaction”). The balance of €3 million (US$3.5 million 1 ) is payable in cash on 28 August 2028, being the second anniversary of completion. Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop recy...",
     "content_word_count": 2881,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "HyProMag"
     ],
@@ -837,7 +839,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.appliedmaterials.com/us/en/newsroom.html",
     "source_type": "official",
@@ -855,7 +857,7 @@
     "content_excerpt": "Dropdown language United States China - 简体中文 Europe - English India - English Israel - English Japan - 日本語 Korea - 한국어 Singapore - English Taiwan - 繁體中文 United States - English Trending Topics Dropdown language United States China - 简体中文 Europe - English India - English Israel - English Japan - 日本語 Korea - 한국어 Singapore - English Taiwan - 繁體中文 United States - English Products & Services Products &amp; Technologies \\r\\n\"}}\" id=\"_content_experience-fragments_applied-materials_us_en_site_header_master_jcr:content_root_globalheader_copy_tabs_item-0_item_0_copy_columncontainer_copy_container_copy_2033090085_text-21895\" class=\"cmp-text\"> Products & Technologies Semiconductor \"> Semiconductor Display \"> Display Automation Software \"> Automation Software Services \\r\\n\"}}\" id=\"_content_experience-f...",
     "content_word_count": 1579,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -918,7 +920,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -936,7 +938,7 @@
     "content_excerpt": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026 Nexeon has secured backing from the National Wealth Fund to support the expansion of its domestic operations, strengthening the UK’s battery supply chain, creating jobs and boosting growth. The National Wealth Fund’s commitment of £52.6 million ($70 million) marks the completion of Nexeon’s latest investment round totalling £100 million ($133 million). Other new investors include the Korea Development Bank and Honda Xcelerator Ventures. Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles. The investment round supports the company’s continued scale-up and commercialisation activities...",
     "content_word_count": 685,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -962,14 +964,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "실리콘 음극재 소재 생산 및 상용화 활동과 연계된 투자 유치 및 양산 시설 관련 사업 동향이 명확히 확인됨",
-    "ai_summary_ko": "넥세온이 1억 파운드 규모의 투자 유치를 완료하고 실리콘 음극재 양산 및 상용화 활동을 본격적으로 추진함. 내셔널 웰스 펀드, 한국산업은행, 혼다 등이 신규 투자자로 참여해 군산 생산시설 가동과 영국 파일럿 시설 개발을 지원함.",
-    "ai_summary_en": "Nexeon completed a £100m investment round backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures to advance its silicon anode materials business. The funding supports the company's continued scale-up, the development of a UK pilot manufacturing facility, and the operation of its Si-C volume production facility in Gunsan, South Korea.",
+    "ai_summary_reason": "실리콘 음극재 기술을 활용한 배터리 성능 향상 및 양산 시설 구축 등 핵심 사업 활동이 명시되어 있음",
+    "ai_summary_ko": "넥세온은 최첨단 실리콘 음극재 소재를 통해 고에너지 밀도 리튬이온 배터리 생산을 지원하며, 군산에 세계 최초의 실리콘-탄소 소재 전용 양산 시설을 가동함. 또한 영국 국부펀드, KDB, 혼다 등이 참여한 1억 파운드 규모의 투자 라운드를 완료하고 국내 운영 확장과 R&D 활동을 가속화하고 있음.",
+    "ai_summary_en": "Nexeon provides cutting-edge silicon anode materials that enable higher energy density lithium-ion batteries and recently brought online the world's first volume production facility for silicon-carbon materials in Gunsan, South Korea. The company also completed a £100 million investment round with backing from the National Wealth Fund, Korea Development Bank, and Honda to support domestic operations and advanced manufacturing.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "460f6be908a5ec6d4a26229a",
     "ai_evidence_quotes": [
-      "Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries",
+      "Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles.",
       "Nexeon recently brought online the first volume production facility globally for silicon-carbon materials dedicated to enhancing lithium-ion battery performance in Gunsan, South Korea."
     ]
   },
@@ -1002,7 +1004,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1020,7 +1022,7 @@
     "content_excerpt": "Nexeon Achieves ISO 9001 Certification for Gunsan Plant August 28, 2026 Nexeon's production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification, internationally recognised as the benchmark standard for quality management systems. The certification marks an important milestone in the development of Nexeon’s Gunsan operation, and reinforces the company’s commitment to delivering consistently high quality silicon-carbon materials to leading battery cell manufacturers and automotive customers. Nexeon’s Gunsan facility is the company’s first commercial-scale production plant, and was announced as production ready in December 2025. It is designed for the volume manufacture of Nexeon’s advanced silicon-carbon anode materials, supporting the company’s growing pipeline of glob...",
     "content_word_count": 366,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -1063,6 +1065,8 @@
     "title": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
     "url": "https://www.renishaw.com/en/renishaw-launches-next-generation-rle-interferometric-laser-encoders-for-advanced-motion-control-in-semiconductor-manufacturing--50149",
     "source": "Renishaw - Latest News / Newsroom / News RSS: Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
+    "publisher": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
+    "publisher_home_url": "https://www.renishaw.com/en/renishaw-launches-next-generation-rle-interferometric-laser-encoders-for-advanced-motion-control-in-semiconductor-manufacturing--50149",
     "published_at": "2026-08-26T11:21:40Z",
     "published_month": "2026-08",
     "published_at_source": "feed",
@@ -1086,7 +1090,7 @@
         "precision": "month"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_feed_discovered",
     "query": "https://www.renishaw.com/en/6635.rss",
     "source_type": "official",
@@ -1101,7 +1105,7 @@
     "content_excerpt": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing August 2026 Renishaw, a global leader in engineering technologies, will present its new family of RLE laser interferometer encoder systems at SEMICON Taiwan 2026, Taipei City and SEMICON West 2026, San Francisco. The new product range comprises three systems RLE100, RLE200 and RLE300 providing precision position feedback for a wide range of semiconductor manufacturing motion control applications. Building on the proven technology platforms of Renishaw's established RLE10 and RLE20 laser encoders, the new family is designed to meet the increasing demands of advanced semiconductor manufacturing equipment. As device feature sizes continue to shrink, manufacturers req...",
     "content_word_count": 712,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Renishaw plc"
     ],
@@ -1167,7 +1171,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -1185,7 +1189,7 @@
     "content_excerpt": "(Translation) This document has been translated from the Japanese original for the convenience of overseas stakeholders. In the event of any discrepancy between this document and the Japanese original, the original shall prevail. 半 期 報 告 書 Semiannual Report (The First Six-month of 24th Fiscal Period) Nabtesco Corporation (Translation) This document has been translated from the Japanese original for the convenience of overseas stakeholders. In the event of any discrepancy between this document and the Japanese original, the original shall prevail. Semiannual Report 1. This document prints out the semiannual report based on Article 27-30-2 of the Financial Instruments and Exchange Law with the contents and pages attached to the data submitted using the electronic information processing syste...",
     "content_word_count": 9987,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -1250,7 +1254,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -1268,7 +1272,7 @@
     "content_excerpt": "Securities Code︓6268 August 5, 2026 The forecast data presented herein reflects assumed results based on conditions that are subject to change. Nabtesco Corporation does not make representations as to, or warrant, in whole or in part, the attainment or realization of any of the forecasted results presented in this document. All figures and ratios are rounded to nearest whole number.. Unauthorized copying and replication of this material including text and image are prohibited. Thank you for joining FY2026/12 H1 Financial Results Briefing 1 Preconditions for the Today’s Briefing Based on the share transfer agreement relating to the hydraulic equipment business of Nabtesco Corporation, hereinafter “the Company” and its consolidated subsidiaries entered into with Comer Industries S.p.A. on Ju...",
     "content_word_count": 6063,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -1361,7 +1365,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.albemarle.com/us/en/newsroom",
     "source_type": "official",
@@ -1374,12 +1378,12 @@
     "link_verdict": "accept",
     "link_reason": "article_link",
     "link_rank": 0,
-    "content_text": "Share \nLinkedIn \nWhatsApp \nX \nEmail \nCopy Link \nAlbemarle Reports Second Quarter 2026 Results \nCHARLOTTE, N.C. , Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026.\nSecond Quarter 2026 and Recent Highlights\n(Unless otherwise stated, all percentage changes represent year-over-year comparisons and do not exclude the prior-period results of Ketjen's refining catalyst solutions business in which the company sold a 51% stake on March 2, 2026) \nNet sales of $1.7 billion,&nbsp;up 31% due to higher pricing in Energy Storage (+73%) and higher pricing and volumes in Specialties (price +11%, volume +8%).\nNet income of $480 million, or $3.52 per diluted share attributable to common shareholders.&nbsp;&nbsp;\nAdjusted EBITDA (a) &nbsp;of $858 million; up 155% due primarily to higher pricing in Energy Storage, increased pricing and volumes in Specialties and ongoing cost and productivity improvements. Adjusted EBITDA expanded in both Energy Storage (+229%) and Specialties (+61%).\nCash from operating activities of $710 million and free cash flow of $638 million (a) . Operating cash flow conversion of 83% (a) , primarily driven by timing of an increased dividend from the Talison joint venture and non-recurring working capital benefits.\nDelivered $100 million in year-to-date run-rate cost and productivity improvements, tracking towards the high end of our full-year target of $100 to $150 million.\nImproving full-year 2026 outlook considerations including: Increasing full-year Specialties net sales outlook to $1.4 to $1.6 billion and adjusted EBITDA outlook to $275 to $325 million, due to stronger-than-expected pricing and volume performance year to date.\nExpect minimal impact to Energy Storage sales volume related to the fire at Talison CGP3 which occurred on June 9, in part due to better-than-planned output from the Wodgina mine.\nReducing full-year capital expenditure forecast to approximately $500 million due to ongoing capital efficiency improvements.\n(a) See Non-GAAP&nbsp;Reconciliations for further details. \n\"Albemarle delivered another quarter of strong results, reflecting improved pricing, continued strength in Specialties, disciplined cost and productivity execution, and strong cash generation,\" said Kent Masters, Chairman and CEO. \"We continue to see resilient demand fundamentals across our core markets, including energy storage, electric vehicles, and semiconductors. We are advancing our highest value organic growth opportunities while maintaining a disciplined approach to capital allocation and execution.\"\nSecond Quarter 2026 Results \nIn millions, except per share amounts \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet sales \n$&nbsp;&nbsp;&nbsp;1,743.3 \n$&nbsp;&nbsp;&nbsp;1,330.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;413.3 \n31.1&nbsp;% \nNet income attributable to Albemarle Corporation \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;480.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.9 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;457.1 \n1,996.2&nbsp;% \nAdjusted EBITDA (a) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;858.1 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;336.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;521.6 \n155.0&nbsp;% \nDiluted income (loss) per share attributable to common\nshareholders \n$&nbsp; &nbsp; &nbsp; &nbsp; 3.52 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.68 \nNM \n&nbsp;&nbsp; Non-recurring and other unusual items (a) \n0.22 \n0.27 \nAdjusted diluted income per share attributable to\ncommon shareholders (a)(b) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.75 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.11 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.64 \nNM \n(a) See Non-GAAP&nbsp;Reconciliations for further details. \n(b) Totals may not add due to rounding. \nNet sales for the second quarter of 2026 were $1.7 billion compared to $1.3 billion for the prior-year quarter, up 31%, driven primarily by higher prices in both Energy Storage and Specialties and volume growth in Specialties. Adjusted EBITDA of $858 million increased by $522 million from the prior-year quarter, primarily due to higher net sales and ongoing cost and productivity improvements.\nNet income attributable to Albemarle of $480 million increased year over year by $457 million. The effective income tax rate for the second quarter of 2026 was 21.3% or 19.1% on an adjusted basis.\nEnergy Storage Results \nIn millions \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet Sales \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,276.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;717.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;559.0 \n77.9&nbsp;% \nSales Volume (kT LCE) (a) \n65 \n59 \n6 \n11.0&nbsp;% \nAvg. Realized Price ($/kg LCE) (a) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19.53 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.17 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.36 \n60.5&nbsp;% \nAdjusted EBITDA \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;723.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;219.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;503.7 \n229.3&nbsp;% \n(a) Includes aggregated salts and spodumene sales on a lithium carbonate equivalent (LCE) basis. \nEnergy Storage net sales for the second quarter of 2026 were $1.3 billion, an increase of $559 million, or 78%, due to higher pricing. Adjusted EBITDA of $723 million increased $504 million, or 229%, primarily due to higher lithium pricing partially offset by higher CORFO commissions.\nSpecialties Results \nIn millions \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet Sales \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;423.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;351.6 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;71.9 \n20.5&nbsp;% \nAdjusted EBITDA \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;117.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;73.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;44.7 \n61.3&nbsp;% \nSpecialties net sales for the second quarter of 2026 were $423 million, an increase of $72 million, or 20%, primarily due to higher volumes (+8%) and pricing (+11%). Adjusted EBITDA of $118 million increased $45 million, or 61%, primarily due to higher volumes and favorable pricing in bromine and derivatives, along with continued productivity improvements and proactive management of cost escalations driven by the conflict in the Middle East.&nbsp;\n2026 Outlook Considerations \nTotal Corporate Outlook Considerations\nThe table below reflects expected outcomes for the total company based on recently observed lithium market price scenarios. Outlook ranges for each scenario are based on variation in sales volume and product mix. Energy Storage production volumes are expected to increase year over year. Sales volumes are expected to be in the range of 225 to 235 kilotons lithium carbonate equivalent, as increased Wodgina volumes partially offset a delay in the Talison CGP3 ramp due to a fire that occurred on June 9. All three scenarios assume flat market pricing flowing through Energy Storage's current contract book which includes approximately 40% of salts volume (or one-third of total volumes) on long-term agreements. Scenarios also assume that spodumene pricing averages 10% of the lithium carbonate equivalent (LCE) price, while other costs are assumed to be constant.\nTotal Corporate FY 2026E \nObserved market price case (a) \nFY 2025 avg. \nQ1 2026 avg. \n2021-2025 avg. \nAverage lithium market price ($/kg LCE) (a) \n~$10 \n~$20 \n~$30 \nNet sales \n$4.1 - $4.3 billion \n$5.7 - $6.0 billion \n$7.5 - $7.8 billion \nAdjusted EBITDA (b) \n$0.9 - $1.0 billion \n$2.4 - $2.6 billion \n$4.2 - $4.4 billion \n(a)&nbsp;Price represents blend of relevant market pricing including spot and regional indices for the periods referenced. \n(b)&nbsp;The Company does not provide a reconciliation of forward-looking non-GAAP financial measures to the most directly comparable financial measures calculated and reported in accordance with GAAP, as the company is unable to estimate significant non-recurring or unusual items without unreasonable effort. See \"Additional Information Regarding Non-GAAP Measures\" for more information. \n&nbsp;\nEnergy Storage Market Price Scenarios \nEnergy Storage FY 2026E \nObserved market price case (a) \nFY 2025 avg. \nQ1 2026 avg. \n2021-2025 avg. \nAverage lithium market price ($/kg LCE) (a) \n~$10 \n~$20 \n~$30 \nNet sales \n$2.5 - $2.6 billion \n$4.0 - $4.2 billion \n$5.9 - $6.1 billion \nAdjusted EBITDA \n$0.7 - $0.8 billion \n$2.1 - $2.3 billion \n$3.9 - $4.1 billion \nEquity in net income of unconsolidated investments\n(net of tax) (b) \n$0.2 - $0.3 billion \n$0.6 - $0.7 billion \n$1.0 - $1.1 billion \n(a) Price represents blend of relevant market pricing including spot and regional indices for the periods referenced. \n(b) Included in adjusted EBITDA on a pre-tax basis. \nSpecialties Outlook Considerations\nSpecialties net sales and adjusted EBITDA outlook is improved primarily due to strong year to date performance driven by volume growth in bromine specialties and cost and productivity improvements. Our outlook continues to reflect modest volume growth in key end markets led by semiconductors, oil and gas, flame retardants and pharmaceuticals partially offset by expected softness in automotive and petrochemicals. Second-half outlook assumes stabilization in the bromine market and continued uncertainties including the situation in the Middle East. Operations at the Jordan Bromine Company (JBC) joint venture are in line with expectations as it continues to navigate geopolitical tensions in the region.\nSegment FY 2026E \nSpecialties net sales \n$1.4 - $1.6 billion \nSpecialties adjusted EBITDA \n$275 - $325 million \nOther Corporate Outlook Considerations\nAlbemarle expects its full-year 2026 capital expenditures to be approximately $500 million, down 15% compared to 2025 due to ongoing capital efficiency improvements.\nFollowing the sale of a controlling stake in Ketjen's refining catalyst solutions business, announced on March 2, 2026, the refining catalyst business earnings are now classified as equity income and included in Corporate, as are the results of the retained Performance Catalyst Solutions (PCS) business. The adjusted EBITDA and equity income contributions from these are expected to be immaterial post transaction.\nInterest and financing expense is expected to be between $120 and $140 million for 2026 following the debt reduction actions completed in the first quarter of 2026.\nOther Corporate FY 2026E \nCapital expenditures \n~$500 million \nDepreciation and amortization \n$660 - $680 million \nAdjusted effective tax rate (a) \n(50)% - 30% \nCorporate adjusted EBITDA (incl. FX, Ketjen equity income & PCS) \n($20) - $20 million \nInterest and financing expenses \n$120 - $140 million \nWeighted-average common shares outstanding (diluted) (b) \n~136 million \n(a)&nbsp;&nbsp;Adjusted effective tax rate dependent on lithium market prices and geographic income mix \n(b)&nbsp;&nbsp;Diluted weighted-average common shares outstanding amount assumes the conversion of preferred stock and the net income attributable to common shareholders will not be reduced by mandatory convertible preferred stock dividends. If the reduction of mandatory convertible preferred stock dividends results in a more dilutive earnings per share, the diluted weighted-average common shares outstanding will not assume conversion of the preferred stock. \nCash Flow and Capital Deployment\nCash from operations of $1.1 billion in the first half of 2026 increased $518 million compared to the prior-year period. Capital expenditures of $170 million in the first six months of 2026 decreased by $132 million versus the prior-year period.\nBalance Sheet and Liquidity\nAs of June&nbsp;30, 2026, Albemarle had estimated liquidity of approximately $3.2 billion, including $1.6 billion of cash and cash equivalents, $1.5 billion available under our revolver and $78 million available under other credit lines. Total debt was $1.9 billion, representing a net debt to adjusted EBITDA ratio (as defined in our credit agreement) of approximately 0.5 (a) .\n(a) See Non-GAAP&nbsp;Reconciliations for further details. \nEarnings Call \nDate: \nThurs., August 6, 2026 \nTime: \n8:00 AM Eastern time \nDial-in (U.S.): \n1-800-590-8290 \nDial-in (International): \n1-240-690-8800 \nConference ID: \nALBQ2 \nThe company's earnings presentation and supporting material are available on Albemarle's website at https://investors.albemarle.com .\nAbout Albemarle\nAlbemarle Corporation (NYSE: ALB) is a world leader in transforming essential resources into critical ingredients for mobility, energy, connectivity and health. We partner to pioneer new ways to move, power, connect and protect with people and planet in mind. A reliable and high-quality global supply of lithium and bromine allows us to deliver advanced solutions for our customers. Learn more about how the people of Albemarle are enabling a more resilient world at Albemarle.com.\nAlbemarle regularly posts information to Albemarle.com, including notification of events, news, financial performance, investor presentations and webcasts, non-GAAP reconciliations, U.S. Securities and Exchange Commission filings and other information regarding the company, its businesses and the markets it serves.\nForward-Looking Statements\nThis press release contains statements concerning our expectations, anticipations and beliefs regarding the future, which constitute \"forward-looking statements\" within the meaning of the Private Securities Litigation Reform Act of 1995. These forward-looking statements, which are based on assumptions that we have made as of the date hereof and are subject to known and unknown risks and uncertainties, often contain words such as \"ambition,\" \"anticipate,\" \"believe,\" \"estimate,\" \"expect,\" \"goal,\" \"guidance,\" \"intend,\" \"may,\" \"outlook,\" \"scenario,\" \"should,\" \"would,\" and \"will.\"&nbsp; Forward-looking statements may include statements regarding: our 2026 company and segment outlooks, including expected market pricing of lithium carbonate equivalent and spodumene and other underlying assumptions and outlook consideration; plans and expectations regarding customer demand and sales; production impacts; financial flexibility and optionality; expected or actual market pricing of lithium, spodumene, bromine, and lithium specialties (\"Company Products\"); supply and demand for Company Products; drivers of long-term demand and growth; other underlying assumptions and outlook considerations; expected capital allocation and expenditure amounts and the corresponding impact on cash flow; expected impact of tariffs and other trade restrictions; plans and expectations regarding other mining interests, resources, reserves, projects and activities, compound annual growth rate, cost reductions, conversion network optimization, margin improvement, accounting charges, and all other information relating to matters that are not historical facts. Factors that could cause Albemarle's actual results to differ materially from the outlook expressed or implied in any forward-looking statement include: changes in economic and business conditions; changes in trade policies and tariffs; and the financial and operating performance of customers; timing and magnitude of customer orders; fluctuations in market pricing of lithium carbonate equivalent and spodumene; potential production volume shortfalls; increased competition and pressure to renegotiate contract terms; changes in product or conversion demand; availability and cost of raw materials and energy; technological change and development; fluctuations in foreign currencies; changes in laws and government regulation; regulatory actions, proceedings, claims or litigation; cyber-security breaches, terrorist attacks, industrial accidents or natural disasters; risks related to the integration of artificial intelligence technologies into our operations; geopolitical conflicts and political unrest affecting global trade, including tensions in the Middle East; the global economy and clean energy initiatives; our ability to retain key personnel and attract new skilled personnel changes in inflation or interest rates; volatility and uncertainties&nbsp; in the debt and equity markets; acquisition and divestiture transactions; timing and success of projects; expected benefits and expenses from new operating structure and asset optimization activities; performance of Albemarle's partners in joint ventures and other projects; changes in credit ratings; and the other factors detailed from time to time in the reports Albemarle files with the SEC, including those described under \"Risk Factors\" in Albemarle's most recent Annual Report on Form 10-K and any subsequently filed Quarterly Reports on Form 10-Q, which are filed with the SEC and available on the investor section of Albemarle's website (investors.albemarle.com) and on the SEC's website at www.sec.gov . These forward-looking statements speak only as of the date of this press release. Albemarle assumes no obligation to provide any revisions to any forward-looking statements should circumstances change, except as otherwise required by securities and other applicable laws.\n&nbsp;\nAlbemarle Corporation and Subsidiaries \nConsolidated Statements of Income \n(In Thousands Except Per Share Amounts) (Unaudited) \nThree Months Ended \nSix Months Ended \nJune 30, \nJune 30, \n2026 \n2025 \n2026 \n2025 \nNet sales \n$&nbsp;1,743,313 \n$&nbsp;1,329,992 \n$&nbsp;3,172,044 \n$&nbsp;2,406,873 \nCost of goods sold \n1,153,012 \n1,133,116 \n2,080,777 \n2,053,698 \nGross profit \n590,301 \n196,876 \n1,091,267 \n353,175 \nSelling, general and administrative expenses \n126,353 \n132,457 \n263,759 \n255,959 \nRestructuring charges and asset write-offs \n7,337 \n4,448 \n33,203 \n3,385 \nResearch and development expenses \n3,667 \n12,444 \n12,837 \n26,543 \nLoss on sale of business \n— \n— \n95,018 \n— \nOperating income \n452,944 \n47,527 \n686,450 \n67,288 \nInterest and financing expenses \n(30,924) \n(49,939) \n(64,045) \n(98,916) \nOther income (expenses), net \n19,629 \n(6,559) \n73,439 \n3,691 \nIncome (loss) before income taxes and equity in net\nincome of unconsolidated investments \n441,649 \n(8,971) \n695,844 \n(27,937) \nIncome tax expense \n94,002 \n34,094 \n115,513 \n30,116 \nIncome (loss) before equity in net income of\nunconsolidated investments \n347,647 \n(43,065) \n580,331 \n(58,053) \nEquity in net income of unconsolidated investments\n(net of tax) \n151,564 \n78,258 \n247,857 \n142,544 \nNet income \n499,211 \n35,193 \n828,188 \n84,491 \nNet income attributable to noncontrolling interests \n(19,252) \n(12,296) \n(29,138) \n(20,246) \nNet income attributable to Albemarle Corporation \n479,959 \n22,897 \n799,050 \n64,245 \nMandatory convertible preferred stock dividends \n(41,687) \n(41,687) \n(83,375) \n(83,375) \nNet income (loss) attributable to Albemarle Corporation\ncommon shareholders \n$&nbsp;&nbsp;&nbsp;438,272 \n$&nbsp;&nbsp;&nbsp;(18,790) \n$&nbsp;&nbsp;&nbsp;715,675 \n$&nbsp;&nbsp;&nbsp;(19,130) \nBasic earnings (loss) per share attributable to common\nshareholders \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.72 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.07 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \nDiluted earnings (loss) per share attributable to\ncommon shareholders \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.52 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.87 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \nWeighted-average common shares outstanding – basic \n117,961 \n117,665 \n117,907 \n117,634 \nWeighted-average common shares outstanding –\ndiluted \n136,212 \n117,665 \n136,170 \n117,634 \n&nbsp;\nAlbemarle Corporation and Subsidiaries \nCondensed Consolidated Balance Sheets \n(In Thousands) (Unaudited) \nJune 30, \nDecember 31, \n2026 \n2025 \nASSETS \nCurrent assets: \nCash and cash equivalents \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,631,688 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,618,001 \nTrade accounts receivable \n603,805 \n593,502 \nOther accounts receivable \n123,870 \n105,110 \nInventories \n1,384,563 \n1,179,271 \nOther current assets \n200,275 \n140,440 \nCurrent assets held for sale \n— \n371,815 \nTotal current assets \n3,944,201 \n4,008,139 \nProperty, plant and equipment \n11,902,156 \n11,768,840 \nLess accumulated depreciation and amortization \n3,442,831 \n3,156,429 \nNet property, plant and equipment \n8,459,325 \n8,612,411 \nInvestments \n1,109,241 \n900,926 \nOther assets \n707,577 \n647,185 \nGoodwill \n1,482,672 \n1,499,657 \nOther intangibles, net of amortization \n202,079 \n214,233 \nNoncurrent assets held for sale \n— \n491,660 \nTotal assets \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15,905,095 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16,374,211 \nLIABILITIES AND EQUITY \nCurrent liabilities: \nAccounts payable to third parties \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;670,229 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;779,160 \nAccounts payable to related parties \n445,421 \n134,369 \nAccrued expenses \n507,556 \n521,831 \nCurrent portion of long-term debt \n74,677 \n74,077 \nDividends payable \n61,514 \n61,387 \nIncome taxes payable \n131,703 \n35,467 \nCurrent liabilities held for sale \n— \n191,753 \nTotal current liabilities \n1,891,100 \n1,798,044 \nLong-term debt \n1,802,107 \n3,119,464 \nPostretirement benefits \n45,198 \n44,744 \nPension benefits \n105,729 \n117,361 \nOther noncurrent liabilities \n1,158,555 \n1,084,892 \nDeferred income taxes \n368,552 \n368,275 \nNoncurrent liabilities held for sale \n— \n59,970 \nCommitments and contingencies \nEquity: \nAlbemarle Corporation shareholders' equity: \nCommon stock \n1,180 \n1,178 \nMandatory convertible preferred stock \n2,235,105 \n2,235,105 \nAdditional paid-in capital \n3,048,664 \n3,018,213 \nAccumulated other comprehensive loss \n(243,599) \n(334,807) \nRetained earnings \n5,233,819 \n4,613,676 \nTotal Albemarle Corporation shareholders' equity \n10,275,169 \n9,533,365 \nNoncontrolling interests \n258,685 \n248,096 \nTotal equity \n10,533,854 \n9,781,461 \nTotal liabilities and equity \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15,905,095 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16,374,211 \n&nbsp;\nAlbemarle Corporation and Subsidiaries \nSelected Consolidated Cash Flow Data \n(In Thousands) (Unaudited) \nSix Months Ended \nJune 30, \n2026 \n2025 \nCash and cash equivalents at beginning of year \n$&nbsp;&nbsp;1,618,001 \n$&nbsp;&nbsp;1,192,230 \nCash flows from operating activities: \nNet income \n828,188 \n84,491 \nAdjustments to reconcile net income to cash flows from operating activities: \nDepreciation and amortization \n313,606 \n330,485 \nLoss on sale of business \n95,018 \n— \nGain on sale of equity investment \n(42,300) \n— \nStock-based compensation and other \n14,661 \n17,068 \nEquity in net income of unconsolidated investments (net of tax) \n(247,857) \n(142,544) \nDividends received from unconsolidated investments and nonmarketable\nsecurities \n131,744 \n67,765 \nPension and postretirement expense \n5,299 \n3,504 \nPension and postretirement contributions \n(14,298) \n(9,934) \nUnrealized (gain) loss on investments in marketable securities \n(2,792) \n4,984 \nGain on early extinguishment of debt \n(12,543) \n— \nDeferred income taxes \n(19,798) \n(38,907) \nWorking capital changes \n(53,125) \n(96,762) \nNoncurrent liability changes and other, net \n60,438 \n318,030 \nNet cash provided by operating activities \n1,056,241 \n538,180 \nCash flows from investing activities: \nCapital expenditures \n(170,407) \n(302,252) \nProceeds from sale of businesses, net of cash sold \n525,156 \n— \nProceeds from sale of property and equipment \n— \n23,751 \nProceeds from sale of investments \n123,270 \n— \nProceeds from sale of available for sale debt securities \n— \n288,000 \n(Payments) proceeds from settlement of foreign currency forward contra",
+    "content_text": "Albemarle Reports Second Quarter 2026 Results \nCHARLOTTE, N.C. , Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026.\nSecond Quarter 2026 and Recent Highlights\n(Unless otherwise stated, all percentage changes represent year-over-year comparisons and do not exclude the prior-period results of Ketjen's refining catalyst solutions business in which the company sold a 51% stake on March 2, 2026) \nNet sales of $1.7 billion,&nbsp;up 31% due to higher pricing in Energy Storage (+73%) and higher pricing and volumes in Specialties (price +11%, volume +8%).\nNet income of $480 million, or $3.52 per diluted share attributable to common shareholders.&nbsp;&nbsp;\nAdjusted EBITDA (a) &nbsp;of $858 million; up 155% due primarily to higher pricing in Energy Storage, increased pricing and volumes in Specialties and ongoing cost and productivity improvements. Adjusted EBITDA expanded in both Energy Storage (+229%) and Specialties (+61%).\nCash from operating activities of $710 million and free cash flow of $638 million (a) . Operating cash flow conversion of 83% (a) , primarily driven by timing of an increased dividend from the Talison joint venture and non-recurring working capital benefits.\nDelivered $100 million in year-to-date run-rate cost and productivity improvements, tracking towards the high end of our full-year target of $100 to $150 million.\nImproving full-year 2026 outlook considerations including: Increasing full-year Specialties net sales outlook to $1.4 to $1.6 billion and adjusted EBITDA outlook to $275 to $325 million, due to stronger-than-expected pricing and volume performance year to date.\nExpect minimal impact to Energy Storage sales volume related to the fire at Talison CGP3 which occurred on June 9, in part due to better-than-planned output from the Wodgina mine.\nReducing full-year capital expenditure forecast to approximately $500 million due to ongoing capital efficiency improvements.\n(a) See Non-GAAP&nbsp;Reconciliations for further details. \n\"Albemarle delivered another quarter of strong results, reflecting improved pricing, continued strength in Specialties, disciplined cost and productivity execution, and strong cash generation,\" said Kent Masters, Chairman and CEO. \"We continue to see resilient demand fundamentals across our core markets, including energy storage, electric vehicles, and semiconductors. We are advancing our highest value organic growth opportunities while maintaining a disciplined approach to capital allocation and execution.\"\nSecond Quarter 2026 Results \nIn millions, except per share amounts \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet sales \n$&nbsp;&nbsp;&nbsp;1,743.3 \n$&nbsp;&nbsp;&nbsp;1,330.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;413.3 \n31.1&nbsp;% \nNet income attributable to Albemarle Corporation \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;480.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.9 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;457.1 \n1,996.2&nbsp;% \nAdjusted EBITDA (a) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;858.1 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;336.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;521.6 \n155.0&nbsp;% \nDiluted income (loss) per share attributable to common\nshareholders \n$&nbsp; &nbsp; &nbsp; &nbsp; 3.52 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.68 \nNM \n&nbsp;&nbsp; Non-recurring and other unusual items (a) \n0.22 \n0.27 \nAdjusted diluted income per share attributable to\ncommon shareholders (a)(b) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.75 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.11 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.64 \nNM \n(a) See Non-GAAP&nbsp;Reconciliations for further details. \n(b) Totals may not add due to rounding. \nNet sales for the second quarter of 2026 were $1.7 billion compared to $1.3 billion for the prior-year quarter, up 31%, driven primarily by higher prices in both Energy Storage and Specialties and volume growth in Specialties. Adjusted EBITDA of $858 million increased by $522 million from the prior-year quarter, primarily due to higher net sales and ongoing cost and productivity improvements.\nNet income attributable to Albemarle of $480 million increased year over year by $457 million. The effective income tax rate for the second quarter of 2026 was 21.3% or 19.1% on an adjusted basis.\nEnergy Storage Results \nIn millions \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet Sales \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,276.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;717.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;559.0 \n77.9&nbsp;% \nSales Volume (kT LCE) (a) \n65 \n59 \n6 \n11.0&nbsp;% \nAvg. Realized Price ($/kg LCE) (a) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19.53 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.17 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.36 \n60.5&nbsp;% \nAdjusted EBITDA \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;723.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;219.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;503.7 \n229.3&nbsp;% \n(a) Includes aggregated salts and spodumene sales on a lithium carbonate equivalent (LCE) basis. \nEnergy Storage net sales for the second quarter of 2026 were $1.3 billion, an increase of $559 million, or 78%, due to higher pricing. Adjusted EBITDA of $723 million increased $504 million, or 229%, primarily due to higher lithium pricing partially offset by higher CORFO commissions.\nSpecialties Results \nIn millions \nQ2 2026 \nQ2 2025 \n$ Change \n% Change \nNet Sales \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;423.5 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;351.6 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;71.9 \n20.5&nbsp;% \nAdjusted EBITDA \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;117.7 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;73.0 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;44.7 \n61.3&nbsp;% \nSpecialties net sales for the second quarter of 2026 were $423 million, an increase of $72 million, or 20%, primarily due to higher volumes (+8%) and pricing (+11%). Adjusted EBITDA of $118 million increased $45 million, or 61%, primarily due to higher volumes and favorable pricing in bromine and derivatives, along with continued productivity improvements and proactive management of cost escalations driven by the conflict in the Middle East.&nbsp;\n2026 Outlook Considerations \nTotal Corporate Outlook Considerations\nThe table below reflects expected outcomes for the total company based on recently observed lithium market price scenarios. Outlook ranges for each scenario are based on variation in sales volume and product mix. Energy Storage production volumes are expected to increase year over year. Sales volumes are expected to be in the range of 225 to 235 kilotons lithium carbonate equivalent, as increased Wodgina volumes partially offset a delay in the Talison CGP3 ramp due to a fire that occurred on June 9. All three scenarios assume flat market pricing flowing through Energy Storage's current contract book which includes approximately 40% of salts volume (or one-third of total volumes) on long-term agreements. Scenarios also assume that spodumene pricing averages 10% of the lithium carbonate equivalent (LCE) price, while other costs are assumed to be constant.\nTotal Corporate FY 2026E \nObserved market price case (a) \nFY 2025 avg. \nQ1 2026 avg. \n2021-2025 avg. \nAverage lithium market price ($/kg LCE) (a) \n~$10 \n~$20 \n~$30 \nNet sales \n$4.1 - $4.3 billion \n$5.7 - $6.0 billion \n$7.5 - $7.8 billion \nAdjusted EBITDA (b) \n$0.9 - $1.0 billion \n$2.4 - $2.6 billion \n$4.2 - $4.4 billion \n(a)&nbsp;Price represents blend of relevant market pricing including spot and regional indices for the periods referenced. \n(b)&nbsp;The Company does not provide a reconciliation of forward-looking non-GAAP financial measures to the most directly comparable financial measures calculated and reported in accordance with GAAP, as the company is unable to estimate significant non-recurring or unusual items without unreasonable effort. See \"Additional Information Regarding Non-GAAP Measures\" for more information. \n&nbsp;\nEnergy Storage Market Price Scenarios \nEnergy Storage FY 2026E \nObserved market price case (a) \nFY 2025 avg. \nQ1 2026 avg. \n2021-2025 avg. \nAverage lithium market price ($/kg LCE) (a) \n~$10 \n~$20 \n~$30 \nNet sales \n$2.5 - $2.6 billion \n$4.0 - $4.2 billion \n$5.9 - $6.1 billion \nAdjusted EBITDA \n$0.7 - $0.8 billion \n$2.1 - $2.3 billion \n$3.9 - $4.1 billion \nEquity in net income of unconsolidated investments\n(net of tax) (b) \n$0.2 - $0.3 billion \n$0.6 - $0.7 billion \n$1.0 - $1.1 billion \n(a) Price represents blend of relevant market pricing including spot and regional indices for the periods referenced. \n(b) Included in adjusted EBITDA on a pre-tax basis. \nSpecialties Outlook Considerations\nSpecialties net sales and adjusted EBITDA outlook is improved primarily due to strong year to date performance driven by volume growth in bromine specialties and cost and productivity improvements. Our outlook continues to reflect modest volume growth in key end markets led by semiconductors, oil and gas, flame retardants and pharmaceuticals partially offset by expected softness in automotive and petrochemicals. Second-half outlook assumes stabilization in the bromine market and continued uncertainties including the situation in the Middle East. Operations at the Jordan Bromine Company (JBC) joint venture are in line with expectations as it continues to navigate geopolitical tensions in the region.\nSegment FY 2026E \nSpecialties net sales \n$1.4 - $1.6 billion \nSpecialties adjusted EBITDA \n$275 - $325 million \nOther Corporate Outlook Considerations\nAlbemarle expects its full-year 2026 capital expenditures to be approximately $500 million, down 15% compared to 2025 due to ongoing capital efficiency improvements.\nFollowing the sale of a controlling stake in Ketjen's refining catalyst solutions business, announced on March 2, 2026, the refining catalyst business earnings are now classified as equity income and included in Corporate, as are the results of the retained Performance Catalyst Solutions (PCS) business. The adjusted EBITDA and equity income contributions from these are expected to be immaterial post transaction.\nInterest and financing expense is expected to be between $120 and $140 million for 2026 following the debt reduction actions completed in the first quarter of 2026.\nOther Corporate FY 2026E \nCapital expenditures \n~$500 million \nDepreciation and amortization \n$660 - $680 million \nAdjusted effective tax rate (a) \n(50)% - 30% \nCorporate adjusted EBITDA (incl. FX, Ketjen equity income & PCS) \n($20) - $20 million \nInterest and financing expenses \n$120 - $140 million \nWeighted-average common shares outstanding (diluted) (b) \n~136 million \n(a)&nbsp;&nbsp;Adjusted effective tax rate dependent on lithium market prices and geographic income mix \n(b)&nbsp;&nbsp;Diluted weighted-average common shares outstanding amount assumes the conversion of preferred stock and the net income attributable to common shareholders will not be reduced by mandatory convertible preferred stock dividends. If the reduction of mandatory convertible preferred stock dividends results in a more dilutive earnings per share, the diluted weighted-average common shares outstanding will not assume conversion of the preferred stock. \nCash Flow and Capital Deployment\nCash from operations of $1.1 billion in the first half of 2026 increased $518 million compared to the prior-year period. Capital expenditures of $170 million in the first six months of 2026 decreased by $132 million versus the prior-year period.\nBalance Sheet and Liquidity\nAs of June&nbsp;30, 2026, Albemarle had estimated liquidity of approximately $3.2 billion, including $1.6 billion of cash and cash equivalents, $1.5 billion available under our revolver and $78 million available under other credit lines. Total debt was $1.9 billion, representing a net debt to adjusted EBITDA ratio (as defined in our credit agreement) of approximately 0.5 (a) .\n(a) See Non-GAAP&nbsp;Reconciliations for further details. \nEarnings Call \nDate: \nThurs., August 6, 2026 \nTime: \n8:00 AM Eastern time \nDial-in (U.S.): \n1-800-590-8290 \nDial-in (International): \n1-240-690-8800 \nConference ID: \nALBQ2 \nThe company's earnings presentation and supporting material are available on Albemarle's website at https://investors.albemarle.com .\nAbout Albemarle\nAlbemarle Corporation (NYSE: ALB) is a world leader in transforming essential resources into critical ingredients for mobility, energy, connectivity and health. We partner to pioneer new ways to move, power, connect and protect with people and planet in mind. A reliable and high-quality global supply of lithium and bromine allows us to deliver advanced solutions for our customers. Learn more about how the people of Albemarle are enabling a more resilient world at Albemarle.com.\nAlbemarle regularly posts information to Albemarle.com, including notification of events, news, financial performance, investor presentations and webcasts, non-GAAP reconciliations, U.S. Securities and Exchange Commission filings and other information regarding the company, its businesses and the markets it serves.\nForward-Looking Statements\nThis press release contains statements concerning our expectations, anticipations and beliefs regarding the future, which constitute \"forward-looking statements\" within the meaning of the Private Securities Litigation Reform Act of 1995. These forward-looking statements, which are based on assumptions that we have made as of the date hereof and are subject to known and unknown risks and uncertainties, often contain words such as \"ambition,\" \"anticipate,\" \"believe,\" \"estimate,\" \"expect,\" \"goal,\" \"guidance,\" \"intend,\" \"may,\" \"outlook,\" \"scenario,\" \"should,\" \"would,\" and \"will.\"&nbsp; Forward-looking statements may include statements regarding: our 2026 company and segment outlooks, including expected market pricing of lithium carbonate equivalent and spodumene and other underlying assumptions and outlook consideration; plans and expectations regarding customer demand and sales; production impacts; financial flexibility and optionality; expected or actual market pricing of lithium, spodumene, bromine, and lithium specialties (\"Company Products\"); supply and demand for Company Products; drivers of long-term demand and growth; other underlying assumptions and outlook considerations; expected capital allocation and expenditure amounts and the corresponding impact on cash flow; expected impact of tariffs and other trade restrictions; plans and expectations regarding other mining interests, resources, reserves, projects and activities, compound annual growth rate, cost reductions, conversion network optimization, margin improvement, accounting charges, and all other information relating to matters that are not historical facts. Factors that could cause Albemarle's actual results to differ materially from the outlook expressed or implied in any forward-looking statement include: changes in economic and business conditions; changes in trade policies and tariffs; and the financial and operating performance of customers; timing and magnitude of customer orders; fluctuations in market pricing of lithium carbonate equivalent and spodumene; potential production volume shortfalls; increased competition and pressure to renegotiate contract terms; changes in product or conversion demand; availability and cost of raw materials and energy; technological change and development; fluctuations in foreign currencies; changes in laws and government regulation; regulatory actions, proceedings, claims or litigation; cyber-security breaches, terrorist attacks, industrial accidents or natural disasters; risks related to the integration of artificial intelligence technologies into our operations; geopolitical conflicts and political unrest affecting global trade, including tensions in the Middle East; the global economy and clean energy initiatives; our ability to retain key personnel and attract new skilled personnel changes in inflation or interest rates; volatility and uncertainties&nbsp; in the debt and equity markets; acquisition and divestiture transactions; timing and success of projects; expected benefits and expenses from new operating structure and asset optimization activities; performance of Albemarle's partners in joint ventures and other projects; changes in credit ratings; and the other factors detailed from time to time in the reports Albemarle files with the SEC, including those described under \"Risk Factors\" in Albemarle's most recent Annual Report on Form 10-K and any subsequently filed Quarterly Reports on Form 10-Q, which are filed with the SEC and available on the investor section of Albemarle's website (investors.albemarle.com) and on the SEC's website at www.sec.gov . These forward-looking statements speak only as of the date of this press release. Albemarle assumes no obligation to provide any revisions to any forward-looking statements should circumstances change, except as otherwise required by securities and other applicable laws.\n&nbsp;\nAlbemarle Corporation and Subsidiaries \nConsolidated Statements of Income \n(In Thousands Except Per Share Amounts) (Unaudited) \nThree Months Ended \nSix Months Ended \nJune 30, \nJune 30, \n2026 \n2025 \n2026 \n2025 \nNet sales \n$&nbsp;1,743,313 \n$&nbsp;1,329,992 \n$&nbsp;3,172,044 \n$&nbsp;2,406,873 \nCost of goods sold \n1,153,012 \n1,133,116 \n2,080,777 \n2,053,698 \nGross profit \n590,301 \n196,876 \n1,091,267 \n353,175 \nSelling, general and administrative expenses \n126,353 \n132,457 \n263,759 \n255,959 \nRestructuring charges and asset write-offs \n7,337 \n4,448 \n33,203 \n3,385 \nResearch and development expenses \n3,667 \n12,444 \n12,837 \n26,543 \nLoss on sale of business \n— \n— \n95,018 \n— \nOperating income \n452,944 \n47,527 \n686,450 \n67,288 \nInterest and financing expenses \n(30,924) \n(49,939) \n(64,045) \n(98,916) \nOther income (expenses), net \n19,629 \n(6,559) \n73,439 \n3,691 \nIncome (loss) before income taxes and equity in net\nincome of unconsolidated investments \n441,649 \n(8,971) \n695,844 \n(27,937) \nIncome tax expense \n94,002 \n34,094 \n115,513 \n30,116 \nIncome (loss) before equity in net income of\nunconsolidated investments \n347,647 \n(43,065) \n580,331 \n(58,053) \nEquity in net income of unconsolidated investments\n(net of tax) \n151,564 \n78,258 \n247,857 \n142,544 \nNet income \n499,211 \n35,193 \n828,188 \n84,491 \nNet income attributable to noncontrolling interests \n(19,252) \n(12,296) \n(29,138) \n(20,246) \nNet income attributable to Albemarle Corporation \n479,959 \n22,897 \n799,050 \n64,245 \nMandatory convertible preferred stock dividends \n(41,687) \n(41,687) \n(83,375) \n(83,375) \nNet income (loss) attributable to Albemarle Corporation\ncommon shareholders \n$&nbsp;&nbsp;&nbsp;438,272 \n$&nbsp;&nbsp;&nbsp;(18,790) \n$&nbsp;&nbsp;&nbsp;715,675 \n$&nbsp;&nbsp;&nbsp;(19,130) \nBasic earnings (loss) per share attributable to common\nshareholders \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.72 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.07 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \nDiluted earnings (loss) per share attributable to\ncommon shareholders \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.52 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.87 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0.16) \nWeighted-average common shares outstanding – basic \n117,961 \n117,665 \n117,907 \n117,634 \nWeighted-average common shares outstanding –\ndiluted \n136,212 \n117,665 \n136,170 \n117,634 \n&nbsp;\nAlbemarle Corporation and Subsidiaries \nCondensed Consolidated Balance Sheets \n(In Thousands) (Unaudited) \nJune 30, \nDecember 31, \n2026 \n2025 \nASSETS \nCurrent assets: \nCash and cash equivalents \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,631,688 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,618,001 \nTrade accounts receivable \n603,805 \n593,502 \nOther accounts receivable \n123,870 \n105,110 \nInventories \n1,384,563 \n1,179,271 \nOther current assets \n200,275 \n140,440 \nCurrent assets held for sale \n— \n371,815 \nTotal current assets \n3,944,201 \n4,008,139 \nProperty, plant and equipment \n11,902,156 \n11,768,840 \nLess accumulated depreciation and amortization \n3,442,831 \n3,156,429 \nNet property, plant and equipment \n8,459,325 \n8,612,411 \nInvestments \n1,109,241 \n900,926 \nOther assets \n707,577 \n647,185 \nGoodwill \n1,482,672 \n1,499,657 \nOther intangibles, net of amortization \n202,079 \n214,233 \nNoncurrent assets held for sale \n— \n491,660 \nTotal assets \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15,905,095 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16,374,211 \nLIABILITIES AND EQUITY \nCurrent liabilities: \nAccounts payable to third parties \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;670,229 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;779,160 \nAccounts payable to related parties \n445,421 \n134,369 \nAccrued expenses \n507,556 \n521,831 \nCurrent portion of long-term debt \n74,677 \n74,077 \nDividends payable \n61,514 \n61,387 \nIncome taxes payable \n131,703 \n35,467 \nCurrent liabilities held for sale \n— \n191,753 \nTotal current liabilities \n1,891,100 \n1,798,044 \nLong-term debt \n1,802,107 \n3,119,464 \nPostretirement benefits \n45,198 \n44,744 \nPension benefits \n105,729 \n117,361 \nOther noncurrent liabilities \n1,158,555 \n1,084,892 \nDeferred income taxes \n368,552 \n368,275 \nNoncurrent liabilities held for sale \n— \n59,970 \nCommitments and contingencies \nEquity: \nAlbemarle Corporation shareholders' equity: \nCommon stock \n1,180 \n1,178 \nMandatory convertible preferred stock \n2,235,105 \n2,235,105 \nAdditional paid-in capital \n3,048,664 \n3,018,213 \nAccumulated other comprehensive loss \n(243,599) \n(334,807) \nRetained earnings \n5,233,819 \n4,613,676 \nTotal Albemarle Corporation shareholders' equity \n10,275,169 \n9,533,365 \nNoncontrolling interests \n258,685 \n248,096 \nTotal equity \n10,533,854 \n9,781,461 \nTotal liabilities and equity \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15,905,095 \n$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16,374,211 \n&nbsp;\nAlbemarle Corporation and Subsidiaries \nSelected Consolidated Cash Flow Data \n(In Thousands) (Unaudited) \nSix Months Ended \nJune 30, \n2026 \n2025 \nCash and cash equivalents at beginning of year \n$&nbsp;&nbsp;1,618,001 \n$&nbsp;&nbsp;1,192,230 \nCash flows from operating activities: \nNet income \n828,188 \n84,491 \nAdjustments to reconcile net income to cash flows from operating activities: \nDepreciation and amortization \n313,606 \n330,485 \nLoss on sale of business \n95,018 \n— \nGain on sale of equity investment \n(42,300) \n— \nStock-based compensation and other \n14,661 \n17,068 \nEquity in net income of unconsolidated investments (net of tax) \n(247,857) \n(142,544) \nDividends received from unconsolidated investments and nonmarketable\nsecurities \n131,744 \n67,765 \nPension and postretirement expense \n5,299 \n3,504 \nPension and postretirement contributions \n(14,298) \n(9,934) \nUnrealized (gain) loss on investments in marketable securities \n(2,792) \n4,984 \nGain on early extinguishment of debt \n(12,543) \n— \nDeferred income taxes \n(19,798) \n(38,907) \nWorking capital changes \n(53,125) \n(96,762) \nNoncurrent liability changes and other, net \n60,438 \n318,030 \nNet cash provided by operating activities \n1,056,241 \n538,180 \nCash flows from investing activities: \nCapital expenditures \n(170,407) \n(302,252) \nProceeds from sale of businesses, net of cash sold \n525,156 \n— \nProceeds from sale of property and equipment \n— \n23,751 \nProceeds from sale of investments \n123,270 \n— \nProceeds from sale of available for sale debt securities \n— \n288,000 \n(Payments) proceeds from settlement of foreign currency forward contracts,\nnet \n(18,772) \n171,262 \nSales of marketable",
     "content_source_url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
-    "content_excerpt": "Share LinkedIn WhatsApp X Email Copy Link Albemarle Reports Second Quarter 2026 Results CHARLOTTE, N.C. , Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026. Second Quarter 2026 and Recent Highlights (Unless otherwise stated, all percentage changes represent year-over-year comparisons and do not exclude the prior-period results of Ketjen's refining catalyst solutions business in which the company sold a 51% stake on March 2, 2026) Net sales of $1.7 billion,&nbsp;up 31% due to higher pricing in Energy Storage (+73%) and higher pricing and volumes in Specialties (price +11%, volume +8%). Net income of $480 million,...",
-    "content_word_count": 6009,
+    "content_excerpt": "Albemarle Reports Second Quarter 2026 Results CHARLOTTE, N.C. , Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026. Second Quarter 2026 and Recent Highlights (Unless otherwise stated, all percentage changes represent year-over-year comparisons and do not exclude the prior-period results of Ketjen's refining catalyst solutions business in which the company sold a 51% stake on March 2, 2026) Net sales of $1.7 billion,&nbsp;up 31% due to higher pricing in Energy Storage (+73%) and higher pricing and volumes in Specialties (price +11%, volume +8%). Net income of $480 million, or $3.52 per diluted share attributable to...",
+    "content_word_count": 6002,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Albemarle Corporation"
     ],
@@ -1405,13 +1409,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "알베마르의 2026년 2분기 리튬 등 에너지 저장 및 특수 화학 제품 관련 실적 및 사업 동향이 구체적으로 제시됨",
-    "ai_summary_ko": "알베마르는 2026년 2분기 동안 에너지 저장 부문에서 리튬 가격 상승 등에 힘입어 13억 달러의 순매출을 기록했음. 전반적인 실적 개선과 함께 2026년 연간 판매량 전망을 유지하며 안정적인 공급 역량을 확인했음.",
-    "ai_summary_en": "Albemarle reported $1.3 billion in net sales for its Energy Storage segment in the second quarter of 2026, driven by higher lithium pricing. The company maintained its full-year sales volume outlook while demonstrating resilient operational performance.",
+    "ai_summary_reason": "앨버마일이 2026년 2분기 실적을 발표하며 에너지 저장 부문의 리튬 판매량 증가 및 가격 상승, 2026년 전체 전망을 공개함.",
+    "ai_summary_ko": "앨버마일이 2026년 2분기 실적을 발표하며 에너지 저장 부문의 매출 및 리튬 판매량 증가와 연간 전망을 공개함. 리튬 가격 상승과 판매량 확대로 에너지 저장 부문의 실적이 대폭 개선되었으며, 연간 가이던스를 제시함.",
+    "ai_summary_en": "Albemarle reported its second-quarter 2026 results, highlighting significant revenue and sales volume growth in its Energy Storage segment driven by higher lithium pricing. The company also updated its full-year outlook considerations.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "17a321624f6751677fade36b",
+    "ai_summary_cache_key": "ac4d12a5b4ec1cf0fc76e3a2",
     "ai_evidence_quotes": [
+      "Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026.",
       "Energy Storage net sales for the second quarter of 2026 were $1.3 billion, an increase of $559 million, or 78%, due to higher pricing."
     ]
   },
@@ -1444,7 +1449,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -1462,7 +1467,7 @@
     "content_excerpt": "(Translation) This document has been translated from the Japanese original for the convenience of overseas stakeholders Q2 FY2026 Financial Results Briefing Q&A Date and time: Wednesday, August 5, 2026, 10:00–11:00 No. 1 2 3 4 Topic Overall Overall Overall Overall Q Looking at progress under the Medium-Term Management Plan, CMP is currently slightly less than 5% short of the OPM referential target excluding the hydraulic equipment business. Are there any measures to achieve the target? Also, TRS has already achieved its OPM target; are there any new OPM targets? The upward revision to the full-year plan appears to reflect the strong H1 performance, while the second-half plan does not seem to have changed significantly. Are there any concerns for H2? CMP’s OPM is 10.6% in H1 and 9.8% in H2,...",
     "content_word_count": 1102,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -1527,7 +1532,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -1545,7 +1550,7 @@
     "content_excerpt": "Securities Code：6268 Au gu s t 5, 2026 The forecast data presented herein reflects assumed results based on conditions that are subject to change. Nabtesco Corporation does not make representations as to, or warrant, in whole or in part, the attainment or realization of any of the forecasted results presented in this document. All figures and ratios are rounded to nearest whole number.. Unauthorized copying and replication of this material including text and image are prohibited. Preconditions for the Today’s Briefing Based on the share transfer agreement relating to the hydraulic equipment business of Nabtesco Corporation, hereinafter “the Company” and its consolidated subsidiaries entered into with Comer Industries S.p.A. on July 31, 2025, the Company consolidated this business into a ne...",
     "content_word_count": 3885,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -1582,6 +1587,75 @@
     ]
   },
   {
+    "target_no": 27,
+    "company": "Prodrive",
+    "title": "18-02-2026 | Whitepaper Revolutionizing plasma power solutions for etching and deposition",
+    "url": "https://prodrive-technologies.com/en/about-us/news/revolutionizing-plasma-power-solutions-for-etching-and-deposition/",
+    "source": "Prodrive - News / Newsroom / News",
+    "published_at": null,
+    "published_month": "",
+    "published_at_source": "",
+    "published_at_precision": "none",
+    "published_at_status": "unknown",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [],
+    "collected_at": "2026-09-11T05:01:10Z",
+    "collector": "official_page",
+    "query": "https://prodrive-technologies.com/en/about-us/news/",
+    "source_type": "official",
+    "source_kind": "newsroom",
+    "is_press_release": false,
+    "source_label_ko": "공식출처",
+    "source_priority": 12,
+    "official_source_url": "https://prodrive-technologies.com/en/about-us/news/",
+    "source_direct_url": "https://prodrive-technologies.com/en/about-us/news/revolutionizing-plasma-power-solutions-for-etching-and-deposition/",
+    "link_verdict": "accept",
+    "link_reason": "article_link",
+    "link_rank": 0,
+    "content_text": "Revolutionizing plasma power solutions for etching and deposition\r\nThe demand for more computing power is constantly increasing. As processors and computers become faster—critical for advancing artificial intelligence—integrated circuits (ICs) are being pushed to their limits. The semiconductor industry is currently operating at the 3 nm node in logic, but even smaller technologies are on the horizon, taking us into the Angstrom era.\nFuture devices will require smaller critical dimensions (CD), the integration of new materials, and 3D device architectures, including the stacked gate-all-around (GAA) structure in logic and 3D-NAND devices in memory.\nPlasma etching and deposition will remain the primary method for pattern transfer of increasingly smaller lithographic features for the foreseeable future. These plasma processes are one of the key steps in semiconductor manufacturing but face increasing challenges in meeting the demand for greater accuracy.\nHow does Prodrive Technologies’ revolutionary solution address these challenges while reducing power consumption and simplifying system complexity?\nDownload the white paper to discover how we achieve high uniformity and reach high yields.\nOr talk to our experts to get more detailed information.\nDiscover a new approach to plasma power\r\nDownload the white paper to learn how Prodrive Technologies supports high process uniformity and yield while reducing power consumption and system complexity.\nDownload whitepaper",
+    "content_source_url": "https://prodrive-technologies.com/en/about-us/news/revolutionizing-plasma-power-solutions-for-etching-and-deposition/",
+    "content_excerpt": "Revolutionizing plasma power solutions for etching and deposition The demand for more computing power is constantly increasing. As processors and computers become faster—critical for advancing artificial intelligence—integrated circuits (ICs) are being pushed to their limits. The semiconductor industry is currently operating at the 3 nm node in logic, but even smaller technologies are on the horizon, taking us into the Angstrom era. Future devices will require smaller critical dimensions (CD), the integration of new materials, and 3D device architectures, including the stacked gate-all-around (GAA) structure in logic and 3D-NAND devices in memory. Plasma etching and deposition will remain the primary method for pattern transfer of increasingly smaller lithographic features for the foreseea...",
+    "content_word_count": 209,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
+    "query_aliases": [
+      "Prodrive Technologies"
+    ],
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 카메라/이미지 신호처리",
+    "target_technology_en": "autonomous vehicle camera and image signal processing",
+    "technology_group": "autonomous_camera_isp",
+    "excluded_from_relevance": true,
+    "exclude_reason": "user_requested_exclusion",
+    "raw_target_technology": "자율이주미행지차신 카호메처라리(광장학치렌)즈,",
+    "pdf_company": "Prodrive",
+    "pdf_row_no": 20,
+    "pdf_sequence": "KO추T가RA",
+    "technology_gate_decision": "relevance_exempt",
+    "candidate_origin": "all_month_sources",
+    "date_status": "unknown",
+    "date_placement": "date_pending",
+    "date_note": "게시일 근거가 전혀 없음",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": false,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "프로드라이브 테크놀로지스(Prodrive Technologies)가 식각 및 증착 공정용 플라즈마 전력 솔루션에 관한 백서를 공개하고 관련 기술 정보를 제공함.",
+    "ai_summary_ko": "프로드라이브 테크놀로지스가 반도체 식각 및 증착 공정을 위한 플라즈마 전력 솔루션 백서를 공개함. 해당 솔루션은 전력 소비와 시스템 복잡성을 줄이면서 고도의 공정 균일성과 수율을 지원함.",
+    "ai_summary_en": "Prodrive Technologies published a white paper detailing its plasma power solutions for etching and deposition processes. The solution aims to achieve high process uniformity and yield while reducing power consumption and system complexity.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "b14578defb88f2fc0982d502",
+    "ai_evidence_quotes": [
+      "18-02-2026 | Whitepaper Revolutionizing plasma power solutions for etching and deposition",
+      "Download the white paper to learn how Prodrive Technologies supports high process uniformity and yield while reducing power consumption and system complexity."
+    ]
+  },
+  {
     "target_no": 32,
     "company": "Vestas",
     "title": "wind turbines orders",
@@ -1595,7 +1669,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/media/company-news",
     "source_type": "official",
@@ -1613,7 +1687,7 @@
     "content_excerpt": "Wind turbine orders Announced wind turbine orders \\r\\n\"}}\" id=\"styledheading-a04bb2028c\" class=\"cmp-text\"> Announced wind turbine orders Below you will find an overview of announced wind turbine orders from the current year and more than five years back. \\r\\n Orders with a&nbsp;total capacity of 1.5 GW or more are disclosed as company announcements. Orders with a capacity below 1.5 GW may be published as news releases by the local business units. All announced orders will figure in the lists below, with a link to either a company announcement or a press release.&nbsp; \\r\\n &nbsp; \\r\\n &nbsp; \\r\\n &nbsp; \\r\\n\"}}\" id=\"text-77947da3ab\" class=\"cmp-text\"> Below you will find an overview of announced wind turbine orders from the current year and more than five years back. Orders with a total cap...",
     "content_word_count": 28097,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -1650,6 +1724,144 @@
     ]
   },
   {
+    "target_no": 49,
+    "company": "Maxon",
+    "title": "maxon at Hannover Messe 2026: Robotics drives, latest portfolio additions, and functional safety",
+    "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
+    "source": "Maxon - News / Newsroom / News",
+    "published_at": null,
+    "published_month": "",
+    "published_at_source": "",
+    "published_at_precision": "none",
+    "published_at_status": "unknown",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [],
+    "collected_at": "2026-09-11T05:01:10Z",
+    "collector": "official_page",
+    "query": "https://www.maxongroup.com/en/news-and-events/news",
+    "source_type": "official",
+    "source_kind": "newsroom",
+    "is_press_release": false,
+    "source_label_ko": "공식출처",
+    "source_priority": 12,
+    "official_source_url": "https://www.maxongroup.com/en/news-and-events/news",
+    "source_direct_url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
+    "link_verdict": "accept",
+    "link_reason": "article_link",
+    "link_rank": 0,
+    "content_text": "maxon at Hannover Messe 2026: Robotics drives, latest portfolio additions, and functional safety\nDownload \nContact us \nShare current page \nAt Hannover Messe 2026, maxon will present itself with an updated trade fair appearance. From April 20 to 24, the maxon Germany team will showcase the latest highlights from our product portfolio.\nAt Hannover Messe, maxon traditionally introduces its latest portfolio additions. Here is what visitors can expect at our booth:\nRobotics solutions: maxon’s High Efficiency Joints (HEJ) bring motion to robotics. They enable humanoid robots to operate in unstructured environments and are also suitable for industrial applications. At Hannover Messe, we will present the proven High Efficiency Joint 90, as well as the new, smaller HEJ 70.\nDrives: In our highlight showcases, we present a wide range of maxon drives combined with gearheads and sensors. Among them is the EC frameless DT 50 M: easy to integrate into customer applications thanks to its separate stator and rotor design, offering high efficiency and dynamic torque. Another example is the ECX PRIME 16L - the long version of our brushless motor with ironless winding. These are just two of many new additions.\nEC frameless DT50M \n1 / 6 \nGearheads: Since launching our new GSW strain wave gear series, we have continuously developed it further. Our gearheads transmit high torques precisely and efficiently and can be combined with a wide range of maxon drives. In Hannover, we will, for example, present the GSW 20 in combination with an ECX PRIME drive.\nIndustrial drives: Our IDX series meets industrial standards and is a proven plug-and-play solution - for industrial applications or autonomous vehicles in intralogistics. At Hannover Messe, we will present the IDX 70 Safe Control, featuring integrated functional safety up to SIL3 / PL e, Cat. 3.\nPrecision, performance and integrated safety\nElectronics: Functional safety is also becoming increasingly important in this field, which is why maxon continues to develop its control solutions accordingly. One example is the EPOS4 Compact 60/20 STO (Safe Torque Off). Visitors can also see the smallest controllers in the maxon portfolio: ESCON2 Nano 24/2 and ESCON2 Micro 60/5. We will also present the MiniMACS6, our freely programmable multi-axis controller, now also available with a PROFINET interface. In addition, we will demonstrate our predictive maintenance solution, maxon MIND, and explain why the motor is the best sensor in a customer application.\nParvalux: The UK-based company Parvalux, part of maxon, specializes in small and medium-sized geared motors. Parvalux solutions drive windshield wipers in high-speed trains or move patients in hospitals. At Hannover Messe, we will show how maxon and Parvalux products can be ideally combined, for example, the maxon IDX industrial drive with the Parvalux GB 28 right-angle gearbox.\nAt our booth, we will also present various live demos showcasing our drive solutions in action. The maxon Germany team will be available for any questions.\nYou can find us at Hannover Messe in Hall 13, Booth C51. \nFor further information, please contact the maxon Newsroom . \nLearn more about our solutions .",
+    "content_source_url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
+    "content_excerpt": "maxon at Hannover Messe 2026: Robotics drives, latest portfolio additions, and functional safety Download Contact us Share current page At Hannover Messe 2026, maxon will present itself with an updated trade fair appearance. From April 20 to 24, the maxon Germany team will showcase the latest highlights from our product portfolio. At Hannover Messe, maxon traditionally introduces its latest portfolio additions. Here is what visitors can expect at our booth: Robotics solutions: maxon’s High Efficiency Joints (HEJ) bring motion to robotics. They enable humanoid robots to operate in unstructured environments and are also suitable for industrial applications. At Hannover Messe, we will present the proven High Efficiency Joint 90, as well as the new, smaller HEJ 70. Drives: In our highlight sho...",
+    "content_word_count": 502,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
+    "query_aliases": [
+      "maxon group"
+    ],
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "로봇용 감속기",
+    "pdf_company": "Maxon",
+    "pdf_row_no": 10,
+    "pdf_sequence": "8",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "unknown",
+    "date_placement": "date_pending",
+    "date_note": "게시일 근거가 전혀 없음",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "맥손(Maxon)이 하노버 메세 2026에서 로봇용 High Efficiency Joint(HEJ) 및 감속기 제품군을 전시하는 등 관련 사업 활동이 확인됨.",
+    "ai_summary_ko": "맥손은 하노버 메세 2026에서 휴머노이드 로봇용 High Efficiency Joint(HEJ)와 최신 드라이브 및 감속기 포트폴리오를 선보임. 구체적으로 기존의 HEJ 90과 함께 소형화된 신제품 HEJ 70을 전시하며 로봇 솔루션 역량을 강조함.",
+    "ai_summary_en": "Maxon showcased its latest portfolio additions, including robotics solutions like the High Efficiency Joint (HEJ) series, at Hannover Messe 2026. The company presented both the proven HEJ 90 and the new, smaller HEJ 70 to support motion in humanoid and industrial robots.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "0ddc1820ea095a75dd4eb817",
+    "ai_evidence_quotes": [
+      "At Hannover Messe 2026, maxon will present itself with an updated trade fair appearance. From April 20 to 24, the maxon Germany team will showcase the latest highlights from our product portfolio.",
+      "Robotics solutions: maxon’s High Efficiency Joints (HEJ) bring motion to robotics. They enable humanoid robots to operate in unstructured environments and are also suitable for industrial applications. At Hannover Messe, we will present the proven High Efficiency Joint 90, as well as the new, smaller HEJ 70."
+    ]
+  },
+  {
+    "target_no": 49,
+    "company": "Maxon",
+    "title": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility",
+    "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
+    "source": "Maxon - News / Newsroom / News",
+    "published_at": null,
+    "published_month": "",
+    "published_at_source": "",
+    "published_at_precision": "none",
+    "published_at_status": "unknown",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [],
+    "collected_at": "2026-09-11T05:01:10Z",
+    "collector": "official_page",
+    "query": "https://www.maxongroup.com/en/news-and-events/news",
+    "source_type": "official",
+    "source_kind": "newsroom",
+    "is_press_release": false,
+    "source_label_ko": "공식출처",
+    "source_priority": 12,
+    "official_source_url": "https://www.maxongroup.com/en/news-and-events/news",
+    "source_direct_url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
+    "link_verdict": "accept",
+    "link_reason": "article_link",
+    "link_rank": 0,
+    "content_text": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility\nStrain wave gearhead\nDownload \nContact us \nShare current page \nAt the SPS trade fair from November 25 to 27, 2025, maxon will present a wide range of new products. From highly integrated robotic actuators to powerful servo drives and controllers: a diverse technology portfolio awaits visitors at the maxon booth in Hall 3, Stand 468.\nOne focus at the maxon booth will be the further developed robotics solutions, in particular the High Efficiency Joints (HEJ). These compact, highly integrated quasi-direct drive (QDD) actuators combine motor, gearhead, sensors, and electronics in a single, robust housing. Following the successful launch of the HEJ 90 (140 Nm), the HEJ 70 with 62 Nm torque now follows - ideal for smaller robots. The HEJ 50 variant is also currently in production and will be available from early 2026. The powerful HEJ \"Hercules\" with over 250 Nm is under development.\nWith this scalable platform, maxon consistently pursues the goal of shortening development times and reducing the overall costs for modern robotics.\nAdditions to the maxon portfolio\nAt SPS, maxon will present several additions to its product portfolio: \nIDX 70 - Compact high-performance servo drive with safety certification \nThe new IDX 70 combines high power density with a compact footprint, making it ideal for mobile robotics, cobots, and driverless transport systems (AGVs). The IDX 70 offers an excellent torque-to-weight ratio and is suitable for demanding industrial environments thanks to its robust design. The certified Safe Torque Off function (STO) and Safe Brake Control (SBC) ensure compliance with the highest safety standards.\nEC frameless DT 50 - Flexible, dynamic, efficient \nThe new EC frameless DT 50 is a brushless motor without a flange and now also available with integrated Hall sensors. The design allows for optimal installation versatility, whether in articulated joints, machine tools, or exoskeletons. With high torque density and outstanding efficiency, it enables precise, dynamic motion with minimal heat generation. Additional sizes — 38 mm, 65 mm, and 85 mm — will be available next year.\nStrain wave gearheads - precision in the smallest space \nWith the new Strain wave gearheads, maxon expands its portfolio, especially for applications with high demands on precision in torque transmission. The backlash-free design ensures exact motion control in minimal installation space – ideal for robotic arms, surgical instruments, or optical applications. In combination with maxon drives, this results in a perfectly matched drive system from a single source - currently available in diameters of 55mm and 62mm. Additional sizes and variants are planned and will be presented at SPS. \nEPOS4 Module/Compact 60/20 STO - Compact controllers with integrated safety \nThe new positioning controllers, with certified STO function up to SIL 3 / PL e category 3, combine advanced control performance and safety in a compact form. They enable precise motion control in modular machines, collaborative robots, or autonomous vehicles. Thanks to versatile interfaces, they can be seamlessly integrated into existing automation systems.\nMiniMACS6 AMP 4IF1 Profinet - multi-axis controller for networked systems \nThe MiniMACS6 AMP 4-IF1 Profinet adds a Profinet communication interface to the successful MACS family. This positions the controller as a key link between motion control and industrial networking. In production environments and robotic systems, it ensures precise real-time coordination of multiple axes and processes.\nBIKEDRIVE AIR S e-bike drive: efficiency meets driving experience \nIn addition to industrial applications, maxon will also be showcasing its latest innovation in the field of lightweight electromobility: the BIKEDRIVE AIR S –the lightest full-power e-bike drive in its class. With a drive weight of just 2 kg, 90 Nm torque, and whisper-quiet operation, the system sets new standards for a sporty yet natural riding experience.\nVisit us at the trade fair\nMeet us in Hall 3, Stand 468, and talk to our experts about the latest drive solutions.\nImage Gallery: New Products for SPS 2025\nHigh Efficiency Joint (HEJ)\n1 / 11",
+    "content_source_url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
+    "content_excerpt": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility Strain wave gearhead Download Contact us Share current page At the SPS trade fair from November 25 to 27, 2025, maxon will present a wide range of new products. From highly integrated robotic actuators to powerful servo drives and controllers: a diverse technology portfolio awaits visitors at the maxon booth in Hall 3, Stand 468. One focus at the maxon booth will be the further developed robotics solutions, in particular the High Efficiency Joints (HEJ). These compact, highly integrated quasi-direct drive (QDD) actuators combine motor, gearhead, sensors, and electronics in a single, robust housing. Following the successful launch of the HEJ 90 (140 Nm), the HEJ 70 with 62 Nm torque now follows - ideal for smal...",
+    "content_word_count": 654,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
+    "query_aliases": [
+      "maxon group"
+    ],
+    "industry": "로봇",
+    "target_technology": "로봇용 감속기",
+    "target_technology_en": "robot reducer",
+    "technology_group": "robot_reducer",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "로봇용 감속기",
+    "pdf_company": "Maxon",
+    "pdf_row_no": 10,
+    "pdf_sequence": "8",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "unknown",
+    "date_placement": "date_pending",
+    "date_note": "게시일 근거가 전혀 없음",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "맥손이 SPS 2025 전시회에서 High Efficiency Joints(HEJ) 로봇용 액츄에이터 및 스트레인 웨이브 기어헤드 등 신제품 구동 솔루션을 공개함.",
+    "ai_summary_ko": "맥손이 SPS 2025 전시회에서 로봇용 고효율 조인트 및 스트레인 웨이브 기어헤드 등 신제품 드라이브 솔루션을 공개함 - 로봇 및 자동화 분야에 적용되는 정밀 감속기와 통합 구동 솔루션 포트폴리오를 선보였음.",
+    "ai_summary_en": "Maxon announced that it will present a wide range of new drive solutions, including robotics solutions like High Efficiency Joints and new strain wave gearheads, at the SPS 2025 trade fair.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "20c48c469f2980a4efd728a0",
+    "ai_evidence_quotes": [
+      "At the SPS trade fair from November 25 to 27, 2025, maxon will present a wide range of new products.",
+      "With the new Strain wave gearheads, maxon expands its portfolio, especially for applications with high demands on precision in torque transmission."
+    ]
+  },
+  {
     "target_no": 32,
     "company": "Vestas",
     "title": "260812 45 Company Announcement.pdf.coredownload.inline.pdf",
@@ -1671,7 +1883,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/investor",
     "source_type": "official",
@@ -1689,7 +1901,7 @@
     "content_excerpt": "Company Announcement No. 45/ 2026 Interim Report Second Quarter 2026 Vestas Wind Systems A/S Hedeager 42, 8200 Aarhus N, Denmark Company Reg. No.: 10403782 Wind. It means the world to us.TM Contents Summary ............................................................................................................................................................................ 3 Key figures ......................................................................................................................................................................... 4 Financial and operational performance .......................................................................................................................... 6 Sustainability performance ...............................................",
     "content_word_count": 10490,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -1715,15 +1927,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "베스타스의 2026년 2분기 실적 보고서로, 해상풍력터빈을 포함한 수주 잔고, 매출 및 인도 실적이 상세히 보고됨.",
-    "ai_summary_ko": "베스타스는 2026년 2분기 동안 해상풍력터빈을 포함한 전사 매출 47억 2,300만 유로를 기록하며 전년 동기 대비 26.1% 성장했음. 또한 해당 기간 풍력터빈 수주와 인도 실적이 견조하게 이어지며 6월 말 기준 풍력터빈 수주 잔고가 360억 유로에 달했음.",
-    "ai_summary_en": "Vestas generated EUR 4,723m in revenue for the second quarter of 2026, marking a 26.1 percent increase year-on-year, supported by strong performance in Power Solutions. Driven by solid wind turbine order intake and deliveries, the company's wind turbine order backlog reached EUR 36.0bn as of 30 June 2026.",
+    "ai_summary_reason": "2026년 2분기 동안 풍력 터빈 주문 intake 3,349 MW 및 매출 성장을 기록하는 등 핵심 사업 활동이 확인됨.",
+    "ai_summary_ko": "베스타스는 2026년 2분기 매출 47억 2,300만 유로와 9.4%의 EBIT 마진을 기록하며 전년 동기 대비 성장을 보였음. 해상 및 육상 파워 솔루션 부문의 실적 개선에 힘입어 분기 풍력 터빈 수주가 3,349 MW로 67% 증가함.",
+    "ai_summary_en": "Vestas reported Q2 2026 revenue of EUR 4.723bn and an EBIT margin of 9.4 percent, driven by performance improvements in Power Solutions. Wind turbine order intake reached 3,349 MW, representing a 67 percent increase year-on-year.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "8be161ccf347346d914322a5",
     "ai_evidence_quotes": [
       "In the second quarter of 2026, Vestas generated revenue of EUR 4,723m – an increase of 26.1 percent compared to the second quarter of 2025.",
-      "The value of the wind turbine order backlog was EUR 36.0bn as at 30 June 2026."
+      "The quarterly intake of firm and unconditional wind turbine orders amounted to 3,349 MW, a 67 percent increase from second quarter 2025."
     ]
   },
   {
@@ -1748,7 +1960,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/investor",
     "source_type": "official",
@@ -1766,7 +1978,7 @@
     "content_excerpt": "Second Quarter 2026 Vestas Wind Systems A/S Copenhagen, 12 August 2026 Disclaimer and cautionary statement This document contains forward-looking statements concerning Vestas’ financial condition, results of operations and business. All statements other than statements of historical fact are, or may be deemed to be, forward-looking statements. Forward-looking statements are statements of future expectations that are based on management’s current expectations and assumptions and involve known and unknown risks and uncertainties that could cause actual results, performance, or events to differ materially from those expressed or implied in these statements. Forward-looking statements include, among other things, statements concerning Vestas’ potential exposure to market risks and statements e...",
     "content_word_count": 2659,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -1839,7 +2051,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.siemens-energy.com/global/en/home/investor-relations.html",
     "source_type": "official",
@@ -1857,7 +2069,7 @@
     "content_excerpt": "Earnings Release Q3 FY 2026 April 1 to June 30, 2026 Munich, Germany, August 5, 2026 – Siemens Energy today announced its results for the third quarter of fiscal year 2026 that ended June 30, 2026. Siemens Energy accelerates profitable growth – Siemens Gamesa delivers a positive quarterly result “Global demand for electricity – and consequently for our products – remained strong in the third quarter. We delivered record orders, revenue, and profitability, while continuing to improve efficiency. The fact that our wind business has returned to profitability in a quarter for the first time since 2022 is a fantastic achievement by this team”, says Christian Bruch, President and CEO of Siemens Energy AG. • Siemens Energy further accelerated its profitable growth in the third quarter, achieving...",
     "content_word_count": 4627,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Siemens Gamesa"
     ],
@@ -1907,7 +2119,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://investors.albemarle.com/financials/annual-reports/default.aspx",
     "source_type": "official",
@@ -1925,7 +2137,7 @@
     "content_excerpt": "Dear Fellow Shareholders, As a purpose-driven and values-led global organization, Albemarle is committed to maintaining strong financial and operational discipline to deliver long-term shareholder value. The markets we serve have a bright future and Albemarle has leading positions in energy storage battery solutions and bromine and lithium specialties. As we reflect upon 2024, we are pleased with how we proactively responded to ongoing industry headwinds, resulting in solid operating performance while preserving our long-term competitiveness. We would like to highlight several ways the Board and executive management team have been working on your behalf this past year. Maintaining Industry Leadership and Enhancing Value Creation In 2024, due to lower lithium pricing, we initiated a compreh...",
     "content_word_count": 12514,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "Albemarle Corporation"
     ],
@@ -1975,7 +2187,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
     "source_type": "official",
@@ -1993,7 +2205,7 @@
     "content_excerpt": "Driving transformation for the future Umicore Integrated Annual Report 2023 Disclaimer This report contains forward-looking information that involves risks and uncertainties, including statements about Umicore’s plans, objectives, expectations and intentions. Should one or more of these risks, uncertainties or contingencies materialize, or should any underlying assumptions prove incorrect, actual results could vary materially from those anticipated, expected, estimated or projected. Readers are cautioned that forward-looking statements include known and unknown risks and are subject to significant business, economic and competitive uncertainties and contingencies, many of which are beyond the control of Umicore. As a result, neither Umicore nor any other person assumes any responsibility f...",
     "content_word_count": 10601,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "이차전지",
     "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
@@ -2017,9 +2229,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "충전식 배터리 소재(Rechargeable Battery Materials) 사업부의 글로벌 오더북 구축 및 양극재 생산 역량 확대 등 관련 사업 동향이 상세히 기술됨.",
-    "ai_summary_ko": "유미코어는 충전식 배터리 소재 부문에서 3개 대륙에 걸쳐 탄탄하고 다각화된 수주 잔고를 구축함. 견고한 계약 조건에 기반하여 유럽과 북미 등지에서 생산 능력 확대 투자를 지속하고 있음.",
-    "ai_summary_en": "Umicore has built a sizeable and diversified order book across three continents in its Rechargeable Battery Materials business. Backed by solid contractual terms, the company continues to invest in expanding its production capacities in Europe and North America.",
+    "ai_summary_reason": "유미코어의 2023년 연차보고서로 충전식 배터리 소재 및 재활용 등 핵심 사업 영역의 전반적인 성과와 투자 진행 상황을 상세히 다루고 있음",
+    "ai_summary_ko": "유미코어는 2023년 연차보고서를 통해 충전식 배터리 소재 부문에서 3개 대륙에 걸쳐 다각화된 수주 잔고를 구축했으며, 북미와 유럽 등에서의 대규모 증설 투자를 본격적으로 집행하고 있다고 밝혔음. 특히 배터리 리사이클링 및 전고체 배터리 소재 등 주요 R&D 프로젝트에 2억 8,100만 유로를 투자하며 미래 성장 동력을 확보하고 있음.",
+    "ai_summary_en": "Umicore released its 2023 Integrated Annual Report, highlighting its strong market position and order book in rechargeable battery materials across three continents. The company continues to advance its strategic expansion projects, including battery recycling and solid-state battery materials, with ongoing capital investments and R&D funding.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "1b3396ac9da84e733a4062b2",
@@ -2041,7 +2253,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
     "source_type": "official",
@@ -2059,7 +2271,7 @@
     "content_excerpt": "Integrated Annual Report 2022 Rising today to transform tomorrow Disclaimer This report contains forward-looking information that involves risks and uncertainties, including statements about Umicore’s plans, objectives, expectations and intentions. Should one or more of these risks, uncertainties or contingencies materialize, or should any underlying assumptions prove incorrect, actual results could vary materially from those anticipated, expected, estimated or projected. Readers are cautioned that forward-looking statements include known and unknown risks and are subject to significant business, economic and competitive uncertainties and contingencies, many of which are beyond the control of Umicore. As a result, neither Umicore nor any other person assumes any responsibility for the accu...",
     "content_word_count": 12409,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "이차전지",
     "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
@@ -2083,14 +2295,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "배터리 양극재 및 리사이클링 관련 사업 활동이 확인됨.",
-    "ai_summary_ko": "유미코어는 전기차용 리튬이온 배터리를 위한 양극재 소재 사업을 전개하고 있으며, 니사 기가팩토리 준공 및 폭스바겐과의 합작법인 설립 등을 통해 배터리 밸류체인 확장을 추진하고 있음.",
-    "ai_summary_en": "Umicore develops cathode active materials for rechargeable lithium-ion batteries in electric vehicles and is expanding its battery value chain through the inauguration of its Nysa gigafactory and a joint venture with Volkswagen's PowerCo.",
+    "ai_summary_reason": "재충전 배터리 소재 및 양극재 관련 사업 및 전략을 추진함",
+    "ai_summary_ko": "유미코어는 리튬이온 배터리용 양극재를 포함한 충전식 배터리 소재 사업을 영위하고 있으며, 배터리 성능을 향상시키기 위한 신기술 연구개발 및 생산 인프라 확장을 추진하고 있음. 폴란드 니사에 유럽 최초의 배터리 소재 기가팩토리를 가동하고 폭스바겐 파워코와 합작법인을 설립하는 등 전기차 공급망 강화를 위한 행보를 이어가고 있음.",
+    "ai_summary_en": "Umicore operates a rechargeable battery materials business encompassing cathode active materials for lithium-ion batteries. The company is advancing next-generation battery technologies, expanding production infrastructure such as its Gigafactory in Nysa, Poland, and strengthening its electric vehicle supply chain through partnerships like the joint venture with PowerCo.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "e2dc194532b598fad74a7240",
     "ai_evidence_quotes": [
-      "While the Rechargeable Battery Materials Business Unit was favorably exposed to higher lithium prices, sales volumes of cathode active materials remained subdued, in line with our previously announced expectations."
+      "In our Rechargeable Battery Materials business, our researchers are diligently working on new technologies to further improve battery performance and thereby electric cars."
     ]
   },
   {
@@ -2107,7 +2319,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://www.riotinto.com/invest/reports/annual-report",
     "source_type": "official",
@@ -2125,7 +2337,7 @@
     "content_excerpt": "Annual Report 2025 Many of our operations are located on land and waters that have belonged to Indigenous and land-connected Peoples for thousands of years. We respect their ongoing deep connection to, and their vast knowledge of, the land, water and environment. We pay our respects to Elders, both past and present, and acknowledge the important role Indigenous and land-connected Peoples play within communities and our business. Contents Strategic report 2025 at a glance Beginning a new chapter Why invest in Rio Tinto Rio Tinto across the world Chair's statement From the Chief Executive Strategic context Our strategic framework The story of our year Our continuing path to value creation Key performance indicators Chief Financial Officer's statement Financial review Aluminium & Lithium Copp...",
     "content_word_count": 19003,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [],
     "industry": "이차전지",
     "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
@@ -2174,7 +2386,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-11T00:29:37Z",
+    "collected_at": "2026-09-11T05:01:10Z",
     "collector": "official_page",
     "query": "https://hypromag.com/",
     "source_type": "official",
@@ -2192,7 +2404,7 @@
     "content_excerpt": "Recycled magnet manufacturing High performance Sustainably sourced Low carbon footprint ETHICAL | INNOVATIVE | GREEN WHO WE ARE HyProMag (UK) was founded in 2018 by leading experts in magnetic materials, recycling and hydrogen technologies – Prof Allan Walton, Mr David Kennedy, Dr John Speight and the late Prof Rex Harris. The Company is 100% held by Maginito Ltd, a subsidiary of AIM/TSXV listed Mkango Resources 1 2 3 4 A company capable of manufacturing rare earth magnets with a significantly reduced carbon footprint Our directors have over 100 years combined experience of Rare Earth Elements and Magnets We have access to the highly energy efficient, patented Hydrogen Processing of Magnet Scrap (HPMS) technology developed over many years at The University of Birmingham A strong network of...",
     "content_word_count": 1955,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-11T00:29:37Z",
+    "content_fetched_at": "2026-09-11T05:01:10Z",
     "query_aliases": [
       "HyProMag"
     ],
@@ -2218,15 +2430,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "사용후 영구자석에서 수소 기반 공정(HPMS)을 통해 NdFeB 자석 분말을 추출하고 저탄소 고성능 재활용 자석을 제조하는 핵심 사업 활동이 명시됨.",
-    "ai_summary_ko": "하이드로매그는 특허 받은 수소 기반 자기스크랩 처리 기술(HPMS)을 활용해 전자기기 및 전기차 부품에 내장된 네오디뮴(NdFeB) 자석을 저에너지 공정으로 회수하고 고성능 저탄소 재활용 자석을 제조하는 사업을 전개하고 있음. 대학과의 오랜 공동연구를 바탕으로 영국과 독일 등에서 상용화 및 양산 파일럿 공장 구축을 추진 중임.",
-    "ai_summary_en": "HyProMag is commercializing a patented Hydrogen Processing of Magnet Scrap (HPMS) technology to extract and demagnetize NdFeB magnets embedded in electronics and EV components, producing high-performance, low-carbon recycled magnets. Backed by long-standing academic research, the company is actively scaling up its pilot and production facilities in the UK and Germany.",
+    "ai_summary_reason": "하이프로매그의 HPMS 기술을 이용한 희토류 자석 재활용 및 파일럿 공장 구축 등 직접적인 사업 동향이 상세히 기술됨",
+    "ai_summary_ko": "하이프로매그는 수소를 활용해 부품 내 NdFeB 자석을 분해하고 탈자기화하는 특허 기술인 HPMS 공정을 상용화하고 있음. 이를 통해 화학적 처리 단계를 거치지 않는 단축 루프 리사이클링으로 저탄소 고성능 희토류 자석 및 합금을 생산함. 버밍엄 대학교와의 협력 및 영국의 타이슬리 에너지 파크 등에서 파일럿 및 데모 플랜트 규모 확장을 추진하고 있음.",
+    "ai_summary_en": "HyProMag is commercialising the patented HPMS process, which uses hydrogen to break down and demagnetise NdFeB magnets embedded in components. Through this short-loop recycling route avoiding chemical processing stages, the company produces low-carbon, high-performance rare earth magnets and alloys. It is advancing scale-up plans with pilot and demonstration plants including at the Tyseley Energy Park in the UK.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "3df7eb633fde5a0f6687dfa8",
     "ai_evidence_quotes": [
-      "The HPMS process being commercialised by HyProMaguses hydrogen to break down and demagnetise the NdFeBmagnet embedded in a component.",
-      "Short Loop Recycling allows us to avoid not only these stages but also Electrolysis and Casting"
+      "The HPMS process being commercialised by HyProMaguses hydrogen to break down and demagnetise the NdFeBmagnet embedded in a component.In the short loop process a magnet or alloy is produced from the resulting NdFeBpowder"
     ]
   }
 ]
