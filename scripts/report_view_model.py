@@ -22,20 +22,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_pdf_report as report
 
 
+# 상태 판정은 build_pdf_report.py 에 둔다. 두 렌더러가 같은 표를 그려야 하므로 규칙의
+# 복사본을 만들지 않는다.
+covered_companies = report.covered_companies
+company_status = report.company_status
+
+
 def matrix_counts(profiles, signal_index, summary, signal_rows):
-    """Reproduce the footnote's three buckets: detected, reviewed, insufficient."""
-    signal_companies = [p for p in profiles if any(signal_index.get(p["company"], {}).values())]
-    covered = {row.get("company") for row in signal_rows
-               if row.get("company") and row.get("source_type") == "official"}
-    if isinstance(summary.get("review_coverage"), list):
-        covered = {item.get("company") for item in summary["review_coverage"]
-                   if item.get("status") == "reviewed"}
-    named = {item["company"] for item in signal_companies}
-    reviewed_off = sum(1 for p in profiles if p["company"] not in named and p["company"] in covered)
+    """각주의 세 묶음. 행마다 붙인 상태를 세는 것이라 표와 숫자가 어긋날 수 없다."""
+    covered = covered_companies(summary, signal_rows)
+    statuses = [company_status(p["company"], signal_index, covered) for p in profiles]
     return {
-        "detected": len(signal_companies),
-        "reviewed_off": reviewed_off,
-        "insufficient": len(profiles) - len(signal_companies) - reviewed_off,
+        "detected": statuses.count("detected"),
+        "reviewed_off": statuses.count("reviewed"),
+        "insufficient": statuses.count("insufficient"),
         "total": len(profiles),
     }
 
@@ -185,6 +185,7 @@ def build(args):
     profiles = report.build_profiles(targets, tech_map)
     signal_index = report.index_investment_signals(investment_signals)
     counts = matrix_counts(profiles, signal_index, summary, signals)
+    covered = covered_companies(summary, signals)
     issue = str(args.issue_number or report.DEFAULT_ISSUE_NUMBER)
     titles = [report.t("cover_title_1"), report.t("cover_title_2"), report.t("cover_title_3")]
 
@@ -207,6 +208,7 @@ def build(args):
             "company_heading": report.t("matrix_company"),
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
+            "legend_unknown": report.t("matrix_legend_unknown"),
             "indicators": report.t("matrix_indicators"),
             "footnote": report.t("matrix_footnote", on=counts["detected"],
                                  off=counts["reviewed_off"] + counts["insufficient"],
@@ -216,6 +218,7 @@ def build(args):
             "rows": [{
                 "target_no": profile["target_no"],
                 "company": profile["company"],
+                "status": company_status(profile["company"], signal_index, covered),
                 "signals": [bool(signal_index.get(profile["company"], {}).get(no)) for no in range(1, 6)],
             } for profile in profiles],
         },

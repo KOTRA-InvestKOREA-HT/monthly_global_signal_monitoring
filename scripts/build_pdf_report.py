@@ -305,7 +305,8 @@ TEXTS = {
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
         "matrix_company": "기업",
         "matrix_legend_on": "시그널 포착",
-        "matrix_legend_off": "미포착·근거 부족",
+        "matrix_legend_off": "검토함 · 신호 없음",
+        "matrix_legend_unknown": "근거 부족 · 재조사 대상",
         "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
         "matrix_footnote": "시그널 포착 {on}개사 · 검토 후 미포착 {reviewed_off}개사 · 근거 부족 {insufficient}개사",
         "detail_title": "기업별 시그널 상세",
@@ -335,7 +336,8 @@ TEXTS = {
         "matrix_desc": "Investment signals (pre-confirmation) across the 77 target companies for {period}. A highlighted cell marks a signal detected during the month; lagging data such as completed deals are excluded.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
-        "matrix_legend_off": "Not detected / insufficient evidence",
+        "matrix_legend_off": "Reviewed, no signal",
+        "matrix_legend_unknown": "Insufficient evidence, revisit",
         "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move",
         "matrix_footnote": "{on} detected · {reviewed_off} reviewed without signals · {insufficient} insufficient evidence",
         "detail_title": "Company Signal Details",
@@ -1345,7 +1347,33 @@ def index_investment_signals(rows):
     return index
 
 
-def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
+def covered_companies(summary, signal_rows):
+    """검토를 끝낸 기업. 커버리지가 있으면 그것을 쓰고, 없으면 공식 출처 유무로 본다."""
+    coverage = summary.get("review_coverage")
+    if isinstance(coverage, list):
+        return {item.get("company") for item in coverage if item.get("status") == "reviewed"}
+    return {row.get("company") for row in signal_rows
+            if row.get("company") and row.get("source_type") == "official"}
+
+
+def company_status(company, signal_index, covered):
+    """매트릭스 한 행의 상태.
+
+    detected     이번 달 시그널이 있다
+    reviewed     검토를 끝냈고 시그널이 없었다
+    insufficient 검토를 끝내지 못했다. 없다는 뜻이 아니라 모른다는 뜻이다
+
+    각주는 이 셋을 숫자로 말해 왔는데 표에는 상태가 없어서, 읽는 사람이 어느 기업을 다시
+    뒤져야 하는지 알 수 없었다. 34546694524 에서 77개사 중 59개사가 뒤쪽이다.
+    report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을 한 곳에 둬야 두 렌더러가
+    같은 표를 그린다.
+    """
+    if any(signal_index.get(company, {}).values()):
+        return "detected"
+    return "reviewed" if company in covered else "insufficient"
+
+
+def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=False):
     c = report.canvas
     table_w = 242
     header_h = 16
@@ -1368,10 +1396,20 @@ def draw_matrix_table(report, profiles, signal_index, x, y_top, right=False):
         c.line(x, y, x + table_w, y)
         report.text(index_x, y + 3.7, str(profile["target_no"]), 6, colors.HexColor("#737C86"), align="center")
         report.text(name_x, y + 3.7, profile["company"], 6, TEXT)
+        status = company_status(profile["company"], signal_index, covered)
         for idx in range(5):
             active = bool(signal_index.get(profile["company"], {}).get(idx + 1))
-            c.setFillColor(GOLD if active else LIGHT)
-            c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
+            if active:
+                c.setFillColor(GOLD)
+                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
+            elif status == "insufficient":
+                # 테두리만: 검토를 못 해 모른다. 속을 채우면 "보고 없었다"로 읽힌다.
+                c.setStrokeColor(TABLE_LINE)
+                c.setLineWidth(0.6)
+                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=0, stroke=1)
+            else:
+                c.setFillColor(LIGHT)
+                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
 
 
 def draw_matrix(report, profiles, signal_index, summary, signal_rows):
@@ -1383,8 +1421,9 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     desc = t("matrix_desc", period=matrix_period_label(summary))
     report.wrapped(desc, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
 
-    draw_matrix_table(report, profiles[:39], signal_index, 25, PAGE_H - 145)
-    draw_matrix_table(report, profiles[39:], signal_index, 281, PAGE_H - 145, right=True)
+    covered = covered_companies(summary, signal_rows)
+    draw_matrix_table(report, profiles[:39], signal_index, covered, 25, PAGE_H - 145)
+    draw_matrix_table(report, profiles[39:], signal_index, covered, 281, PAGE_H - 145, right=True)
 
     y = 88
     c = report.canvas
@@ -1395,7 +1434,14 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     legend_off_x = 45 + c.stringWidth(legend_on, report.fonts["demilight"], 8) + 18
     c.setFillColor(LIGHT)
     c.roundRect(legend_off_x, y + 9, 8, 8, 2, fill=1, stroke=0)
-    report.text(legend_off_x + 13, y + 9, t("matrix_legend_off"), 8, colors.HexColor("#596579"))
+    legend_off = t("matrix_legend_off")
+    report.text(legend_off_x + 13, y + 9, legend_off, 8, colors.HexColor("#596579"))
+    # 세 번째 상태. 각주는 셋을 말해 왔는데 범례는 둘뿐이라 표를 읽을 수 없었다.
+    legend_unknown_x = legend_off_x + 13 + c.stringWidth(legend_off, report.fonts["demilight"], 8) + 18
+    c.setStrokeColor(TABLE_LINE)
+    c.setLineWidth(0.6)
+    c.roundRect(legend_unknown_x, y + 9, 8, 8, 2, fill=0, stroke=1)
+    report.text(legend_unknown_x + 13, y + 9, t("matrix_legend_unknown"), 8, colors.HexColor("#596579"))
     report.text(
         32,
         y - 6,

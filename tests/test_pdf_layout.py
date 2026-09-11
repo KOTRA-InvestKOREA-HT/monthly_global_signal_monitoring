@@ -190,3 +190,46 @@ class ItemPageBalanceTests(unittest.TestCase):
         self.assertEqual(pdf.item_breaks([room + 200]), [])
         # 큰 카드 하나 뒤에 작은 것 셋. 큰 것을 옮기면 들어가지 않으므로 greedy 가 남는다.
         self.assertEqual(pdf.item_breaks([room - pdf.ITEM_CARD_GAP, 40, 40, 40]), [1])
+
+
+class MatrixStatusTests(unittest.TestCase):
+    """34546694524 2쪽: 각주는 포착·검토함·근거부족 셋을 숫자로 말하는데 표의 꺼진 칸은
+    한 가지 모양이라, 77개사 중 어느 59개사를 다시 뒤져야 하는지 읽을 수 없었다."""
+
+    def setUp(self):
+        self.index = {"Acme": {3: [{"x": 1}]}, "Quiet": {}, "Unknown": {}}
+        self.summary = {"review_coverage": [
+            {"company": "Acme", "status": "reviewed"},
+            {"company": "Quiet", "status": "reviewed"},
+            {"company": "Unknown", "status": "incomplete_evidence"},
+        ]}
+
+    def test_the_three_states_are_distinguished(self):
+        covered = pdf.covered_companies(self.summary, [])
+        self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
+        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
+        # 검토를 끝내지 못한 기업은 "신호 없음"이 아니라 "모름"이다.
+        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "insufficient")
+
+    def test_a_company_with_a_signal_is_detected_even_if_coverage_is_incomplete(self):
+        covered = pdf.covered_companies({"review_coverage": []}, [])
+        self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
+
+    def test_without_coverage_the_official_source_decides(self):
+        rows = [{"company": "Quiet", "source_type": "official"},
+                {"company": "Unknown", "source_type": "fallback"}]
+        covered = pdf.covered_companies({}, rows)
+        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
+        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "insufficient")
+
+    def test_the_footnote_counts_are_the_row_statuses_counted(self):
+        # 각주와 표가 어긋나지 않는다는 것이 상태를 행에 붙인 이유다.
+        import report_view_model as vm
+        profiles = [{"company": c, "target_no": i} for i, c in enumerate(self.index, 1)]
+        counts = vm.matrix_counts(profiles, self.index, self.summary, [])
+        covered = pdf.covered_companies(self.summary, [])
+        statuses = [pdf.company_status(p["company"], self.index, covered) for p in profiles]
+        self.assertEqual(counts["detected"], statuses.count("detected"))
+        self.assertEqual(counts["reviewed_off"], statuses.count("reviewed"))
+        self.assertEqual(counts["insufficient"], statuses.count("insufficient"))
+        self.assertEqual(sum(counts[k] for k in ("detected", "reviewed_off", "insufficient")), counts["total"])
