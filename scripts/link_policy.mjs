@@ -110,6 +110,8 @@ export function looksLikeSourceIndexUrl(value) {
     if (hasIndexOnlyPathMarker(parsed)) return true;
     const segments = pathSegments(parsed);
     if (segments.length === 0) return true;
+    // 연도별 보관함(/press-releases/2026/)은 기사가 아니라 그해 목록이다. classifyOfficialLink 도 같은 조각을 거른다.
+    if (/^(19|20)\d{2}$/.test(segments[segments.length - 1])) return true;
     if (segments.length <= 4 && segments.every((segment) => INDEX_SEGMENTS.has(segment))) return true;
     // /company/newsroom/featured-stories/automotive 처럼 상위 경로가 전부 목록이고
     // 마지막 조각이 짧은 낱말이면 기사가 아니라 카테고리 탭이다.
@@ -167,6 +169,36 @@ const ASSET_EXTENSION =
   /\.(jpg|jpeg|png|gif|svg|webp|bmp|ico|mp4|mov|avi|wmv|mp3|wav|zip|rar|7z|gz|tar|exe|dmg)(?:[?#]|$)/i;
 
 const BOILERPLATE = /privacy|cookie|terms|subscribe|contact|career|linkedin|facebook|twitter|youtube|instagram/i;
+
+// 제안 규칙의 공통 링크 판정. 낱말이 URL 어디든 들어가면 버리던 BOILERPLATE 는
+// /career-company/latest/news/ 기사까지 채용 페이지로 버렸다(2026-08 Schmalz 공식 기사 0건).
+// 경로 조각 전체와 링크 문구 전체로만 본다. BOILERPLATE 는 비교용으로 얼린 두 규칙이 그대로 쓴다.
+const BOILERPLATE_SEGMENT = /^(privacy|privacy-policy|privacy-notice|cookies?|cookie-policy|cookie-settings|terms|terms-of-use|terms-and-conditions|legal-notice|imprint|subscribe|subscription|contacts?|contact-us|contact-form|careers?|jobs?)$/i;
+const BOILERPLATE_TITLE = /^(privacy( policy| notice)?|cookies?( policy| settings)?|terms( of use| and conditions)?|legal notice|imprint|subscribe|contacts?( us)?|contact form|find contact person|careers?|jobs)$/i;
+const SOCIAL = /linkedin|facebook|twitter|youtube|instagram/i;
+
+export function isBoilerplateLink(title, url) {
+  if (SOCIAL.test(`${title} ${url}`)) return true;
+  if (BOILERPLATE_TITLE.test(String(title || "").trim())) return true;
+  try {
+    return new URL(url).pathname.split("/").filter(Boolean)
+      .some((segment) => BOILERPLATE_SEGMENT.test(decodeURIComponent(segment).replace(/\.(html?|aspx|php)$/i, "")));
+  } catch {
+    return false;
+  }
+}
+
+// 사람 소개·애널리스트 목록 페이지. IR 피드가 기사와 함께 싣는다(West 이사 소개, Amkor 애널리스트).
+const PERSON_OR_COVERAGE_SEGMENT = /^(board-members?|board-of-directors|directors|management|management-team|leadership|leadership-team|executive-team|executive-management|executives|analysts?|analyst-coverage|people)$/i;
+
+export function isPersonOrCoveragePage(url) {
+  try {
+    return new URL(url).pathname.split("/").filter(Boolean).slice(0, -1)
+      .some((segment) => PERSON_OR_COVERAGE_SEGMENT.test(segment));
+  } catch {
+    return false;
+  }
+}
 
 const NAV_TITLE =
   /^(investor relations home|corporate governance|corporate directory|corporate citizenship|management|contact us|about us|products?|solutions?|careers?)$/i;
@@ -287,7 +319,7 @@ export function classifyOfficialLink(anchor, pageUrl, deps) {
 
   const title = deps.officialTitle(anchor);
   const direct = `${title} ${url}`.toLowerCase();
-  if (BOILERPLATE.test(direct)) return reject("boilerplate_or_social");
+  if (isBoilerplateLink(title, url)) return reject("boilerplate_or_social");
   if (NAV_TITLE.test(title)) return reject("navigation_label");
 
   let parsed;
@@ -305,6 +337,10 @@ export function classifyOfficialLink(anchor, pageUrl, deps) {
   if (segments.length === 0) return reject("site_root");
   // 남은 조각이 전부 목록용 낱말이면 그 URL이 가리키는 것은 기사 묶음이다. 계속 거부한다.
   if (segments.length <= 4 && segments.every((segment) => INDEX_SEGMENTS.has(segment))) return reject("index_page");
+  // 연도별 보관함(/press-releases/2026/). 경로에 연도가 들어 있어 기사 모양으로 받아들여졌다.
+  // 2026-08 Besi 보도자료 페이지에는 이런 링크가 12개 있었다. 받아봐야 제목이 "2026"뿐이라 버려지므로
+  // 확인 요청만 쓴다.
+  if (/^(19|20)\d{2}$/.test(segments[segments.length - 1])) return reject("index_page");
 
   const detectedDate = deps.detectDate(`${anchor.title} ${anchor.context} ${url}`);
   const pathLooksDetailed = looksDetailed(url);
