@@ -508,12 +508,26 @@ export function followUpEvents(articles) {
   return [...events.values()];
 }
 
-export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0) {
+// 기업 커버리지는 "이번 달 신호를 놓쳤을 수 있는가"를 묻는다. 기사 하나가 그 답을 막는 경우는 셋이다.
+// 검토자가 근거가 모자라 판단을 미뤘다(needs_review). 본문 없이 제목만으로 기업과 지표 사건이 맞다고
+// 봤다(본문 없는 후보는 승인될 수 없으므로 신호가 묻혀 있을 수 있다). 신호가 나왔는데 게시일이 보류돼
+// 보고서 본문에 싣지 못했다.
+// 신호가 없다고 판단을 끝낸 기사는 본문이 없든 게시일이 어느 달이든 이번 달 결론을 바꾸지 않는다.
+// 2026-08 실행은 날짜 보류나 본문 없는 기사가 하나만 있어도 막아 77곳 중 63곳이 근거 부족이었다.
+// 대부분 목록 페이지, 제품 소개, 주가 해설 기사처럼 신호 없음이 분명한 것이었다.
+export function articleCoverageGap(article, review, published = false) {
+  const decisions = review?.decisions || [];
+  if (decisions.some((decision) => decision.quality === 'needs_review')) return 'needs_review';
+  if (!article.candidates.some((candidate) => hasArticleBody(candidate.row)) &&
+    decisions.some((decision) => decision.entity_supported && decision.indicator_supported)) return 'no_body';
+  if (article.date_placement === 'date_pending' && published) return 'date_pending';
+  return null;
+}
+
+export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0, publishedArticleIds = new Set()) {
   if (collectionStatus === 'incomplete' || deferredCount > 0) return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
-  return articles.some(article => article.date_placement === 'date_pending' ||
-    !article.candidates.some(candidate => hasArticleBody(candidate.row)) ||
-    reviewByArticle.get(article.id).decisions.some(d => d.quality === 'needs_review'))
+  return articles.some((article) => articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)))
     ? 'incomplete_evidence' : 'reviewed';
 }
 
@@ -537,19 +551,20 @@ export async function build(args) {
   try {
     const reviewByArticle = new Map(reviews.map((review) => [review.article_id, review]));
     const deferred = snapshot.date_deferred || sourceCandidates(snapshot.signals, snapshot.technology, snapshot.indicators, snapshot.period).deferred;
+    // 보고서에 실리는 판정(승인·사람 검토)이 나온 기사. 게시일 보류가 커버리지를 막는지 여기서 갈린다.
+    const publishedArticles = new Set(results.filter((item) => item.supported || item.human_review).map((item) => item.article_id));
     const coverage = snapshot.targets.map((target) => {
       const deferredArticles = deferred.filter(article => article.company === target.company);
       const articles = snapshot.articles.filter((article) => article.company === target.company);
       const incomplete = articles.filter((article) =>
-        !article.candidates.some((candidate) => hasArticleBody(candidate.row)) ||
-        reviewByArticle.get(article.id).decisions.some((d) => d.quality === "needs_review"));
+        articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticles.has(article.id)));
       const datePending = articles.filter((article) => article.date_placement === "date_pending");
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
         date_pending_articles: datePending.length,
         deferred_articles: deferredArticles.length,
         status: coverageStatus(articles, reviewByArticle,
-          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status, deferredArticles.length),
+          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status, deferredArticles.length, publishedArticles),
         follow_up: [...followUpEvents(incomplete), ...deferredArticles],
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };

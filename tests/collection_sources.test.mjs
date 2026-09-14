@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { isBoilerplateLink, isPersonOrCoveragePage, looksLikeSourceIndexUrl } from '../scripts/link_policy.mjs';
+import { collectionBlockingErrors, enrichOfficialRowsWithContent } from '../scripts/collect_company_signals.mjs';
 
 const range = { fromDate: '2026-08-01', toDate: '2026-08-31', fromMs: Date.parse('2026-08-01T00:00:00Z'), toMs: Date.parse('2026-08-31T23:59:59Z') };
 const company = { target_no: 22, company: 'Boeing' };
@@ -85,4 +86,33 @@ test('dated links are kept ahead of undated ones of the same rank before the per
   assert.deepEqual(orderPageRows(rows).slice(0, 3).map(row => row.url), [rows[4].url, rows[5].url, rows[0].url]);
   // Rank still wins over dates: a fetch_to_verify link never jumps ahead of an accepted one.
   assert.equal(orderPageRows(rows).at(-1).url, verify.url);
+});
+
+test('subscription, feedback and whistleblower pages are not articles', () => {
+  assert.equal(isBoilerplateLink('Subscribe to press releases', 'https://www.solvay.com/newsroom/subscribe-solvay-news'), true);
+  assert.equal(isBoilerplateLink('Subscribe to News Alerts', 'https://www.arkema.com/global/en/media/news-alert-subscription/'), true);
+  assert.equal(isBoilerplateLink('', 'https://www.umicore.com/en/media/newsroom/suggestion.url'), true);
+  assert.equal(isBoilerplateLink('EthicsPoint - Precision Castparts', 'https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=2033'), true);
+  assert.equal(isBoilerplateLink('Adobe subscription revenue grows', 'https://news.example.com/2026/08/adobe-subscription-revenue-grows'), false);
+});
+
+test('only listing-level failures leave a company collection incomplete', () => {
+  const blocking = (error) => collectionBlockingErrors([error]).length;
+  assert.equal(blocking({ source: 'official_detail', error: 'HTTP 403 Forbidden' }), 0);
+  assert.equal(blocking({ source: 'official_pages', kind: 'filing', error: 'HTTP 403 Forbidden' }), 0);
+  assert.equal(blocking({ source: 'official_pages', kind: 'financial_report', error: 'HTTP 404 Not Found' }), 0);
+  assert.equal(blocking({ source: 'official_pages', kind: 'discovered_feed', error: 'HTTP 404 Not Found' }), 0);
+  assert.equal(blocking({ source: 'official_pages', kind: 'newsroom', error: 'HTTP 403 Forbidden' }), 1);
+  assert.equal(blocking({ source: 'official_feeds', kind: 'feed', error: 'fetch failed' }), 1);
+  assert.equal(blocking({ source: 'google_news', error: 'fetch failed' }), 1);
+});
+
+test('an undated file the collector cannot open is dropped, a dated one stays', async () => {
+  const args = { fetchOfficialContent: true, maxVerifyPerCompany: 5, maxDetailPerCompany: 10 };
+  const base = { company: 'Merck', target_no: 1, source_type: 'official', link_verdict: 'accept', date_candidates: [] };
+  const { rows } = await enrichOfficialRowsWithContent([
+    { ...base, title: 'Regional Sector Sales (XLS)', url: 'https://www.example.com/files/regional-sector-sales.xlsx' },
+    { ...base, title: 'Production report', url: 'https://www.example.com/files/2026-08-12-production-report.xlsx' },
+  ], args, '2026-09-01T00:00:00Z', { company: 'Merck' });
+  assert.deepEqual(rows.map((row) => row.url), ['https://www.example.com/files/2026-08-12-production-report.xlsx']);
 });

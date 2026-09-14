@@ -211,6 +211,11 @@ class MatrixStatusTests(unittest.TestCase):
         # 검토를 끝내지 못한 기업은 "신호 없음"이 아니라 "모름"이다.
         self.assertEqual(pdf.company_status("Unknown", self.index, covered), "insufficient")
 
+    def test_a_company_whose_sources_had_nothing_this_month_was_reviewed(self):
+        summary = {"review_coverage": [{"company": "Quiet", "status": "no_monthly_sources"}]}
+        covered = pdf.covered_companies(summary, [])
+        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
+
     def test_a_company_with_a_signal_is_detected_even_if_coverage_is_incomplete(self):
         covered = pdf.covered_companies({"review_coverage": []}, [])
         self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")

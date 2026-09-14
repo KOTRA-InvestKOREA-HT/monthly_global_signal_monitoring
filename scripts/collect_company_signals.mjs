@@ -15,7 +15,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v11-stale-periodic-documents';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v12-decoded-news-relays';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -1237,7 +1237,7 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
         ).slice(0, maxPerSource),
       );
     } catch (error) {
-      errors.push({ source_url: feedUrl, source_name: sourceName, error: error.message });
+      errors.push({ source_url: feedUrl, source_name: sourceName, kind: "feed", error: error.message });
     }
   }
   return { rows, requestCount, errors, recoveryCandidates: rows };
@@ -1264,7 +1264,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           rows.push(...feedRows.slice(0, maxPerSource));
           recoveryCandidates.push(...feedRows.map(row => ({ ...row, source_page_url: feedUrl })));
         } catch (error) {
-          errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, error: error.message });
+          errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, kind: "discovered_feed", error: error.message });
         }
       }
       const kept = [];
@@ -1306,7 +1306,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       // 확인 대상은 확실한 기사 뒤에 세운다. maxPerSource 로 잘릴 때 밀려나야 할 쪽이 그쪽이다.
       rows.push(...orderPageRows(filterByDateRange(sourceRows, dateRange)).slice(0, maxPerSource));
     } catch (error) {
-      errors.push({ source_url: page.url, source_name: page.source, error: error.message });
+      errors.push({ source_url: page.url, source_name: page.source, kind: page.kind, error: error.message });
     }
   }
   return { rows, requestCount, errors, recoveryCandidates };
@@ -1348,6 +1348,19 @@ export function createPublisherProbe(limit = 3) {
     return result;
   };
 }
+// 기업 수집을 미완료로 만드는 오류. 목록·피드·사이트맵·검색 단계의 실패만 센다.
+// 상세 페이지 실패는 그 기사가 본문 없는 기사로 남아 검토 커버리지에서 따로 드러난다. 여기서도 세면
+// 실패 하나가 두 번 막는다. 공시·재무 보고서 목록은 월간 사건 기사가 올라오는 곳이 아니고(8-K 는
+// sec_filings 가 따로 읽는다), 목록 페이지 안에서 찾은 피드는 그 페이지를 이미 읽었으므로 보조 경로다.
+// 2026-08 실행에서는 오류가 하나라도 있으면 미완료로 봐서, 2023년 PDF 404나 SEC 공시 목록 403만으로
+// 28개 기업이 근거 부족이 됐다.
+const NON_BLOCKING_ERROR_SOURCES = new Set(["official_detail", "official_model"]);
+const NON_BLOCKING_ERROR_KINDS = new Set(["filing", "financial_report", "discovered_feed"]);
+
+export function collectionBlockingErrors(errors = []) {
+  return errors.filter((error) => !NON_BLOCKING_ERROR_SOURCES.has(error.source) && !NON_BLOCKING_ERROR_KINDS.has(error.kind));
+}
+
 // In-memory only: each collector execution starts with fresh probes.
 const probePublisher = createPublisherProbe();
 
@@ -1402,11 +1415,51 @@ export function extractPdfText(bytes) {
   });
 }
 
+// Google News RSS 가 싣는 기사 주소는 발행사 주소를 감춘 중계 주소다. 따라가도 동의 페이지나 스크립트
+// 이동에서 멈춘다. 2026-08 실행에서 이렇게 본문 없이 남은 기사가 98건이었다(Yahoo Finance, Reuters,
+// Business Wire 등). 중계 페이지에 실린 서명으로 Google News 자체의 해독 요청을 보내 발행사 주소를 받는다.
+// 어느 단계든 실패하면 null 이다. 호출하는 쪽은 예전처럼 리다이렉트를 따라가 본다.
+export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch) {
+  let id;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'news.google.com') return null;
+    id = parsed.pathname.match(/\/articles\/([^/?#]+)/)?.[1];
+  } catch {
+    return null;
+  }
+  if (!id) return null;
+  const page = await fetchImpl(`https://news.google.com/articles/${id}`,
+    { signal: AbortSignal.timeout(timeoutSeconds * 1000), headers: { 'User-Agent': USER_AGENT } });
+  if (!page.ok) return null;
+  const html = await page.text();
+  const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
+  const timestamp = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
+  if (!signature || !timestamp) return null;
+  const request = ['garturlreq', [['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1],
+    'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0], id, Number(timestamp), signature];
+  const response = await fetchImpl('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
+    method: 'POST', signal: AbortSignal.timeout(timeoutSeconds * 1000),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT },
+    body: `f.req=${encodeURIComponent(JSON.stringify([[['Fbv4je', JSON.stringify(request), null, 'generic']]]))}`,
+  });
+  if (!response.ok) return null;
+  try {
+    const payload = (await response.text()).split('\n\n')[1];
+    const decoded = JSON.parse(JSON.parse(payload)[0][2])[1];
+    return /^https?:\/\//i.test(decoded) && !isGoogle(decoded) ? decoded : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetch) {
-  const response = await fetchImpl(url, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
-    redirect: 'follow', headers: requestHeaders(url) });
+  const publisherUrl = isGoogle(url) ? await decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl).catch(() => null) : null;
+  const target = publisherUrl || url;
+  const response = await fetchImpl(target, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
+    redirect: 'follow', headers: requestHeaders(target) });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const resolvedUrl = response.url || url;
+  const resolvedUrl = response.url || target;
   // Google consent/RSS wrapper text is not publisher evidence.
   if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) {
     await response.body?.cancel();
@@ -1475,14 +1528,21 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         continue;
       }
       // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다. 다만 URL 날짜는 정황 근거다.
+      const skipDates = chooseDateEvidence([
+        ...(row.date_candidates || []),
+        dateEvidence(extractDateFromText(skipTitle) || extractMonthFromText(skipTitle), "text", "context"),
+        dateEvidence(extractDateFromUrl(row.url), "url", "context"),
+      ]);
+      // 열 수 없는 파일(XLS 등)에 날짜 근거도 없으면 검토도 날짜 확인도 영영 할 수 없다. 남겨 두면 매달
+      // 수집 보완 대상으로만 쌓인다. 2026-08 실행의 Merck 지역 매출표, ABB 2021년 3분기 재무표가 그랬다.
+      if (skipStatus === "skipped_non_html" && !skipDates.published_at && !skipDates.published_month) {
+        recordExclusion(row.company, skipTitle, row.url, "unreadable_undated_file");
+        continue;
+      }
       enriched.push({
         ...row,
         title: skipTitle,
-        ...chooseDateEvidence([
-          ...(row.date_candidates || []),
-          dateEvidence(extractDateFromText(skipTitle) || extractMonthFromText(skipTitle), "text", "context"),
-          dateEvidence(extractDateFromUrl(row.url), "url", "context"),
-        ]),
+        ...skipDates,
         content_fetch_status: skipStatus,
       });
       continue;
@@ -1578,8 +1638,15 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         recordExclusion(row.company, row.title, row.url, 'unverified_fetch_error');
         continue;
       }
+      // 받아오지 못한 기사도 제목·URL에 남은 날짜는 살린다. 2026-08 실행에서 /2026/04/ 경로의 Air Products
+      // 실적 발표가 날짜 미상으로 남아 8월 수집 보완 대상에 섞였다.
       enriched.push({
         ...row,
+        ...chooseDateEvidence([
+          ...(row.date_candidates || []),
+          dateEvidence(extractDateFromText(row.title) || extractMonthFromText(row.title), "text", "context"),
+          dateEvidence(sitemapUrlDate(row.url), "url", "context"),
+        ]),
         content_fetch_status: "error",
         content_fetched_at: collectedAt,
       });
@@ -1956,7 +2023,7 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
       requestCount += 1;
       rows.push(...sitemapRows(xml, company, entry, dateRange, collectedAt).slice(0, maxPerSource));
     } catch (error) {
-      errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", error: error.message });
+      errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", kind: "sitemap", error: error.message });
     }
   }
   return { rows, requestCount, errors };
@@ -2111,7 +2178,7 @@ async function main() {
     cached_company_count: companyResults.filter(result => result.cached).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,
     collection_coverage: companies.map((company, index) => ({ company: company.company,
-      status: companyResults[index].errors.length ? 'incomplete' : 'completed',
+      status: collectionBlockingErrors(companyResults[index].errors).length ? 'incomplete' : 'completed',
       retryable: retryableCollection(companyResults[index]), cached: companyResults[index].cached })),
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
