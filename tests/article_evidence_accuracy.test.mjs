@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { extractArticleText, collectHtmlDateEvidence, parseRssOrAtom } from '../scripts/collect_company_signals.mjs';
+import { extractArticleText, collectHtmlDateEvidence, extractMonthFromText, parseRssOrAtom } from '../scripts/collect_company_signals.mjs';
 import { chooseDateEvidence, reportEligible } from '../scripts/date_state.mjs';
 const august = { from_date: '2026-08-01', to_date: '2026-08-31' };
 
@@ -90,6 +90,26 @@ test('event dates are not publication dates, and conflicting time tags are held'
   const chosen = chooseDateEvidence(collectHtmlDateEvidence('<time datetime="2026-08-05"></time><time datetime="2026-07-20"></time>'));
   assert.equal(chosen.date_conflict, true);
   assert.equal(reportEligible(chosen, august), false);
+});
+
+// The August 2026 collection admitted three Tosoh releases from 1999 as
+// date-unknown review candidates even though title, URL and body all carried
+// exact historical dates. Archived 19xx documents must be recognized and
+// rejected by the ordinary period rule rather than consuming review budget.
+test('explicit archived 19xx release dates remain valid evidence and out of period', () => {
+  const cases = [
+    ['<h1>1999.12.06 release</h1><p>1999年12月06日</p>', 'https://www.tosoh.co.jp/news/release/1999/19991206_nw000063.html', '1999-12-06'],
+    ['<meta property="article:published_time" content="October 20, 1999">', '', '1999-10-20'],
+    ['<time itemprop="datePublished" datetime="8 September 1999"></time>', '', '1999-09-08'],
+  ];
+  for (const [html, url, day] of cases) {
+    const chosen = chooseDateEvidence(collectHtmlDateEvidence(html, url));
+    assert.equal(chosen.published_at.slice(0, 10), day);
+    assert.equal(reportEligible(chosen, august), false);
+  }
+  assert.equal(extractMonthFromText('1999年8月 ニュース一覧'), '1999-08');
+  const yearOnly = chooseDateEvidence(collectHtmlDateEvidence('<title>1999</title>'));
+  assert.equal(yearOnly.published_at, null, 'a bare year must not become January 1');
 });
 
 // 34546694524: Infineon 기사 6건의 본문이 24,000자로 완전히 동일했다. 페이지 전체가 하나의

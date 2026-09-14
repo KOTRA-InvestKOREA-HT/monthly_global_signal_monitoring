@@ -17,7 +17,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
-- `scripts/classify_investment_signals.mjs`: finds five investment-signal candidates with deterministic keyword rules.
+- `scripts/classify_investment_signals.mjs`: evaluates each candidate against the five investment-indicator categories with deterministic keyword rules.
 - `scripts/review_report.mjs`: shared automated collection, article review, validation, and bilingual PDF pipeline.
 - `scripts/report_period.mjs`: shared reporting-period resolver for the CLI and Actions.
 - `scripts/summarize_signal_evidence.mjs`: legacy row-based summary tool, outside the monthly report pipeline.
@@ -151,7 +151,7 @@ node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signal
 
 The relevance filter uses broad Korean/English synonyms and excludes these companies from relevance analysis by request: `Prodrive`, `JSR`, `Applied Materials`, `Amkor Technology`, `Heraeus`, `Toray`, `3M`, `Air Liquide`, `Air Products`.
 
-Classify five investment-signal candidates:
+Classify candidates against all five investment-indicator categories:
 
 ```bash
 node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true

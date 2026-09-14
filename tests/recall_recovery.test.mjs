@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
-import { needsStageReview } from '../scripts/review_report.mjs';
+import { needsForm3Review, needsStageReview } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
 test('publisher redirects supply HTML, Google wrappers never become evidence', async () => {
@@ -51,4 +51,19 @@ test('passing AI decisions cannot hide absent bodies or unresolved dates in cove
   assert.equal(coverageStatus([a], reviews), 'reviewed');
   assert.equal(coverageStatus([{ ...a, candidates: [{ row: {} }] }], reviews), 'incomplete_evidence');
   assert.equal(coverageStatus([{ ...a, date_placement: 'date_pending' }], reviews), 'incomplete_evidence');
+});
+
+test('an old approved Form 3 S5 decision gets one fresh semantic review', () => {
+  const article = { candidates: [{ id: 'investment:5', kind: 'investment', relevance_exempt: true,
+    row: { source_kind: 'filing', investment_signal_no: 5,
+      title: '3 - Initial statement of beneficial ownership of securities' } }] };
+  const decision = { candidate_id: 'investment:5', entity_supported: true, target_technology_supported: false,
+    indicator_supported: true, leading_indicator_supported: true, quality: 'pass', event_stage: 'precursor' };
+  assert.equal(needsForm3Review(article, { decisions: [decision] }), true);
+  // A fresh review is trusted under the ordinary semantic contract whether it
+  // finds an explicit appointment or rejects a status-only filing.
+  assert.equal(needsForm3Review(article, { decisions: [decision], form3_review_version: 'form3-personnel-event-v1' }), false);
+  assert.equal(needsForm3Review(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
+  assert.equal(needsForm3Review({ candidates: [{ ...article.candidates[0],
+    row: { ...article.candidates[0].row, source_kind: 'press_release' } }] }, { decisions: [decision] }), false);
 });

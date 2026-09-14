@@ -50,6 +50,8 @@ export const SYSTEM_INSTRUCTION =
   'For S4, quote and evaluate the actual joint research, licensing or technical collaboration separately; ' +
   'a supported enabling collaboration is precursor even when mentioned alongside a closed acquisition. ' +
   'Do not approve an acquisition itself as research, or assume a vague synergy is a concrete collaboration. ' +
+  'For S5, an SEC Form 3 or beneficial-ownership filing that merely lists an officer title does not prove an appointment or personnel move. ' +
+  'Approve such a filing only when the supplied evidence explicitly states the appointment, hiring, promotion or role transition. ' +
   SUMMARY_INSTRUCTION + 'Return only decisions in the required schema. ' + DATE_INSTRUCTION;
 
 export const RETRY_INSTRUCTION =

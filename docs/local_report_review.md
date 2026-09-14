@@ -11,6 +11,7 @@
 - `npm run report:local -- status --run-dir RUN_DIR`로 남은 기사를 확인하고, `review_dir/ARTICLE_ID.json`에 기사별 판정을 직접 저장한다. 정상 완료된 파일은 재사용한다.
 - 모두 완료하면 `npm run report:local -- build --run-dir RUN_DIR`을 실행한다. 필요하면 `--python /absolute/path/to/python3` 또는 `PYTHON` 환경 변수로 ReportLab이 설치된 Python을 지정한다. `--issue-number`로 발행 호수를 지정한다(기본 2).
 - 기존 PDF 생성기가 한·영 PDF를 같은 새 `report-*` 폴더에 만든다. 페이지를 이미지로 렌더링하여 표지, 매트릭스, 기업 상세와 품목동향의 실제 레이아웃을 확인하고 파일 링크를 전달한다. 원격 발행은 별도 요청 범위다.
+- SEC Form 3·초기 지분소유 신고서에 임원 직함이 적혀 있다는 사실만으로 S5 인사 이동을 승인하지 않는다. 기사 근거가 임명·취임·영입·승진 등 실제 인사 사건을 명시할 때만 그 사건을 판정한다.
 
 ## 판정 기준
 
