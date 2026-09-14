@@ -227,7 +227,9 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
       const article = groups.get(key);
       for (const text of [row.title, row.content_text, row.content_excerpt,
         ...(row.evidence_snippets || []), ...(row.technology_evidence_snippets || [])]) {
-        if (clean(text) && !article.evidence.includes(clean(text))) article.evidence.push(clean(text));
+        // 이미 실린 근거 안에 그대로 들어 있는 글은 다시 싣지 않는다. 본문 발췌는 본문 앞부분을 자른 것이라
+        // 둘 다 보내면 같은 내용이 두 번 간다(2026-08 HyproMag: 803자 발췌가 19,464자 본문에 그대로 있었다).
+        if (clean(text) && !article.evidence.some((block) => block.includes(clean(text)))) article.evidence.push(clean(text));
       }
       const candidate = {
         id: kind === "investment" ? `investment:${row.investment_signal_no}` : "relevant",
