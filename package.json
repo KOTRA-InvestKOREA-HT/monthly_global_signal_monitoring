@@ -6,6 +6,7 @@
   "scripts": {
     "report:review": "node scripts/review_report.mjs",
     "report:local": "node scripts/local_report.mjs",
+    "audit:coverage": "node scripts/audit_signal_coverage.mjs",
     "test": "node --test",
     "dev": "next dev",
     "build": "next build",

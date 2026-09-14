@@ -25,6 +25,7 @@ export function publishedSignalCounts(rows, period) {
     companies_in_report: new Set(published.map(row => row.company)).size };
 }
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
+const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
@@ -35,6 +36,25 @@ export function needsStageReview(article, review) {
     ['committed', 'completed'].includes(d.event_stage) &&
     d.entity_supported && d.indicator_supported && (d.target_technology_supported ||
       article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt));
+}
+
+// A Form 3 records an officer's reporting status but does not itself announce
+// an appointment. Older review 9ff5363 inferred a personnel move from the title
+// alone. Recheck only previously approved S5 Form 3 candidates once under the
+// explicit instruction below. The fresh semantic decision is accepted without
+// a wording whitelist, so legitimate appointments phrased differently survive.
+export function needsForm3Review(article, review) {
+  if (review.form3_review_version === FORM3_REVIEW_VERSION) return false;
+  return review.decisions.some(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    if (candidate?.kind !== 'investment' || Number(candidate.row?.investment_signal_no) !== 5 ||
+        candidate.row?.source_kind !== 'filing' ||
+        !/(?:\bform\s*3\b|initial statement of beneficial ownership)/i.test(candidate.row?.title || '')) return false;
+    const supported = decision.entity_supported && (candidate.relevance_exempt || decision.target_technology_supported) &&
+      decision.indicator_supported && decision.leading_indicator_supported && decision.quality === 'pass' &&
+      investmentStageSupported(decision.event_stage, 5);
+    return supported;
+  });
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -258,6 +278,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
+    form3_review_version: FORM3_REVIEW_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -380,6 +401,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
       if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
+      if (needsForm3Review(article, review)) throw new Error('Form 3 personnel event needs recheck');
       cached++; completed++;
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.

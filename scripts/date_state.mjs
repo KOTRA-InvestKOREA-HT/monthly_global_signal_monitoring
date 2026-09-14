@@ -17,7 +17,7 @@ export const DATE_STATUS_LABEL_KO = {
   unknown: "게시일 미상",
 };
 
-const MONTH_PATTERN = /^(20\d{2})-(0[1-9]|1[0-2])$/;
+const MONTH_PATTERN = /^((?:19|20)\d{2})-(0[1-9]|1[0-2])$/;
 
 // 오프셋이 없는 값은 PDF 생성기와 같게 UTC로 읽는다. 기간 비교는 하루 단위 문자열로만 한다.
 export function dayOf(value) {

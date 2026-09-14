@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { createDomainGuard, collectWithCheckpoint, retryableCollection, collectionInputDigest } from './collection_resilience.mjs';
-import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
+import { ARTICLE_BODY_MIN_CHARS, chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
 import {
   augustRule,
   classifyOfficialLink,
@@ -13,7 +13,8 @@ import {
   looksLikeSourceIndexUrl,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-export const CONTENT_COLLECTION_VERSION = 'article-body-v7-nested-scope';
+import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v8-historical-date';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -40,6 +41,9 @@ const FIELDNAMES = [
   "source_priority",
   "official_source_url",
   "source_direct_url",
+  "publisher_resolution",
+  "publisher_resolution_source_url",
+  "publisher_discovery_url",
   "content_excerpt",
   "content_word_count",
   "content_fetch_status",
@@ -315,6 +319,22 @@ function parseDate(value) {
   if (gdelt) {
     return `${gdelt[1]}-${gdelt[2]}-${gdelt[3]}T${gdelt[4]}:${gdelt[5]}:${gdelt[6]}Z`;
   }
+  // Date parses a zone-less English calendar date at local midnight. In KST
+  // that becomes the previous UTC day, so "October 20" was stored as the 19th.
+  // Calendar-only values have no timezone; preserve the printed day as UTC.
+  const named = String(value).match(new RegExp(
+    `^\\s*(${MONTH_NAME_PATTERN})\\s+([0-3]?\\d),?\\s+((?:19|20)\\d{2})\\s*$`, 'i'));
+  const dayNamed = String(value).match(new RegExp(
+    `^\\s*([0-3]?\\d)\\s+(${MONTH_NAME_PATTERN})\\s+((?:19|20)\\d{2})\\s*$`, 'i'));
+  const calendar = named
+    ? [named[3], monthNumberFromName(named[1]), named[2]]
+    : dayNamed ? [dayNamed[3], monthNumberFromName(dayNamed[2]), dayNamed[1]] : null;
+  if (calendar) {
+    const [year, month, day] = calendar.map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return value;
+    return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+  }
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
@@ -333,16 +353,24 @@ function isoMonth(year, month) {
   return `${year}-${String(month).padStart(2, "0")}`;
 }
 
+// Archived corporate newsrooms can expose releases from the 1990s alongside
+// current items. Treat those explicit dates as dates so period filtering can
+// reject them; leaving them "unknown" sends clearly historical documents to
+// the review queue and wastes scarce semantic review capacity.
+const SUPPORTED_YEAR_PATTERN = "(?:19|20)\\d{2}";
+
 // "2026-08"이나 "August 2026"처럼 일자가 없는 값. Date는 이런 값을 그 달 1일로 읽어버리므로
 // 게시일로 쓰기 전에 걸러내고 월 단위 근거로만 남긴다.
 function parseMonthOnly(value) {
   const text = cleanText(String(value ?? ""));
   if (!text) return "";
-  const iso = text.match(/^(20\d{2})[-/](0?[1-9]|1[0-2])$/);
+  const iso = text.match(/^((?:19|20)\d{2})[-/](0?[1-9]|1[0-2])$/);
   if (iso) return isoMonth(iso[1], iso[2]);
-  const korean = text.match(/^(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월$/);
+  const korean = text.match(/^((?:19|20)\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월$/);
   if (korean) return isoMonth(korean[1], korean[2]);
-  const named = text.match(new RegExp(`^(${MONTH_NAME_PATTERN}),?\\s+(20\\d{2})$`, "i"));
+  const japanese = text.match(/^((?:19|20)\d{2})\s*年\s*(0?[1-9]|1[0-2])\s*月$/);
+  if (japanese) return isoMonth(japanese[1], japanese[2]);
+  const named = text.match(new RegExp(`^(${MONTH_NAME_PATTERN}),?\\s+(${SUPPORTED_YEAR_PATTERN})$`, "i"));
   const namedNumber = named ? monthNumberFromName(named[1]) : 0;
   return namedNumber ? isoMonth(named[2], namedNumber) : "";
 }
@@ -352,9 +380,11 @@ function parseMonthOnly(value) {
 // 다르면 수집에서 못 읽은 날짜를 판정에서 받아들이는 일이 생긴다.
 export function extractMonthFromText(value = "") {
   const text = cleanText(String(value ?? ""));
-  const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월/);
+  const korean = text.match(/((?:19|20)\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월/);
   if (korean) return isoMonth(korean[1], korean[2]);
-  const named = text.match(new RegExp(`\\b(${MONTH_NAME_PATTERN}),?\\s+(20\\d{2})\\b`, "i"));
+  const japanese = text.match(/((?:19|20)\d{2})\s*年\s*(0?[1-9]|1[0-2])\s*月/);
+  if (japanese) return isoMonth(japanese[1], japanese[2]);
+  const named = text.match(new RegExp(`\\b(${MONTH_NAME_PATTERN}),?\\s+(${SUPPORTED_YEAR_PATTERN})\\b`, "i"));
   const namedNumber = named ? monthNumberFromName(named[1]) : 0;
   return namedNumber ? isoMonth(named[2], namedNumber) : "";
 }
@@ -362,7 +392,7 @@ export function extractMonthFromText(value = "") {
 // parseDate는 해석에 실패하면 입력 문자열을 그대로 돌려준다. 날짜로 확신할 수 있을 때만 받고 싶은 곳에서 쓴다.
 function parseStrictDate(value) {
   // Date는 "2026"을 1월 1일로 읽는다. 연도만 적힌 값은 게시일 근거가 아니다.
-  if (/^\s*20\d{2}\s*$/.test(String(value || "")) || parseMonthOnly(value)) return null;
+  if (/^\s*(?:19|20)\d{2}\s*$/.test(String(value || "")) || parseMonthOnly(value)) return null;
   const parsed = parseDate(value);
   return parsed && /^\d{4}-\d{2}-\d{2}T/.test(parsed) ? parsed : null;
 }
@@ -381,37 +411,37 @@ function isoDate(year, month, day) {
 
 export function extractDateFromText(value = "") {
   const text = cleanText(value);
-  const korean = text.match(/(20\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*(0?[1-9]|[12]\d|3[01])\s*일/);
+  const korean = text.match(/((?:19|20)\d{2})\s*년\s*(0?[1-9]|1[0-2])\s*월\s*(0?[1-9]|[12]\d|3[01])\s*일/);
   if (korean) {
     return isoDate(korean[1], korean[2], korean[3]);
   }
-  const japanese = text.match(/(20\d{2})\s*年\s*(0?[1-9]|1[0-2])\s*月\s*(0?[1-9]|[12]\d|3[01])\s*日/);
+  const japanese = text.match(/((?:19|20)\d{2})\s*年\s*(0?[1-9]|1[0-2])\s*月\s*(0?[1-9]|[12]\d|3[01])\s*日/);
   if (japanese) {
     return isoDate(japanese[1], japanese[2], japanese[3]);
   }
-  const numeric = text.match(/\b(20\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
+  const numeric = text.match(/\b((?:19|20)\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
   if (numeric) {
     return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
   }
   // 유럽식 점 표기(31.12.2026). 앞자리가 12를 넘으면 일-월 순서가 확정된다.
-  const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.(20\d{2})\b/);
+  const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.((?:19|20)\d{2})\b/);
   if (dayFirst) {
     return isoDate(dayFirst[3], dayFirst[2], dayFirst[1]);
   }
   // 미국식 슬래시 표기(12/31/2026).
-  const monthFirst = text.match(/\b(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/(20\d{2})\b/);
+  const monthFirst = text.match(/\b(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/((?:19|20)\d{2})\b/);
   if (monthFirst) {
     return isoDate(monthFirst[3], monthFirst[1], monthFirst[2]);
   }
   const monthName = text.match(
-    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+(20\d{2})\b/i,
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+((?:19|20)\d{2})\b/i,
   );
   if (monthName) {
     // 월 이름 표기를 Date에 그대로 넘기면 현지 시간대로 읽혀 하루가 밀린다.
     return isoDate(monthName[3], monthNumberFromName(monthName[1]), monthName[2]);
   }
   const dayMonth = text.match(
-    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+(20\d{2})\b/i,
+    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+((?:19|20)\d{2})\b/i,
   );
   if (dayMonth) {
     return isoDate(dayMonth[3], monthNumberFromName(dayMonth[2]), dayMonth[1]);
@@ -427,11 +457,11 @@ function extractDateFromUrl(url) {
   } catch {
     // 잘못 인코딩된 URL은 원문 그대로 본다.
   }
-  const ymd = text.match(/(?:^|\D)(20\d{2})[/_-](0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])(?:\D|$)/);
+  const ymd = text.match(/(?:^|\D)((?:19|20)\d{2})[/_-](0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])(?:\D|$)/);
   if (ymd) return isoDate(ymd[1], ymd[2], ymd[3]);
-  const mdy = text.match(/(?:^|\D)(0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])[/_-](20\d{2})(?:\D|$)/);
+  const mdy = text.match(/(?:^|\D)(0?[1-9]|1[0-2])[/_-](0?[1-9]|[12]\d|3[01])[/_-]((?:19|20)\d{2})(?:\D|$)/);
   if (mdy) return isoDate(mdy[3], mdy[1], mdy[2]);
-  const compact = text.match(/(?:^|\D)(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?:\D|$)/);
+  const compact = text.match(/(?:^|\D)((?:19|20)\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(?:\D|$)/);
   if (compact) return isoDate(compact[1], compact[2], compact[3]);
   return null;
 }
@@ -1157,12 +1187,13 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
       ).slice(0, maxPerSource),
     );
   }
-  return { rows, requestCount };
+  return { rows, requestCount, recoveryCandidates: rows };
 }
 
 async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
   const pages = normalizeOfficialPageEntries(sourceConfig.official_pages?.[company.company] || []);
   const rows = [];
+  const recoveryCandidates = [];
   const errors = [];
   let requestCount = 0;
   for (const page of pages) {
@@ -1173,18 +1204,25 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
         try {
           const feedXml = await fetchText(feedUrl, timeoutSeconds);
           requestCount += 1;
-          rows.push(
-            ...filterByDateRange(
-              parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
-              dateRange,
-            ).slice(0, maxPerSource),
+          const feedRows = filterByDateRange(
+            parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
+            dateRange,
           );
+          rows.push(...feedRows.slice(0, maxPerSource));
+          recoveryCandidates.push(...feedRows.map(row => ({ ...row, source_page_url: feedUrl })));
         } catch (error) {
           errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, error: error.message });
         }
       }
       const kept = [];
       for (const anchor of parseAnchors(html, page.url)) {
+        // Keep raw configured-newsroom anchors only for exact-title recovery of
+        // an opaque Google discovery URL. They do not enter collection unless
+        // the ordinary link policy accepts them.
+        if (!looksLikeSourceIndexUrl(anchor.url) && !looksLikeBrokenUrl(anchor.url)) {
+          recoveryCandidates.push({ company: company.company, title: officialTitle(anchor),
+            url: anchor.url, source_page_url: page.url });
+        }
         const judged = judgeAnchor(anchor, page.url, linkPolicy);
         countLinkVerdict(judged.verdict);
         if (judged.verdict === "hard_reject") {
@@ -1222,7 +1260,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       errors.push({ source_url: page.url, source_name: page.source, error: error.message });
     }
   }
-  return { rows, requestCount, errors };
+  return { rows, requestCount, errors, recoveryCandidates };
 }
 
 function canFetchDetailContent(url) {
@@ -1389,6 +1427,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         title: skipTitle,
         ...chooseDateEvidence([
           ...(row.date_candidates || []),
+          dateEvidence(extractDateFromText(skipTitle) || extractMonthFromText(skipTitle), "text", "context"),
           dateEvidence(extractDateFromUrl(row.url), "url", "context"),
         ]),
         content_fetch_status: skipStatus,
@@ -1413,18 +1452,42 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         continue;
       }
       const html = document.html;
-      const content = document.content ?? extractArticleText(html);
-      const limitedContent = content.slice(0, args.contentCharLimit);
+      let content = document.content ?? extractArticleText(html);
       const pageTitle = extractPageTitle(html);
+      const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
+      if (row.publisher_resolution === 'official_exact_title' &&
+          !fetchedTitleMatchesPublisherArticle(row, pageTitle || content.split(/\r?\n/, 1)[0])) {
+        throw new Error('publisher_article_title_mismatch');
+      }
+      let contentFetchStatus = content ? 'fetched' : 'empty';
+      // Some official AEM pages return only a title shell in HTML. After an
+      // independently discovered same-host exact-title URL, try that page's
+      // same-path model once. The model helper accepts content only when its
+      // own title identifies the same article.
+      if (row.publisher_resolution === 'official_exact_title' && content.length < ARTICLE_BODY_MIN_CHARS) {
+        const modelUrl = aemModelUrl(document.resolvedUrl);
+        try {
+          requestCount += 1;
+          const modelArticle = extractQualcommAemArticle(row, await fetchJson(modelUrl, args.timeoutSeconds), cleanHtmlText);
+          if (modelArticle?.content && modelArticle.content.length > content.length) {
+            content = `${modelArticle.title}\n${modelArticle.content}`;
+            contentFetchStatus = 'fetched_aem_model';
+          }
+        } catch (error) {
+          errors.push({ target_no: row.target_no, company: row.company, source: 'official_model',
+            source_url: modelUrl, source_name: row.source, error: error.message });
+        }
+      }
+      const limitedContent = content.slice(0, args.contentCharLimit);
       // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
       // 상세 페이지를 보고 나서야 알 수 있다.
       const bodyHead = content.slice(0, 4000);
       const dates = chooseDateEvidence([
         ...(row.date_candidates || []),
-        ...collectHtmlDateEvidence(html, row.url),
-        dateEvidence(extractDateFromText(bodyHead) || extractMonthFromText(bodyHead), "body_text", "context"),
+        ...collectHtmlDateEvidence(html, document.resolvedUrl),
+        dateEvidence(extractDateFromText(`${resolvedTitle} ${bodyHead}`) ||
+          extractMonthFromText(`${resolvedTitle} ${bodyHead}`), "body_text", "context"),
       ]);
-      const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
       // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
       // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
       // 확인 대상으로 넘어온 링크는 제목에 더해 문서 자체가 목록이 아닌지도 여기서 본다.
@@ -1444,7 +1507,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         content_source_url: document.resolvedUrl,
         content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
         content_word_count: content.split(/\s+/).filter(Boolean).length,
-        content_fetch_status: content ? "fetched" : "empty",
+        content_fetch_status: contentFetchStatus,
         content_fetched_at: collectedAt,
       });
     } catch (error) {
@@ -1543,6 +1606,36 @@ function dedupeRows(rows) {
     deduped.push(row);
   }
   return deduped;
+}
+
+function rowDateEvidence(row) {
+  if (Array.isArray(row.date_candidates) && row.date_candidates.length) return row.date_candidates;
+  return [dateEvidence(row.published_at || row.published_month, row.published_at_source || 'none', 'published')].filter(Boolean);
+}
+
+// Exact official/relay duplicates should be one review article, but the Google
+// feed can carry a useful publication date that the official index omitted.
+// Merge that evidence into the retained official row; confirmed disagreement
+// becomes a date conflict through the shared date policy.
+export function mergePublisherDuplicateDates(officialRows, fallbackRows) {
+  const byDirect = new Map();
+  for (const row of fallbackRows) {
+    if (!row.source_direct_url) continue;
+    if (!byDirect.has(row.source_direct_url)) byDirect.set(row.source_direct_url, []);
+    byDirect.get(row.source_direct_url).push(row);
+  }
+  const matched = new Set();
+  const mergedOfficial = officialRows.map(row => {
+    const direct = row.source_direct_url || row.url;
+    const copies = byDirect.get(direct) || [];
+    if (!copies.length) return row;
+    copies.forEach(copy => matched.add(copy));
+    const dates = chooseDateEvidence([row, ...copies].flatMap(rowDateEvidence));
+    return { ...row, ...dates, publisher_resolution: 'official_exact_title_duplicate',
+      publisher_resolution_source_url: copies[0].publisher_resolution_source_url,
+      publisher_discovery_url: copies[0].url };
+  });
+  return { officialRows: mergedOfficial, fallbackRows: fallbackRows.filter(row => !matched.has(row)) };
 }
 
 // maxPerCompany 로 자를 때 무엇을 먼저 버릴지 정한다. link_rank 는 0=지금도 걷던 기사,
@@ -1644,6 +1737,7 @@ export function usableMonthlySource(row, dateRange) {
 
 async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
   const companyRows = [];
+  const publisherCandidates = [];
   const errors = [];
   let requestCount = 0;
 
@@ -1663,6 +1757,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
         throw new Error(`Unknown source: ${source}`);
       }
       companyRows.push(...result.rows);
+      publisherCandidates.push(...(result.recoveryCandidates || result.rows || []));
       requestCount += result.requestCount;
       for (const sourceError of result.errors || []) {
         errors.push({
@@ -1698,12 +1793,16 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       const fallback = await collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       requestCount += fallback.requestCount;
       if (fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
+      const recoveredFallback = fallback.rows
+        .map(row => recoverPublisherRow(row, publisherCandidates, sourceConfig));
+      const split = mergePublisherDuplicateDates(rows.filter(row => row.source_type === 'official'), recoveredFallback);
+      rows = [...split.officialRows, ...rows.filter(row => row.source_type !== 'official')];
       // Dated monthly evidence first, then the rest of what this company's own
       // sources returned, and only then the fallback. Ranking Google News above
       // an undated or unfetched official row let it push real press releases
       // out of maxPerCompany: 26 official rows were lost that way in the
       // 2026-08 run while fallback rows grew from 37 to 142.
-      rows = trimByRank(dedupeRows([...usable, ...rows, ...fallback.rows]), args.maxPerCompany);
+      rows = trimByRank(dedupeRows([...usable, ...rows, ...split.fallbackRows]), args.maxPerCompany);
       const fallbackRows = rows.filter(row => row.source_type !== 'official');
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company);
       requestCount += detailedFallback.requestCount;
@@ -1784,6 +1883,7 @@ async function main() {
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
     skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
+    publisher_resolution_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,
