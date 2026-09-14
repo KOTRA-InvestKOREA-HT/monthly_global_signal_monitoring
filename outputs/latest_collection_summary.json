@@ -1,13 +1,13 @@
 {
-  "run_started_at": "2026-09-14T07:10:35Z",
+  "run_started_at": "2026-09-14T08:23:34Z",
   "collection_resume_version": 1,
   "collection_input_digest": "5f54eda5f50e3fa5d704f5535e657b936ecddc1715b83d7bfab63ff104faba5a",
   "html_network": {
-    "attempts": 51,
+    "attempts": 13,
     "skipped": 3,
-    "elapsed_ms": 31820
+    "elapsed_ms": 11606
   },
-  "cached_company_count": 72,
+  "cached_company_count": 75,
   "retryable_company_count": 2,
   "collection_coverage": [
     {
@@ -44,7 +44,7 @@
       "company": "Moderna",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "West Pharmaceutical",
@@ -104,7 +104,7 @@
       "company": "Amkor Technology",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Onsemi",
@@ -134,7 +134,7 @@
       "company": "GE Healthcare",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Boeing",
@@ -473,11 +473,11 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-14T07:10:58Z",
+  "run_finished_at": "2026-09-14T08:23:47Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 5,
       "cached": true
@@ -491,7 +491,7 @@
     },
     {
       "company": "Corning",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -505,91 +505,91 @@
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 22586,
-      "request_count": 19,
+      "elapsed_ms": 4,
+      "request_count": 0,
       "result_count": 10,
-      "cached": false
+      "cached": true
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 218,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Dupont",
-      "elapsed_ms": 224,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 229,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "TIMET",
-      "elapsed_ms": 15,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Air Products",
-      "elapsed_ms": 9,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Chemours",
-      "elapsed_ms": 17,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 19,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "DOW",
-      "elapsed_ms": 18,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Thermo Fisher",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 7199,
-      "request_count": 13,
+      "elapsed_ms": 3,
+      "request_count": 0,
       "result_count": 7,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Onsemi",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -610,77 +610,77 @@
     },
     {
       "company": "Eli Lilly and Company",
-      "elapsed_ms": 2,
-      "request_count": 0,
-      "result_count": 10,
-      "cached": true
-    },
-    {
-      "company": "GE Healthcare",
-      "elapsed_ms": 8560,
-      "request_count": 13,
-      "result_count": 8,
-      "cached": false
-    },
-    {
-      "company": "Boeing",
       "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
-      "company": "3M",
+      "company": "GE Healthcare",
+      "elapsed_ms": 4,
+      "request_count": 0,
+      "result_count": 8,
+      "cached": true
+    },
+    {
+      "company": "Boeing",
       "elapsed_ms": 3,
+      "request_count": 0,
+      "result_count": 10,
+      "cached": true
+    },
+    {
+      "company": "3M",
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Ouster",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Applied Materials",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Magnix",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 0,
       "cached": true
     },
     {
       "company": "Prodrive",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 3,
       "cached": true
     },
     {
       "company": "ASML",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Besi",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "NXP",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 6,
       "cached": true
@@ -694,77 +694,77 @@
     },
     {
       "company": "Vestas",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heidenhain",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Infineon",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Schmalz",
-      "elapsed_ms": 14,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Bayer",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Merck",
-      "elapsed_ms": 2,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Schott Pharma",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "BASF",
-      "elapsed_ms": 45,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 0,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -778,224 +778,224 @@
     },
     {
       "company": "Umicore",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Solvay",
-      "elapsed_ms": 1,
+      "elapsed_ms": 9,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Syensqo",
-      "elapsed_ms": 0,
+      "elapsed_ms": 10,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Hexagon AB",
-      "elapsed_ms": 1,
+      "elapsed_ms": 10,
       "request_count": 0,
       "result_count": 3,
       "cached": true
     },
     {
       "company": "ABB",
-      "elapsed_ms": 3,
+      "elapsed_ms": 9,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Maxon",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Siemens-Gamesa",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Renishaw",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Nexeon",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "HyproMag",
-      "elapsed_ms": 1,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "EVG",
-      "elapsed_ms": 0,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Plansee",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 12098,
+      "elapsed_ms": 13047,
       "request_count": 6,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "Veolia",
-      "elapsed_ms": 1,
+      "elapsed_ms": 127,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 1,
+      "elapsed_ms": 121,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Safran",
-      "elapsed_ms": 0,
+      "elapsed_ms": 127,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 1,
+      "elapsed_ms": 16,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Arkema",
-      "elapsed_ms": 1,
+      "elapsed_ms": 16,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "DNP",
-      "elapsed_ms": 1,
+      "elapsed_ms": 16,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Hitachi Metals",
-      "elapsed_ms": 1,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Toppan Holdings",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 4,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Glass",
-      "elapsed_ms": 1,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "JSR",
-      "elapsed_ms": 1,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Tokyo Electron",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Tosoh",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Mitsubishi Chemical",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Sumitomo Chemical",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Toray",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 1,
       "cached": true
@@ -1009,7 +1009,7 @@
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 14017,
+      "elapsed_ms": 11227,
       "request_count": 5,
       "result_count": 0,
       "cached": false
@@ -1042,7 +1042,7 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 56,
+  "request_count": 11,
   "fetch_retries": 2,
   "retry_count": 4,
   "result_count": 536,
@@ -1060,106 +1060,30 @@
   "undated_with_body_count": 51,
   "link_policy": "proposed",
   "link_verdict_counts": {
-    "hard_reject": 1250,
-    "accept": 82,
-    "fetch_to_verify": 75
+    "hard_reject": 322,
+    "accept": 4
   },
   "max_verify_per_company": 0,
-  "excluded_non_article_count": 1250,
+  "excluded_non_article_count": 322,
   "excluded_non_article_reasons": {
-    "offsite_link": 54,
-    "site_root": 82,
-    "navigation_label": 20,
-    "no_article_affordance": 855,
-    "index_page": 51,
-    "category_or_pagination": 49,
-    "boilerplate_or_social": 132,
-    "asset_file": 7
+    "site_root": 26,
+    "no_article_affordance": 256,
+    "offsite_link": 27,
+    "navigation_label": 5,
+    "boilerplate_or_social": 8
   },
-  "excluded_non_article_sample_count": 54,
+  "excluded_non_article_sample_count": 15,
   "excluded_non_article_samples": [
     {
-      "company": "Moderna",
-      "title": "Join the meeting here, recommended to login beginning at 7:45 AM ET >",
-      "url": "https://central.virtualshareholdermeeting.com/vsm/web?pvskey=MRNA2025",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://central.proxyvote.com/pv/web",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Listen to webcast",
-      "url": "https://event.summitcast.com/view/aMepMFxWv3z5SRZ9meKJzp/guest_book?session_id=hpAZR87JrNiWpQRGHNcAL2",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Listen to webcast",
-      "url": "https://edge.media-server.com/mmc/p/y8poov6f/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Connect with us Sign up for email updates from Amkor",
-      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Connect with us Sign up for email updates from Amkor",
-      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
-      "reason": "offsite_link"
+      "company": "Shanghai Electric Wind Power",
+      "title": "",
+      "url": "https://www.shanghai-electric.com/",
+      "reason": "site_root"
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "title": "上证E互动",
-      "url": "http://sns.sseinfo.com/company.do?uid=1727",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "校园招聘",
-      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://www.proxyvote.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "GEHealthcare.com",
-      "url": "https://www.gehealthcare.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "",
-      "url": "https://investor.gehealthcare.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Amkor.com",
-      "url": "https://amkor.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "",
-      "url": "https://ir.amkor.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Moderna",
-      "title": "Health Care Professionals",
-      "url": "https://modernapro.com/",
+      "title": "EN",
+      "url": "https://www.shanghai-electric.com/",
       "reason": "site_root"
     },
     {
@@ -1176,45 +1100,39 @@
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "title": "",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
+      "title": "CN",
+      "url": "https://www.shanghai-electric.com/listed/",
+      "reason": "no_article_affordance"
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "title": "EN",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
+      "title": "首页",
+      "url": "https://www.shanghai-electric.com/listed/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "GE Healthcare",
-      "title": "About Us",
-      "url": "https://www.gehealthcare.com/about/about-ge-healthcare-systems",
-      "reason": "navigation_label"
+      "company": "Texcell",
+      "title": "Custom Cell Culture",
+      "url": "https://texcell.com/custom-cell-culture/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "GE Healthcare",
-      "title": "About Us",
-      "url": "https://www.gehealthcare.com/about/about-ge-healthcare-systems",
-      "reason": "navigation_label"
+      "company": "Texcell",
+      "title": "Cell Banking",
+      "url": "https://texcell.com/cell-banking/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Amkor Technology",
-      "title": "Corporate Governance",
-      "url": "https://ir.amkor.com/corporate-governance/highlights",
-      "reason": "navigation_label"
+      "company": "Shanghai Electric Wind Power",
+      "title": "上证E互动",
+      "url": "http://sns.sseinfo.com/company.do?uid=1727",
+      "reason": "offsite_link"
     },
     {
-      "company": "Amkor Technology",
-      "title": "Corporate Governance",
-      "url": "https://ir.amkor.com/corporate-governance/highlights",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Moderna",
-      "title": "Products",
-      "url": "https://www.modernatx.com/products",
-      "reason": "navigation_label"
+      "company": "Shanghai Electric Wind Power",
+      "title": "校园招聘",
+      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
+      "reason": "offsite_link"
     },
     {
       "company": "Texcell",
@@ -1235,150 +1153,6 @@
       "reason": "navigation_label"
     },
     {
-      "company": "GE Healthcare",
-      "title": "Leadership",
-      "url": "https://www.gehealthcare.com/about/leadership",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Email Alerts",
-      "url": "https://investor.gehealthcare.com/resources/email-alerts",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Board of Directors",
-      "url": "https://ir.amkor.com/corporate-governance/board-of-directors",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Corporate Management",
-      "url": "https://ir.amkor.com/corporate-governance/management",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Moderna",
-      "title": "mRNA Pipeline",
-      "url": "https://www.modernatx.com/research/product-pipeline",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Moderna",
-      "title": "Moderna Supplier Page",
-      "url": "https://www.modernatx.com/supplier/moderna-supplier-page",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Texcell",
-      "title": "Custom Cell Culture",
-      "url": "https://texcell.com/custom-cell-culture/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Texcell",
-      "title": "Cell Banking",
-      "url": "https://texcell.com/cell-banking/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "CN",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "首页",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Sustainability",
-      "url": "https://www.gehealthcare.com/about/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "News",
-      "url": "https://www.gehealthcare.com/about/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Press Releases",
-      "url": "https://ir.amkor.com/press-releases",
-      "reason": "index_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "News",
-      "url": "https://amkor.com/news/",
-      "reason": "index_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Current page 1",
-      "url": "https://investor.gehealthcare.com/news-events/news-releases?page=0",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Page 2",
-      "url": "https://investor.gehealthcare.com/news-events/news-releases?page=1",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Company News",
-      "url": "https://amkor.com/category/company-news/",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Company News",
-      "url": "https://amkor.com/category/company-news/",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "",
-      "url": "https://www.facebook.com/GEHealthcare/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "",
-      "url": "https://www.instagram.com/gehealthcare",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "&nbsp;",
-      "url": "https://www.linkedin.com/company/7135/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "&nbsp;",
-      "url": "https://twitter.com/AmkorTechnology",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Moderna",
-      "title": "Careers",
-      "url": "https://www.modernatx.com/careers/life-at-moderna",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Moderna",
-      "title": "Life at Moderna",
-      "url": "https://www.modernatx.com/careers/life-at-moderna",
-      "reason": "boilerplate_or_social"
-    },
-    {
       "company": "Texcell",
       "title": "Contact us",
       "url": "https://texcell.com/contact-us/",
@@ -1389,29 +1163,14 @@
       "title": "Careers",
       "url": "https://texcell.com/about-us/",
       "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Moderna",
-      "title": "VIDEO: COVID-19 vaccine assembly and packaging.",
-      "url": "https://assets.modernatx.com/m/7e4dd9091bcbeb6f/original/Moderna-Vaccine-in-Box.MOV",
-      "reason": "asset_file"
-    },
-    {
-      "company": "Moderna",
-      "title": "VIDEO: COVID-19 vaccine sorting and production.",
-      "url": "https://assets.modernatx.com/m/355dff7bd8f07e3c/original/Moderna-Vaccine-Vials.MOV",
-      "reason": "asset_file"
     }
   ],
   "excluded_non_article_sample_reasons": {
-    "offsite_link": 8,
-    "site_root": 10,
-    "navigation_label": 8,
-    "no_article_affordance": 10,
-    "index_page": 4,
-    "category_or_pagination": 4,
-    "boilerplate_or_social": 8,
-    "asset_file": 2
+    "site_root": 4,
+    "no_article_affordance": 4,
+    "offsite_link": 2,
+    "navigation_label": 3,
+    "boilerplate_or_social": 2
   },
   "published_at_source_counts": {
     "text": 6,
@@ -2440,9 +2199,9 @@
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T071035Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T071035Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260914T071035Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T082334Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T082334Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260914T082334Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -2530,11 +2289,26 @@
     {
       "company": "Moderna",
       "monthly_articles": 10,
-      "needs_review_articles": 1,
+      "needs_review_articles": 3,
       "date_pending_articles": 5,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "follow_up": [
+        {
+          "title": "mRNA（メッセンジャーRNA）技術のパイオニア - モデルナ・ジャパン",
+          "url": "https://www.modernatx.com/ja-JP/newsroom/news-and-media?slug=newsroom%2Fnews-and-media&fromLocale=en-US",
+          "publishers": []
+        },
+        {
+          "title": "Moderna Shares More Than Double on Success of mRNA Cancer Vaccine - WSJ",
+          "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPRTk3NVU2azE5bE52RjBLSHlDdTdrQmM5QXUxSjZ6dVFrMTd5MUFoVUQ4c3ViYVBTbWhfSERUSl9CVEpXSmVzZ0puV1BmUkk0QXpCN3VKQy15dVVlOG9XVmFSeUdGLWktVUgxc0hudWFOTnJ2MXI3aFFqSi1yXzVxNk1GdmlPbzQ3NmNnVnpJNk5hb015VTdfdl9DS0Myejl5bWJqMGRBZm5ITURFc25iYw?oc=5",
+          "publishers": [
+            {
+              "publisher": "WSJ",
+              "home_url": "https://www.wsj.com/"
+            }
+          ]
+        },
         {
           "title": "First mRNA flu shot gets FDA approval, raising hopes for a more effective vaccine - CIDRAP",
           "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNR1dicEVTYl8wSXgxR3pjbzRXSThfZHFEcFJwR29FLUhOODRhTnJRQi1RRk01dUtJemIyQWVwYklXbGlnbVJBN0J6ZEtWZnhjeXZvaGkyMmR4MEg1SUpZeXFTV1BjNTlqVUdKSXlMdjZfbkwyd203OWRrYkVmZ0ZSU0ltMnBfWFc3b2RxTjh0SzRrNUtCUmpZc2VTcVZEdWpuc0pWd2ZYT3pXVzA5NVFiektJOW0yOGtYaGdHYg?oc=5",
@@ -2631,22 +2405,11 @@
     {
       "company": "Air Products",
       "monthly_articles": 6,
-      "needs_review_articles": 1,
+      "needs_review_articles": 0,
       "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
-      "follow_up": [
-        {
-          "title": "Is Air Products And Chemicals (APD) Undervalued After Its Earnings Beat And Raised Outlook? - Yahoo Finance",
-          "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ3lTYVN2dWdOY3dMN19wakZXSjVhRl9IVDd6dHNVZUd5UXZqZEl2dkxGRDVjQmtGWDBYU2R5dU5acklMOWMtU0NIUWJiU1hBbG5PUDU4SWdaT1FodzRiYnNJYmJvV1dLdVVOX3BmdUxOdG5QckdvUndjWjV5SlpCQnAyVTBpdE1kc0htZnYydmtDcXdCTHNha2Q4N1FsNDJwdGs0UlZn?oc=5",
-          "publishers": [
-            {
-              "publisher": "Yahoo Finance",
-              "home_url": "https://finance.yahoo.com/"
-            }
-          ]
-        }
-      ],
+      "follow_up": [],
       "date_follow_up": [
         {
           "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ3lTYVN2dWdOY3dMN19wakZXSjVhRl9IVDd6dHNVZUd5UXZqZEl2dkxGRDVjQmtGWDBYU2R5dU5acklMOWMtU0NIUWJiU1hBbG5PUDU4SWdaT1FodzRiYnNJYmJvV1dLdVVOX3BmdUxOdG5QckdvUndjWjV5SlpCQnAyVTBpdE1kc0htZnYydmtDcXdCTHNha2Q4N1FsNDJwdGs0UlZn?oc=5",
@@ -2800,11 +2563,16 @@
     {
       "company": "Eli Lilly and Company",
       "monthly_articles": 6,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 4,
       "status": "incomplete_evidence",
       "follow_up": [
+        {
+          "title": "Lilly to acquire Merida Biosciences to advance treatments for serious autoimmune and allergic diseases",
+          "url": "https://investor.lilly.com/news-releases/news-release-details/lilly-acquire-merida-biosciences-advance-treatments-serious",
+          "publishers": []
+        },
         {
           "company": "Eli Lilly and Company",
           "url": "https://www.lilly.com/news/media/social-media-guidelines",
@@ -3085,12 +2853,12 @@
           "publishers": []
         },
         {
-          "title": "Is Vestas Wind Systems (CPSE:VWS) Fully Valued As Earnings Lifted Full Year Guidance? - Yahoo Finance",
-          "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNak01T25YdlJUUmZKUlNnbGlGcHVnc3FaWlowZVVhS3hvYjktV0I5VlVmNk9kWFRXQWVBRXRIbWJMeVBjRWs0T292cmZLLURSeUZiRHZUZU16aUUwY2xKQUJIR0dLbnlVaGNrX01QdkUtMDBsdlBSTFNzMm9rQjAyVVI2TXQ3T0ROd0pjaC1BSEhNZ29mcWluVg?oc=5",
+          "title": "Vestas Wind Systems A/S 2026 Q2 - Results - Earnings Call Presentation (OTCMKTS:VWDRY) 2026-08-12 - Seeking Alpha",
+          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPUC1BRlZtdUNfN01JR3NYRjRaNmh1WlE0SEpOcWxBU0tIOGRreWVRckMtaUwyY0RqbTNjYmNhLTk4RnZOX2tPczAwQjM1UTNUUGJVek0ySjZuSmltWWhaaUJmUmFxNjM0RldyTVRoVVdUVHJDQVQ0aFh1N2szRlJCYWtPZ25zRjdPUlg3VmNUWE40Y2FGMjJUMjRKcEtGRzFCRTcyOEo2V1lHUDA?oc=5",
           "publishers": [
             {
-              "publisher": "Yahoo Finance",
-              "home_url": "https://finance.yahoo.com/"
+              "publisher": "Seeking Alpha",
+              "home_url": "https://seekingalpha.com/"
             }
           ]
         },
@@ -3480,11 +3248,22 @@
     {
       "company": "ABB",
       "monthly_articles": 4,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 2,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "follow_up": [
+        {
+          "title": "ABB invests in LevelTen Energy to advance clean energy procurement - ABB",
+          "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPTFlKQ0xQc3V4ZmFsRXVIR1Z0STRKRktRTGdYbnlZbWl5U3h6aGlMUFJhZ1R6XzBRdnQ2bEM0NzBQaVVpSG8zYUdNZ2JYTmlLOFlVU1lfcm41OUZ0dlhaZnE5ZGg2WVFkbmtCYXQwRTJuRUhoQ1RFMnhMLTNoTktjRWo1SlBNVzZwX3hoaUZBd1dIVFVCUTFtSGxleWpsOGFhOVJmWjN4TDQ?oc=5",
+          "publishers": [
+            {
+              "publisher": "ABB",
+              "home_url": "https://new.abb.com/"
+            }
+          ]
+        }
+      ],
       "date_follow_up": [
         {
           "url": "https://www.abb.com/content/dam/aot/en/company/annual-reporting-suite/2025/IR_Chairman_subtitles.txt",
@@ -3501,24 +3280,14 @@
     {
       "company": "Maxon",
       "monthly_articles": 9,
-      "needs_review_articles": 3,
+      "needs_review_articles": 1,
       "date_pending_articles": 9,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "follow_up": [
         {
-          "title": "maxon at Hannover Messe 2026: Robotics drives, latest portfolio additions, and functional safety",
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
-          "publishers": []
-        },
-        {
           "title": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility",
           "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
-          "publishers": []
-        },
-        {
-          "title": "maxon acquires strategic minority stake in Synapticon",
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
           "publishers": []
         }
       ],
@@ -4033,22 +3802,11 @@
     {
       "company": "Nabtesco",
       "monthly_articles": 9,
-      "needs_review_articles": 2,
+      "needs_review_articles": 0,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "incomplete_evidence",
-      "follow_up": [
-        {
-          "title": "FY2026/12 Q2 Results Briefing Web-conference Material with script",
-          "url": "https://www.nabtesco.com/en/news/20260806-18353/",
-          "publishers": []
-        },
-        {
-          "title": "FY2026/12 Q2 Results Briefing Web-conference Material",
-          "url": "https://www.nabtesco.com/en/news/20260804-18326/",
-          "publishers": []
-        }
-      ],
+      "status": "reviewed",
+      "follow_up": [],
       "date_follow_up": []
     },
     {

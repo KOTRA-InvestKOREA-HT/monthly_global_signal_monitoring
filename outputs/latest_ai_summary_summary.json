@@ -1,12 +1,19 @@
 {
   "status": "completed",
-  "requests": 33,
-  "cached": 325,
+  "requests": 5,
+  "cached": 340,
   "completed": 344,
   "total": 344,
   "date_hints": 0,
   "failed_articles": [],
-  "diagnostics": [],
+  "diagnostics": [
+    {
+      "article_id": "460f6be908a5ec6d4a26229a",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/460f6be908a5ec6d4a26229a/64c68c37-8d1e-4be3-9808-2da327a9e1c7-attempt-1.json"
+    }
+  ],
   "concurrency": 4,
   "period": {
     "from_date": "2026-08-01",
