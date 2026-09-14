@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, humanReviewGaps, importReview, normalizeQuote, build } from './local_report.mjs';
+import { sourceCandidates, groupArticles, humanReviewGaps, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
 import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
@@ -95,6 +95,10 @@ export function needsFundingReview(article, review) {
   });
 }
 
+// 요약 숫자 검증을 넣기 전에 저장된 판정은 틀린 숫자를 가질 수 있다. 보고서에 실리는 문안의 숫자가
+// 기사에 없을 때만 문안을 한 번 다시 받는다.
+const SUMMARY_NUMBERS_VERSION = 'summary-numbers-v1';
+
 // 보고서에 실리는 판정. 승인된 투자 시그널, 사람 검토 후보, 승인된 사업동향이다.
 function publishedDecision(candidate, decision) {
   if (!candidate || !decision.entity_supported || !decision.indicator_supported) return false;
@@ -107,9 +111,12 @@ function publishedDecision(candidate, decision) {
 // 요약 정확성 지시(시제·실제 사건·국가명·관계 과장 금지)를 넣기 전에 저장된 판정은 옛 문안이다.
 // 보고서에 실리는 판정이 있는 기사만 한 번 다시 묻고, 판정은 옮기지 않고 문안만 옮긴다.
 export function needsSummaryRefresh(article, review) {
-  if (review.summary_accuracy_version === SUMMARY_ACCURACY_VERSION) return false;
-  return review.decisions.some(decision =>
+  const published = review.decisions.filter(decision =>
     publishedDecision(article.candidates.find(item => item.id === decision.candidate_id), decision));
+  if (!published.length) return false;
+  if (review.summary_accuracy_version !== SUMMARY_ACCURACY_VERSION) return true;
+  return review.summary_numbers_version !== SUMMARY_NUMBERS_VERSION &&
+    published.some(decision => decisionNumberProblems(article, decision).length > 0);
 }
 
 export function mergeRefreshedSummaries(article, review, fresh) {
@@ -121,7 +128,7 @@ export function mergeRefreshedSummaries(article, review, fresh) {
     if (!String(next.summary_ko || '').trim() || !String(next.summary_en || '').trim()) return decision;
     return { ...decision, summary_ko: next.summary_ko, summary_en: next.summary_en };
   });
-  return { ...review, decisions, summary_accuracy_version: SUMMARY_ACCURACY_VERSION };
+  return { ...review, decisions, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -346,11 +353,11 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
-    summary_accuracy_version: SUMMARY_ACCURACY_VERSION,
+    summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
-  try { importReview(article, review); } catch (error) { problem = error; }
+  try { importReview(article, review, { strictNumbers: true }); } catch (error) { problem = error; }
   // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다. 첫 실패는 기존 재시도에 맡기되, 재시도에서도
   // 인용이 그 날짜를 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는
   // 날짜 하나 때문에 잃으면 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
@@ -363,10 +370,20 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
       return withoutHint;
     } catch (error) { problem = error; }
   }
+  // 숫자 검증은 틀린 숫자를 알려 한 번 되묻는다. 재시도에서도 숫자만 걸리면 판정은 받고 경고를 남긴다.
+  // 표기 차이로 생긴 오탐 하나로 근거 있는 판정 전체를 잃으면 그 기사는 보고서에서 빠지고 생성까지 막힌다.
+  if (problem && retry && /summary numbers/.test(problem.message)) {
+    try {
+      importReview(article, review);
+      console.log(`Article ${article.id}: summary numbers still unconfirmed after retry; kept with a warning`);
+      return { ...review, summary_number_warning: problem.message };
+    } catch (error) { problem = error; }
+  }
   if (problem) {
     const failure = invalid(/published_date/.test(problem.message) ? 'date_evidence_mismatch'
       : /evidence_quotes/.test(problem.message) ? 'evidence_mismatch'
       : /summary names/.test(problem.message) ? 'summary_ungrounded'
+      : /summary numbers/.test(problem.message) ? 'summary_number_ungrounded'
       : /needs an evidence quote/.test(problem.message) ? 'missing_evidence' : 'review_validation');
     // importReview 의 메시지는 우리가 만든 문구다. 회사명과 후보 id 만 담고 모델 출력은 담지 않는다.
     failure.diagnostic = quoteDiagnostics(article, parsed.decisions, apiKey, problem.message);
@@ -513,13 +530,18 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     } catch (error) {
       if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
       console.log(`Article ${article.id}: summary refresh unavailable (${error.response_code || error.status || 'error'})`);
-      return review;
+      // 응답이 검증을 통과하지 못했으면 다음 실행에서 다시 물어도 결과가 같기 쉽다. 버전을 찍어 매 실행
+      // 같은 기사에 요청을 쓰지 않게 한다. 할당량·전송 오류는 찍지 않고 다음 실행에 맡긴다.
+      if (!error.response_code) return review;
+      const stamped = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
+      await write(file, stamped);
+      return stamped;
     }
     let merged = mergeRefreshedSummaries(article, review, fresh);
     try {
-      importReview(article, merged);
+      importReview(article, merged, { strictNumbers: true });
     } catch {
-      merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION };
+      merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
     }
     await write(file, merged);
     return merged;

@@ -185,3 +185,14 @@ test('summary refresh copies new prose into published decisions only and never m
   assert.equal(merged.decisions[2].summary_ko, '옛 사업동향');
   assert.equal(needsSummaryRefresh(article, merged), false);
 });
+
+test('a published summary whose numbers the article does not state is refreshed once', () => {
+  const article = { evidence: ['Automotive revenues surged 61% year over year.'],
+    candidates: [{ id: 'relevant', kind: 'relevant', relevance_exempt: true }] };
+  const decision = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, quality: 'pass',
+    summary_ko: '자동차 매출이 69% 급증함', summary_en: 'Automotive revenue surged 61%.' };
+  const stamped = { summary_accuracy_version: 'summary-accuracy-v1' };
+  assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [decision] }), true);
+  assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [{ ...decision, summary_ko: '자동차 매출이 61% 급증함' }] }), false);
+  assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', decisions: [decision] }), false);
+});

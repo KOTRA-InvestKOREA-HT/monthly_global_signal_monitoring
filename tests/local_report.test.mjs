@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, unpackArticle } from "../scripts/local_report.mjs";
+import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
@@ -485,4 +485,45 @@ test("an article with a single candidate needs no folding", () => {
   const a = groupArticles([source], [], period)[0];
   assert.equal(packArticle(a).shared_row, undefined);
   assert.equal(JSON.stringify(unpackArticle(packArticle(a))), JSON.stringify(a));
+});
+
+// 2026-08 보고서(9월 14일 실행): Qualcomm 원문 61%가 한글 요약에 69%로, 통화 기호가 없는 ASML 9.33 billion 이
+// 달러로 실렸다.
+test("summary numbers and currencies must be stated by the article", () => {
+  const qualcomm = ["Automotive revenues surged 61% year over year to $1.59 billion, marking a record quarter."];
+  assert.deepEqual(summaryNumberProblems("자동차 부문 매출이 전년 동기 대비 69% 급증함", qualcomm, "ko"), ["69%"]);
+  assert.deepEqual(summaryNumberProblems("자동차 부문 매출이 전년 동기 대비 61% 증가한 15억 9000만 달러를 기록함", qualcomm, "ko"), []);
+  assert.deepEqual(summaryNumberProblems("Automotive revenue rose 61% to $1.59 billion.", qualcomm, "en"), []);
+
+  const asml = ["ASML's second-quarter results produced 9.33 billion in sales and 2.92 billion in net income. " +
+    "New-system sales jumped to 86 machines from 67."];
+  assert.equal(summaryNumberProblems("ASML reported $9.33 billion in sales.", asml, "en").length, 1);
+  assert.equal(summaryNumberProblems("매출 93억 3000만 달러를 기록함", asml, "ko").length, 1);
+  assert.deepEqual(summaryNumberProblems("매출 93억 3000만을 기록하고 신규 시스템 판매가 67대에서 86대로 늘었음", asml, "ko"), []);
+
+  const nexeon = ["the completion of Nexeon's latest investment round totalling £100 million ($133 million)"];
+  assert.deepEqual(summaryNumberProblems("총 1억 파운드(1억 3300만 달러) 규모의 투자 라운드를 완료함", nexeon, "ko"), []);
+  assert.deepEqual(summaryNumberProblems("Nexeon completed a £100 million round.", nexeon, "en"), []);
+
+  // 통화 코드를 앞에, 백만 단위를 m 으로 적은 공시.
+  const vestas = ["Revenue of EUR 4,723m (Q2 2025: EUR 3,745m), an increase of 26.1 percent. Order intake rose 67 percent to 3,349 MW."];
+  assert.deepEqual(summaryNumberProblems("매출 47억 2,300만 유로를 기록해 26.1퍼센트 증가했고 수주는 3,349메가와트로 67퍼센트 증가함", vestas, "ko"), []);
+  assert.deepEqual(summaryNumberProblems("Vestas generated revenue of EUR 4,723m, up 26.1 percent, with order intake up 67 percent to 3,349 MW.", vestas, "en"), []);
+
+  // 날짜·분기·연도·제품 번호는 보지 않는다.
+  const evonik = ["The Supervisory Board appointed Dr. Claus Rettig effective September 1, 2026. RLE100 encoders use 512 Mb flash."];
+  assert.deepEqual(summaryNumberProblems("2026년 9월 1일 자로 선임하고 3분기에 RLE100과 512 Mb 제품을 공개함", evonik, "ko"), []);
+  assert.deepEqual(summaryNumberProblems("Rettig takes office on September 1, 2026 for Q3 FY26 with RLE100 and 512 Mb flash.", evonik, "en"), []);
+});
+
+test("number checking blocks new reviews only", () => {
+  const quote = "Example will invest $50 million in a pilot plant for its target material.";
+  const a = groupArticles([{ ...source, content_text: quote + " " + TAIL }], [], period)[0];
+  const wrong = decision({ evidence_quotes: [quote], summary_ko: "타겟 소재 파일럿 시설에 5억 달러 투자 계획",
+    summary_en: "Example plans to invest $500 million in a target-material pilot plant." });
+  assert.throws(() => importReview(a, review(a, [wrong]), { strictNumbers: true }), /summary numbers/);
+  // 저장된 판정과 보고서 생성은 막지 않는다.
+  assert.doesNotThrow(() => importReview(a, review(a, [wrong])));
+  assert.doesNotThrow(() => importReview(a, review(a, [{ ...wrong, summary_ko: "타겟 소재 파일럿 시설에 5000만 달러 투자 계획",
+    summary_en: "Example plans to invest $50 million in a target-material pilot plant." }]), { strictNumbers: true }));
 });
