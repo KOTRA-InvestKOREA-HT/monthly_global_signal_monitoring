@@ -16,9 +16,26 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const POLICY_VERSION = "local-report-v3";
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 // Compare typographic equivalents only; preserve words, numbers and block boundaries.
+// 수집 본문에는 &ouml; 같은 이름 있는 HTML 엔티티가 풀리지 않은 채 남기도 한다. 모델은 이를 "Göschwitz"로
+// 옮겨 적으므로, 엔티티를 풀지 않으면 올바른 인용도 원문에 없다고 판정된다. 2026-08 전체 재검토에서 Jenoptik
+// 기사가 이 때문에 첫 시도에서 떨어졌고, 재시도까지 실패해 보고서 생성이 멈췄다.
+const LATIN1_ENTITY_NAMES = ("nbsp iexcl cent pound curren yen brvbar sect uml copy ordf laquo not shy reg macr deg plusmn " +
+  "sup2 sup3 acute micro para middot cedil sup1 ordm raquo frac14 frac12 frac34 iquest Agrave Aacute Acirc Atilde Auml Aring " +
+  "AElig Ccedil Egrave Eacute Ecirc Euml Igrave Iacute Icirc Iuml ETH Ntilde Ograve Oacute Ocirc Otilde Ouml times Oslash " +
+  "Ugrave Uacute Ucirc Uuml Yacute THORN szlig agrave aacute acirc atilde auml aring aelig ccedil egrave eacute ecirc euml " +
+  "igrave iacute icirc iuml eth ntilde ograve oacute ocirc otilde ouml divide oslash ugrave uacute ucirc uuml yacute thorn yuml").split(" ");
+const HTML_ENTITIES = {
+  // U+00A0 부터 U+00FF 까지 순서대로 붙은 이름이다.
+  ...Object.fromEntries(LATIN1_ENTITY_NAMES.map((name, index) => [name, String.fromCodePoint(0xa0 + index)])),
+  OElig: 'Œ', oelig: 'œ', Scaron: 'Š', scaron: 'š', Yuml: 'Ÿ', euro: '€', hellip: '…', bull: '•', trade: '™',
+  sbquo: '‚', bdquo: '„', lsaquo: '‹', rsaquo: '›', minus: '−',
+  // 인용 대조용으로 모양을 맞춘다. 공백·따옴표·대시는 아래에서 한 가지 모양으로 모은다.
+  amp: '&', quot: '"', apos: "'", nbsp: ' ', lsquo: "'", rsquo: "'", ldquo: '"', rdquo: '"', ndash: '-', mdash: '-',
+};
+
 export function normalizeQuote(value) {
-  const entities = { amp: '&', quot: '"', apos: "'", nbsp: ' ', lsquo: "'", rsquo: "'", ldquo: '"', rdquo: '"', ndash: '-', mdash: '-' };
-  return clean(String(value || '').replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity) => {
+  const entities = HTML_ENTITIES;
+  return clean(String(value || '').replace(/&(#x[0-9a-f]+|#\d+|[a-z0-9]+);/gi, (match, entity) => {
     if (!entity.startsWith('#')) return Object.hasOwn(entities, entity) ? entities[entity] : match;
     const code = /^#x/i.test(entity) ? parseInt(entity.slice(2), 16) : Number(entity.slice(1));
     return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : match;

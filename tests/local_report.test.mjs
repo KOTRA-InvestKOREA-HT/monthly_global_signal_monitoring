@@ -527,3 +527,15 @@ test("number checking blocks new reviews only", () => {
   assert.doesNotThrow(() => importReview(a, review(a, [{ ...wrong, summary_ko: "타겟 소재 파일럿 시설에 5000만 달러 투자 계획",
     summary_en: "Example plans to invest $50 million in a target-material pilot plant." }]), { strictNumbers: true }));
 });
+
+// 2026-08 전체 재검토: 본문에 "Jena-G&ouml;schwitz" 가 풀리지 않은 채 남아, 모델이 옳게 옮긴 "Göschwitz" 인용이
+// 원문에 없다고 판정됐다.
+test("named HTML entities in collected text match the characters a quote uses", () => {
+  const a = article();
+  a.evidence = ["Jenoptik invests in high-end manufacturing facility for semiconductor optics at the production campus in " +
+    "Jena-G&ouml;schwitz. Stra&szlig;e 3 &times; 2 caf&eacute; costs &euro;5 &yuml; &sup2;."];
+  const check = quote => importReview(a, review(a, [decision({ evidence_quotes: [quote] })]));
+  assert.equal(check("Jenoptik invests in high-end manufacturing facility for semiconductor optics at the production campus in Jena-Göschwitz.")[0].supported, true);
+  assert.equal(check("Straße 3 × 2 café costs €5 ÿ ².")[0].supported, true);
+  assert.throws(() => check("production campus in Jena-Goschwitz."), /exact passages/);
+});
