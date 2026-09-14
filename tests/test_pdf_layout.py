@@ -233,3 +233,18 @@ class MatrixStatusTests(unittest.TestCase):
         self.assertEqual(counts["reviewed_off"], statuses.count("reviewed"))
         self.assertEqual(counts["insufficient"], statuses.count("insufficient"))
         self.assertEqual(sum(counts[k] for k in ("detected", "reviewed_off", "insufficient")), counts["total"])
+
+
+class HumanReviewSignalTests(unittest.TestCase):
+    def test_review_rows_need_both_summaries_to_fill_a_cell(self):
+        # 2026-08 run: review rows without prose printed raw English/Japanese article text in the Korean PDF.
+        base = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": False,
+                "ai_review_tier": "human_review", "ai_entity_supported": True, "ai_indicator_supported": True,
+                "ai_target_technology_supported": False, "ai_leading_indicator_supported": True,
+                "ai_summary_quality": "pass", "ai_event_stage": "planned", "ai_summary_reason": "x"}
+        with_prose = dict(base, title="with", ai_summary_ko="표제 - 상세", ai_summary_en="Headline - detail")
+        without = dict(base, title="without", ai_summary_ko="", ai_summary_en="")
+        ko_only = dict(base, title="ko only", ai_summary_ko="표제 - 상세", ai_summary_en="")
+        index = pdf.index_investment_signals([without, ko_only, with_prose])
+        self.assertEqual([row["title"] for row in index["A"][2]], ["with"])
+        self.assertIsNone(pdf.index_investment_signals([without, ko_only]).get("A"))

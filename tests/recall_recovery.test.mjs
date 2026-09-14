@@ -74,7 +74,7 @@ test('a saved review whose human-review candidate lacks prose is asked once for 
     target_technology_supported: false, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
     summary_ko: '', summary_en: '' };
   assert.equal(needsReviewSummary(article, { decisions: [decision] }), true);
-  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'human-review-summary-v1' }), false);
+  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'human-review-summary-v2' }), false);
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, summary_ko: '요약 - 상세', summary_en: 'Summary - detail' }] }), false);
   // Neither an approved decision nor one without an indicator event is a review candidate.
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: true }] }), false);
@@ -98,7 +98,7 @@ test('summary backfill copies prose only into empty human-review decisions and k
     { ...review.decisions[1], entity_supported: true, summary_ko: '다른 문안', summary_en: 'Other prose' },
   ] };
   const merged = mergeReviewSummaries(article, review, fresh);
-  assert.equal(merged.summary_review_version, 'human-review-summary-v1');
+  assert.equal(merged.summary_review_version, 'human-review-summary-v2');
   assert.equal(merged.decisions[0].target_technology_supported, false);
   assert.equal(merged.decisions[0].summary_ko, '표제 - 상세');
   assert.equal(merged.decisions[0].summary_en, 'Headline - detail');
