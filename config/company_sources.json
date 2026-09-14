@@ -541,15 +541,6 @@
     ],
     "TIMET": [
       {
-        "source": "TIMET - TIMET News / Newsroom / News",
-        "kind": "newsroom",
-        "url": "https://www.timet.com/timet-news/",
-        "crawl_priority": "Primary",
-        "page_title": "TIMET News",
-        "source_type_label": "Newsroom / News",
-        "domain": "www.timet.com"
-      },
-      {
         "source": "TIMET - Documents / Corporate Documents",
         "kind": "official_page",
         "url": "https://www.timet.com/documents/",

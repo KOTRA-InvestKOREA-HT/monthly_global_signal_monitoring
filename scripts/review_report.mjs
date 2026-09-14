@@ -642,7 +642,9 @@ async function main() {
       inputDigest: collectionInputDigest(targets, sourceConfig) })) throw new Error('Refresh stale or incomplete collection');
   }
   catch {
-    const result = spawnSync(process.execPath, ['scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
+    // 응답 헤더가 Node 기본 한도(16KB)를 넘는 사이트가 있다. Cytiva 뉴스룸과 Yahoo Finance 는 이 한도에서
+    // UND_ERR_HEADERS_OVERFLOW 로 실패한다.
+    const result = spawnSync(process.execPath, ['--max-http-header-size=131072', 'scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
       '--sources', 'official_feeds,official_pages,official_sitemaps,sec_filings,google_news', '--from-date', from, '--to-date', to,
       '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'missing', '--fallback-min-results', '1', '--rate-limit-seconds', '0.5', '--company-concurrency', '4'], { stdio: 'inherit' });
     if (result.error || result.status !== 0) throw new Error('Collection failed');

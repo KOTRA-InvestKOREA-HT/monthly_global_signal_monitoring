@@ -176,13 +176,25 @@ const BOILERPLATE = /privacy|cookie|terms|subscribe|contact|career|linkedin|face
 const BOILERPLATE_SEGMENT = /^(privacy|privacy-policy|privacy-notice|cookies?|cookie-policy|cookie-settings|terms|terms-of-use|terms-and-conditions|legal-notice|imprint|subscribe|subscription|contacts?|contact-us|contact-form|careers?|jobs?)$/i;
 const BOILERPLATE_TITLE = /^(privacy( policy| notice)?|cookies?( policy| settings)?|terms( of use| and conditions)?|legal notice|imprint|subscribe|contacts?( us)?|contact form|find contact person|careers?|jobs)$/i;
 const SOCIAL = /linkedin|facebook|twitter|youtube|instagram/i;
+// 구독 신청·의견 보내기·제보 창구. 조각 전체 비교로는 "subscribe-solvay-news", "news-alert-subscription",
+// "suggestion.url" 이 빠져 2026-08 실행에서 날짜도 본문도 없는 수집 보완 대상으로 남았다.
+// 구독 낱말은 조각의 처음이나 끝에 올 때만 본다. "adobe-subscription-revenue-grows" 같은 기사 슬러그는 남긴다.
+const SERVICE_SEGMENT = /^(un)?subscri(be|ption)s?([-_]|$)|[-_](un)?subscri(be|ption)s?$|^(website-)?feedback$|^suggestions?$|^whistleblow/i;
+const SERVICE_TITLE = /^subscribe\b/i;
+// 외부 제보 창구 서비스. 회사 목록 페이지가 링크하지만 기사가 아니다.
+const SERVICE_HOST = /(^|\.)(ethicspoint\.com|c-hotline\.net)$/i;
 
 export function isBoilerplateLink(title, url) {
   if (SOCIAL.test(`${title} ${url}`)) return true;
-  if (BOILERPLATE_TITLE.test(String(title || "").trim())) return true;
+  const label = String(title || "").trim();
+  if (BOILERPLATE_TITLE.test(label) || SERVICE_TITLE.test(label)) return true;
   try {
-    return new URL(url).pathname.split("/").filter(Boolean)
-      .some((segment) => BOILERPLATE_SEGMENT.test(decodeURIComponent(segment).replace(/\.(html?|aspx|php)$/i, "")));
+    const parsed = new URL(url);
+    if (SERVICE_HOST.test(parsed.hostname)) return true;
+    return parsed.pathname.split("/").filter(Boolean).some((segment) => {
+      const name = decodeURIComponent(segment).replace(/\.(html?|aspx|php|url)$/i, "");
+      return BOILERPLATE_SEGMENT.test(name) || SERVICE_SEGMENT.test(name);
+    });
   } catch {
     return false;
   }

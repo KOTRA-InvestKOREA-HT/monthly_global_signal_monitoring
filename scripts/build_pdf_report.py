@@ -1389,7 +1389,8 @@ def covered_companies(summary, signal_rows):
     """검토를 끝낸 기업. 커버리지가 있으면 그것을 쓰고, 없으면 공식 출처 유무로 본다."""
     coverage = summary.get("review_coverage")
     if isinstance(coverage, list):
-        return {item.get("company") for item in coverage if item.get("status") == "reviewed"}
+        # no_monthly_sources 는 수집이 끝났는데 이번 달 자료가 없었다는 뜻이다. 검토 후 미포착과 같다.
+        return {item.get("company") for item in coverage if item.get("status") in ("reviewed", "no_monthly_sources")}
     return {row.get("company") for row in signal_rows
             if row.get("company") and row.get("source_type") == "official"}
 

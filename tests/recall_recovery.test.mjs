@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
+import { decodeGoogleNewsUrl, fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
 import { mergeRefreshedSummaries, mergeReviewSummaries, needsForm3Review, needsFundingReview, needsReviewSummary, needsStageReview, needsSummaryRefresh } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
@@ -16,6 +16,30 @@ test('publisher redirects supply HTML, Google wrappers never become evidence', a
     async () => response('https://publisher.example/news/story', '<article>Real story</article>'));
   assert.equal(doc.html, '<article>Real story</article>');
   assert.equal(doc.resolvedUrl, 'https://publisher.example/news/story');
+});
+
+test('Google News relay URLs are decoded to the publisher before fetching', async () => {
+  const calls = [];
+  const fetchImpl = async (url, init = {}) => {
+    calls.push(url);
+    if (url === 'https://news.google.com/articles/CBMiABC') {
+      return new Response('<c-wiz><div data-n-a-sg="SIG" data-n-a-ts="1757000000"></div></c-wiz>');
+    }
+    if (url.includes('/batchexecute')) {
+      assert.ok(decodeURIComponent(init.body).includes('SIG'));
+      return new Response(")]}'\n\n" + JSON.stringify([['wrb.fr', 'Fbv4je',
+        JSON.stringify(['garturlres', 'https://publisher.example/story', 1])]]));
+    }
+    if (url === 'https://publisher.example/story') return new Response('<article>Publisher story</article>');
+    throw new Error(`unexpected ${url}`);
+  };
+  const doc = await fetchArticleDocument('https://news.google.com/rss/articles/CBMiABC?oc=5', 1, fetchImpl);
+  assert.equal(doc.resolvedUrl, 'https://publisher.example/story');
+  assert.equal(doc.html, '<article>Publisher story</article>');
+  assert.equal(calls.at(-1), 'https://publisher.example/story');
+  assert.equal(await decodeGoogleNewsUrl('https://publisher.example/story', 1, fetchImpl), null);
+  assert.equal(await decodeGoogleNewsUrl('https://news.google.com/rss/articles/NOSIG', 1,
+    async () => new Response('<html>no signature</html>')), null);
 });
 
 test('only plausible old S4 stage rejections need a new review', () => {
@@ -44,13 +68,23 @@ test('stage review covers every indicator that precursor is available to', () =>
     { decisions: [{ ...decision(3), candidate_id: 'relevant' }] }), false);
 });
 
-test('passing AI decisions cannot hide absent bodies or unresolved dates in coverage', () => {
+test('coverage is blocked only by articles that could still hide a signal', () => {
   const a = { id: 'a', date_placement: 'in_period', candidates: [{ row: { content_text: 'Evidence '.repeat(80) } }] };
-  const reviews = new Map([['a', { decisions: [{ quality: 'pass' }] }]]);
+  const noSignal = { quality: 'pass', entity_supported: true, indicator_supported: false };
+  const reviews = new Map([['a', { decisions: [noSignal] }]]);
   assert.equal(coverageStatus([], reviews), 'no_monthly_sources');
   assert.equal(coverageStatus([a], reviews), 'reviewed');
-  assert.equal(coverageStatus([{ ...a, candidates: [{ row: {} }] }], reviews), 'incomplete_evidence');
-  assert.equal(coverageStatus([{ ...a, date_placement: 'date_pending' }], reviews), 'incomplete_evidence');
+  // A review that deferred judgement for lack of evidence blocks coverage.
+  assert.equal(coverageStatus([a], new Map([['a', { decisions: [{ ...noSignal, quality: 'needs_review' }] }]])), 'incomplete_evidence');
+  // Without a body, a title that matches both the company and an indicator event may hide a signal.
+  const bodiless = { ...a, candidates: [{ row: {} }] };
+  assert.equal(coverageStatus([bodiless], new Map([['a', { decisions: [{ ...noSignal, indicator_supported: true }] }]])), 'incomplete_evidence');
+  // A title that is clearly no signal does not.
+  assert.equal(coverageStatus([bodiless], reviews), 'reviewed');
+  // A pending date blocks only when the article produced a report row.
+  const pending = { ...a, date_placement: 'date_pending' };
+  assert.equal(coverageStatus([pending], reviews), 'reviewed');
+  assert.equal(coverageStatus([pending], reviews, 'completed', 0, new Set(['a'])), 'incomplete_evidence');
 });
 
 test('an old approved Form 3 S5 decision gets one fresh semantic review', () => {
