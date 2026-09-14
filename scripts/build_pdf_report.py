@@ -33,7 +33,6 @@ WHITE = colors.white
 
 DEFAULT_ISSUE_NUMBER = "2"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-TARGET_EMOJI_PATH = PROJECT_ROOT / "assets" / "images" / "emoji_target_1f3af.png"
 KOTRA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "kotra_logo_white.png"
 INVEST_KOREA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "invest_korea_logo_white.png"
 FONT_WEIGHTS = {
@@ -64,37 +63,6 @@ EXEMPT_COMPANIES = {
     "3M",
     "Air Liquide",
     "Air Products",
-}
-TARGET_TECH_LABEL_COMPANIES = {
-    normalize_company_key(company)
-    for company in [
-        "Charles River",
-        "Texcell",
-        "Schott Pharma",
-        "West Pharmaceutical",
-        "Cytiva",
-        "GE Healthcare",
-        "Thermo Fisher",
-        "Eli Lilly and Company",
-        "Eli Lilly and Compan",
-        "Moderna",
-        "Asahi Glass",
-        "Infineon",
-        "NXP",
-        "Mitsubishi Chemical",
-        "Nexeon",
-        "EMM(Umicore)",
-        "Norsk Hydro",
-        "TIMET",
-        "Australian Strategic Metals",
-        "HyproMag",
-        "Shin-Etsu Chemicals",
-        "Evonik Industries",
-        "Solvay",
-        "Air Products",
-        "Asahi Kasei",
-        "BASF",
-    ]
 }
 
 COUNTRY_BY_COMPANY = {
@@ -313,9 +281,7 @@ TEXTS = {
         "detail_title": "기업별 시그널 상세",
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
-        "business_empty": "해당 기간에 공식 출처 기반으로 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않는다.",
-        "target_item": "타겟품목",
-        "target_tech": "타겟기술",
+        "business_empty": "해당 기간 공식 출처에서 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않음.",
         "source_prefix": "출처",
         "source_fallback": "수집 출처",
         "source_empty": "출처  —",
@@ -346,8 +312,6 @@ TEXTS = {
         "no_signal": "No signal this month",
         "business_heading": "GLOBAL BUSINESS STATUS",
         "business_empty": "No global business activity could be summarised from official sources for this period.",
-        "target_item": "Target item",
-        "target_tech": "Target tech",
         "source_prefix": "Source",
         "source_fallback": "Collected source",
         "source_empty": "Source  —",
@@ -1692,26 +1656,6 @@ def draw_industry_pill(report, x, y, max_width, text, color):
     return pill_width
 
 
-def draw_target_marker(c, x, y, size=11):
-    if TARGET_EMOJI_PATH.exists():
-        c.drawImage(
-            ImageReader(str(TARGET_EMOJI_PATH)),
-            x - size / 2,
-            y - size / 2,
-            width=size,
-            height=size,
-            mask="auto",
-        )
-        return
-
-    c.setFillColor(colors.HexColor("#F45E7A"))
-    c.circle(x, y, 4.4, fill=1, stroke=0)
-    c.setFillColor(colors.HexColor("#F4FBFA"))
-    c.circle(x, y, 2.9, fill=1, stroke=0)
-    c.setFillColor(colors.HexColor("#0A7C72"))
-    c.circle(x, y, 1.45, fill=1, stroke=0)
-
-
 DETAIL_BOX_TOP = PAGE_H - 114
 DETAIL_BOX_GAP = 16
 DETAIL_BOTTOM_MARGIN = 56
@@ -1834,7 +1778,7 @@ def business_target_layout(report, profile, x, width):
     heading = t("business_heading")
     heading_w = c.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
     label_x = x + 16 + heading_w + 18
-    label_w = c.stringWidth(label, report.fonts["semibold"], 8.5) + 38
+    label_w = c.stringWidth(label, report.fonts["semibold"], 7.6) + 16
     value_x = label_x + label_w + 9
     value_width = (x + width - 16) - value_x
     fits = c.stringWidth(text, report.fonts["semibold"], 9.5) <= value_width
@@ -1856,10 +1800,11 @@ def target_section_for_profile(profile):
     target_text = str(profile.get("target_technology") or "").strip()
     if not target_text:
         return "", ""
-    is_technology = normalize_company_key(profile.get("company")) in TARGET_TECH_LABEL_COMPANIES
+    # 라벨은 품목별 사업동향 카드와 같은 "투자유치 필요 품목·기술" 하나로 쓴다. 기업 목록으로 "타겟기술"과
+    # "타겟품목"을 나누던 방식은 한 보고서 안에서 같은 정보를 세 이름으로 불렀다.
     # 같은 품목명이 품목별 페이지에서는 대문자로, 상세 페이지에서는 소문자로 나오던 것을 맞춘다.
     # item_target_text는 첫 글자만 올리므로 LiDAR·GMP 같은 약어는 그대로 남는다.
-    return t("target_tech") if is_technology else t("target_item"), item_target_text(profile)
+    return t("item_target_label"), item_target_text(profile)
 
 
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
@@ -1980,21 +1925,21 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     heading = t("business_heading")
     report.spaced_text(x + 16, header_y, heading, 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
     if target_layout["text"]:
-        c.setFillColor(colors.HexColor("#DDF0EE"))
-        c.roundRect(target_layout["label_x"], top - 32, target_layout["label_w"], 20, 3, fill=1, stroke=0)
-        draw_target_marker(c, target_layout["label_x"] + 13, header_y + 2)
+        # 품목별 사업동향 카드와 같은 회색 라벨. 이모지와 청록 배경 위 청록 글씨는 보고서 톤과 대비 모두 어긋났다.
+        c.setFillColor(WHITE)
+        c.roundRect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, 3, fill=1, stroke=0)
         report.text(
-            target_layout["label_x"] + 25, header_y, target_layout["label"], 8.5, colors.HexColor("#087A70"), weight="semibold"
+            target_layout["label_x"] + 8, header_y, target_layout["label"], 7.6, colors.HexColor("#56687B"), weight="semibold"
         )
         if target_layout["wrapped"]:
             # 라벨 옆에 안 들어가는 타겟품목은 잘라내지 않고 박스 폭 전체를 쓰는 아랫줄에 싣는다.
             wrapped_text = short_text_to_width(c, target_layout["text"], width - 32, report.fonts["semibold"], 9.5, "detail_target_tech")
             report.text(
-                x + 16, header_y - TARGET_WRAP_HEIGHT, wrapped_text, 9.5, colors.HexColor("#087A70"), weight="semibold"
+                x + 16, header_y - TARGET_WRAP_HEIGHT, wrapped_text, 9.5, TEXT, weight="semibold"
             )
         else:
             report.text(
-                target_layout["value_x"], header_y, target_layout["text"], 9.5, colors.HexColor("#087A70"), weight="semibold"
+                target_layout["value_x"], header_y, target_layout["text"], 9.5, TEXT, weight="semibold"
             )
 
     body_y = top - BUSINESS_BODY_TOP_PAD - target_layout["extra_top"]

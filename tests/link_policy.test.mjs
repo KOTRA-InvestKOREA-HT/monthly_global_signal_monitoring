@@ -204,3 +204,17 @@ test('감사 도구는 프로덕션 판정을 읽기만 하고 바꾸지 않는�
     anchors.filter((item) => currentRule(item, page, DEPS)).length,
   );
 });
+
+test('section and archive titles fail verification even without link density, real headlines pass', () => {
+  const check = title => verifyFetchedArticle({ title, content: 'x'.repeat(2000), html: '', usableTitle: true });
+  for (const title of ['Press Release Archive since 2022', 'Events & trade shows', 'Events and Trade fairs',
+    'Trade shows', 'Media Events Overview', 'Media Hub', 'Media Kits & Digital Assets', 'Media contacts & resources',
+    'Media & analyst coverage', 'news and press releases', 'News overview', 'Press releases from 2019']) {
+    assert.equal(check(title).reason, 'verified_index_page', title);
+  }
+  for (const title of ['Hexagon to acquire Guidance Marine, strengthening maritime positioning portfolio',
+    'Evonik expands lipid-based drug delivery capabilities with new GMP facility',
+    'Siemens Energy media briefing on Q3 results', 'Jenoptik reports significant increase in orders']) {
+    assert.equal(check(title).ok, true, title);
+  }
+});

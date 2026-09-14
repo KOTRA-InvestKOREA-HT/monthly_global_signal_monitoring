@@ -14,7 +14,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v8-historical-date';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v9-listing-titles';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -427,6 +427,13 @@ export function extractDateFromText(value = "") {
   const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.((?:19|20)\d{2})\b/);
   if (dayFirst) {
     return isoDate(dayFirst[3], dayFirst[2], dayFirst[1]);
+  }
+  // 유럽식 하이픈 표기(1-04-2026, 23-09-2025). 연도가 앞인 ISO 표기는 위에서 이미 읽었고, 미국은
+  // 월-일을 슬래시로 쓰므로 하이픈 일-월-연은 일이 앞이다. 2026-08 Prodrive 목록의 "1-04-2026 |
+  // Press release"가 날짜 미상으로 남아 4월 기사가 8월 검토에 들어왔다.
+  const dayFirstHyphen = text.match(/\b(0?[1-9]|[12]\d|3[01])-(0?[1-9]|1[0-2])-((?:19|20)\d{2})\b/);
+  if (dayFirstHyphen) {
+    return isoDate(dayFirstHyphen[3], dayFirstHyphen[2], dayFirstHyphen[1]);
   }
   // 미국식 슬래시 표기(12/31/2026).
   const monthFirst = text.match(/\b(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/((?:19|20)\d{2})\b/);
@@ -901,6 +908,13 @@ export function parseAnchors(html, baseUrl) {
 // 보고서 헤드라인으로 쓸 수 없으므로 제목 복구 대상으로 넘긴다.
 const GENERIC_TITLE_PATTERN = new RegExp(
   `^(?:${[
+    // 링크 문구·사이트 인사말. 문서 이름이 아니라 버튼이나 사이트 전체 제목이다(2026-08:
+    // Umicore 연차보고서 PDF가 "English version", Air Liquide 보고서가 "PDF 3.29 MB",
+    // Mkango 기사가 사이트 og:title "Welcome to Mkango Resources Ltd."로 수집됨).
+    "welcome to\\b.*",
+    "(?:english|german|french|japanese|chinese|korean) version",
+    "download (?:the )?(?:document|file|pdf|report|presentation|video transcript)",
+    "(?:pdf(?:&nbsp;|\\s)*)?[\\d.,]+\\s*[kmg]b(?:\\s*\\(pdf\\))?",
     "read more",
     "see more\\b.*",
     "learn more",
@@ -998,7 +1012,7 @@ function titleFromUrl(url) {
     const last = segments.reverse().find((segment) => !/^(default|index|news|press|releases?|details?|en|global|ir)$/i.test(segment));
     if (!last) return "";
     const cleaned = decodeURIComponent(last)
-      .replace(/\.(html?|aspx|php)$/i, "")
+      .replace(/\.(pdf|html?|aspx|php)$/i, "")
       .replace(/[-_]+/g, " ")
       .replace(/\s+/g, " ")
       .trim();
@@ -1369,11 +1383,15 @@ export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetc
   return { html: '', content: await extractPdfText(bytes), resolvedUrl };
 }
 
-function chooseBetterTitle(currentTitle, pageTitle, url, company) {
+export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
   // 사이트 <title>이 회사명뿐이거나 메뉴 이름이면 링크 텍스트보다 나을 게 없다.
   // onsemi 뉴스룸의 <title>이 "onsemi"라서 제목이 회사명으로 덮이던 문제를 막는다.
   const usablePageTitle = pageTitle && isUsableTitle(pageTitle, company) ? pageTitle : "";
-  if (!usablePageTitle) return currentTitle;
+  if (!usablePageTitle) {
+    // PDF처럼 문서에 제목이 없고 링크 문구가 라벨뿐이면("English version") 파일 이름이 더 낫다.
+    const urlTitle = titleFromUrl(url);
+    return !isUsableTitle(currentTitle, company) && urlTitle && isUsableTitle(urlTitle, company) ? urlTitle : currentTitle;
+  }
   if (!currentTitle || currentTitle.length < 16 || isGenericOfficialTitle(currentTitle)) return usablePageTitle;
   const urlTitle = titleFromUrl(url);
   if (urlTitle && currentTitle.toLowerCase() === urlTitle.toLowerCase()) return usablePageTitle;
@@ -1492,9 +1510,11 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
       // 확인 대상으로 넘어온 링크는 제목에 더해 문서 자체가 목록이 아닌지도 여기서 본다.
       const usable = isUsableTitle(resolvedTitle, company);
-      const verdict = row.link_verdict === "fetch_to_verify"
-        ? verifyFetchedArticle({ title: resolvedTitle, content, html, usableTitle: usable })
-        : { ok: usable, reason: "no_article_title" };
+      // 이미 기사 링크로 받아들인 행도 받아온 제목이 목록·문서번호 모양이면 기사가 아니다.
+      // 2026-08에는 "Press releases from 2020" 목록이 투자 시그널 승인까지 받았다. 링크 밀도 검사는
+      // 확인 대상에만 둔다. 메뉴 링크가 많은 사이트에서는 짧은 정상 공지까지 떨어뜨리기 때문이다.
+      const verdict = verifyFetchedArticle({ title: resolvedTitle, content,
+        html: row.link_verdict === "fetch_to_verify" ? html : "", usableTitle: usable });
       if (!verdict.ok) {
         recordExclusion(row.company, resolvedTitle || row.title, row.url, verdict.reason);
         continue;

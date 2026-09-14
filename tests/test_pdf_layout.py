@@ -310,3 +310,22 @@ class BusinessProseTests(unittest.TestCase):
     def test_prose_ranges_and_inner_dashes_are_left_alone(self):
         for text in ("레니쇼는 신제품을 출시했음. 2025 - 2026년 로드맵을 공개함.", "매출 2025 - 2026년 증가 전망", "CD-SEM 장비를 발표함."):
             self.assertEqual(pdf.business_prose(text), text)
+
+
+class BusinessBoxLabelTests(unittest.TestCase):
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def test_every_company_uses_the_item_target_label(self):
+        pdf.set_language("ko")
+        for company in ("Thermo Fisher", "Jenoptik", "Ouster"):
+            label, text = pdf.target_section_for_profile({"company": company, "target_technology": "라이다"})
+            self.assertEqual(label, "투자유치 필요 품목·기술")
+            self.assertTrue(text)
+        pdf.set_language("en")
+        self.assertEqual(pdf.target_section_for_profile({"company": "Ouster", "target_technology": "LiDAR"})[0],
+                         "Target item/tech")
+
+    def test_empty_business_text_follows_the_report_style(self):
+        pdf.set_language("ko")
+        self.assertTrue(pdf.t("business_empty").endswith("않음."))
