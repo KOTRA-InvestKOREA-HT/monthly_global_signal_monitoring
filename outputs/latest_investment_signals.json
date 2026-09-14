@@ -30,7 +30,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://mkango.ca/rss",
     "source_type": "official",
@@ -45,7 +45,7 @@
     "content_excerpt": "News Mkango Completes Acquisition Of Remloy August 31, 2026 View PDF (530 kB) London / Vancouver: 31 August 2026 – Mkango Resources Ltd. ( AIM/TSX-V: MKA) (“Mkango” or the “Company”) is pleased to announce that following the announcement on 20 May 2026, the Company has completed the acquisition of the Remloy rare earth magnet recycling business (“Remloy”) from Heraeus Amloy Technologies GmbH for €8 million (US$9.3 million [1] ) in cash of which €5 million (US$5.8 million 1 ) was settled by Mkango on closing (the “Transaction”). The balance of €3 million (US$3.5 million 1 ) is payable in cash on 28 August 2028, being the second anniversary of completion. Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop recy...",
     "content_word_count": 2881,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "HyProMag"
     ],
@@ -87,104 +87,6 @@
     ]
   },
   {
-    "target_no": 21,
-    "company": "GE Healthcare",
-    "title": "GE HealthCare’s Photonova™ Spectra gains CE Mark, expanding international access",
-    "url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcares-photonovatm-spectra-gains-ce-mark-expanding",
-    "source": "GE Healthcare - Official RSS",
-    "publisher": "",
-    "publisher_home_url": "",
-    "published_at": "2026-08-31T12:00:44Z",
-    "published_month": "2026-08",
-    "published_at_source": "jsonld",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-31T12:00:44Z",
-        "month": "2026-08",
-        "source": "jsonld",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-31T12:00:44Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-31T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-14T04:29:43Z",
-    "collector": "official_feed",
-    "query": "https://investor.gehealthcare.com/rss.xml",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://investor.gehealthcare.com/rss.xml",
-    "source_direct_url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcares-photonovatm-spectra-gains-ce-mark-expanding",
-    "content_text": "GE HealthCare’s Photonova™ Spectra gains CE Mark, expanding international access\nAugust 31, 2026\nPDF Version \nFollowing U.S . FDA 510(k) clearance and Japanese regulatory approval, Photonova Spectra has also achieved CE Mark, supporting expanded research and clinical adoption across Europe and other global markets\nPowered by the company’s proprietary Deep Silicon detector technology and engineered for ultra‑high definition clarity, on‑demand spectral and spatial imaging, and fast, wide‑coverage acquisition, Photonova Spectra brings together rich detail, robust performance, and an Effortless Workflow to help support confident detection, characterization, and monitoring\nCHICAGO --(BUSINESS WIRE)--Aug. 31, 2026--\nGE HealthCare (Nasdaq: GEHC) recently achieved CE Mark for Photonova Spectra, i an advanced photon-counting computed tomography (PCCT) system with the company’s proprietary Deep Silicon™ detector technology. The regulatory milestone expands access and enables clinical adoption of the technology in CE Mark–observing countries and underscores GE HealthCare’s commitment to purposeful, customer-driven innovation in computed tomography (CT).\nThis press release features multimedia. View the full release here: https://www.businesswire.com/news/home/20260826913138/en/ \nGE HealthCare’s Photonova™ Spectra gains CE Mark, expanding international access\n“We are proud to deliver this new generation of photon-counting CT to the clinicians and patients around the world it was intentionally designed to serve,” shares Chad Rowland , Executive Director, Global CT, GE HealthCare . “At its core is our Deep Silicon detector technology, which enables Photonova Spectra to capture remarkably detailed, spectral information in every scan. That level of clarity and consistency aims to make a meaningful difference in both cutting-edge research and day‑to‑day care – from helping teams see subtle findings confidently to reducing steps across a wide range of exams. Ultimately, this innovative technology was created to advance imaging as well as support the people who rely on it.”\nAs healthcare providers navigate rising patient volumes ii and increasing diagnostic complexity, iii clinicians need clear, timely answers to inform decisions across care pathways. Photonova Spectra was intentionally engineered to help clinicians address these realities.\nBy harnessing the full potential of GE HealthCare’s proprietary Deep Silicon detector technology, the system’s ultra-high definition (UHD) imaging is designed to work with wide coverage, enabling fast acquisition speeds and the precise visualization of subtle tissue variations, small lesions and vascular structures. With on-demand spectral and spatial imaging for every scan and a one protocol setup for many exams, Photonova Spectra also seeks to empower clinicians to detect, characterize and monitor disease with confidence as well as reducing complexity and supporting efficiency.\n“Deep Silicon brings a meaningful evolution to photon-counting CT. Silicon's unique properties as a semiconductor enables precise photon energy measurement, helping power advanced spectral imaging capabilities,” adds Johan de Mey , MD, PhD, Chair of Radiology, UZ Brussel - Vrije Universiteit Brussel . “For us, that may offer new opportunities to differentiate materials like iodine, calcium and fat, as well as provide image quality that holds up even in challenging patient scenarios. Additionally, with Photonova Spectra’s rapid 0.23‑second rotation speed and 80 mm detector coverage, we can achieve fast, motion‑free acquisitions across care areas, helping ensure that detail and diagnostic confidence aren’t compromised. These advancements aim to provide a more reliable picture of how a condition is evolving or whether a treatment is truly working, supporting more timely and informed decisions for every patient.”\nThe clinical potential of Photonova Spectra with Deep Silicon spans a wide range of specialties, seeking to unlock new levels of clarity, detail, and diagnostic confidence with the technology's design, including:\nNeurology: Excellent visualization of tiny structures like the inner ear and clear delineation between brain grey and white matter at the same time. iv \nOncology: Clear lesion characterization and precise quantification due to the system’s Deep Silicon detectors – helping clinicians make confident decisions for cancer detection. Its iodine mapping also aims to help clinicians distinguish oncological findings and support treatment monitoring.\nMusculoskeletal imaging: Impressive visualization of small fractures and bone marrow edema, supporting detailed assessments for orthopedic care.\nThoracic imaging: Ultra-high definition chest scans, capable of revealing fine details with exceptional clarity.\nCardiology: Wide coverage that provides robust imaging, while combining ultra-high definition and spectral imaging to enable in-stent lumen assessment, plaque characterization and myocardial assessment.\nPhotonova Spectra’s advanced photon-counting architecture and Deep Silicon detector design also aim to open new possibilities for research, including quantitative imaging, tissue characterization, and spectral biomarker discovery. By enabling richer spectral data, the system may also allow researchers to explore novel clinical applications and imaging protocols that were previously constrained by conventional CT technology.\n“Across Europe, clinicians are looking for imaging solutions that keep pace with rising demand while elevating diagnostic confidence,” says Catherine Estrampes , President & CEO, Global Markets, GE HealthCare . “Deep Silicon photon‑counting CT gives them both – the clarity needed to see what truly matters and the efficiency required to deliver it consistently. With CE Mark for Photonova Spectra, we’re bringing this technology to European care teams with the added strengths of Deep Silicon, ultra‑high definition imaging, and wide detector coverage to help support fast, robust acquisitions. It’s about giving clinicians tools that help them move quickly and decisively and giving their patients the reassurance that their care is guided by the best information possible.”\nPhotonova Spectra is intentionally designed to manage the significant data volumes generated by photon-counting CT, harnessing up to 50 times more data v than conventional CT by using NVIDIA’s accelerated computing platform and CUDA-optimized reconstruction to turn rich spectral datasets into timely, clinically actionable images while helping maintain smooth, efficient workflows.\nWorkflow efficiency is further supported by a one-scan, universal full fidelity approach intended to reduce exam-specific protocols and enable automated reconstruction of ultra-high definition spectral images on demand. The CT ONE operator environment and automated features – including Auto Positioning – are designed to help improve consistency across GE HealthCare systems and simplify the overall CT workflow.\nAdvancing innovation through global collaboration \nAdditionally, GE HealthCare is expanding collaborations across clinical disciplines to further evaluate Photonova Spectra and accelerate new discoveries:\nUZ Brussel – Vrije Universiteit Brussel &nbsp; ( Brussels, Belgium ): A premier European academic medical center collaborating to assess the advanced capabilities of Photonova Spectra across multiple clinical domains, including cardiology, oncology, and spectral imaging. In particular, the collaboration will support the evaluation of advanced imaging applications, generating valuable clinical evidence and optimizing imaging protocols to facilitate broader adoption in routine clinical practice.\nRigshospitalet ( Copenhagen, Denmark ): A leading university hospital for highly specialized diagnostics and treatments collaborating to explore broad the clinical applications of GE HealthCare’s photon-counting CT system. The collaboration will include a focus on low-dose imaging, enhanced tissue characterization, and the use of spectral data across complex clinical cases such as neurology, cardiology, oncology, and musculoskeletal imaging.\nThese collaborations and the advanced architecture of Photonova Spectra could open new avenues for research in quantitative imaging, tissue characterization, and spectral biomarker development.\nWith CE Mark now achieved, GE HealthCare will begin commercial activities in countries that observe CE Mark.\nNews of Photonova Spectra’s latest regulatory achievement quickly follows its 510(k) clearance by the U.S. Food and Drug Administration (FDA) and Japanese regulatory approval in March 2026 – further demonstrating GE HealthCare’s ability to move breakthrough innovation from introduction to regulatory validation with speed and discipline.\nPhotonova Spectra is a result of the company’s more than $5 billion innovation investment, leading to a wave of transformational products across the portfolio which combined are expected to drive 1-2 percent revenue growth.\nFor more information on GE HealthCare’s new Photonova Spectra photon-counting CT with Deep Silicon detectors, please visit gehealthcare.com .\nAbout GE HealthCare Technologies Inc. \nGE HealthCare is a leading global healthcare solutions provider of advanced medical technology, pharmaceutical diagnostics, and AI, cloud and software solutions that help clinicians tackle the world’s most complex diseases. Serving patients and providers for 130 years, GE HealthCare is delivering bold innovations designed for the next era of medicine across its Advanced Imaging Solutions, Pharmaceutical Diagnostics and Patient Care Solutions segments to help clinicians deliver more personalized, precise patient care. We are a $20.6 billion business with approximately 54,000 colleagues working to create a world where healthcare has no limits.\nGE HealthCare is proud to be among 2026 Fortune World’s Most Admired Companies™. \nFollow us on LinkedIn , Facebook , Instagram , or visit our website for our latest news and perspectives .\n____________________ \ni Photonova Spectra is CE marked and 510(k) cleared with the U.S . FDA. Not available for sale in all regions.\nii &nbsp; Kaufman Hall . State of Hospital Volumes. Kaufman Hall , https://www.kaufmanhall.com/insights/infographic/state-hospital-volumes . Accessed October 6, 2025 .\niii Sittig, Dean F., and Hardeep Singh . A New Socio-technical Model for Studying Health Information Technology in Complex Adaptive Healthcare Systems. In: Henriksen K, Battles JB, Keyes MA, Grady ML, editors. Advances in Patient Safety: New Directions and Alternative Approaches (Vol. 1: Assessment). Rockville (MD): Agency for Healthcare Research and Quality (US); August 2008 . https://www.ncbi.nlm.nih.gov/books/NBK338593/ . Accessed October 6, 2025 .\niv Enhanced Boundary for PCCT is CE Marked and 510(k) cleared with the U.S . FDA. Not available for sale in all regions.\nv When compared to Revolution Apex Elite.\nView source version on businesswire.com : https://www.businesswire.com/news/home/20260826913138/en/ \nGE HealthCare Media Contact\nMargaret Steinhafel \nGlobal Communications Director, Molecular Imaging, Computed Tomography and X-ray\nM +1 608 381 8829\nMargaret.Steinhafel@gehealthcare.com \nSource: GE HealthCare",
-    "content_source_url": "https://investor.gehealthcare.com/news-releases/news-release-details/ge-healthcares-photonovatm-spectra-gains-ce-mark-expanding",
-    "content_excerpt": "GE HealthCare’s Photonova™ Spectra gains CE Mark, expanding international access August 31, 2026 PDF Version Following U.S . FDA 510(k) clearance and Japanese regulatory approval, Photonova Spectra has also achieved CE Mark, supporting expanded research and clinical adoption across Europe and other global markets Powered by the company’s proprietary Deep Silicon detector technology and engineered for ultra‑high definition clarity, on‑demand spectral and spatial imaging, and fast, wide‑coverage acquisition, Photonova Spectra brings together rich detail, robust performance, and an Effortless Workflow to help support confident detection, characterization, and monitoring CHICAGO --(BUSINESS WIRE)--Aug. 31, 2026-- GE HealthCare (Nasdaq: GEHC) recently achieved CE Mark for Photonova Spectra, i a...",
-    "content_word_count": 1540,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
-    "query_aliases": [
-      "GE HealthCare"
-    ],
-    "industry": "바이오",
-    "target_technology": "바이오의약품 생산용 배양 및 정제 시스템",
-    "target_technology_en": "biopharma culture and purification system",
-    "technology_group": "bioprocess_culture_purification",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "차세배대양 바 이및오 정의제약시품스 템생산용",
-    "pdf_company": "GE Healthcare",
-    "pdf_row_no": 28,
-    "pdf_sequence": "KO추T가RA",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "investment_signal_no": 4,
-    "investment_signal_id": "technology_ecosystem_rd",
-    "investment_signal_label": "기술 생태계 밀착(R&D)",
-    "investment_signal_label_en": "Tech Ecosystem Engagement (R&D)",
-    "investment_signal_description": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
-    "ai_signal_supported": false,
-    "ai_review_tier": "human_review",
-    "ai_review_gaps": [
-      "target_technology"
-    ],
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "precursor",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "GE 헬스케어가 UZ 브뤼셀 및 릭스호스피탈레 등과 임상 평가 및 연구를 위한 협력을 확장하고 있으나, 타겟 품목인 바이오의약품 생산용 배양 및 정제 시스템 기술과 직접 연결되지 않아 타겟 기술 연계가 성립하지 않음.",
-    "ai_summary_ko": "임상 기관 협력 확대 - GE 헬스케어는 UZ 브뤼셀 등과 협력하여 Photonova Spectra의 임상적 잠재력을 평가하고 새로운 발견을 가속화하고 있음.",
-    "ai_summary_en": "GE HealthCare is expanding collaborations with clinical institutions such as UZ Brussel to evaluate the Photonova Spectra and accelerate new discoveries.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "b5705ac2ffe152bcdd266e88",
-    "ai_evidence_quotes": [
-      "Additionally, GE HealthCare is expanding collaborations across clinical disciplines to further evaluate Photonova Spectra and accelerate new discoveries: UZ Brussel – Vrije Universiteit Brussel  ( Brussels, Belgium ): A premier European academic medical center collaborating to assess the advanced capabilities of Photonova Spectra across multiple clinical domains, including cardiology, oncology, and spectral imaging."
-    ]
-  },
-  {
     "target_no": 40,
     "company": "Evonik Industries",
     "title": "August 27, 2026 Company Claus Rettig to serve as interim CEO of Evonik At an extraordinary meeting, the Supervisory Board today appointed Dr. Claus Rettig to Evonik's Executive Board effective September 1, 2026, and appointed him Deputy Chairman.",
@@ -220,7 +122,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.evonik.com/en/media.html",
     "source_type": "official",
@@ -238,7 +140,7 @@
     "content_excerpt": "Claus Rettig to serve as interim CEO of Evonik Rettig, who runs Evonik’s Asia business, appointed to Executive Board Chairman Bernd Toenjes places emphasis on continuity Christian Kullmann on the road to recovery Essen, Germany . At an extraordinary meeting, the Supervisory Board today appointed Dr. Claus Rettig to Evonik's Executive Board effective September 1, 2026, and appointed him Deputy Chairman. The 66-year-old has been with the company for more than 30 years and heads Evonik's Asian business as General Representative in Singapore. Until further notice, Rettig is taking over the duties of Christian Kullmann, who is recovering in the upcoming weeks from a recent serious, unplanned surgery. Rettig will continue to assume his responsibility for Asia as member of the Executive Board. \"W...",
     "content_word_count": 611,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Evonik"
     ],
@@ -314,7 +216,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://www.dnp.co.jp/news/rss_news_jp.xml",
     "source_type": "official",
@@ -329,7 +231,7 @@
     "content_excerpt": "大日本印刷 JCCLに出資しCO₂分離回収の事業化を加速 燃焼系ガスを対象とした膜分離法によるCO₂分離回収技術の社会実装を目指す ニュースリリース 研究開発 企業情報 環境 コラボレーション 大日本印刷株式会社（本社：東京都 代表取締役社長：北島義斉 以下：DNP）は、株式会社ＪＣＣＬ（本社：福岡県 代表取締役：梅原俊志）が実施した資金調達において、2026年7月31日付で同社に出資しました。両社は、工場などから排出される燃焼系ガスを対象にした、膜分離法 ＊1 によるCO₂分離回収技術の開発・事業化に向け、戦略的パートナーとして連携を強化します。 DNPが保有する精密塗工技術、評価・解析技術、生産設備の設計・製造技術と、JCCLが保有するCO₂を選択的に透過する材料を組み合わせることで、低コストかつ高効率なCO₂分離回収装置を開発し、その社会実装を目指します。また、本装置をDNPグループのGHG（Greenhouse Gas：温室効果ガス）排出量削減にも活用し、実証を通じて得た知見を今後の開発・装置提供につなげていきます。さらに、回収したCO₂の利活用に向けて企業や研究機関との連携を進め、CO₂を資源として多様な製品・燃料に活用するカーボンリサイクル事業の創出にも取り組みます。 出資の背景 近年、製造業を中心に脱炭素化への対応が重要な経営課題となっています。省エネルギー化や再生可能エネルギーの導入が進む一方で、製造プロセスなどの事業活動に伴って排出されるCO₂は一定量の排出が避けられない場合があります。こうしたCO₂を回収して大気中への排出を抑制する技術の実用化が、脱炭素社会の実現に向けて期待されています。 DNPは、JCCLと2025年10月から、工場などから排出される燃焼系ガスを対象としたCO₂分離回収事業での協業 ＊2 を進めてきました。今回、両社の技術や知見を組み...",
     "content_word_count": 122,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -403,7 +305,7 @@
         "precision": "month"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://www.dnp.co.jp/news/rss_news_jp.xml",
     "source_type": "official",
@@ -418,7 +320,7 @@
     "content_excerpt": "つくば総合開発センターに共創拠点「FIOラボ」を開設 生産現場に近い環境で先進技術を検証し、製造現場の課題解決と新たな価値創出を推進 ニュースリリース 研究開発 企業情報 大日本印刷株式会社（本社：東京 代表取締役社長：北島義斉 以下：DNP）は、茨城県つくば市の「つくば総合開発センター」内に、パートナー企業や大学・研究機関との共創により、製造現場の新たな価値創出を目指す「FIOラボ（エフアイオーラボ）」を開設し、2026年8月より企業向けに公開します。 本ラボで、共創パートナーは、DNPの生産現場に近い実践的な環境で先進技術を検証し、製造現場への導入に向けた技術的・運用的な課題を早期に把握し、解決することができます。 DNPが創業以来培ってきた生産技術や評価解析技術、幅広い事業領域での製造に関する知見と、パートナーの技術・知見を掛け合わせることで、技術検証からさまざまな生産現場への導入を支援します。さらに国内外のDNPグループ製造拠点にも展開し、迅速な社会実装と新たな市場創出につなげます。 未来の工場 実装ゾーン ロボティクス検証ゾーン 【「FIOラボ」開設の背景と共創パートナーへの提供価値】 国内では生産年齢人口が減少するなか、製造業における労働生産性の向上や技能・技術の継承、AI・ロボティクスを活用した自動化・省人化が重要な課題となっています。こうした課題の解決に向けて、DNPグループの多様な事業部門の生産技術を横断して研究する「技術開発センター」の強みを活かし、共創拠点「FIOラボ」を設立しました。パートナー企業や大学・研究機関に対し、以下の価値を提供することで、共創による課題解決と新たな価値創出を推進します。 ○実際の製造ラインに近い環境で技術を検証し、生産現場への適用に向けた実践的なデータを取得。 ○DNPが長年培ってきた生産技術や評価解析技術に加え、多様な事業...",
     "content_word_count": 129,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -473,7 +375,7 @@
     "publisher_home_url": "",
     "published_at": "2026-08-26T11:00:31Z",
     "published_month": "2026-08",
-    "published_at_source": "feed",
+    "published_at_source": "jsonld",
     "published_at_precision": "day",
     "published_at_status": "confirmed",
     "modified_at": "",
@@ -482,12 +384,33 @@
       {
         "date": "2026-08-26T11:00:31Z",
         "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-26T11:00:31Z",
+        "month": "2026-08",
         "source": "feed",
         "kind": "published",
         "precision": "day"
+      },
+      {
+        "date": "2026-08-26T00:00:00Z",
+        "month": "2026-08",
+        "source": "text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-26T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://investors.ouster.com/rss.xml",
     "source_type": "official",
@@ -497,8 +420,12 @@
     "source_priority": 5,
     "official_source_url": "https://investors.ouster.com/rss.xml",
     "source_direct_url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
-    "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_text": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar\nAugust 26, 2026\nPDF Version \nUnlocking Precision and Safety in Autonomous Agriculture: GUSS Plans Deployment of Rev8 to Revolutionize Orchard Operations\nSAN FRANCISCO --(BUSINESS WIRE)--Aug. 26, 2026--\nOuster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet. The integration is expected to further expand machine capabilities while underscoring the role of advanced sensing technologies in helping autonomous agricultural machines operate in complex outdoor environments.\nThis press release features multimedia. View the full release here: https://www.businesswire.com/news/home/20260826062948/en/ \nOuster OS0 digital lidar on a fleet of GUSS Autonomous Sprayers\nBuilding on Ouster's recent momentum in industrial robotics, GUSS is embedding Ouster and other enterprise-grade capabilities into agricultural duty cycles. High-value crop environments introduce significant navigation challenges, as traditional GPS systems often lack the centimeter-level precision necessary to safely navigate dense orchards and vineyards.\nThrough a planned integration of Ouster’s Rev8 OS0 digital lidar, GUSS is addressing these complexities with additional perception capabilities for autonomous operations. Ouster technology equips driverless sprayers with an ultra-wide field of view, enabling them to map tree trunks, crop rows, and ground contours with a high level of detail. These autonomous vehicles also benefit from the dense 3D point cloud data Ouster lidar delivers, allowing them to support navigation and obstacle detection across a range of outdoor operating conditions, including varying lighting environments.\n“At GUSS, we are focused on developing autonomous solutions that help growers address the unique challenges of high-value crop production,” said Jason Brantley , Vice President, Production Systems, Small Ag & Turf at John Deere. “Integrating advanced sensing technologies into our machines helps support reliable operation in complex orchard environments and provides growers with tools designed to improve productivity and operational flexibility.”\nOuster's Rev8 architecture delivers a unique combination of highly accurate, dense 3D depth data, high dynamic range native color, and extreme structural ruggedness. Engineered to meet the rigorous demands of production deployments in unstructured settings, the Rev8 platform brings enhanced environmental resilience to the field.\nWith the planned Rev8 integration, Ouster native color lidar sensors will provide additional sensing capabilities in challenging orchard environments, including dust, spray, and dense vegetation. This level of reliable sensing allows a single operator to monitor up to eight autonomous machines simultaneously from a laptop, providing complete control of spraying job outcomes executed by Orchard GUSS and Mini GUSS machines in a wide range of permanent crops. Spraying is just the first application: the same lidar-powered autonomy approach can be leveraged by other orchard and vineyard operations.\n“John Deere’s decision to integrate Ouster’s Rev8 digital lidar technology represents an important milestone for the future of American agriculture,” said Ouster CEO Angus Pacala . “As GUSS leverages Ouster’s digital lidar in its autonomous fleet, we are empowering growers to achieve new levels of precision and efficiency. This announcement is about more than technology. It is about scaling reliable solutions that make agricultural operations more resilient and sustainable.”\nRev8 is the most rugged sensor family Ouster has ever built, providing a validated path to production scale that eliminates the compromises traditionally associated with operating complex robotics in heavy-duty outdoor environments.\nAbout Ouster \nOuster (Nasdaq: OUST) is a leader in sensing and perception for Physical AI across industrial, robotics, automotive, and smart infrastructure. With a unified platform of high-performance digital lidar, cameras, AI compute, sensor fusion and perception software, and AI models, Ouster delivers solutions that improve quality of life in the physical world. Headquartered in San Francisco, CA , Ouster has a global presence serving thousands of customers with offices in the Americas , Europe , and Asia-Pacific . For more information about our products, visit www.ouster.com , contact our sales team , or connect with us on X or LinkedIn .\nAbout GUSS Automation \nGUSS Automation, based in Kingsburg, California , is the pioneer that built the world's first autonomous orchard sprayer. Now a John Deere company, GUSS anchors Deere's High-Value Crop autonomy portfolio for orchards and vineyards. Its driverless Autonomous Orchard Machines are sold and supported through the John Deere dealer network, delivering season-after-season uptime and advanced efficiency to growers worldwide.\nAbout Deere & Company \nIt doesn't matter if you've never driven a tractor, mowed a lawn, or operated a dozer. With John Deere's role in helping produce food, fiber, fuel, and infrastructure, we work for every single person on the planet. It all started nearly 200 years ago with a steel plow. Today, John Deere drives innovation in agriculture, construction, forestry, turf, power systems, and more.\nForward-Looking Statements \nThis press release contains forward-looking statements within the meaning of the Private Securities Litigation Reform Act of 1995. The Company intends such forward-looking statements to be covered by the safe harbor provisions for forward-looking statements contained in Section 27A of the Securities Act of 1933, as amended and Section 21E of the Securities Exchange Act of 1934, as amended. Such statements are based upon current plans, estimates and expectations of management that are subject to various risks and uncertainties that could cause actual results to differ materially from such statements. The inclusion of forward-looking statements should not be regarded as a representation that such plans, estimates and expectations will be achieved. Words such as “anticipate,” “expect,” “project,” “intend,” “believe,” “may,” “will,” “should,” “plan,” “could,” “continue,” “target,” “contemplate,” “estimate,” “forecast,” “guidance,” “predict,” “possible,” “potential,” “pursue,” “likely,” and the negative of these terms and similar expressions are intended to identify forward-looking statements, though not all forward-looking statements use these words or expressions. All statements, other than statements of historical fact, including statements regarding the capabilities of Ouster’s product offerings; uses for Physical AI; the anticipated performance, benefits to and expectations around customer adoption and application of our product offerings; and Ouster’s competitive position all constitute forward-looking statements. All forward-looking statements are subject to risks and uncertainties that may cause actual results to differ materially from those that we expected, including, but not limited to, product quality and liability risks; the possibility of cancellation or postponement of contracts or unsuccessful implementations; risks related to the adoption of our products and the growth of the lidar market generally; risks related to the use of AI tools by us and others, including risks related to product performance, cybersecurity, and data privacy; Ouster’s ability to adequately protect and enforce its intellectual property rights; legal and regulatory risks; and other important factors discussed in the Company’s Annual Report on Form 10-K for the year ended December 31, 2025, and as may be further updated from time to time in the Company’s Quarterly Reports on Form 10-Q and other filings with the SEC. Readers are urged to consider these factors carefully and in the totality of the circumstances when evaluating these forward-looking statements, and not to place undue reliance on any of them. Any such forward-looking statements represent management’s reasonable estimates and beliefs as of the date of this press release. While Ouster may elect to update such forward-looking statements at some point in the future, it disclaims any obligation to do so, other than as may be required by law, even if subsequent events cause its views to change.\nView source version on businesswire.com: https://www.businesswire.com/news/home/20260826062948/en/ \nOuster:\nFor Investors\ninvestors@ouster.io \nFor Media\npress@ouster.io \nJohn Deere:\nFor Media\nPublicRelations@johndeere.com \nSource: Ouster, Inc.",
+    "content_source_url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+    "content_excerpt": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar August 26, 2026 PDF Version Unlocking Precision and Safety in Autonomous Agriculture: GUSS Plans Deployment of Rev8 to Revolutionize Orchard Operations SAN FRANCISCO --(BUSINESS WIRE)--Aug. 26, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet. The integra...",
+    "content_word_count": 1269,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -529,14 +456,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "존 디어 자회사인 GUSS 오토메이션이 오우스터의 차세대 REV8 디지털 라이다를 활용해 고부가가치 작물 정밀 자율주행 기술을 발전시킬 계획임을 밝혀 기술 협력 전조 활동이 확인됨.",
-    "ai_summary_ko": "차세대 디지털 라이다 활용 협력 계획 - 존 디어 자회사인 GUSS 오토메이션이 오우스터의 차세대 REV8 디지털 라이다를 도입하여 고부가가치 작물 대상 정밀 자율주행 기술을 발전시킬 계획임.",
-    "ai_summary_en": "GUSS Automation, a wholly owned subsidiary of John Deere, plans to advance precision autonomy in high-value crops using Ouster's next-generation REV8 digital lidar.",
+    "ai_summary_reason": "존디어 자회사인 GUSS 오토메이션이 오우스터의 차세대 REV8 디지털 라이다 센서를 자율주행 농기계 함대에 통합할 계획을 발표하여 기술 협력 및 생태계 확장의 전조 활동이 확인됨.",
+    "ai_summary_ko": "자율주행 농기계용 라이다 도입 계획 - 존디어 자회사인 GUSS 오토메이션이 오우스터의 차세대 REV8 디지털 라이다 센서를 차세대 자율주행 과수원 장비 함대에 통합할 계획이라고 발표함.",
+    "ai_summary_en": "Plans to integrate digital lidar for autonomous agricultural machinery - GUSS Automation, a wholly owned subsidiary of John Deere, announced plans to incorporate Ouster's next-generation REV8 digital lidar sensors into its upcoming fleet of autonomous orchard machines.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "dae7bec19e22eff61805057e",
+    "ai_summary_cache_key": "20cd89bc08e3a38de45a1d99",
     "ai_evidence_quotes": [
-      "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar"
+      "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+      "today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet."
     ]
   },
   {
@@ -568,7 +496,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://ir.criver.com/news-releases/",
     "source_type": "official",
@@ -586,7 +514,7 @@
     "content_excerpt": "&nbsp;View printer-friendly version Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing PDF Version Collaboration leverages NGS technologies to accelerate high-quality vaccine development, support global regulatory readiness, and help reduce animal testing WILMINGTON, Mass. --(BUSINESS WIRE)--Aug. 20, 2026-- Charles River Laboratories International, Inc. (NYSE: CRL) and Medigen Vaccine Biologics Corp. (MVC) collaborate &nbsp; on the characterization and validation of the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing (NGS), to support critical steps of Chemistry, M...",
     "content_word_count": 966,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Charles River Laboratories"
     ],
@@ -649,7 +577,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_sitemap",
     "query": "https://www.asahi-kasei.com/sitemap-en.xml",
     "source_type": "official",
@@ -664,7 +592,7 @@
     "content_excerpt": "Asahi Kasei Develops Novel Lithium Pre-doping Technology to Raise Energy Density and Lower Cost of Silicon-rich Lithium-ion Batteries 2026-08-20T11:00:00 Asahi Kasei Corp. secondary border false backgroundColor white width full imagePosition left imageCaption false bottomSpacing false buttonPosition left Novel lithium pre-doping technology to raise energy density and lower cost Enables the use of low-cost lithium carbonate with existing production lines Global PoC evaluations and licensing to accelerate commercialization Asahi Kasei, a diversified global company, has developed a novel pre-doping technology for high-voltage lithium-ion batteries (LIBs) with silicon-based anodes. This technology enables lithium carbonate to serve as an additional lithium source at lower voltages, reducing th...",
     "content_word_count": 651,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [],
     "industry": "화학소재",
     "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
@@ -709,6 +637,206 @@
     ]
   },
   {
+    "target_no": 24,
+    "company": "Ouster",
+    "title": "Trossen Robotics and Stereolabs, an Ouster Subsidiary, Partner to Put High-Fidelity Stereo Vision at the Heart of Physical AI Data Collection",
+    "url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+    "source": "Ouster - Official RSS",
+    "publisher": "",
+    "publisher_home_url": "",
+    "published_at": "2026-08-18T11:00:31Z",
+    "published_month": "2026-08",
+    "published_at_source": "jsonld",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-18T11:00:31Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-18T11:00:31Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-18T00:00:00Z",
+        "month": "2026-08",
+        "source": "text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-18T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-14T05:18:18Z",
+    "collector": "official_feed",
+    "query": "https://investors.ouster.com/rss.xml",
+    "source_type": "official",
+    "source_kind": "press_release",
+    "is_press_release": true,
+    "source_label_ko": "공식보도자료",
+    "source_priority": 5,
+    "official_source_url": "https://investors.ouster.com/rss.xml",
+    "source_direct_url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+    "content_text": "Trossen Robotics and Stereolabs, an Ouster Subsidiary, Partner to Put High-Fidelity Stereo Vision at the Heart of Physical AI Data Collection\nAugust 18, 2026\nPDF Version \nTrossen's new lineup of Physical AI platforms comes equipped with a Stereolabs ZED X Mini scene camera and dual ZED X Nano wrist cameras, giving robot-learning teams synchronized, training-grade visual data out of the box \nSAN FRANCISCO & DOWNERS GROVE, Ill. --(BUSINESS WIRE)--Aug. 18, 2026--\nTrossen Robotics, a provider of research and data-collection platforms for Physical AI, and Stereolabs SAS, a wholly owned subsidiary of Ouster, Inc. (Nasdaq: OUST), and maker of the ZED series of AI stereo cameras, today announced a collaboration that integrates Stereolabs' ZED X Mini and ZED X Nano cameras into Trossen's new Physical AI hardware suite for robot learning. The suite is headlined by the Trossen Workbench and Rivet, its stationary and mobile bimanual manipulation platforms.\nThis press release features multimedia. View the full release here: https://www.businesswire.com/news/home/20260818161842/en/ \nTrossen and Stereolabs Workbench Arm Close-Up with ZED X Nano Camera\nPhysical AI models are only as good as the demonstration data they are trained on and most of that data is visual. Today, teams typically assemble their own rigs from individually sourced robot arms and consumer-grade USB cameras, relying on custom driver code to connect them. The result is datasets with low-resolution imagery, inconsistent calibration, motion blur, and timing drift across views and data streams.\nThe Trossen Workbench and Rivet are unified development platforms featuring dual WidowX Pro 6-DoF arms with reach from 700 mm to 1000 mm, payload capacities of 4 to 6 kg payload, and 1 mm repeatability. Each platform is powered by an onboard NVIDIA Jetson AGX Orin 64 GB compute and supports teleoperation over local networks and the internet. Each also includes a factory-calibrated three-camera vision system built entirely with Stereolabs hardware .\nThe Stereolabs and Trossen joint vision architecture mirrors how state-of-the-art manipulation policies are trained. A center-mounted Stereolabs ZED X Mini provides the global scene view and stereo-depth context of the full workspace, while each wrist-mounted ZED X Nano delivers the close-range view of the gripper and object that imitation-learning policies rely on for fine manipulation.\nThe ZED X Nano was designed specifically for this application. Its dual 2.3 MP (1920×1200) global-shutter sensors capture at up to 60 fps without the motion blur of rolling-shutter USB cameras, and its neural depth engine resolves geometry from as close as 3 cm, the distances at which grasping actually happens. GMSL2 connectivity with locking, EMI-resistant cabling keeps all three cameras deterministically synchronized on the Jetson with a zero-copy pipeline, so teams can record, encode, and run inference simultaneously without frames silently dropping mid-episode. A vibration-resistant onboard IMU keeps the wrist views usable even as the arms move at speed.\nEvery teleoperated episode collected on the Workbench and Rivet is a clean, synchronized, multi-view, RGB-plus-depth training sample, ready for imitation learning, reinforcement learning, and sim-to-real workflows through native support for ROS 2 and NVIDIA Isaac Sim / Isaac Lab .\n“The Physical AI community is migrating to GMSL2 because USB can't handle the long cable runs from the end effector to compute that real robots demand,” said Matt Trossen , CEO from Trossen Robotics. “Stereolabs ZED X Nano gives us the signal stability, image quality, and throughput to take Physical AI from the lab into hardened industrial deployments. Teams should spend their time collecting demonstrations and training policies, not integrating and calibrating camera rigs.”\n“Trossen has done what few others have: put the camera at the heart of a complete, calibrated data-collection system,” said Cecile Schmollgruber, President of Stereolabs. “The Workbench with Stereolabs ZED X Mini and ZED X Nano turns every demonstration into training-grade data, and that's what will move Physical AI forward.”\nThe Workbench anchors Trossen's broader Physical AI hardware suite including the RIVET mobile manipulation platform, GLIDE passive leader arms, and COCKPIT operator station for scalable teleoperated data collection. The suite will be shown publicly at Trossen's Physical AI Residency in San Francisco , August 12–28, 2026, alongside live data-collection and policy-evaluation demos at Trossen’s booth at the Actuate conference also in San Francisco , August 18-19, 2026 .\nAbout Trossen Robotics \nTrossen Robotics develops accessible, modular hardware and software platforms for Physical AI research, data collection, and deployment. Its robotic arms, mobile manipulators, teleoperation systems, and developer tools help teams collect high-quality data, train embodied AI models, and move robotic applications from the lab into real-world use.\nAbout Stereolabs \nStereolabs, a wholly owned subsidiary of Ouster, Inc. (Nasdaq: OUST), is a leader of 3D vision and depth perception for Physical AI. Its ZED camera family and ZED SDK platform provide real-time depth sensing, spatial mapping, and AI-powered object understanding for robotics, industrial automation, and smart spaces.\nForward-Looking Statements \nThis press release contains forward-looking statements within the meaning of the Private Securities Litigation Reform Act of 1995. Ouster intends such forward-looking statements to be covered by the safe harbor provisions for forward-looking statements contained in Section 27A of the Securities Act of 1933, as amended and Section 21E of the Securities Exchange Act of 1934, as amended. Such statements are based upon current plans, estimates and expectations of management that are subject to various risks and uncertainties that could cause actual results to differ materially from such statements. The inclusion of forward-looking statements should not be regarded as a representation that such plans, estimates and expectations will be achieved. Words such as “anticipate,” “expect,” “project,” “intend,” “believe,” “may,” “will,” “should,” “plan,” “could,” “continue,” “target,” “contemplate,” “estimate,” “forecast,” “guidance,” “predict,” “possible,” “potential,” “pursue,” “likely,” and the negative of these terms and similar expressions are intended to identify forward-looking statements, though not all forward-looking statements use these words or expressions. All statements, other than statements of historical fact, including statements regarding the capabilities and applications of Ouster’s product offerings, uses for Physical AI, the anticipated performance, benefits to and expectations around customer adoption and application of our product offerings; and Ouster’s competitive position constitute forward-looking statements. All forward-looking statements are subject to risks and uncertainties that may cause actual results to differ materially from those that we expected, including, but not limited to, risks related to the capabilities and benefits of our hardware offerings and software-attached offerings, including with respect to the enhancement of signal stability and data collection; product quality and liability risks; cancellation or postponement of contracts or unsuccessful implementations; dependence on key third party suppliers; Ouster’s ability to complete, successfully integrate or achieve the anticipated benefits of new acquisitions or investments, including the Stereolabs acquisition; risks related to the use of AI tools by us and others, including risks related to product performance, cybersecurity, and data privacy; Ouster’s ability to adequately protect and enforce its intellectual property rights; legal and regulatory risks; and other important factors discussed in Ouster’s Annual Report on Form 10-K for the year ended December 31, 2025, and as may be further updated from time to time its Quarterly Reports on Form 10-Q and other filings with the SEC. Readers are urged to consider these factors carefully and in the totality of the circumstances when evaluating these forward-looking statements, and not to place undue reliance on any of them. Any such forward-looking statements represent management’s reasonable estimates and beliefs as of the date of this press release. While Ouster may elect to update such forward-looking statements at some point in the future, it disclaims any obligation to do so, other than as may be required by law, even if subsequent events cause its views to change.\nView source version on businesswire.com: https://www.businesswire.com/news/home/20260818161842/en/ \nTrossen:\nnupur.patra@trossenrobotics.com \nOuster: \nFor Investors\ninvestors@ouster.io \nFor Media\npress@ouster.io \nSource: Ouster, Inc.",
+    "content_source_url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+    "content_excerpt": "Trossen Robotics and Stereolabs, an Ouster Subsidiary, Partner to Put High-Fidelity Stereo Vision at the Heart of Physical AI Data Collection August 18, 2026 PDF Version Trossen's new lineup of Physical AI platforms comes equipped with a Stereolabs ZED X Mini scene camera and dual ZED X Nano wrist cameras, giving robot-learning teams synchronized, training-grade visual data out of the box SAN FRANCISCO & DOWNERS GROVE, Ill. --(BUSINESS WIRE)--Aug. 18, 2026-- Trossen Robotics, a provider of research and data-collection platforms for Physical AI, and Stereolabs SAS, a wholly owned subsidiary of Ouster, Inc. (Nasdaq: OUST), and maker of the ZED series of AI stereo cameras, today announced a collaboration that integrates Stereolabs' ZED X Mini and ZED X Nano cameras into Trossen's new Physical...",
+    "content_word_count": 1273,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
+    "query_aliases": [
+      "Ouster Inc"
+    ],
+    "industry": "로봇",
+    "target_technology": "로봇용 라이다",
+    "target_technology_en": "robot LiDAR",
+    "technology_group": "robot_lidar",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "로봇용 라이다",
+    "pdf_company": "Ouster",
+    "pdf_row_no": 14,
+    "pdf_sequence": "11",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "investment_signal_no": 4,
+    "investment_signal_id": "technology_ecosystem_rd",
+    "investment_signal_label": "기술 생태계 밀착(R&D)",
+    "investment_signal_label_en": "Tech Ecosystem Engagement (R&D)",
+    "investment_signal_description": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "precursor",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "자회사 스테레오랩스가 트로센 로보틱스와 협력하여 AI 카메라를 하드웨어 스위트에 통합하는 기술 협업을 발표함.",
+    "ai_summary_ko": "로봇 AI 카메라 하드웨어 통합 협력 추진 - 오우스터의 자회사 스테레오랩스가 트로센 로보틱스와 협업을 통해 ZED X Mini 및 ZED X Nano 카메라를 로봇 학습용 피지컬 AI 하드웨어 스위트에 통합함.",
+    "ai_summary_en": "Ouster's subsidiary Stereolabs has announced a collaboration with Trossen Robotics to integrate its ZED X Mini and ZED X Nano cameras into Trossen's new Physical AI hardware suite for robot learning.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "fd49d6212df1eb29fee3dde1",
+    "ai_evidence_quotes": [
+      "Stereolabs SAS, a wholly owned subsidiary of Ouster, Inc. (Nasdaq: OUST), and maker of the ZED series of AI stereo cameras, today announced a collaboration that integrates Stereolabs' ZED X Mini and ZED X Nano cameras into Trossen's new Physical AI hardware suite for robot learning."
+    ]
+  },
+  {
+    "target_no": 13,
+    "company": "BorgWarner",
+    "title": "Aug 14, 2026 BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes",
+    "url": "https://www.borgwarner.com/newsroom/press-releases/2026/08/14/borgwarner-announces-pricing-terms-of-cash-tender-offers-for-its-senior-notes",
+    "source": "BorgWarner - Investors / Investor Relations",
+    "published_at": "2026-08-14T00:00:00Z",
+    "published_month": "2026-08",
+    "published_at_source": "listing",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-14T00:00:00Z",
+        "month": "2026-08",
+        "source": "listing",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-14T00:00:00Z",
+        "month": "2026-08",
+        "source": "url",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2029-02-15T00:00:00Z",
+        "month": "2029-02",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-14T05:18:18Z",
+    "collector": "official_page",
+    "query": "https://www.borgwarner.com/investors/",
+    "source_type": "official",
+    "source_kind": "press_release",
+    "is_press_release": true,
+    "source_label_ko": "공식보도자료",
+    "source_priority": 5,
+    "official_source_url": "https://www.borgwarner.com/investors/",
+    "source_direct_url": "https://www.borgwarner.com/newsroom/press-releases/2026/08/14/borgwarner-announces-pricing-terms-of-cash-tender-offers-for-its-senior-notes",
+    "link_verdict": "accept",
+    "link_reason": "article_link",
+    "link_rank": 1,
+    "content_text": "BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes\nAuburn Hills, Michigan, August 14, 2026 &ndash;&nbsp; BorgWarner Inc. (NYSE: BWA) (the &ldquo;Company&rdquo;) today announced the Reference Yield and Tender Consideration (as set forth in the table below) to be paid in connection with its previously announced tender offers to purchase for cash the debt securities issued by the Company referred to below (collectively, the &ldquo;Notes,&rdquo; and each a &ldquo;Series&rdquo;), in each case upon the terms and subject to the conditions set forth in the Offer to Purchase dated August 10, 2026 (the &ldquo;Offer to Purchase&rdquo;). The Company made the Tender Offers as a balanced capital allocation strategy intended to grow the long-term earnings of the Company. \nCertain information regarding the Notes and the pricing for the Tender Offers is set forth in the table below.\nSeries of Notes CUSIP/ISIN Number (1) Aggregate Principal Amount Outstanding&nbsp; &nbsp;Offer Sub Cap Acceptance Priority Level Reference Security&nbsp; Reference Yield (2)&nbsp; Bloomberg Reference Page&nbsp; Fixed Spread (Basis Points)&nbsp; Tender Consideration (3) \n&nbsp;7.125% Senior Notes due 2029 (any and All Offer) 099724 AC0 / US099724AC03&nbsp; $120,685,000&nbsp; &nbsp;N/A &nbsp;N/A 3.500% UST due 2/15/2029 4.230%&nbsp; &nbsp;FIT 5 +25 $1,061.70 \n&nbsp;4,375% Senior Notes due 2045 099724 AH9 / US099724AH99&nbsp; &nbsp;$500,000,000 N/A &nbsp;1 5.000% UST due 5/15/2046&nbsp; 5.265%&nbsp; &nbsp;FIT 1 +65 $827.77 \n&nbsp;5.400% Senior Notes due 2034 099724 AQ9 / US099724AQ98&nbsp; $500,000,000&nbsp; &nbsp;N/A 2 4.375% UST due 5/15/2036&nbsp; 4.689% &nbsp;FIT 1 +40&nbsp; $1,019.75 \n&nbsp;4.950% Senior Notes due 2029 099724 AP1 / US099724AP16&nbsp; &nbsp;$500,000,000 &nbsp;N/A &nbsp;3 4.125% UST due 7/15/2029&nbsp; 4.248% &nbsp;FIT 1 +30 $1,010.87 \n&nbsp;2.650% Senior Notes due 2027 099724 AL0 / US099724AL02&nbsp; $1,100,000,000&nbsp; $250,000,000&nbsp; &nbsp;4 3.750% UST due 6/30/2027&nbsp; 4.013% FIT 3&nbsp; +20&nbsp; $986.77 \n(1) No representation is made as to the correctness or accuracy of the CUSIP or ISIN numbers listed above.\n(2) Each Reference Yield was determined at 3:00 p.m., New York City time, on August 14, 2026.\n(3) Payable per each $1,000 principal amount of Notes of a series validly tendered, not validly withdrawn and accepted for purchase at or prior to the Expiration Date (defined below). Each Tender Consideration was determined in the manner described in the Tender Offer Documents. \nThe Tender Offers consist of offers to purchase for cash (i) any and all of the Company&rsquo;s outstanding 7.125% Senior Notes due 2029 (the &ldquo;7.125% Notes&rdquo; and the &ldquo;Any and All Offer&rdquo;) for the Tender Consideration and (ii) four separate offers, one for each Series of Notes set forth in the table above (other than the 7.125% Notes) (the &ldquo;Waterfall Notes&rdquo;) (each, an &ldquo;Offer&rdquo; and, collectively, the &ldquo;Offers,&rdquo; and together with the Any and All Offer, a &ldquo;Tender Offer&rdquo; and, collectively, the &ldquo;Tender Offers&rdquo;) for aggregate Tender Consideration of up to $720,000,000 (the &ldquo;Waterfall Cap&rdquo;), excluding the Accrued Interest Payment (as defined below), subject to the proration and the application of the Acceptance Priority Levels set forth in the table above and as further set forth in the Offer to Purchase and the terms and conditions, including, among others, a cap of $250,000,000 (the &ldquo;Sub Cap&rdquo;) on the maximum aggregate principal amount of the 2.650% Senior Notes due 2027 (the &ldquo;2.650% Notes&rdquo;) to be purchased pursuant to the Offer. The Company may, but is under no obligation to, increase the Waterfall Cap or the Sub Cap. Additionally, the Company may increase the amount of Waterfall Notes accepted for payment in the Offers by no more than 2% of the outstanding Waterfall Notes of the applicable Series, as further described in the Acceptance Priority Procedures set forth in the Offer to Purchase, without amending or extending the Offer. In the event proration is required with respect to a Series of Waterfall Notes, the Company will multiply the principal amount of each valid tender of such Series of Waterfall Notes by the applicable proration rate and round the resulting amount down to the nearest integral multiple of $1,000, in order to determine the principal amount of such tender that will be accepted pursuant to the applicable Offer. The Offer to Purchase and any related documents are referred to herein collectively as the &ldquo;Tender Offer Documents.&rdquo; Capitalized terms used but not defined in this press release have the meanings given to them in the Offer to Purchase.&nbsp; \nOn August 10, 2026, the Company intends to deliver to The Bank of New York Mellon (&ldquo;BNY,&rdquo; as successor in interest to The First National Bank of Chicago and as trustee of the 7.125% Notes) a notice of redemption to redeem on September 9, 2026 (the &ldquo;Redemption Date&rdquo;) all of the 7.125% Notes that remain outstanding following the Any and All Offer, to the extent the Company purchases less than all of the 7.125% Notes in the Any and All Offer, in accordance with the terms of the Indenture, dated February 15, 1999 (the &ldquo;7.125% Notes Indenture&rdquo;), between the Company (f/k/a Borg-Warner Automotive, Inc.) and BNY, at a make-whole redemption price pursuant to the 7.125% Notes Indenture plus accrued and unpaid interest to, but not including, the Redemption Date. \nThe &ldquo;Tender Consideration&rdquo; for each Series of Notes payable per each $1,000 principal amount of such Series of Notes validly tendered for purchase will be based on the applicable Fixed Spread for such Series of Notes, plus the Reference Yield based on the applicable Reference Security as quoted on the applicable Bloomberg Reference Page as of 3:00 p.m., New York City time, on August 14, 2026 (the &ldquo;Price Determination Date&rdquo;). Unless extended with respect to any Offer, promptly after the Price Determination Date, the Company will announce in a press release, among other things, the Tender Consideration applicable to each Series of Notes accepted for purchase. Holders must validly tender (and not validly withdraw) their Notes at or prior to the Expiration Date (as defined below) to receive the Tender Consideration. The formula for determining the Tender Consideration is set forth on Annex A to the Offer to Purchase. See &ldquo;The Tender Offers&mdash;Tender Consideration&rdquo; of the Offer to Purchase. \nIn addition to the Tender Consideration, all Holders whose Notes are accepted for purchase pursuant to a Tender Offer will, on the Settlement Date, also receive accrued and unpaid interest on those Notes from the last interest payment date with respect to those Notes to, but excluding, the Settlement Date (the &ldquo;Accrued Interest,&rdquo; and the payment thereof, the &ldquo;Accrued Interest Payment&rdquo;).&nbsp; \nThe Tender Offers will expire at 5:00 p.m., New York City time, on August 14, 2026 (such time and date, as it may be extended, the &ldquo;Expiration Date&rdquo;), unless extended or earlier terminated by the Company. The Notes tendered may be withdrawn at any time at or prior to the Expiration Date by following the procedures described in the Offer to Purchase. \nThe &ldquo;Settlement Date&rdquo; will be the second business day after the Expiration Date and is expected to be August 18, 2026. \nThe Company&rsquo;s obligation to accept for purchase and to pay for Notes of each series validly tendered and not validly withdrawn pursuant to the Tender Offers is subject to the satisfaction or waiver, in the Company&rsquo;s discretion, of certain conditions, which are more fully described in the Offer to Purchase. If any condition is not satisfied, the Company is not obligated to accept for payment, purchase or pay for, and may delay the acceptance for payment of, any tendered Notes, in each case subject to applicable law, and may terminate or alter any or all of the Tender Offers. Subject to applicable law, the Company reserves the right to (i) waive any and all conditions to the any or all of the Tender Offers, (ii) extend or terminate the Any and All Offer or the Offers, including the Expiration Date, or (iii) otherwise amend any of the Tender Offers. The Tender Offers are not contingent upon the tender of any aggregate minimum principal amount of Notes of any Series (subject to minimum denomination requirements as set forth in the Offer to Purchase), and none of the Tender Offers is conditioned on the consummation of any of the other Tender Offers by the Company. The complete terms and conditions of the Tender Offers are set forth in the Tender Offer Documents. Holders of Notes are urged to read the Tender Offer Documents carefully. \nI nformation Relating to the Tender Offers \nThe Offer to Purchase is being distributed to holders beginning today. Barclays Capital Inc. and PNC Capital Markets LLC are the dealer managers for the Tender Offers. Investors with questions regarding the Tender Offers may contact Barclays Capital Inc. at (212) 528-7581 or toll-free at (800) 438-3242, or email [email protected] , or PNC Capital Markets LLC at (212) 878-8946 or toll-free at (833) 715-3537, or email [email protected] . Global Bondholder Services Corporation is the tender and information agent for the Tender Offers and can be contacted at (212) 430-3774 or toll-free at (855) 654-2015. The Offer to Purchase may be accessed at the following web address: https://www.gbsc-usa.com/borgwarner/ . \nHolders of Notes are advised to check with each bank, securities broker or other intermediary through which they hold Notes as to when such intermediary would need to receive instructions from a beneficial owner in order for that Holder to be able to participate in, or withdraw their instruction to participate in the Offers before the deadlines specified herein and in the Offer to Purchase. The deadlines set by any such intermediary and The Depositary Trust Company for the submission and withdrawal of tender instructions may be earlier than the relevant deadlines specified herein and in the Offer to Purchase. \nNone of the Company, the dealer managers, the tender and information agent, the trustees or any of their respective directors, officers, employees or affiliates makes any recommendation as to whether holders should tender Notes of a series in response to the Tender Offers. Each holder must make his, her or its own decision as to whether to tender Notes and, if so, as to what principal amount of Notes to tender. \nThis press release shall not constitute an offer to sell, a solicitation to buy or an offer to purchase or sell any securities. The Tender Offers are being made only pursuant to the Offer to Purchase and only to such persons and in such jurisdictions as is permitted under applicable law. \nBack to list \nNext \nDownloads\nBorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes \n155 KB\nOverlay Title",
+    "content_source_url": "https://www.borgwarner.com/newsroom/press-releases/2026/08/14/borgwarner-announces-pricing-terms-of-cash-tender-offers-for-its-senior-notes",
+    "content_excerpt": "BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes Auburn Hills, Michigan, August 14, 2026 &ndash;&nbsp; BorgWarner Inc. (NYSE: BWA) (the &ldquo;Company&rdquo;) today announced the Reference Yield and Tender Consideration (as set forth in the table below) to be paid in connection with its previously announced tender offers to purchase for cash the debt securities issued by the Company referred to below (collectively, the &ldquo;Notes,&rdquo; and each a &ldquo;Series&rdquo;), in each case upon the terms and subject to the conditions set forth in the Offer to Purchase dated August 10, 2026 (the &ldquo;Offer to Purchase&rdquo;). The Company made the Tender Offers as a balanced capital allocation strategy intended to grow the long-term earnings of the Company. Certai...",
+    "content_word_count": 1726,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
+    "query_aliases": [
+      "BorgWarner Inc"
+    ],
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "자율주베행이차스 IM밴U드(고칩주)파부,",
+    "pdf_company": "BorgWarner",
+    "pdf_row_no": 15,
+    "pdf_sequence": "KO추T가RA",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "investment_signal_no": 3,
+    "investment_signal_id": "investment_financing",
+    "investment_signal_label": "투자 재원 확보",
+    "investment_signal_label_en": "Capital Securing & Financing",
+    "investment_signal_description": "대규모 회사채 발행·유상증자·신용공여 조달 등",
+    "ai_signal_supported": false,
+    "ai_review_tier": "human_review",
+    "ai_review_gaps": [
+      "target_technology"
+    ],
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": false,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "precursor",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "보그워너가 장기 수익 성장을 위한 자본 배분 전략의 일환으로 현금 공개매수 및 부채 증권 매입 가격 조건을 발표함.",
+    "ai_summary_ko": "현금 공개매수 조건 발표 - 장기 수익 성장을 위한 자본 배분 전략의 일환으로 선니어 노트에 대한 현금 공개매수 및 가격 조건을 발표함.",
+    "ai_summary_en": "BorgWarner announced pricing terms for cash tender offers of its senior notes as part of a balanced capital allocation strategy.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "13f897272796d3597e52add1",
+    "ai_evidence_quotes": [
+      "The Company made the Tender Offers as a balanced capital allocation strategy intended to grow the long-term earnings of the Company."
+    ]
+  },
+  {
     "target_no": 25,
     "company": "Applied Materials",
     "title": "Applied Materials Announces Third Quarter 2026 Results",
@@ -746,7 +874,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://ir.appliedmaterials.com/rss.xml",
     "source_type": "official",
@@ -761,7 +889,7 @@
     "content_excerpt": "Applied Materials Announces Third Quarter 2026 Results Aug 13, 2026 at 4:01 PM EDT PDF Version Record revenue $9.12 billion , up 25 percent year over year GAAP gross margin 50.3 percent and non-GAAP gross margin 50.4 percent GAAP EPS $3.17 and record non-GAAP EPS $3.50 , up 43 percent and 41 percent year over year, respectively EPIC Center R&D partnerships expand to 11 engagements with leading chipmakers, universities and innovation partners SANTA CLARA, Calif. , Aug. 13, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. (NASDAQ: AMAT) today reported results for its third quarter ended July 26, 2026 . Third Quarter Results Applied generated record revenue of $9.12 billion . On a GAAP basis, the company reported gross margin of 50.3 percent, record operating income of $3.08 billion or 33.7 p...",
     "content_word_count": 4512,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -842,7 +970,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://ir.appliedmaterials.com/rss.xml",
     "source_type": "official",
@@ -857,7 +985,7 @@
     "content_excerpt": "Applied Materials Announces Third Quarter 2026 Results Aug 13, 2026 at 4:01 PM EDT PDF Version Record revenue $9.12 billion , up 25 percent year over year GAAP gross margin 50.3 percent and non-GAAP gross margin 50.4 percent GAAP EPS $3.17 and record non-GAAP EPS $3.50 , up 43 percent and 41 percent year over year, respectively EPIC Center R&D partnerships expand to 11 engagements with leading chipmakers, universities and innovation partners SANTA CLARA, Calif. , Aug. 13, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. (NASDAQ: AMAT) today reported results for its third quarter ended July 26, 2026 . Third Quarter Results Applied generated record revenue of $9.12 billion . On a GAAP basis, the company reported gross margin of 50.3 percent, record operating income of $3.08 billion or 33.7 p...",
     "content_word_count": 4512,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -933,7 +1061,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.evonik.com/en/media.html",
     "source_type": "official",
@@ -951,7 +1079,7 @@
     "content_excerpt": "Altmark Lithium Extraction (ALE) project: Evonik Catalysts supports Pilot Phase II Evonik Catalysts is supporting the next phase of Neptune Energy's Altmark Lithium Extraction Project (ALE) in northern Germany Evonik Catalysts Liocel® adsorbent selected for test phase of Neptune Energy's Altmark Lithium Extraction Project Materials successful preliminary testing will now be evaluated in a pilot plant by Fraunhofer IEG On-site application and process know-how supporting Pilot Phase II with Fraunhofer IEG Hanau, Germany. Evonik Catalysts is supporting the next phase of Neptune Energy's Altmark Lithium Extraction Project (ALE) in northern Germany. Following the successful preliminary testing, Evonik's Liocel® adsorbent has been selected as the first material to be evaluated in the direct lith...",
     "content_word_count": 614,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Evonik"
     ],
@@ -1039,7 +1167,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.jenoptik.com/news/pressreleases",
     "source_type": "official",
@@ -1057,7 +1185,7 @@
     "content_excerpt": "Home News Press Releases Results of the first half year 2026 Recommend Facebook LinkedIn Jenoptik reports significant increase in orders and earnings in the first half of 2026 12 August 2026 Strong order intake momentum, particularly in the OEM businesses Revenue slightly above prior year; profitability significantly improved Guidance for 2026 specified &ldquo;In the first half of the year, we saw particularly strong demand, especially in our OEM businesses, which focus on the semiconductor equipment, medical technology, life sciences and defense end markets. As this development was partly driven by some major orders, this very strong momentum may not continue in the second half of the year,&rdquo; said Dr. Ralf Kuschnereit, Chief Technology Officer and Chief Operating Officer of JENOPTIK...",
     "content_word_count": 1176,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "JENOPTIK"
     ],
@@ -1140,7 +1268,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed",
     "query": "https://ir.appliedmaterials.com/rss.xml",
     "source_type": "official",
@@ -1155,7 +1283,7 @@
     "content_excerpt": "UC Berkeley to Join Applied Materials’ EPIC Center to Speed Chip Innovation Aug 11, 2026 at 9:00 AM EDT PDF Version Collaboration pairs UC Berkeley’s semiconductor research strength with Applied’s state-of-the-art equipment and process integration expertise Located in Silicon Valley , Applied’s EPIC Center provides industry-scale R&D environment with access to cutting-edge chipmaking equipment to enable rapid co-innovation and faster commercialization SANTA CLARA, Calif. , Aug. 11, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. today announced that the University of California, Berkeley will join the company’s EPIC Center in Silicon Valley as a research collaborator. Working side by side with Applied’s scientists and engineers, UC Berkeley faculty and students will pursue high-impact res...",
     "content_word_count": 844,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -1224,7 +1352,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://boeing.mediaroom.com/news-releases-statements",
     "source_type": "official",
@@ -1242,7 +1370,7 @@
     "content_excerpt": "News Releases Archer to Shape Physical AI Future of Aerospace and Defense with Acquisition of Boeing's Wisk Aero, Insitu and SkyGrid Subsidiaries; Boeing to Invest in Archer and Collaborate Transaction creates an end-to-end physical AI platform for aerospace and defense. Adds a profitable defense business generating over $200M in annual revenue 1 , with operations across 35 countries, to Archer's portfolio. Combines Wisk, SkyGrid and Insitu's pioneering autonomy and airspace intelligence software with Archer's leading purpose-built AI foundation model for aerospace and defense, ZEE. Boeing to take stake and become a strategic partner to Archer; establishes ongoing Archer and Boeing collaboration and technology sharing arrangement. ARLINGTON, Va. and SILICON VALLEY, Calif. , Aug. 10, 2026 /...",
     "content_word_count": 1505,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "The Boeing Company"
     ],
@@ -1316,7 +1444,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.infineon.com/about/press",
     "source_type": "official",
@@ -1334,7 +1462,7 @@
     "content_excerpt": "Infineon collaborates with MediaTek to enable future automotive smart cockpit solutions Technology news Aug 06, 2026 Munich, Germany – 6 August 2026 – Infineon Technologies (FSE: IFX / OTCQX: IFNNY) is partnering with MediaTek to enable an advanced AI-driven in-cabin experience in future vehicles. MediaTek has now qualified the Infineon 512 Mb Quad SPI NOR Flash, an automotive-grade NOR Flash memory solution, for use in its Dimensity Auto Cockpit platform C-X1. This turns the Infineon device into an approved and easily adoptable memory option for automotive OEMs, Tier-1 suppliers, and design partners developing the next generation of smart cockpit systems. “Automotive memory is a strategic enabler of innovation as software-defined vehicles depend on high-performance Systems-on-Chip (SoCs),...",
     "content_word_count": 481,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Infineon Technologies"
     ],
@@ -1429,7 +1557,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://plansee-group.com/en/news-media/press-stories",
     "source_type": "official",
@@ -1447,7 +1575,7 @@
     "content_excerpt": "all articles 03. August 2026 News Security of supply doesn’t happen overnight Karlheinz Wex, Chairman of the Executive Board of the Plansee Group, on raw material security, recycling, and Europe’s industrial future Published by: Plansee Group &middot; Last updated: 03. August 2026 Mr. Wex, why is everyone talking about tungsten right now? Tungsten is a metal with unique properties. It has the highest melting point of any metal, is extremely dense, and is indispensable for numerous industrial applications. About 65 percent of tungsten is used to manufacture all kinds of tools. Whether milling, drilling, turning, or forming: without tungsten carbide, many modern manufacturing processes would not exist. At the same time, tungsten components are needed, for example, in CT scanners, power trans...",
     "content_word_count": 1195,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Plansee Group"
     ],
@@ -1542,7 +1670,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://plansee-group.com/en/news-media/press-stories",
     "source_type": "official",
@@ -1560,7 +1688,7 @@
     "content_excerpt": "all articles 03. August 2026 News Security of supply doesn’t happen overnight Karlheinz Wex, Chairman of the Executive Board of the Plansee Group, on raw material security, recycling, and Europe’s industrial future Published by: Plansee Group &middot; Last updated: 03. August 2026 Mr. Wex, why is everyone talking about tungsten right now? Tungsten is a metal with unique properties. It has the highest melting point of any metal, is extremely dense, and is indispensable for numerous industrial applications. About 65 percent of tungsten is used to manufacture all kinds of tools. Whether milling, drilling, turning, or forming: without tungsten carbide, many modern manufacturing processes would not exist. At the same time, tungsten components are needed, for example, in CT scanners, power trans...",
     "content_word_count": 1195,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Plansee Group"
     ],
@@ -1648,7 +1776,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.jenoptik.com/news/pressreleases",
     "source_type": "official",
@@ -1666,7 +1794,7 @@
     "content_excerpt": "Dr. Dominic Dorfner assumes office as CEO of JENOPTIK AG The Supervisory Board approves reorganization of Executive Board responsibilities and creates new CTO/COO role. 03 August 2026 Dr. Dominic Dorfner assumed his position as Chief Executive Officer (CEO) of JENOPTIK AG on August 1, 2026. He leads the photonics group together with Dr. Prisca Havranek-Kosicek and Dr. Ralf Kuschnereit. The Supervisory Board had unanimously appointed Dorfner at the end of March 2026 &nbsp;for a three-year term. Within the Executive Board , Dr. Ralf Kuschnereit has assumed the newly created role of Chief Technology Officer and Chief Operating Officer (CTO/COO) effective August 1. In this role, he is responsible for functional excellence and the further development of the company&rsquo;s technology base. As C...",
     "content_word_count": 404,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "JENOPTIK"
     ],
@@ -1741,7 +1869,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1759,7 +1887,7 @@
     "content_excerpt": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026 Nexeon has secured backing from the National Wealth Fund to support the expansion of its domestic operations, strengthening the UK’s battery supply chain, creating jobs and boosting growth. The National Wealth Fund’s commitment of £52.6 million ($70 million) marks the completion of Nexeon’s latest investment round totalling £100 million ($133 million). Other new investors include the Korea Development Bank and Honda Xcelerator Ventures. Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles. The investment round supports the company’s continued scale-up and commercialisation activities...",
     "content_word_count": 685,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -1829,7 +1957,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1847,7 +1975,7 @@
     "content_excerpt": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026 Nexeon has secured backing from the National Wealth Fund to support the expansion of its domestic operations, strengthening the UK’s battery supply chain, creating jobs and boosting growth. The National Wealth Fund’s commitment of £52.6 million ($70 million) marks the completion of Nexeon’s latest investment round totalling £100 million ($133 million). Other new investors include the Korea Development Bank and Honda Xcelerator Ventures. Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles. The investment round supports the company’s continued scale-up and commercialisation activities...",
     "content_word_count": 685,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -1917,7 +2045,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1935,7 +2063,7 @@
     "content_excerpt": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026 Nexeon has secured backing from the National Wealth Fund to support the expansion of its domestic operations, strengthening the UK’s battery supply chain, creating jobs and boosting growth. The National Wealth Fund’s commitment of £52.6 million ($70 million) marks the completion of Nexeon’s latest investment round totalling £100 million ($133 million). Other new investors include the Korea Development Bank and Honda Xcelerator Ventures. Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles. The investment round supports the company’s continued scale-up and commercialisation activities...",
     "content_word_count": 685,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -2008,7 +2136,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_feed_discovered",
     "query": "https://www.dnp.co.jp/news/rss_topics_jp.xml",
     "source_type": "official",
@@ -2023,7 +2151,7 @@
     "content_excerpt": "環境省「令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業」に6社共同の実証事業が採択 建設現場から排出される廃プラスチックの循環モデル構築に向けた実証 製品・サービス コーポレートコミュニケーション 環境 ESG コラボレーション 資源循環システムズ株式会社 大栄環境株式会社 大日本印刷株式会社 BIPROGY株式会社 三重中央開発株式会社 株式会社八木熊 資源循環システムズ株式会社（以下 資源循環システムズ）、大栄環境株式会社（以下 大栄環境）、大日本印刷株式会社（以下 DNP）、BIPROGY株式会社（以下 BIPROGY）、三重中央開発株式会社（以下 三重中央開発）、株式会社八木熊（以下 八木熊）の6社は、環境省の「令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業」に採択されました。本事業では、建設現場で発生する廃プラスチックを対象に、AIを活用した分別支援、再資源化工程による品質確保・向上、再生材の利用先創出をつなぐ資源循環の構築・実証に取り組みます。 【背景】 近年、国内外でサーキュラーエコノミー（循環経済）への移行が加速しており、日本政府も2030年までにサーキュラーエコノミー関連市場を80兆円規模へ拡大することを目指しています。 一方、建設現場から排出される廃プラスチックは、材質や形状が多様で汚れや異物が付着しやすいことから、現場での分別精度、再資源化後の品質確保、再生材の利用先確保という3つの課題が相互に影響し合い、建設現場由来の廃プラスチックの資源循環の妨げとなっています。 こうした課題を解決するため、本事業では建設現場での排出から分別、回収、再資源化、製品化、利用先確保までを一体でつなぐ、デジタルやAIを活用した資源循環の構築・実証に取り組みます。 【事業概要】 本事業では、大和ハウス工業株式会社（以下 大...",
     "content_word_count": 189,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -2109,7 +2237,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.hydro.com/en/global/investors/news-subscription/",
     "source_type": "official",
@@ -2127,7 +2255,7 @@
     "content_excerpt": "Alunorte reduces alumina production on natural gas supply disruptions Alunorte has been informed of disruptions to natural gas availability by its supplier, CELBA, part of the New Fortress Group. CELBA also owns the gas terminal infrastructure in Barcarena, Brazil. Alunorte has consequently reduced alumina production to 50 percent. The liquefied natural gas (LNG) to Alunorte is delivered via a floating storage and regasification unit (FSRU) and import terminal in Barcarena. In response to the notification from the supplier of disruptions to the natural gas availability affecting Alunorte, the refinery has implemented contingency measures to mitigate operational impacts. Measures include purchasing spot gas volumes, requesting direct access to the Barcarena LNG receiving and regasification...",
     "content_word_count": 265,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Hydro"
     ],
@@ -2215,7 +2343,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.hydro.com/en/global/media/news/",
     "source_type": "official",
@@ -2233,7 +2361,7 @@
     "content_excerpt": "Hydro brings high-recycled aluminium to General Motors EV with Hydro CIRCAL General Motors’ Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy composed of at least 75 percent post‑consumer scrap produced at Hydro’s newest U.S. recycling facility in Cassopolis, Michigan. The 2026 Cadillac OPTIQ with Hydro CIRCAL recycled aluminium. (Photo: General Motors) Hydro, automotive supplier Shape Corp. and General Motors are demonstrating how aluminium from end-of-life products can be recycled and returned to new automotive applications, supporting increased circularity in the mobility sector. The collaboration marks one of the first U.S. implementations of Hydro CIRCAL in a structural, safety‑critical automotive application. “By bringing recycled a...",
     "content_word_count": 490,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Hydro"
     ],
@@ -2288,7 +2416,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.maxongroup.com/en/news-and-events/news",
     "source_type": "official",
@@ -2306,7 +2434,7 @@
     "content_excerpt": "maxon acquires strategic minority stake in Synapticon The Synapticon Headquarter in Schönaich near Stuttgart, Germany Download Contact us Share current page The Swiss maxon Group is expanding its expertise in the field of motion control through a strategic partnership with the German company Synapticon. The goal of the collaboration is the joint development of high-performance drive solutions with integrated functional safety, based on optimally combined components from both companies. As part of this partnership, the maxon Group has acquired a minority stake in Synapticon. The company, based in Baden-Württemberg, Germany, is a leading provider of intelligent motion control solutions with integrated, certified safety functions. Together, the partners are building a comprehensive portfolio...",
     "content_word_count": 605,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "maxon group"
     ],
@@ -2374,7 +2502,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/investor",
     "source_type": "official",
@@ -2392,7 +2520,7 @@
     "content_excerpt": "Company Announcement No. 45/ 2026 Interim Report Second Quarter 2026 Vestas Wind Systems A/S Hedeager 42, 8200 Aarhus N, Denmark Company Reg. No.: 10403782 Wind. It means the world to us.TM Contents Summary ............................................................................................................................................................................ 3 Key figures ......................................................................................................................................................................... 4 Financial and operational performance .......................................................................................................................... 6 Sustainability performance ...............................................",
     "content_word_count": 10490,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
+    "content_fetched_at": "2026-09-14T05:18:18Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -2434,221 +2562,6 @@
     ]
   },
   {
-    "target_no": 9,
-    "company": "Albemarle",
-    "title": "2025 Proxy Statement of 2024, PDF file, (opens in new window)",
-    "url": "https://s201.q4cdn.com/960975307/files/doc_financials/2024/ar/ALBEMARLE-CORP_2025_Proxy_Statement_-for-website.pdf",
-    "source": "Albemarle - Annual Reports / Annual Reports",
-    "published_at": null,
-    "published_month": "",
-    "published_at_source": "",
-    "published_at_precision": "none",
-    "published_at_status": "unknown",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [],
-    "collected_at": "2026-09-14T04:29:43Z",
-    "collector": "official_page",
-    "query": "https://investors.albemarle.com/financials/annual-reports/default.aspx",
-    "source_type": "official",
-    "source_kind": "financial_report",
-    "is_press_release": false,
-    "source_label_ko": "공식출처",
-    "source_priority": 19,
-    "official_source_url": "https://investors.albemarle.com/financials/annual-reports/default.aspx",
-    "source_direct_url": "https://s201.q4cdn.com/960975307/files/doc_financials/2024/ar/ALBEMARLE-CORP_2025_Proxy_Statement_-for-website.pdf",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Dear Fellow Shareholders,\nAs a purpose-driven and values-led global organization, Albemarle is committed to maintaining\nstrong financial and operational discipline to deliver long-term shareholder value. The markets we serve\nhave a bright future and Albemarle has leading positions in energy storage battery solutions and bromine\nand lithium specialties. As we reflect upon 2024, we are pleased with how we proactively responded to\nongoing industry headwinds, resulting in solid operating performance while preserving our long-term\ncompetitiveness.\nWe would like to highlight several ways the Board and executive management team have been\nworking on your behalf this past year.\nMaintaining Industry Leadership and Enhancing Value Creation\nIn 2024, due to lower lithium pricing, we initiated a comprehensive, strategic review of our cost\nand operating structure and, as a result, implemented these actions:\n•\n•\n•\n•\nTransitioned the Company’s operating structure from two core global business units – Energy\nStorage and Specialties – to a fully integrated, functional model designed to increase agility,\ndeliver significant cost savings and maintain long-term competitiveness.\nLaunched a cost reduction program, achieving more than 50% of our $300 to $400 million cost\nand productivity improvement target by the end of 2024.\nReduced capital expenses by more than $450 million year-over-year and plan to significantly\nreduce further in 2025, focusing on health, safety, environmental and site maintenance and a\nphased approach to maintain our world-class resource base.\nOptimized our network by halting construction at Kemerton Trains 3 and 4 and placing\nKemerton Train 2 into care and maintenance. In early 2025, we also announced placing our\nChengdu lithium conversion facility into care and maintenance by mid-2025 and shifting a\nportion of our Qinzhou production from hydroxide to carbonate in response to shifting market\ndynamics.\nStrong Governance and Shareholder Engagement\nAlbemarle's seasoned Board of Directors and executive management team possess substantial\nindustry experience, including navigating cyclical economic conditions, geopolitics and regulatory\ndynamics. Our governance practices are robust, ensuring that our pay-for-performance and shareholder-\naligned pay philosophy strongly correlates with total shareholder return and overall shareholder\nexperience.\nThe Board believes that understanding our shareholders’ views and perspectives is an essential\npart of our commitment to continuously improving our corporate governance practices and enabling\nAlbemarle’s long-term success. In 2024, our investor relations team engaged with more than 245\nshareholders, including outreach on Annual Meeting matters to shareholders of approximately 65% of our\noutstanding shares. We use feedback from these meetings to inform our sustainability and human capital\nefforts, as well as governance and compensation programs. Reflecting our commitment to reward\nshareholders, Albemarle has raised its dividend for 30 consecutive years.\nPeople and Planet Stewardship\nThe Board and its Sustainability, Safety & Public Policy Committee continue to oversee\nAlbemarle’s efforts to reduce our environmental impact and we remain on track to achieve sustainability\ngoals for greenhouse gas emissions and water. We’re also focused on actively engaging with the\ncommunities where we live and work and responsible sourcing.\nSince the inception of the Albemarle Foundation in 2007, we’ve contributed nearly $70 million to\nour communities and our global employees regularly engage with local stakeholders to find ways to build\na more resilient world. This past year, we earned a gold medal from EcoVadis, the largest global\nsustainability ratings provider. Its annual evaluation of our operational sustainability practices placed us in\nthe top 5% of all companies that were assessed. In addition, TIME magazine named Albemarle one of the\nWorld’s Best Companies, recognizing employee satisfaction, revenue growth and sustainability.\nWe are confident that Albemarle is well positioned for sustained success and we remain\ncommitted to delivering long-term shareholder value. As always, we thank you for your continued\ninvestment in Albemarle and we look forward to sharing updates about our progress and hearing your\nfeedback throughout the coming year. We encourage you to review this year’s Proxy Statement and 2024\nAnnual Report in detail and vote your shares for our Annual Meeting on May 6, 2025.\nSincerely,\nJ. Kent Masters, Jr. James J. O’Brien\nChairman and CEO Lead Independent Director\nNOTICE OF ANNUAL MEETING OF SHAREHOLDERS\nDate and Time Location\nTuesday, May 6, 2025 Albemarle's corporate\nheadquarters located at:\n7:30 AM (Eastern)\n4250 Congress Street\nCharlotte, NC 28209\nWho May Vote\nShareholders of record at\nthe close of business on\nWednesday, March 12,\n2025\nAGENDA\n1\n2\n3\n4\nElection of the ten nominees named in the\nProxy Statement to serve as directors for the\nensuing year\nAdvisory vote to approve the compensation of\nour named executive officers\nRatification of the appointment of\nPricewaterhouseCoopers LLP as our\nindependent registered public accounting firm\nfor year ending December 31, 2025\nShareholder proposal regarding simple majority\nvote, if properly presented\nBoard Vote Recommendation\n\"FOR\" each director nominee\n\"FOR\"\n\"FOR\"\n\"AGAINST\"\nFor Further Details\nPage 6\nPage 29\nPage 81\nPage 84\nShareholders will take action upon any other business properly brought before the Annual\nMeeting or any adjournments or postponements thereof.\nTo ensure your vote is counted, we encourage you to vote your shares promptly, regardless of\nwhether you expect to attend the Annual Meeting. Voting instructions are provided on the Notice of\nInternet Availability of Proxy Materials, your proxy card or on the voting instruction form provided by your\nbroker. Brokers are not permitted to vote on certain proposals, and may not vote on any of the proposals,\nunless you provide voting instructions. Voting your shares will help to ensure that your interests are\nrepresented at the meeting.\nIf you are present at the Annual Meeting, you may vote in person even if you already voted your\nproxy by the Internet, telephone, or mail. Seating at the Annual Meeting will be on a first-come basis.\nBy Order of the Board of Directors\nStacy G. Grant\nSenior Vice President, General Counsel\nand Corporate Secretary\nMarch 27, 2025\nImportant Notice Regarding the Availability of Proxy Materials for the 2025 Annual Meeting of Shareholders to Be\nHeld on May 6, 2025: Our 2025 Proxy Statement and Annual Report for the year ended December 31, 2024 are\navailable free of charge on our website at investors.albemarle.com/financials/annual-reports.\nTABLE OF CONTENTS\nPROXY STATEMENT SUMMARY 1 Compensation Discussion and Analysis\nPROPOSAL 1 – ELECTION OF DIRECTORS\nSummary of Director Nominee\nQualifications, Experience and\nBackground\nDirector Nominees\nCorporate Governance\nProcess for Selecting Directors\nDirector Candidate Recommendations\nand Nominations by Shareholders\nDirector Independence\nDirector Continuing Education\nDirector Retirement Policy\nAttendance at Annual Meeting\nBoard Meetings\n6\n7\n8\n13\n13\n14\n14\n15\n15\n15\n15\nLetter from the Exec Compensation &\nTalent Development Committee\n2024 Named Executive Officers\n2024 Compensation Highlights\nShareholder Engagement\nPerformance and Pay Alignment\nNavigating the CD&A\nExecutive Compensation Framework\nExecutive Compensation Management\n2024 Compensation Decisions and\nOutcomes\nOther Compensation-Related Policies\nCompensation Committee Report\nMeetings of Non-Employee Directors 15 Compensation Tables and Other Information\nBoard and Committee Evaluations\nBoard Leadership Structure\nRisk Oversight\nSustainability Oversight\nHuman Capital Management\nCybersecurity Oversight\nCommittees of the Board of Directors\nCertain Relationships and Related\nTransactions\nDirector Compensation\n16\n16\n20\n23\n24\nSummary Compensation Table\nGrants of Plan-Based Awards\nOutstanding Equity Awards and Fiscal\nYear-End\nOption Exercises and Stock Vested\nRetirement Benefits\nPotential Payments Upon Termination\nEquity Compensation Plan Information\nCEO Pay Ratio\nSEC Disclosure on Pay Versus\nPerformance\nPROPOSAL 3 – RATIFICATION OF\nAnnual Compensation 24 APPOINTMENT OF INDEPENDENT\nREGISTERED PUBLIC ACCOUNTING FIRM\nDeferred Compensation 25 Fees Billed by PwC\nOther Benefits and Perquisites 25 Audit & Finance Committee Pre-\nApproval Policy\nDirector Share Ownership Guidelines 27 Audit & Finance Committee Report\nDirector Compensation Table 26 PROPOSAL 4 – SHAREHOLDER PROPOSAL\nShare Ownership 27 Q&As About this Proxy Statement and the\nAnnual Meeting\nPrincipal Shareholders 27 Shareholder Proposals\nDirectors and Executive Officers 28 Other Matters\nDelinquent Section 16(a) Reports 28 Important Notice Regarding the Internet\nAvailability of Proxy Materials\nPROPOSAL 2 – ADVISORY RESOLUTION 29 Summary of Defined Terms\nAPPROVING EXECUTIVE COMPENSATION\ni\n30\n30\n31\n31\n32\n35\n38\n38\n41\n46\n56\n59\n60\n60\n63\n66\n67\n68\n69\n75\n75\n77\n81\n81\n81\n83\n84\n86\n93\n94\n94\n95\nPROXY STATEMENT SUMMARY\nThis summary highlights information contained elsewhere in this Proxy Statement. This summary\ndoes not contain all of the information that you should consider and you should read the entire Proxy\nStatement carefully before voting. For ease of reference, certain terms are defined in the Summary of\nDefined Terms included on page 95 of this Proxy Statement. For more complete information regarding\nAlbemarle’s 2024 performance, please review our Annual Report.\nAbout Albemarle Corporation\nWe are committed to building a more resilient world:\nAlbemarle leads the world in transforming essential resources into critical ingredients for mobility,\nenergy, connectivity and health. We partner to pioneer new ways to move, power, connect and protect\nwith people and planet in mind. A reliable and high-quality global supply of lithium and bromine allows us\nto deliver advanced solutions for our customers.\nWe have a clear strategy to achieve profitable growth and enhance sustainability:\nAlbemarle’s competitive advantages lie in its world-class resources, leading process chemistry,\nhigh-impact innovation, customer-centricity and commitment to sustainability, all driven by a vertically\nintegrated business model and a focus on transforming essential resources into critical ingredients for\nmodern living with people and planet in mind. The end markets that we serve have outsized long-term\ngrowth driven by megatrends like the energy transition, electrification and AI, population growth and\nenvironmental preservation. We continue to build upon our existing green solutions portfolio and our\nongoing mission to provide innovative, yet commercially viable, clean energy products and services to the\nmarketplace to contribute to our sustainability-based revenue.\n1\n2024 Financial Highlights\nOur full year results show continued strong volumetric growth with full-year 2024 net sales of $5.4\nbillion including Energy Storage sales volumes up 26%. Our full year cash from operations of $702 million\nrepresented more than 60% operating cash flow conversion, driven primarily by working capital\nmanagement. The Company achieved over 50% of our $300 to $400 million cost and productivity\nimprovement target by the end of 2024.\nShareholder Engagement\nEffective corporate governance includes regular, constructive conversations with our shareholders\nto proactively seek shareholder insights, which enable us to consider a broad range of perspectives. In\n2024, Albemarle continued this long-standing practice. Executives and team members from our investor\nrelations, sustainability, human resources and legal teams routinely engaged with shareholders on a\nvariety of topics, including our strategy and value proposition, financial performance, market outlook,\ncorporate governance, executive compensation, human capital management, culture and sustainability.\nWhen appropriate, directors also met with shareholders. We spoke with representatives from our top\ninstitutional investors, mutual funds, public pension funds and socially responsible funds to hear their\nviews on these important topics. Overall, investors expressed strong support for Albemarle's governance\npractices. We believe our regular shareholder engagement was productive and provided an open\nexchange of ideas and perspectives for both Albemarle and our shareholders. For more formation, see\n“Shareholder Engagement ” beginning on page 32 and “2024 Compensation Highlights - Advisory\nShareholder Say-on-Pay Vote” beginning on page 31 of this Proxy Statement.\nProposal 1 – Election of Directors\nAlbemarle has adopted robust corporate governance policies that facilitate strong Board\nleadership and strategic deliberation, effective oversight practices and transparency. Highlights of our\ngovernance practices include:\nBoard of Directors\n• Annual election of Directors\n• Independent Board, except CEO\n• 100% independent standing Board committees\n• Continuing director education\n• Attendance of at least 86% of Board and applicable\nCommittee meetings held in 2024 by each Director\n• Annual Board and Committee evaluation process\n• Clawback policies applicable to annual and long-term\nincentive compensation\n• No shareholder rights plan (poison pill)\n• Robust shareholder engagement program\n• Board oversight of initiatives reported in Annual\nSustainability Report\n• Risk oversight by Board and Committees\n• Resignation policy for Directors not receiving a majority vote\n• Lead Independent Director with substantive responsibilities\n• Regular executive sessions of independent Directors\n• Director retirement requirement at age 72\n• Longstanding commitment to sustainability and corporate\nresponsibility\n• Authority to retain independent advisors\n• Anti-hedging and pledging policies for Directors and\nemployees\n• Annual Say-on-Pay vote\n• Share ownership guidelines for Directors and executives\n• Quarterly mandatory IT security training for employees as part\nof comprehensive Cybersecurity Program\n2\nOur Board recommends a vote FOR each of the 10 nominees listed below. All of the nominees\nare currently serving as Directors.\nStanding Committee Membership\nDirector Audit & Compensation Nominating & Capital Sustainability,\nName Age Independent & Talent Safety & Public\nSince Finance Governance Investment\nM. Lauren Brlas\nRalf H. Cramer\nJ. Kent Masters, Jr.\n(Chair)\nGlenda J. Minor\nJames J. O’Brien\n(Lead Independent\nDirector)\nDiarmuid B. O’Connell\nDean L. Seavers\nGerald A. Steiner\nHolly A. Van Deursen\nAlejandro D. Wolff\n(1) Chair since 2020\n67\n59\n64\n68\n70\n61\n64\n64\n66\n68\nYes 2017\nYes 2022\nNo 2015(1)\nYes 2019\nYes 2012(2)\nYes\nYes\nYes\nYes\nYes\n2018\n2018\n2013\n2019\n2015\nDevelopment\nC\n•\n•\n•\n•\n•\n•\n•\nC\nPolicy\n•\n•\n•\nC\n•\nC\n• C\n•\n•\n(2) Lead Independent Director since 2020\nDirector Independence Director Age Director Tenure\n6\n5\n4\n3\n2\n1\n0\nU 6 6\n6\n5\n4\n3\n2\n1\n0\n0 -3 4 -6 7 -9 1 0\nI n d e p e n d e n t n 0 -6 6 -7 +\nd y y y y\ne r 5 0 e e e e\na a a\nN o t I n d e p e n dent 6 rs rs rs a rs\n0\nIndependent: 9 of 10 Average age: 65.1 Average tenure: 8.2 years\n3\nProposal 2 – Advisory Vote on Executive Compensation\nExecutive Compensation Highlights\nOur executive compensation program is designed to attract and retain highly-qualified executives,\nmotivate our executives to achieve our overall business objectives and align our executives’ interests with\nthose of our shareholders. Our compensation philosophy rewards executives for achieving our financial\nand stewardship metrics and building long-term value for our shareholders and other stakeholders. We\nfollow several other principles when designing our executive compensation program including: 1) pay-for-\nperformance, 2) pay benchmarking, 3) aligning interests with our stakeholders and 4) avoiding poor\ngovernance policies. For more information see “Executive Compensation Philosophy and Principles” on\npage 38 of this Proxy Statement.\nIn line with our compensation principles, our NEOs (as defined on page 31 of this Proxy\nStatement) are primarily rewarded through performance-based cash and equity incentive awards. This is\nintended to both encourage and recognize strong Company performance and stock price growth, further\ndriving shareholder value. In 2024, 90% of the target compensation of our Chief Executive Officer and an\naverage of 79% of target compensation of our other current NEOs was variable and subject to Company\nand individual performance. Target compensation is defined as target annual base salary + target bonus\n+ target equity based on the stock closing price at the grant date for RSUs and PSUs and the Black\nScholes value for Stock Options.\nIn setting compensation for 2024, the Company's Executive Compensation & Talent Development\nCommittee did not increase the CEO's target pay and raised target pay only for the Company's recently\nappointed Chief Financial Officer. In addition, the Executive Compensation & Talent Development\nCommittee exercised negative discretion for the 2024 annual incentive plan payout, lowering the overall\nEnterprise payout by 34 percentage points (from 141% of target to 107% of target).\nAlbemarle's incentive plans convey a balanced focus among growth, efficiency and stewardship.\nThe 2024 executive compensation program provided short-term annual cash bonuses designed to drive\nadjusted EBITDA and adjusted Cash Flow from Operations and long-term performance-based equity\nawards designed to drive total stockholder return and return on invested capital, all as described in\nfurther detail below under “Compensation Discussion and Analysis” beginning on page 30 of this Proxy\nStatement.\nOur Board recommends a vote FOR the advisory vote to approve the compensation of our NEOs.\n4\nProposal 3 – Ratification of the Appointment of PwC\nThe Audit & Finance Committee has appointed PricewaterhouseCoopers LLP (“PwC”) to serve as\nAlbemarle's independent registered public accounting firm for 2025 and this appointment is being\nsubmitted to our shareholders for ratification. The Audit & Finance Committee has reviewed the\nindependence, qualifications and performance of PwC and has determined that their retention is in the\nbest interests of Albemarle and its shareholders.\nOur Board recommends a vote FOR ratification of the appointment of PwC as our independent\nregistered public accounting firm for 2025.\nProposal 4 – Shareholder Proposal\nA shareholder has submitted a proposal on simple majority vote. The Board has carefully\nconsidered this proposal and concluded that its adoption is unnecessary in light of actions taken by the\nBoard and shareholders in 2018 to remove substantially all supermajority provisions from the Charter and\nBylaws.\nAt the 2018 Annual Meeting, shareholders overwhelmingly supported a proposal to amend the\nCompany’s Charter to adopt majority vote standards for extraordinary transactions and most Charter\namendments. This Charter amendment maintained the supermajority shareholder vote provisions for the\napproval of “affiliated transactions” and amendments to the “affiliated transactions” provision of the\nCharter.\nOur Board views the affiliated transaction provision in its Charter as an important shareholder\nprotection promoting shareholder rights and believes it is in the best interest of the Company's\nshareholders to keep this supermajority provision in place. As such, our Board recommends a vote\nAGAINST this shareholder proposal.\nAs such, our Board recommends a vote AGAINST this shareholder proposal.\n5\nPROPOSAL 1 – ELECTION OF DIRECTORS\nThe Board of Directors, upon recommendation of the Nominating & Governance Committee,\nunanimously approved the persons named below as nominees for election to the Board of Directors at\nthe Annual Meeting. Each of the nominees is currently a member of the Board of Directors. Each of the\nnominees (i) has been nominated for election at the Annual Meeting to hold office until the 2026 Annual\nMeeting of shareholders or, if earlier, the election or appointment of their successor, and (ii) has\nconsented to being named as such and to serve as such if elected. The proxies submitted for the Annual\nMeeting cannot be voted for more than ten nominees.\nProxies will be voted “FOR” the election of the persons named below (or if for any reason such\npersons are unavailable, for such substitutes as the Board of Directors may designate) as Directors for\nthe ensuing year. The Board of Directors has no reason to believe that any of the nominees will be\nunavailable. Each nominee who is elected will serve as a Director until his or her successor is elected at\nour 2026 Annual Meeting of shareholders or until his or her earlier resignation, replacement, or removal.\nEach nominee is listed below with information as of the Record Date (March 12, 2025) concerning\nage, principal occupation, employment, and directorships during the past five years and positions with the\nCompany, if applicable, and the year in which he or she first became a Director of the Company. Also set\nforth below is a brief discussion of the specific experience, qualifications, attributes, or skills that led to his\nor her nomination as a Director, in light of the Company’s business and governance structure.\nThe following table highlights the qualifications and experience of each member of our Board that\ncontributed to the Board’s determination that such individual is uniquely qualified to serve on the Board.\nWhile designation on this table indicates competency or experience in the relevant area, this high-level\nsummary is not intended to be an exhaustive list of each nominee’s skills or contributions.\nElection of each Director requires the affirmative vote of a majority of the votes cast by the holders\nof shares represented at the Annual Meeting and entitled to vote (which means that the number of shares\nvoted “FOR” a director must exceed the number of shares voted “AGAINST” a director). In uncontested\nelections, any Director who does not receive a majority of the votes cast must tender his or her\nresignation to the Board of Directors. The Nominating & Governance Committee will make a\nrecommendation to the Board of Directors on whether or not to accept the tendered resignation.\nAbstentions will have no effect on any Director's election.\nTHE BOARD OF DIRECTORS RECOMMENDS THAT SHAREHOLDERS\nVOTE “FOR” EACH OF THE DIRECTOR NOMINEES SET FORTH IN THIS\nPROXY STATEMENT.\n6\nSummary of Director Nominee Qualifications, Experience and Background\nBrlas Cramer Masters Minor O'Brien O'Connell Seavers Steiner Van Wolff\nKEY COMPETENCIES\nPublic Company Leadership Experience\nP&L Experience\nRelevant Industry Experience\nR&D / Innovation Experience\nManufacturing / Operations Experience\nGlobal / Emerging Markets Experience\nSupply Chain and Logistics Experience\nIT / Cybersecurity / Technology Capability\nFinancial Literacy\nM&A Experience\nRisk Management\nPublic Company Compliance / Governance\nStrategy Development\nPublic Company Executive Compensation\nLeadership Development / Succession\nPlanning\nGeopolitics / Government Affairs\nNatural Resource Management /\nEnvironment\nSafety / Health\nCOMPLIANCE\nIndependent Director\nAudit Committee Financial Expert\nCurrent Public Company Boards (including\nALB)\nCurrent Public Company Audit Committees\n(including ALB)\nDEMOGRAPHICS\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nY\n3\n2\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n1\n1\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nN\nN\n1\n—\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nY\n3\n3\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nY\n2\n1\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n3\n2\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n2\n—\nDeursen\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n1\n1\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n3\n1\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nn\nY\nN\n2\n—\nAge 67 59 64 68 70 61 64 64 66 68\nTenure 8 3 10 6 13 7 7 12 6 10\nBOARD STANDING COMMITTEES (Chair, Member)\nAudit & Finance C M M M M\nCapital Investment M C M\nExecutive Compensation & Talent Dev. M M M C\nSustainability, Safety & Public Policy M M C\nNominating & Governance M C M M\nLead Independent Director Y\n7\nDirector Nominees\nIndependent\nAge: 67\nDirector Sin",
-    "content_source_url": "https://s201.q4cdn.com/960975307/files/doc_financials/2024/ar/ALBEMARLE-CORP_2025_Proxy_Statement_-for-website.pdf",
-    "content_excerpt": "Dear Fellow Shareholders, As a purpose-driven and values-led global organization, Albemarle is committed to maintaining strong financial and operational discipline to deliver long-term shareholder value. The markets we serve have a bright future and Albemarle has leading positions in energy storage battery solutions and bromine and lithium specialties. As we reflect upon 2024, we are pleased with how we proactively responded to ongoing industry headwinds, resulting in solid operating performance while preserving our long-term competitiveness. We would like to highlight several ways the Board and executive management team have been working on your behalf this past year. Maintaining Industry Leadership and Enhancing Value Creation In 2024, due to lower lithium pricing, we initiated a compreh...",
-    "content_word_count": 12514,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
-    "query_aliases": [
-      "Albemarle Corporation"
-    ],
-    "industry": "이차전지",
-    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-    "target_technology_en": "cathode material lithium hydroxide/carbonate",
-    "technology_group": "lithium_cathode_materials",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
-    "pdf_company": "Albemarle",
-    "pdf_row_no": 57,
-    "pdf_sequence": "42",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "unknown",
-    "date_placement": "date_pending",
-    "date_note": "게시일 근거가 전혀 없음",
-    "investment_signal_no": 1,
-    "investment_signal_id": "supply_chain_geopolitical_risk",
-    "investment_signal_label": "공급망·지정학 리스크 대응",
-    "investment_signal_label_en": "Supply Chain & Geopolitical Risk",
-    "investment_signal_description": "특정지역 의존도 축소·공급망 다변화·규제 리스크 대응 등",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "precursor",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "공급망 및 운영 구조 최적화 조치를 통해 지정학 및 시장 변화에 대응하고 있음",
-    "ai_summary_ko": "공급망 및 운영 효율성 제고 - 앨버말은 시장 변화에 대응하여 케머튼 공장 건설 중단 및 청두 리튬 전환 시설의 가동 중단(care and maintenance)을 발표하고 칭저우 생산라인을 조정함",
-    "ai_summary_en": "Supply chain and operational adjustment - Albemarle optimized its network by halting construction at Kemerton Trains, placing the Chengdu facility into care and maintenance, and shifting a portion of Qinzhou production from hydroxide to carbonate.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "d79de0028a870879c3a542a3",
-    "ai_evidence_quotes": [
-      "Optimized our network by halting construction at Kemerton Trains 3 and 4 and placing Kemerton Train 2 into care and maintenance. In early 2025, we also announced placing our Chengdu lithium conversion facility into care and maintenance by mid-2025 and shifting a portion of our Qinzhou production from hydroxide to carbonate in response to shifting market dynamics."
-    ]
-  },
-  {
-    "target_no": 44,
-    "company": "Umicore",
-    "title": "annual report 2023 lres",
-    "url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "source": "Umicore - Annual Report / Annual Reports",
-    "published_at": null,
-    "published_month": "",
-    "published_at_source": "",
-    "published_at_precision": "none",
-    "published_at_status": "unknown",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [],
-    "collected_at": "2026-09-14T04:29:43Z",
-    "collector": "official_page",
-    "query": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
-    "source_type": "official",
-    "source_kind": "financial_report",
-    "is_press_release": false,
-    "source_label_ko": "공식출처",
-    "source_priority": 19,
-    "official_source_url": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
-    "source_direct_url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Driving\ntransformation\nfor the future\nUmicore Integrated Annual Report 2023\nDisclaimer\nThis report contains forward-looking information that involves\nrisks and uncertainties, including statements about Umicore’s\nplans, objectives, expectations and intentions. Should one or\nmore of these risks, uncertainties or contingencies materialize,\nor should any underlying assumptions prove incorrect, actual\nresults could vary materially from those anticipated, expected,\nestimated or projected. Readers are cautioned that forward-looking\nstatements include known and unknown risks and are subject to\nsignificant business, economic and competitive uncertainties and\ncontingencies, many of which are beyond the control of Umicore.\nAs a result, neither Umicore nor any other person assumes any\nresponsibility for the accuracy of these forward-looking statements.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nDriving transformation for the future\nFrom strategic plan to execution\n4\n5\n9\n13\n16\n23\n31\n33\n34\n35\nPerformance\nHow we create value\nKey performance figures\nFinancial\nOperations\nInnovation\nEnvironment\n39\n40\n41\n42\n69\n85\n98\nEmployees 118\nSociety 143\nLeadership 165\nGovernance\nSupervisory Board\nManagement Board\nLeadership roles\nManagement approach\nRisks & opportunities\n166\n167\n172\n177\n178\n182\nUmicore Integrated Annual Report 2023 3\nStatements 196\nFinancial statements, F1-F41\nEnvironmental statements, E1-E10\nSocial statements, S1-S7\nGovernance statements, G1-G13\n197\n272\n282\n295\nAbout this report 312\nAbout this report\nGRI/SASB index\nTCFD index\nAssurance reports\nGlossary\n313\n314\n320\n321\n331\nThe Umicore integrated annual report offers a comprehensive and\nintegrated view of our performance for 2023. This report is produced\nin accordance to the GRI Standards. For more, please see About this\nreport. Definitions for the terms used throughout this report can be\nfound in the Glossary for the report.\nAccess all items in this report, in English and in Dutch, online:\nANNUALREPORT.UMICORE.COM\nContents\nAt a glance\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\n5\n9\n13\n16\n23\n31\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nCEO & Chair review – Umicore Integrated Annual Report 2023 5\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nCEO & Chair\nreview\nChair Thomas Leysen and CEO Mathias Miedreich at\nUmicore’s Headquarters in Brussels, Belgium\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nUmicore’s 2023 results demonstrated our ability to deliver\nstrong cash flows and margins in the face of challenging\nmarket conditions. Our Catalysis and Recycling Business\nGroups showed a very strong performance with a ROCE of\nrespectively 28.8% and 67.9%, whilst the Energy & Surface\nTechnologies Business Group saw increased investments in\norder to ramp up our capacities. This currently weighs down\nthe ROCE, which came in at 4%. We continued to invest\n€ 281 million in R&D, including major projects such as\nbattery recycling and solid-state battery materials.\nIn Rechargeable Battery Materials we have\nbuilt a sizeable and diversified order book\non three continents, safeguarded by solid\ncontractual terms. We were also able to\nsecure substantial government grants of\nclose to € 1 billion for our expansions in\nEurope and North America. With these\ngrants and an optimized capacity ramp-up\nphasing, we could reduce our anticipated\nnet capital expenditure needed to execute\nour order book and remain well within\nour self-financing capability. As we move\ninto 2024, our teams are now focusing\non executing this ambitious investment\nprogram.\nIn order to provide more insight on\nour high-growth, but capital intensive\nBattery Materials business as well as on\nthe performance of our attractive niche\nbusinesses in Specialty Materials, we have\ndecided to report these two businesses\nseparately as of June 2024.\nBusiness highlights\nRevenues for the Group decreased in 2023,\nmainly impacted by lower PGM (Platinum\nGroup Metal) prices. Our profitability\nremained high with a 25% EBITDA margin\ndemonstrating Umicore’s ability to mitigate\nthe headwinds of declining PGM prices as\nwell as reduced volumes in some of our\nend markets. In particular, we generated\ngood cash flows in 2023 through strict\nworking capital management in Catalysis\nand Recycling. This resulted in a cash\nconversion of 125% from EBITDA to\noperating cash flow in 2023 compared with\n73% in the previous year.\nCEO & Chair review – Umicore Integrated Annual Report 2023 6\nChair Thomas Leysen and CEO Mathias Miedreich at Umicore’s headquarters in Brussels, Belgium\nWe also worked intensively in 2023 on ways\nto further boost and accelerate EBITDA and\ncashflow generation in the medium- to As we move into 2024,\nlong- term through our Efficiency-for-Growth\nour teams are now focusing\nprogram, while reducing exposure to\nfuture PGM price volatility by increasing our on execution excellence,\nstrategic metal hedging. remaining firmly committed\nCapital expenditure amounted to € 857 to delivering on our targets.\nmillion, up 82% year-on-year, mainly driven\nby investments to execute the contracts\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nAerial view of our Precious Metals Refining site in Hoboken, Belgium\nsecured in the order book for Rechargeable\nBattery Materials. Operational free cash\nflow remained strong at € 332 million,\ndespite the significantly increased capital\nexpenditure. Net financial debt slightly\nincreased to € 1.3 billion resulting in\na leverage ratio of 1.30x LTM adjusted\nEBITDA.\nCatalysis delivered record results for\nthe third consecutive year. Adjusted\nEBITDA amounted to € 436 million, up\n4% compared with the previous year.\nThe business group’s performance was\nmostly driven by higher sales volumes and\nrevenues in Automotive Catalysts reflecting\na rebound in Chinese heavy-duty diesel\nproduction as well as year-on-year growth\nin global light-duty internal combustion\nengine (ICE) production. In addition,\nAutomotive Catalysts made further strong\nprogress on efficiency improvements.\nCatalysis generated substantial free cash\nflow and recorded an adjusted EBITDA\nmargin of 24.2%. We see this business\ngroup as continuing to generate attractive\nreturns even as the ICE cars will slowly\ndecline. Furthermore, it remains a useful\nportfolio hedge in case the transition\nelectric vehicles were to somewhat slower\nthan anticipated. It also constitutes a\nreservoir of talent for the other businesses.\nCEO & Chair review – Umicore Integrated Annual Report 2023 7\nUmicore marked several milestones in\n2023 and celebrated some anniversaries\n– 135 years of our Hoboken site in\nBelgium and 20 years of our site in\nHanau, Germany.\nRevenues for Energy & Surface\nTechnologies were below the level of\n2022. The decrease mainly results from\nlower revenues for Rechargeable Battery\nMaterials, which reflected the combined\nimpact of a lower non-recurring lithium\neffect and lower volumes for cathode\nactive materials from legacy contracts.\nAdjusted EBITDA amounted to € 259\nmillion, with a slight increase in earnings\nfor Rechargeable Battery Materials\nsupported by a substantial one-off related\nto lower costs from mass production test\nruns and valuation of battery production\nscraps. Cobalt & Specialty Materials\nreported, as expected, a substantial decline\nin earnings. This combined with the solid\nperformance of the Business Units Electro-\nOptic Materials and Metal Deposition\nSolutions resulted in an EBITDA margin of\n24.6% for the Business Group. In the years\nto come, we will continue to build on our\nstrong positions in the Specialty Materials\npart of this business while executing our\ninvestment program to secure our position\nas a leading global supplier of Battery\nMaterials.\nRecycling produced again very high\nreturns on invested capital. Although it\nwas below the exceptional performance\nof 2022, it was well above pre-2020 levels,\nthe year in which the rhodium price started\nto peak. Adjusted EBITDA amounted to\n€ 372 million, down 30%, reflecting a\ncontext of substantially declining PGM\nprices during 2023, as well as the impact\nof cost inflation mainly in the first half of\nthe year. These headwinds were partially\nmitigated by the strong performance\nof the Precious Metals Management\nBusiness Unit as well as strategic metal\nhedges. The introduction of an efficiency\nprogram, which going forward will result in\nincreased cost efficiencies to counteract the\ndecreased PGM price environment, played\nan important part in the 2023 performance.\nAlso the Jewelry and Industrial Metals\nBusiness Unit did well in this respect.\nStrategic milestones\nUmicore marked several milestones in\n2023 and celebrated some important\nanniversaries – 135 years of our Hoboken\nsite in Belgium and 20 years since the\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nacquisition of the former Degussa precious\nmetals business, headquartered in Hanau,\nGermany. This transformative acquisition\npropelled Umicore to a new level at the\ntime, just as we are now preparing the\nnext quantum leap for our Group.\nWe secured our North American strategy\nfor Rechargeable Battery Materials with\nthe start of construction of the plant in\nOntario, Canada, after securing a long-term\noff-take contract as well as significant\ngovernment funding for the project.\nThe joint venture backed by Umicore and\nVolkswagen Group-owned PowerCo –\nIONWAY – announced construction of\nits first cathode materials production\nplant in Nysa, Poland, adjacent to\nUmicore’s existing plant. The project also\nreceived financial support from the Polish\nGovernment.\nWe made significant headway in Fuel\nCells & Stationary Catalysts with the\ngroundbreaking ceremony on December\n1st, 2023 of a greenfield plant in Suzhou,\nChina. Due to be operational in early 2026,\nthis plant is set to be the world’s largest\nfuel cell catalyst production facility.\nThe Management Board has been further\nstrengthened with the appointments of\nVeerle Slenders, Executive Vice President\n(EVP) of Recycling, Geert Olbrechts Chief\nTechnology Officer & EVP Specialty Materials\nand Ana Fonseca Nordang our new EVP\nof People & Organization. We have also\ninstilled a mindset of Efficiency for Growth\nand continuous improvement throughout\nthe entire Group, which will stand us in\ngood stead in these challenging times.\nThe fatal accident which tragically occurred\nin our Hoboken plant in March 2023 brought\nhome again that we can never relent our\nfocus on safety. Our overall recordable\ninjuries showed a positive trajectory, but\nclearly our safety journey still has a way\nto go.\nNon-financial targets\nDuring the past year, we made good\nprogress in our decarbonization roadmap,\nwith 41% global renewable energy use\nnow compared with a 35% baseline in\n2021. In Europe, it is close to 60%, and\nwe are on track for our 2025 target of\n100% renewable energy use. We unveiled\nthe Umicore Climate Transition Plan\nunderlining our commitment to climate\naction, resilience and transparency. We\nalso remain committed to upholding the\nTen Principles of the United Nations Global\nCompact in the areas of Human Rights,\nLabor, Environment, and Anti-Corruption.\nIn this Integrated Annual Report, we\noutline our efforts towards implementing\nthese principles and how we contribute\nto the United Nations’ Sustainable\nDevelopment Goals. All this ensures the\nsustainable aspects of future growth.\nCEO & Chair review – Umicore Integrated Annual Report 2023 8\n20-years anniversary of Umicore Hanau, Germany\nConfidence in the future\nAs we embark on the next stage of our\njourney, we look ahead with confidence.\nUmicore has demonstrated in the past\ndecades that it could reinvent itself as\nnew opportunities and challenges arose.\nWe have unrivalled technological capabilities\nin each of our businesses, from advanced\nand proprietary catalysts to germanium\nsemiconductor wafers, from an absolutely\nunique set of metallurgical capabilities\nto next generation battery chemistry. We\nhave deep customer relationships with\nvirtually every automotive manufacturer in\nthe world, but are also a preferred supplier\nand business partner to many other high-\nend industries. And we have talented,\ncommitted and global teams which have\nshown courage, persistence and resilience.\nWhilst our major investment program in\nbattery materials will still take some time\nto generate its full potential, our other\nbusinesses will continue to generate the\ncashflows required to invest in our future\nand remunerate our shareholders.\nWe would like to thank our customers\nand business partners for continuing to\nplace their confidence in us, as well as our\ntalented colleagues for their continued\ndedication to our common purpose.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 9\nAbout us\nUmicore: the circular materials technology company\nReducing harmful vehicle emissions.\nGiving new life to used metals.\nPowering the cars of the future.\nUmicore is world a leader in circular materials\ntechnology and recycling, employing 11,948\npeople and spanning 29 countries over\nfive continents.\nUmicore’s operations are divided into business groups: Catalysis,\nEnergy & Surface Technologies and Recycling. Each business group\nis in turn comprised of several business units that serve different\nend markets, resulting in an overall diversified revenue and customer\nbase. Read more about it in Our complementary business groups.\nDrawing on its extensive expertise in the fields of chemistry,\nmaterial science and metallurgy, Umicore is a key enabler of\nthe mobility transformation and circularity of critical metals.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nMobility transformation\nWe lead the way in emission control catalysts for passenger\ncars and heavy-duty applications; a leading supplier of cathode\nactive materials for lithium-ion batteries used in electric vehicles;\na front-runner in battery recycling; and we are a leading\nsupplier of proton exchange membrane fuel cell catalysts used\nin the emerging hydrogen economy (in particular, focusing on\ntransportation applications).\nCircularity of critical metals\nWe operate one of the world’s most sophisticated precious\nmetals recycling facilities and our plants can recover 28 precious and\nnon-ferrous metals from - industrial residues, electronic scrap,\nbatteries, automotive and industrial catalysts and fuel cells. The\nrecovered materials are transformed into pure metals or new\nproducts. Umicore is also a pioneer in recycling batteries: its plant\nin Belgium has an annual capacity of 7,000 tonnes of lithium-ion\nbatteries and battery production scrap.\nAbout us – Umicore Integrated Annual Report 2023 10\nClosed-loop business model not only defines how we run\nour business and build our strategy but sets us apart from\nour competitors.\nAll our materials are customized and developed with processes that\naccommodate health and safety, recyclability, cost efficiency, waste\nreduction and energy efficiency, in our own facilities and throughout\nthe value chain.\nWe have made sustainability a priority in all we do. Our integrated\napproach to sustainability minimizes the impact of our industrial\noperations and our commitment to ethical and responsible sourcing\ndelivers value and distinguishes us from our competitors.\nThis positive impact enhances quality of life by reducing harmful\nvehicle emissions, giving new life to used metals and powering the\ncars of the future.\nOur success depends on balancing the economic, environmental and\nsocial impact of our operations, while looking to our highly skilled\npeople to uphold our values and mission.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 11\nMaterials for a better life\nMaterials are at the core of our daily lives, and are key for wealth\ncreation and, ultimately human progress.\nAt Umicore, we stand by our convictions of making materials that\nwill improve our quality of life and the health of our planet, while\ndelivering sustainable value to our stakeholders. That’s why we\nplace great emphasis on our closed-loop business model and, more\nparticularly, in the sound and efficient recycling of metal-related\nmaterials, making them vital for sustainable products and services.\nWe also actively invest in and pursue activities that have a positive\nimpact on society from reducing harmful vehicle emissions, giving\nnew life to used metals powering the clean cars of the future.\nWe want Umicore to lead the way in creating and\nproviding material-based solutions that live up to our\nmission of Materials for a better life.\nThe Umicore Way is the cornerstone of everything we do\nat Umicore. Our strategy sets out our business goals and growth\nambitions for the coming years, as well as our sustainability and\nbroad environmental, social and governance objectives. The Umicore\nWay outlines our values and the way in which we wish to achieve\nthese goals as well as our overall commitment to the principles\nof sustainable development. We believe that the broad values and\naspirations captured in this document should be applicable in all\ncontexts – in different regions, cultures and business situations.\nThe Umicore Way is not only for Umicore employees but also covers\nour relationships with all our stakeholders. The Umicore Way is\nsupplemented by detailed company codes and charters including the\nUmicore Code of Conduct, the 2020 Belgian Code on Corporate\nGovernance, the Umicore Corporate Governance Charter and\nthe Umicore Dealing Code.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 12\nOur values are vital to our success\nOpenness\nWe communicate openly, accurately and enthusiastically. We provide\nreliable and relevant information about our activities promptly and\nregularly while respecting commercial confidentiality. We consider\ninteraction important and welcome constructive dialogue with all\nour stakeholders.\nInnovation\nWe believe in continuously searching for improvement and that\ninnovation is the ultimate driver for long-term profitability and\ngrowth. We are open to new ideas and prepared to take\nconsidered risks.\nTeamwork\nWe encourage sharing of information across divisional, functional\nand geographical borders to make full use of all our knowledge\nand experience. By working together towards shared goals, our\nemployees are expected to derive pride, satisfaction and fun from\ntheir work.\nRespect\nWe show respect for each other and for cultures, customs and values\nin our dealings with employees and other stakeholders. We do\nnot compromise on occupational health and safety and act with\nresponsibility to the environment.\nCommitment\nWe believe in keeping our promises, adhering to high performance\nstandards and continuously searching for the best possible solutions.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nOur complementary business groups – Umicore Integrated Annual Report 2023 13\nOur complementary business groups\nComplementarity of Umicore’s activities continues to give us a true competitive edge\nOur operations are divided into three business\ngroups, each consisting of decentralized\nbusiness units that serve multiple end markets\n(automotive being the most sizeable). Within\nthese three business groups the focus is on areas\nin which Umicore not only adds value, but can\nexcel and is recognized as market leader by\nits customers.\nOur ambition is to be the preferred partner of our customers. We are\ncommitted to the growth of our businesses through the competence\nof our people, excellence in operations and technological innovation.\nWe have a unique portfolio of mutually reinforcing activities in\nwhich every Business Group, unit and department has an important\nrole to play in achieving our ambition to be the circular materials\ntechnology company.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAutomotive Catalysts\nLeading producer of emission control catalysts for gasoline and diesel\non-road and non-road applications, power generation and industrial\nprocesses to meet environmental standards around the world.\nFuel Cells & Stationary Catalysts\nLeading player in emissions control catalysts for industrial plants and\nshipping, and supplier of state-of-the-art fuel cell catalysts for zero\nemission mobility and green hydrogen production.\nPrecious Metals Chemistry\nExperts in metals-based catalysis for life-enhancing applications.\nEmission treatment technologies, the production of fine chemicals\nand advanced electronics – all are made possible with our\norganometallic technology know-how.\nOur complementary business groups – Umicore Integrated Annual Report 2023 14\nCobalt & Specialty Materials\nExperts in sourcing, production and distribution of cobalt and nickel\nproducts. Our materials are at the heart of everyday products such\nas batteries, tools, paints and tyres. Our recycling and refining\nprocesses, give new life to cobalt and other metals.\nElectro-Optic Materials\nLeading supplier of material solutions for the space, optics and\nelectronics sectors, including products for thermal imaging, wafers\nfor space solar cells, highbrightness LEDs and chemicals for\nfiber optics.\nMetal Deposition Solutions\nWorld leader in supplying products for (precious) metal-based\nelectroplating and PVD coating of surfaces in the nano and\nmicrometre range. The highest demand for our solutions comes from\nproducts in daily use or the solutions that enable their production in\nthe first place.\nRechargeable Battery Materials\nPioneer in battery materials and a leader in cathode material supplies\nfor rechargeable lithium-ion batteries to power electric vehicles,\ngiving them added range and performance.\nBattery Recycling Solutions\nLeader in closed-loop technology for batteries. We use proprietary\nhigh-quality recycling processes to recover all valuable metals in an\nenvironmentally sound manner. We offer a unique sustainable and\ncircular approach.\nJewelry & Industrial Metals\nExperts in developing products and processes based on precious\nmetals such as gold, silver and platinum. Our customers use\nthese materials to make fine jewelry, coins, high-purity glass and\nindustrial catalysts. We provide our customers with sustainabl",
-    "content_source_url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "content_excerpt": "Driving transformation for the future Umicore Integrated Annual Report 2023 Disclaimer This report contains forward-looking information that involves risks and uncertainties, including statements about Umicore’s plans, objectives, expectations and intentions. Should one or more of these risks, uncertainties or contingencies materialize, or should any underlying assumptions prove incorrect, actual results could vary materially from those anticipated, expected, estimated or projected. Readers are cautioned that forward-looking statements include known and unknown risks and are subject to significant business, economic and competitive uncertainties and contingencies, many of which are beyond the control of Umicore. As a result, neither Umicore nor any other person assumes any responsibility f...",
-    "content_word_count": 10601,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
-    "query_aliases": [],
-    "industry": "이차전지",
-    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-    "target_technology_en": "cathode material lithium hydroxide/carbonate",
-    "technology_group": "lithium_cathode_materials",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
-    "pdf_company": "Umicore",
-    "pdf_row_no": 58,
-    "pdf_sequence": "KO추T가RA",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "unknown",
-    "date_placement": "date_pending",
-    "date_note": "게시일 근거가 전혀 없음",
-    "investment_signal_no": 3,
-    "investment_signal_id": "investment_financing",
-    "investment_signal_label": "투자 재원 확보",
-    "investment_signal_label_en": "Capital Securing & Financing",
-    "investment_signal_description": "대규모 회사채 발행·유상증자·신용공여 조달 등",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "precursor",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "유럽 및 북미 지역 확장을 위해 약 10억 유로 상당의 상당한 정부 보조금을 확보함.",
-    "ai_summary_ko": "북미 및 유럽 확장 재원 조달 - 유럽과 북미 지역의 사업 확장을 위해 약 10억 유로 규모의 정부 보조금을 성공적으로 확보함.",
-    "ai_summary_en": "Securing financing for North American and European expansion - Secured close to €1 billion in substantial government grants for expansions in Europe and North America.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "c850e086332e0789b0073699",
-    "ai_evidence_quotes": [
-      "We were also able to secure substantial government grants of close to € 1 billion for our expansions in Europe and North America."
-    ]
-  },
-  {
-    "target_no": 44,
-    "company": "Umicore",
-    "title": "annual report 2023 lres",
-    "url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "source": "Umicore - Annual Report / Annual Reports",
-    "published_at": null,
-    "published_month": "",
-    "published_at_source": "",
-    "published_at_precision": "none",
-    "published_at_status": "unknown",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [],
-    "collected_at": "2026-09-14T04:29:43Z",
-    "collector": "official_page",
-    "query": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
-    "source_type": "official",
-    "source_kind": "financial_report",
-    "is_press_release": false,
-    "source_label_ko": "공식출처",
-    "source_priority": 19,
-    "official_source_url": "https://www.umicore.com/en/investor-relations/publications-reports/annual-report",
-    "source_direct_url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Driving\ntransformation\nfor the future\nUmicore Integrated Annual Report 2023\nDisclaimer\nThis report contains forward-looking information that involves\nrisks and uncertainties, including statements about Umicore’s\nplans, objectives, expectations and intentions. Should one or\nmore of these risks, uncertainties or contingencies materialize,\nor should any underlying assumptions prove incorrect, actual\nresults could vary materially from those anticipated, expected,\nestimated or projected. Readers are cautioned that forward-looking\nstatements include known and unknown risks and are subject to\nsignificant business, economic and competitive uncertainties and\ncontingencies, many of which are beyond the control of Umicore.\nAs a result, neither Umicore nor any other person assumes any\nresponsibility for the accuracy of these forward-looking statements.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nDriving transformation for the future\nFrom strategic plan to execution\n4\n5\n9\n13\n16\n23\n31\n33\n34\n35\nPerformance\nHow we create value\nKey performance figures\nFinancial\nOperations\nInnovation\nEnvironment\n39\n40\n41\n42\n69\n85\n98\nEmployees 118\nSociety 143\nLeadership 165\nGovernance\nSupervisory Board\nManagement Board\nLeadership roles\nManagement approach\nRisks & opportunities\n166\n167\n172\n177\n178\n182\nUmicore Integrated Annual Report 2023 3\nStatements 196\nFinancial statements, F1-F41\nEnvironmental statements, E1-E10\nSocial statements, S1-S7\nGovernance statements, G1-G13\n197\n272\n282\n295\nAbout this report 312\nAbout this report\nGRI/SASB index\nTCFD index\nAssurance reports\nGlossary\n313\n314\n320\n321\n331\nThe Umicore integrated annual report offers a comprehensive and\nintegrated view of our performance for 2023. This report is produced\nin accordance to the GRI Standards. For more, please see About this\nreport. Definitions for the terms used throughout this report can be\nfound in the Glossary for the report.\nAccess all items in this report, in English and in Dutch, online:\nANNUALREPORT.UMICORE.COM\nContents\nAt a glance\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\n5\n9\n13\n16\n23\n31\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nCEO & Chair review – Umicore Integrated Annual Report 2023 5\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nCEO & Chair\nreview\nChair Thomas Leysen and CEO Mathias Miedreich at\nUmicore’s Headquarters in Brussels, Belgium\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nUmicore’s 2023 results demonstrated our ability to deliver\nstrong cash flows and margins in the face of challenging\nmarket conditions. Our Catalysis and Recycling Business\nGroups showed a very strong performance with a ROCE of\nrespectively 28.8% and 67.9%, whilst the Energy & Surface\nTechnologies Business Group saw increased investments in\norder to ramp up our capacities. This currently weighs down\nthe ROCE, which came in at 4%. We continued to invest\n€ 281 million in R&D, including major projects such as\nbattery recycling and solid-state battery materials.\nIn Rechargeable Battery Materials we have\nbuilt a sizeable and diversified order book\non three continents, safeguarded by solid\ncontractual terms. We were also able to\nsecure substantial government grants of\nclose to € 1 billion for our expansions in\nEurope and North America. With these\ngrants and an optimized capacity ramp-up\nphasing, we could reduce our anticipated\nnet capital expenditure needed to execute\nour order book and remain well within\nour self-financing capability. As we move\ninto 2024, our teams are now focusing\non executing this ambitious investment\nprogram.\nIn order to provide more insight on\nour high-growth, but capital intensive\nBattery Materials business as well as on\nthe performance of our attractive niche\nbusinesses in Specialty Materials, we have\ndecided to report these two businesses\nseparately as of June 2024.\nBusiness highlights\nRevenues for the Group decreased in 2023,\nmainly impacted by lower PGM (Platinum\nGroup Metal) prices. Our profitability\nremained high with a 25% EBITDA margin\ndemonstrating Umicore’s ability to mitigate\nthe headwinds of declining PGM prices as\nwell as reduced volumes in some of our\nend markets. In particular, we generated\ngood cash flows in 2023 through strict\nworking capital management in Catalysis\nand Recycling. This resulted in a cash\nconversion of 125% from EBITDA to\noperating cash flow in 2023 compared with\n73% in the previous year.\nCEO & Chair review – Umicore Integrated Annual Report 2023 6\nChair Thomas Leysen and CEO Mathias Miedreich at Umicore’s headquarters in Brussels, Belgium\nWe also worked intensively in 2023 on ways\nto further boost and accelerate EBITDA and\ncashflow generation in the medium- to As we move into 2024,\nlong- term through our Efficiency-for-Growth\nour teams are now focusing\nprogram, while reducing exposure to\nfuture PGM price volatility by increasing our on execution excellence,\nstrategic metal hedging. remaining firmly committed\nCapital expenditure amounted to € 857 to delivering on our targets.\nmillion, up 82% year-on-year, mainly driven\nby investments to execute the contracts\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nBasislijn hoofdstuk titel\nen/of 1e tekstregel\nBasislijn Subtitel\nen/of 1e tekstregel\nAerial view of our Precious Metals Refining site in Hoboken, Belgium\nsecured in the order book for Rechargeable\nBattery Materials. Operational free cash\nflow remained strong at € 332 million,\ndespite the significantly increased capital\nexpenditure. Net financial debt slightly\nincreased to € 1.3 billion resulting in\na leverage ratio of 1.30x LTM adjusted\nEBITDA.\nCatalysis delivered record results for\nthe third consecutive year. Adjusted\nEBITDA amounted to € 436 million, up\n4% compared with the previous year.\nThe business group’s performance was\nmostly driven by higher sales volumes and\nrevenues in Automotive Catalysts reflecting\na rebound in Chinese heavy-duty diesel\nproduction as well as year-on-year growth\nin global light-duty internal combustion\nengine (ICE) production. In addition,\nAutomotive Catalysts made further strong\nprogress on efficiency improvements.\nCatalysis generated substantial free cash\nflow and recorded an adjusted EBITDA\nmargin of 24.2%. We see this business\ngroup as continuing to generate attractive\nreturns even as the ICE cars will slowly\ndecline. Furthermore, it remains a useful\nportfolio hedge in case the transition\nelectric vehicles were to somewhat slower\nthan anticipated. It also constitutes a\nreservoir of talent for the other businesses.\nCEO & Chair review – Umicore Integrated Annual Report 2023 7\nUmicore marked several milestones in\n2023 and celebrated some anniversaries\n– 135 years of our Hoboken site in\nBelgium and 20 years of our site in\nHanau, Germany.\nRevenues for Energy & Surface\nTechnologies were below the level of\n2022. The decrease mainly results from\nlower revenues for Rechargeable Battery\nMaterials, which reflected the combined\nimpact of a lower non-recurring lithium\neffect and lower volumes for cathode\nactive materials from legacy contracts.\nAdjusted EBITDA amounted to € 259\nmillion, with a slight increase in earnings\nfor Rechargeable Battery Materials\nsupported by a substantial one-off related\nto lower costs from mass production test\nruns and valuation of battery production\nscraps. Cobalt & Specialty Materials\nreported, as expected, a substantial decline\nin earnings. This combined with the solid\nperformance of the Business Units Electro-\nOptic Materials and Metal Deposition\nSolutions resulted in an EBITDA margin of\n24.6% for the Business Group. In the years\nto come, we will continue to build on our\nstrong positions in the Specialty Materials\npart of this business while executing our\ninvestment program to secure our position\nas a leading global supplier of Battery\nMaterials.\nRecycling produced again very high\nreturns on invested capital. Although it\nwas below the exceptional performance\nof 2022, it was well above pre-2020 levels,\nthe year in which the rhodium price started\nto peak. Adjusted EBITDA amounted to\n€ 372 million, down 30%, reflecting a\ncontext of substantially declining PGM\nprices during 2023, as well as the impact\nof cost inflation mainly in the first half of\nthe year. These headwinds were partially\nmitigated by the strong performance\nof the Precious Metals Management\nBusiness Unit as well as strategic metal\nhedges. The introduction of an efficiency\nprogram, which going forward will result in\nincreased cost efficiencies to counteract the\ndecreased PGM price environment, played\nan important part in the 2023 performance.\nAlso the Jewelry and Industrial Metals\nBusiness Unit did well in this respect.\nStrategic milestones\nUmicore marked several milestones in\n2023 and celebrated some important\nanniversaries – 135 years of our Hoboken\nsite in Belgium and 20 years since the\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nacquisition of the former Degussa precious\nmetals business, headquartered in Hanau,\nGermany. This transformative acquisition\npropelled Umicore to a new level at the\ntime, just as we are now preparing the\nnext quantum leap for our Group.\nWe secured our North American strategy\nfor Rechargeable Battery Materials with\nthe start of construction of the plant in\nOntario, Canada, after securing a long-term\noff-take contract as well as significant\ngovernment funding for the project.\nThe joint venture backed by Umicore and\nVolkswagen Group-owned PowerCo –\nIONWAY – announced construction of\nits first cathode materials production\nplant in Nysa, Poland, adjacent to\nUmicore’s existing plant. The project also\nreceived financial support from the Polish\nGovernment.\nWe made significant headway in Fuel\nCells & Stationary Catalysts with the\ngroundbreaking ceremony on December\n1st, 2023 of a greenfield plant in Suzhou,\nChina. Due to be operational in early 2026,\nthis plant is set to be the world’s largest\nfuel cell catalyst production facility.\nThe Management Board has been further\nstrengthened with the appointments of\nVeerle Slenders, Executive Vice President\n(EVP) of Recycling, Geert Olbrechts Chief\nTechnology Officer & EVP Specialty Materials\nand Ana Fonseca Nordang our new EVP\nof People & Organization. We have also\ninstilled a mindset of Efficiency for Growth\nand continuous improvement throughout\nthe entire Group, which will stand us in\ngood stead in these challenging times.\nThe fatal accident which tragically occurred\nin our Hoboken plant in March 2023 brought\nhome again that we can never relent our\nfocus on safety. Our overall recordable\ninjuries showed a positive trajectory, but\nclearly our safety journey still has a way\nto go.\nNon-financial targets\nDuring the past year, we made good\nprogress in our decarbonization roadmap,\nwith 41% global renewable energy use\nnow compared with a 35% baseline in\n2021. In Europe, it is close to 60%, and\nwe are on track for our 2025 target of\n100% renewable energy use. We unveiled\nthe Umicore Climate Transition Plan\nunderlining our commitment to climate\naction, resilience and transparency. We\nalso remain committed to upholding the\nTen Principles of the United Nations Global\nCompact in the areas of Human Rights,\nLabor, Environment, and Anti-Corruption.\nIn this Integrated Annual Report, we\noutline our efforts towards implementing\nthese principles and how we contribute\nto the United Nations’ Sustainable\nDevelopment Goals. All this ensures the\nsustainable aspects of future growth.\nCEO & Chair review – Umicore Integrated Annual Report 2023 8\n20-years anniversary of Umicore Hanau, Germany\nConfidence in the future\nAs we embark on the next stage of our\njourney, we look ahead with confidence.\nUmicore has demonstrated in the past\ndecades that it could reinvent itself as\nnew opportunities and challenges arose.\nWe have unrivalled technological capabilities\nin each of our businesses, from advanced\nand proprietary catalysts to germanium\nsemiconductor wafers, from an absolutely\nunique set of metallurgical capabilities\nto next generation battery chemistry. We\nhave deep customer relationships with\nvirtually every automotive manufacturer in\nthe world, but are also a preferred supplier\nand business partner to many other high-\nend industries. And we have talented,\ncommitted and global teams which have\nshown courage, persistence and resilience.\nWhilst our major investment program in\nbattery materials will still take some time\nto generate its full potential, our other\nbusinesses will continue to generate the\ncashflows required to invest in our future\nand remunerate our shareholders.\nWe would like to thank our customers\nand business partners for continuing to\nplace their confidence in us, as well as our\ntalented colleagues for their continued\ndedication to our common purpose.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 9\nAbout us\nUmicore: the circular materials technology company\nReducing harmful vehicle emissions.\nGiving new life to used metals.\nPowering the cars of the future.\nUmicore is world a leader in circular materials\ntechnology and recycling, employing 11,948\npeople and spanning 29 countries over\nfive continents.\nUmicore’s operations are divided into business groups: Catalysis,\nEnergy & Surface Technologies and Recycling. Each business group\nis in turn comprised of several business units that serve different\nend markets, resulting in an overall diversified revenue and customer\nbase. Read more about it in Our complementary business groups.\nDrawing on its extensive expertise in the fields of chemistry,\nmaterial science and metallurgy, Umicore is a key enabler of\nthe mobility transformation and circularity of critical metals.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nMobility transformation\nWe lead the way in emission control catalysts for passenger\ncars and heavy-duty applications; a leading supplier of cathode\nactive materials for lithium-ion batteries used in electric vehicles;\na front-runner in battery recycling; and we are a leading\nsupplier of proton exchange membrane fuel cell catalysts used\nin the emerging hydrogen economy (in particular, focusing on\ntransportation applications).\nCircularity of critical metals\nWe operate one of the world’s most sophisticated precious\nmetals recycling facilities and our plants can recover 28 precious and\nnon-ferrous metals from - industrial residues, electronic scrap,\nbatteries, automotive and industrial catalysts and fuel cells. The\nrecovered materials are transformed into pure metals or new\nproducts. Umicore is also a pioneer in recycling batteries: its plant\nin Belgium has an annual capacity of 7,000 tonnes of lithium-ion\nbatteries and battery production scrap.\nAbout us – Umicore Integrated Annual Report 2023 10\nClosed-loop business model not only defines how we run\nour business and build our strategy but sets us apart from\nour competitors.\nAll our materials are customized and developed with processes that\naccommodate health and safety, recyclability, cost efficiency, waste\nreduction and energy efficiency, in our own facilities and throughout\nthe value chain.\nWe have made sustainability a priority in all we do. Our integrated\napproach to sustainability minimizes the impact of our industrial\noperations and our commitment to ethical and responsible sourcing\ndelivers value and distinguishes us from our competitors.\nThis positive impact enhances quality of life by reducing harmful\nvehicle emissions, giving new life to used metals and powering the\ncars of the future.\nOur success depends on balancing the economic, environmental and\nsocial impact of our operations, while looking to our highly skilled\npeople to uphold our values and mission.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 11\nMaterials for a better life\nMaterials are at the core of our daily lives, and are key for wealth\ncreation and, ultimately human progress.\nAt Umicore, we stand by our convictions of making materials that\nwill improve our quality of life and the health of our planet, while\ndelivering sustainable value to our stakeholders. That’s why we\nplace great emphasis on our closed-loop business model and, more\nparticularly, in the sound and efficient recycling of metal-related\nmaterials, making them vital for sustainable products and services.\nWe also actively invest in and pursue activities that have a positive\nimpact on society from reducing harmful vehicle emissions, giving\nnew life to used metals powering the clean cars of the future.\nWe want Umicore to lead the way in creating and\nproviding material-based solutions that live up to our\nmission of Materials for a better life.\nThe Umicore Way is the cornerstone of everything we do\nat Umicore. Our strategy sets out our business goals and growth\nambitions for the coming years, as well as our sustainability and\nbroad environmental, social and governance objectives. The Umicore\nWay outlines our values and the way in which we wish to achieve\nthese goals as well as our overall commitment to the principles\nof sustainable development. We believe that the broad values and\naspirations captured in this document should be applicable in all\ncontexts – in different regions, cultures and business situations.\nThe Umicore Way is not only for Umicore employees but also covers\nour relationships with all our stakeholders. The Umicore Way is\nsupplemented by detailed company codes and charters including the\nUmicore Code of Conduct, the 2020 Belgian Code on Corporate\nGovernance, the Umicore Corporate Governance Charter and\nthe Umicore Dealing Code.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAbout us – Umicore Integrated Annual Report 2023 12\nOur values are vital to our success\nOpenness\nWe communicate openly, accurately and enthusiastically. We provide\nreliable and relevant information about our activities promptly and\nregularly while respecting commercial confidentiality. We consider\ninteraction important and welcome constructive dialogue with all\nour stakeholders.\nInnovation\nWe believe in continuously searching for improvement and that\ninnovation is the ultimate driver for long-term profitability and\ngrowth. We are open to new ideas and prepared to take\nconsidered risks.\nTeamwork\nWe encourage sharing of information across divisional, functional\nand geographical borders to make full use of all our knowledge\nand experience. By working together towards shared goals, our\nemployees are expected to derive pride, satisfaction and fun from\ntheir work.\nRespect\nWe show respect for each other and for cultures, customs and values\nin our dealings with employees and other stakeholders. We do\nnot compromise on occupational health and safety and act with\nresponsibility to the environment.\nCommitment\nWe believe in keeping our promises, adhering to high performance\nstandards and continuously searching for the best possible solutions.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nOur complementary business groups – Umicore Integrated Annual Report 2023 13\nOur complementary business groups\nComplementarity of Umicore’s activities continues to give us a true competitive edge\nOur operations are divided into three business\ngroups, each consisting of decentralized\nbusiness units that serve multiple end markets\n(automotive being the most sizeable). Within\nthese three business groups the focus is on areas\nin which Umicore not only adds value, but can\nexcel and is recognized as market leader by\nits customers.\nOur ambition is to be the preferred partner of our customers. We are\ncommitted to the growth of our businesses through the competence\nof our people, excellence in operations and technological innovation.\nWe have a unique portfolio of mutually reinforcing activities in\nwhich every Business Group, unit and department has an important\nrole to play in achieving our ambition to be the circular materials\ntechnology company.\nContents\nAt a glance\nCEO & Chair review\nAbout us\nOur complementary business groups\nRising up for impact\nInvesting in Umicore\nHighlights\nStrategy\nPerformance\nLeadership\nStatements\nAbout this report\nAutomotive Catalysts\nLeading producer of emission control catalysts for gasoline and diesel\non-road and non-road applications, power generation and industrial\nprocesses to meet environmental standards around the world.\nFuel Cells & Stationary Catalysts\nLeading player in emissions control catalysts for industrial plants and\nshipping, and supplier of state-of-the-art fuel cell catalysts for zero\nemission mobility and green hydrogen production.\nPrecious Metals Chemistry\nExperts in metals-based catalysis for life-enhancing applications.\nEmission treatment technologies, the production of fine chemicals\nand advanced electronics – all are made possible with our\norganometallic technology know-how.\nOur complementary business groups – Umicore Integrated Annual Report 2023 14\nCobalt & Specialty Materials\nExperts in sourcing, production and distribution of cobalt and nickel\nproducts. Our materials are at the heart of everyday products such\nas batteries, tools, paints and tyres. Our recycling and refining\nprocesses, give new life to cobalt and other metals.\nElectro-Optic Materials\nLeading supplier of material solutions for the space, optics and\nelectronics sectors, including products for thermal imaging, wafers\nfor space solar cells, highbrightness LEDs and chemicals for\nfiber optics.\nMetal Deposition Solutions\nWorld leader in supplying products for (precious) metal-based\nelectroplating and PVD coating of surfaces in the nano and\nmicrometre range. The highest demand for our solutions comes from\nproducts in daily use or the solutions that enable their production in\nthe first place.\nRechargeable Battery Materials\nPioneer in battery materials and a leader in cathode material supplies\nfor rechargeable lithium-ion batteries to power electric vehicles,\ngiving them added range and performance.\nBattery Recycling Solutions\nLeader in closed-loop technology for batteries. We use proprietary\nhigh-quality recycling processes to recover all valuable metals in an\nenvironmentally sound manner. We offer a unique sustainable and\ncircular approach.\nJewelry & Industrial Metals\nExperts in developing products and processes based on precious\nmetals such as gold, silver and platinum. Our customers use\nthese materials to make fine jewelry, coins, high-purity glass and\nindustrial catalysts. We provide our customers with sustainabl",
-    "content_source_url": "https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf",
-    "content_excerpt": "Driving transformation for the future Umicore Integrated Annual Report 2023 Disclaimer This report contains forward-looking information that involves risks and uncertainties, including statements about Umicore’s plans, objectives, expectations and intentions. Should one or more of these risks, uncertainties or contingencies materialize, or should any underlying assumptions prove incorrect, actual results could vary materially from those anticipated, expected, estimated or projected. Readers are cautioned that forward-looking statements include known and unknown risks and are subject to significant business, economic and competitive uncertainties and contingencies, many of which are beyond the control of Umicore. As a result, neither Umicore nor any other person assumes any responsibility f...",
-    "content_word_count": 10601,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-14T04:29:43Z",
-    "query_aliases": [],
-    "industry": "이차전지",
-    "target_technology": "양극재 소재(수산화리튬, 탄산리튬)",
-    "target_technology_en": "cathode material lithium hydroxide/carbonate",
-    "technology_group": "lithium_cathode_materials",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "양극재 소재산(리수튬산)화리튬, 탄",
-    "pdf_company": "Umicore",
-    "pdf_row_no": 58,
-    "pdf_sequence": "KO추T가RA",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "unknown",
-    "date_placement": "date_pending",
-    "date_note": "게시일 근거가 전혀 없음",
-    "investment_signal_no": 4,
-    "investment_signal_id": "technology_ecosystem_rd",
-    "investment_signal_label": "기술 생태계 밀착(R&D)",
-    "investment_signal_label_en": "Tech Ecosystem Engagement (R&D)",
-    "investment_signal_description": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "precursor",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "배터리 재활용 및 전고체 배터리 소재 등 주요 프로젝트를 포함하여 R&D에 2억 8,100만 유로를 지속 투자함.",
-    "ai_summary_ko": "차세대 배터리 기술 R&D 투자 - 배터리 재활용 및 전고체 배터리 소재 등 주요 프로젝트를 포함해 R&D에 2억 8,100만 유로를 지속 투자함.",
-    "ai_summary_en": "Investment in R&D for next-generation battery technology - Continued to invest €281 million in R&D, including major projects such as battery recycling and solid-state battery materials.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "c850e086332e0789b0073699",
-    "ai_evidence_quotes": [
-      "We continued to invest € 281 million in R&D, including major projects such as battery recycling and solid-state battery materials."
-    ]
-  },
-  {
     "target_no": 15,
     "company": "Thermo Fisher",
     "title": "Thermo Fisher Scientific Collaborates with The Michael J. Fox Foundation to Advance Proteomics-Enabled Parkinson’s Precision Medicine - Business Wire",
@@ -2672,7 +2585,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-14T04:29:43Z",
+    "collected_at": "2026-09-14T05:18:18Z",
     "collector": "google_news_rss",
     "query": "(\"Thermo Fisher\" OR \"Thermo Fisher Scientific\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:47d",
     "source_type": "fallback",
