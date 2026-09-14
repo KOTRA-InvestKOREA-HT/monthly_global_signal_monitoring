@@ -329,11 +329,19 @@ export function proposedRule(anchor, pageUrl, deps) {
 // fetch 이후 판정. 링크 단계에서 확인 대상으로 넘긴 문서가 실제로 기사였는지 본다.
 // 링크를 세는 이유는, 받은 것이 기사면 본문이 링크보다 길고 목록이면 그 반대이기 때문이다.
 // PDF는 html 이 비어 있어 링크 밀도가 0이므로 이 조항에 걸리지 않는다.
+// 섹션 이름 모양만 본다. 기사 제목은 사건을 말하고, 목록·자료실 제목은 섹션을 말한다.
+// 2026-08 수집에서 "Press Release Archive since 2022", "Events & trade shows", "Media Hub",
+// "news and press releases" 같은 섹션 페이지가 기사로 들어왔다.
 const LISTING_TITLE = new RegExp(
   [
     "press\\s*releases?\\s+from\\s+\\d{4}",
     "news\\s*archive",
-    "^\\s*(news|press\\s*releases?|media\\s*releases?|announcements?)\\s*(archive|list|overview)?\\s*$",
+    "\\b(?:news|press|media)\\b.*\\barchive\\b",
+    "^\\s*(news|press\\s*releases?|media\\s*releases?|announcements?)(\\s*(?:and|&)\\s*(news|press\\s*releases?|media\\s*releases?|announcements?))?\\s*(archive|list|overview)?\\s*$",
+    "^\\s*(?:media\\s+)?events?(?:\\s*(?:&|and)\\s*trade\\s*(?:shows|fairs))?(?:\\s+overview)?\\s*$",
+    "^\\s*trade\\s*(?:shows|fairs)\\s*$",
+    "^\\s*media\\s*(?:hub|kits?|centre|center|library|gallery|contacts?|resources)\\b",
+    "^\\s*media\\s*(?:&|and)\\s*analyst\\s*coverage\\s*$",
   ].join("|"),
   "i",
 );

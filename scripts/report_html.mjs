@@ -182,9 +182,6 @@ const signalRow = signal => `
 
 function detailPages(state, model, assets) {
   const { details } = model;
-  const marker = assets
-    ? `<img class="marker" src="${assets}/images/emoji_target_1f3af.png" alt="">`
-    : '<span class="marker"></span>';
   return details.pages.map((entry, index) => page(state, `
       ${header(details.kicker, details.title, `${index + 1}/${details.pages.length}`)}
       <div class="detail">
@@ -200,7 +197,7 @@ function detailPages(state, model, assets) {
           <p class="business-head">
             <span class="business-heading">${escapeHtml(entry.business.heading)}</span>
             ${entry.business.target_text ? `
-            <span class="pill target">${marker}${escapeHtml(entry.business.target_label)}</span>
+            <span class="pill target">${escapeHtml(entry.business.target_label)}</span>
             <span class="target-text">${escapeHtml(entry.business.target_text)}</span>` : ''}
           </p>
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
@@ -577,21 +574,15 @@ body {
   margin-right: 9pt;
   white-space: nowrap;
 }
-.business-head .target {
-  display: inline-flex;
-  align-items: center;
-  gap: 5pt;
-  background: #DDF0EE;
-  color: ${COLORS.teal};
-  font-size: 8.5pt;
-}
-.business-head .marker { width: 11pt; height: 11pt; }
+/* Same grey label as the item-linked trend cards. The emoji and teal-on-teal
+   pill read as decoration in a formal report and had weak contrast. */
+.business-head .target { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; background: #fff; }
 .target-text {
   flex: 0 1 auto;
   min-width: 0;
   font-size: 9.5pt;
   font-weight: 600;
-  color: ${COLORS.teal};
+  color: ${COLORS.text};
   word-break: keep-all;
 }
 .business-body {

@@ -45,7 +45,7 @@ function withDetails(companies, signalsFor = () => [firing(4)]) {
       industry: '반도체',
       signals: [1, 2, 3, 4, 5].map(no => signalsFor(company).find(s => s.no === no) || silent(no)),
       business: {
-        heading: '글로벌 사업현황', target_label: '타겟품목', target_text: '라이다',
+        heading: '글로벌 사업현황', target_label: '투자유치 필요 품목·기술', target_text: '라이다',
         body: '본문', source: '출처 Media',
       },
     })),
@@ -269,4 +269,11 @@ test('review-only cells are outlined apart from confirmed cells and get their ow
   assert.equal(occurrences(html, '<i class="review">'), 2);
   assert.equal(occurrences(html, '<i class="on">'), 3);
   assert.ok(html.includes('검토 필요'));
+});
+
+test('the business box labels its target with a plain pill, not an emoji marker', () => {
+  const html = renderReport(withDetails(['Ouster']), { assets: 'file:///assets' });
+  assert.equal(occurrences(html, 'emoji_target'), 0);
+  assert.equal(occurrences(html, 'class="marker"'), 0);
+  assert.ok(html.includes('<span class="pill target">투자유치 필요 품목·기술</span>'));
 });
