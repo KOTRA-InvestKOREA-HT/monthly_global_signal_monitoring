@@ -92,6 +92,9 @@ jobs:
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
           REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '2' }}
           REPORT_REFRESH: ${{ inputs.refresh || 'false' }}
+          # SEC EDGAR 는 연락처가 든 User-Agent 를 요구한다(예: "KOTRA Invest KOREA signal monitor team@example.org").
+          # 저장소 변수를 비워 두면 8-K 수집만 건너뛴다.
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: node scripts/review_report.mjs
       - name: Save review progress even when quota is exhausted
         if: ${{ always() && steps.review.outcome != 'skipped' }}

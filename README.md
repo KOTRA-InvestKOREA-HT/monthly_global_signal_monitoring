@@ -8,7 +8,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `data/target_companies.csv`: spreadsheet-friendly version of the same list.
 - `data/company_technology_map.json`: 77-company target technology mapping from the reference PDF.
 - `data/company_technology_map.csv`: spreadsheet-friendly version of the technology mapping.
-- `config/company_sources.json`: official Newsroom/Press/IR source catalog by company.
+- `config/company_sources.json`: official Newsroom/Press/IR pages, official RSS feeds, SEC 8-K filers (confirmed by ticker) and dated news sitemaps by company. SEC collection runs only when `SEC_USER_AGENT` (a User-Agent with a contact address, per SEC fair-access policy) is set; in Actions this comes from the `SEC_USER_AGENT` repository variable.
 - `config/technology_keywords.json`: broad Korean/English synonym keyword catalog for relevance filtering.
 - `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
 - `.github/workflows/collect-company-signals.yml`: manual GitHub Actions workflow for on-demand collection.
@@ -125,7 +125,7 @@ python scripts/extract_pdf_companies.py --pdf "C:/Users/buy4u/Desktop/KOTRA/AX ê
 Run a full 77-company collection test with Node.js and no package install:
 
 ```bash
-node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5
+node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,official_sitemaps,sec_filings,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5
 ```
 
 Official RSS/Atom feeds and official Newsroom/Press/IR pages are read first. Google News is used only when a company has no official result in the run. GDELT is also implemented as `gdelt`, but its public endpoint can return rate-limit responses unless requests are spaced at roughly 5 seconds or more.

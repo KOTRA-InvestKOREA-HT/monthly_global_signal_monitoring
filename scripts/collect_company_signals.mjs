@@ -11,10 +11,11 @@ import {
   isHttpUrl,
   looksLikeBrokenUrl,
   looksLikeSourceIndexUrl,
+  isPersonOrCoveragePage,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v9-listing-titles';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v10-feeds-sec-sitemaps';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -118,7 +119,7 @@ export function parseArgs(argv) {
     sourceConfig: "config/company_sources.json",
     outDir: "outputs",
     refresh: false,
-    sources: "official_feeds,official_pages,google_news",
+    sources: "official_feeds,official_pages,official_sitemaps,sec_filings,google_news",
     days: 45,
     fromDate: "",
     toDate: "",
@@ -336,7 +337,17 @@ function parseDate(value) {
     return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
   }
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().replace(/\.\d{3}Z$/, "Z");
+  if (Number.isNaN(parsed.getTime())) return value;
+  // 시간대 표기가 없는 값(08/05/26, 2026-08-05T00:00:00)을 Date 는 실행 기기의 현지 시각으로 읽는다.
+  // Actions(UTC)에서는 8월 5일이던 Albemarle JSON-LD "08/05/26" 가 한국 시간 PC에서는 8월 4일 15시가 되어
+  // 메타 태그의 8월 5일과 충돌했다. 표기가 없으면 적힌 시각을 UTC 로 읽는다. 날짜만 있는 ISO 값은
+  // Date 가 이미 UTC 로 읽으므로 그대로 둔다. RSS 의 "16:00:00 EST" 같은 미국 시간대 약어도 Date 가
+  // 제대로 읽는 시간대 표기다.
+  const text = String(value).trim();
+  const zoned = /(?:Z|[+-]\d{2}:?\d{2}|\b(?:GMT|UTC|[ECMP][SD]T)\b)$/i.test(text) || /^\d{4}-\d{2}-\d{2}$/.test(text);
+  const utc = zoned ? parsed : new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
+    parsed.getHours(), parsed.getMinutes(), parsed.getSeconds()));
+  return utc.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
 const MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
@@ -742,6 +753,14 @@ function requestHeaders(url) {
   } catch {
     // 상대 경로나 깨진 URL이면 Referer 없이 보낸다.
   }
+  // SEC 는 연락처가 든 User-Agent 를 요구한다(공정 접근 정책). 설정했을 때만 sec.gov 요청에 쓴다.
+  try {
+    if (process.env.SEC_USER_AGENT && /(^|\.)sec\.gov$/i.test(new URL(url).hostname)) {
+      headers["User-Agent"] = process.env.SEC_USER_AGENT.trim();
+    }
+  } catch {
+    // URL 이 깨졌으면 기본 헤더를 쓴다.
+  }
   return headers;
 }
 
@@ -1108,6 +1127,18 @@ function acceptFirst(row) {
   return row.link_rank ?? 0;
 }
 
+// 페이지 링크를 잘라낼 순서. 같은 순위 안에서는 목록에 날짜가 붙은 링크를 앞에 세운다. 날짜 없는
+// 링크는 상세 페이지를 열어봐야 쓸 수 있다. 2026-08 Besi 보도자료 페이지에서는 문서 앞쪽의
+// 주주총회 보관 링크 6개가 페이지당 상한을 먼저 채워, 날짜 붙은 보도자료가 한 건도 남지 않았다.
+// 기간 밖 날짜는 이 정렬 전에 이미 걸러져 있다.
+export function orderPageRows(rows) {
+  const undated = (row) => (row.published_at || row.published_month ? 0 : 1);
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => acceptFirst(a.row) - acceptFirst(b.row) || undated(a.row) - undated(b.row) || a.index - b.index)
+    .map(({ row }) => row);
+}
+
 const PRESS_RELEASE_PATTERN =
   /press[\s_-]*releases?|news[\s_-]*releases?|media[\s_-]*releases?|pressreleases?|newsreleases?|보도\s*자료|press[\s_-]*room|pressemitteilung|communiqu[eé]s?[\s_-]*de[\s_-]*presse|comunicad[oa]s?[\s_-]*de[\s_-]*prensa/i;
 
@@ -1186,22 +1217,30 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
   const feeds = sourceConfig.official_feeds?.[company.company] || [];
   const rows = [];
   let requestCount = 0;
+  const errors = [];
   for (const feed of feeds) {
     const feedUrl = typeof feed === "string" ? feed : feed.url;
     const sourceName =
       typeof feed === "string" ? `Official feed: ${company.company}` : feed.source || `Official feed: ${company.company}`;
     const feedKind = typeof feed === "string" ? "" : feed.kind || "";
     if (!feedUrl) continue;
-    const xml = await fetchText(feedUrl, timeoutSeconds);
-    requestCount += 1;
-    rows.push(
-      ...filterByDateRange(
-        parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind),
-        dateRange,
-      ).slice(0, maxPerSource),
-    );
+    // 피드 하나가 실패해도 같은 기업의 다른 피드는 계속 읽는다.
+    try {
+      const xml = await fetchText(feedUrl, timeoutSeconds);
+      requestCount += 1;
+      rows.push(
+        ...filterByDateRange(
+          parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind)
+            // IR 피드는 이사·애널리스트 소개 페이지도 새 항목으로 싣는다. 기사가 아니다.
+            .filter((row) => !isPersonOrCoveragePage(row.url)),
+          dateRange,
+        ).slice(0, maxPerSource),
+      );
+    } catch (error) {
+      errors.push({ source_url: feedUrl, source_name: sourceName, error: error.message });
+    }
   }
-  return { rows, requestCount, recoveryCandidates: rows };
+  return { rows, requestCount, errors, recoveryCandidates: rows };
 }
 
 async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
@@ -1265,11 +1304,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
         })),
       );
       // 확인 대상은 확실한 기사 뒤에 세운다. maxPerSource 로 잘릴 때 밀려나야 할 쪽이 그쪽이다.
-      const ordered = filterByDateRange(sourceRows, dateRange)
-        .map((row, index) => ({ row, index }))
-        .sort((a, b) => acceptFirst(a.row) - acceptFirst(b.row) || a.index - b.index)
-        .map(({ row }) => row);
-      rows.push(...ordered.slice(0, maxPerSource));
+      rows.push(...orderPageRows(filterByDateRange(sourceRows, dateRange)).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: page.url, source_name: page.source, error: error.message });
     }
@@ -1755,6 +1790,178 @@ export function usableMonthlySource(row, dateRange) {
   return reportEligible(row, dateRangePeriod(dateRange));
 }
 
+// ---------------------------------------------------------------- SEC EDGAR 8-K
+// 미국 상장 타겟기업의 수시공시. 뉴스룸이 수집을 막아도(403) 게시일과 원문이 확실하다.
+// 대상은 설정의 sec_filers 에 티커로 확정한 CIK 만 쓴다. 이름 매칭은 Merck KGaA 를 미국
+// Merck & Co. 로 잘못 잇는다. 내부자 거래(Form 3·4·144)는 8-K 가 아니므로 들어오지 않는다.
+const SEC_ITEM_LABELS = {
+  "1.01": "Entry into a Material Definitive Agreement",
+  "1.02": "Termination of a Material Definitive Agreement",
+  "2.01": "Completion of Acquisition or Disposition of Assets",
+  "2.02": "Results of Operations and Financial Condition",
+  "2.03": "Creation of a Direct Financial Obligation",
+  "2.05": "Costs Associated with Exit or Disposal Activities",
+  "2.06": "Material Impairments",
+  "3.02": "Unregistered Sales of Equity Securities",
+  "5.02": "Departure or Appointment of Directors or Officers",
+  "5.03": "Amendments to Articles of Incorporation or Bylaws",
+  "5.07": "Submission of Matters to a Vote of Security Holders",
+  "7.01": "Regulation FD Disclosure",
+  "8.01": "Other Events",
+};
+
+export function resolveSources(value, env = process.env) {
+  const sources = String(value || "").split(",").map((source) => source.trim()).filter(Boolean);
+  if (sources.includes("sec_filings") && !String(env.SEC_USER_AGENT || "").trim()) {
+    return { sources: sources.filter((source) => source !== "sec_filings"), skipped: ["sec_filings: SEC_USER_AGENT not set"] };
+  }
+  return { sources, skipped: [] };
+}
+
+export function secFilingRows(company, filer, submissions, dateRange, collectedAt, maxPerSource = 6) {
+  const recent = submissions?.filings?.recent || {};
+  const cik = String(Number(filer.cik));
+  const listUrl = `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${filer.cik}&type=8-K`;
+  const rows = [];
+  (recent.form || []).forEach((form, index) => {
+    if (!/^8-K(\/A)?$/.test(form)) return;
+    const accession = String(recent.accessionNumber?.[index] || "");
+    const document = String(recent.primaryDocument?.[index] || "");
+    if (!accession || !document) return;
+    const url = `https://www.sec.gov/Archives/edgar/data/${cik}/${accession.replace(/-/g, "")}/${document}`;
+    const items = String(recent.items?.[index] || "").split(",").map((item) => item.trim())
+      .filter((item) => item && item !== "9.01");
+    const labels = items.map((item) => `Item ${item} ${SEC_ITEM_LABELS[item] || ""}`.trim());
+    rows.push({
+      target_no: company.target_no,
+      company: company.company,
+      title: `${company.company} ${form}: ${labels.join("; ") || "Current report"}`,
+      url,
+      source: `${company.company} - SEC EDGAR / ${form}`,
+      ...chooseDateEvidence([dateEvidence(recent.acceptanceDateTime?.[index] || recent.filingDate?.[index], "feed", "published")]),
+      collected_at: collectedAt,
+      collector: "sec_edgar",
+      query: listUrl,
+      ...officialSourceFields("filing", "SEC filing", url),
+      official_source_url: listUrl,
+      source_direct_url: url,
+      sec_items: items,
+    });
+  });
+  return filterByDateRange(rows, dateRange).slice(0, maxPerSource);
+}
+
+// SEC 공정 접근 정책(초당 10건 이하)을 넉넉히 지키려고 SEC 요청은 한 줄로 세운다.
+let secQueue = Promise.resolve();
+function secFetchText(url, timeoutSeconds) {
+  const run = secQueue.then(() => fetchText(url, timeoutSeconds));
+  secQueue = run.then(() => sleep(150), () => sleep(150));
+  return run;
+}
+
+async function collectSecFilings(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
+  const filer = sourceConfig.sec_filers?.[company.company];
+  if (!filer) return { rows: [], requestCount: 0 };
+  let requestCount = 1;
+  const submissions = JSON.parse(await secFetchText(`https://data.sec.gov/submissions/CIK${filer.cik}.json`, timeoutSeconds));
+  const rows = secFilingRows(company, filer, submissions, dateRange, collectedAt, maxPerSource);
+  for (const row of rows) {
+    // 실적·보도자료 8-K 의 본문은 첨부 EX-99 에 있다. 본 문서는 항목 목록뿐인 경우가 많다.
+    try {
+      requestCount += 1;
+      const index = JSON.parse(await secFetchText(row.url.replace(/[^/]+$/, "index.json"), timeoutSeconds));
+      const exhibit = (index.directory?.item || []).map((item) => item.name)
+        .find((name) => /ex-?99/i.test(name) && /\.html?$/i.test(name));
+      if (exhibit) {
+        row.sec_primary_document_url = row.url;
+        row.url = row.url.replace(/[^/]+$/, exhibit);
+        row.source_direct_url = row.url;
+      }
+    } catch {
+      // 첨부 목록을 못 읽으면 본 문서를 그대로 쓴다.
+    }
+  }
+  return { rows, requestCount };
+}
+
+// ---------------------------------------------------------------- dated news sitemaps
+// 사이트맵의 lastmod 는 게시일이 아니다(2026-08 조사: 8월 lastmod 874건 중 제품·옛 페이지가 대부분).
+// URL 에 박힌 게시 시점만 쓴다. /2026/08/, infxx202607-113, ze260803 세 모양을 읽는다.
+export function sitemapUrlDate(url) {
+  const direct = extractDateFromUrl(url);
+  if (direct) return direct;
+  let pathname;
+  try {
+    pathname = new URL(url).pathname;
+  } catch {
+    return null;
+  }
+  const yearMonth = pathname.match(/\/((?:19|20)\d{2})\/(0[1-9]|1[0-2])\//);
+  if (yearMonth) return `${yearMonth[1]}-${yearMonth[2]}`;
+  const folder = pathname.match(/\/((?:19|20)\d{2})\/[a-z]*(\d{6,8})(?:[-_.]|$)/i);
+  if (!folder) return null;
+  const [, year, digits] = folder;
+  const valid = (month, day) => Number(month) >= 1 && Number(month) <= 12 && (!day || (Number(day) >= 1 && Number(day) <= 31));
+  if (digits.startsWith(year)) {
+    const month = digits.slice(4, 6);
+    const day = digits.length >= 8 ? digits.slice(6, 8) : "";
+    if (!valid(month, day)) return null;
+    return day ? isoDate(year, month, day) : `${year}-${month}`;
+  }
+  if (digits.length === 6 && digits.slice(0, 2) === year.slice(2)) {
+    const month = digits.slice(2, 4);
+    const day = digits.slice(4, 6);
+    return valid(month, day) ? isoDate(year, month, day) : null;
+  }
+  return null;
+}
+
+export function sitemapRows(xml, company, entry, dateRange, collectedAt) {
+  const include = entry.include ? new RegExp(entry.include, "i") : null;
+  const sourceName = entry.source || `${company.company} - Official news sitemap`;
+  const rows = [];
+  for (const match of String(xml || "").matchAll(/<url>([\s\S]*?)<\/url>/gi)) {
+    const loc = (match[1].match(/<loc>\s*([^<\s]+)\s*<\/loc>/i) || [])[1];
+    if (!loc || (include && !include.test(loc))) continue;
+    const when = sitemapUrlDate(loc);
+    if (!when) continue;
+    rows.push({
+      target_no: company.target_no,
+      company: company.company,
+      // URL 에서 뽑은 제목이 짧으면 비워 둔다. URL 을 제목으로 넣으면 상세 페이지 제목으로 바뀌지 않는다.
+      title: titleFromUrl(loc),
+      url: loc,
+      source: sourceName,
+      ...chooseDateEvidence([dateEvidence(when, "url", "context")]),
+      collected_at: collectedAt,
+      collector: "official_sitemap",
+      query: entry.url,
+      ...officialSourceFields(entry.kind || "press_release", sourceName, entry.url, loc),
+      official_source_url: entry.url,
+      source_direct_url: directUrlCandidate(loc),
+    });
+  }
+  return filterByDateRange(rows, dateRange)
+    .sort((a, b) => String(b.published_at || b.published_month || "").localeCompare(String(a.published_at || a.published_month || "")));
+}
+
+async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
+  const entries = sourceConfig.official_sitemaps?.[company.company] || [];
+  const rows = [];
+  const errors = [];
+  let requestCount = 0;
+  for (const entry of entries) {
+    try {
+      const xml = await fetchText(entry.url, timeoutSeconds);
+      requestCount += 1;
+      rows.push(...sitemapRows(xml, company, entry, dateRange, collectedAt).slice(0, maxPerSource));
+    } catch (error) {
+      errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", error: error.message });
+    }
+  }
+  return { rows, requestCount, errors };
+}
+
 async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
   const companyRows = [];
   const publisherCandidates = [];
@@ -1768,6 +1975,10 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
         result = await collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "official_pages") {
         result = await collectOfficialPages(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else if (source === "official_sitemaps") {
+        result = await collectOfficialSitemaps(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      } else if (source === "sec_filings") {
+        result = await collectSecFilings(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "google_news") {
         // Decide after official detail/date enrichment, not from undated listing links.
         continue;
@@ -1851,7 +2062,9 @@ async function main() {
   linkPolicy = args.linkPolicy === "proposed" ? "proposed" : "current";
 
   const sourceConfig = await loadJson(args.sourceConfig, {});
-  const selectedSources = args.sources.split(",").map((source) => source.trim()).filter(Boolean);
+  // SEC 는 연락처가 든 User-Agent 없이 요청하지 않는다. 설정이 없으면 그 출처만 건너뛰고 요약에 남긴다.
+  const { sources: selectedSources, skipped: skippedSources } = resolveSources(args.sources);
+  for (const skipped of skippedSources) console.warn(`Skipping source ${skipped}`);
   const collectedAt = utcNow();
   const dateRange = buildDateRange(args, collectedAt);
   const rows = [];
@@ -1865,7 +2078,7 @@ async function main() {
       const started = Date.now();
       const { outDir, refresh, ...settings } = args;
       const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
-        identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings,
+        identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings, active_sources: selectedSources,
           period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh,
         collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
@@ -1907,6 +2120,7 @@ async function main() {
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,
+    skipped_sources: skippedSources,
     days: args.days,
     date_range_mode: dateRange.mode,
     from_date: dateRange.fromDate,

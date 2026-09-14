@@ -1,6 +1,201 @@
 {
-  "description": "Official company source catalog generated from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx. The collector reads these official pages first and uses fallback search only when official results are missing.",
-  "official_feeds": {},
+  "description": "Official company source catalog generated from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx. The collector reads these official pages first and uses fallback search only when official results are missing. official_feeds: official RSS/Atom feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates.",
+  "official_feeds": {
+    "Australian Strategic Metals": [
+      {
+        "source": "Australian Strategic Metals - Official RSS",
+        "kind": "press_release",
+        "url": "https://asm-au.com/feed/"
+      }
+    ],
+    "Cognex": [
+      {
+        "source": "Cognex - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.cognex.com/rss/pressrelease.aspx"
+      }
+    ],
+    "Cytiva": [
+      {
+        "source": "Danaher (Cytiva parent) - Press Releases RSS",
+        "kind": "press_release",
+        "url": "https://investors.danaher.com/press-releases?pagetemplate=rss"
+      }
+    ],
+    "West Pharmaceutical": [
+      {
+        "source": "West Pharmaceutical - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.westpharma.com/rss.xml"
+      }
+    ],
+    "Air Products": [
+      {
+        "source": "Air Products - Official RSS",
+        "kind": "press_release",
+        "url": "https://investors.airproducts.com/rss.xml"
+      }
+    ],
+    "Chemours": [
+      {
+        "source": "Chemours - Official RSS",
+        "kind": "press_release",
+        "url": "https://investors.chemours.com/rss.xml"
+      }
+    ],
+    "Amkor Technology": [
+      {
+        "source": "Amkor Technology - Official RSS",
+        "kind": "press_release",
+        "url": "https://ir.amkor.com/rss.xml"
+      }
+    ],
+    "Onsemi": [
+      {
+        "source": "Onsemi - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.onsemi.com/rss.xml"
+      }
+    ],
+    "Qualcomm": [
+      {
+        "source": "Qualcomm - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.qualcomm.com/rss/pressrelease.aspx"
+      }
+    ],
+    "Skyworks": [
+      {
+        "source": "Skyworks - Official RSS",
+        "kind": "press_release",
+        "url": "https://investors.skyworksinc.com/rss.xml"
+      }
+    ],
+    "Eli Lilly and Company": [
+      {
+        "source": "Eli Lilly and Company - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.lilly.com/rss.xml"
+      }
+    ],
+    "GE Healthcare": [
+      {
+        "source": "GE Healthcare - Official RSS",
+        "kind": "press_release",
+        "url": "https://investor.gehealthcare.com/rss.xml"
+      }
+    ],
+    "3M": [
+      {
+        "source": "3M - Official RSS",
+        "kind": "press_release",
+        "url": "https://investors.3m.com/news-events/press-releases/rss"
+      }
+    ],
+    "Ouster": [
+      {
+        "source": "Ouster - Official RSS",
+        "kind": "press_release",
+        "url": "https://investors.ouster.com/rss.xml"
+      }
+    ],
+    "Applied Materials": [
+      {
+        "source": "Applied Materials - Official RSS",
+        "kind": "press_release",
+        "url": "https://ir.appliedmaterials.com/rss.xml"
+      }
+    ],
+    "NXP": [
+      {
+        "source": "NXP - Official RSS",
+        "kind": "press_release",
+        "url": "https://media.nxp.com/rss.xml"
+      }
+    ],
+    "Heidenhain": [
+      {
+        "source": "Heidenhain - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.heidenhain.us/feed"
+      }
+    ],
+    "Solvay": [
+      {
+        "source": "Solvay - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.solvay.com/rss.xml"
+      }
+    ],
+    "Syensqo": [
+      {
+        "source": "Syensqo - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.syensqo.com/rss.xml"
+      }
+    ],
+    "Renishaw": [
+      {
+        "source": "Renishaw - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.renishaw.com/en/6635.rss"
+      }
+    ],
+    "Rio Tinto": [
+      {
+        "source": "Rio Tinto - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.riotinto.com/news/feed"
+      }
+    ],
+    "HyproMag": [
+      {
+        "source": "Mkango Resources (HyProMag parent) - News RSS",
+        "kind": "press_release",
+        "url": "https://mkango.ca/rss"
+      }
+    ],
+    "Veolia": [
+      {
+        "source": "Veolia - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.veolia.com/en/rss-press-releases"
+      }
+    ],
+    "DNP": [
+      {
+        "source": "DNP - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.dnp.co.jp/news/rss_news_jp.xml"
+      },
+      {
+        "source": "DNP - IR News RSS",
+        "kind": "ir",
+        "url": "https://www.dnp.co.jp/news/rss_ir_news.xml"
+      }
+    ],
+    "Nabtesco": [
+      {
+        "source": "Nabtesco - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.nabtesco.com/en/news/feed"
+      }
+    ],
+    "JSR": [
+      {
+        "source": "JSR - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.jsr.co.jp/jsr_e/news/rss.xml"
+      }
+    ],
+    "Cheng Uei Precision": [
+      {
+        "source": "Cheng Uei Precision - Official RSS",
+        "kind": "press_release",
+        "url": "https://www.foxlink.com/web/feed/"
+      }
+    ]
+  },
   "official_pages": {
     "Australian Strategic Metals": [
       {
@@ -2980,6 +3175,157 @@
         "page_title": "Shanghai Electric Wind Power Group Profile",
         "source_type_label": "Corporate Profile",
         "domain": "www.shanghai-electric.com"
+      }
+    ]
+  },
+  "sec_filers": {
+    "Cognex": {
+      "cik": "0000851205",
+      "ticker": "CGNX",
+      "name": "COGNEX CORP"
+    },
+    "Corning": {
+      "cik": "0000024741",
+      "ticker": "GLW",
+      "name": "CORNING INC /NY"
+    },
+    "Charles River": {
+      "cik": "0001100682",
+      "ticker": "CRL",
+      "name": "CHARLES RIVER LABORATORIES INTERNATIONAL, INC."
+    },
+    "Moderna": {
+      "cik": "0001682852",
+      "ticker": "MRNA",
+      "name": "Moderna, Inc."
+    },
+    "West Pharmaceutical": {
+      "cik": "0000105770",
+      "ticker": "WST",
+      "name": "WEST PHARMACEUTICAL SERVICES INC"
+    },
+    "Dupont": {
+      "cik": "0001666700",
+      "ticker": "DD",
+      "name": "DuPont de Nemours, Inc."
+    },
+    "Albemarle": {
+      "cik": "0000915913",
+      "ticker": "ALB",
+      "name": "ALBEMARLE CORP"
+    },
+    "Air Products": {
+      "cik": "0000002969",
+      "ticker": "APD",
+      "name": "Air Products & Chemicals, Inc."
+    },
+    "Chemours": {
+      "cik": "0001627223",
+      "ticker": "CC",
+      "name": "Chemours Co"
+    },
+    "BorgWarner": {
+      "cik": "0000908255",
+      "ticker": "BWA",
+      "name": "BORGWARNER INC"
+    },
+    "DOW": {
+      "cik": "0001751788",
+      "ticker": "DOW",
+      "name": "DOW INC."
+    },
+    "Thermo Fisher": {
+      "cik": "0000097745",
+      "ticker": "TMO",
+      "name": "THERMO FISHER SCIENTIFIC INC."
+    },
+    "Amkor Technology": {
+      "cik": "0001047127",
+      "ticker": "AMKR",
+      "name": "AMKOR TECHNOLOGY, INC."
+    },
+    "Onsemi": {
+      "cik": "0001097864",
+      "ticker": "ON",
+      "name": "ON SEMICONDUCTOR CORP"
+    },
+    "Qualcomm": {
+      "cik": "0000804328",
+      "ticker": "QCOM",
+      "name": "QUALCOMM INC/DE"
+    },
+    "Skyworks": {
+      "cik": "0000004127",
+      "ticker": "SWKS",
+      "name": "SKYWORKS SOLUTIONS, INC."
+    },
+    "Eli Lilly and Company": {
+      "cik": "0000059478",
+      "ticker": "LLY",
+      "name": "ELI LILLY & Co"
+    },
+    "GE Healthcare": {
+      "cik": "0001932393",
+      "ticker": "GEHC",
+      "name": "GE HealthCare Technologies Inc."
+    },
+    "Boeing": {
+      "cik": "0000012927",
+      "ticker": "BA",
+      "name": "BOEING CO"
+    },
+    "3M": {
+      "cik": "0000066740",
+      "ticker": "MMM",
+      "name": "3M CO"
+    },
+    "Ouster": {
+      "cik": "0001816581",
+      "ticker": "OUST",
+      "name": "Ouster, Inc."
+    },
+    "Applied Materials": {
+      "cik": "0000006951",
+      "ticker": "AMAT",
+      "name": "APPLIED MATERIALS INC /DE"
+    },
+    "NXP": {
+      "cik": "0001413447",
+      "ticker": "NXPI",
+      "name": "NXP Semiconductors N.V."
+    }
+  },
+  "official_sitemaps": {
+    "Evonik Industries": [
+      {
+        "source": "Evonik Industries - Press release sitemap",
+        "kind": "press_release",
+        "url": "https://www.evonik.com/en.sitemap.xml",
+        "include": "/en/news/press-releases/\\d{4}/\\d{2}/"
+      }
+    ],
+    "Corning": [
+      {
+        "source": "Corning - News release sitemap",
+        "kind": "press_release",
+        "url": "https://www.corning.com/sitemap.xml",
+        "include": "/worldwide/en/about-us/news-events/news-releases/\\d{4}/\\d{2}/"
+      }
+    ],
+    "Infineon": [
+      {
+        "source": "Infineon - Press release sitemap",
+        "kind": "press_release",
+        "url": "https://www.infineon.com/en.sitemap.row-sitemap.xml",
+        "include": "^https://www\\.infineon\\.com/press-release/\\d{4}/"
+      }
+    ],
+    "Asahi Kasei": [
+      {
+        "source": "Asahi Kasei - News sitemap",
+        "kind": "press_release",
+        "url": "https://www.asahi-kasei.com/sitemap-en.xml",
+        "include": "/news/\\d{4}/[a-z]+\\d{6}"
       }
     ]
   }
