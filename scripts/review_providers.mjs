@@ -36,7 +36,8 @@ export const SUMMARY_INSTRUCTION =
   'Do not change evidence-based fields or quality just to avoid writing summaries. ' +
   // 승인은 못 받았지만 기업·지표 사건이 확인된 투자 후보는 사람이 거르도록 보고서에 실린다.
   // 요약이 없으면 카드에 본문 발췌가 들어가므로 같은 형식의 문안을 받는다.
-  'An investment candidate with entity_supported=true and indicator_supported=true that fails any other approval condition ' +
+  'An investment candidate with entity_supported=true and indicator_supported=true that fails exactly ONE other approval condition, ' +
+  'and whose event_stage is not "completed", ' +
   'is a human-review candidate shown to a person, and it ALSO needs BOTH summaries in the same format as an approved one. ' +
   'Writing them does not approve it and must not change any field. All other candidates use empty summaries. ' +
   // 실적·연차 공시는 지난 분기 사건을 하이라이트로 다시 싣는다. 인용은 그 기사에 있으니

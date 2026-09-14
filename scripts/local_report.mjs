@@ -199,16 +199,24 @@ function dateStatedInQuote(quote) {
   return month ? { day: "", month } : null;
 }
 
-// 승인 조건 중 무엇이 모자랐는지. 투자 후보가 기업 귀속과 지표 사건을 갖추지 못했으면 검토 후보도
-// 아니므로 null, 모두 갖췄으면 빈 배열(승인)이다. 캐시 재검토도 같은 기준을 쓴다.
+// 승인 조건 중 무엇이 모자랐는지. 모두 갖췄으면 빈 배열(승인)이고, 사람 검토 후보가 아니면 null이다.
+// 캐시 재검토와 문안 보강도 같은 기준을 쓴다.
+//
+// 사람 검토 후보는 "아깝게 떨어진" 투자 후보만이다. 기업 귀속과 지표 사건이 확인되고, 나머지 승인
+// 조건 가운데 딱 하나만 모자라야 한다. 둘 이상 모자라면 승인과 거리가 멀다. 2026-08 실행에서
+// 감산 조치·지분 평가이익·타 사업 채권 발행이 이렇게 들어와 사람이 거를 목록만 늘렸다.
+// 이미 끝난 사건(completed)도 뺀다. 이 보고서는 앞으로의 투자 전조를 찾으므로, 실적·연차 자료가
+// 다시 적은 완료된 증설·조달·가동 현황은 정의상 신호가 아니다. 확정됐으나 진행 전인 committed와
+// 단계를 판단하지 못한 unclear는 사람이 볼 가치가 있어 남긴다.
 export function humanReviewGaps(candidate, decision) {
   if (candidate?.kind !== "investment" || !decision.entity_supported || !decision.indicator_supported) return null;
-  return [
+  const gaps = [
     ...(candidate.relevance_exempt || decision.target_technology_supported ? [] : ["target_technology"]),
     ...(decision.leading_indicator_supported ? [] : ["leading_indicator"]),
     ...(investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no) ? [] : ["event_stage"]),
     ...(decision.quality === "pass" ? [] : ["quality"]),
   ];
+  return gaps.length > 1 || decision.event_stage === "completed" ? null : gaps;
 }
 
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
