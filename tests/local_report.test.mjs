@@ -88,13 +88,12 @@ test('not_applicable investment stages record a rejection and still validate evi
     assert.equal(result[0].supported, false);
     assert.equal(result[0].row, null);
   }
-  // A matched indicator event with no stageable investment is still something a
-  // person should see; it becomes a human-review row rather than vanishing.
+  // An indicator match that also lacks both a leading event and a stage misses
+  // more than one condition, so it is not a human-review row either.
   for (const flags of [{ indicator_supported: true }, { indicator_supported: true, quality: 'needs_review' }]) {
     const result = importReview(a, review(a, [{ ...rejected, ...flags }]));
     assert.equal(result[0].supported, false);
-    assert.equal(result[0].row.ai_review_tier, 'human_review');
-    assert.ok(result[0].row.ai_review_gaps.includes('event_stage'));
+    assert.equal(result[0].row, null);
   }
   // The stage is the only thing blocking approval here: that contradiction is
   // what the retry exists to resolve, so it must stay loud.
@@ -133,8 +132,8 @@ test("an entity-and-indicator match the AI rejected stays as a human-review row 
   const cases = [
     [{ target_technology_supported: false, reason_ko: "no direct evidence of the target material" }, ["target_technology"]],
     [{ quality: "needs_review" }, ["quality"]],
-    [{ event_stage: "completed" }, ["event_stage"]],
-    [{ leading_indicator_supported: false, event_stage: "unclear" }, ["leading_indicator", "event_stage"]],
+    [{ event_stage: "committed" }, ["event_stage"]],
+    [{ event_stage: "unclear" }, ["event_stage"]],
   ];
   for (const [overrides, gaps] of cases) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
@@ -144,6 +143,14 @@ test("an entity-and-indicator match the AI rejected stays as a human-review row 
     assert.equal(result.row.ai_review_tier, "human_review");
     assert.deepEqual(result.row.ai_review_gaps, gaps);
     assert.equal(result.row.ai_summary_ko, "");
+  }
+  // Far misses (two or more unmet conditions) and already-completed events are not review candidates.
+  for (const overrides of [{ event_stage: "completed" }, { target_technology_supported: false, event_stage: "committed" },
+    { leading_indicator_supported: false, event_stage: "unclear" }, { target_technology_supported: false, quality: "needs_review" }]) {
+    const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
+    assert.equal(result.supported, false);
+    assert.equal(result.human_review, false);
+    assert.equal(result.row, null);
   }
   // Business-trend candidates never enter the review tier.
   const business = groupArticles([], [{ ...source, investment_signal_no: undefined }], period)[0];
