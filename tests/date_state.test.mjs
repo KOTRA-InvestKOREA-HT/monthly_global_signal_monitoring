@@ -62,3 +62,23 @@ test("period placement keeps date work separate from content review", () => {
   assert.match(pending.reason, /근거/);
   assert.equal(periodPlacement({ published_at: "2026-07-01T00:00:00Z", published_at_source: "feed" }, period).placement, "out_of_period");
 });
+
+test('periodic documents dated by their title year cannot be this month without a confirmed date', async () => {
+  const { periodicDocumentPublicationYear, periodPlacement: place } = await import('../scripts/date_state.mjs');
+  const august = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const undated = (title, url = '') => ({ title, url, published_at: null, published_at_source: '', date_candidates: [] });
+  assert.equal(periodicDocumentPublicationYear(undated('annual report 2023 lres', 'https://www.umicore.com/storage/demo_2024/annual-report-2023-lres.pdf')), 2024);
+  assert.equal(periodicDocumentPublicationYear(undated('2025 Proxy Statement of 2024, PDF file')), 2025);
+  assert.equal(place(undated('annual report 2023 lres'), august).placement, 'out_of_period');
+  assert.equal(place(undated('umicore integrated annual report 2022'), august).placement, 'out_of_period');
+  assert.equal(place(undated('2025 Proxy Statement of 2024, PDF file, (opens in new window)'), august).placement, 'out_of_period');
+  assert.equal(place(undated('Sustainability Report 2023', 'https://assets.example.com/dam/x/Siemens-Energy_Sustainability-Report-2023.pdf'), august).placement, 'out_of_period');
+  // This year's publication of last year's report may be this month; keep it for review.
+  assert.equal(place(undated('2025 Annual Report of 2025, PDF file'), august).placement, 'date_pending');
+  // A confirmed August press release about a report is judged by its date, not its title.
+  const confirmed = { title: 'Chemours Publishes 2023 Sustainability Report', published_at: '2026-08-25T00:00:00Z',
+    published_month: '2026-08', published_at_source: 'jsonld', date_candidates: [] };
+  assert.equal(place(confirmed, august).placement, 'in_period');
+  // Ordinary headlines with a year are not periodic documents.
+  assert.equal(periodicDocumentPublicationYear(undated('Energy Fuels completes acquisition of ASM in 2024 deal')), null);
+});

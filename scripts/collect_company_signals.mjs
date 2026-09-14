@@ -15,7 +15,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v10-feeds-sec-sitemaps';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v11-stale-periodic-documents';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 

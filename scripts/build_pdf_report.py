@@ -745,22 +745,28 @@ def summary_parts(row):
     if not text:
         return None
 
+    # 앞부분을 표제로 떼어 낼 때는 그 앞부분이 표제 상한 안에 들어갈 때만 나눈다. 넘치는 앞부분을 잘라
+    # 표제로 쓰면 문장 한가운데가 "..."로 끊긴다. 2026-08 영문판의 "…in Singapore with the..."가
+    # 그랬다. "표제 - 상세" 구분 없이 한 문장으로 온 영문 요약의 첫 쉼표 앞이 110자를 넘었다.
+    def fits_headline(part):
+        return len(phraseify_summary_text(part, row)) <= headline_limit
+
     dashed = re.split(r"\s[-–—]\s", text)
-    if len(dashed) >= 2:
+    if len(dashed) >= 2 and fits_headline(dashed[0]):
         return {
             "headline": compact_summary_phrase(dashed[0], headline_limit, row),
             "detail": compact_summary_phrase(" - ".join(dashed[1:]), detail_limit, row),
         }
 
     sentences = sentence_spans(text)
-    if len(sentences) >= 2:
+    if len(sentences) >= 2 and fits_headline(sentences[0]):
         return {
             "headline": compact_summary_phrase(sentences[0], headline_limit, row),
             "detail": compact_summary_phrase(" ".join(sentences[1:]), detail_limit, row),
         }
 
     clauses = [item for item in re.split(r",\s*", text) if item]
-    if len(clauses) >= 2:
+    if len(clauses) >= 2 and fits_headline(clauses[0]):
         return {
             "headline": compact_summary_phrase(clauses[0], headline_limit, row),
             "detail": compact_summary_phrase(", ".join(clauses[1:]), detail_limit, row),

@@ -148,6 +148,33 @@ function touchesPeriod(state, period) {
   return state.precision === "day" ? dayInPeriod(state.day, period) : monthTouchesPeriod(state.month, period);
 }
 
+// 제목이나 URL에 대상 연도가 박힌 정기 문서의 발행 연도. 연간·통합·지속가능경영 보고서는 그해 실적을
+// 이듬해에 싣고, 위임장 설명서(proxy statement)는 표기한 해에 나온다. 게시일 근거가 없어도 이 연도가
+// 보고 기간보다 앞이면 이번 달 자료일 수 없다. 2026-08 실행에서 Umicore 2023 연차보고서와 Albemarle
+// 2025 위임장 설명서가 날짜 미상으로 검토에 들어가 투자 시그널 승인까지 받았다.
+// 문서마다 여러 해가 적혀 있으면 가장 늦은 발행 연도를 쓴다. 잘못 늦게 잡는 쪽은 걸러내지 않을 뿐이다.
+const PERIODIC_DOCUMENTS = [
+  { lag: 1, pattern: /\b(?:annual|integrated|sustainability|esg|non-financial|csr)(?:[\s_-]+annual)?[\s_-]+report(?:[\s_-]+(?:of|for|fy))?[\s_-]*((?:19|20)\d{2})\b/gi },
+  { lag: 1, pattern: /\b((?:19|20)\d{2})[\s_-]+(?:(?:integrated|sustainability|esg|non-financial|csr)[\s_-]+)?(?:annual[\s_-]+)?report\b/gi },
+  { lag: 0, pattern: /\b((?:19|20)\d{2})[\s_-]+proxy[\s_-]+statement\b/gi },
+  { lag: 0, pattern: /\bproxy[\s_-]+statement[\s_-]*((?:19|20)\d{2})\b/gi },
+];
+
+export function periodicDocumentPublicationYear(row = {}) {
+  let url = String(row.url || "");
+  try {
+    url = decodeURIComponent(url);
+  } catch {
+    // 잘못 인코딩된 URL은 그대로 본다.
+  }
+  const text = `${row.title || ""} ${url}`;
+  let latest = 0;
+  for (const { pattern, lag } of PERIODIC_DOCUMENTS) {
+    for (const match of text.matchAll(pattern)) latest = Math.max(latest, Number(match[1]) + lag);
+  }
+  return latest || null;
+}
+
 // 기간 배치는 세 갈래다.
 // in_period: 게시월까지 확정돼 월간 보고서 본문에 쓸 수 있다.
 // date_pending: 내용 검토는 하되 날짜가 보강되기 전에는 본문에 넣지 않는다.
@@ -155,6 +182,13 @@ function touchesPeriod(state, period) {
 export function periodPlacement(row, period) {
   const state = resolveDateState(row);
   const hold = (reason) => ({ placement: "date_pending", state, reason });
+  // 게시일이 확정된 기사는 그 날짜를 따른다. 확정 근거가 없을 때만 정기 문서의 발행 연도로 거른다.
+  if (state.status !== "confirmed") {
+    const publicationYear = periodicDocumentPublicationYear(row);
+    if (publicationYear && publicationYear < Number(String(period.from_date).slice(0, 4))) {
+      return { placement: "out_of_period", state, reason: `${publicationYear}년 발행 정기 문서` };
+    }
+  }
   if (state.status === "unknown") return hold("게시일 근거가 전혀 없음");
   const touches = touchesPeriod(state, period);
   if (state.status === "conflicting") {
