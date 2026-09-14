@@ -495,6 +495,14 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   const failed = [];
   const diagnostics = [];
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics, ...extra });
+  // 문안만 다시 받는 보조 요청이 거절되면 모델이 무엇을 썼는지 남긴다. 2026-08 ASML 사업동향은 요약을 다시
+  // 받았는데도 옛 문안이 남았고, 새 응답이 저장되지 않아 무엇이 틀렸는지 알 수 없었다.
+  const recordSupplementDiagnostic = async (article, reason, detail) => {
+    const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-${reason}.json`;
+    await write(path.join(path.dirname(reviewDir), diagnosticPath), {
+      schema_version: 1, article_id: article.id, model: MODEL, created_at: new Date().toISOString(), reason, ...detail });
+    diagnostics.push({ article_id: article.id, attempt: 0, reason, file: diagnosticPath });
+  };
   // 문안이 빈 사람 검토 후보를 짚어 한 번 더 묻는다. 판정은 옮기지 않고 문안만 옮긴다. 새로 판정한
   // 기사도 같은 실행 안에서 보강한다. 실패하거나 한도에 걸리면 다음 실행에서 다시 묻는다.
   const backfillSummaries = async (article, review, file) => {
@@ -533,6 +541,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       // 응답이 검증을 통과하지 못했으면 다음 실행에서 다시 물어도 결과가 같기 쉽다. 버전을 찍어 매 실행
       // 같은 기사에 요청을 쓰지 않게 한다. 할당량·전송 오류는 찍지 않고 다음 실행에 맡긴다.
       if (!error.response_code) return review;
+      await recordSupplementDiagnostic(article, `summary_refresh_${error.response_code}`, error.diagnostic || {});
       const stamped = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
       await write(file, stamped);
       return stamped;
@@ -540,7 +549,10 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     let merged = mergeRefreshedSummaries(article, review, fresh);
     try {
       importReview(article, merged, { strictNumbers: true });
-    } catch {
+    } catch (error) {
+      await recordSupplementDiagnostic(article, 'summary_refresh_rejected', { validation_message: error.message,
+        fresh_summaries: (fresh.decisions || []).filter(d => d.summary_ko || d.summary_en)
+          .map(d => ({ candidate_id: d.candidate_id, summary_ko: d.summary_ko, summary_en: d.summary_en })) });
       merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
     }
     await write(file, merged);
@@ -656,6 +668,13 @@ async function main() {
   const inputDir = path.join(root, `${from}_${to}`);
   const sourceFile = path.join(inputDir, 'latest_company_signals.json');
   if (process.env.REPORT_REFRESH === 'true') await fs.rm(inputDir, { recursive: true, force: true });
+  // 저장된 판정을 전부 버리고 모든 기사를 다시 판정한다. 판정·요약 지시가 여러 번 바뀌어 옛 판정과 새 판정이
+  // 섞였을 때 쓴다. 요청 한도나 할당량에 걸려 멈추면 다음 실행은 이 옵션을 끄고 돌려야 이어서 판정한다.
+  // 켜 둔 채 다시 돌리면 또 처음부터 시작한다.
+  if (process.env.REPORT_REREVIEW === 'true') {
+    await fs.rm(path.join(root, 'reviews'), { recursive: true, force: true });
+    console.log('Discarded saved article reviews; every article will be reviewed again');
+  }
   try {
     await fs.access(sourceFile);
     const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));

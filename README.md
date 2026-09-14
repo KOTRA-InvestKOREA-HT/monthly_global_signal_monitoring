@@ -75,9 +75,11 @@ NVIDIA uses the existing `OPENAI_API_KEY` secret. Model settings
 are `GEMINI_MODEL` / `NVIDIA_MODEL`.
 
 `REPORT_MAX_REQUESTS` (1–400), `REPORT_CONCURRENCY` (1–12), `REPORT_DELAY_MS`,
-`REPORT_REFRESH`, and `REPORT_ISSUE_NUMBER` use the same implementation in both
+`REPORT_REFRESH`, `REPORT_REREVIEW`, and `REPORT_ISSUE_NUMBER` use the same implementation in both
 environments. Progress lives in `outputs/review_work`; rerun the same period to
-resume. An incomplete review exits with code 75 and does not publish new PDFs.
+resume. `REPORT_REREVIEW=true` (the Actions `rereview` checkbox) discards saved
+article reviews and reviews every article again; if that run pauses, rerun with it
+off so the next run resumes instead of starting over. An incomplete review exits with code 75 and does not publish new PDFs.
 Successful CLI runs update `outputs/latest_*.json` and both `public/reports` PDFs;
 only Actions additionally commits the outputs. Python dependencies from
 `requirements-python.txt` and Chrome/Edge are required to build the reports.

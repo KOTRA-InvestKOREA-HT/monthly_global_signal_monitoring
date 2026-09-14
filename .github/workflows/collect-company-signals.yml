@@ -37,6 +37,10 @@ on:
         description: "Recollect sources instead of resuming the saved collection"
         type: boolean
         default: false
+      rereview:
+        description: "Discard saved AI reviews and review every article again. If the run pauses, run again with this off"
+        type: boolean
+        default: false
       concurrency:
         description: "Concurrent article requests (1-12); shared RPM limit still applies"
         type: string
@@ -92,6 +96,7 @@ jobs:
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
           REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '2' }}
           REPORT_REFRESH: ${{ inputs.refresh || 'false' }}
+          REPORT_REREVIEW: ${{ inputs.rereview || 'false' }}
           # SEC EDGAR 는 연락처가 든 User-Agent 를 요구한다(예: "KOTRA Invest KOREA signal monitor team@example.org").
           # 저장소 변수를 비워 두면 8-K 수집만 건너뛴다.
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
