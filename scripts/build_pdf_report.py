@@ -1200,6 +1200,8 @@ def build_profiles(targets, tech_map):
                 **tech,
                 "target_no": target.get("target_no", tech.get("target_no")),
                 "company": company,
+                # 식별자는 그대로 두고 화면에만 쓰는 이름. 목록 원본의 오기(Metals)를 바로잡는다.
+                "display_name": target.get("display_name") or company,
                 "country": country,
                 "detailed_industry": industry,
                 "target_technology": target_technology,
@@ -1321,6 +1323,24 @@ def signal_needs_human_review(row):
     )
 
 
+# 검토 필요 표시에 붙이는 사유. 무엇이 모자라 AI 승인을 못 받았는지 보여야 사람이 빨리 거른다.
+REVIEW_GAP_LABELS = {
+    "ko": {"target_technology": "타겟 기술 미확인", "leading_indicator": "전조 활동 미확인",
+           "event_stage": "투자 단계 기준 밖", "quality": "근거 부족"},
+    "en": {"target_technology": "target tech unconfirmed", "leading_indicator": "no leading activity",
+           "event_stage": "stage outside criteria", "quality": "insufficient evidence"},
+}
+
+
+def review_label(row):
+    """검토 필요 표시와 그 사유. 사람 검토 후보가 아니면 빈 문자열."""
+    if not signal_needs_human_review(row):
+        return ""
+    labels = REVIEW_GAP_LABELS["en" if LANG == "en" else "ko"]
+    reasons = [labels.get(gap, gap) for gap in (row.get("ai_review_gaps") or [])]
+    return " · ".join(["Needs review" if LANG == "en" else "검토 필요", *reasons])
+
+
 def signal_publishable(row):
     """시그널 칸에 올릴 수 있는 행. 사람 검토 후보는 대시보드의 무시 목록으로 빠진다."""
     return signal_supported(row) or signal_needs_human_review(row)
@@ -1427,7 +1447,7 @@ def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=F
         c.setLineWidth(0.45)
         c.line(x, y, x + table_w, y)
         report.text(index_x, y + 3.7, str(profile["target_no"]), 6, colors.HexColor("#737C86"), align="center")
-        report.text(name_x, y + 3.7, profile["company"], 6, TEXT)
+        report.text(name_x, y + 3.7, profile.get("display_name") or profile["company"], 6, TEXT)
         status = company_status(profile["company"], signal_index, covered)
         for idx in range(5):
             state = signal_cell_state(signal_index, profile["company"], idx + 1)
@@ -1530,6 +1550,19 @@ def source_line(row):
     tail = f" {date}" if date else ""
     room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
     return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
+
+
+def source_url(row):
+    """출처 줄이 가리킬 원문 주소. Google 중계 주소보다 발행사 원문을 먼저 쓴다.
+
+    PDF 출처가 글자 라벨뿐이라 독자가 원문으로 갈 수 없었다(2026-08 검토, 링크 0개).
+    """
+    if not row:
+        return ""
+    candidates = [str(row.get(key) or "").strip() for key in ("source_direct_url", "content_source_url", "url")]
+    web = [value for value in candidates if value.startswith(("http://", "https://"))]
+    direct = [value for value in web if "news.google.com" not in value]
+    return (direct or web or [""])[0]
 
 
 def detail_text(row, limit=260):
@@ -1896,8 +1929,9 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.roundRect(x, top_y, width, top_h, 10, fill=1, stroke=1)
 
     header_y = DETAIL_BOX_TOP - 29
-    report.text(x + 17, header_y, company, 14, TEXT, weight="semibold")
-    name_w = report.canvas.stringWidth(company, report.bold_font, 14)
+    display_name = profile.get("display_name") or company
+    report.text(x + 17, header_y, display_name, 14, TEXT, weight="semibold")
+    name_w = report.canvas.stringWidth(display_name, report.bold_font, 14)
     industry_x = min(x + 17 + name_w + 14, x + 250)
     country_text = profile.get("country", "")
     country_w = report.canvas.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0
@@ -2061,8 +2095,9 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     c.roundRect(x, top - layout["height"], width, layout["height"], 10, fill=1, stroke=1)
 
     header_y = top - ITEM_CARD_TITLE_TOP
-    report.text(x + 17, header_y, company, 13, TEXT, weight="semibold")
-    name_w = c.stringWidth(company, report.bold_font, 13)
+    display_name = profile.get("display_name") or company
+    report.text(x + 17, header_y, display_name, 13, TEXT, weight="semibold")
+    name_w = c.stringWidth(display_name, report.bold_font, 13)
     industry_text = profile.get("detailed_industry", "")
     country_text = profile.get("country", "")
     country_w = c.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0

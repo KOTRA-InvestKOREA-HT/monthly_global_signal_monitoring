@@ -1,5 +1,5 @@
 [
-  {"target_no": 1, "company": "Australian Strategic Metals", "query_aliases": ["ASM", "Australian Strategic Materials"]},
+  {"target_no": 1, "company": "Australian Strategic Metals", "display_name": "Australian Strategic Materials", "query_aliases": ["ASM", "Australian Strategic Materials"]},
   {"target_no": 2, "company": "Cognex", "query_aliases": ["Cognex Corporation"]},
   {"target_no": 3, "company": "Corning", "query_aliases": ["Corning Incorporated"]},
   {"target_no": 4, "company": "Charles River", "query_aliases": ["Charles River Laboratories"]},

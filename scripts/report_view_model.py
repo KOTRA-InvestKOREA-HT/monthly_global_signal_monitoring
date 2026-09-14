@@ -94,8 +94,9 @@ def signal_entry(no, rows, measure):
         "plain": "" if parts else report.detail_text(row, 560),
         "inline": summary_fits_one_line(parts, measure),
         # 대표 행이 AI 미승인 검토 후보면 읽는 사람이 알 수 있게 표시한다.
-        "review": ("Needs review" if report.LANG == "en" else "검토 필요") if report.signal_needs_human_review(row) else "",
+        "review": report.review_label(row),
         "source": report.source_line(row),
+        "source_url": report.source_url(row),
     }
 
 
@@ -108,7 +109,7 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
         business_row = report.best_business_row(profile["company"], relevant, investment, signals)
         target_label, target_text = report.target_section_for_profile(profile)
         entries.append({
-            "company": profile["company"],
+            "company": profile.get("display_name") or profile["company"],
             "country": profile.get("country", ""),
             "industry": profile.get("detailed_industry", ""),
             "signals": [signal_entry(no, rows_by_signal.get(no, []), measure) for no in range(1, 6)],
@@ -118,6 +119,7 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
                 "target_text": target_text,
                 "body": report.business_text([business_row] if business_row else []),
                 "source": report.source_line(business_row) if business_row else report.t("source_empty"),
+                "source_url": report.source_url(business_row),
             },
         })
     return entries
@@ -140,7 +142,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
         "target_label": report.t("item_target_label"),
         "trend_label": report.t("item_trend_label", month=month),
         "cards": [{
-            "company": entry["profile"]["company"],
+            "company": entry["profile"].get("display_name") or entry["profile"]["company"],
             "industry": entry["profile"].get("detailed_industry", ""),
             "country": entry["profile"].get("country", ""),
             "target_text": report.item_target_text(entry["profile"]),
@@ -149,6 +151,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
             "body": report.item_trend_body(measure, entry["row"], ITEM_BODY_WIDTH,
                                            report.ITEM_BODY_SIZE, report.ITEM_BODY_MAX_LINES)[0],
             "source": report.source_line(entry["row"]),
+            "source_url": report.source_url(entry["row"]),
         } for entry in entries],
     }
 
@@ -219,7 +222,7 @@ def build(args):
             "counts": counts,
             "rows": [{
                 "target_no": profile["target_no"],
-                "company": profile["company"],
+                "company": profile.get("display_name") or profile["company"],
                 "status": company_status(profile["company"], signal_index, covered),
                 "signals": [report.signal_cell_state(signal_index, profile["company"], no) for no in range(1, 6)],
             } for profile in profiles],

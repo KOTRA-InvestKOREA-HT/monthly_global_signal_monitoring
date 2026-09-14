@@ -277,3 +277,14 @@ test('the business box labels its target with a plain pill, not an emoji marker'
   assert.equal(occurrences(html, 'class="marker"'), 0);
   assert.ok(html.includes('<span class="pill target">투자유치 필요 품목·기술</span>'));
 });
+
+test('source lines link to the original article when a web address is known', () => {
+  const html = renderReport(withDetails(['Ouster'], () => [firing(4, {
+    source: 'Source Ouster - Official RSS 2026.08.26',
+    source_url: 'https://investors.ouster.com/news-releases/news-release-details/guss-automation',
+  })]));
+  assert.ok(html.includes('<a href="https://investors.ouster.com/news-releases/news-release-details/guss-automation">Source Ouster - Official RSS 2026.08.26</a>'));
+  // No address, or a non-web one, stays plain text.
+  const plain = renderReport(withDetails(['Ouster'], () => [firing(4, { source_url: 'javascript:alert(1)' })]));
+  assert.equal(occurrences(plain, '<a href="javascript'), 0);
+});

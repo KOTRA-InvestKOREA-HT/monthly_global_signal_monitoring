@@ -92,7 +92,9 @@ test('a cached review gains a date hint once without re-deciding the article', a
   const a = pendingArticle('Undated');
   const file = path.join(reviewDir, `${a.id}.json`);
   // 날짜 스키마 이전에 저장된 판정: 두 필드가 아예 없다.
-  const before = { article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: pendingDecisions };
+  // 요약 정확성 재요청까지 끝난 판정이다. 이 테스트는 날짜 힌트 보강만 따로 본다.
+  const before = { article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: pendingDecisions,
+    summary_accuracy_version: 'summary-accuracy-v1' };
   await fs.writeFile(file, JSON.stringify(before));
   const args = { articles: [a], reviewDir, policy: '', config, sleep: async () => {} };
   const topped = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-14', datedQuote, [{ ...pendingDecisions[0], summary_ko: '재판정된 다른 요약' }]) });
@@ -177,7 +179,7 @@ test('bumping only the date hint version re-asks the date and keeps every conten
   const a = pendingArticle('Undated'), b = article('Dated');
   const cache = (article, ds, date_hint_version) => fs.writeFile(path.join(reviewDir, `${article.id}.json`),
     JSON.stringify({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
-      decisions: ds, date_hint_version, published_date: '', published_date_quote: '' }));
+      decisions: ds, date_hint_version, published_date: '', published_date_quote: '', summary_accuracy_version: 'summary-accuracy-v1' }));
   // 이전 규칙으로 물어봐 빈 답을 받은 기사. 프롬프트·파서가 바뀌었으므로 날짜만 다시 묻는다.
   await cache(a, pendingDecisions, 'date-hint-v0');
   await cache(b, decisions, 'date-hint-v0');
