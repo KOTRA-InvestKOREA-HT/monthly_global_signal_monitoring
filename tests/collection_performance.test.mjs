@@ -11,17 +11,27 @@ test('Google rows are probed unless a publisher URL is already known', () => {
   assert.equal(row.title, 'Original RSS title');
 });
 
-test('parallel Google work stops after three unresolved probes, and resets next run', async () => {
-  const probe = createPublisherProbe();
+test('parallel Google work pauses after three unresolved probes, stops after repeated pauses, and resets next run', async () => {
+  const pauses = [];
+  const probe = createPublisherProbe(3, { pauseMs: 60000, maxPauses: 3, sleepFn: async (ms) => { pauses.push(ms); } });
   let calls = 0;
   const fail = async () => { calls++; throw new Error('publisher_url_unresolved'); };
   const results = await Promise.allSettled(Array.from({ length: 115 }, (_, i) =>
     probe(`https://news.google.com/rss/articles/${i}`, fail)));
-  assert.equal(calls, 3);
-  assert.equal(results.filter(r => r.status === 'rejected').length, 3);
-  assert.equal(results.filter(r => r.status === 'fulfilled' && r.value === null).length, 112);
+  // Three failures, then three pause-and-retry rounds of three failures each, then stop.
+  assert.deepEqual(pauses, [60000, 60000, 60000]);
+  assert.equal(calls, 12);
+  assert.equal(results.filter(r => r.status === 'rejected').length, 12);
+  assert.equal(results.filter(r => r.status === 'fulfilled' && r.value === null).length, 103);
   assert.equal(await probe('https://publisher.example/story', async () => 'body'), 'body');
   assert.equal(await createPublisherProbe()('https://news.google.com/new', async () => 'body'), 'body');
+});
+
+test('a pause that clears the block lets probing continue', async () => {
+  const probe = createPublisherProbe(3, { pauseMs: 1, sleepFn: async () => {} });
+  const url = 'https://news.google.com/rss/articles/sample';
+  for (let i = 0; i < 3; i += 1) await assert.rejects(probe(url, async () => { throw new Error('publisher_url_unresolved'); }));
+  assert.equal(await probe(url, async () => 'publisher body'), 'publisher body');
 });
 
 test('successful redirects and unrelated errors break the unresolved failure streak', async () => {

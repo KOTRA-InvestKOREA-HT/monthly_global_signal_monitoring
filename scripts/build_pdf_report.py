@@ -728,13 +728,23 @@ def compact_summary_phrase(value, limit=90, row=None):
     return short_text(phraseify_summary_text(value, row), limit)
 
 
+def summary_detail_text(value, limit=230):
+    """표제 아래 상세 문장. 표제용 명사형 압축을 걸지 않는다.
+
+    phraseify_summary_text 는 "개발하고"를 "개발"로, "활용해"를 "활용·"로 바꾸고 문장 앞 주어를 떼어
+    짧은 표제를 만든다. 같은 규칙을 상세 문장에 걸면 2026-08 보고서(9월 14일 실행)의 Moderna 칸처럼
+    "인티스메란을 개발 면역항암제 키트루다와 병용 연구를 공동으로 진행함"이 되고, 주어였던 머크도 사라진다.
+    """
+    return short_text(clean_text(value), limit)
+
+
 def summary_parts(row):
     headline_limit = 110 if LANG == "en" else 58
     # 본문이 최대 6줄까지 늘어날 수 있으므로 글자 수 상한이 먼저 걸리지 않게 잡는다.
     # 실제로 몇 줄을 싣을지는 draw_summary_text가 폭으로 판단한다.
     detail_limit = 440 if LANG == "en" else 230
     headline = compact_summary_phrase(summary_field(row, "ai_summary_headline"), headline_limit, row)
-    detail = compact_summary_phrase(summary_field(row, "ai_summary_detail"), detail_limit, row)
+    detail = summary_detail_text(summary_field(row, "ai_summary_detail"), detail_limit)
     if headline or detail:
         return {
             "headline": headline or compact_summary_phrase(summary_field(row, "ai_summary"), headline_limit, row),
@@ -755,24 +765,21 @@ def summary_parts(row):
     if len(dashed) >= 2 and fits_headline(dashed[0]):
         return {
             "headline": compact_summary_phrase(dashed[0], headline_limit, row),
-            "detail": compact_summary_phrase(" - ".join(dashed[1:]), detail_limit, row),
+            "detail": summary_detail_text(" - ".join(dashed[1:]), detail_limit),
         }
 
     sentences = sentence_spans(text)
     if len(sentences) >= 2 and fits_headline(sentences[0]):
         return {
             "headline": compact_summary_phrase(sentences[0], headline_limit, row),
-            "detail": compact_summary_phrase(" ".join(sentences[1:]), detail_limit, row),
+            "detail": summary_detail_text(" ".join(sentences[1:]), detail_limit),
         }
 
-    clauses = [item for item in re.split(r",\s*", text) if item]
-    if len(clauses) >= 2 and fits_headline(clauses[0]):
-        return {
-            "headline": compact_summary_phrase(clauses[0], headline_limit, row),
-            "detail": compact_summary_phrase(", ".join(clauses[1:]), detail_limit, row),
-        }
-
-    return {"headline": compact_summary_phrase(text, detail_limit, row), "detail": ""}
+    # 쉼표에서는 나누지 않는다. 쉼표 앞은 대개 주어나 고유명사일 뿐이다. 2026-08 영문판에서
+    # "GUSS Automation, a wholly owned subsidiary of John Deere, plans ..."는 "GUSS Automation"이,
+    # "University of California, Berkeley"는 "University of California"가 표제로 떨어졌다.
+    # 나눌 곳이 없으면 요약 전체를 한 문장으로 싣는다.
+    return {"headline": summary_detail_text(text, detail_limit), "detail": ""}
 
 
 def summary_plain_text(row):
