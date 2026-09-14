@@ -39,3 +39,19 @@ test('approved totals distinguish report rows, pending dates and outside-period 
   assert.deepEqual(publishedSignalCounts(rows, period), { approved_count: 4, human_review_count: 0, report_signal_count: 2, approved_companies_in_report: 1,
     date_pending_count: 1, out_of_period_count: 1, companies_in_report: 1 });
 });
+
+test('human-review rows count toward the report only when both summaries exist, as in the PDF', () => {
+  const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const review = { company: 'R', published_at: '2026-08-10', published_at_source: 'feed',
+    ai_signal_supported: false, ai_review_tier: 'human_review' };
+  const counts = publishedSignalCounts([
+    { company: 'A', published_at: '2026-08-10', published_at_source: 'feed' },
+    { ...review, ai_summary_ko: '표제 - 상세', ai_summary_en: 'Headline - detail' },
+    { ...review, company: 'S', ai_summary_ko: '', ai_summary_en: '' },
+  ], period);
+  assert.equal(counts.approved_count, 1);
+  assert.equal(counts.human_review_count, 2);
+  assert.equal(counts.report_signal_count, 2);
+  assert.equal(counts.companies_in_report, 2);
+  assert.equal(counts.approved_companies_in_report, 1);
+});

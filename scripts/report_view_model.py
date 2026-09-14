@@ -34,6 +34,7 @@ def matrix_counts(profiles, signal_index, summary, signal_rows):
     statuses = [company_status(p["company"], signal_index, covered) for p in profiles]
     return {
         "detected": statuses.count("detected"),
+        "review": statuses.count("review"),
         "reviewed_off": statuses.count("reviewed"),
         "insufficient": statuses.count("insufficient"),
         "total": len(profiles),
@@ -209,8 +210,9 @@ def build(args):
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
             "legend_unknown": report.t("matrix_legend_unknown"),
+            "legend_review": report.t("matrix_legend_review"),
             "indicators": report.t("matrix_indicators"),
-            "footnote": report.t("matrix_footnote", on=counts["detected"],
+            "footnote": report.t("matrix_footnote", on=counts["detected"], review=counts["review"],
                                  off=counts["reviewed_off"] + counts["insufficient"],
                                  total=counts["total"], reviewed_off=counts["reviewed_off"],
                                  insufficient=counts["insufficient"]),
@@ -219,7 +221,7 @@ def build(args):
                 "target_no": profile["target_no"],
                 "company": profile["company"],
                 "status": company_status(profile["company"], signal_index, covered),
-                "signals": [bool(signal_index.get(profile["company"], {}).get(no)) for no in range(1, 6)],
+                "signals": [report.signal_cell_state(signal_index, profile["company"], no) for no in range(1, 6)],
             } for profile in profiles],
         },
         "details": {

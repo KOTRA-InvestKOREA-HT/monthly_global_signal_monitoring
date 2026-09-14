@@ -32,6 +32,7 @@ export const SUMMARY_INSTRUCTION =
   'For relevant, leading_indicator_supported=true and event_stage="not_applicable" are constants; no investment-stage test applies. ' +
   'An eligible relevant candidate needs its OWN Korean and English business summaries whether investment candidates are approved or rejected. ' +
   'An investment summary does not replace the relevant summaries, even when both cite the same passage. ' +
+  'A relevant (business) summary is plain prose sentences only: no headline, no "title - detail" form and no leading company label. ' +
   'A relevance-exempt candidate can need summaries even when target_technology_supported=false. ' +
   'Do not change evidence-based fields or quality just to avoid writing summaries. ' +
   // 승인은 못 받았지만 기업·지표 사건이 확인된 투자 후보는 사람이 거르도록 보고서에 실린다.

@@ -18,7 +18,11 @@ export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
-  const published = rows.filter(row => reportEligible(row, period));
+  // 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다(build_pdf_report.signal_needs_human_review).
+  // 여기서도 같은 기준으로 세야 요약 파일의 보고서 건수·기업 수가 PDF와 맞는다.
+  const inReport = row => reportEligible(row, period) && (row.ai_review_tier !== 'human_review' ||
+    Boolean(String(row.ai_summary_ko || '').trim() && String(row.ai_summary_en || '').trim()));
+  const published = rows.filter(inReport);
   // 사람 검토 후보도 보고서에 들어가지만 AI 승인은 아니므로 따로 센다.
   const humanReview = rows.filter(row => row.ai_review_tier === 'human_review');
   return { approved_count: rows.length - humanReview.length, human_review_count: humanReview.length,

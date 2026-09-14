@@ -232,7 +232,8 @@ class MatrixStatusTests(unittest.TestCase):
         self.assertEqual(counts["detected"], statuses.count("detected"))
         self.assertEqual(counts["reviewed_off"], statuses.count("reviewed"))
         self.assertEqual(counts["insufficient"], statuses.count("insufficient"))
-        self.assertEqual(sum(counts[k] for k in ("detected", "reviewed_off", "insufficient")), counts["total"])
+        self.assertEqual(counts["review"], statuses.count("review"))
+        self.assertEqual(sum(counts[k] for k in ("detected", "review", "reviewed_off", "insufficient")), counts["total"])
 
 
 class HumanReviewSignalTests(unittest.TestCase):
@@ -248,3 +249,64 @@ class HumanReviewSignalTests(unittest.TestCase):
         index = pdf.index_investment_signals([without, ko_only, with_prose])
         self.assertEqual([row["title"] for row in index["A"][2]], ["with"])
         self.assertIsNone(pdf.index_investment_signals([without, ko_only]).get("A"))
+
+
+APPROVED_ROW = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": True, "ai_summary_quality": "pass",
+                "ai_entity_supported": True, "ai_indicator_supported": True, "ai_leading_indicator_supported": True,
+                "ai_target_technology_supported": True, "ai_event_stage": "planned", "ai_summary_reason": "x",
+                "ai_summary_ko": "표제 - 상세", "ai_summary_en": "Headline - detail"}
+REVIEW_ROW = dict(APPROVED_ROW, ai_signal_supported=False, ai_review_tier="human_review",
+                  ai_target_technology_supported=False, investment_signal_no=4)
+
+
+class MatrixReviewStateTests(unittest.TestCase):
+    """2026-08: review-only cells were painted like AI-confirmed cells and counted as detected."""
+
+    def setUp(self):
+        self.index = {"Mixed": {2: [APPROVED_ROW], 4: [REVIEW_ROW]}, "ReviewOnly": {4: [REVIEW_ROW]},
+                      "Both": {4: [APPROVED_ROW, REVIEW_ROW]}}
+
+    def test_cells_and_rows_separate_confirmed_from_review(self):
+        self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 2), "on")
+        self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 4), "review")
+        self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 1), "")
+        self.assertEqual(pdf.signal_cell_state(self.index, "Both", 4), "on")
+        self.assertEqual(pdf.company_status("Mixed", self.index, set()), "detected")
+        self.assertEqual(pdf.company_status("ReviewOnly", self.index, set()), "review")
+
+
+class SentenceBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.previous_language = pdf.LANG
+        pdf.set_language("ko")
+
+    def tearDown(self):
+        pdf.set_language(self.previous_language)
+
+    def test_initials_decimals_and_abbreviations_are_not_sentence_ends(self):
+        self.assertEqual(pdf.split_sentences("Michael J. Fox Foundation joined. Sales rose 23.6% at Acme Inc. in Q2. Next"),
+                         ["Michael J. Fox Foundation joined.", "Sales rose 23.6% at Acme Inc. in Q2.", "Next"])
+        self.assertEqual(pdf.split_sentences("出資しました。連携を強化します。"), ["出資しました。", "連携を強化します。"])
+
+    def test_korean_phrasing_keeps_initials_and_decimals(self):
+        text = pdf.phraseify_summary_text("써모 피셔 사이언티픽이 마이클 J. 폭스 재단과 협력해 매출 23.6% 증가를 기록함.")
+        self.assertIn("J. 폭스", text)
+        self.assertIn("23.6%", text)
+        self.assertNotIn("J,", text)
+
+
+class BusinessProseTests(unittest.TestCase):
+    """2026-08 Nabtesco card printed a model headline run into the body."""
+
+    def test_a_leading_headline_is_removed(self):
+        nabtesco = ("나브테스코 - 로봇용 감속기 포함 컴포넌트 솔루션 사업 매출 증가 기록 나브테스코는 "
+                    "2026년 상반기 반기보고서를 통해 매출이 증가했다고 공시함.")
+        self.assertTrue(pdf.business_prose(nabtesco).startswith("나브테스코는 2026년 상반기"))
+        self.assertEqual(pdf.business_prose("오우스터, 유타주 교통 현대화 사업 수주 - 에코라이트와의 파트너십을 통해 계약을 수주함."),
+                         "에코라이트와의 파트너십을 통해 계약을 수주함.")
+        self.assertEqual(pdf.business_prose("Ouster Secures Utah Contract - Ouster announced that Econolite won a contract."),
+                         "Ouster announced that Econolite won a contract.")
+
+    def test_prose_ranges_and_inner_dashes_are_left_alone(self):
+        for text in ("레니쇼는 신제품을 출시했음. 2025 - 2026년 로드맵을 공개함.", "매출 2025 - 2026년 증가 전망", "CD-SEM 장비를 발표함."):
+            self.assertEqual(pdf.business_prose(text), text)

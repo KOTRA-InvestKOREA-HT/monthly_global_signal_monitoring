@@ -259,3 +259,14 @@ test('body text colours clear the WCAG AA contrast floor on white', () => {
   // 보조 라벨은 AA 까지는 못 가도 이전(2.04:1)보다는 읽혀야 한다.
   assert.ok(onWhite(COLORS.grey) >= 3, `grey ${COLORS.grey} is ${onWhite(COLORS.grey).toFixed(2)}:1`);
 });
+
+test('review-only cells are outlined apart from confirmed cells and get their own legend entry', () => {
+  const m = model(77);
+  m.matrix.legend_review = '검토 필요';
+  m.matrix.rows[0].signals = ['on', 'review', '', false, true];
+  const html = renderReport(m);
+  // One review cell plus the legend; two confirmed cells (a legacy true included) plus the legend.
+  assert.equal(occurrences(html, '<i class="review">'), 2);
+  assert.equal(occurrences(html, '<i class="on">'), 3);
+  assert.ok(html.includes('검토 필요'));
+});
