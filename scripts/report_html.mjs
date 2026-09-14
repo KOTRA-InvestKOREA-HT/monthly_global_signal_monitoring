@@ -167,6 +167,11 @@ const summary = signal => {
     : `<p class="summary">${headline}</p><p class="summary continued">— ${escapeHtml(signal.detail)}</p>`;
 };
 
+// 출처 줄은 원문으로 가는 링크다. Chrome 이 PDF 로 인쇄할 때 링크 주석으로 남긴다.
+const sourceLine = (text, url) => (/^https?:\/\//i.test(String(url || ''))
+  ? `<p class="source"><a href="${escapeHtml(url)}">${escapeHtml(text)}</a></p>`
+  : `<p class="source">${escapeHtml(text)}</p>`);
+
 const signalRow = signal => `
           <li class="signal ${signal.active ? 'on' : 'off'}">
             <span class="badge">${escapeHtml(signal.no)}</span>
@@ -176,7 +181,7 @@ const signalRow = signal => `
                 ${signal.review ? `<span class="review">${escapeHtml(signal.review)}</span>` : ''}
                 ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
               </p>
-              ${signal.active ? `${summary(signal)}<p class="source">${escapeHtml(signal.source)}</p>` : ''}
+              ${signal.active ? `${summary(signal)}${sourceLine(signal.source, signal.source_url)}` : ''}
             </div>
           </li>`;
 
@@ -201,7 +206,7 @@ function detailPages(state, model, assets) {
             <span class="target-text">${escapeHtml(entry.business.target_text)}</span>` : ''}
           </p>
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
-          <p class="source">${escapeHtml(entry.business.source)}</p>
+          ${sourceLine(entry.business.source, entry.business.source_url)}
         </section>
       </div>`)).join('');
 }
@@ -219,7 +224,7 @@ const itemCard = (items, card) => `
           </p>
           <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span></p>
           <p class="item-body">${escapeHtml(card.body)}</p>
-          <p class="source">${escapeHtml(card.source)}</p>
+          ${sourceLine(card.source, card.source_url)}
         </article>`;
 
 // `breaks` holds the card indices that start a new sheet. The builder works
@@ -555,6 +560,7 @@ body {
 .signal .source, .business-box .source { margin: 2.4pt 0 0; font-size: 7.1pt; color: ${COLORS.muted}; }
 /* The drawn row keeps 2.5pt under the source line before its separator. */
 .signal .source { max-width: 378pt; padding-bottom: 2.6pt; }
+.source a { color: inherit; text-decoration: none; }
 .business-box {
   margin-top: 15.2pt;
   min-height: 88pt;

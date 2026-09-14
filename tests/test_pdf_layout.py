@@ -351,3 +351,29 @@ class SummarySplitTests(unittest.TestCase):
         parts = pdf.summary_parts({"ai_summary_en": "Executive leadership changes announced - Evonik appointed Claus Rettig interim CEO."})
         self.assertEqual(parts["headline"], "Executive leadership changes announced")
         self.assertTrue(parts["detail"].startswith("Evonik appointed"))
+
+
+class ReviewLabelAndSourceTests(unittest.TestCase):
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def test_review_label_names_the_missing_condition(self):
+        row = dict(REVIEW_ROW, ai_review_gaps=["target_technology"])
+        pdf.set_language("ko")
+        self.assertEqual(pdf.review_label(row), "검토 필요 · 타겟 기술 미확인")
+        pdf.set_language("en")
+        self.assertEqual(pdf.review_label(row), "Needs review · target tech unconfirmed")
+        self.assertEqual(pdf.review_label(APPROVED_ROW), "")
+
+    def test_source_url_prefers_the_publisher_over_a_news_relay(self):
+        relay = {"url": "https://news.google.com/rss/articles/x", "source_direct_url": "https://www.example.com/news/a"}
+        self.assertEqual(pdf.source_url(relay), "https://www.example.com/news/a")
+        self.assertEqual(pdf.source_url({"url": "https://news.google.com/rss/articles/x"}), "https://news.google.com/rss/articles/x")
+        self.assertEqual(pdf.source_url({"url": "not a url"}), "")
+
+    def test_display_name_corrects_the_label_but_keeps_the_key(self):
+        pdf.set_language("ko")
+        profiles = pdf.build_profiles([{"target_no": 1, "company": "Australian Strategic Metals",
+                                        "display_name": "Australian Strategic Materials"}], {"companies": []})
+        self.assertEqual(profiles[0]["company"], "Australian Strategic Metals")
+        self.assertEqual(profiles[0]["display_name"], "Australian Strategic Materials")

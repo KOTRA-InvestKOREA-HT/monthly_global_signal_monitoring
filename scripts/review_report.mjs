@@ -35,6 +35,8 @@ export function publishedSignalCounts(rows, period) {
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
 const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
 const SUMMARY_REVIEW_VERSION = 'human-review-summary-v2';
+const FUNDING_REVIEW_VERSION = 'funding-event-v1';
+const SUMMARY_ACCURACY_VERSION = 'summary-accuracy-v1';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
@@ -77,6 +79,49 @@ export function missingReviewSummaryIds(article, review) {
 }
 export function needsReviewSummary(article, review) {
   return review.summary_review_version !== SUMMARY_REVIEW_VERSION && missingReviewSummaryIds(article, review).length > 0;
+}
+// S3 는 새 자금 조달만 신호다. 2026-08 BorgWarner 기존 회사채 현금 공개매수와 Vestas 기존 채권 상환용
+// 유로본드가 투자 재원 확보 후보로 올라왔다. 공개매수·매입·상환·재조달이 제목이나 인용에 나오는 S3
+// 판정 중 보고서에 실릴 수 있는 것만 새 지시로 한 번 다시 묻는다. 낱말은 재검토 대상을 고를 뿐이고
+// 결론은 새 판정이 내린다.
+const NOT_NEW_FUNDING = /\b(?:tender offers?|repurchas\w*|buy-?backs?|redempt\w*|redeem\w*|repay\w*|refinanc\w*|prepay\w*)\b/i;
+export function needsFundingReview(article, review) {
+  if (review.funding_review_version === FUNDING_REVIEW_VERSION) return false;
+  return review.decisions.some(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    if (candidate?.kind !== 'investment' || Number(candidate.row?.investment_signal_no) !== 3) return false;
+    if (!decision.entity_supported || !decision.indicator_supported) return false;
+    return NOT_NEW_FUNDING.test([candidate.row?.title, ...(decision.evidence_quotes || [])].join(' '));
+  });
+}
+
+// 보고서에 실리는 판정. 승인된 투자 시그널, 사람 검토 후보, 승인된 사업동향이다.
+function publishedDecision(candidate, decision) {
+  if (!candidate || !decision.entity_supported || !decision.indicator_supported) return false;
+  if (candidate.kind === 'relevant') {
+    return Boolean((candidate.relevance_exempt || decision.target_technology_supported) && decision.quality === 'pass');
+  }
+  return Array.isArray(humanReviewGaps(candidate, decision));
+}
+
+// 요약 정확성 지시(시제·실제 사건·국가명·관계 과장 금지)를 넣기 전에 저장된 판정은 옛 문안이다.
+// 보고서에 실리는 판정이 있는 기사만 한 번 다시 묻고, 판정은 옮기지 않고 문안만 옮긴다.
+export function needsSummaryRefresh(article, review) {
+  if (review.summary_accuracy_version === SUMMARY_ACCURACY_VERSION) return false;
+  return review.decisions.some(decision =>
+    publishedDecision(article.candidates.find(item => item.id === decision.candidate_id), decision));
+}
+
+export function mergeRefreshedSummaries(article, review, fresh) {
+  const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
+  const decisions = review.decisions.map(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    const next = freshById.get(decision.candidate_id);
+    if (!publishedDecision(candidate, decision) || !next) return decision;
+    if (!String(next.summary_ko || '').trim() || !String(next.summary_en || '').trim()) return decision;
+    return { ...decision, summary_ko: next.summary_ko, summary_en: next.summary_en };
+  });
+  return { ...review, decisions, summary_accuracy_version: SUMMARY_ACCURACY_VERSION };
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -300,7 +345,8 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
-    form3_review_version: FORM3_REVIEW_VERSION,
+    form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
+    summary_accuracy_version: SUMMARY_ACCURACY_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -455,6 +501,29 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       return review;
     }
   };
+  // 보고서에 실리는 판정의 문안을 새 정확성 지시로 한 번 다시 받는다. 새 문안이 인용 검증을 통과하지
+  // 못하면 기존 문안을 두고 버전만 찍어 반복 요청을 막는다.
+  const refreshSummaries = async (article, review, file) => {
+    if (!needsSummaryRefresh(article, review) || supplementStop.stopped || requests >= config.maxRequests) return review;
+    if (requests) await sleep(config.delayMs);
+    requests++;
+    let fresh;
+    try {
+      fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl);
+    } catch (error) {
+      if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
+      console.log(`Article ${article.id}: summary refresh unavailable (${error.response_code || error.status || 'error'})`);
+      return review;
+    }
+    let merged = mergeRefreshedSummaries(article, review, fresh);
+    try {
+      importReview(article, merged);
+    } catch {
+      merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION };
+    }
+    await write(file, merged);
+    return merged;
+  };
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
     try {
@@ -463,8 +532,10 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       importReview(article, review);
       if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
       if (needsForm3Review(article, review)) throw new Error('Form 3 personnel event needs recheck');
+      if (needsFundingReview(article, review)) throw new Error('S3 funding event needs recheck');
       cached++; completed++;
       review = await backfillSummaries(article, review, file);
+      review = await refreshSummaries(article, review, file);
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
       // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.

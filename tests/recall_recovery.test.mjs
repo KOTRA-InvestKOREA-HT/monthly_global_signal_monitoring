@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
-import { mergeReviewSummaries, needsForm3Review, needsReviewSummary, needsStageReview } from '../scripts/review_report.mjs';
+import { mergeRefreshedSummaries, mergeReviewSummaries, needsForm3Review, needsFundingReview, needsReviewSummary, needsStageReview, needsSummaryRefresh } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
 test('publisher redirects supply HTML, Google wrappers never become evidence', async () => {
@@ -106,4 +106,45 @@ test('summary backfill copies prose only into empty human-review decisions and k
   assert.equal(needsReviewSummary(article, merged), false);
   // A fresh answer without prose is still stamped, so the article is not asked again.
   assert.equal(needsReviewSummary(article, mergeReviewSummaries(article, review, { decisions: [] })), false);
+});
+
+test('an S3 decision that could publish and mentions a debt buyback is asked again once', () => {
+  const article = { candidates: [{ id: 'investment:3', kind: 'investment', row: { investment_signal_no: 3,
+    title: 'BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes' } }] };
+  const decision = { candidate_id: 'investment:3', entity_supported: true, indicator_supported: true,
+    target_technology_supported: false, leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass',
+    evidence_quotes: ['The Company made the Tender Offers as a balanced capital allocation strategy.'] };
+  assert.equal(needsFundingReview(article, { decisions: [decision] }), true);
+  assert.equal(needsFundingReview(article, { decisions: [decision], funding_review_version: 'funding-event-v1' }), false);
+  assert.equal(needsFundingReview(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
+  const round = { candidates: [{ ...article.candidates[0], row: { investment_signal_no: 3, title: 'Nexeon completes £100m investment round' } }] };
+  assert.equal(needsFundingReview(round, { decisions: [{ ...decision, evidence_quotes: ['marks the completion of the investment round'] }] }), false);
+});
+
+test('summary refresh copies new prose into published decisions only and never moves a judgement', () => {
+  const article = { candidates: [
+    { id: 'investment:1', kind: 'investment', row: { investment_signal_no: 1 } },
+    { id: 'investment:5', kind: 'investment', row: { investment_signal_no: 5 } },
+    { id: 'relevant', kind: 'relevant', row: {} },
+  ] };
+  const approved = { candidate_id: 'investment:1', entity_supported: true, indicator_supported: true, target_technology_supported: true,
+    leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass', summary_ko: '영국 공급망 다변화 - 국내 운영 확장', summary_en: 'Old' };
+  const rejected = { candidate_id: 'investment:5', entity_supported: false, indicator_supported: false, target_technology_supported: false,
+    leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' };
+  const business = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, target_technology_supported: true,
+    leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass', summary_ko: '옛 사업동향', summary_en: 'Old business' };
+  const review = { decisions: [approved, rejected, business] };
+  assert.equal(needsSummaryRefresh(article, review), true);
+  const fresh = { decisions: [
+    { ...approved, indicator_supported: false, summary_ko: '영국 배터리 공급망 강화 - 영국 내 운영 확장', summary_en: 'UK supply chain strengthened' },
+    { ...rejected, entity_supported: true, summary_ko: '새 문안', summary_en: 'New' },
+    { ...business, summary_ko: '', summary_en: 'Only English' },
+  ] };
+  const merged = mergeRefreshedSummaries(article, review, fresh);
+  assert.equal(merged.decisions[0].summary_ko, '영국 배터리 공급망 강화 - 영국 내 운영 확장');
+  assert.equal(merged.decisions[0].indicator_supported, true);
+  assert.deepEqual(merged.decisions[1], rejected);
+  // Half-empty fresh prose keeps the old business summary.
+  assert.equal(merged.decisions[2].summary_ko, '옛 사업동향');
+  assert.equal(needsSummaryRefresh(article, merged), false);
 });
