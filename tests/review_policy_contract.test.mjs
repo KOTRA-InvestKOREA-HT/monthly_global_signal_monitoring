@@ -97,3 +97,23 @@ test('the policy digest does not depend on how the checkout stores line endings'
   // 줄바꿈만 같게 볼 뿐, 내용이 바뀌면 여전히 달라져야 한다.
   assert.notEqual(reviewPolicy({ policyText: lf, ...inputs }), reviewPolicy({ policyText: '다른 기준', ...inputs }));
 });
+
+// 2026-08 전체 재검토 조사: 지표 설명이 "…등" 한 줄뿐이라 인수 잔금 지급이 S3, 사외이사 선임이 S5,
+// 인수 찬성 투표가 S1, 실적 전망이 S2 로 승인됐다.
+test('each indicator states what counts and what does not', () => {
+  for (const no of [1, 2, 3, 4, 5]) {
+    const line = CRITERIA.split('\n').find(item => item.includes(`\`investment:${no}\`(S${no}`));
+    assert.ok(line, `investment:${no} 정의가 있어야 한다`);
+    assert.match(line, /해당하지 않음:/);
+  }
+  assert.match(CRITERIA, /인수 대금·잔금 지급처럼 돈을 내는 일/);
+  assert.match(CRITERIA, /사외이사 등 이사회 구성원 선임만 있는 경우/);
+  assert.match(CRITERIA, /매출·실적 전망과 가이던스/);
+  assert.match(CRITERIA, /결과만 보고하는 기사에는 새 전조 활동이 없으므로/);
+  assert.match(CRITERIA, /결론을 먼저 정하고 사유를 맞추지 않는다/);
+});
+
+test('the criteria sent to the model contain no step only a local agent can take', () => {
+  assert.doesNotMatch(CRITERIA, /원문을 확인한다/);
+  assert.doesNotMatch(CRITERIA, /새 준비본을 만든다/);
+});

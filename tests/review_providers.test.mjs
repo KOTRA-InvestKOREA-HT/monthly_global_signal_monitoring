@@ -158,7 +158,9 @@ test('the Gemini request uses its own dialect and carries the same one schema', 
   assert.equal(GEMINI.url(GEMINI.model), 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent');
   assert.equal(GEMINI.headers('AIzaTest')['x-goog-api-key'], 'AIzaTest');
   assert.match(body.systemInstruction.parts[0].text, /POLICY$/);
-  assert.equal(body.generationConfig.temperature, 0);
+  // Gemini 3.x 는 temperature 를 보내지 않고, 추론 단계를 명시한다.
+  assert.equal(body.generationConfig.temperature, undefined);
+  assert.deepEqual(body.generationConfig.thinkingConfig, { thinkingLevel: 'low' });
   assert.equal(body.generationConfig.responseMimeType, 'application/json');
   const schema = body.generationConfig.responseSchema;
   // 날짜 힌트 두 필드는 여기에도 루트로 실린다. 스키마 정의가 한 곳이므로 자동으로 따라온다.
@@ -183,6 +185,33 @@ test('Gemini responses drop reasoning parts and reject truncation', () => {
   assert.deepEqual(ok.usage, { totalTokenCount: 9 });
   assert.throws(() => GEMINI.parse({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [] } }] }, invalid), /incomplete_response/);
   assert.throws(() => GEMINI.parse({ candidates: [{ finishReason: 'STOP', content: {} }] }, invalid), /invalid_parts/);
+});
+
+test('the model writes quotes and its reason before any verdict field', () => {
+  const keys = Object.keys(decisionProperties);
+  assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason_ko']);
+  for (const verdict of ['entity_supported', 'indicator_supported', 'event_stage', 'quality']) {
+    assert.ok(keys.indexOf(verdict) > keys.indexOf('reason_ko'), verdict);
+  }
+});
+
+test('the Gemini thinking level is overridable, validated and part of the cache identity', async () => {
+  const { reviewPolicy } = await import('../scripts/review_report.mjs');
+  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini' }).thinkingLevel, 'low');
+  const medium = resolveProvider({ REPORT_PROVIDER: 'gemini', GEMINI_THINKING_LEVEL: ' Medium ' });
+  assert.equal(medium.thinkingLevel, 'medium');
+  assert.deepEqual(medium.body({ article: article('Acme'), policy: '', retry: false, model: medium.model }).generationConfig.thinkingConfig,
+    { thinkingLevel: 'medium' });
+  assert.throws(() => resolveProvider({ REPORT_PROVIDER: 'gemini', GEMINI_THINKING_LEVEL: 'max' }), /GEMINI_THINKING_LEVEL/);
+  const inputs = { policyText: 'criteria', technology: {}, indicators: {} };
+  assert.notEqual(reviewPolicy({ ...inputs, provider: GEMINI }), reviewPolicy({ ...inputs, provider: medium }));
+});
+
+test('the S rules name the candidate ids the model actually receives', () => {
+  const { SYSTEM_INSTRUCTION } = provider_module;
+  assert.match(SYSTEM_INSTRUCTION, /S1 to S5 .* mean the candidates investment:1 to investment:5/);
+  for (const no of [2, 3, 4, 5]) assert.match(SYSTEM_INSTRUCTION, new RegExp(`For investment:${no} \\(S${no}`));
+  assert.match(SYSTEM_INSTRUCTION, /deferred consideration spend money/);
 });
 
 test('the provider is selected by name and each keeps its own key, model and pacing', () => {

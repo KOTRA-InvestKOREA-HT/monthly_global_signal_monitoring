@@ -200,7 +200,8 @@ export function reviewPolicy({ policyText, technology, indicators, provider = PR
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
   // 평가가 운영과 다른 정책을 재고, 체크아웃 설정이 다른 사람이 캐시를 통째로 무효화한다.
   const normalized = String(policyText).split('\r\n').join('\n');
-  return `${VERSION}:${digest([provider.id, provider.model, normalized, technology, indicators])}`;
+  // 추론 단계도 판정 결과를 바꾸므로 식별자에 넣는다.
+  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', normalized, technology, indicators])}`;
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
