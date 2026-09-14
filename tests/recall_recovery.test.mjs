@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
-import { needsForm3Review, needsStageReview } from '../scripts/review_report.mjs';
+import { mergeReviewSummaries, needsForm3Review, needsReviewSummary, needsStageReview } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
 test('publisher redirects supply HTML, Google wrappers never become evidence', async () => {
@@ -66,4 +66,44 @@ test('an old approved Form 3 S5 decision gets one fresh semantic review', () => 
   assert.equal(needsForm3Review(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
   assert.equal(needsForm3Review({ candidates: [{ ...article.candidates[0],
     row: { ...article.candidates[0].row, source_kind: 'press_release' } }] }, { decisions: [decision] }), false);
+});
+
+test('a saved review whose human-review candidate lacks prose is asked once for summaries', () => {
+  const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { investment_signal_no: 2 } }] };
+  const decision = { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true,
+    target_technology_supported: false, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
+    summary_ko: '', summary_en: '' };
+  assert.equal(needsReviewSummary(article, { decisions: [decision] }), true);
+  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'human-review-summary-v1' }), false);
+  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, summary_ko: '요약 - 상세', summary_en: 'Summary - detail' }] }), false);
+  // Neither an approved decision nor one without an indicator event is a review candidate.
+  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: true }] }), false);
+  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
+});
+
+test('summary backfill copies prose only into empty human-review decisions and keeps every judgement', () => {
+  const article = { candidates: [
+    { id: 'investment:2', kind: 'investment', row: { investment_signal_no: 2 } },
+    { id: 'investment:3', kind: 'investment', row: { investment_signal_no: 3 } },
+  ] };
+  const review = { article_id: 'x', decisions: [
+    { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true, target_technology_supported: false,
+      leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', summary_ko: '', summary_en: '' },
+    { candidate_id: 'investment:3', entity_supported: false, indicator_supported: false, target_technology_supported: false,
+      leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' },
+  ] };
+  // The fresh answer flips judgements; only prose for the review candidate may cross over.
+  const fresh = { decisions: [
+    { ...review.decisions[0], target_technology_supported: true, summary_ko: '표제 - 상세', summary_en: 'Headline - detail' },
+    { ...review.decisions[1], entity_supported: true, summary_ko: '다른 문안', summary_en: 'Other prose' },
+  ] };
+  const merged = mergeReviewSummaries(article, review, fresh);
+  assert.equal(merged.summary_review_version, 'human-review-summary-v1');
+  assert.equal(merged.decisions[0].target_technology_supported, false);
+  assert.equal(merged.decisions[0].summary_ko, '표제 - 상세');
+  assert.equal(merged.decisions[0].summary_en, 'Headline - detail');
+  assert.deepEqual(merged.decisions[1], review.decisions[1]);
+  assert.equal(needsReviewSummary(article, merged), false);
+  // A fresh answer without prose is still stamped, so the article is not asked again.
+  assert.equal(needsReviewSummary(article, mergeReviewSummaries(article, review, { decisions: [] })), false);
 });

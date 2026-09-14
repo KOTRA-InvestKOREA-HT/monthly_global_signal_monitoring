@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, importReview, normalizeQuote, build } from './local_report.mjs';
+import { sourceCandidates, groupArticles, humanReviewGaps, importReview, normalizeQuote, build } from './local_report.mjs';
 import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
@@ -19,13 +19,18 @@ export const MODEL = PROVIDER.model;
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
   const published = rows.filter(row => reportEligible(row, period));
-  return { approved_count: rows.length, report_signal_count: published.length,
+  // 사람 검토 후보도 보고서에 들어가지만 AI 승인은 아니므로 따로 센다.
+  const humanReview = rows.filter(row => row.ai_review_tier === 'human_review');
+  return { approved_count: rows.length - humanReview.length, human_review_count: humanReview.length,
+    report_signal_count: published.length,
+    approved_companies_in_report: new Set(published.filter(row => row.ai_review_tier !== 'human_review').map(row => row.company)).size,
     date_pending_count: rows.filter(row => periodPlacement(row, period).placement === 'date_pending').length,
     out_of_period_count: rows.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
     companies_in_report: new Set(published.map(row => row.company)).size };
 }
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
 const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
+const SUMMARY_REVIEW_VERSION = 'human-review-summary-v1';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
@@ -54,6 +59,17 @@ export function needsForm3Review(article, review) {
       decision.indicator_supported && decision.leading_indicator_supported && decision.quality === 'pass' &&
       investmentStageSupported(decision.event_stage, 5);
     return supported;
+  });
+}
+// 사람 검토 후보도 보고서에 실리므로 문안이 필요하다. 요약 지시는 판정 캐시 식별자 밖이라, 지시를
+// 바꾸기 전에 저장된 판정은 검토 후보 문안이 비어 있다. 그런 기사만 한 번 다시 묻고, 새 응답에도
+// 문안이 없으면 본문 발췌로 대신한다(버전을 찍으므로 반복해서 묻지 않는다).
+export function needsReviewSummary(article, review) {
+  if (review.summary_review_version === SUMMARY_REVIEW_VERSION) return false;
+  return review.decisions.some(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    const gaps = candidate ? humanReviewGaps(candidate, decision) : null;
+    return Boolean(gaps?.length) && !(String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim());
   });
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
@@ -278,7 +294,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
-    form3_review_version: FORM3_REVIEW_VERSION,
+    form3_review_version: FORM3_REVIEW_VERSION, summary_review_version: SUMMARY_REVIEW_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -388,6 +404,22 @@ function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
+// 저장된 판정은 그대로 두고, 문안이 빈 사람 검토 후보에만 새 응답의 문안을 옮긴다. 날짜 힌트와 같은
+// 이유로 판정 자체는 재현성 없는 재판정으로 덮지 않는다. 옮긴 문안도 가져오기 단계에서 근거 없는
+// 고유명사 검사를 받는다. 새 응답에 문안이 없어도 버전을 찍어 같은 기사를 반복해서 묻지 않는다.
+export function mergeReviewSummaries(article, review, fresh) {
+  const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
+  const decisions = review.decisions.map(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    const gaps = candidate ? humanReviewGaps(candidate, decision) : null;
+    const next = freshById.get(decision.candidate_id);
+    const hasProse = String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim();
+    if (!gaps?.length || hasProse || !next) return decision;
+    return { ...decision, summary_ko: next.summary_ko || '', summary_en: next.summary_en || '' };
+  });
+  return { ...review, decisions, summary_review_version: SUMMARY_REVIEW_VERSION };
+}
+
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
   supplementFetchImpl = fetchImpl, supplementStop = { stopped: false } }) {
   let requests = 0, cached = 0, completed = 0, dateHints = 0;
@@ -397,12 +429,26 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
     try {
-      const review = await read(file);
+      let review = await read(file);
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
       if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
       if (needsForm3Review(article, review)) throw new Error('Form 3 personnel event needs recheck');
       cached++; completed++;
+      if (needsReviewSummary(article, review) && !supplementStop.stopped && requests < config.maxRequests) {
+        if (requests) await sleep(config.delayMs);
+        requests++;
+        try {
+          const merged = mergeReviewSummaries(article, review, await requestReview(article, policy, config.apiKey, supplementFetchImpl));
+          importReview(article, merged);
+          await write(file, merged);
+          review = merged;
+        } catch (error) {
+          // 문안 보강도 보조 작업이다. 실패하면 발췌로 대신하고, 다음 실행에서 다시 묻는다.
+          if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
+          console.log(`Article ${article.id}: human-review summary unavailable (${error.response_code || error.status || 'error'})`);
+        }
+      }
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
       // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.

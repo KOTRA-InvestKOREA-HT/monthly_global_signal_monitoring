@@ -98,7 +98,24 @@ function isUndated(item) {
 // 요약 단계에서 본문을 읽고 근거가 없다고 판정한 항목은 보고서에서 빠지고 화면에만 남는다.
 // 판정 필드가 없는 과거 데이터는 판정 자체가 없었던 것이므로 근거 있음으로 본다.
 function isUnsupportedSignal(item) {
-  return item?.ai_signal_supported === false;
+  return item?.ai_signal_supported === false && !isHumanReviewSignal(item);
+}
+
+// AI 승인 조건은 못 채웠지만 기업·지표 사건이 확인돼 보고서에 넣은 후보. 사람이 보고 무시로 거른다.
+function isHumanReviewSignal(item) {
+  return item?.ai_review_tier === "human_review";
+}
+
+const REVIEW_GAP_LABEL = {
+  target_technology: "타겟 기술 연결 미확인",
+  leading_indicator: "전조 활동 미확인",
+  event_stage: "투자 단계 기준 밖",
+  quality: "근거 부족",
+};
+
+function reviewGapText(item) {
+  const gaps = (item?.ai_review_gaps || []).map((gap) => REVIEW_GAP_LABEL[gap] || gap);
+  return [...gaps, item?.ai_summary_reason].filter(Boolean).join(" · ");
 }
 
 function PublishedDate({ item }) {
@@ -967,6 +984,11 @@ export default function HomePage() {
                     <div className="signalStack">
                       <span className="signalNo">{item.investment_signal_no}</span>
                       <strong>{item.investment_signal_label}</strong>
+                      {isHumanReviewSignal(item) ? (
+                        <span className="undatedBadge" title={`AI 승인 기준 미충족(${reviewGapText(item)}). 월간 보고서에 포함되므로 해당 없으면 무시하세요`}>
+                          검토 필요
+                        </span>
+                      ) : null}
                       {isUnsupportedSignal(item) ? (
                         <span className="undatedBadge" title="본문에서 이 시그널의 근거를 확인하지 못해 월간 보고서에서는 제외됩니다">
                           근거 미확인

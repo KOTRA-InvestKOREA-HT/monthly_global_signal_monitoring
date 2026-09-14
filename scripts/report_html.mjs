@@ -169,6 +169,7 @@ const signalRow = signal => `
             <div class="signal-body">
               <p class="signal-head">
                 <span class="pill">${escapeHtml(signal.label)}</span>
+                ${signal.review ? `<span class="review">${escapeHtml(signal.review)}</span>` : ''}
                 ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
               </p>
               ${signal.active ? `${summary(signal)}<p class="source">${escapeHtml(signal.source)}</p>` : ''}
@@ -531,6 +532,7 @@ body {
 .signal:last-child { padding-bottom: 0; }
 .signal-head { display: flex; align-items: baseline; gap: 18pt; height: 16pt; margin: 0; }
 .signal-head .pill { flex: 0 1 auto; min-width: 0; padding: 2pt 8pt; font-size: 7.6pt; }
+.signal-head .review { flex: 0 0 auto; font-size: 8.5pt; color: #B45309; border: 0.6pt solid #B45309; border-radius: 3pt; padding: 0 3pt; white-space: nowrap; }
 .signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 10pt; color: ${COLORS.faint}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .signal-head .dash { margin-left: auto; margin-right: 12pt; font-size: 10pt; color: ${COLORS.faint}; }
 .summary {
