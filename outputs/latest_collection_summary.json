@@ -1,11 +1,11 @@
 {
-  "run_started_at": "2026-09-14T02:03:20Z",
+  "run_started_at": "2026-09-14T02:22:54Z",
   "collection_resume_version": 1,
   "collection_input_digest": "94283586fb2d61bcbb137c14c789818ab5dcfa7375885ad5787cd28239a57254",
   "html_network": {
     "attempts": 36,
     "skipped": 3,
-    "elapsed_ms": 18308
+    "elapsed_ms": 20130
   },
   "cached_company_count": 73,
   "retryable_company_count": 4,
@@ -473,123 +473,123 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-14T02:03:36Z",
+  "run_finished_at": "2026-09-14T02:23:11Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Cognex",
-      "elapsed_ms": 6,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Corning",
-      "elapsed_ms": 6,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Charles River",
-      "elapsed_ms": 6,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 15429,
+      "elapsed_ms": 16751,
       "request_count": 14,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 200,
+      "elapsed_ms": 53,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 201,
+      "elapsed_ms": 54,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Dupont",
-      "elapsed_ms": 200,
+      "elapsed_ms": 53,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 12,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "TIMET",
-      "elapsed_ms": 12,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Air Products",
-      "elapsed_ms": 12,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Chemours",
-      "elapsed_ms": 7,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 7,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "DOW",
-      "elapsed_ms": 13,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Thermo Fisher",
-      "elapsed_ms": 11,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 11,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Onsemi",
-      "elapsed_ms": 5,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -610,28 +610,28 @@
     },
     {
       "company": "Eli Lilly and Company",
-      "elapsed_ms": 5059,
+      "elapsed_ms": 4760,
       "request_count": 3,
       "result_count": 1,
       "cached": false
     },
     {
       "company": "GE Healthcare",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Boeing",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "3M",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 6,
       "cached": true
@@ -645,42 +645,42 @@
     },
     {
       "company": "Applied Materials",
-      "elapsed_ms": 3,
-      "request_count": 0,
-      "result_count": 10,
-      "cached": true
-    },
-    {
-      "company": "Magnix",
-      "elapsed_ms": 3,
-      "request_count": 0,
-      "result_count": 0,
-      "cached": true
-    },
-    {
-      "company": "Prodrive",
       "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
+      "company": "Magnix",
+      "elapsed_ms": 2,
+      "request_count": 0,
+      "result_count": 0,
+      "cached": true
+    },
+    {
+      "company": "Prodrive",
+      "elapsed_ms": 1,
+      "request_count": 0,
+      "result_count": 10,
+      "cached": true
+    },
+    {
       "company": "ASML",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Besi",
-      "elapsed_ms": 11,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "NXP",
-      "elapsed_ms": 11,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 7,
       "cached": true
@@ -715,56 +715,56 @@
     },
     {
       "company": "Schmalz",
-      "elapsed_ms": 38,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Bayer",
-      "elapsed_ms": 38,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Merck",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Schott Pharma",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "BASF",
-      "elapsed_ms": 21,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 21,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 10,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 10,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -778,35 +778,35 @@
     },
     {
       "company": "Umicore",
-      "elapsed_ms": 7,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Solvay",
-      "elapsed_ms": 9,
+      "elapsed_ms": 13,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Syensqo",
-      "elapsed_ms": 4,
+      "elapsed_ms": 13,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Hexagon AB",
-      "elapsed_ms": 4,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "ABB",
-      "elapsed_ms": 5,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -841,35 +841,35 @@
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "HyproMag",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "EVG",
-      "elapsed_ms": 2,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Plansee",
-      "elapsed_ms": 2,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 9940,
+      "elapsed_ms": 9439,
       "request_count": 6,
       "result_count": 4,
       "cached": false
@@ -883,28 +883,28 @@
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Safran",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Arkema",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -932,7 +932,7 @@
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 2,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 4,
       "cached": true
@@ -946,14 +946,14 @@
     },
     {
       "company": "JSR",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -974,7 +974,7 @@
     },
     {
       "company": "Mitsubishi Chemical",
-      "elapsed_ms": 2,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -988,14 +988,14 @@
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Toray",
-      "elapsed_ms": 3,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 1,
       "cached": true
@@ -1009,7 +1009,7 @@
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 9140,
+      "elapsed_ms": 10738,
       "request_count": 5,
       "result_count": 0,
       "cached": false
@@ -2127,9 +2127,9 @@
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T020320Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T020320Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260914T020320Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T022254Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260914T022254Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260914T022254Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
