@@ -9,7 +9,7 @@ export const DASHBOARD_SIGNAL_FIELDS = [
   'investment_signal_label', 'investment_signal_reason', 'relevance_reason',
   'technology_matched_terms', 'matched_terms', 'evidence_snippets', 'content_excerpt',
   'ai_signal_supported', 'ai_summary_headline_ko', 'ai_summary_detail_ko',
-  'ai_summary_ko', 'ai_summary_tier',
+  'ai_summary_ko', 'ai_summary_tier', 'ai_review_tier', 'ai_review_gaps', 'ai_summary_reason',
 ];
 
 export function dashboardSignals(rows) {

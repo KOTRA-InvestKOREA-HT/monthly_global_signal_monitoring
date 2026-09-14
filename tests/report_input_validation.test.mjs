@@ -60,3 +60,14 @@ test("precursor stages are restricted to enabling activities and unknown stages 
   for (const stage of ["precursor", "not_applicable", "unknown", "committed"])
     assert.ok(validateRows([validRow({ ai_event_stage: stage })], "investment").length > 0);
 });
+
+test("a human-review row may lack prose but must keep entity and indicator evidence", () => {
+  const reviewRow = validRow({ ai_signal_supported: false, ai_review_tier: "human_review", ai_review_gaps: ["target_technology"],
+    ai_target_technology_supported: false, ai_summary_ko: "", ai_summary_en: "",
+    ai_summary_reason: "타겟 기술과의 직접적 연관성은 확인되지 않음" });
+  assert.deepEqual(validateRows([reviewRow], "investment"), []);
+  assert.ok(validateRows([{ ...reviewRow, ai_indicator_supported: false }], "investment").length > 0);
+  assert.ok(validateRows([reviewRow], "relevant").some((error) => error.includes("only for investment")));
+  // Without the tier marker an unsupported row still needs prose.
+  assert.ok(validateRows([{ ...reviewRow, ai_review_tier: undefined }], "investment").some((error) => error.includes("ai_summary_ko")));
+});

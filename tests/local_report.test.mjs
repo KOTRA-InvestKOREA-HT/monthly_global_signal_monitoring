@@ -83,11 +83,18 @@ test('not_applicable investment stages record a rejection and still validate evi
   // shape: the model matched the indicator but found no leading-indicator
   // evidence. Rejecting these discarded the whole article, other candidates
   // included, over a field that cannot approve anything.
-  for (const flags of [{ indicator_supported: true }, { leading_indicator_supported: true },
-    { indicator_supported: true, quality: 'needs_review' }, { target_technology_supported: false }]) {
+  for (const flags of [{ leading_indicator_supported: true }, { target_technology_supported: false }]) {
     const result = importReview(a, review(a, [{ ...rejected, ...flags }]));
     assert.equal(result[0].supported, false);
     assert.equal(result[0].row, null);
+  }
+  // A matched indicator event with no stageable investment is still something a
+  // person should see; it becomes a human-review row rather than vanishing.
+  for (const flags of [{ indicator_supported: true }, { indicator_supported: true, quality: 'needs_review' }]) {
+    const result = importReview(a, review(a, [{ ...rejected, ...flags }]));
+    assert.equal(result[0].supported, false);
+    assert.equal(result[0].row.ai_review_tier, 'human_review');
+    assert.ok(result[0].row.ai_review_gaps.includes('event_stage'));
   }
   // The stage is the only thing blocking approval here: that contradiction is
   // what the retry exists to resolve, so it must stay loud.
@@ -112,12 +119,38 @@ test("only supported decisions need bilingual prose; rejection does not become a
   const a = article();
   assert.throws(() => importReview(a, review(a, [decision({ summary_en: "" })])), /missing ai_summary_en/);
   assert.throws(() => importReview(a, review(a, [decision({ reason_ko: "no direct evidence" })])), /denies direct relevance/);
-  for (const overrides of [{ quality: "needs_review" }, { event_stage: "completed" }, { entity_supported: false }]) {
+  for (const overrides of [{ entity_supported: false }, { indicator_supported: false }]) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
     assert.equal(result.supported, false);
+    assert.equal(result.human_review, false);
     assert.equal(result.row, null);
   }
   assert.equal(importReview(a, review(a))[0].row.ai_summary_source, "local_agent_review");
+});
+
+test("an entity-and-indicator match the AI rejected stays as a human-review row with its gaps", () => {
+  const a = article();
+  const cases = [
+    [{ target_technology_supported: false, reason_ko: "no direct evidence of the target material" }, ["target_technology"]],
+    [{ quality: "needs_review" }, ["quality"]],
+    [{ event_stage: "completed" }, ["event_stage"]],
+    [{ leading_indicator_supported: false, event_stage: "unclear" }, ["leading_indicator", "event_stage"]],
+  ];
+  for (const [overrides, gaps] of cases) {
+    const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
+    assert.equal(result.supported, false);
+    assert.equal(result.human_review, true);
+    assert.equal(result.row.ai_signal_supported, false);
+    assert.equal(result.row.ai_review_tier, "human_review");
+    assert.deepEqual(result.row.ai_review_gaps, gaps);
+    assert.equal(result.row.ai_summary_ko, "");
+  }
+  // Business-trend candidates never enter the review tier.
+  const business = groupArticles([], [{ ...source, investment_signal_no: undefined }], period)[0];
+  const rejected = importReview(business, review(business, [decision({ candidate_id: business.candidates[0].id,
+    event_stage: "not_applicable", target_technology_supported: false, summary_ko: "", summary_en: "" })]))[0];
+  assert.equal(rejected.human_review, false);
+  assert.equal(rejected.row, null);
 });
 
 test('quote matching accepts typography and entities but rejects paraphrases, changed numbers and cross-block joins', () => {

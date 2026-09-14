@@ -1312,9 +1312,26 @@ def is_periodic_disclosure(row):
     return bool(PERIODIC_DISCLOSURE_PATTERN.search(str(row.get("title") or "")))
 
 
+def signal_needs_human_review(row):
+    """AI 승인 조건은 못 채웠지만 기업 귀속과 지표 사건이 확인돼 사람이 거르도록 넣은 행인지."""
+    return (
+        bool(row)
+        and row.get("ai_signal_supported") is False
+        and row.get("ai_review_tier") == "human_review"
+        and row.get("ai_entity_supported") is True
+        and row.get("ai_indicator_supported") is True
+    )
+
+
+def signal_publishable(row):
+    """시그널 칸에 올릴 수 있는 행. 사람 검토 후보는 대시보드의 무시 목록으로 빠진다."""
+    return signal_supported(row) or signal_needs_human_review(row)
+
+
 def sort_signal_rows(rows, prefer_single_event=False):
     def key(row):
-        supported = 0 if signal_supported(row) else 1
+        # AI 승인 행이 같은 칸의 사람 검토 후보보다 먼저 대표 문안이 된다.
+        supported = 0 if signal_supported(row) else 1 if signal_needs_human_review(row) else 2
         # 시그널 칸을 고를 때만 쓴다. 사업현황 상자는 실적 공시가 본래의 근거이므로
         # best_business_row 는 이 선호를 켜지 않는다.
         single_event = (1 if prefer_single_event and is_periodic_disclosure(row) else 0)
@@ -1335,8 +1352,8 @@ def index_investment_signals(rows):
     index = defaultdict(lambda: defaultdict(list))
     for row in rows:
         # 매트릭스의 켜진 칸은 '당월 포착된 시그널'을 뜻한다. 근거가 확인되지 않은 행이 칸을 켜면
-        # 문서가 스스로 정의한 뜻과 어긋난다.
-        if not signal_supported(row):
+        # 문서가 스스로 정의한 뜻과 어긋난다. 사람 검토 후보는 기업·지표 사건이 확인된 행만 들어온다.
+        if not signal_publishable(row):
             continue
         company = row.get("company")
         try:

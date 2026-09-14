@@ -66,8 +66,18 @@ export function validateRows(rows, kind) {
     for (const field of REQUIRED_DECISIONS) {
       if (typeof row[field] !== "boolean") errors.push(`${id}: missing boolean ${field}`);
     }
-    if (!cleanText(row.ai_summary_ko)) errors.push(`${id}: missing ai_summary_ko`);
-    if (!cleanText(row.ai_summary_en)) errors.push(`${id}: missing ai_summary_en`);
+    // 사람 검토 후보는 AI 승인 조건을 다 채우지 못한 행이라 문안이 없을 수 있다. 대신 무엇을
+    // 확인했는지(기업·지표)는 반드시 참이어야 하고, 투자 시그널에만 존재한다.
+    const humanReview = row.ai_signal_supported === false && row.ai_review_tier === "human_review";
+    if (humanReview) {
+      if (kind !== "investment") errors.push(`${id}: human-review tier is only for investment rows`);
+      if (row.ai_entity_supported !== true || row.ai_indicator_supported !== true) {
+        errors.push(`${id}: human-review row lacks entity or indicator evidence`);
+      }
+    } else {
+      if (!cleanText(row.ai_summary_ko)) errors.push(`${id}: missing ai_summary_ko`);
+      if (!cleanText(row.ai_summary_en)) errors.push(`${id}: missing ai_summary_en`);
+    }
     if (!cleanText(row.ai_summary_reason)) errors.push(`${id}: missing ai_summary_reason`);
     if (!cleanText(row.ai_event_stage)) errors.push(`${id}: missing ai_event_stage`);
 

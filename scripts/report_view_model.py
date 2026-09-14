@@ -92,6 +92,8 @@ def signal_entry(no, rows, measure):
         "detail": (parts or {}).get("detail", ""),
         "plain": "" if parts else report.detail_text(row, 560),
         "inline": summary_fits_one_line(parts, measure),
+        # 대표 행이 AI 미승인 검토 후보면 읽는 사람이 알 수 있게 표시한다.
+        "review": ("Needs review" if report.LANG == "en" else "검토 필요") if report.signal_needs_human_review(row) else "",
         "source": report.source_line(row),
     }
 

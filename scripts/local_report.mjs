@@ -199,6 +199,18 @@ function dateStatedInQuote(quote) {
   return month ? { day: "", month } : null;
 }
 
+// 승인 조건 중 무엇이 모자랐는지. 투자 후보가 기업 귀속과 지표 사건을 갖추지 못했으면 검토 후보도
+// 아니므로 null, 모두 갖췄으면 빈 배열(승인)이다. 캐시 재검토도 같은 기준을 쓴다.
+export function humanReviewGaps(candidate, decision) {
+  if (candidate?.kind !== "investment" || !decision.entity_supported || !decision.indicator_supported) return null;
+  return [
+    ...(candidate.relevance_exempt || decision.target_technology_supported ? [] : ["target_technology"]),
+    ...(decision.leading_indicator_supported ? [] : ["leading_indicator"]),
+    ...(investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no) ? [] : ["event_stage"]),
+    ...(decision.quality === "pass" ? [] : ["quality"]),
+  ];
+}
+
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
 export function importReview(article, review) {
@@ -272,22 +284,30 @@ export function importReview(article, review) {
           `Quote the passage the summary describes, or summarize only the quoted event.`);
       }
     }
+    const gaps = supported ? null : humanReviewGaps(candidate, decision);
+    const reviewGaps = gaps?.length ? gaps : null;
+    const humanReview = Boolean(reviewGaps);
+    // 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 검토 후보의 문안은 그 검사를 받지 않았으므로
+    // 같은 결함이 있으면 문안만 비우고 후보는 남긴다.
+    const groundedSummary = supported || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
     let row = null;
-    if (supported) {
+    if (supported || humanReview) {
       row = {
         ...candidate.row,
-        ai_signal_supported: true,
+        ai_signal_supported: supported,
+        ...(humanReview ? { ai_review_tier: "human_review", ai_review_gaps: reviewGaps } : {}),
         ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, decision[field]])),
         ai_event_stage: decision.event_stage, ai_summary_quality: decision.quality,
         ai_summary_reason: clean(decision.reason_ko),
-        ai_summary_ko: clean(decision.summary_ko), ai_summary_en: clean(decision.summary_en),
+        ai_summary_ko: groundedSummary ? clean(decision.summary_ko) : "",
+        ai_summary_en: groundedSummary ? clean(decision.summary_en) : "",
         ai_summary_source: review.provider ? `${review.provider}_article_review` : "local_agent_review", ai_summary_reviewer: review.reviewer,
         ai_summary_cache_key: article.id, ai_evidence_quotes: quotes,
       };
       const errors = validateRows([row], candidate.kind);
       if (errors.length) throw new Error(errors.join("\n"));
     }
-    return { candidate_id: candidate.id, kind: candidate.kind, supported, row, reason_ko: decision.reason_ko };
+    return { candidate_id: candidate.id, kind: candidate.kind, supported, human_review: humanReview, row, reason_ko: decision.reason_ko };
   });
 }
 
@@ -498,7 +518,8 @@ export async function build(args) {
   // 승인된 판정은 날짜 상태와 무관하게 모두 남긴다. 게시월이 확정된 행만 PDF 본문에 들어가고,
   // 날짜 보류 행은 같은 파일에 남아 대시보드의 검토 후보가 된다. PDF 생성기가 같은 기준으로 거른다.
   const approved = (kind) => results.filter((item) => item.supported && item.kind === kind).map((item) => item.row);
-  const investment = approved("investment");
+  // 투자 시그널에는 사람 검토 후보도 함께 싣는다. 행의 ai_review_tier 로 구분된다.
+  const investment = results.filter((item) => item.kind === "investment" && (item.supported || item.human_review)).map((item) => item.row);
   const relevant = approved("relevant");
   const datePending = (rows) => rows.filter((row) => !reportEligible(row, snapshot.period));
   const errors = [...validateRows(investment, "investment"), ...validateRows(relevant, "relevant")];
@@ -554,7 +575,8 @@ export async function build(args) {
         "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)]);
     }
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
-      reviewed_candidates: results.length, approved_investment: investment.length, approved_business: relevant.length,
+      reviewed_candidates: results.length, approved_investment: investment.filter((row) => row.ai_signal_supported).length,
+      human_review_investment: investment.filter((row) => row.ai_review_tier === "human_review").length, approved_business: relevant.length,
       date_pending_investment: datePending(investment).length, date_pending_business: datePending(relevant).length,
       incomplete_companies: coverage.filter((item) => item.status !== "reviewed").length,
       rejected_candidates: results.filter((item) => !item.supported).length }, null, 2));
