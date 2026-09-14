@@ -77,10 +77,13 @@ test('coverage is blocked only by articles that could still hide a signal', () =
   // A review that deferred judgement for lack of evidence blocks coverage.
   assert.equal(coverageStatus([a], new Map([['a', { decisions: [{ ...noSignal, quality: 'needs_review' }] }]])), 'incomplete_evidence');
   // Without a body, a title that matches both the company and an indicator event may hide a signal.
-  const bodiless = { ...a, candidates: [{ row: {} }] };
-  assert.equal(coverageStatus([bodiless], new Map([['a', { decisions: [{ ...noSignal, indicator_supported: true }] }]])), 'incomplete_evidence');
-  // A title that is clearly no signal does not.
-  assert.equal(coverageStatus([bodiless], reviews), 'reviewed');
+  const bodiless = { ...a, id: 'b', candidates: [{ row: {} }] };
+  const both = (decision) => new Map([['a', { decisions: [noSignal] }], ['b', { decisions: [decision] }]]);
+  assert.equal(coverageStatus([a, bodiless], both({ ...noSignal, indicator_supported: true })), 'incomplete_evidence');
+  // A title that is clearly no signal does not, as long as the company has something that was read.
+  assert.equal(coverageStatus([a, bodiless], both(noSignal)), 'reviewed');
+  // A company whose every article is title-only was never read.
+  assert.equal(coverageStatus([bodiless], both(noSignal)), 'incomplete_evidence');
   // A pending date blocks only when the article produced a report row.
   const pending = { ...a, date_placement: 'date_pending' };
   assert.equal(coverageStatus([pending], reviews), 'reviewed');

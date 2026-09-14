@@ -15,7 +15,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v12-decoded-news-relays';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v13-resumable-news-relay-probe';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -1327,14 +1327,24 @@ export function detailSourceUrl(row) {
   return row.url;
 }
 
-export function createPublisherProbe(limit = 3) {
-  let failures = 0, queue = Promise.resolve();
+// 연속 실패가 limit 에 닿으면 멈추는 대신 pauseMs 만큼 쉬고 다시 시도한다. 쉬고 나서도 다시 막히기를
+// maxPauses 번 되풀이하면 그때 이번 실행의 Google 확인을 멈춘다.
+// 2026-08 보고서(9월 14일 실행)에서는 Schott Pharma 에서 세 번 연속 실패한 뒤 Google 확인을 통째로 껐다.
+// 그 뒤 순서의 기사 51건이 본문 없이 남았는데, 같은 링크를 로컬에서 다시 풀면 전부 1초 안에 풀렸다.
+// 일시적인 차단이었다.
+export function createPublisherProbe(limit = 3, { pauseMs = 60000, maxPauses = 3, sleepFn = sleep } = {}) {
+  let failures = 0, pauses = 0, queue = Promise.resolve();
   return async (url, request) => {
     if (!isGoogle(url)) return request();
     // Serialize Google probes across company workers so the failure threshold
     // cannot be exceeded by already queued requests. Other publishers run freely.
     const result = queue.then(async () => {
-      if (failures >= limit) return null;
+      if (failures >= limit) {
+        if (pauses >= maxPauses) return null;
+        pauses += 1;
+        failures = 0;
+        await sleepFn(pauseMs);
+      }
       try {
         const document = await request();
         failures = 0;
@@ -1429,8 +1439,16 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
     return null;
   }
   if (!id) return null;
-  const page = await fetchImpl(`https://news.google.com/articles/${id}`,
-    { signal: AbortSignal.timeout(timeoutSeconds * 1000), headers: { 'User-Agent': USER_AGENT } });
+  // 429·5xx 는 잠깐 쉬고 두 번까지 다시 보낸다. 해독 요청이 몰리면 Google 이 잠시 거절한다.
+  const send = async (target, init) => {
+    for (let attempt = 0; ; attempt += 1) {
+      const response = await fetchImpl(target, { ...init, signal: AbortSignal.timeout(timeoutSeconds * 1000) });
+      if ((response.status !== 429 && response.status < 500) || attempt >= 2) return response;
+      await response.body?.cancel();
+      await sleep(2000 * 2 ** attempt);
+    }
+  };
+  const page = await send(`https://news.google.com/articles/${id}`, { headers: { 'User-Agent': USER_AGENT } });
   if (!page.ok) return null;
   const html = await page.text();
   const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
@@ -1438,8 +1456,8 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
   if (!signature || !timestamp) return null;
   const request = ['garturlreq', [['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1],
     'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0], id, Number(timestamp), signature];
-  const response = await fetchImpl('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
-    method: 'POST', signal: AbortSignal.timeout(timeoutSeconds * 1000),
+  const response = await send('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
+    method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT },
     body: `f.req=${encodeURIComponent(JSON.stringify([[['Fbv4je', JSON.stringify(request), null, 'generic']]]))}`,
   });

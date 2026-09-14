@@ -382,3 +382,27 @@ class ReviewLabelAndSourceTests(unittest.TestCase):
                                         "display_name": "Australian Strategic Materials"}], {"companies": []})
         self.assertEqual(profiles[0]["company"], "Australian Strategic Metals")
         self.assertEqual(profiles[0]["display_name"], "Australian Strategic Materials")
+
+
+class SummaryDetailProseTests(unittest.TestCase):
+    """2026-08 report (run on 2026-09-14): detail sentences were compressed like headlines."""
+
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def test_korean_detail_keeps_its_connectives_and_subject(self):
+        pdf.set_language("ko")
+        parts = pdf.summary_parts({"ai_summary_ko": "mRNA 암 백신 공동 개발 및 병용 연구 추진 - 모더나와 머크가 환자 맞춤형 "
+                                                    "mRNA 기반 암 백신 인티스메란을 개발하고 면역항암제 키트루다와 병용하는 연구를 공동으로 진행함"})
+        self.assertEqual(parts["headline"], "mRNA 암 백신 공동 개발 및 병용 연구 추진")
+        self.assertIn("모더나와 머크가", parts["detail"])
+        self.assertIn("개발하고", parts["detail"])
+        self.assertIn("병용하는", parts["detail"])
+
+    def test_a_leading_name_before_a_comma_is_not_a_headline(self):
+        pdf.set_language("en")
+        text = ("GUSS Automation, a wholly owned subsidiary of John Deere, plans to incorporate Ouster's Rev8 digital "
+                "lidar sensors into the next generation of its autonomous orchard machine fleet.")
+        parts = pdf.summary_parts({"ai_summary_en": text})
+        self.assertEqual(parts["headline"], text)
+        self.assertEqual(parts["detail"], "")

@@ -524,11 +524,20 @@ export function articleCoverageGap(article, review, published = false) {
   return null;
 }
 
+// 기업 하나의 커버리지 공백 기사. 이번 달 기사가 모두 본문 없이 제목뿐이면 전부 공백이다. 읽어 본 근거가
+// 하나도 없는데 제목만으로 "검토 후 미포착"이라 할 수는 없다. 2026-08 보고서(9월 14일 실행)에서
+// Google News 확인이 멈춘 뒤 Airbus 6건, Heraeus 5건, Schott Pharma 6건이 본문 없이 이렇게 표시됐다.
+export function companyCoverageGaps(articles, reviewByArticle, publishedArticleIds = new Set()) {
+  if (articles.length && !articles.some((article) => article.candidates.some((candidate) => hasArticleBody(candidate.row)))) {
+    return articles;
+  }
+  return articles.filter((article) => articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)));
+}
+
 export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0, publishedArticleIds = new Set()) {
   if (collectionStatus === 'incomplete' || deferredCount > 0) return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
-  return articles.some((article) => articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)))
-    ? 'incomplete_evidence' : 'reviewed';
+  return companyCoverageGaps(articles, reviewByArticle, publishedArticleIds).length ? 'incomplete_evidence' : 'reviewed';
 }
 
 export async function build(args) {
@@ -556,8 +565,7 @@ export async function build(args) {
     const coverage = snapshot.targets.map((target) => {
       const deferredArticles = deferred.filter(article => article.company === target.company);
       const articles = snapshot.articles.filter((article) => article.company === target.company);
-      const incomplete = articles.filter((article) =>
-        articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticles.has(article.id)));
+      const incomplete = companyCoverageGaps(articles, reviewByArticle, publishedArticles);
       const datePending = articles.filter((article) => article.date_placement === "date_pending");
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
