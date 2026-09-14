@@ -109,6 +109,9 @@ function coverPage(state, model, assets) {
 // 없었다. 34546694524 에서 77개사 중 59개사가 뒤쪽이다. 속을 채운 점은 "보고 없었다",
 // 테두리만 있는 점은 "못 봤다"로 읽힌다.
 const offMark = row => (row.status === 'insufficient' ? 'unknown' : 'off');
+// 사람 검토 후보만 있는 칸은 금색 테두리만 그린다. AI 확인 칸(채움)과 같은 뜻으로 읽히면 안 된다.
+// 예전 뷰 모델은 칸을 true/false 로 줬으므로 true 도 확인 칸으로 읽는다.
+const cellMark = (state, row) => (state === true || state === 'on' ? 'on' : state === 'review' ? 'review' : offMark(row));
 
 const matrixTable = (heading, rows) => `
         <table class="matrix">
@@ -122,7 +125,7 @@ const matrixTable = (heading, rows) => `
             <tr>
               <td class="no">${escapeHtml(row.target_no)}</td>
               <td class="company">${escapeHtml(row.company)}</td>
-              ${row.signals.map(on => `<td class="cell"><i class="${on ? 'on' : offMark(row)}"></i></td>`).join('')}
+              ${row.signals.map(state => `<td class="cell"><i class="${cellMark(state, row)}"></i></td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>`;
@@ -143,6 +146,7 @@ function matrixPages(state, model) {
       <div class="matrix-tail">
         <div class="matrix-legend">
           <span><i class="on"></i>${escapeHtml(matrix.legend_on)}</span>
+          ${matrix.legend_review ? `<span><i class="review"></i>${escapeHtml(matrix.legend_review)}</span>` : ''}
           <span><i class="off"></i>${escapeHtml(matrix.legend_off)}</span>
           <span><i class="unknown"></i>${escapeHtml(matrix.legend_unknown)}</span>
         </div>
@@ -632,8 +636,9 @@ table.matrix td {
 table.matrix td.no { width: 22pt; color: ${COLORS.rowNo}; text-align: center; }
 table.matrix td.cell { text-align: center; }
 table.matrix td.company { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-i.on, i.off, i.unknown { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
+i.on, i.review, i.off, i.unknown { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
 i.on { background: ${COLORS.gold}; }
+i.review { background: transparent; box-shadow: inset 0 0 0 1.2pt ${COLORS.gold}; }
 /* 채운 점: 검토했고 신호가 없었다. 테두리만: 검토를 못 해 모른다. */
 i.off { background: ${COLORS.light}; }
 i.unknown { background: transparent; box-shadow: inset 0 0 0 0.6pt ${COLORS.tableLine}; }

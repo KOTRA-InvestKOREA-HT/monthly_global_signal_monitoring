@@ -304,11 +304,12 @@ TEXTS = {
         "matrix_title": "이번 달 시그널 매트릭스",
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
         "matrix_company": "기업",
-        "matrix_legend_on": "시그널 포착",
+        "matrix_legend_on": "AI 확인 시그널",
+        "matrix_legend_review": "검토 필요 · 사람 확인 전",
         "matrix_legend_off": "검토함 · 신호 없음",
         "matrix_legend_unknown": "근거 부족 · 재조사 대상",
         "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        "matrix_footnote": "시그널 포착 {on}개사 · 검토 후 미포착 {reviewed_off}개사 · 근거 부족 {insufficient}개사",
+        "matrix_footnote": "AI 확인 {on}개사 · 검토 필요 {review}개사 · 검토 후 미포착 {reviewed_off}개사 · 근거 부족 {insufficient}개사",
         "detail_title": "기업별 시그널 상세",
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
@@ -335,11 +336,12 @@ TEXTS = {
         "matrix_title": "This Month's Signal Matrix",
         "matrix_desc": "Investment signals (pre-confirmation) across the 77 target companies for {period}. A highlighted cell marks a signal detected during the month; lagging data such as completed deals are excluded.",
         "matrix_company": "Company",
-        "matrix_legend_on": "Signal detected",
+        "matrix_legend_on": "AI-confirmed signal",
+        "matrix_legend_review": "Needs review, unconfirmed",
         "matrix_legend_off": "Reviewed, no signal",
         "matrix_legend_unknown": "Insufficient evidence, revisit",
         "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move",
-        "matrix_footnote": "{on} detected · {reviewed_off} reviewed without signals · {insufficient} insufficient evidence",
+        "matrix_footnote": "{on} AI-confirmed · {review} needs review · {reviewed_off} reviewed without signals · {insufficient} insufficient evidence",
         "detail_title": "Company Signal Details",
         "no_signal": "No signal this month",
         "business_heading": "GLOBAL BUSINESS STATUS",
@@ -726,10 +728,10 @@ def phraseify_summary_text(value, row=None):
     text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)", r"\1 \3", text)
     text = re.sub(r"(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)", "", text)
     text = re.sub(r"\s+(다만|또한|그리고)\s+", ", ", text)
-    text = re.sub(r"[.!?。]+", ". ", text)
+    pieces = [part for sentence in sentence_spans(text) for part in re.split(r"\s*;\s*", sentence)]
     clauses = [
-        phrase_ending_text(re.sub(r"^(이는|다만|또한|그리고)\s+", "", clause))
-        for clause in re.split(r"\s*\.\s*|\s*;\s*", text)
+        phrase_ending_text(re.sub(r"^(이는|다만|또한|그리고)\s+", "", re.sub(r"[.!?。]+$", "", clause.strip())))
+        for clause in pieces
     ]
     text = ", ".join(clause for clause in clauses if clause)
     text = re.sub(r"\s*,\s*,\s*", ", ", text)
@@ -786,7 +788,7 @@ def summary_parts(row):
             "detail": compact_summary_phrase(" - ".join(dashed[1:]), detail_limit, row),
         }
 
-    sentences = [item for item in re.split(r"(?<=[.!?。])\s+", text) if item]
+    sentences = sentence_spans(text)
     if len(sentences) >= 2:
         return {
             "headline": compact_summary_phrase(sentences[0], headline_limit, row),
@@ -889,8 +891,27 @@ def short_text_to_width(canvas_obj, text, max_width, font_name, font_size, slot=
     return head + suffix if head else suffix
 
 
+# 문장 끝. 마침표는 뒤에 공백이나 글 끝이 올 때만 끝으로 본다. 그래야 23.6% 같은 소수점이
+# 갈라지지 않는다. 영문 이니셜과 흔한 약어 뒤 마침표도 끝이 아니다. 2026-08 보고서에서
+# "Michael J. Fox" 가 "마이클 J, 폭스"로 인쇄됐다. 일본어 마침표는 뒤에 공백이 없어도 끝이다.
+SENTENCE_END = re.compile(r"。+|[.!?]+(?=\s|$)")
+NOT_A_SENTENCE_END = re.compile(r"(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e))$")
+
+
+def sentence_spans(text):
+    text = str(text or "")
+    sentences, start = [], 0
+    for match in SENTENCE_END.finditer(text):
+        if match.group() == "." and NOT_A_SENTENCE_END.search(text[start:match.start()]):
+            continue
+        sentences.append(text[start:match.end()].strip())
+        start = match.end()
+    sentences.append(text[start:].strip())
+    return [sentence for sentence in sentences if sentence]
+
+
 def split_sentences(text):
-    return [sentence.strip() for sentence in re.split(r"(?<=[.!?。])\s+", str(text or "")) if sentence.strip()]
+    return sentence_spans(text)
 
 
 def fit_sentences(canvas_obj, text, max_width, font_name, font_size, max_lines):
@@ -1383,20 +1404,34 @@ def covered_companies(summary, signal_rows):
             if row.get("company") and row.get("source_type") == "official"}
 
 
+def signal_cell_state(signal_index, company, no):
+    """매트릭스 한 칸. on=AI 확인 시그널, review=사람 검토 후보뿐, ""=없음.
+
+    2026-08 보고서는 검토 후보만 있는 칸도 AI 확인 칸과 같은 금색으로 칠해, 받는 사람이 둘을
+    구분할 수 없었다. 한 칸에 둘이 섞이면 AI 확인이 이긴다.
+    """
+    rows = signal_index.get(company, {}).get(no) or []
+    if not rows:
+        return ""
+    return "review" if all(signal_needs_human_review(row) for row in rows) else "on"
+
+
 def company_status(company, signal_index, covered):
     """매트릭스 한 행의 상태.
 
-    detected     이번 달 시그널이 있다
+    detected     이번 달 AI 확인 시그널이 있다
+    review       사람 검토 후보만 있다
     reviewed     검토를 끝냈고 시그널이 없었다
     insufficient 검토를 끝내지 못했다. 없다는 뜻이 아니라 모른다는 뜻이다
 
-    각주는 이 셋을 숫자로 말해 왔는데 표에는 상태가 없어서, 읽는 사람이 어느 기업을 다시
-    뒤져야 하는지 알 수 없었다. 34546694524 에서 77개사 중 59개사가 뒤쪽이다.
-    report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을 한 곳에 둬야 두 렌더러가
-    같은 표를 그린다.
+    각주는 이 상태를 숫자로 말한다. report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을
+    한 곳에 둬야 두 렌더러가 같은 표를 그린다.
     """
-    if any(signal_index.get(company, {}).values()):
+    states = [signal_cell_state(signal_index, company, no) for no in range(1, 6)]
+    if "on" in states:
         return "detected"
+    if "review" in states:
+        return "review"
     return "reviewed" if company in covered else "insufficient"
 
 
@@ -1425,10 +1460,15 @@ def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=F
         report.text(name_x, y + 3.7, profile["company"], 6, TEXT)
         status = company_status(profile["company"], signal_index, covered)
         for idx in range(5):
-            active = bool(signal_index.get(profile["company"], {}).get(idx + 1))
-            if active:
+            state = signal_cell_state(signal_index, profile["company"], idx + 1)
+            if state == "on":
                 c.setFillColor(GOLD)
                 c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
+            elif state == "review":
+                # 금색 테두리만: 사람 검토 전 후보. 채운 칸(AI 확인)과 같은 뜻으로 읽히면 안 된다.
+                c.setStrokeColor(GOLD)
+                c.setLineWidth(1.1)
+                c.roundRect(signal_xs[idx] + 0.5, y + 3.5, 7.2, 7.2, 2, fill=0, stroke=1)
             elif status == "insufficient":
                 # 테두리만: 검토를 못 해 모른다. 속을 채우면 "보고 없었다"로 읽힌다.
                 c.setStrokeColor(TABLE_LINE)
@@ -1454,21 +1494,27 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
 
     y = 88
     c = report.canvas
-    c.setFillColor(GOLD)
-    c.roundRect(32, y + 9, 8, 8, 2, fill=1, stroke=0)
-    legend_on = t("matrix_legend_on")
-    report.text(45, y + 9, legend_on, 8, colors.HexColor("#596579"))
-    legend_off_x = 45 + c.stringWidth(legend_on, report.fonts["demilight"], 8) + 18
-    c.setFillColor(LIGHT)
-    c.roundRect(legend_off_x, y + 9, 8, 8, 2, fill=1, stroke=0)
-    legend_off = t("matrix_legend_off")
-    report.text(legend_off_x + 13, y + 9, legend_off, 8, colors.HexColor("#596579"))
-    # 세 번째 상태. 각주는 셋을 말해 왔는데 범례는 둘뿐이라 표를 읽을 수 없었다.
-    legend_unknown_x = legend_off_x + 13 + c.stringWidth(legend_off, report.fonts["demilight"], 8) + 18
-    c.setStrokeColor(TABLE_LINE)
-    c.setLineWidth(0.6)
-    c.roundRect(legend_unknown_x, y + 9, 8, 8, 2, fill=0, stroke=1)
-    report.text(legend_unknown_x + 13, y + 9, t("matrix_legend_unknown"), 8, colors.HexColor("#596579"))
+    legend_color = colors.HexColor("#596579")
+    legend_x = 32
+    for mark, label in (("on", t("matrix_legend_on")), ("review", t("matrix_legend_review")),
+                        ("off", t("matrix_legend_off")), ("unknown", t("matrix_legend_unknown"))):
+        if mark == "on":
+            c.setFillColor(GOLD)
+            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
+        elif mark == "review":
+            c.setStrokeColor(GOLD)
+            c.setLineWidth(1.1)
+            c.roundRect(legend_x + 0.5, y + 9.5, 7, 7, 2, fill=0, stroke=1)
+        elif mark == "off":
+            c.setFillColor(LIGHT)
+            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
+        else:
+            # 테두리만 회색: 검토를 못 해 모른다.
+            c.setStrokeColor(TABLE_LINE)
+            c.setLineWidth(0.6)
+            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=0, stroke=1)
+        report.text(legend_x + 13, y + 9, label, 8, legend_color)
+        legend_x += 13 + c.stringWidth(label, report.fonts["demilight"], 8) + 18
     report.text(
         32,
         y - 6,
@@ -1476,27 +1522,16 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
         7,
         MUTED,
     )
-    official_covered = {
-        row.get("company")
-        for row in signal_rows
-        if row.get("company") and row.get("source_type") == "official"
-    }
-    if isinstance(summary.get("review_coverage"), list):
-        official_covered = {item.get("company") for item in summary["review_coverage"] if item.get("status") == "reviewed"}
-    reviewed_off = sum(
-        1
-        for profile in profiles
-        if profile["company"] not in signal_company_names
-        and profile["company"] in official_covered
-    )
-    insufficient = len(profiles) - len(signal_companies) - reviewed_off
+    # 각주는 행 상태를 센 것이다. 따로 계산하면 표와 숫자가 어긋난다.
+    statuses = [company_status(profile["company"], signal_index, covered) for profile in profiles]
     footnote = t(
         "matrix_footnote",
-        on=len(signal_companies),
-        off=reviewed_off + insufficient,
+        on=statuses.count("detected"),
+        review=statuses.count("review"),
+        off=statuses.count("reviewed") + statuses.count("insufficient"),
         total=len(profiles),
-        reviewed_off=reviewed_off,
-        insufficient=insufficient,
+        reviewed_off=statuses.count("reviewed"),
+        insufficient=statuses.count("insufficient"),
     )
     report.text(
         32,
@@ -1549,11 +1584,31 @@ def expand_business_summary(row, text):
     return normalize_summary_text(text)
 
 
+def business_prose(text):
+    """사업동향은 문장으로 싣는다. 모델이 앞에 붙인 "표제 - 본문"의 표제를 뗀다.
+
+    2026-08 Nabtesco 카드는 "나브테스코 - 로봇용 감속기 … 매출 증가 기록 나브테스코는 …"처럼
+    표제와 본문이 붙어 인쇄됐다. 표제 뒤에서 같은 주어(표제 첫 구절 + 은/는/이/가)가 다시
+    나오면 거기서 본문이 시작한다. 숫자 범위("2025 - 2026")나 문장 안의 대시는 건드리지 않는다.
+    """
+    match = re.match(r"^(?P<lead>[^.!?。]{1,80}?)\s[-–—]\s(?P<rest>.+)$", text or "")
+    if not match:
+        return text
+    lead, rest = match.group("lead").strip(), match.group("rest").strip()
+    if re.search(r"\d$", lead) and re.match(r"\d", rest):
+        return text
+    subject = lead.split(",")[0].strip()
+    again = re.search(rf"{re.escape(subject)}(은|는|이|가)\s", rest) if subject else None
+    if again and again.start() <= 120 and not re.search(r"[.!?。]", rest[:again.start()]):
+        rest = rest[again.start():]
+    return rest
+
+
 def business_text(rows):
     if not rows:
         return t("business_empty")
     row = sort_signal_rows(rows)[0]
-    ai_summary = normalize_summary_text(summary_field(row, "ai_summary"))
+    ai_summary = business_prose(normalize_summary_text(summary_field(row, "ai_summary")))
     if ai_summary:
         return short_text(expand_business_summary(row, ai_summary), 950)
     return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
@@ -2002,7 +2057,7 @@ def item_trend_body(report, row, width, size, max_lines):
     문장 중간에서 '...'로 잘리지 않고 '무엇을 했다 / 하고 있다'로 끝난다.
     """
     font_name = report.fonts["demilight"]
-    text = normalize_summary_text(summary_field(row, "ai_summary")) or normalize_summary_text(detail_text(row, 400))
+    text = business_prose(normalize_summary_text(summary_field(row, "ai_summary"))) or normalize_summary_text(detail_text(row, 400))
     body = fit_sentences(report.canvas, text, width, font_name, size, max_lines)
     if not body:
         return "", 1
