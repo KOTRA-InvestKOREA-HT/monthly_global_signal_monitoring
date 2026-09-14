@@ -1313,13 +1313,20 @@ def is_periodic_disclosure(row):
 
 
 def signal_needs_human_review(row):
-    """AI 승인 조건은 못 채웠지만 기업 귀속과 지표 사건이 확인돼 사람이 거르도록 넣은 행인지."""
+    """AI 승인 조건은 못 채웠지만 기업 귀속과 지표 사건이 확인돼 사람이 거르도록 넣은 행인지.
+
+    한·영 문안이 모두 있어야 싣는다. 문안 없이 원문 발췌로 칸을 채우면 한국어판에 영어·일본어
+    본문이나 "PDF 3.29 MB" 같은 링크 문구가 그대로 나간다(2026-08 실행). 두 언어판의 매트릭스가
+    같도록 한쪽 문안만 있는 행도 뺀다. 빠진 행은 대시보드에는 남는다.
+    """
     return (
         bool(row)
         and row.get("ai_signal_supported") is False
         and row.get("ai_review_tier") == "human_review"
         and row.get("ai_entity_supported") is True
         and row.get("ai_indicator_supported") is True
+        and bool(clean_text(row.get("ai_summary_ko")))
+        and bool(clean_text(row.get("ai_summary_en")))
     )
 
 

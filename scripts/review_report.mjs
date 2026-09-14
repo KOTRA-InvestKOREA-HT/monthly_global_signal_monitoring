@@ -30,7 +30,7 @@ export function publishedSignalCounts(rows, period) {
 }
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
 const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
-const SUMMARY_REVIEW_VERSION = 'human-review-summary-v1';
+const SUMMARY_REVIEW_VERSION = 'human-review-summary-v2';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
@@ -61,16 +61,18 @@ export function needsForm3Review(article, review) {
     return supported;
   });
 }
-// 사람 검토 후보도 보고서에 실리므로 문안이 필요하다. 요약 지시는 판정 캐시 식별자 밖이라, 지시를
-// 바꾸기 전에 저장된 판정은 검토 후보 문안이 비어 있다. 그런 기사만 한 번 다시 묻고, 새 응답에도
-// 문안이 없으면 본문 발췌로 대신한다(버전을 찍으므로 반복해서 묻지 않는다).
-export function needsReviewSummary(article, review) {
-  if (review.summary_review_version === SUMMARY_REVIEW_VERSION) return false;
-  return review.decisions.some(decision => {
+// 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다. 원문 발췌를 대신 싣으면 한국어판에 영어·일본어
+// 본문이나 "PDF 3.29 MB" 같은 링크 문구가 그대로 나간다(2026-08 실행). 문안이 빈 후보를 짚어 한 번 더
+// 묻고, 그래도 없으면 대시보드에만 남긴다. 버전을 찍으므로 같은 기사를 반복해서 묻지 않는다.
+export function missingReviewSummaryIds(article, review) {
+  return review.decisions.filter(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
     const gaps = candidate ? humanReviewGaps(candidate, decision) : null;
     return Boolean(gaps?.length) && !(String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim());
-  });
+  }).map(decision => decision.candidate_id);
+}
+export function needsReviewSummary(article, review) {
+  return review.summary_review_version !== SUMMARY_REVIEW_VERSION && missingReviewSummaryIds(article, review).length > 0;
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -294,7 +296,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
-    form3_review_version: FORM3_REVIEW_VERSION, summary_review_version: SUMMARY_REVIEW_VERSION,
+    form3_review_version: FORM3_REVIEW_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -426,6 +428,29 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   const failed = [];
   const diagnostics = [];
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics, ...extra });
+  // 문안이 빈 사람 검토 후보를 짚어 한 번 더 묻는다. 판정은 옮기지 않고 문안만 옮긴다. 새로 판정한
+  // 기사도 같은 실행 안에서 보강한다. 실패하거나 한도에 걸리면 다음 실행에서 다시 묻는다.
+  const backfillSummaries = async (article, review, file) => {
+    const missing = missingReviewSummaryIds(article, review);
+    if (review.summary_review_version === SUMMARY_REVIEW_VERSION || !missing.length ||
+        supplementStop.stopped || requests >= config.maxRequests) return review;
+    if (requests) await sleep(config.delayMs);
+    requests++;
+    try {
+      const fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl, {
+        reason: 'human_review_summaries_missing',
+        validation_message: `summary_ko and summary_en are empty for human-review candidates: ${missing.join(', ')}` });
+      const merged = mergeReviewSummaries(article, review, fresh);
+      importReview(article, merged);
+      await write(file, merged);
+      return merged;
+    } catch (error) {
+      // 문안 보강은 보조 작업이다. 할당량·전송 오류면 남은 기사에서도 같으므로 이번 실행에서는 멈춘다.
+      if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
+      console.log(`Article ${article.id}: human-review summary unavailable (${error.response_code || error.status || 'error'})`);
+      return review;
+    }
+  };
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
     try {
@@ -435,20 +460,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
       if (needsForm3Review(article, review)) throw new Error('Form 3 personnel event needs recheck');
       cached++; completed++;
-      if (needsReviewSummary(article, review) && !supplementStop.stopped && requests < config.maxRequests) {
-        if (requests) await sleep(config.delayMs);
-        requests++;
-        try {
-          const merged = mergeReviewSummaries(article, review, await requestReview(article, policy, config.apiKey, supplementFetchImpl));
-          importReview(article, merged);
-          await write(file, merged);
-          review = merged;
-        } catch (error) {
-          // 문안 보강도 보조 작업이다. 실패하면 발췌로 대신하고, 다음 실행에서 다시 묻는다.
-          if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
-          console.log(`Article ${article.id}: human-review summary unavailable (${error.response_code || error.status || 'error'})`);
-        }
-      }
+      review = await backfillSummaries(article, review, file);
       // 끝난 내용 판정은 그대로 두고 날짜만 보강한다. 스키마가 바뀌었다고 캐시 식별자를 올리면
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
       // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.
@@ -518,6 +530,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         continue;
       }
       await write(file, review);
+      review = await backfillSummaries(article, review, file);
       completed++;
       if (logReviewed) console.log(`Reviewed ${completed}/${articles.length}: ${article.company}`);
       break;
