@@ -52,6 +52,9 @@ export const SUMMARY_INSTRUCTION =
   '(Korean 예정·계획·가능성), never 완료 or 진행. Describe the event the evidence reports: an executive who assumed office this month ' +
   'was not appointed this month unless the evidence says so. Name the country or region instead of domestic, local, home or 국내. ' +
   'Do not upgrade a relationship: an investment or stake is not a collaboration, and potential synergies are not an ongoing collaboration. ' +
+  // 2026-08 보고서(9월 14일 실행): 원문 61%를 한글 요약에 69%로 적었고, 통화 기호 없는 금액에 달러를 붙였다.
+  'Copy every number, percentage and amount exactly as the article states it; never change, round or recompute it. ' +
+  'Convert units exactly (9.33 billion = 93억 3000만). Attach a currency only when the article states that currency for that amount. ' +
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
   'When the evidence dates the event differently from the announcement, state that event date. ';
 

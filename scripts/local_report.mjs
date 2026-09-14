@@ -76,6 +76,88 @@ export function ungroundedSummaryNames(summaryEn, quotes, title) {
   });
 }
 
+// 요약에 적힌 숫자·금액·통화가 기사에 있는지 본다. 인용 검증은 문장이 기사에 있었다는 것만 증명하고,
+// 요약이 그 숫자를 제대로 옮겼는지는 보지 않는다. 2026-08 보고서(9월 14일 실행)에서 원문 "61%"가 한글
+// 요약에 "69%"로 실렸고, 통화 기호가 없는 ASML "9.33 billion"에는 "달러"가 붙었다.
+// 억·만 단위 금액은 값으로 바꿔 billion·million 과 대조한다. 날짜·분기·순번, 연도, 한 자리 정수,
+// 영문자에 붙은 번호(RLE100, Q3, FY26)는 보지 않는다. 표기 차이로 생기는 오탐이 남으므로 importReview 는
+// 새로 받은 응답에서만(strictNumbers) 되묻고, 재시도 뒤에도 숫자만 걸리면 경고를 남기고 받는다.
+// 통화 코드를 앞에 두고 백만 단위를 m 으로 적는 공시가 있다(2026-08 Vestas "EUR 4,723m").
+const AMOUNT_SCALE = { trillion: 1e12, tn: 1e12, billion: 1e9, bn: 1e9, million: 1e6, mn: 1e6, m: 1e6, thousand: 1e3, k: 1e3,
+  "兆": 1e12, "億": 1e8, "万": 1e4, "조": 1e12, "억": 1e8, "만": 1e4 };
+const CURRENCY_CODE = { "$": "USD", "US$": "USD", "A$": "USD", "C$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₩": "KRW",
+  usd: "USD", dollar: "USD", dollars: "USD", "달러": "USD", eur: "EUR", euro: "EUR", euros: "EUR", "유로": "EUR",
+  gbp: "GBP", pound: "GBP", pounds: "GBP", "파운드": "GBP", jpy: "JPY", yen: "JPY", "円": "JPY", "엔": "JPY",
+  krw: "KRW", "원": "KRW", chf: "CHF", franc: "CHF", francs: "CHF", "프랑": "CHF" };
+const CURRENCY_MARKER = { USD: /\$|\bUSD\b|dollar/i, EUR: /€|\bEUR\b|euro/i, GBP: /£|\bGBP\b|pound|sterling/i,
+  JPY: /¥|円|\bJPY\b|\byen\b/i, KRW: /₩|\bKRW\b|\bwon\b|원/i, CHF: /\bCHF\b|franc/i };
+const LATIN_AMOUNT = /(US\$|A\$|C\$|[$€£¥₩]|(?:USD|EUR|GBP|JPY|CHF)(?=\s?\d))?\s?(?<![A-Za-z0-9.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s?(%|percent\b|trillion\b|billion\b|million\b|thousand\b|tn\b|bn\b|mn\b|m\b|k\b|兆|億|万)|(?![A-Za-z0-9]))(?:\s?(?:(USD|EUR|GBP|JPY|KRW|CHF|dollars?|euros?|pounds?|yen|francs?)\b|(円)))?/gi;
+const KOREAN_AMOUNT = /(?<![A-Za-z0-9.,])((?:\d+(?:\.\d+)?\s?[조억만]\s?)*(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(?![A-Za-z0-9.,])\s?([조억만])?\s?(%|퍼센트|달러|유로|파운드|엔|원|프랑|년|월|일|분기|개월|주년|주|차|번째|위|세대|호|시|분|배)?/g;
+const KOREAN_SKIP = new Set(["년", "월", "일", "분기", "개월", "주년", "주", "차", "번째", "위", "세대", "호", "시", "분", "배"]);
+
+const sameValue = (a, b) => Math.abs(a - b) <= Math.max(1e-9, Math.abs(b) * 1e-6);
+const plainNumber = (text) => Number(String(text).replace(/,/g, ""));
+
+function koreanValue(digits, unit = "") {
+  let total = 0;
+  for (const [, number, scale] of `${String(digits).replace(/,/g, "")}${unit}`.matchAll(/(\d+(?:\.\d+)?)\s?([조억만])?/g)) {
+    total += Number(number) * (AMOUNT_SCALE[scale] || 1);
+  }
+  return total;
+}
+
+function sourceAmounts(text) {
+  return [...text.matchAll(LATIN_AMOUNT)].map((match) => {
+    const raw = plainNumber(match[2]);
+    return { raw, scaled: raw * (AMOUNT_SCALE[String(match[3] || "").toLowerCase()] || 1),
+      start: match.index, end: match.index + match[0].length };
+  });
+}
+
+function summaryAmounts(summary, lang) {
+  const text = normalizeQuote(summary);
+  if (lang === "ko") {
+    return [...text.matchAll(KOREAN_AMOUNT)].flatMap((match) => {
+      const suffix = match[3] || "";
+      if (KOREAN_SKIP.has(suffix)) return [];
+      const scaled = Boolean(match[2]) || /[조억만]/.test(match[1]);
+      return [{ label: match[0].trim(), value: scaled ? koreanValue(match[1], match[2]) : plainNumber(match[1]),
+        scaled, percent: suffix === "%" || suffix === "퍼센트", currency: CURRENCY_CODE[suffix] || "" }];
+    });
+  }
+  return [...text.matchAll(LATIN_AMOUNT)].map((match) => {
+    const unit = String(match[3] || "").toLowerCase();
+    const word = String(match[4] || match[5] || "").toLowerCase();
+    return { label: match[0].trim(), value: plainNumber(match[2]) * (AMOUNT_SCALE[unit] || 1), scaled: Boolean(AMOUNT_SCALE[unit]),
+      percent: unit === "%" || unit === "percent", currency: CURRENCY_CODE[match[1] || ""] || CURRENCY_CODE[String(match[1] || "").toLowerCase()] || CURRENCY_CODE[word] || "" };
+  });
+}
+
+const worthChecking = (item) => item.percent || item.scaled || item.currency ||
+  !(Number.isInteger(item.value) && (item.value < 10 || (item.value >= 1900 && item.value <= 2100)));
+
+export function summaryNumberProblems(summary, evidenceTexts, lang = "en") {
+  if (!clean(summary)) return [];
+  const source = (evidenceTexts || []).map(normalizeQuote).join("\n");
+  const amounts = sourceAmounts(source);
+  const problems = [];
+  for (const item of summaryAmounts(summary, lang).filter(worthChecking)) {
+    const found = amounts.filter((amount) => sameValue(amount.raw, item.value) || sameValue(amount.scaled, item.value));
+    if (!found.length) {
+      problems.push(item.label);
+    } else if (item.currency && !found.some((amount) =>
+      CURRENCY_MARKER[item.currency].test(source.slice(Math.max(0, amount.start - 8), amount.end + 14)))) {
+      problems.push(`${item.label} (${item.currency} not stated for this amount)`);
+    }
+  }
+  return [...new Set(problems)];
+}
+
+export function decisionNumberProblems(article, decision) {
+  return [...summaryNumberProblems(decision.summary_ko, article.evidence, "ko"),
+    ...summaryNumberProblems(decision.summary_en, article.evidence, "en")];
+}
+
 const hash = (value) => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 24);
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const write = async (file, value) => fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
@@ -221,7 +303,7 @@ export function humanReviewGaps(candidate, decision) {
 
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
-export function importReview(article, review) {
+export function importReview(article, review, { strictNumbers = false } = {}) {
   if (review.article_id !== article.id) throw new Error(`${article.company}: stale or mismatched article_id`);
   if (!clean(review.reviewer)) throw new Error(`${article.company}: reviewer is required`);
   if (!Array.isArray(review.decisions) || review.decisions.length !== article.candidates.length) {
@@ -295,6 +377,12 @@ export function importReview(article, review) {
     const gaps = supported ? null : humanReviewGaps(candidate, decision);
     const reviewGaps = gaps?.length ? gaps : null;
     const humanReview = Boolean(reviewGaps);
+    // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
+    // 막히지 않는다(옛 판정은 review_report 의 요약 새로고침이 한 번 다시 받는다).
+    if (strictNumbers && (supported || humanReview)) {
+      const numbers = decisionNumberProblems(article, decision);
+      if (numbers.length) throw new Error(`${context}: summary numbers ${numbers.join(", ")} are not stated in this article`);
+    }
     // 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 검토 후보의 문안은 그 검사를 받지 않았으므로
     // 같은 결함이 있으면 문안만 비우고 후보는 남긴다.
     const groundedSummary = supported || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
