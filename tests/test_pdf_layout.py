@@ -329,3 +329,25 @@ class BusinessBoxLabelTests(unittest.TestCase):
     def test_empty_business_text_follows_the_report_style(self):
         pdf.set_language("ko")
         self.assertTrue(pdf.t("business_empty").endswith("않음."))
+
+
+class SummarySplitTests(unittest.TestCase):
+    """2026-08 English edition: a long first clause became a headline cut off with "..."."""
+
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def test_a_long_first_clause_is_not_cut_into_a_headline(self):
+        pdf.set_language("en")
+        text = ("Applied Materials completed the expansion of its manufacturing and R&D operations in Singapore with the "
+                "new $500 million Tampines Campus, more than doubling its advanced cleanroom capacity to support the "
+                "global build-out of AI infrastructure.")
+        parts = pdf.summary_parts({"ai_summary_en": text})
+        self.assertNotIn("...", parts["headline"] + parts["detail"])
+        self.assertIn("Tampines Campus", parts["headline"] + parts["detail"])
+
+    def test_a_short_first_clause_still_becomes_the_headline(self):
+        pdf.set_language("en")
+        parts = pdf.summary_parts({"ai_summary_en": "Executive leadership changes announced - Evonik appointed Claus Rettig interim CEO."})
+        self.assertEqual(parts["headline"], "Executive leadership changes announced")
+        self.assertTrue(parts["detail"].startswith("Evonik appointed"))
