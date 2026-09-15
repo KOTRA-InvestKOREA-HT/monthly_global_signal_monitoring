@@ -100,7 +100,10 @@ files as the unconfigured fallback. PDF delivery still uses files from the web
 app's deployment; shared versioning between dashboard data and PDFs is a separate
 remaining task.
 
-The web app uses Next.js and the separate Python function `api/report-dynamic.py`.
+The web app uses Next.js. `GET /api/report` renders the same HTML report as
+Actions and prints it with `puppeteer-core` and `@sparticuz/chromium`, including
+downloads with ignored signals or another period. The separate Python function
+`api/report-view-model.py` computes the report content it renders.
 Keep root `requirements.txt` for that function; `requirements-python.txt` supplies
 the additional collection/report tools used locally and in Actions.
 
