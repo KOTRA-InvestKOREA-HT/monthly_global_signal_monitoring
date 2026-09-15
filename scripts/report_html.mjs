@@ -270,19 +270,19 @@ ${itemPages(state, model, itemBreaks)}
 
 function styles(assets) {
   return `
-/* The static cuts, not the 10MB variable file: Chrome embeds what it is given
-   and a variable face lands in the PDF an order of magnitude heavier. These are
-   the same four weights build_pdf_report.py instantiates. */
-@font-face { font-family: 'Noto Sans KR'; src: url('${assets}/fonts/NotoSansKR-DemiLight.ttf') format('truetype'); font-weight: 350; font-display: block; }
-@font-face { font-family: 'Noto Sans KR'; src: url('${assets}/fonts/NotoSansKR-Medium.ttf') format('truetype'); font-weight: 500; font-display: block; }
-@font-face { font-family: 'Noto Sans KR'; src: url('${assets}/fonts/NotoSansKR-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: block; }
-@font-face { font-family: 'Noto Sans KR'; src: url('${assets}/fonts/NotoSansKR-ExtraBold.ttf') format('truetype'); font-weight: 800; font-display: block; }
+/* The static cuts, not a variable file: Chrome embeds what it is given and a
+   variable face lands in the PDF an order of magnitude heavier. These are the
+   same four weights build_pdf_report.py measures with (FONT_FILES). */
+@font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Medium.woff2') format('woff2'); font-weight: 500; font-display: block; }
+@font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
+@font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
 @page { size: ${PAGE_WIDTH_PT}pt ${PAGE_HEIGHT_PT}pt; margin: 0; }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-weight: 350;
+  font-family: 'Pretendard JP', sans-serif;
+  font-weight: 400;
   color: ${COLORS.text};
   -webkit-font-smoothing: antialiased;
 }

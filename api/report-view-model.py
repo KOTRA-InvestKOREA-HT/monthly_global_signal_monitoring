@@ -51,7 +51,7 @@ class handler(BaseHTTPRequestHandler):
                 relevant=str(ROOT / "outputs" / "latest_relevant_signals.json"),
                 investment_signals=str(ROOT / "outputs" / "latest_investment_signals.json"),
                 indicator_config=str(ROOT / "config" / "investment_signal_indicators.json"),
-                font=str(ROOT / "assets" / "fonts" / "NOTOSANSKR-VF.TTF"),
+                font=str(ROOT / "assets" / "fonts" / "PretendardJP-Regular.ttf"),
                 issue_number=clean_issue(first_param(params, "issue", "2")),
                 lang=clean_lang(first_param(params, "lang", "ko")),
                 ignored_signals=first_param(params, "ignored", ""),

@@ -245,7 +245,7 @@ def main():
     parser.add_argument("--investment-signals", required=True)
     parser.add_argument("--relevant", default="outputs/latest_relevant_signals.json")
     parser.add_argument("--indicator-config", required=True)
-    parser.add_argument("--font", default="assets/fonts/NOTOSANSKR-VF.TTF")
+    parser.add_argument("--font", default="assets/fonts/PretendardJP-Regular.ttf")
     parser.add_argument("--issue-number", default=report.DEFAULT_ISSUE_NUMBER)
     parser.add_argument("--lang", default="ko", choices=["ko", "en"])
     parser.add_argument("--ignored-signals", default="")

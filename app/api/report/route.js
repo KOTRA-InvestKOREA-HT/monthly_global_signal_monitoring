@@ -98,7 +98,7 @@ async function viewModelFromPython({ issue, ignored, fromDate, toDate, lang }) {
     "--relevant", "outputs/latest_relevant_signals.json",
     "--investment-signals", "outputs/latest_investment_signals.json",
     "--indicator-config", "config/investment_signal_indicators.json",
-    "--font", "assets/fonts/NOTOSANSKR-VF.TTF",
+    "--font", "assets/fonts/PretendardJP-Regular.ttf",
     "--issue-number", issue,
     "--lang", lang,
     "--ignored-signals", ignored.join(","),

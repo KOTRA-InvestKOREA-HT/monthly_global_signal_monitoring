@@ -637,7 +637,7 @@ td a {
 
 .structuredSummary {
   color: #111827;
-  font-weight: 350;
+  font-weight: 400;
 }
 
 .structuredSummary strong {
@@ -648,12 +648,12 @@ td a {
 .structuredSummary .summaryDash,
 .structuredSummary .summaryDetail {
   color: #111827;
-  font-weight: 350;
+  font-weight: 400;
 }
 
 .businessSummary {
   color: #111827;
-  font-weight: 350;
+  font-weight: 400;
 }
 
 .keywordList {
