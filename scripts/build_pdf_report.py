@@ -35,17 +35,19 @@ DEFAULT_ISSUE_NUMBER = "2"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 KOTRA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "kotra_logo_white.png"
 INVEST_KOREA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "invest_korea_logo_white.png"
+# Role names are kept from the earlier Noto Sans KR cuts; "demilight" is the body text weight.
+# Pretendard JP rather than plain Pretendard: source lines quote Japanese kana and kanji.
 FONT_WEIGHTS = {
-    "demilight": 350,
+    "demilight": 400,
     "medium": 500,
     "semibold": 600,
     "extrabold": 800,
 }
 FONT_FILES = {
-    "demilight": "NotoSansKR-DemiLight.ttf",
-    "medium": "NotoSansKR-Medium.ttf",
-    "semibold": "NotoSansKR-SemiBold.ttf",
-    "extrabold": "NotoSansKR-ExtraBold.ttf",
+    "demilight": "PretendardJP-Regular.ttf",
+    "medium": "PretendardJP-Medium.ttf",
+    "semibold": "PretendardJP-SemiBold.ttf",
+    "extrabold": "PretendardJP-ExtraBold.ttf",
 }
 
 
@@ -938,21 +940,21 @@ def instantiate_variable_font(font_path, weight, out_dir):
 
     font = FontToolsTTFont(str(font_path))
     instanced = instancer.instantiateVariableFont(font, {"wght": weight}, inplace=False)
-    out_file = out_dir / f"NotoSansKR-{weight}.ttf"
+    out_file = out_dir / f"PretendardJP-{weight}.ttf"
     instanced.save(str(out_file))
     return out_file
 
 
 def register_fonts(font_path):
     source = Path(font_path)
-    temp_work = tempfile.TemporaryDirectory(prefix="noto-sans-kr-")
+    temp_work = tempfile.TemporaryDirectory(prefix="pretendard-jp-")
     temp_dir = Path(temp_work.name)
     fonts = {}
     try:
         for role, weight in FONT_WEIGHTS.items():
             static_file = source.parent / FONT_FILES[role]
             font_file = static_file if static_file.exists() else instantiate_variable_font(source, weight, temp_dir)
-            font_name = f"NotoSansKR-{role}"
+            font_name = f"PretendardJP-{role}"
             report_font = ReportLabTTFont(font_name, str(font_file))
             report_font.face.name = font_name.encode("ascii")
             pdfmetrics.registerFont(report_font)
@@ -960,7 +962,7 @@ def register_fonts(font_path):
     except Exception:
         fonts = {}
         for role in FONT_WEIGHTS:
-            font_name = f"NotoSansKR-{role}"
+            font_name = f"PretendardJP-{role}"
             report_font = ReportLabTTFont(font_name, str(source))
             report_font.face.name = font_name.encode("ascii")
             pdfmetrics.registerFont(report_font)

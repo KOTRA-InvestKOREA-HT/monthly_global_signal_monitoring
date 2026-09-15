@@ -13,18 +13,20 @@ const latestOutputFiles = [
 
 const archivedOutputFiles = ["./outputs/*_20*.json", "./outputs/*_20*.csv"];
 // The HTML report's own fonts and images, read by Chromium through file:// URLs.
+// WOFF2 keeps every glyph (Japanese kana and kanji appear in source lines) at
+// about 2MB a weight, less than half the TTF size.
+const reportFontWeights = ["Regular", "Medium", "SemiBold", "ExtraBold"];
 const reportRenderFiles = [
-  "./assets/fonts/NotoSansKR-DemiLight.ttf",
-  "./assets/fonts/NotoSansKR-Medium.ttf",
-  "./assets/fonts/NotoSansKR-SemiBold.ttf",
-  "./assets/fonts/NotoSansKR-ExtraBold.ttf",
+  ...reportFontWeights.map(weight => `./assets/fonts/PretendardJP-${weight}.woff2`),
   "./assets/images/*.png",
 ];
+// Python measures text with the TTF cuts of the same fonts.
+const reportMetricFonts = reportFontWeights.map(weight => `./assets/fonts/PretendardJP-${weight}.ttf`);
 // Inputs for scripts/report_view_model.py. On Vercel api/report-view-model.py
 // computes the view model, so the Node route never ships these.
 const viewModelFiles = [
   ...latestOutputFiles,
-  "./assets/fonts/NOTOSANSKR-VF.TTF",
+  ...reportMetricFonts,
   "./scripts/report_view_model.py",
   "./scripts/build_pdf_report.py",
   "./data/target_companies.json",
@@ -32,22 +34,21 @@ const viewModelFiles = [
   "./config/investment_signal_indicators.json",
   "./config/date_evidence_sources.json",
 ];
-// @sparticuz/chromium decompresses its browser from these files at runtime; the
-// tracer does not follow them on its own. pnpm keeps the real copy under .pnpm.
-const chromiumFiles = [
-  "./node_modules/@sparticuz/chromium/bin/**",
-  "./node_modules/.pnpm/@sparticuz+chromium@*/node_modules/@sparticuz/chromium/bin/**",
-];
+// The route opens assets/ through a runtime path, so the tracer ships the whole
+// directory. Chromium reads only the WOFF2 cuts; the TTFs are for Python. Named
+// one by one: on Windows a "*.ttf" exclude glob matched nothing and 23.7MB stayed.
+const unusedReportFonts = reportMetricFonts;
 const vercel = process.env.VERCEL === "1";
 
 const nextConfig = {
   reactStrictMode: true,
-  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  // The browser itself is downloaded at cold start (app/lib/report_pdf.mjs), not bundled.
+  serverExternalPackages: ["@sparticuz/chromium-min", "puppeteer-core"],
   outputFileTracingExcludes: {
     "/*": archivedOutputFiles,
     "/api/*": archivedOutputFiles,
     ...(vercel ? {
-      "/api/report": [...archivedOutputFiles, ...viewModelFiles],
+      "/api/report": [...archivedOutputFiles, ...viewModelFiles, ...unusedReportFonts],
       "/api/signals": [...archivedOutputFiles, ...latestOutputFiles],
     } : {}),
   },
@@ -57,7 +58,7 @@ const nextConfig = {
     // 쓴다) 배포된 함수는 이 5.65MB 를 한 번도 열지 않는다. 로컬과 자체호스팅은
     // 그대로 싣는다. 자격증명 없이 배포할 일이 생기면 이 조건만 되돌리면 된다.
     "/api/signals": vercel ? [] : latestOutputFiles,
-    "/api/report": [...reportRenderFiles, ...(vercel ? chromiumFiles : viewModelFiles)],
+    "/api/report": [...reportRenderFiles, ...(vercel ? [] : viewModelFiles)],
   },
 };
 

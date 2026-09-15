@@ -1,6 +1,6 @@
 // 웹 다운로드용 보고서 PDF. Actions 와 같은 HTML(renderReport)과 같은 품목 카드 나눔(itemBreaks)을 쓰고
 // 인쇄만 puppeteer 로 한다. build_html_report.mjs 는 Chrome 명령줄로 인쇄한다(Actions 는 npm 패키지를
-// 설치하지 않는다). 서버리스 함수에는 명령줄로 띄울 Chrome 이 없어 @sparticuz/chromium 을 puppeteer 로 띄운다.
+// 설치하지 않는다). 서버리스 함수에는 명령줄로 띄울 Chrome 이 없어 @sparticuz/chromium-min 을 puppeteer 로 띄운다.
 // 예전 웹 다운로드는 무시한 시그널이 있으면 reportlab 으로 모양이 다른 보고서를 만들었고, 없으면 정적 PDF 위에
 // reportlab 좌표로 호수를 덧그려 HTML 표지의 보고월 줄을 가렸다.
 import fs from 'node:fs/promises';
@@ -14,12 +14,17 @@ import { renderReport } from '../../scripts/report_html.mjs';
 const measureCards = () => [...document.querySelectorAll('.item-card')]
   .map(card => card.getBoundingClientRect().height / (96 / 72));
 
+// 브라우저는 함수 번들에 싣지 않는다. @sparticuz/chromium 은 chromium.br 64MB 를 실어 /api/report 가
+// 2.4MB 에서 94MB 가 됐다. -min 은 콜드 스타트 때 이 팩을 받아 /tmp 에 풀고, 따뜻한 동안은 다시 받지 않는다.
+// 팩 버전은 package.json 의 @sparticuz/chromium-min 버전과 같아야 한다.
+export const CHROMIUM_PACK_URL = 'https://github.com/Sparticuz/chromium/releases/download/v153.0.0/chromium-v153.0.0-pack.x64.tar';
+
 export async function browserLaunchOptions(puppeteer, env = process.env) {
   if (env.VERCEL === '1') {
-    const { default: chromium } = await import('@sparticuz/chromium');
+    const { default: chromium } = await import('@sparticuz/chromium-min');
     return {
       args: await puppeteer.defaultArgs({ args: chromium.args, headless: 'shell' }),
-      executablePath: await chromium.executablePath(),
+      executablePath: await chromium.executablePath(env.CHROMIUM_PACK_URL || CHROMIUM_PACK_URL),
       headless: 'shell',
     };
   }
