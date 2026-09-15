@@ -1,0 +1,1083 @@
+
+=== PAGE 1 ===
+Issue 3
+September 2026
+G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R
+Target Companies
+Global Investment Signals
+Monitor
+30 Major Investment-Attraction Projects (MOTIE) · 77 Target Companies
+Five investment signals per company · Pre-confirmation indicators only
+FIVE LEADING SIGNAL INDICATORS
+1
+Supply Chain & Geopolitical Risk
+Dependence reduction, diversification, regulatory risk, etc.
+2
+Production Expansion & Diversification
+APAC expansion reviews, feasibility studies, etc.
+3
+Capital Securing & Financing
+Large bond issues, equity raises, credit lines, etc.
+4
+Tech Ecosystem Engagement (R&D)
+Joint research, licensing, PoC matching, equity, etc.
+5
+Strategic Executive Move
+C-level moves, quiet visits, due-diligence signs, etc.
+
+
+=== PAGE 2 ===
+S I G N A L   M A T R I X
+This Month's Signal Matrix
+Investment signals (pre-confirmation) across the 77 target companies for August (2026.8.1~8.31). A highlighted cell marks a signal detected
+during the month; lagging data such as completed deals are excluded.
+Company
+①
+②
+③
+④
+⑤
+1
+Australian Strategic Materials
+2
+Cognex
+3
+Corning
+4
+Charles River
+5
+Cytiva
+6
+Moderna
+7
+West Pharmaceutical
+8
+Dupont
+9
+Albemarle
+10
+TIMET
+11
+Air Products
+12
+Chemours
+13
+BorgWarner
+14
+DOW
+15
+Thermo Fisher
+16
+Amkor Technology
+17
+Onsemi
+18
+Qualcomm
+19
+Skyworks
+20
+Eli Lilly and Company
+21
+GE Healthcare
+22
+Boeing
+23
+3M
+24
+Ouster
+25
+Applied Materials
+26
+Magnix
+27
+Prodrive
+28
+ASML
+29
+Besi
+30
+NXP
+31
+Norsk Hydro
+32
+Vestas
+33
+Heidenhain
+34
+Infineon
+35
+Schmalz
+36
+Bayer
+37
+Merck
+38
+Schott Pharma
+39
+BASF
+Company
+①
+②
+③
+④
+⑤
+40
+Evonik Industries
+41
+Heraeus
+42
+Jenoptik
+43
+EMM(Umicore)
+44
+Umicore
+45
+Solvay
+46
+Syensqo
+47
+Hexagon AB
+48
+ABB
+49
+Maxon
+50
+Siemens-Gamesa
+51
+Renishaw
+52
+Nexeon
+53
+Rio Tinto
+54
+HyproMag
+55
+EVG
+56
+Plansee
+57
+Texcell
+58
+Veolia
+59
+Airbus
+60
+Safran
+61
+Air Liquide
+62
+Arkema
+63
+DNP
+64
+Hitachi Metals
+65
+Toppan Holdings
+66
+Nabtesco
+67
+Asahi Glass
+68
+JSR
+69
+Shin-Etsu Chemicals
+70
+Tokyo Electron
+71
+Tosoh
+72
+Mitsubishi Chemical
+73
+Sumitomo Chemical
+74
+Asahi Kasei
+75
+Toray
+76
+Cheng Uei Precision
+77
+Shanghai Electric Wind Power
+AI-confirmed signal
+Needs review, unconfirmed
+Reviewed, no signal
+Insufficient evidence, revisit
+① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move
+11 AI-confirmed · 8 needs review · 25 reviewed without signals · 33 insufficient evidence
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+02
+
+
+=== PAGE 3 ===
+C O M P A N Y   S I G N A L S · 1/19
+Company Signal Details
+Corning
+EUV mask materials
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+EUV blank mask
+No global business activity could be summarised from official sources for this period.
+Source —
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+Needs review · target tech unconfirmed
+Expansion plans for Harrodsburg plant
+— Corning's CEO stated that the company seeks to triple its output at the Harrodsburg plant.
+Source Google News: WKYT 2026.08.28
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Needs review · target tech unconfirmed
+Multiyear agreements announced with Amazon and NVIDIA to support further demand for
+optical fiber, cable, and connectivity products.
+Source Google News: Yahoo Finance 2026.08.27
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+03
+
+
+=== PAGE 4 ===
+C O M P A N Y   S I G N A L S · 2/19
+Company Signal Details
+Charles River
+Bioanalysis & safety testing
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+Virus validation and MCB/WCB characterization
+Charles River Laboratories and Medigen Vaccine Biologics Corp. have entered a collaboration to advance next-
+generation multivalent enterovirus vaccine development programs using Next-Generation Sequencing. The
+partnership focuses on characterizing and validating virus seed banks to support regulatory readiness and
+non-clinical studies.
+Source Official press release · Charles River - News Releases / Press Releases 2026.08.20
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Charles River Laboratories and Medigen Vaccine Biologics Corp. collaborated on the
+characterization and validation of the virus seed bank for MVC's next-generation multivalent
+enterovirus vaccine.
+Source Official press release · Charles River - News Releases / Press Releases 2026.08.20
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+04
+
+
+=== PAGE 5 ===
+C O M P A N Y   S I G N A L S · 3/19
+Company Signal Details
+Moderna
+Cell & gene therapy
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+Gene/cell therapy delivery vector and GMP raw material
+Moderna announced initial results from a study of an experimental mRNA cancer treatment that would be the
+first of its kind if approved by regulators. The treatment involves an mRNA-based cancer vaccine called
+intismeran tailored to individual patients' tumor mutations, paired with Merck's Keytruda for melanoma patients.
+The study showed that patients who received the combination lived longer without cancer returning or
+metastasizing compared to those who received Keytruda alone.
+Source Google News: PBS 2026.08.20
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Moderna and Merck jointly develop mRNA cancer vaccine
+— Moderna and Merck are developing a treatment using an mRNA-based cancer vaccine called
+intismeran tailored to individual patients.
+Source Google News: PBS 2026.08.20
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+05
+
+
+=== PAGE 6 ===
+C O M P A N Y   S I G N A L S · 4/19
+Company Signal Details
+Air Products
+Chemical platform feedstock
+USA
+GLOBAL BUSINESS STATUS
+Air Products shares have gained 24.7% so far this year, outperforming the Zacks Chemicals Diversified industry.
+The company is benefiting from investments in high-return projects and productivity initiatives.
+Source Google News: Yahoo Finance 2026.08.31
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+Air Products plans to invest around $1.5 billion annually in traditional industrial gas projects.
+Source Google News: Yahoo Finance 2026.08.31
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Air Products and Yara International have finalized a marketing and distribution agreement for
+renewable ammonia.
+Source Google News: Yahoo Finance 2026.08.31
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+06
+
+
+=== PAGE 7 ===
+C O M P A N Y   S I G N A L S · 5/19
+Company Signal Details
+Skyworks
+Autonomous driving chips
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+Autonomous vehicle IMU/RF/baseband chip
+No global business activity could be summarised from official sources for this period.
+Source —
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+Needs review · target tech unconfirmed
+Regulatory Risk Response
+— Skyworks is progressing through antitrust and foreign investment approval procedures
+related to its merger with Qorvo.
+Source Google News: Stock Titan 2026.08.03
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+No signal this month
+—
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+07
+
+
+=== PAGE 8 ===
+C O M P A N Y   S I G N A L S · 6/19
+Company Signal Details
+GE Healthcare
+Bioprocess equipment
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+Biopharma culture and purification system
+No global business activity could be summarised from official sources for this period.
+Source —
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Needs review · target tech unconfirmed
+GE HealthCare is expanding collaborations with UZ Brussel and Rigshospitalet to evaluate
+the advanced capabilities of Photonova Spectra and explore its clinical applications across
+multiple domains including cardiology and oncology.
+Source Official press release · GE Healthcare - Official RSS 2026.08.31
+5
+Strategic Executive Move · C-level moves, due diligence
+Needs review · target tech unconfirmed
+GE HealthCare announced the appointment of William Grogan as Chief Financial Officer,
+effective September 14, 2026.
+Source Official press release · GE Healthcare - Official RSS 2026.08.18
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+08
+
+
+=== PAGE 9 ===
+C O M P A N Y   S I G N A L S · 7/19
+Company Signal Details
+3M
+Advanced membranes
+USA
+GLOBAL BUSINESS STATUS
+3M entered into a $4.25 billion unsecured revolving credit facility with JPMorgan Chase Bank and other
+lenders.
+Source 3M - SEC Filings / Regulatory Filings RSS 2026.08.19
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+Entry into a new credit agreement
+— 3M entered into a $4.25 billion unsecured revolving credit facility with JPMorgan Chase Bank
+and other lenders.
+Source 3M - SEC Filings / Regulatory Filings RSS 2026.08.19
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+No signal this month
+—
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+09
+
+
+=== PAGE 10 ===
+C O M P A N Y   S I G N A L S · 8/19
+Company Signal Details
+Ouster
+Robotics LiDAR
+USA
+GLOBAL BUSINESS STATUS
+Target item/tech
+Robot LiDAR
+Ouster announced that GUSS Automation, a wholly owned John Deere subsidiary, plans to integrate Ouster's
+Rev8 digital lidar sensors into its next-generation autonomous orchard machine fleet to enhance precision
+navigation and obstacle detection in agricultural operations.
+Source Official press release · Ouster - Official RSS 2026.08.26
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+GUSS Automation, a wholly owned John Deere subsidiary, plans to incorporate Ouster's Rev8
+digital lidar sensors into its next-generation autonomous orchard machine fleet.
+Source Official press release · Ouster - Official RSS 2026.08.26
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+10
+
+
+=== PAGE 11 ===
+C O M P A N Y   S I G N A L S · 9/19
+Company Signal Details
+Applied Materials
+Advanced packaging
+USA
+GLOBAL BUSINESS STATUS
+Applied Materials reported its third quarter fiscal 2026 results, achieving record revenue of $9.12 billion, up 25
+percent year over year. The company raised its Semiconductor Systems revenue expectations for calendar
+2026 driven by strong demand for materials engineering solutions.
+Source Official press release · Applied Materials - Official RSS 2026.08.13
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+Singapore Manufacturing and R&D Facility Expansion
+— Applied Materials expanded its manufacturing and R&D operations in Singapore and is making
+additional manufacturing capacity investments to support projected demand through the end of
+the decade.
+Source Official press release · Applied Materials - Official RSS 2026.08.13
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+UC Berkeley joins EPIC Center as research collaborator
+— Applied Materials announced that the University of California, Berkeley will join its EPIC
+Center in Silicon Valley as a research collaborator to pursue high-impact research programs
+accelerating material and process innovations for AI computing.
+Source Official press release · Applied Materials - Official RSS 2026.08.11
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+11
+
+
+=== PAGE 12 ===
+C O M P A N Y   S I G N A L S · 10/19
+Company Signal Details
+ASML
+Semiconductor lithography
+Netherlands
+GLOBAL BUSINESS STATUS
+Target item/tech
+EUV lithography equipment
+ASML is demonstrating rapid growth driven by its dominant position in EUV lithography systems. Second-
+quarter revenue rose 24.2% year over year to $10.8 billion. Strong AI demand continues to support the market
+for its advanced lithography products.
+Source Google News: Yahoo Finance 2026.08.17
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+ASML collaborated with Mistral AI to deploy generative AI capabilities across engineering
+workflows and customer service, accelerating design processes.
+Source Google News: Yahoo Finance 2026.08.17
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+12
+
+
+=== PAGE 13 ===
+C O M P A N Y   S I G N A L S · 11/19
+Company Signal Details
+NXP
+Aerospace RF chips
+Netherlands
+GLOBAL BUSINESS STATUS
+Target item/tech
+RF semiconductor for satellite communication and radar
+NXP's Trimension Ultra-Wideband solutions will be deployed by the BMW Group across its fleet. The
+deployment will start with selected 2026 vehicle programs.
+Source Official press release · NXP - Official RSS 2026.08.04
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+Needs review · target tech unconfirmed
+NXP Semiconductors celebrated the groundbreaking of its new assembly and test factory in
+Petaling Jaya, Malaysia, to increase internal capacity and strengthen its global supply chain.
+Source Official press release · NXP - Official RSS 2026.08.12
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+No signal this month
+—
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+13
+
+
+=== PAGE 14 ===
+C O M P A N Y   S I G N A L S · 12/19
+Company Signal Details
+Norsk Hydro
+Non-ferrous metal recycling
+Norway
+GLOBAL BUSINESS STATUS
+Target item/tech
+Non-ferrous metal scrap recycling and utilization
+General Motors' Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced
+aluminium alloy composed of at least 75 percent post-consumer scrap. The material is produced at Hydro's
+recycling facility in Cassopolis, Michigan.
+Source Norsk Hydro - News / Newsroom / News 2026.08.05
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+Local U.S. sourcing
+— Sourcing recycled aluminium locally and making it in Michigan strengthens U.S. production
+and supply chain resilience.
+Source Norsk Hydro - News / Newsroom / News 2026.08.05
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Recycled aluminium collaboration
+— Collaborating with automotive suppliers and original equipment manufacturers to return
+recycled aluminium to new automotive applications.
+Source Norsk Hydro - News / Newsroom / News 2026.08.05
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+14
+
+
+=== PAGE 15 ===
+C O M P A N Y   S I G N A L S · 13/19
+Company Signal Details
+Infineon
+Aerospace RF chips
+Germany
+GLOBAL BUSINESS STATUS
+Target item/tech
+RF semiconductor for satellite communication and radar
+Infineon's radiation-hardened HiRel power devices are aboard the NASA Nancy Grace Roman Space Telescope,
+which successfully launched from Florida. The components support stable power delivery for the mission's
+scientific operations.
+Source Official press release · Infineon - Press / Press Releases / Media 2026.08.31
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Needs review · target tech unconfirmed
+Technology collaboration between Infineon and Fox ESS
+— Infineon supplies silicon carbide power semiconductors to Fox ESS to enhance the efficiency
+of its residential energy storage systems.
+Source Official press release · Infineon - Press / Press Releases / Media 2026.08.26
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+15
+
+
+=== PAGE 16 ===
+C O M P A N Y   S I G N A L S · 14/19
+Company Signal Details
+Merck
+Pharmaceutical materials
+Germany
+GLOBAL BUSINESS STATUS
+Target item/tech
+Pharmaceutical excipient
+No global business activity could be summarised from official sources for this period.
+Source —
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Needs review · target tech unconfirmed
+Research Collaboration in Rare Genetic Cardiomyopathies
+— In June 2026, Merck announced a strategic research-stage collaboration with Saturnus Bio, a
+biotech company founded by Versant Ventures, aimed at establishing a foundational portfolio in
+rare genetic cardiomyopathies.
+Source Merck - News & Stories / Newsroom / Stories 2026.08.06
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+16
+
+
+=== PAGE 17 ===
+C O M P A N Y   S I G N A L S · 15/19
+Company Signal Details
+Evonik Industries
+Eco-friendly silica
+Germany
+GLOBAL BUSINESS STATUS
+Target item/tech
+Precipitated silica for eco-friendly tires
+Evonik reported in its second-quarter earnings release that its Inorganics business posted slightly higher sales,
+benefiting from increased demand for precipitated silicas. The product line showed positive momentum amid
+broader supply chain dynamics.
+Source Official press release · Evonik Industries - Media / Newsroom / Media 2026.08.04
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Needs review · target tech unconfirmed
+Evonik's Liocel adsorbent has been selected for evaluation in the direct lithium extraction
+pilot plant developed by Fraunhofer IEG, supporting the project with application and process
+know-how.
+Source Official press release · Evonik Industries - Media / Newsroom / Media 2026.08.13
+5
+Strategic Executive Move · C-level moves, due diligence
+Needs review · target tech unconfirmed
+Appointment of Interim CEO
+— The Supervisory Board of Evonik appointed Dr. Claus Rettig to the Executive Board as Deputy
+Chairman and interim CEO effective September 1, 2026.
+Source Official press release · Evonik Industries - Media / Newsroom / Media 2026.08.27
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+17
+
+
+=== PAGE 18 ===
+C O M P A N Y   S I G N A L S · 16/19
+Company Signal Details
+Jenoptik
+Machine vision & sensors
+Germany
+GLOBAL BUSINESS STATUS
+Target item/tech
+3D vision sensor
+Jenoptik supplies optical and micro-optical modules and subsystems for the semiconductor equipment
+industry, along with micro-optic based sensors for precision alignment in lithography systems. The company
+also produces high-end precision optics for inspection systems and optical modules for the global medical
+technology and life science industry.
+Source Jenoptik - Reports and Presentations / Financial Reports / Presentations August 2026 (day unknown)
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+Needs review · stage outside criteria
+Jenoptik has commenced production at its new micro-optics cleanroom fab in Dresden and
+plans further capacity expansion in the OEM business to support organic growth.
+Source Jenoptik - Reports and Presentations / Financial Reports / Presentations August 2026 (day unknown)
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Joint R&D Project Collaboration
+— Jenoptik establishes an ecosystem sharing joint R&D projects and technology roadmaps
+based on close customer cooperation.
+Source Jenoptik - Reports and Presentations / Financial Reports / Presentations August 2026 (day unknown)
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+18
+
+
+=== PAGE 19 ===
+C O M P A N Y   S I G N A L S · 17/19
+Company Signal Details
+Nexeon
+Battery anode materials
+UK
+GLOBAL BUSINESS STATUS
+Target item/tech
+Silicon anode material technology
+Nexeon's cutting-edge silicon anode materials enable the production of higher energy density lithium-ion
+batteries, helping to reduce charging times and extend the driving range of electric vehicles. The company is
+advancing its commercialization and high-volume manufacturing activities globally.
+Source Nexeon - Media / Newsroom / Media 2026.08.31
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+Nexeon secured backing from the National Wealth Fund to support the expansion of its
+domestic operations and strengthen the UK’s battery supply chain.
+Source Nexeon - Media / Newsroom / Media 2026.08.31
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+The National Wealth Fund’s commitment of £52.6 million marks the completion of Nexeon’s
+latest investment round totalling £100 million.
+Source Nexeon - Media / Newsroom / Media 2026.08.31
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+No signal this month
+—
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+19
+
+
+=== PAGE 20 ===
+C O M P A N Y   S I G N A L S · 18/19
+Company Signal Details
+Veolia
+Advanced membranes
+France
+GLOBAL BUSINESS STATUS
+Target item/tech
+Ion exchange membrane and bipolar membrane
+No global business activity could be summarised from official sources for this period.
+Source —
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+No signal this month
+—
+3
+Capital Securing & Financing · bonds, equity, credit lines
+Needs review · target tech unconfirmed
+Securing investment financing through bond issuance
+— Veolia successfully issued a total of 1.15 billion euros in bonds through a two-tranche
+transaction, including a 4-year bond for 650 million euros and an 8-year bond for 500 million
+euros.
+Source Official press release · Veolia - Official RSS 2026.08.26
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+No signal this month
+—
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+20
+
+
+=== PAGE 21 ===
+C O M P A N Y   S I G N A L S · 19/19
+Company Signal Details
+Air Liquide
+Advanced membranes
+France
+GLOBAL BUSINESS STATUS
+Air Liquide reported group revenue of 13,828 million euros for the first half of 2026, up 4.3% excluding currency
+and energy impacts, including the acquisition of DIG Airgas in South Korea. Net profit reached 1,823 million
+euros.
+Source Air Liquide - Regulated Information / Regulatory Disclosures 2026.08.06
+1
+Supply Chain & Geopolitical Risk · risk events, responses
+No signal this month
+—
+2
+Production Expansion & Diversification · site reviews
+Needs review · stage outside criteria
+US production facility investment plans
+— Air Liquide is building a new high-performance partial oxidation unit in Texas, United States,
+with start-up planned for 2029.
+Source Air Liquide - Regulated Information / Regulatory Disclosures 2026.08.06
+3
+Capital Securing & Financing · bonds, equity, credit lines
+No signal this month
+—
+4
+Tech Ecosystem Engagement (R&D) · joint research, PoC
+Gas supply for low-carbon steel plant in Louisiana, United States
+— Air Liquide has entered into a long-term agreement to supply oxygen, nitrogen, and argon to
+Hyundai-Posco Louisiana LLC for its new low-carbon steel plant in Louisiana, backed by a 350
+million US dollars investment.
+Source Air Liquide - Regulated Information / Regulatory Disclosures 2026.08.06
+5
+Strategic Executive Move · C-level moves, due diligence
+No signal this month
+—
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+21
+
+
+=== PAGE 22 ===
+T A R G E T - I T E M   S I G N A L S · 1/4
+Item-Linked Global Business Trends
+Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was
+detected in August — monitored for potential signal development.
+Australian Strategic Materials
+Rare-earth magnet recycling
+Australia
+Target item/tech
+Rare earth extraction from end-of-life permanent magnets
+August global business trend
+Energy Fuels has completed its 100% acquisition of Australian Strategic Materials through a scheme of
+arrangement. ASM was subsequently removed from the official list of the ASX, with eligible shareholders
+receiving share consideration and cash payments.
+Source Official press release · Australian Strategic Metals - Official RSS 2026.08.31
+Albemarle
+Battery cathode materials
+USA
+Target item/tech
+Cathode material lithium hydroxide/carbonate
+August global business trend
+Albemarle reported net sales of $1.7 billion for the second quarter of 2026, up 31% year over year, driven primarily
+by higher pricing in Energy Storage and higher pricing and volumes in Specialties. The company also noted strong
+adjusted EBITDA growth and continued cost and productivity improvements across its core markets.
+Source Albemarle - Newsroom / Newsroom / News 2026.08.05
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+22
+
+
+=== PAGE 23 ===
+T A R G E T - I T E M   S I G N A L S · 2/4
+Item-Linked Global Business Trends
+Thermo Fisher
+Bioprocess equipment
+USA
+Target item/tech
+Biopharma culture and purification system
+August global business trend
+Thermo Fisher reported revenues of $11.99 billion, up 10.5% year on year.
+Source Google News: Yahoo Finance 2026.08.19
+Prodrive
+Autonomous driving sensing
+Netherlands
+Target item/tech
+Autonomous vehicle camera and image signal processing
+August global business trend
+Prodrive participated in the hydrogen-powered streamliner's world land speed record campaign, taking
+responsibility for vehicle integration and trackside operations. Through this collaboration with JCB and Ricardo,
+the company helped demonstrate the performance and potential of hydrogen combustion technology.
+Source Google News: Prodrive 2026.08.12
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+23
+
+
+=== PAGE 24 ===
+T A R G E T - I T E M   S I G N A L S · 3/4
+Item-Linked Global Business Trends
+Besi
+Advanced packaging
+Netherlands
+Target item/tech
+Nm-scale W2W hybrid bonding equipment
+August global business trend
+Besi supplies equipment for advanced packaging, including hybrid bonding, which stacks chips more densely for
+AI and high-bandwidth memory. The Dutch chip equipment maker provides advanced packaging gear such as
+hybrid bonding for denser chip stacking in artificial intelligence and high-bandwidth memory applications.
+Source Google News: TradingView 2026.08.04
+Schott Pharma
+Drug delivery & fill-finish
+Germany
+Target item/tech
+Autoinjector/PFS fill-finish manufacturing
+August global business trend
+SCHOTT Pharma reaffirmed its commitment to science-based climate action following the validation of updated
+climate targets by the Science Based Targets initiative (SBTi). The company continues to advance sustainability
+strategies and decarbonization initiatives across its global operations and value chain.
+Source Google News: Yahoo Finance 2026.08.17
+Siemens-Gamesa
+Offshore wind turbines
+Spain
+Target item/tech
+Offshore wind turbine
+August global business trend
+Siemens Gamesa reported a positive quarterly result for the first time since fiscal year 2022 and is on track to
+reach break-even for 2026. The wind business returned to profitability, driven by productivity gains and increased
+cost efficiency.
+Source Siemens-Gamesa - Siemens Energy Investor Relations / Investor Relations 2026.08.12
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+24
+
+
+=== PAGE 25 ===
+T A R G E T - I T E M   S I G N A L S · 4/4
+Item-Linked Global Business Trends
+Renishaw
+Precision position metrology
+UK
+Target item/tech
+Linear scale
+August global business trend
+Renishaw has launched its next-generation RLE interferometric laser encoder family, comprising the RLE100,
+RLE200, and RLE300 systems, to provide advanced motion control and precision position feedback for
+semiconductor manufacturing applications.
+Source Official press release · Renishaw - Official RSS: Renishaw launches next-generation RLE... 2026.08.26
+HyproMag
+Rare-earth magnet recycling
+UK
+Target item/tech
+Rare earth extraction from end-of-life permanent magnets
+August global business trend
+Mkango Resources has completed the acquisition of the Remloy rare earth magnet recycling business from
+Heraeus Amloy Technologies GmbH for €8 million in cash. The transaction strengthens the rare earth supply
+chain and recycling ecosystem in Germany and neighboring regions.
+Source Official press release · Mkango Resources (HyProMag parent) - News RSS 2026.08.31
+Nabtesco
+Robot precision drives
+Japan
+Target item/tech
+Robot reducer
+August global business trend
+Nabtesco announced in its semiannual report for the first half of 2026 that sales of precision reduction gears
+increased year-on-year due to favorable demand for industrial robots mainly from automobile manufacturers in
+China and South Korea and general industries.
+Source Nabtesco - IR-filtered News / Investor News / Timely Disclosures 2026.08.14
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3
+25

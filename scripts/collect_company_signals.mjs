@@ -816,6 +816,8 @@ async function fetchJson(url, timeoutSeconds) {
 }
 
 function relevantAliases(company) {
+  // 동명 기업이 있는 경우 검색에는 명시된 정식명만 쓴다. 표시명은 유지한다.
+  if (company.search_names?.length) return [...new Set(company.search_names)];
   const names = [company.company];
   for (const alias of company.query_aliases || []) {
     const key = alias.toLowerCase();

@@ -25,7 +25,7 @@
   {"target_no": 24, "company": "Ouster", "query_aliases": ["Ouster Inc"]},
   {"target_no": 25, "company": "Applied Materials", "query_aliases": []},
   {"target_no": 26, "company": "Magnix", "query_aliases": ["magniX"]},
-  {"target_no": 27, "company": "Prodrive", "query_aliases": ["Prodrive Technologies"]},
+  {"target_no": 27, "company": "Prodrive", "query_aliases": ["Prodrive Technologies"], "search_names": ["Prodrive Technologies"]},
   {"target_no": 28, "company": "ASML", "query_aliases": ["ASML Holding"]},
   {"target_no": 29, "company": "Besi", "query_aliases": ["BE Semiconductor Industries", "BESI"]},
   {"target_no": 30, "company": "NXP", "query_aliases": ["NXP Semiconductors"]},
