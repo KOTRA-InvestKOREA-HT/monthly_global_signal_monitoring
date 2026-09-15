@@ -643,7 +643,10 @@ export function followUpEvents(articles) {
 // 2026-08 실행은 날짜 보류나 본문 없는 기사가 하나만 있어도 막아 77곳 중 63곳이 근거 부족이었다.
 // 대부분 목록 페이지, 제품 소개, 주가 해설 기사처럼 신호 없음이 분명한 것이었다.
 export function articleCoverageGap(article, review, published = false) {
-  const decisions = review?.decisions || [];
+  // 보고서까지 판정 없이 온 기사는 재시도해도 인용 검증을 통과하지 못한 것뿐이다(build 의 reviewFailed).
+  // 읽어 보지 못했으니 신호가 없다고 할 수 없다.
+  if (!review) return 'review_failed';
+  const decisions = review.decisions || [];
   if (decisions.some((decision) => decision.quality === 'needs_review')) return 'needs_review';
   if (!article.candidates.some((candidate) => hasArticleBody(candidate.row)) &&
     decisions.some((decision) => decision.entity_supported && decision.indicator_supported)) return 'no_body';
@@ -667,12 +670,25 @@ export function coverageStatus(articles, reviewByArticle, collectionStatus, defe
   return companyCoverageGaps(articles, reviewByArticle, publishedArticleIds).length ? 'incomplete_evidence' : 'reviewed';
 }
 
+// 보고서를 막는 판정 공백. 재시도까지 인용 검증에 실패한 기사(reviewFailed)는 막지 않는다. 2026-08 판정
+// (34939670823)에서 영상 자막 파일·번역된 인용 같은 6건이 매 실행 다시 실패해 PDF 가 한 번도 나오지 않을 수
+// 있었다. 그 기사는 판정 없이 두고 해당 기업을 근거 부족으로 표시한다. 아직 시도하지 못한 기사는 여전히 막는다.
+export function reportBlockers({ pending, invalid }, reviewFailed = new Set()) {
+  const waiting = pending.filter((item) => !reviewFailed.has(item.article_id));
+  return waiting.length || invalid.length ? { pending: waiting.length, invalid: invalid.length } : null;
+}
+
 export async function build(args) {
   const runDir = path.resolve(args.runDir);
   const { snapshot, pending, invalid, results, reviews } = await loadReviews(runDir);
-  if (pending.length || invalid.length) {
-    throw new Error(`Report blocked: ${pending.length} pending articles, ${invalid.length} invalid reviews. Run status --run-dir ${runDir}`);
+  const reviewFailed = new Set(args.reviewFailed || []);
+  const blockers = reportBlockers({ pending, invalid }, reviewFailed);
+  if (blockers) {
+    throw new Error(`Report blocked: ${blockers.pending} pending articles, ${blockers.invalid} invalid reviews. Run status --run-dir ${runDir}`);
   }
+  const reviewFailedArticles = snapshot.articles.filter((article) => reviewFailed.has(article.id) &&
+    pending.some((item) => item.article_id === article.id))
+    .map((article) => ({ company: article.company, title: article.title, url: article.url, article_id: article.id }));
   // 승인된 판정은 날짜 상태와 무관하게 모두 남긴다. 게시월이 확정된 행만 PDF 본문에 들어가고,
   // 날짜 보류 행은 같은 파일에 남아 대시보드의 검토 후보가 된다. PDF 생성기가 같은 기준으로 거른다.
   const approved = (kind) => results.filter((item) => item.supported && item.kind === kind).map((item) => item.row);
@@ -705,7 +721,8 @@ export async function build(args) {
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
     });
     const files = {
-      "signals.json": snapshot.signals, "summary.json": { ...snapshot.summary, review_coverage: coverage },
+      "signals.json": snapshot.signals,
+      "summary.json": { ...snapshot.summary, review_coverage: coverage, review_failed_articles: reviewFailedArticles },
       "coverage.json": coverage,
       "investment.json": investment, "relevant.json": relevant,
       "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },
@@ -728,7 +745,7 @@ export async function build(args) {
         "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
         "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
         "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
-        "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/NOTOSANSKR-VF.TTF"),
+        "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
         "--issue-number", args.issueNumber || "2", "--lang", lang,
         "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)]);
     }
@@ -737,6 +754,7 @@ export async function build(args) {
       human_review_investment: investment.filter((row) => row.ai_review_tier === "human_review").length, approved_business: relevant.length,
       date_pending_investment: datePending(investment).length, date_pending_business: datePending(relevant).length,
       incomplete_companies: coverage.filter((item) => item.status !== "reviewed").length,
+      review_failed_articles: reviewFailedArticles.length,
       rejected_candidates: results.filter((item) => !item.supported).length }, null, 2));
     return buildDir;
   } catch (error) {

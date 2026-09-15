@@ -33,7 +33,7 @@ Run `.github/workflows/collect-company-signals.yml` with:
   before the period is used in a cache key.
 - `provider`: `gemini` (the form default) or `nvidia`.
 - `issue_number`: the number on both PDFs.
-- `max_requests`: 1–400 including retries; `concurrency`: 1–12.
+- `max_requests`: 1–600 including retries; `concurrency`: 1–12.
 - `delay_ms`: blank uses the provider default; `refresh`: false resumes usable work.
 - `days`: retained for compatibility with the existing dashboard dispatch. The
   monthly pipeline uses the explicit/resolved date range, not this legacy input.
@@ -57,9 +57,13 @@ this directory using a cache keyed by reporting period, and uploads progress as
 an artifact even if review stops. Valid decisions are reused only when their
 article evidence and policy/provider identity match.
 
-If the run reaches its request budget or has unresolved review errors, the shared
-script exits with code 75 and leaves the published PDFs in place. A successful
-run validates decisions and builds both PDFs before copying final results to:
+If the run reaches its request budget or stops on a provider error, the shared
+script exits with code 75 and leaves the published PDFs in place. When every
+article has been tried and the only ones left failed evidence validation on each
+retry, the report is built without them: their companies are marked as incomplete
+evidence and the articles are listed in `review_failed_articles` of the collection
+summary. A successful run validates decisions and builds both PDFs before copying
+final results to:
 
 ```text
 outputs/latest_company_signals.json
@@ -101,8 +105,9 @@ app's deployment; shared versioning between dashboard data and PDFs is a separat
 remaining task.
 
 The web app uses Next.js. `GET /api/report` renders the same HTML report as
-Actions and prints it with `puppeteer-core` and `@sparticuz/chromium`, including
-downloads with ignored signals or another period. The separate Python function
+Actions and prints it with `puppeteer-core` and `@sparticuz/chromium-min`, including
+downloads with ignored signals or another period. The browser pack is downloaded
+at cold start rather than bundled, which keeps the route near its earlier size. The separate Python function
 `api/report-view-model.py` computes the report content it renders.
 Keep root `requirements.txt` for that function; `requirements-python.txt` supplies
 the additional collection/report tools used locally and in Actions.

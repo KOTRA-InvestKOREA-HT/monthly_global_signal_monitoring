@@ -26,9 +26,9 @@ on:
         options: [gemini, nvidia]
         default: gemini
       max_requests:
-        description: "Maximum API requests including retries (1-400)"
+        description: "Maximum API requests including retries (1-600)"
         type: string
-        default: "400"
+        default: "600"
       delay_ms:
         description: "Delay between requests in ms. Leave empty for the provider default (gemini 4500, nvidia 1600)"
         type: string
@@ -91,7 +91,7 @@ jobs:
           GEMINI_THINKING_LEVEL: ${{ vars.GEMINI_THINKING_LEVEL }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '400' }}
+          REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '600' }}
           REPORT_DELAY_MS: ${{ inputs.delay_ms || vars.REPORT_DELAY_MS || '' }}
           REPORT_CONCURRENCY: ${{ inputs.concurrency || vars.REPORT_CONCURRENCY || '4' }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
