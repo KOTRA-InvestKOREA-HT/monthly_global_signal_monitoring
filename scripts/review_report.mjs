@@ -148,15 +148,16 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   }
   const keyEnv = provider.keyEnv.find(name => env[name]);
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
-  const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 400);
+  const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 600);
   const delayMs = Number(env[`${prefix}_DELAY_MS`] || env.REPORT_DELAY_MS || provider.defaultDelayMs);
   // 무료 티어의 분당 요청 한도는 동시 실행 수와 무관하게 공유된다. 8 이면 한도에 먼저
   // 부딪혀 429 재시도로 되돌아오는 낭비가 커서 4 로 낮춘다. REPORT_CONCURRENCY 로 올릴 수 있다.
   const concurrency = Number(env.REPORT_CONCURRENCY || 4);
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 12) throw new Error('REPORT_CONCURRENCY must be 1..12');
   // 대기 하한은 프로바이더의 관측 RPM 에서 온다(60000 / RPM). 429 가 나도 저장 후 멈추고
-  // 다음 실행이 이어간다. 400 상한은 한 회차 전체를 한 번에 덮는다.
-  if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > 400) throw new Error(`${prefix}_MAX_REQUESTS must be 1..400`);
+  // 다음 실행이 이어간다. 2026-08 첫 판정(34939670823)은 기사 372건에 재시도·보강이 붙어 400건에서
+  // 358건만 끝냈다. 600 이면 한 회차가 한 번에 끝난다.
+  if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > 600) throw new Error(`${prefix}_MAX_REQUESTS must be 1..600`);
   if (!Number.isFinite(delayMs) || delayMs < provider.minDelayMs || delayMs > 60000) {
     throw new Error(`${prefix}_DELAY_MS must be ${provider.minDelayMs}..60000`);
   }
@@ -651,6 +652,15 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   return state(failed.length ? { status: 'paused', reason: 'invalid_responses' } : { status: 'completed' });
 }
 
+// 요청 한도·할당량으로 멈춘 실행은 다음 실행이 이어 판정해야 하므로 보고서를 만들지 않는다. 모든 기사를
+// 시도했고 남은 것이 재시도까지 인용 검증에 실패한 기사뿐일 때만, 그 기사를 판정 실패로 두고 보고서를 만든다.
+// 실패한 기사는 저장되지 않아 매 실행 다시 시도되므로, 막아 두면 같은 기사 몇 건이 보고서를 영영 막는다.
+export function publishableReviewFailures(state) {
+  if (state.status !== 'paused' || state.reason !== 'invalid_responses') return [];
+  const ids = [...new Set((state.failed_articles || []).map(item => item.article_id))];
+  return ids.length && state.completed + ids.length === state.total ? ids : [];
+}
+
 async function main() {
   const period = resolveReportPeriod();
   const { from_date: from, to_date: to } = period;
@@ -703,10 +713,13 @@ async function main() {
   const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
   await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL, ...runIdentity() });
   console.log(JSON.stringify(state));
+  const reviewFailed = publishableReviewFailures(state);
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} report\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
-    (state.status === 'paused' ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
+    (reviewFailed.length ? `Building the report without ${reviewFailed.length} article(s) that failed evidence validation twice; ` +
+      'their companies are marked as incomplete evidence.\n' : '') +
+    (state.status === 'paused' && !reviewFailed.length ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
       (state.provider_message ? `${PROVIDER.label} said: ${state.provider_message}
 ` : '') +
       (state.transport_reason ? `Transport: ${state.transport_reason}${state.transport_message ? ` - ${state.transport_message}` : ''}
@@ -723,8 +736,9 @@ async function main() {
       'Existing published PDFs are unchanged.\n' : '') +
     state.failed_articles.map(item => `- Article ${item.article_id}: ${item.reason}\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
-  if (state.status !== 'completed') { process.exitCode = 75; return; }
-  const reportDir = await build({ runDir, issueNumber: process.env.REPORT_ISSUE_NUMBER || '2' });
+  if (state.status !== 'completed' && !reviewFailed.length) { process.exitCode = 75; return; }
+  const reportDir = await build({ runDir, issueNumber: process.env.REPORT_ISSUE_NUMBER || '2', reviewFailed });
+  const finalState = reviewFailed.length ? { ...state, status: 'completed_with_review_failures' } : state;
   const investment = await read(path.join(reportDir, 'investment.json'));
   const relevant = await read(path.join(reportDir, 'relevant.json'));
   // The workflow commits these files together only after both PDFs have succeeded.
@@ -733,7 +747,8 @@ async function main() {
   }
   await write('outputs/latest_investment_signal_summary.json', { investment_signal_count: investment.length, companies_with_investment_signals: new Set(investment.map(r => r.company)).size, ...publishedSignalCounts(investment, period), provider: PROVIDER.id });
   await write('outputs/latest_relevance_summary.json', { relevant_signal_count: relevant.length, companies_with_relevant_signals: new Set(relevant.map(r => r.company)).size, ...publishedSignalCounts(relevant, period), provider: PROVIDER.id });
-  await write('outputs/latest_ai_summary_summary.json', { ...state, period, provider: PROVIDER.id, model: MODEL });
+  await write('outputs/latest_ai_summary_summary.json', { ...finalState, period, provider: PROVIDER.id, model: MODEL });
+  if (reviewFailed.length) await write(path.join(root, 'status.json'), { ...finalState, period, provider: PROVIDER.id, model: MODEL, ...runIdentity() });
   await fs.mkdir('public/reports', { recursive: true });
   await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
   await fs.copyFile(path.join(reportDir, 'report_en.pdf'), 'public/reports/latest_report_en.pdf');

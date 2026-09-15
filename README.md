@@ -74,12 +74,12 @@ and requires `GEMINI_FREE_TIER_CONFIRMED=true` after the project has been checke
 NVIDIA uses the existing `OPENAI_API_KEY` secret. Model settings
 are `GEMINI_MODEL` / `NVIDIA_MODEL`.
 
-`REPORT_MAX_REQUESTS` (1–400), `REPORT_CONCURRENCY` (1–12), `REPORT_DELAY_MS`,
+`REPORT_MAX_REQUESTS` (1–600), `REPORT_CONCURRENCY` (1–12), `REPORT_DELAY_MS`,
 `REPORT_REFRESH`, `REPORT_REREVIEW`, and `REPORT_ISSUE_NUMBER` use the same implementation in both
 environments. Progress lives in `outputs/review_work`; rerun the same period to
 resume. `REPORT_REREVIEW=true` (the Actions `rereview` checkbox) discards saved
 article reviews and reviews every article again; if that run pauses, rerun with it
-off so the next run resumes instead of starting over. An incomplete review exits with code 75 and does not publish new PDFs.
+off so the next run resumes instead of starting over. A review stopped by the request budget or a provider error exits with code 75 and does not publish new PDFs; articles that still fail evidence validation after retries no longer block the report and are marked as incomplete evidence.
 Successful CLI runs update `outputs/latest_*.json` and both `public/reports` PDFs;
 only Actions additionally commits the outputs. Python dependencies from
 `requirements-python.txt` and Chrome/Edge are required to build the reports.
@@ -213,9 +213,12 @@ AI-evaluated report rows additionally include `ai_entity_supported`, `ai_target_
 ## Vercel
 
 The web app uses Next.js. Its PDF download renders the same HTML report as
-Actions and prints it with `puppeteer-core` and `@sparticuz/chromium`; the
-report content (view model) comes from the separate `api/report-view-model.py`
-function, which uses root `requirements.txt`. Monthly collection/review runs in Actions or locally.
+Actions and prints it with `puppeteer-core` and `@sparticuz/chromium-min`. The
+browser is not bundled: a cold start downloads the Chromium pack named in
+`app/lib/report_pdf.mjs` (override with `CHROMIUM_PACK_URL`), whose version must
+match the pinned `@sparticuz/chromium-min`. The report content (view model) comes
+from the separate `api/report-view-model.py` function, which uses root
+`requirements.txt`. Monthly collection/review runs in Actions or locally.
 Changing the pipeline does not require resuming a paused Vercel deployment.
 
 
