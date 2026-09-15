@@ -91,9 +91,14 @@ export const SYSTEM_INSTRUCTION =
   'recap earlier events. Mentioning an event there does not make it a new event this month: unless the evidence states that the event ' +
   'was newly announced, agreed or started in the reporting period, set leading_indicator_supported=false and say so in reason_ko. ' +
   // 같은 보고서: Schott Pharma 의 SBTi 기후 목표 승인이 의약품 제조기술 사업동향으로, 주가 상승 해설이 사업동향으로 실렸다.
-  'For relevant candidates, climate or emissions targets and their validation, ESG or sustainability reporting, share-price or ' +
-  'valuation commentary, and general descriptions of the company or its product lines are not target technology business activity: ' +
-  'indicator_supported=false. ' +
+  'For relevant candidates, set indicator_supported=false when the evidence ONLY provides climate or emissions targets, their validation, ' +
+  'ESG or sustainability reporting, share-price or valuation commentary, or general company/product descriptions WITHOUT a concrete ' +
+  'target-technology business activity. Do not reject a document by its genre: independently evaluate any specific production, process, ' +
+  'development or commercial activity it reports. Completed business activity can qualify as relevant without qualifying as an investment precursor. ' +
+  'Use reporting_period.from_date and reporting_period.to_date as the report window, not the current date. ' +
+  'Use target_identity to identify the target company, including its legal name, country and domains when supplied. A namesake is not the ' +
+  'target entity. A technology exemption never exempts entity identity. Third-party reporting is allowed; the publisher need not be the target. ' +
+  'Do not infer an ownership or collaboration link between unrelated companies from a shared short name. ' +
   'For investment:5 (S5), an SEC Form 3 or beneficial-ownership filing that merely lists an officer title does not prove an appointment or personnel move. ' +
   'Approve such a filing only when the supplied evidence explicitly states the appointment, hiring, promotion or role transition. ' +
   'Electing a non-executive director or board member alone is not an S5 executive move. ' +

@@ -327,11 +327,11 @@ test("a verified date is only ever an estimated hint for a pending article", () 
   assert.equal(inPeriod(undatedSource, period), false);
 });
 
-test("review identity survives a recovered date so a corrected article is not reviewed twice", () => {
+test("review identity changes when a recovered date changes the recency evidence", () => {
   const undated = { ...source, published_at: null, published_at_source: "" };
   const before = groupArticles([undated], [], period)[0];
   const after = groupArticles([{ ...undated, published_at: source.published_at, published_at_source: "meta" }], [], period)[0];
-  assert.equal(before.id, after.id);
+  assert.notEqual(before.id, after.id);
   assert.equal(before.date_status, "unknown");
   assert.equal(after.date_placement, "in_period");
 });
@@ -551,6 +551,34 @@ test("a title-only article is neither approved nor sent to human review, and sho
   assert.deepEqual(results.map((r) => [r.candidate_id, r.supported, r.human_review]),
     [["investment:2", false, false], ["relevant", false, false]]);
   assert.equal(articleCoverageGap(a, review(a, decisions)), "no_body");
+});
+
+test('undated articles carry the reporting period and cannot reuse another month or entity identity', () => {
+  const row = { ...source, published_at: null };
+  const august = groupArticles([row], [], monthPeriod('2026-08'))[0];
+  const september = groupArticles([row], [], monthPeriod('2026-09'))[0];
+  assert.deepEqual(august.reporting_period, period);
+  assert.notEqual(august.id, september.id);
+  assert.equal(august.id, groupArticles([row], [], period)[0].id);
+  const identified = groupArticles([{ ...row, target_identity: { legal_name: 'Another entity' } }], [], period)[0];
+  assert.notEqual(august.id, identified.id);
+});
+
+test('a namesake official article cannot approve the target, while target and third-party articles remain reviewable', () => {
+  const identity = { legal_name: 'Prodrive Technologies', country: 'Netherlands',
+    official_domains: ['prodrive-technologies.com'], unrelated_domains: ['prodrive.com'] };
+  const quote = 'Prodrive in Banbury supported the JCB hydrogen vehicle project.';
+  const make = (url, text = quote) => groupArticles([], [{ ...source, company: 'Prodrive',
+    target_identity: identity, excluded_from_relevance: true, content_source_url: url,
+    content_text: `${text} ${TAIL}` }], period)[0];
+  const verdict = a => importReview(a, review(a, [decision({ candidate_id: 'relevant',
+    target_technology_supported: false, event_stage: 'not_applicable', evidence_quotes: [quote],
+    summary_ko: 'Prodrive가 차량 개발 사업을 지원했음.', summary_en: 'Prodrive supported the vehicle project.' })]))[0];
+  assert.equal(verdict(make('https://www.prodrive.com/news/jcb')).supported, false);
+  assert.equal(verdict(make('https://www.prodrive.com/news/jcb')).human_review, false);
+  assert.equal(verdict(make('https://prodrive-technologies.com/news/project')).supported, true);
+  assert.equal(verdict(make('https://news.example.com/report')).supported, true);
+  assert.equal(verdict(make('https://www.prodrive.com/news/joint', `${quote} Prodrive Technologies is the joint developer.`)).supported, true);
 });
 
 // 34915776314: GE Healthcare CT 임상 협력이 '배양·정제 시스템' S4 로 승인됐다. 같은 기사의 사업동향은 기술 false 였다.

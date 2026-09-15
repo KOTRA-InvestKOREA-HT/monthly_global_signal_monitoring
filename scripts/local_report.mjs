@@ -219,6 +219,9 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
       const key = JSON.stringify([row.target_no, row.company, row.url || row.title]);
       if (!groups.has(key)) groups.set(key, {
         company: row.company, target_no: row.target_no, url: row.url, title: row.title,
+        reporting_period: { from_date: period.from_date, to_date: period.to_date },
+        target_identity: row.target_identity || { names: [row.company, ...(row.query_aliases || [])] },
+        content_source_url: row.content_source_url || "",
         source: row.source, source_type: row.source_type,
         publisher: row.publisher || "", publisher_home_url: row.publisher_home_url || "",
         ...dateFields(row, period),
@@ -248,14 +251,11 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
   return [...groups.values()].map((article) => {
     article.evidence.sort();
     article.candidates.sort((a, b) => a.id.localeCompare(b.id));
-    // 기사 ID에는 날짜를 넣지 않는다. 날짜를 보강했다고 이미 끝난 내용 판정을 버리면
-    // 한정된 검토 호출을 같은 기사에 두 번 쓰게 된다. 발행사도 같은 이유로 넣지 않는다.
-    // 어느 매체가 썼는지는 후속 확인용 정보지 모델이 판정하는 근거가 아니다. 넣으면 필드가
-    // 생긴 것만으로 모든 기사 ID가 바뀌어 캐시된 판정 전부를 다시 사는 셈이 된다.
-    const { published_at, published_month, date_status, date_placement, date_note, date_label,
-      publisher, publisher_home_url, ...content } = article;
+    // 신규 사건 판정에는 보고 기간과 기사 날짜가 쓰인다. 날짜 보강으로 판단 근거가
+    // 달라지면 재검토한다. 표시용 설명과 발행사 메타데이터만 캐시 식별자에서 제외한다.
+    const { date_note, date_label, publisher, publisher_home_url, ...content } = article;
     const material = { ...content, policy, candidates: article.candidates.map(({ row, ...item }) => item) };
-    return { ...material, published_at, published_month, date_status, date_placement, date_note, date_label,
+    return { ...material, date_note, date_label,
       publisher, publisher_home_url, id: hash(material), candidates: article.candidates };
   });
 }
@@ -328,6 +328,16 @@ export function humanReviewGaps(candidate, decision) {
 // 같은 실행에서 GE Healthcare 의 CT 임상 협력이 '배양·정제 시스템' S4 로 승인됐다. 사람 검토 후보로 내린다.
 export function decisionForApproval(article, decisions, decision) {
   if (!article.candidates.some((candidate) => hasArticleBody(candidate.row))) return null;
+  // 명시적으로 식별된 동명 회사의 자체 사이트이고 타겟 정식명도 없으면 귀속을
+  // 인정하지 않는다. 제3자 언론과 타겟을 명시한 협업 기사는 모델 판단을 유지한다.
+  const identity = article.target_identity;
+  let host = "";
+  try { host = new URL(article.content_source_url || article.url).hostname.toLowerCase(); } catch {}
+  const otherCompany = (identity?.unrelated_domains || []).some(domain => host === domain || host.endsWith(`.${domain}`));
+  const text = (article.evidence || []).join(" ").toLowerCase();
+  if (otherCompany && identity?.legal_name && !text.includes(identity.legal_name.toLowerCase())) {
+    return { ...decision, entity_supported: false };
+  }
   const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
   const business = decisions.find((item) => item.candidate_id === "relevant");
   if (candidate?.kind === "investment" && !candidate.relevance_exempt &&

@@ -455,6 +455,7 @@
     {
       "target_no": 27,
       "company": "Prodrive",
+      "target_identity": {"legal_name": "Prodrive Technologies", "country": "Netherlands", "names": ["Prodrive Technologies", "Prodrive Technologies B.V."], "official_domains": ["prodrive-technologies.com"], "unrelated_domains": ["prodrive.com"]},
       "query_aliases": [
         "Prodrive Technologies"
       ],
