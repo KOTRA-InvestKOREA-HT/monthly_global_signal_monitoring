@@ -1,17 +1,41 @@
 {
-  "status": "completed",
-  "requests": 5,
-  "cached": 340,
-  "completed": 344,
-  "total": 344,
+  "status": "completed_with_review_failures",
+  "reason": "invalid_responses",
+  "requests": 24,
+  "cached": 355,
+  "completed": 371,
+  "total": 372,
   "date_hints": 0,
-  "failed_articles": [],
+  "failed_articles": [
+    {
+      "article_id": "36d037a085a999ec2b07ca1e",
+      "reason": "evidence_mismatch"
+    }
+  ],
   "diagnostics": [
     {
-      "article_id": "460f6be908a5ec6d4a26229a",
+      "article_id": "36d037a085a999ec2b07ca1e",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/460f6be908a5ec6d4a26229a/64c68c37-8d1e-4be3-9808-2da327a9e1c7-attempt-1.json"
+      "file": "reviews/diagnostics/36d037a085a999ec2b07ca1e/867dd8b8-579c-488d-b468-077e7fb25ce2-attempt-1.json"
+    },
+    {
+      "article_id": "36d037a085a999ec2b07ca1e",
+      "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/36d037a085a999ec2b07ca1e/b6ef6c08-be1b-44c2-8a57-d3da217a1d72-attempt-2.json"
+    },
+    {
+      "article_id": "716ea8cad8f92b1f6fd8ccc8",
+      "attempt": 1,
+      "reason": "summary_ungrounded",
+      "file": "reviews/diagnostics/716ea8cad8f92b1f6fd8ccc8/47937d52-a1d7-4718-b9ba-4f76b554e80f-attempt-1.json"
+    },
+    {
+      "article_id": "f0aacbb5fcdb0caf50247efc",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/f0aacbb5fcdb0caf50247efc/6219a57c-3d2c-455c-be23-a3d5121e5c62-attempt-1.json"
     }
   ],
   "concurrency": 4,
