@@ -160,7 +160,7 @@ test('the Gemini request uses its own dialect and carries the same one schema', 
   assert.match(body.systemInstruction.parts[0].text, /POLICY$/);
   // Gemini 3.x 는 temperature 를 보내지 않고, 추론 단계를 명시한다.
   assert.equal(body.generationConfig.temperature, undefined);
-  assert.deepEqual(body.generationConfig.thinkingConfig, { thinkingLevel: 'low' });
+  assert.deepEqual(body.generationConfig.thinkingConfig, { thinkingLevel: 'high' });
   assert.equal(body.generationConfig.responseMimeType, 'application/json');
   const schema = body.generationConfig.responseSchema;
   // 날짜 힌트 두 필드는 여기에도 루트로 실린다. 스키마 정의가 한 곳이므로 자동으로 따라온다.
@@ -197,7 +197,7 @@ test('the model writes quotes and its reason before any verdict field', () => {
 
 test('the Gemini thinking level is overridable, validated and part of the cache identity', async () => {
   const { reviewPolicy } = await import('../scripts/review_report.mjs');
-  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini' }).thinkingLevel, 'low');
+  assert.equal(resolveProvider({ REPORT_PROVIDER: 'gemini' }).thinkingLevel, 'high');
   const medium = resolveProvider({ REPORT_PROVIDER: 'gemini', GEMINI_THINKING_LEVEL: ' Medium ' });
   assert.equal(medium.thinkingLevel, 'medium');
   assert.deepEqual(medium.body({ article: article('Acme'), policy: '', retry: false, model: medium.model }).generationConfig.thinkingConfig,

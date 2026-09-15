@@ -56,7 +56,10 @@ export const SUMMARY_INSTRUCTION =
   'Copy every number, percentage and amount exactly as the article states it; never change, round or recompute it. ' +
   'Convert units exactly (9.33 billion = 93억 3000만). Attach a currency only when the article states that currency for that amount. ' +
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
-  'When the evidence dates the event differently from the announcement, state that event date. ';
+  'When the evidence dates the event differently from the announcement, state that event date. ' +
+  // 같은 보고서: "찰스 파이어 래보러토리즈", "에어 liquide", 예놉틱/예노틱처럼 음차가 틀리거나 한 보고서에서 갈렸다.
+  'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
+  'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ';
 
 // 2026-08 전체 재검토(34819154825) 조사: S3·S4·S5 규칙이 모델에 보내는 후보 어디에도 정의되지 않은 이름을
 // 가리켰다. 후보 id 는 investment:3 이고 S3 라는 표기는 없다. 규칙마다 후보 id 를 함께 적는다.
@@ -76,6 +79,21 @@ export const SYSTEM_INSTRUCTION =
   'a supported enabling collaboration is precursor even when mentioned alongside a closed acquisition. ' +
   'Do not approve an acquisition itself as research, or assume a vague synergy is a concrete collaboration. ' +
   'A report of results from a finished project, record, test or event is not a new collaboration. ' +
+  // 2026-08 보고서(34945709484) 검토: Air Products·Yara 유통계약, Air Liquide 가스 공급계약, Ouster 센서 채택,
+  // Jenoptik IR 자료의 "Joint R&D projects" 도식 문구, Moderna·Merck 의 오래된 공동개발이 S4 로 승인됐다.
+  'For investment:4 (S4), supply, distribution, marketing, offtake and long-term gas or material supply agreements, and a customer ' +
+  'adopting, integrating or deploying the company\'s product, are commercial deals, not technology collaboration, unless the evidence ' +
+  'states joint development of a specific technology; indicator_supported=false. A company overview, investor presentation or annual ' +
+  'report that describes partnerships, joint R&D or ecosystems in general, without a named partner and a specific new project, is not ' +
+  'an S4 event. Progress or trial results of a long-running existing collaboration are not a new collaboration. ' +
+  // 같은 보고서: 주가 분석 기사(Yahoo Finance·Morningstar)와 반기 보고서가 되짚은 지난 사건이 이번 달 시그널이 됐다.
+  'Share-price, valuation, analyst-rating and market-commentary articles, and results releases, half-year or annual reports, often ' +
+  'recap earlier events. Mentioning an event there does not make it a new event this month: unless the evidence states that the event ' +
+  'was newly announced, agreed or started in the reporting period, set leading_indicator_supported=false and say so in reason_ko. ' +
+  // 같은 보고서: Schott Pharma 의 SBTi 기후 목표 승인이 의약품 제조기술 사업동향으로, 주가 상승 해설이 사업동향으로 실렸다.
+  'For relevant candidates, climate or emissions targets and their validation, ESG or sustainability reporting, share-price or ' +
+  'valuation commentary, and general descriptions of the company or its product lines are not target technology business activity: ' +
+  'indicator_supported=false. ' +
   'For investment:5 (S5), an SEC Form 3 or beneficial-ownership filing that merely lists an officer title does not prove an appointment or personnel move. ' +
   'Approve such a filing only when the supplied evidence explicitly states the appointment, hiring, promotion or role transition. ' +
   'Electing a non-executive director or board member alone is not an S5 executive move. ' +
@@ -170,9 +188,12 @@ export const GEMINI = {
   label: 'Gemini',
   model: 'gemini-3.5-flash-lite',
   // Flash-Lite 의 기본 추론 단계는 minimal 이라, 설정하지 않으면 거의 추론 없이 답한다. 앞선 342건 모두
-  // 추론 토큰이 없었다. 판정은 후보 여섯 개의 여러 조건을 한 번에 따지는 일이라 low 로 올린다.
+  // 추론 토큰이 없었다. low 로 올린 2026-08 판정(34939670823) 358건에도 thoughtsTokenCount 가 한 번도
+  // 없었고, 공급계약을 R&D 로, 주가 해설 속 지난 사건을 이번 달 시그널로 승인했다. 그래서 최대인 high 로 둔다.
+  // 무료 등급의 토큰 한도(GenerateContentInputTokensPerModelPerMinute-FreeTier)는 입력 토큰만 세고
+  // RPM·RPD 는 요청 수라, 추론 단계는 무료 한도를 더 쓰지 않는다. 늘어나는 것은 응답 시간과 출력 토큰이다.
   // 기본값은 버전마다 바뀌어 왔으므로 기대지 않고 명시한다. GEMINI_THINKING_LEVEL 로 바꿀 수 있다.
-  thinkingLevel: 'low',
+  thinkingLevel: 'high',
   keyEnv: ['GEMINI_API_KEY'],
   // 관측된 무료 티어 15 RPM. 4500ms가 안전값, 4000이 한도다.
   minDelayMs: 4000,
@@ -198,8 +219,9 @@ ${policy}` }] },
         // Gemini 3.x 문서는 temperature·top_p·top_k 를 요청에서 빼라고 한다. 그래서 보내지 않는다.
         // 예전에 보내던 temperature 0 이 판정 재현을 보장한다고 볼 근거는 없다.
         // maxOutputTokens 에는 추론 토큰도 들어간다.
-        thinkingConfig: { thinkingLevel: this.thinkingLevel || 'low' },
-        maxOutputTokens: 16384, responseMimeType: 'application/json',
+        thinkingConfig: { thinkingLevel: this.thinkingLevel || 'high' },
+        // high 추론의 추론 토큰이 잘리지 않도록 gemini-3.5-flash-lite 출력 한도(65,536)까지 연다.
+        maxOutputTokens: 65536, responseMimeType: 'application/json',
         responseSchema: toGeminiSchema(decisionsEnvelope),
       },
     };

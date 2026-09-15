@@ -291,18 +291,22 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
     ? value.split(apiKey).join('[REDACTED]') : value));
 }
 
+// 판정 요청 하나를 기다리는 시간. 추론 단계를 high 로 올리면 긴 기사(입력 4만 토큰대)는 답이 늦다.
+// 120초로는 느린 한 건이 transport 오류로 실행을 멈출 수 있어 넉넉히 둔다.
+const REVIEW_REQUEST_TIMEOUT_MS = 300000;
+
 export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER) {
   const invalid = code => invalidResponse(code, provider.label);
   let response;
   try {
     response = await fetchImpl(provider.url(provider.model), {
       method: 'POST', headers: provider.headers(apiKey),
-      signal: AbortSignal.timeout(120000),
+      signal: AbortSignal.timeout(REVIEW_REQUEST_TIMEOUT_MS),
       body: JSON.stringify(provider.body({ article, policy, retry, model: provider.model })),
     });
   } catch (error) {
     if (error.name === 'TimeoutError' || error.name === 'AbortError' || error instanceof TypeError) {
-      // 이름과 사유를 함께 남긴다. TimeoutError(프로바이더가 120초 안에 답하지 않음)와
+      // 이름과 사유를 함께 남긴다. TimeoutError(프로바이더가 제한시간 안에 답하지 않음)와
       // TypeError(DNS·TLS·연결 실패, 또는 fetch 호출 안에서 난 우리 코드의 결함)는 서로 다른
       // 문제인데 예전에는 둘 다 이름 없는 "transport error" 하나로 뭉뚱그려졌다.
       throw Object.assign(new Error(`${provider.label} transport error`), { transport_error: true,
@@ -426,7 +430,7 @@ export async function reviewArticles(options) {
     });
     queue = slot.then(() => {}, () => {});
     if (!await slot) throw Object.assign(new Error('Request scheduling stopped'), { scheduling_stopped: true });
-    const response = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(120000) });
+    const response = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(REVIEW_REQUEST_TIMEOUT_MS) });
     // Stop queued requests promptly on quota/auth errors, but let in-flight
     // successful responses finish validation and durable cache writes.
     // 보강의 실패로는 판정 요청을 멈추지 않는다. 할당량이 정말 끝났다면 다음 판정 요청이 같은 응답으로 알아낸다.
