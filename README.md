@@ -212,8 +212,10 @@ AI-evaluated report rows additionally include `ai_entity_supported`, `ai_target_
 
 ## Vercel
 
-The web app uses Next.js; the separate `api/report-dynamic.py` function uses
-root `requirements.txt`. Monthly collection/review runs in Actions or locally.
+The web app uses Next.js. Its PDF download renders the same HTML report as
+Actions and prints it with `puppeteer-core` and `@sparticuz/chromium`; the
+report content (view model) comes from the separate `api/report-view-model.py`
+function, which uses root `requirements.txt`. Monthly collection/review runs in Actions or locally.
 Changing the pipeline does not require resuming a paused Vercel deployment.
 
 
