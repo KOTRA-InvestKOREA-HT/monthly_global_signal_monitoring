@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, readLimitedPdf } from '../scripts/collect_company_signals.mjs';
+import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, rankCompanyRows, readLimitedPdf } from '../scripts/collect_company_signals.mjs';
 
 test('Google rows are probed unless a publisher URL is already known', () => {
   const row = { url: 'https://news.google.com/rss/articles/opaque', title: 'Original RSS title' };
@@ -118,4 +118,23 @@ test('a company waiting on the Google lane lends its slot and gets it back befor
   });
   assert.deepEqual(results, ['A', 'B', 'C']);
   assert.deepEqual(log, ['start a', 'start b', 'end b', 'a resumed', 'end a', 'start c', 'end c']);
+});
+
+// 34921453566: BASF 는 이번 달 기사가 없어 Google News 를 찾았지만, 받아 보니 기간 밖이던 공식 기사 10건 뒤에 서서
+// 대체 기사가 하나도 남지 않았다.
+test('official rows dated outside the period after fetching stand behind the fallback for company slots', () => {
+  const dateRange = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const row = (title, published_at, source_type = 'official') => ({ company: 'BASF', title, source_type,
+    url: `https://example.com/${encodeURIComponent(title)}`, published_at, published_at_source: 'jsonld' });
+  const inMonth = row('August capacity expansion announced', '2026-08-12');
+  const undated = { ...row('Annual press conference', ''), published_at_source: '' };
+  const september = row('September trade fair appearance', '2026-09-03');
+  const old = row('Annual shareholders meeting 2025', '2025-05-02');
+  const fallback = [row('Google story about a new plant', '2026-08-20', 'news'), row('Google story about a partnership', '2026-08-21', 'news')];
+  const ranked = rankCompanyRows({ usable: [inMonth], rows: [september, inMonth, old, undated], fallbackRows: fallback, dateRange, limit: 4 });
+  assert.deepEqual(ranked.map(r => r.title), ['August capacity expansion announced', 'Annual press conference',
+    'Google story about a new plant', 'Google story about a partnership']);
+  // 자리가 남으면 기간 밖 공식 기사도 원래 순서대로 뒤에 남는다.
+  assert.deepEqual(rankCompanyRows({ usable: [inMonth], rows: [september, inMonth, old, undated], fallbackRows: fallback, dateRange, limit: 10 })
+    .slice(4).map(r => r.title), ['September trade fair appearance', 'Annual shareholders meeting 2025']);
 });

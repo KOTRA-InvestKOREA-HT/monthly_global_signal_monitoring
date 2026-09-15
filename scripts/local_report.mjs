@@ -320,6 +320,23 @@ export function humanReviewGaps(candidate, decision) {
   return gaps.length > 1 || decision.event_stage === "completed" ? null : gaps;
 }
 
+// 모델 판정 가운데 코드로 확인할 수 있는 두 가지를 승인 전에 적용한다. 저장된 판정에도 그대로 걸린다.
+// 본문 없는 기사는 승인도 사람 검토도 하지 않는다(null). 제목은 사건을 가리킬 뿐 세부를 보여 주지 않는다.
+// 2026-08 첫 실행(34915776314)에서 Ouster 제목 159자 하나로 S4 와 사업동향이 승인됐다. 이런 기사는
+// articleCoverageGap 이 no_body 로 드러내고, 본문이 들어오면 근거가 바뀌어 기사 ID 도 바뀌므로 다시 검토된다.
+// 같은 기사의 사업동향이 타겟 기술과 무관하다고 봤는데 투자 후보만 기술을 인정하면 그 인정은 쓰지 않는다.
+// 같은 실행에서 GE Healthcare 의 CT 임상 협력이 '배양·정제 시스템' S4 로 승인됐다. 사람 검토 후보로 내린다.
+export function decisionForApproval(article, decisions, decision) {
+  if (!article.candidates.some((candidate) => hasArticleBody(candidate.row))) return null;
+  const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
+  const business = decisions.find((item) => item.candidate_id === "relevant");
+  if (candidate?.kind === "investment" && !candidate.relevance_exempt &&
+      decision.target_technology_supported === true && business?.target_technology_supported === false) {
+    return { ...decision, target_technology_supported: false };
+  }
+  return decision;
+}
+
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
 export function importReview(article, review, { strictNumbers = false } = {}) {
@@ -377,7 +394,9 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     const noInvestmentEvent = candidate.kind === "investment" &&
       decision.event_stage === "not_applicable" && !approvableExceptStage;
     if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
-    const supported = approvableExceptStage &&
+    const gated = decisionForApproval(article, review.decisions, decision);
+    const supported = Boolean(gated) && gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
+      gated.indicator_supported && gated.leading_indicator_supported && gated.quality === "pass" &&
       (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row.investment_signal_no));
     const quotes = decision.evidence_quotes;
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
@@ -393,7 +412,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
           `Quote the passage the summary describes, or summarize only the quoted event.`);
       }
     }
-    const gaps = supported ? null : humanReviewGaps(candidate, decision);
+    const gaps = supported || !gated ? null : humanReviewGaps(candidate, gated);
     const reviewGaps = gaps?.length ? gaps : null;
     const humanReview = Boolean(reviewGaps);
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
@@ -411,7 +430,8 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
         ...candidate.row,
         ai_signal_supported: supported,
         ...(humanReview ? { ai_review_tier: "human_review", ai_review_gaps: reviewGaps } : {}),
-        ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, decision[field]])),
+        ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, gated[field]])),
+        ...(gated.target_technology_supported !== decision.target_technology_supported ? { ai_technology_conflict: true } : {}),
         ai_event_stage: decision.event_stage, ai_summary_quality: decision.quality,
         ai_summary_reason: clean(decision.reason_ko),
         ai_summary_ko: groundedSummary ? clean(decision.summary_ko) : "",

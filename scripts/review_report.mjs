@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, humanReviewGaps, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
+import { sourceCandidates, groupArticles, humanReviewGaps, decisionForApproval, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
 import { resolveProvider, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
@@ -73,7 +73,8 @@ export function needsForm3Review(article, review) {
 export function missingReviewSummaryIds(article, review) {
   return review.decisions.filter(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-    const gaps = candidate ? humanReviewGaps(candidate, decision) : null;
+    const gated = candidate ? decisionForApproval(article, review.decisions, decision) : null;
+    const gaps = gated ? humanReviewGaps(candidate, gated) : null;
     return Boolean(gaps?.length) && !(String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim());
   }).map(decision => decision.candidate_id);
 }
@@ -100,19 +101,20 @@ export function needsFundingReview(article, review) {
 const SUMMARY_NUMBERS_VERSION = 'summary-numbers-v1';
 
 // 보고서에 실리는 판정. 승인된 투자 시그널, 사람 검토 후보, 승인된 사업동향이다.
-function publishedDecision(candidate, decision) {
-  if (!candidate || !decision.entity_supported || !decision.indicator_supported) return false;
+function publishedDecision(article, decisions, decision) {
+  const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+  const gated = candidate && decisionForApproval(article, decisions, decision);
+  if (!gated || !gated.entity_supported || !gated.indicator_supported) return false;
   if (candidate.kind === 'relevant') {
-    return Boolean((candidate.relevance_exempt || decision.target_technology_supported) && decision.quality === 'pass');
+    return Boolean((candidate.relevance_exempt || gated.target_technology_supported) && gated.quality === 'pass');
   }
-  return Array.isArray(humanReviewGaps(candidate, decision));
+  return Array.isArray(humanReviewGaps(candidate, gated));
 }
 
 // 요약 정확성 지시(시제·실제 사건·국가명·관계 과장 금지)를 넣기 전에 저장된 판정은 옛 문안이다.
 // 보고서에 실리는 판정이 있는 기사만 한 번 다시 묻고, 판정은 옮기지 않고 문안만 옮긴다.
 export function needsSummaryRefresh(article, review) {
-  const published = review.decisions.filter(decision =>
-    publishedDecision(article.candidates.find(item => item.id === decision.candidate_id), decision));
+  const published = review.decisions.filter(decision => publishedDecision(article, review.decisions, decision));
   if (!published.length) return false;
   if (review.summary_accuracy_version !== SUMMARY_ACCURACY_VERSION) return true;
   return review.summary_numbers_version !== SUMMARY_NUMBERS_VERSION &&
@@ -122,9 +124,8 @@ export function needsSummaryRefresh(article, review) {
 export function mergeRefreshedSummaries(article, review, fresh) {
   const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
   const decisions = review.decisions.map(decision => {
-    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
     const next = freshById.get(decision.candidate_id);
-    if (!publishedDecision(candidate, decision) || !next) return decision;
+    if (!publishedDecision(article, review.decisions, decision) || !next) return decision;
     if (!String(next.summary_ko || '').trim() || !String(next.summary_en || '').trim()) return decision;
     return { ...decision, summary_ko: next.summary_ko, summary_en: next.summary_en };
   });
@@ -481,7 +482,8 @@ export function mergeReviewSummaries(article, review, fresh) {
   const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
   const decisions = review.decisions.map(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-    const gaps = candidate ? humanReviewGaps(candidate, decision) : null;
+    const gated = candidate ? decisionForApproval(article, review.decisions, decision) : null;
+    const gaps = gated ? humanReviewGaps(candidate, gated) : null;
     const next = freshById.get(decision.candidate_id);
     const hasProse = String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim();
     if (!gaps?.length || hasProse || !next) return decision;

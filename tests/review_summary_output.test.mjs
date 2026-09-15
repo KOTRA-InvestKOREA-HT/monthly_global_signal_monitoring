@@ -7,8 +7,11 @@ import { groupArticles, importReview } from '../scripts/local_report.mjs';
 // The failed EPIC response supplied S4 summaries but omitted both relevant summaries.
 // Use a technology-exempt company so false technology is not mistaken for rejection.
 const quote = 'Acme and University will jointly develop advanced chip packaging processes.';
+// 본문 없는 기사는 승인되지 않으므로 기사 길이의 본문을 둔다.
+const TAIL = 'The work starts with qualification volumes, and both partners said the first results are expected next year ' +
+  'once the shared line has been installed.';
 const row = { company: 'Acme', target_no: 1, title: 'Research collaboration',
-  url: 'https://example.com/research', published_at: '2026-08-11', content_text: quote,
+  url: 'https://example.com/research', published_at: '2026-08-11', content_text: `${quote} ${TAIL}`,
   target_technology: 'hybrid bonding', excluded_from_relevance: true };
 const article = groupArticles([{ ...row, investment_signal_no: 4 }], [row],
   { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
