@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { decodeGoogleNewsUrl, fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
 import { mergeRefreshedSummaries, mergeReviewSummaries, needsForm3Review, needsFundingReview, needsReviewSummary, needsStageReview, needsSummaryRefresh } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
+// 본문 없는 기사의 판정은 보고서에 실리지 않으므로 문안 보강·새로고침 대상도 아니다. 고정값에 본문을 둔다.
+const BODY = 'Article body text that is long enough to count as a fetched article rather than a title. '.repeat(3);
 
 test('publisher redirects supply HTML, Google wrappers never become evidence', async () => {
   const response = (url, html) => {
@@ -106,7 +108,7 @@ test('an old approved Form 3 S5 decision gets one fresh semantic review', () => 
 });
 
 test('a saved review whose human-review candidate lacks prose is asked once for summaries', () => {
-  const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { investment_signal_no: 2 } }] };
+  const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } }] };
   const decision = { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true,
     target_technology_supported: false, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
     summary_ko: '', summary_en: '' };
@@ -120,8 +122,8 @@ test('a saved review whose human-review candidate lacks prose is asked once for 
 
 test('summary backfill copies prose only into empty human-review decisions and keeps every judgement', () => {
   const article = { candidates: [
-    { id: 'investment:2', kind: 'investment', row: { investment_signal_no: 2 } },
-    { id: 'investment:3', kind: 'investment', row: { investment_signal_no: 3 } },
+    { id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } },
+    { id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3 } },
   ] };
   const review = { article_id: 'x', decisions: [
     { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true, target_technology_supported: false,
@@ -146,7 +148,7 @@ test('summary backfill copies prose only into empty human-review decisions and k
 });
 
 test('an S3 decision that could publish and mentions a debt buyback is asked again once', () => {
-  const article = { candidates: [{ id: 'investment:3', kind: 'investment', row: { investment_signal_no: 3,
+  const article = { candidates: [{ id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3,
     title: 'BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes' } }] };
   const decision = { candidate_id: 'investment:3', entity_supported: true, indicator_supported: true,
     target_technology_supported: false, leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass',
@@ -154,15 +156,15 @@ test('an S3 decision that could publish and mentions a debt buyback is asked aga
   assert.equal(needsFundingReview(article, { decisions: [decision] }), true);
   assert.equal(needsFundingReview(article, { decisions: [decision], funding_review_version: 'funding-event-v1' }), false);
   assert.equal(needsFundingReview(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
-  const round = { candidates: [{ ...article.candidates[0], row: { investment_signal_no: 3, title: 'Nexeon completes £100m investment round' } }] };
+  const round = { candidates: [{ ...article.candidates[0], row: { content_text: BODY, investment_signal_no: 3, title: 'Nexeon completes £100m investment round' } }] };
   assert.equal(needsFundingReview(round, { decisions: [{ ...decision, evidence_quotes: ['marks the completion of the investment round'] }] }), false);
 });
 
 test('summary refresh copies new prose into published decisions only and never moves a judgement', () => {
   const article = { candidates: [
-    { id: 'investment:1', kind: 'investment', row: { investment_signal_no: 1 } },
-    { id: 'investment:5', kind: 'investment', row: { investment_signal_no: 5 } },
-    { id: 'relevant', kind: 'relevant', row: {} },
+    { id: 'investment:1', kind: 'investment', row: { content_text: BODY, investment_signal_no: 1 } },
+    { id: 'investment:5', kind: 'investment', row: { content_text: BODY, investment_signal_no: 5 } },
+    { id: 'relevant', kind: 'relevant', row: { content_text: BODY } },
   ] };
   const approved = { candidate_id: 'investment:1', entity_supported: true, indicator_supported: true, target_technology_supported: true,
     leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass', summary_ko: '영국 공급망 다변화 - 국내 운영 확장', summary_en: 'Old' };
@@ -188,7 +190,7 @@ test('summary refresh copies new prose into published decisions only and never m
 
 test('a published summary whose numbers the article does not state is refreshed once', () => {
   const article = { evidence: ['Automotive revenues surged 61% year over year.'],
-    candidates: [{ id: 'relevant', kind: 'relevant', relevance_exempt: true }] };
+    candidates: [{ id: 'relevant', kind: 'relevant', relevance_exempt: true, row: { content_text: BODY } }] };
   const decision = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, quality: 'pass',
     summary_ko: '자동차 매출이 69% 급증함', summary_en: 'Automotive revenue surged 61%.' };
   const stamped = { summary_accuracy_version: 'summary-accuracy-v1' };

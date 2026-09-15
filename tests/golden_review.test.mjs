@@ -8,9 +8,12 @@ import { MODEL } from '../scripts/review_report.mjs';
 import { selectGoldenArticles, compareArticle, assertIsolatedOutDir, runGolden } from '../scripts/golden_review.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
+// 본문 없는 기사는 승인되지 않으므로 고정값에도 기사 길이의 본문을 둔다.
+const TAIL = 'The company said the site would support qualification volumes first, that a final location has not been chosen, ' +
+  'and that no construction contract has been signed.';
 const source = (company, url) => ({ target_no: 1, company, url, title: `${company} plans a pilot`,
   published_at: '2026-08-10T00:00:00Z', target_technology: 'target material', investment_signal_no: 2,
-  content_text: `${company} is considering a new pilot plant for its target material.` });
+  content_text: `${company} is considering a new pilot plant for its target material. ${TAIL}` });
 const build = (rows, policy) => groupArticles(rows, [], period, policy);
 const decision = (article, overrides = {}) => ({ candidate_id: 'investment:2',
   entity_supported: true, target_technology_supported: true, indicator_supported: true,

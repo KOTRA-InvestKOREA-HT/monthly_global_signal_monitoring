@@ -15,7 +15,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v13-resumable-news-relay-probe';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v14-out-of-period-behind-fallback';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -1807,6 +1807,16 @@ export function trimByRank(rows, limit) {
   return [...rows].sort((a, b) => (a.link_rank ?? 0) - (b.link_rank ?? 0)).slice(0, limit);
 }
 
+// 대체 수집 뒤 기업 자리(maxPerCompany)를 채우는 순서: 이번 달로 쓸 수 있는 기사, 나머지 자체 출처,
+// 대체 수집, 상세 페이지를 받아 보니 기간 밖이던 자체 출처. 목록에 날짜가 없어 자리를 받은 기사가
+// 받아 보면 기간 밖인 경우가 많다. 2026-08 실행(34921453566)에서 538행 중 161행이 그랬고, BASF·Shin-Etsu·Maxon 은
+// 이번 달 기사가 없어 Google News 를 찾고도 기간 밖 공식 기사 10건 뒤에 서서 남은 대체 기사가 없었다.
+export function rankCompanyRows({ usable, rows, fallbackRows, dateRange, limit }) {
+  const period = dateRangePeriod(dateRange);
+  const outside = row => periodPlacement(row, period).placement === 'out_of_period';
+  return trimByRank(dedupeRows([...usable, ...rows.filter(row => !outside(row)), ...fallbackRows, ...rows.filter(outside)]), limit);
+}
+
 export function selectDetailRows(rows, maxVerify = DEFAULT_MAX_VERIFY_PER_COMPANY) {
   return [...rows].filter(row => maxVerify > 0 || row.link_verdict !== 'fetch_to_verify')
     .sort((a, b) => acceptFirst(a) - acceptFirst(b));
@@ -2125,16 +2135,23 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
   }
 
   // Drop disabled probes before the company cap; keep priority through fetching.
-  const selectedCompanyRows = trimByRank(selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany), args.maxPerCompany);
+  const candidateRows = selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany);
+  const selectedCompanyRows = trimByRank(candidateRows, args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company, slot);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
   let rows = enriched.rows;
   const usable = rows.filter((row) => usableMonthlySource(row, dateRange));
+  // 기업 자리와 대체 수집 생략이 이번 달 근거를 얼마나 가렸는지 남긴다. 이 기록 없이는 상한을 늘릴지 판단할 수 없다.
+  const stats = { candidates: candidateRows.length, cut_by_company_cap: candidateRows.length - selectedCompanyRows.length,
+    out_of_period_after_fetch: rows.filter(row => periodPlacement(row, dateRangePeriod(dateRange)).placement === 'out_of_period').length,
+    usable_monthly: usable.length, fallback: selectedSources.includes("google_news") ? "skipped_has_monthly_source" : "not_selected" };
   if (selectedSources.includes("google_news") &&
       (args.fallbackMode !== "missing" || usable.length < args.fallbackMinResults)) {
+    stats.fallback = "run";
     try {
       const fallback = await collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      stats.fallback_found = fallback.rows.length;
       requestCount += fallback.requestCount;
       if (fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       const recoveredFallback = fallback.rows
@@ -2146,18 +2163,21 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       // an undated or unfetched official row let it push real press releases
       // out of maxPerCompany: 26 official rows were lost that way in the
       // 2026-08 run while fallback rows grew from 37 to 142.
-      rows = trimByRank(dedupeRows([...usable, ...rows, ...split.fallbackRows]), args.maxPerCompany);
+      // Official rows the detail page dated outside the period go last (rankCompanyRows).
+      rows = rankCompanyRows({ usable, rows, fallbackRows: split.fallbackRows, dateRange, limit: args.maxPerCompany });
       const fallbackRows = rows.filter(row => row.source_type !== 'official');
+      stats.fallback_kept = fallbackRows.length;
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company, slot);
       requestCount += detailedFallback.requestCount;
       errors.push(...detailedFallback.errors);
       const byUrl = new Map(detailedFallback.rows.map(row => [row.url, row]));
       rows = rows.map(row => byUrl.get(row.url) || row);
     } catch (error) {
+      stats.fallback = "error";
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
   }
-  return { rows, requestCount, errors };
+  return { rows, requestCount, errors, stats };
 }
 
 async function main() {
@@ -2228,6 +2248,10 @@ async function main() {
       retryable: retryableCollection(companyResults[index]), cached: companyResults[index].cached })),
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
+    // 체크포인트에서 온 옛 결과에는 stats 가 없어 기업 이름만 남는다.
+    company_collection_stats: companies.map((company, index) => ({ company: company.company, ...(companyResults[index].stats || {}) })),
+    companies_cut_by_company_cap: companyResults.filter(result => result.stats?.cut_by_company_cap > 0).length,
+    fallback_skipped_company_count: companyResults.filter(result => result.stats?.fallback === 'skipped_has_monthly_source').length,
     skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
     publisher_resolution_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
     company_count: companies.length,

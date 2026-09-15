@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
+import { articleCoverageGap, dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
@@ -365,7 +365,7 @@ test("a signal summary cannot name a party its evidence quote never mentions", (
 test("summary grounding survives paraphrase, reads the title, and spares business rows", () => {
   const quote = "The joint venture backed by Umicore and Volkswagen Group-owned PowerCo announced a plant.";
   const build = (over = {}) => ({ ...source, company: "Umicore", investment_signal_no: 4,
-    title: "IONWAY plant announcement", url: "https://example.com/ionway", content_text: quote, ...over });
+    title: "IONWAY plant announcement", url: "https://example.com/ionway", content_text: `${quote} ${TAIL}`, ...over });
   const a = groupArticles([build()], [], period)[0];
   const stage = { candidate_id: "investment:4", event_stage: "precursor", evidence_quotes: [quote] };
   // 같은 대상을 달리 적었을 뿐이면 막지 않는다. 낱말 단위로 대조하기 때문이다.
@@ -538,4 +538,33 @@ test("named HTML entities in collected text match the characters a quote uses", 
   assert.equal(check("Jenoptik invests in high-end manufacturing facility for semiconductor optics at the production campus in Jena-Göschwitz.")[0].supported, true);
   assert.equal(check("Straße 3 × 2 café costs €5 ÿ ².")[0].supported, true);
   assert.throws(() => check("production campus in Jena-Goschwitz."), /exact passages/);
+});
+
+// 34915776314: Ouster 는 제목 159자 하나로 S4 와 사업동향이 승인됐다.
+test("a title-only article is neither approved nor sent to human review, and shows as a coverage gap", () => {
+  const titleOnly = { ...source, content_text: "" };
+  const a = groupArticles([titleOnly], [{ ...titleOnly, investment_signal_no: undefined }], period)[0];
+  const quoted = { evidence_quotes: [source.title] };
+  const decisions = [decision(quoted), decision({ ...quoted, candidate_id: "relevant", event_stage: "not_applicable",
+    summary_ko: "파일럿 시설을 검토함.", summary_en: "Example plans a pilot." })];
+  const results = importReview(a, review(a, decisions));
+  assert.deepEqual(results.map((r) => [r.candidate_id, r.supported, r.human_review]),
+    [["investment:2", false, false], ["relevant", false, false]]);
+  assert.equal(articleCoverageGap(a, review(a, decisions)), "no_body");
+});
+
+// 34915776314: GE Healthcare CT 임상 협력이 '배양·정제 시스템' S4 로 승인됐다. 같은 기사의 사업동향은 기술 false 였다.
+test("an investment candidate cannot claim the target technology its own article's business row denies", () => {
+  const a = groupArticles([source], [{ ...source, investment_signal_no: undefined }], period)[0];
+  const business = decision({ candidate_id: "relevant", event_stage: "not_applicable", target_technology_supported: false,
+    summary_ko: "파일럿 시설을 검토함.", summary_en: "Example is considering a pilot plant." });
+  const [investment] = importReview(a, review(a, [decision(), business]));
+  assert.equal(investment.supported, false);
+  assert.equal(investment.human_review, true);
+  assert.deepEqual(investment.row.ai_review_gaps, ["target_technology"]);
+  assert.equal(investment.row.ai_target_technology_supported, false);
+  assert.equal(investment.row.ai_technology_conflict, true);
+  // 사업동향도 기술을 인정하면 투자 후보 승인은 그대로다.
+  const agreed = importReview(a, review(a, [decision(), { ...business, target_technology_supported: true }]));
+  assert.deepEqual(agreed.map((r) => r.supported), [true, true]);
 });
