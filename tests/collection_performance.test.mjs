@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPublisherProbe, detailSourceUrl, readLimitedPdf } from '../scripts/collect_company_signals.mjs';
+import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, readLimitedPdf } from '../scripts/collect_company_signals.mjs';
 
 test('Google rows are probed unless a publisher URL is already known', () => {
   const row = { url: 'https://news.google.com/rss/articles/opaque', title: 'Original RSS title' };
@@ -67,4 +67,55 @@ test('unknown or understated PDF size is limited while streaming', async () => {
   }
   const bytes = new Uint8Array([1, 2, 3, 4]);
   assert.deepEqual(await readLimitedPdf(new Response(bytes), 4), Buffer.from(bytes));
+});
+
+// 2026-09-15 실행: Google 차례가 발행사 본문 다운로드까지 기다려서 다른 기업의 Google 링크가 그 뒤에 섰다.
+test('the Google lane only decodes; a slow publisher download does not hold the next Google link', async () => {
+  const realFetch = globalThis.fetch;
+  let releaseA, bFetched = false;
+  const gate = new Promise(resolve => { releaseA = resolve; });
+  const timer = setTimeout(releaseA, 2000);
+  globalThis.fetch = async (url, init = {}) => {
+    const id = String(url).match(/\/articles\/(CBMi\w+)/)?.[1];
+    if (id) return new Response(`<div data-n-a-sg="SIG" data-n-a-ts="1757000000"></div>`);
+    if (String(url).includes('/batchexecute')) {
+      const target = decodeURIComponent(init.body).includes('CBMiAAA') ? 'a' : 'b';
+      return new Response(")]}'\n\n" + JSON.stringify([['wrb.fr', 'Fbv4je',
+        JSON.stringify(['garturlres', `https://publisher.example/${target}`, 1])]]));
+    }
+    if (url === 'https://publisher.example/a') await gate;
+    if (url === 'https://publisher.example/b') { bFetched = true; releaseA(); }
+    return new Response('<title>Story</title><article>Publisher story</article>');
+  };
+  const args = { fetchOfficialContent: true, maxVerifyPerCompany: 0, maxDetailPerCompany: 10, timeoutSeconds: 5,
+    contentCharLimit: 20000, contentExcerptLimit: 800, rateLimitSeconds: 0 };
+  const row = (company, id) => ({ company, target_no: 1, source_type: 'news', link_verdict: 'accept', date_candidates: [],
+    title: `${company} expands its production plant`, url: `https://news.google.com/rss/articles/${id}` });
+  try {
+    let aDone = false;
+    const a = enrichOfficialRowsWithContent([row('Alpha', 'CBMiAAA')], args, '2026-09-15T00:00:00Z', { company: 'Alpha' })
+      .then(() => { aDone = true; });
+    await enrichOfficialRowsWithContent([row('Beta', 'CBMiBBB')], args, '2026-09-15T00:00:00Z', { company: 'Beta' });
+    assert.equal(bFetched, true);
+    assert.equal(aDone, false);
+    await a;
+  } finally {
+    clearTimeout(timer);
+    globalThis.fetch = realFetch;
+  }
+});
+
+test('a company waiting on the Google lane lends its slot and gets it back before new companies start', async () => {
+  const log = [];
+  let openLane;
+  const lane = new Promise(resolve => { openLane = resolve; });
+  const results = await mapWithConcurrency(['a', 'b', 'c'], 1, async (item, index, yieldSlot) => {
+    log.push(`start ${item}`);
+    if (item === 'a') { await yieldSlot(() => lane); log.push('a resumed'); }
+    if (item === 'b') { openLane(); await new Promise(resolve => setTimeout(resolve, 10)); }
+    log.push(`end ${item}`);
+    return item.toUpperCase();
+  });
+  assert.deepEqual(results, ['A', 'B', 'C']);
+  assert.deepEqual(log, ['start a', 'start b', 'end b', 'a resumed', 'end a', 'start c', 'end c']);
 });

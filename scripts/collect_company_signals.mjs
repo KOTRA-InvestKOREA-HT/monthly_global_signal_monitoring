@@ -1471,9 +1471,23 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
   }
 }
 
+// Google 차례에서 할 일만 한다. 발행사 본문 다운로드는 차례 밖 downloadArticleDocument 가 맡는다.
+// 2026-09-15 실행에서는 해독 뒤의 본문·PDF 받기까지 차례 안에서 해서, 다른 기업의 Google 링크가 그걸 기다렸다.
+// 해독이 안 되면 예전처럼 중계 주소를 따라가 보는데, 드물게 발행사에 닿으면 그 응답은 여기서 끝까지 읽는다.
+// 본문을 차례 밖으로 넘기면 기업 자리를 기다리는 동안 요청 제한 시간이 지나 버린다.
+export async function resolveArticleSource(url, timeoutSeconds, fetchImpl = fetch) {
+  if (!isGoogle(url)) return { target: url };
+  const publisherUrl = await decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl).catch(() => null);
+  if (publisherUrl) return { target: publisherUrl };
+  return { document: await downloadArticleDocument(url, timeoutSeconds, fetchImpl) };
+}
+
 export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetch) {
-  const publisherUrl = isGoogle(url) ? await decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl).catch(() => null) : null;
-  const target = publisherUrl || url;
+  const source = await resolveArticleSource(url, timeoutSeconds, fetchImpl);
+  return source.document || downloadArticleDocument(source.target, timeoutSeconds, fetchImpl);
+}
+
+export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
   const response = await fetchImpl(target, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
     redirect: 'follow', headers: requestHeaders(target) });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1504,7 +1518,8 @@ export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
   return currentTitle;
 }
 
-export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company) {
+// yieldSlot: Google 차례를 기다리는 동안 기업 작업 자리를 내놓는다(mapWithConcurrency 참고).
+export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company, { yieldSlot = task => task() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
     return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
@@ -1567,13 +1582,20 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
     }
 
     try {
-      const document = await probePublisher(detailUrl, async () => {
+      let document;
+      if (row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)) {
         requestCount += 1;
         detailCount += 1;
-        return row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)
-          ? { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl }
-          : await fetchArticleDocument(detailUrl, args.timeoutSeconds);
-      });
+        document = { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl };
+      } else {
+        const resolve = () => probePublisher(detailUrl, async () => {
+          requestCount += 1;
+          detailCount += 1;
+          return resolveArticleSource(detailUrl, args.timeoutSeconds);
+        });
+        const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
+        document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
+      }
       if (!document) {
         if (row.link_verdict === 'fetch_to_verify') {
           recordExclusion(row.company, row.title, row.url, 'unverified_no_fetch');
@@ -1843,23 +1865,29 @@ async function loadJson(filePath, fallback = null) {
   }
 }
 
-async function mapWithConcurrency(items, concurrency, worker) {
-  const limit = Math.max(1, Number(concurrency) || 1);
-  const results = new Array(items.length);
-  let cursor = 0;
-
-  async function runNext() {
-    while (cursor < items.length) {
-      const index = cursor;
-      cursor += 1;
-      results[index] = await worker(items[index], index);
-    }
-  }
-
-  await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, () => runNext()),
-  );
-  return results;
+// 기업 자리는 공식 출처와 발행사 요청의 동시 처리 수다. Google 링크는 전역 차례(createPublisherProbe)가
+// 따로 한 번에 하나로 묶으므로, 그 차례를 기다리는 기업은 worker 에 넘기는 yieldSlot 으로 자리를 내놓는다.
+// 2026-09-15 실행에서는 60초 휴식 세 번 동안 네 자리가 모두 Google 을 기다리며 묶여 있었다.
+// 차례가 끝난 기업은 아직 시작하지 않은 기업보다 먼저 자리를 받아, 하던 기업을 먼저 끝내고 체크포인트를 남긴다.
+export async function mapWithConcurrency(items, concurrency, worker) {
+  let free = Math.max(1, Number(concurrency) || 1);
+  const resuming = [], starting = [];
+  const acquire = (waiters) => {
+    if (free > 0) { free -= 1; return Promise.resolve(); }
+    return new Promise(resolve => waiters.push(resolve));
+  };
+  const release = () => {
+    const next = resuming.shift() || starting.shift();
+    if (next) next(); else free += 1;
+  };
+  const yieldSlot = async (task) => {
+    release();
+    try { return await task(); } finally { await acquire(resuming); }
+  };
+  return Promise.all(items.map(async (item, index) => {
+    await acquire(starting);
+    try { return await worker(item, index, yieldSlot); } finally { release(); }
+  }));
 }
 
 // Coverage for the Google News fallback decision only. A dated in-month row
@@ -2047,7 +2075,7 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
   return { rows, requestCount, errors };
 }
 
-async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) {
+async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, slot = {}) {
   const companyRows = [];
   const publisherCandidates = [];
   const errors = [];
@@ -2098,7 +2126,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
 
   // Drop disabled probes before the company cap; keep priority through fetching.
   const selectedCompanyRows = trimByRank(selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany), args.maxPerCompany);
-  const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company);
+  const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company, slot);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
   let rows = enriched.rows;
@@ -2120,7 +2148,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       // 2026-08 run while fallback rows grew from 37 to 142.
       rows = trimByRank(dedupeRows([...usable, ...rows, ...split.fallbackRows]), args.maxPerCompany);
       const fallbackRows = rows.filter(row => row.source_type !== 'official');
-      const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company);
+      const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company, slot);
       requestCount += detailedFallback.requestCount;
       errors.push(...detailedFallback.errors);
       const byUrl = new Map(detailedFallback.rows.map(row => [row.url, row]));
@@ -2159,13 +2187,13 @@ async function main() {
   const companyResults = await mapWithConcurrency(
     companies,
     args.companyConcurrency,
-    async (company) => {
+    async (company, index, yieldSlot) => {
       const started = Date.now();
       const { outDir, refresh, ...settings } = args;
       const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
         identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings, active_sources: selectedSources,
           period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh,
-        collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt) });
+        collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, { yieldSlot }) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
         request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };
       console.log(`Collected ${company.company}: ${result.rows.length} rows in ${(result.timing.elapsed_ms / 1000).toFixed(1)}s`);
