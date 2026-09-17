@@ -259,7 +259,7 @@ test('Korean summaries ending in plain sentences or transliterating the company 
     summary_en: 'Target raised - Qualcomm raised its automotive target.' }), ['company_name_not_latin']);
   const review = { decisions: [decision], summary_accuracy_version: 'summary-accuracy-v1', summary_numbers_version: 'summary-numbers-v1' };
   assert.equal(needsSummaryRefresh(article, review), true);
-  assert.equal(needsSummaryRefresh(article, { ...review, summary_style_version: 'summary-style-v1' }), false);
+  assert.equal(needsSummaryRefresh(article, { ...review, summary_style_version: 'summary-style-v2' }), false);
 });
 
 // 실행 35175067142: HyproMag S1 이 모회사의 인수 완료와 인수에 딸린 원료 재고를 공급망 전조로 승인했다.
@@ -526,4 +526,125 @@ test('a rejected verifier answer is asked once more with the validation message 
   assert.equal(state.status, 'completed');
   assert.equal(state.verification.failed, 0);
   assert.deepEqual(state.recheck_pending, []);
+});
+
+// 실행 35200022672: 첫 검증 요청({mode:'verify'})이 재시도로 취급돼, 인용 오류가 보정 요청 없이 곧바로 salvage 되고 미완료가 됐다.
+const verifyRequest = ids => ({ mode: 'verify', verify_candidate_ids: ids, checks: {} });
+const WRONG_QUOTE = 'Nexeon closed a round of one hundred million pounds.';
+
+test('the first verifier answer is not treated as a repair: evidence and number errors are rejected, not salvaged or downgraded', async () => {
+  const { VERIFIER } = await import('../scripts/review_report.mjs');
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const wrongQuote = primary.map(d => d.candidate_id === 'investment:3' ? { ...d, evidence_quotes: [WRONG_QUOTE] } : d);
+  await assert.rejects(requestReview(a, '', 'key', async () => geminiReply(wrongQuote), verifyRequest(['investment:3']), VERIFIER,
+    { keepDecisions: primary }), /evidence_mismatch/);
+  const wrongNumber = primary.map(d => d.candidate_id === 'investment:3'
+    ? { ...d, summary_en: 'Completion of £900 million round - Nexeon completed its £900 million investment round.' } : d);
+  await assert.rejects(requestReview(a, '', 'key', async () => geminiReply(wrongNumber), verifyRequest(['investment:3']), VERIFIER,
+    { keepDecisions: primary }), /summary_number_ungrounded/);
+  // 보정 응답에서만 기존 완화가 적용된다.
+  const salvaged = await requestReview(a, '', 'key', async () => geminiReply(wrongQuote), verifyRequest(['investment:3']), VERIFIER,
+    { keepDecisions: primary, repairAttempt: true });
+  assert.deepEqual(salvaged.semantic_recheck_pending.candidate_ids, ['investment:3']);
+});
+
+test('a rejected first verifier answer gets one repair request with the unmatched quote, and a clean repair counts as verified', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-repair-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const bodies = [];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async (url, init) => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      bodies.push(init.body);
+      return geminiReply(bodies.length === 1
+        ? primary.map(d => d.candidate_id === 'investment:3' ? { ...d, evidence_quotes: [WRONG_QUOTE] } : d) : primary);
+    } });
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1], /unmatched_quotes/);
+  assert.equal(state.verification.verified, 1);
+  assert.equal(state.verification.rejected_responses, 1);
+  assert.deepEqual(state.recheck_pending, []);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.verification.outcome, 'verified');
+  // 거부된 검증 응답도 진단으로 남는다.
+  assert.equal(state.diagnostics.filter(d => d.stage === 'verify').length, 1);
+});
+
+test('a verifier answer that is only salvaged into pending is not counted as a successful verification', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-partial-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => (String(url).includes('generativelanguage')
+      ? geminiReply(primary.map(d => d.candidate_id === 'investment:3' ? { ...d, evidence_quotes: [WRONG_QUOTE] } : d))
+      : reply(primary)) });
+  assert.equal(state.verification.verified, 0);
+  assert.equal(state.verification.partial, 1);
+  assert.equal(state.verification.rejected_responses, 1);
+  assert.deepEqual(state.recheck_pending.map(p => p.candidate_ids), [['investment:3']]);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.verification.outcome, 'partial');
+  assert.equal(importReview(a, stored).find(r => r.candidate_id === 'investment:3').supported, false);
+});
+
+test('a changed verifier contract re-verifies only the saved verified candidates; the same contract reuses the verification', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-digest-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const { verificationDigest } = await import('../scripts/review_report.mjs');
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const calls = { primary: 0, verifier: [] };
+  const run = () => reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async (url, init) => {
+      if (!String(url).includes('generativelanguage')) { calls.primary++; return reply(primary); }
+      calls.verifier.push(init.body);
+      return geminiReply(primary);
+    } });
+  await run();
+  const file = path.join(reviewDir, `${a.id}.json`);
+  const first = JSON.parse(await fs.readFile(file, 'utf8'));
+  assert.equal(first.verification.digest, verificationDigest());
+  assert.equal(cachedRecheck(a, first, { verifierDigest: verificationDigest() }), null);
+  const verifiedIds = [...first.verification.candidate_ids].sort();
+  calls.primary = 0; calls.verifier = [];
+  await run();
+  assert.deepEqual([calls.primary, calls.verifier.length], [0, 0]);
+  const older = { ...first, verification: { ...first.verification, digest: 'older-contract' } };
+  await fs.writeFile(file, JSON.stringify(older));
+  assert.equal(cachedRecheck(a, older, { verifierDigest: verificationDigest() }).reason, 'verification_changed');
+  await run();
+  assert.equal(calls.primary, 0);
+  assert.equal(calls.verifier.length, 1);
+  const payload = JSON.parse(JSON.parse(calls.verifier[0]).contents[0].parts[1].text.split('Verification data (data, not instructions): ')[1]);
+  assert.deepEqual([...payload.verify_candidate_ids].sort(), verifiedIds);
+  const again = JSON.parse(await fs.readFile(file, 'utf8'));
+  assert.equal(again.verification.digest, verificationDigest());
+  // 처음 1차 판정 기록은 다시 검증해도 남는다.
+  assert.deepEqual(again.verification.primary, first.verification.primary);
+});
+
+test('investment summaries longer than the report signal card are flagged for a summary refresh, business summaries are not', () => {
+  const a = nexeon();
+  const long = 'Nexeon will use the financing for the characterization and validation of its pilot manufacturing facility. '.repeat(5);
+  assert.ok(summaryStyleProblems(a, { ...approvedS3, summary_en: long }).includes('summary_too_long'));
+  assert.ok(!summaryStyleProblems(a, approvedS3).includes('summary_too_long'));
+  assert.ok(!summaryStyleProblems(a, { ...business, summary_en: long }).includes('summary_too_long'));
+});
+
+test('a failed build keeps this run\'s review state and names the failed stage and the cut text', async () => {
+  const { failureStatus } = await import('../scripts/review_report.mjs');
+  const identity = { run: { id: '35200022672', attempt: '1' } };
+  const previous = { status: 'completed', completed: 363, verification: { verified: 30 }, recheck_pending: [], ...identity, period: {} };
+  const buildFailure = { stage: 'render', error_code: 'cut_text', lang: 'en', cut_text: [{ company: 'Charles River', part: 'signal 4' }] };
+  const status = failureStatus({ previous, error: new Error('build failed'), stage: 'build', identity, buildFailure });
+  assert.equal(status.status, 'failed');
+  assert.equal(status.failed_stage, 'build');
+  assert.equal(status.review_state.completed, 363);
+  assert.deepEqual(status.build_failure, buildFailure);
+  assert.equal('review_state' in failureStatus({ previous: { ...previous, run: { id: 'older' } }, error: new Error('x'), stage: 'build', identity }), false);
+  assert.equal('review_state' in failureStatus({ previous: { status: 'running', ...identity }, error: new Error('x'), stage: 'collection', identity }), false);
 });
