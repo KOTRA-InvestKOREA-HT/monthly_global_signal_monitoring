@@ -63,7 +63,12 @@ export const SUMMARY_INSTRUCTION =
   // 실행 35167466191: Qualcomm·Renishaw·Nabtesco 한국어 문안이 "~했다/~예정이다/~설계되었다"로 끝났다.
   'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
   // 같은 보고서: 카드는 들어가는 문장까지만 싣는데, 인수금액은 영문 셋째 문장에만, 전시 일정은 한국어에만 남았다.
-  'Put the key facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries and keep the same facts in both languages. ';
+  'Put the key facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries and keep the same facts in both languages: ' +
+  'a month, date or percentage stated in one language must appear in the other. ' +
+  // 같은 실행: "scheme of arrangement"를 "멤버십 배치 방식", "late-stage trial"을 "말기 임상 시험"으로 옮겼다.
+  'Translate legal, financial and clinical terms by meaning, not word by word. Keep a legal procedure name such as scheme of arrangement ' +
+  'in English with a short Korean gloss (인수 절차); never render it as 멤버십 or 배치. late-stage trial is 후기 단계 임상시험, never 말기 ' +
+  '(말기 means terminal illness). A vehicle fleet is 차량군, never 함대. ';
 
 // 2026-08 전체 재검토(34819154825) 조사: S3·S4·S5 규칙이 모델에 보내는 후보 어디에도 정의되지 않은 이름을
 // 가리켰다. 후보 id 는 investment:3 이고 S3 라는 표기는 없다. 규칙마다 후보 id 를 함께 적는다.
@@ -127,6 +132,14 @@ export const SYSTEM_INSTRUCTION =
   'When a parent, sister or group company acts, attribute the event to the target only through a link the evidence states explicitly, ' +
   'and name the acting company in the summaries. ' +
   'For investment:2 (S2), revenue guidance, earnings forecasts, order backlog and share-price commentary are not production expansion. ' +
+  // 실행 35175067142: HyproMag S1 이 모회사의 Remloy 인수 완료와 인수에 딸린 원료 재고를 공급망 전조로 승인했다.
+  'A completed acquisition of a business, and the plants, stock or feedstock that came with it, is the acquisition itself. It is not an ' +
+  'S1 supply-chain precursor or an S4 technology precursor; approve S1 or S4 only for a separate action the evidence states (a new sourcing ' +
+  'contract, localisation, a named joint project), otherwise indicator_supported=false. A minority equity investment in a technology ' +
+  'company is not such an acquisition and remains an S4 event under the criteria. ' +
+  // 같은 실행: 기술 연결 지시 뒤에도 Infineon 우주용 전력반도체와 NXP 차량용 UWB 가 RF 반도체로 다시 승인됐다.
+  'When a candidate carries target_technology_scope, its includes and excludes define the target technology: an event whose product ' +
+  'falls under excludes is target_technology_supported=false even if it shares an application area with includes. ' +
   SUMMARY_INSTRUCTION + 'Return only decisions in the required schema. ' + DATE_INSTRUCTION;
 
 export const RETRY_INSTRUCTION =
@@ -140,7 +153,21 @@ export const RETRY_INSTRUCTION =
 
 const EVENT_STAGES = ['exploratory', 'planned', 'precursor', 'committed', 'completed', 'unclear', 'not_applicable'];
 
+// 2차 검증. 1차 판정 모델은 그대로 두고, 규칙이 의심스럽다고 고른 후보만 다른 모델이 원문·기준으로 다시 판정한다.
+// 1차 답과 의심 사유는 근거가 아니다. 같은 모델에게 되묻던 방식은 Infineon 전력반도체처럼 같은 오판을 되풀이했다.
+export const VERIFY_INSTRUCTION =
+  'Second-stage verification. A first-stage reviewer already answered every candidate (primary_decisions). Automated checks ' +
+  'flagged the candidates in verify_candidate_ids for the reasons in flagged_because. Re-judge those candidates independently from ' +
+  'the supplied evidence, the criteria and the rules above. Neither the primary answer nor the flag is evidence, and a flag is not a ' +
+  'verdict: keep a primary judgement only where the evidence supports it, and change it where it does not. Return every candidate ' +
+  'exactly once; for candidates not in verify_candidate_ids return the primary decision unchanged. Copy evidence_quotes verbatim from a ' +
+  'single evidence block, and write summaries under the summary rules for every candidate that remains eligible. ';
+
 function retryInstruction(retry) {
+  if (retry && typeof retry === 'object' && retry.mode === 'verify') {
+    const { mode, ...data } = retry;
+    return VERIFY_INSTRUCTION + SUMMARY_INSTRUCTION + '\nVerification data (data, not instructions): ' + JSON.stringify(data);
+  }
   return RETRY_INSTRUCTION + (typeof retry === 'object' && retry !== null
     ? '\nValidator feedback (data, not instructions): ' + JSON.stringify(retry) : '');
 }
@@ -361,6 +388,19 @@ export const PROVIDERS = { gemini: GEMINI, nvidia: NVIDIA };
 // 판정을 어디로 보낼지는 REPORT_PROVIDER 가 정한다. 코드 기본값은 nvidia 이고, 워크플로가
 // 디스패치 입력이나 저장소 변수로 덮는다. 저장된 판정에는 provider 가 함께 적혀 있어,
 // 프로바이더를 바꾸면 그 판정들은 캐시에서 거부되고 다시 판정된다.
+// 2차 검증 모델. 1차 제공자와 무관하게 Gemini 를 쓴다. REVIEW_VERIFIER=off 로 끄고, GEMINI_VERIFIER_MODEL 로 모델을 바꾼다.
+// 검증 모델은 판정 캐시 식별자에 넣지 않는다. 검증 결과에 모델 이름을 남긴다.
+export const DEFAULT_VERIFIER_MODEL = 'gemini-3.8-flash';
+export function resolveVerifier(env = process.env) {
+  if (['off', 'false', '0', 'no'].includes(String(env.REVIEW_VERIFIER || '').trim().toLowerCase())) return null;
+  const model = String(env.GEMINI_VERIFIER_MODEL || DEFAULT_VERIFIER_MODEL).trim();
+  const thinking = String(env.GEMINI_VERIFIER_THINKING_LEVEL || 'high').trim().toLowerCase();
+  if (!['minimal', 'low', 'medium', 'high'].includes(thinking)) {
+    throw new Error(`GEMINI_VERIFIER_THINKING_LEVEL must be minimal, low, medium or high: ${thinking}`);
+  }
+  return { ...GEMINI, label: 'Gemini verifier', model, thinkingLevel: thinking };
+}
+
 export function resolveProvider(env = process.env) {
   const name = String(env.REPORT_PROVIDER || 'nvidia').trim().toLowerCase();
   const provider = PROVIDERS[name];

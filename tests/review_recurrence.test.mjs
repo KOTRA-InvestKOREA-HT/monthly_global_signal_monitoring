@@ -6,8 +6,9 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { reviewArticles, requestReview, facilityStageSuspects, fundingSuspects, needsFundingReview, needsFacilityStageReview,
-  needsTechnologyReview, needsSummaryRefresh, summaryStyleProblems, withoutUnverifiedRejectedQuotes } from '../scripts/review_report.mjs';
-import { groupArticles, importReview } from '../scripts/local_report.mjs';
+  needsTechnologyReview, needsSummaryRefresh, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
+  bilingualFactProblems, nearestEvidence } from '../scripts/review_report.mjs';
+import { groupArticles, importReview, sourceCandidates, ungroundedSummaryNames } from '../scripts/local_report.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
 const ROUND = 'The National Wealth Fund’s commitment of £52.6 million marks the completion of Nexeon’s latest investment round totalling £100 million.';
@@ -58,17 +59,53 @@ test('a wrong quote on a rejected candidate no longer discards the approvable ca
   assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:3').evidence_quotes, [ROUND]);
 });
 
-test('an unverifiable quote is never dropped from a candidate that is approved or goes to human review', async () => {
+// 실행 35175067142: Nexeon 은 두 번째 응답의 S3 문안 하나가 검증에 걸려 1억 파운드 조달 기사 전체가 다시 빠졌다.
+test('an approvable candidate with unverifiable evidence becomes pending while the rest of the article is kept', async () => {
   const a = nexeon();
-  const withBadQuote = decision => ({ article_id: a.id, reviewer: 'test', decisions: [approvedS2, approvedS3, rejectedS5, business]
-    .map(d => (d.candidate_id === decision.candidate_id ? decision : d)) });
-  // 승인 후보: 맞는 인용과 틀린 인용이 섞여 있어도 받지 않는다.
-  assert.equal(withoutUnverifiedRejectedQuotes(a, withBadQuote({ ...approvedS3, evidence_quotes: [ROUND, 'Invented.'] })), null);
-  // 사람 검토 후보(기술 연결만 부족): 보고서에 실리므로 받지 않는다.
-  assert.equal(withoutUnverifiedRejectedQuotes(a, withBadQuote({ ...approvedS2, target_technology_supported: false,
-    evidence_quotes: [USE, 'Invented.'] })), null);
+  const review = decisions => ({ article_id: a.id, reviewer: 'test', decisions });
+  // 승인 후보의 틀린 인용: 인용은 빼고, 그 후보는 문안을 비운 채 미완료로 둔다. AI 승인으로는 싣지 않는다.
+  const salvaged = salvageCandidateEvidence(a, review([approvedS2, { ...approvedS3, evidence_quotes: [ROUND, 'Invented.'] }, rejectedS5, business]));
+  // S5 는 탈락 판정이라 틀린 인용만 빠지고 미완료로 두지 않는다.
+  assert.deepEqual(salvaged.semantic_recheck_pending.candidate_ids, ['investment:3']);
+  const s3 = salvaged.decisions.find(d => d.candidate_id === 'investment:3');
+  assert.deepEqual(s3.evidence_quotes, [ROUND]);
+  assert.equal(s3.summary_ko, '');
+  const results = Object.fromEntries(importReview(a, salvaged).map(r => [r.candidate_id, r]));
+  assert.equal(results['investment:3'].supported, false);
+  assert.deepEqual(results['investment:3'].row.ai_review_gaps, ['semantic_recheck']);
+  assert.equal(results['investment:2'].supported, true);
+  assert.equal(results.relevant.supported, true);
+  // 인용 밖 고유명사를 쓴 승인 후보도 같은 방식으로 그 후보만 미완료가 된다.
+  const named = salvageCandidateEvidence(a, review([approvedS2, { ...approvedS3,
+    summary_en: 'Completion of round - Nexeon completed a round led by Barclays Capital.' }, rejectedS5, business]));
+  assert.deepEqual(named.semantic_recheck_pending.candidate_ids, ['investment:3']);
+  // 사업동향의 틀린 인용: 사람 검토 단계가 없으므로 미완료 동안 싣지 않는다.
+  const relevant = salvageCandidateEvidence(a, review([approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] },
+    { ...business, evidence_quotes: ['Invented.'] }]));
+  assert.equal(importReview(a, relevant).find(r => r.candidate_id === 'relevant').supported, false);
+  // 발행될 후보가 모두 근거를 잃으면 살릴 판정이 없으므로 실패로 둔다.
+  assert.equal(salvageCandidateEvidence(a, review([{ ...approvedS2, evidence_quotes: ['Invented.'] },
+    { ...approvedS3, evidence_quotes: ['Invented.'] }, { ...rejectedS5, evidence_quotes: [] }, { ...business, evidence_quotes: ['Invented.'] }])), null);
   // 첫 응답에서는 되묻기가 우선이다. 재시도 전에는 인용을 빼지 않는다.
   await assert.rejects(requestReview(a, '', 'key', async () => reply([approvedS2, approvedS3, rejectedS5, business])), /evidence_mismatch/);
+  // "UK-based" 의 based 는 이름이 아니다.
+  assert.deepEqual(ungroundedSummaryNames('Round - Nexeon will build a UK-based pilot facility.', [ROUND], 'Nexeon £100m round'), []);
+});
+
+// 실행 35175067142: 재시도 요청은 "후보 X 인용이 틀렸다"만 알려 줘, 중간을 건너뛴 Vestas 표 인용이 두 번째에도 틀렸다.
+test('the retry names each unmatched quote and shows the source text from where it diverged', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'retry-quotes-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const skipped = 'The National Wealth Fund’s commitment of £52.6 million marks the completion of Nexeon’s latest investment round.';
+  assert.match(nearestEvidence([ROUND.replace(/[’]/g, "'")], skipped.replace(/[’]/g, "'")), /^The National Wealth Fund's commitment of £52\.6 million marks the completion of Nexeon's latest investment round totalling/);
+  const bodies = [];
+  await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async (_, init) => { bodies.push(init.body); return reply([approvedS2, { ...approvedS3, evidence_quotes: [skipped] },
+      { ...rejectedS5, evidence_quotes: [] }, business]); } });
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1], /unmatched_quotes/);
+  assert.match(bodies[1], /totalling £100 million/);
 });
 
 test('a fresh S3 answer that calls a completed funding round completed is asked once more, and the answer is kept', async t => {
@@ -87,6 +124,32 @@ test('a fresh S3 answer that calls a completed funding round completed is asked 
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.equal(stored.decisions.find(d => d.candidate_id === 'investment:3').event_stage, 'precursor');
   assert.equal(stored.semantic_recheck.previous.find(d => d.candidate_id === 'investment:3').event_stage, 'completed');
+});
+
+// 실행 35175067142: Vestas 는 저장된 판정의 기술 연결 재검토가 두 번 실패했는데 옛 판정이 그대로 남아,
+// 실행 상태는 실패인데 보고서는 검토 완료로 셌다.
+test('a saved review whose recheck fails is kept as pending instead of silently counting as reviewed', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'cached-recheck-failed-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const { MODEL } = await import('../scripts/review_report.mjs');
+  const saved = { article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
+    decisions: [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business], summary_accuracy_version: 'summary-accuracy-v1' };
+  await fs.writeFile(path.join(reviewDir, `${a.id}.json`), JSON.stringify(saved));
+  assert.equal(cachedRecheck(a, saved).reason, 'technology_link');
+  const args = { articles: [a], reviewDir, policy: '', config, sleep: async () => {} };
+  const state = await reviewArticles({ ...args, fetchImpl: async () => new Response('{"choices":[{"finish_reason":"stop","message":{"content":"not json"}}]}') });
+  assert.deepEqual(state.failed_articles, []);
+  assert.equal(state.recheck_pending.length, 1);
+  assert.match(state.recheck_pending[0].reason, /^technology_link:/);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.deepEqual(stored.decisions, saved.decisions);
+  assert.deepEqual(stored.semantic_recheck_pending.candidate_ids.sort(), ['investment:2', 'investment:3', 'relevant']);
+  // 미완료 후보는 AI 승인으로 싣지 않는다. 다음 실행은 다시 묻는다.
+  assert.equal(importReview(a, stored).filter(r => r.supported).length, 0);
+  let calls = 0;
+  await reviewArticles({ ...args, fetchImpl: async () => { calls++; return reply([approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business]); } });
+  assert.equal(calls, 1);
 });
 
 // 3M 자료로 재현된 결함: 되묻기 응답이 실패하면 앞 응답을 저장했는데, 그 응답에 최신 재검토 버전이 찍혀 있어
@@ -174,7 +237,7 @@ test('saved business approvals that rely on a technology link are rechecked once
   const decision = { candidate_id: 'relevant', entity_supported: true, target_technology_supported: true, indicator_supported: true,
     leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass' };
   assert.equal(needsTechnologyReview(article(false), { decisions: [decision] }), true);
-  assert.equal(needsTechnologyReview(article(false), { decisions: [decision], technology_review_version: 'technology-link-v1' }), false);
+  assert.equal(needsTechnologyReview(article(false), { decisions: [decision], technology_review_version: 'technology-link-v2' }), false);
   assert.equal(needsTechnologyReview(article(true), { decisions: [decision] }), false);
   assert.equal(needsTechnologyReview(article(false), { decisions: [{ ...decision, target_technology_supported: false }] }), false);
 });
@@ -187,7 +250,8 @@ test('Korean summaries ending in plain sentences or transliterating the company 
   assert.deepEqual(summaryStyleProblems(article, decision), ['plain_sentence_ending', 'company_name_not_latin']);
   assert.deepEqual(summaryStyleProblems(article, { ...decision, summary_ko: 'Qualcomm의 자동차 부문 매출이 61% 증가했음. 연간 전망도 올렸음.' }), []);
   // 투자 시그널 표제는 명사구라 문장 끝 검사에서 뺀다.
-  assert.deepEqual(summaryStyleProblems(article, { ...decision, summary_ko: 'Qualcomm 매출 목표 상향 - 목표를 약 70억 달러로 올렸음.' }), []);
+  assert.deepEqual(summaryStyleProblems(article, { ...decision, summary_ko: 'Qualcomm 매출 목표 상향 - 목표를 약 70억 달러로 올렸음.',
+    summary_en: 'Target raised - Qualcomm raised its target to about $7 billion.' }), []);
   // 투자 시그널 문안은 회사명을 반복하지 않는 것이 규칙이다. 이름이 없다는 것만으로 음차로 보지 않는다.
   assert.deepEqual(summaryStyleProblems(article, { ...decision, summary_ko: '매출 목표 상향 - 자동차 매출 목표를 약 70억 달러로 올렸음.',
     summary_en: 'Target raised - Qualcomm raised its automotive target to about $7 billion.' }), []);
@@ -196,4 +260,133 @@ test('Korean summaries ending in plain sentences or transliterating the company 
   const review = { decisions: [decision], summary_accuracy_version: 'summary-accuracy-v1', summary_numbers_version: 'summary-numbers-v1' };
   assert.equal(needsSummaryRefresh(article, review), true);
   assert.equal(needsSummaryRefresh(article, { ...review, summary_style_version: 'summary-style-v1' }), false);
+});
+
+// 실행 35175067142: HyproMag S1 이 모회사의 인수 완료와 인수에 딸린 원료 재고를 공급망 전조로 승인했다.
+test('S1 or S4 approvals that rest on a completed acquisition are asked again', () => {
+  const article = { candidates: [{ id: 'investment:1' }] };
+  const decision = { candidate_id: 'investment:1', entity_supported: true, indicator_supported: true, event_stage: 'precursor',
+    evidence_quotes: ['the Company has completed the acquisition of the Remloy rare earth magnet recycling business'] };
+  assert.equal(acquisitionSuspects(article, [decision]).length, 1);
+  assert.equal(cachedRecheck({ candidates: article.candidates }, { decisions: [decision] }).reason, 'acquisition_event');
+  assert.equal(acquisitionSuspects(article, [{ ...decision, evidence_quotes: ['signed a new long-term feedstock supply agreement'] }]).length, 0);
+  assert.equal(acquisitionSuspects(article, [{ ...decision, candidate_id: 'investment:2' }]).length, 0);
+  // 기술 기업 소수 지분투자는 지침상 S4 사건이다(Maxon–Synapticon).
+  assert.equal(acquisitionSuspects({ candidates: [{ id: 'investment:4' }] }, [{ ...decision, candidate_id: 'investment:4',
+    evidence_quotes: ['maxon Group has acquired a strategic minority stake in Synapticon'] }]).length, 0);
+});
+
+// 같은 실행: Renishaw 한국어 문안에만 9월·10월 전시 일정이 있었다.
+test('Korean and English summaries that state different months or percentages are refreshed', () => {
+  const decision = { summary_ko: '2026년 9월 SEMICON Taiwan과 10월 SEMICON West에서 공개 예정임.', summary_en: 'It will be shown at SEMICON Taiwan and SEMICON West.' };
+  assert.deepEqual(bilingualFactProblems(decision), ['bilingual_month_mismatch']);
+  assert.deepEqual(bilingualFactProblems({ ...decision, summary_en: 'It will be shown at SEMICON Taiwan in September and SEMICON West in October.' }), []);
+  assert.deepEqual(bilingualFactProblems({ summary_ko: '매출이 26% 증가했음.', summary_en: 'Revenue rose 62 percent.' }), ['bilingual_percent_mismatch']);
+  // 같은 실행의 오역: scheme of arrangement → 멤버십 배치 방식, late-stage → 말기.
+  const article = { company: 'ASM', candidates: [{ id: 'relevant', row: {} }] };
+  assert.deepEqual(summaryStyleProblems(article, { candidate_id: 'relevant', summary_ko: 'Energy Fuels가 멤버십 배치 방식으로 인수를 완료했음.',
+    summary_en: 'Energy Fuels completed the acquisition by way of a scheme of arrangement.' }), ['mistranslated_term']);
+  assert.deepEqual(summaryStyleProblems(article, { candidate_id: 'relevant', summary_ko: 'Moderna가 말기 임상 결과를 발표했음.',
+    summary_en: 'Moderna reported late-stage trial results.' }), ['mistranslated_term']);
+  assert.deepEqual(summaryStyleProblems(article, { candidate_id: 'relevant', summary_ko: 'Moderna가 후기 단계 임상시험 결과를 발표했음.',
+    summary_en: 'Moderna reported late-stage trial results.' }), []);
+});
+
+// 같은 실행: 지시만으로는 Infineon 우주용 전력반도체와 NXP 차량용 UWB 가 RF 반도체로 다시 승인됐다.
+test('a technology scope reaches only the candidates of its group, so other article ids do not change', () => {
+  const signal = company => ({ company, target_no: 1, url: `https://example.com/${company}`, title: 'News', published_at: '2026-08-10T00:00:00Z',
+    content_text: BODY });
+  const technology = { companies: [
+    { company: 'NXP', target_no: 1, technology_group: 'satellite_radar_rf_semiconductor', target_technology: 'RF' },
+    { company: 'Nexeon', target_no: 1, technology_group: 'silicon_anode_sic', target_technology: 'anode' }] };
+  const indicators = { indicators: [] };
+  const scopes = { satellite_radar_rf_semiconductor: { excludes_en: 'automotive UWB chips' } };
+  const withScope = sourceCandidates([signal('NXP'), signal('Nexeon')], technology, indicators, period, scopes);
+  const without = sourceCandidates([signal('NXP'), signal('Nexeon')], technology, indicators, period, {});
+  const ids = c => Object.fromEntries(groupArticles(c.investment, c.relevant, period).map(a => [a.company, a]));
+  assert.deepEqual(ids(withScope).NXP.candidates[0].target_technology_scope, scopes.satellite_radar_rf_semiconductor);
+  assert.notEqual(ids(withScope).NXP.id, ids(without).NXP.id);
+  assert.equal(ids(withScope).Nexeon.id, ids(without).Nexeon.id);
+  assert.equal('target_technology_scope' in ids(withScope).Nexeon.candidates[0], false);
+});
+
+// 2차 검증: 1차 판정 모델은 그대로 두고, 규칙이 고른 의심 후보만 Gemini 검증 모델이 다시 판정한다.
+const geminiReply = ds => new Response(JSON.stringify({ candidates: [{ finishReason: 'STOP',
+  content: { parts: [{ text: JSON.stringify({ decisions: ds, published_date: '', published_date_quote: '' }) }] } }], usageMetadata: {} }));
+const verifierConfig = { ...config, verifierApiKey: 'AIzaVerifier' };
+
+test('suspicious candidates of a fresh answer go to the verifier model, and only their decisions are replaced', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-fresh-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const { VERIFIER } = await import('../scripts/review_report.mjs');
+  const a = nexeon();
+  const s5 = { ...rejectedS5, evidence_quotes: [] };
+  // 1차: S3 를 completed 로 봤고(단계 의심), 나머지는 기술 연결로 발행될 후보라 함께 검증 대상이다.
+  const primary = [approvedS2, { ...approvedS3, event_stage: 'completed', summary_ko: '', summary_en: '' }, s5, business];
+  const calls = [];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async (url, init) => {
+      calls.push({ url, body: init.body });
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      // 검증 모델은 S3 를 precursor 로 고치고, 1차가 승인한 사업동향은 구체적 사업 활동이 아니라고 본다.
+      return geminiReply([{ ...approvedS2, reason_ko: '검증: 파일럿 제조시설 계획 확인' }, approvedS3, s5,
+        { ...business, indicator_supported: false, summary_ko: '', summary_en: '' }]);
+    } });
+  assert.equal(calls.length, 2);
+  assert.match(calls[1].url, new RegExp(VERIFIER.model.replace(/\./g, '\\.')));
+  assert.equal(VERIFIER.model, 'gemini-3.8-flash');
+  const verifyBody = JSON.parse(calls[1].body);
+  assert.match(JSON.stringify(verifyBody), /Second-stage verification/);
+  assert.match(JSON.stringify(verifyBody), /verify_candidate_ids/);
+  assert.equal(state.verification.requested, 1);
+  assert.equal(state.verification.changed, 1);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.deepEqual(stored.verification.candidate_ids.sort(), ['investment:2', 'investment:3', 'relevant']);
+  assert.deepEqual(stored.verification.changed.sort(), ['investment:3', 'relevant']);
+  assert.equal(stored.verification.model, 'gemini-3.8-flash');
+  // 의심 대상이 아닌 S5 는 1차 판정 그대로다.
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:5'), s5);
+  const results = Object.fromEntries(importReview(a, stored).map(r => [r.candidate_id, r.supported]));
+  assert.deepEqual(results, { 'investment:2': true, 'investment:3': true, 'investment:5': false, relevant: false });
+  // 검증을 마친 판정은 다음 실행에서 다시 검증하지 않는다.
+  let again = 0;
+  await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async () => { again++; return reply(primary); } });
+  assert.equal(again, 0);
+});
+
+test('when the verifier fails, the suspicious candidates stay pending instead of being published as approved', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-failed-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => (String(url).includes('generativelanguage') ? new Response('', { status: 429 }) : reply(primary)) });
+  assert.equal(state.status, 'completed');
+  assert.equal(state.verification.failed, 1);
+  assert.equal(state.recheck_pending.length, 1);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.match(stored.semantic_recheck_pending.reason, /^verifier:/);
+  assert.equal(importReview(a, stored).filter(r => r.supported).length, 0);
+  // 다음 실행은 1차 판정을 다시 사지 않고 검증만 다시 시도한다.
+  const urls = [];
+  await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => { urls.push(String(url)); return geminiReply(primary); } });
+  assert.equal(urls.length, 1);
+  assert.match(urls[0], /generativelanguage/);
+  const verified = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal('semantic_recheck_pending' in verified, false);
+  assert.equal(importReview(a, verified).filter(r => r.supported).length, 3);
+});
+
+test('a verifier model the API rejects stops the run instead of quietly withholding every suspicious approval', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-config-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  for (const concurrency of [1, 2]) {
+    await assert.rejects(reviewArticles({ articles: [a], reviewDir, policy: '', config: { ...verifierConfig, concurrency }, sleep: async () => {},
+      fetchImpl: async url => (String(url).includes('generativelanguage') ? new Response('{"error":{"message":"model not found"}}', { status: 404 }) : reply(primary)) }),
+      /Verifier gemini-3\.8-flash rejected the request \(HTTP 404\)/);
+  }
 });

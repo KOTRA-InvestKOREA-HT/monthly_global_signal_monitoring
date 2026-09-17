@@ -232,8 +232,10 @@ test('Gemini needs a human free-tier confirmation that NVIDIA does not', () => {
   const env = { REPORT_PROVIDER: 'gemini', GEMINI_API_KEY: 'AIzaKey' };
   // API 가 무료 티어를 강제하지 못하므로, 확인 표시 없이는 한 번도 호출하지 않는다.
   assert.throws(() => configuration(env, GEMINI), /GEMINI_FREE_TIER_CONFIRMED=true/);
+  // 확인된 Gemini 키가 있으면 2차 검증도 같은 키로 켜진다. REVIEW_VERIFIER=off 로 끌 수 있다.
   assert.deepEqual(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI),
-    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4 });
+    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4, verifierApiKey: 'AIzaKey' });
+  assert.equal('verifierApiKey' in configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', REVIEW_VERIFIER: 'off' }, GEMINI), false);
   assert.throws(() => configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '3999' }, GEMINI), /4000\.\.60000/);
   assert.throws(() => configuration({ REPORT_PROVIDER: 'gemini', GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI), /GEMINI_API_KEY is required/);
   // 선불 크레딧인 NVIDIA 는 같은 위험이 없어 확인을 요구하지 않는다.

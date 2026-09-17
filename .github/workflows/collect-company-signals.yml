@@ -89,6 +89,9 @@ jobs:
           GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
           # 비워 두면 코드 기본값(low)을 쓴다. minimal, low, medium, high 중 하나.
           GEMINI_THINKING_LEVEL: ${{ vars.GEMINI_THINKING_LEVEL }}
+          # 2차 검증: 규칙이 고른 의심 후보만 이 모델로 다시 판정한다. 비워 두면 gemini-3.8-flash. off 로 끈다.
+          GEMINI_VERIFIER_MODEL: ${{ vars.GEMINI_VERIFIER_MODEL }}
+          REVIEW_VERIFIER: ${{ vars.REVIEW_VERIFIER }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '600' }}

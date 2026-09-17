@@ -1,0 +1,11 @@
+{
+  "description": "기술 그룹별 타겟 품목의 포함·제외 범위. 판정 모델에 후보의 target_technology_scope 로 전달된다. 범위를 바꾸면 해당 그룹 기업의 기사만 다시 판정된다.",
+  "groups": {
+    "satellite_radar_rf_semiconductor": {
+      "includes_ko": "위성통신·우주항공·방산 레이다 시스템의 RF 신호를 송수신·증폭·변환하는 반도체(RF 프런트엔드, 전력증폭기, LNA, 빔포밍·밀리미터파 칩 등)",
+      "excludes_ko": "전력 변환·전원용 전력 반도체(우주용·방사선 내성 제품 포함), 차량용 UWB·디지털 키·실내 재실 감지 칩, 우주항공 외 용도의 일반 반도체",
+      "includes_en": "Semiconductors that transmit, receive, amplify or convert RF signals in satellite communication, aerospace or defence radar systems (RF front ends, power amplifiers, LNAs, beamforming and mmWave chips)",
+      "excludes_en": "Power semiconductors for power conversion or supply, including space-grade or radiation-hardened ones; automotive UWB, digital key and in-cabin presence chips; general semiconductors for non-aerospace uses"
+    }
+  }
+}

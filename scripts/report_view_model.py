@@ -175,7 +175,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
     }
 
 
-SCOPE_REASONS = ("collection_incomplete", "review_failed", "date_pending", "date_deferred", "needs_review", "no_body")
+SCOPE_REASONS = ("collection_incomplete", "review_failed", "recheck_pending", "date_pending", "date_deferred", "needs_review", "no_body")
 
 
 def scope_entries(profiles, signal_index, summary, counts):

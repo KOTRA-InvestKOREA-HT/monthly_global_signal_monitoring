@@ -3,6 +3,7 @@
 // This script never calls a model API or changes outputs/latest_*.
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -13,6 +14,12 @@ import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDa
 import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// 기술 그룹별로 무엇이 타겟 품목이고 무엇이 아닌지 적은 범위. 기술 매핑(company_technology_map.json)과 따로 두는 것은
+// 매핑을 바꾸면 정책 식별자가 바뀌어 전체 기사가 다시 판정되기 때문이다. 범위가 붙은 기사만 ID 가 바뀌어 다시 판정된다.
+export const TECHNOLOGY_SCOPES = (() => {
+  try { return JSON.parse(readFileSync(path.join(ROOT, "config/technology_scope.json"), "utf8")).groups || {}; }
+  catch (error) { if (error.code === "ENOENT") return {}; throw error; }
+})();
 const POLICY_VERSION = "local-report-v3";
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 // Compare typographic equivalents only; preserve words, numbers and block boundaries.
@@ -55,8 +62,10 @@ export function normalizeQuote(value) {
 // 그래서 시그널 문안이 인용문에 없는 제3자를 새로 불러오지 못하게 한다. 이름의 표기 차이
 // ("Volkswagen's PowerCo" 대 "Volkswagen Group-owned PowerCo")로 막히면 안 되므로,
 // 구절 전체가 아니라 이름을 이루는 낱말 단위로 대조한다.
+// "UK-based", "Germany-based" 의 based 는 이름이 아니다. 실행 35175067142 에서 Nexeon S3 요약의 "UK-based" 가
+// 이 검사에 걸려 1억 파운드 조달 기사 전체가 저장되지 않았다(국가 표기 UK 는 두 글자라 원래 검사하지 않는다).
 const NAME_STOPWORDS = new Set(["the", "and", "for", "with", "from", "group", "inc", "corp",
-  "ltd", "llc", "gmbh", "plc", "company", "technologies", "holdings", "limited"]);
+  "ltd", "llc", "gmbh", "plc", "company", "technologies", "holdings", "limited", "based"]);
 
 // 모델이 붙이는 " - " 앞 머리글은 항목에 이름을 붙이는 말이지 제3자에 대한 주장이 아니다.
 const summaryBody = (text) => {
@@ -238,6 +247,8 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
         id: kind === "investment" ? `investment:${row.investment_signal_no}` : "relevant",
         kind,
         target_technology: row.target_technology || "",
+        // 범위가 없는 기사는 필드 자체를 넣지 않는다. 빈 필드를 넣으면 모든 기사 ID 가 바뀐다.
+        ...(row.target_technology_scope ? { target_technology_scope: row.target_technology_scope } : {}),
         relevance_exempt: row.excluded_from_relevance === true || row.technology_gate_decision === "relevance_exempt",
         indicator: row.investment_signal_label || "품목 연계 사업동향",
         description: row.investment_signal_description || "타겟 품목·기술과 직접 연계된 사업 활동",
@@ -261,7 +272,7 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
 }
 
 // Every in-month source reaches the agent, including keyword/technology filter misses.
-export function sourceCandidates(signals, technology, indicators, period) {
+export function sourceCandidates(signals, technology, indicators, period, scopes = TECHNOLOGY_SCOPES) {
   const investment = [], relevant = [], seen = new Set(), deferred = [];
   for (const signal of signals) {
     const placement = reviewCandidate(signal, period);
@@ -275,7 +286,9 @@ export function sourceCandidates(signals, technology, indicators, period) {
     seen.add(key);
     const tech = technology.companies.find((item) => item.company === signal.company && item.target_no === signal.target_no);
     if (!tech) throw new Error(`Missing target technology: ${signal.company}`);
+    const scope = scopes[tech.technology_group];
     const row = { ...withoutAI(signal), ...tech, company: signal.company,
+      ...(scope ? { target_technology_scope: scope } : {}),
       technology_gate_decision: tech.excluded_from_relevance ? "relevance_exempt" : "agent_review",
       candidate_origin: "all_month_sources",
       date_status: placement.state.status, date_placement: placement.placement, date_note: placement.reason };
@@ -349,6 +362,17 @@ export function decisionForApproval(article, decisions, decision) {
 
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
+// 인용·문안 검증과 무관한 판정 결과. 승인 여부와 사람 검토 사유만 본다.
+export function decisionOutcome(article, decisions, decision) {
+  const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
+  if (!candidate) return { supported: false, gaps: null };
+  const gated = decisionForApproval(article, decisions, decision);
+  const supported = Boolean(gated) && gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
+    gated.indicator_supported && gated.leading_indicator_supported && gated.quality === "pass" &&
+    (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no));
+  return { supported, gaps: supported || !gated ? null : humanReviewGaps(candidate, gated), gated };
+}
+
 export function importReview(article, review, { strictNumbers = false } = {}) {
   if (review.article_id !== article.id) throw new Error(`${article.company}: stale or mismatched article_id`);
   if (!clean(review.reviewer)) throw new Error(`${article.company}: reviewer is required`);
@@ -404,42 +428,41 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     const noInvestmentEvent = candidate.kind === "investment" &&
       decision.event_stage === "not_applicable" && !approvableExceptStage;
     if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
-    const gated = decisionForApproval(article, review.decisions, decision);
-    const supported = Boolean(gated) && gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
-      gated.indicator_supported && gated.leading_indicator_supported && gated.quality === "pass" &&
-      (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row.investment_signal_no));
+    const { supported, gaps, gated } = decisionOutcome(article, review.decisions, decision);
+    // 재검토를 끝내지 못한 후보. 의심 판정을 AI 승인으로 발행하지 않는다. 투자 후보는 "재검토 미완료" 사유를 붙여
+    // 사람 검토로만 싣고, 사업동향은 사람 검토 단계가 없으므로 싣지 않는다. 다음 실행이 이 기사를 다시 판정한다.
+    // 인용이 원문과 맞지 않아 뺀 후보도 여기에 들어오므로, 인용 없는 승인·문안 근거 검사는 이 후보에 걸지 않는다.
+    const recheckPending = (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) &&
+      (supported || gaps?.length > 0);
     const quotes = decision.evidence_quotes;
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
       throw new Error(`${context}: evidence_quotes must be exact passages from this article`);
     }
-    if (supported && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
+    if (supported && !recheckPending && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
     // 다섯 지표 칸에만 건다. 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이
     // 인용문 밖에서 나오는 것이 정상이고, 같은 기준을 대면 근거 있는 요약까지 막힌다.
-    if (supported && candidate.kind === "investment") {
+    if (supported && !recheckPending && candidate.kind === "investment") {
       const ungrounded = ungroundedSummaryNames(decision.summary_en, quotes, article.title);
       if (ungrounded.length) {
         throw new Error(`${context}: summary names ${ungrounded.join(", ")} without an evidence quote. ` +
           `Quote the passage the summary describes, or summarize only the quoted event.`);
       }
     }
-    const gaps = supported || !gated ? null : humanReviewGaps(candidate, gated);
-    // 재검토 규칙에 걸려 되물었지만 답을 받지 못한 후보. 의심 판정을 AI 승인으로 발행하지 않는다. 승인이나 사람 검토로
-    // 실릴 판정이었다면 "재검토 미완료" 사유를 붙여 사람 검토로만 싣는다. 다음 실행이 이 기사를 다시 판정한다.
-    const recheckPending = candidate.kind === "investment" &&
-      (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) && (supported || gaps?.length > 0);
-    const reviewGaps = recheckPending ? [...(gaps || []), "semantic_recheck"] : gaps?.length ? gaps : null;
+    const reviewGaps = recheckPending
+      ? (candidate.kind === "investment" ? [...(gaps || []), "semantic_recheck"] : null)
+      : gaps?.length ? gaps : null;
     const humanReview = Boolean(reviewGaps);
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
     // 막히지 않는다(옛 판정은 review_report 의 요약 새로고침이 한 번 다시 받는다).
-    if (strictNumbers && (supported || humanReview)) {
+    if (strictNumbers && ((supported && !recheckPending) || humanReview)) {
       const numbers = decisionNumberProblems(article, decision);
       if (numbers.length) throw new Error(`${context}: summary numbers ${numbers.join(", ")} are not stated in this article`);
     }
     // 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 검토 후보의 문안은 그 검사를 받지 않았으므로
     // 같은 결함이 있으면 문안만 비우고 후보는 남긴다.
-    const groundedSummary = supported || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
+    const groundedSummary = (supported && !recheckPending) || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
     let row = null;
-    if (supported || humanReview) {
+    if ((supported && !recheckPending) || humanReview) {
       row = {
         ...candidate.row,
         ai_signal_supported: supported && !recheckPending,
@@ -660,6 +683,8 @@ export function articleCoverageGap(article, review, published = false) {
   // 보고서까지 판정 없이 온 기사는 재시도해도 인용 검증을 통과하지 못한 것뿐이다(build 의 reviewFailed).
   // 읽어 보지 못했으니 신호가 없다고 할 수 없다.
   if (!review) return 'review_failed';
+  // 재검토를 끝내지 못한 판정은 신호 유무를 확정하지 못한 것이다.
+  if (review.semantic_recheck_pending) return 'recheck_pending';
   const decisions = review.decisions || [];
   if (decisions.some((decision) => decision.quality === 'needs_review')) return 'needs_review';
   if (!article.candidates.some((candidate) => hasArticleBody(candidate.row)) &&
@@ -757,7 +782,8 @@ export async function build(args) {
       // 원문 기준 재판정(판정 실패·오판정)과 문안만 고친 수정은 따로 센다.
       adjudicated_articles: reviews.filter((review) => review.adjudication && review.adjudication.kind !== "wording").length,
       wording_fixed_articles: reviews.filter((review) => review.adjudication?.kind === "wording").length,
-      recheck_pending_candidates: investment.filter((row) => (row.ai_review_gaps || []).includes("semantic_recheck")).length,
+      // 실행 상태의 recheck_pending 과 같은 단위(후보 수)로 센다. 사업동향 후보는 PDF 에 없으므로 행으로는 셀 수 없다.
+      recheck_pending_candidates: reviews.reduce((n, review) => n + (review.semantic_recheck_pending?.candidate_ids?.length || 0), 0),
       date_pending_investment_rows: datePending(investment).length,
       date_pending_business_rows: datePending(relevant).length,
       deferred_articles: deferred.length,
