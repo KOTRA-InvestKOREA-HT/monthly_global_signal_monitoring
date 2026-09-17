@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
+import fs from 'node:fs';
+import { buildQuery, judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { isBoilerplateLink, isPersonOrCoveragePage, looksLikeSourceIndexUrl } from '../scripts/link_policy.mjs';
 import { collectionBlockingErrors, enrichOfficialRowsWithContent } from '../scripts/collect_company_signals.mjs';
 
@@ -115,4 +116,14 @@ test('an undated file the collector cannot open is dropped, a dated one stays', 
     { ...base, title: 'Production report', url: 'https://www.example.com/files/2026-08-12-production-report.xlsx' },
   ], args, '2026-09-01T00:00:00Z', { company: 'Merck' });
   assert.deepEqual(rows.map((row) => row.url), ['https://www.example.com/files/2026-08-12-production-report.xlsx']);
+});
+
+// 2026-08 보고서: 'Prodrive' 단독 검색이 영국 모터스포츠 Prodrive 의 JCB 기사를 네덜란드 타겟에 실었다.
+test('a company with declared search names is searched by those names only, not its short display name', () => {
+  const targets = JSON.parse(fs.readFileSync('data/target_companies.json', 'utf8'));
+  const prodrive = targets.find(company => company.company === 'Prodrive');
+  const query = buildQuery(prodrive, 31);
+  assert.match(query, /^"Prodrive Technologies" \(/);
+  assert.doesNotMatch(query, /"Prodrive"/);
+  assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, 31), /^\("Ouster" OR "Ouster Inc"\)/);
 });

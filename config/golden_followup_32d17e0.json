@@ -1,0 +1,38 @@
+{
+  "month": "2026-08",
+  "source": "docs/claude_followup_32d17e0.md 완료 기준",
+  "articles": [
+    {
+      "company": "Prodrive",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPbEwwV081N0FrVDNOdjJMb296dUUtSnc3SHpKbjdtM2Vhb0RrNExfbHNEM2QzNlV0a0F1bkQ0OW95Z0VaVDNKUUVBLVVKbVJ0cGhubEJOTEd5TURWdmtHLW1Dc2gyZk5ORmhuR0twTFVrdlRFdlZZTTlyNWdHcnBHQk5sWXBRdGhGZm4ycGtKalNWVzNmeFptZW5DODloUGdI?oc=5",
+      "expect": "negative",
+      "note": "영국 Banbury Prodrive의 JCB 기록 도전 — 네덜란드 Prodrive Technologies 귀속 불가, R/S1~S5 전부 탈락"
+    },
+    {
+      "company": "Schott Pharma",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNMHpMelJlLVV6QXlwOVdNTi15b1lvdlozMzBnOThWTkFsbE9wcXQwLXN4ZnBkcUZReFRfWlBnN0p3Smk0cmhtbTRfc2toS0NQbHlOOC1ORllaOHNEcWhkY0FoWlNiQ2VPMDlMRFFuOEpqVEVxcDFtU3NORncyTnNGQnhBcERjRlpKcm5mTWpGX2RlT0l6OUppbHBZb0tFaWc?oc=5",
+      "expect": "negative",
+      "note": "SBTi 기후 목표 인증만 있음 — 의약품 제조기술 사업동향 승인 금지"
+    },
+    {
+      "company": "Chemours",
+      "url": "https://investors.chemours.com/news-releases/news-release-details/chemours-publishes-2025-sustainability-report-highlighting",
+      "expect": "unknown",
+      "note": "ESG 보고서 대조군 — 문서 종류만으로 탈락시키지 않고 FOC 공정 배출 저감·Opteon 채택 등 구체 활동을 독립 판단"
+    },
+    {
+      "company": "Applied Materials",
+      "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip",
+      "expect": "positive",
+      "baseline_article_id": "d44c9c800f8fb06a55fc9701",
+      "note": "Applied–UC Berkeley — R 유지, S4 precursor"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "expect": "unknown",
+      "baseline_article_id": "ca32ab44533e46fb169d76ae",
+      "note": "Ouster–GUSS — R 유지; 제품 채택·통합만으로 S4 승인 금지, 별도 공동개발 근거 필요"
+    }
+  ]
+}

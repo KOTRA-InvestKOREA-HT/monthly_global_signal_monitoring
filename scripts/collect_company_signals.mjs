@@ -828,7 +828,7 @@ function relevantAliases(company) {
   return [...new Map(names.map((name) => [name.toLowerCase(), name])).values()].slice(0, 3);
 }
 
-function buildQuery(company, days) {
+export function buildQuery(company, days) {
   const names = relevantAliases(company);
   let nameClause = names.map((name) => `"${name}"`).join(" OR ");
   if (names.length > 1) nameClause = `(${nameClause})`;
