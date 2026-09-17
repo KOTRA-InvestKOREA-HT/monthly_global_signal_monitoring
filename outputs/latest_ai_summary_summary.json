@@ -1,302 +1,285 @@
 {
   "status": "completed_with_review_failures",
   "reason": "invalid_responses",
-  "requests": 22,
-  "cached": 312,
-  "completed": 362,
+  "requests": 36,
+  "cached": 329,
+  "completed": 363,
   "total": 364,
   "date_hints": 0,
   "failed_articles": [
     {
-      "article_id": "a02a239ca2b6bb4a409a4103",
-      "reason": "evidence_mismatch"
-    },
-    {
-      "article_id": "c2f5c757eab28908e6515374",
+      "article_id": "5a36fa5108d15dd7d119ed85",
       "reason": "evidence_mismatch"
     }
   ],
   "diagnostics": [
     {
-      "article_id": "a02a239ca2b6bb4a409a4103",
+      "article_id": "5a36fa5108d15dd7d119ed85",
       "attempt": 1,
-      "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/6fc66f46-e921-454d-9c1e-a20889e5cc71-attempt-1.json"
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/5a36fa5108d15dd7d119ed85/ecf98f36-bb41-49ab-8b3a-86ba7d17f4e3-attempt-1.json"
     },
     {
-      "article_id": "a02a239ca2b6bb4a409a4103",
+      "article_id": "5a36fa5108d15dd7d119ed85",
       "attempt": 2,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/f95fe690-b981-4d82-a976-8ef4ec47468e-attempt-2.json"
-    },
-    {
-      "article_id": "c2f5c757eab28908e6515374",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/223592eb-0667-4c1a-ae2c-8419ceb42224-attempt-1.json"
-    },
-    {
-      "article_id": "c2f5c757eab28908e6515374",
-      "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/f4e3d079-b1bc-4de5-8bd7-e55850521ea6-attempt-2.json"
+      "file": "reviews/diagnostics/5a36fa5108d15dd7d119ed85/e0e81d0a-0583-47d0-bcd4-80e582d5f2d8-attempt-2.json"
     }
   ],
   "concurrency": 4,
   "quote_removals": [],
   "recheck_pending": [
     {
-      "article_id": "ae55f545a376db882a62ca66",
-      "candidate_ids": [
-        "investment:1",
-        "relevant"
-      ],
-      "reason": "verifier:503"
-    },
-    {
-      "article_id": "978af39518d19cbf2868939a",
+      "article_id": "71d2166ebf62482c16fbe52e",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier:error"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "8d6959be1cc4b2b3d6ce9c50",
+      "article_id": "00d7fa11fd8d1222bde069a9",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "02734e904b0832801764cc19",
+      "article_id": "d0adf1bf18cbfae8ac3ab2d7",
+      "candidate_ids": [
+        "investment:5",
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "f48ff2b8cba4f93e64f6dec9",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "6a36fdb5099a8264d067330c",
+      "article_id": "4b8856267676b6ea91d733f1",
       "candidate_ids": [
         "investment:4",
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "5a07fabe369c8080df8e6f0d",
+      "article_id": "603240e805e5258564bb0c64",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "7bbcfbfcc8fca19098658a1a",
+      "article_id": "c59af946e87a4ec744d8ba08",
+      "candidate_ids": [
+        "investment:4"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "8c985f991f9df7f22a6cd0b7",
       "candidate_ids": [
         "investment:4",
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "6aadaa90edd4ce73bc9fd548",
+      "article_id": "d6f7a74e69bfbb72e735e9d0",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "77d7c9a7faefc8455c4b79d4",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "026a9660e33f8351263189a8",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "d4c93c9a8457c7e09a7ec72c",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "ee57660720d13e8a13b51943",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "bae8b2275930394fd96891a2",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "27186feff58111c990b345e8",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "ccdfa39bb2d2aa0cfa67cea6",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "aa65c24dc99ded80fbfcfae0",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "6d7017133c1a203542476c9b",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "b2f983fe825417e6948fc286",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "d7b063a5473e7577d0046941",
-      "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "436856f5d9879292f2143b93",
+      "article_id": "1105e08043c0bbb7999d4faf",
       "candidate_ids": [
         "investment:4",
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "71d7341cd043fa9e6433bd38",
+      "article_id": "fafa5038d0bd0895d3c78cee",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "3f6cb9741b942102370b1713",
+      "article_id": "80cb5d530ea4cd0f09cce27e",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "b6e6d8cc9e55a874665f4c06",
+      "article_id": "d39bc946fd92b0a28638cf2c",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "4d8f3b6d25a573877926ceba",
+      "article_id": "ba671c03e4aa601d013965ee",
       "candidate_ids": [
-        "relevant"
-      ],
-      "reason": "verifier_unavailable"
-    },
-    {
-      "article_id": "f339eb0a85d7d0d8dbd194e7",
-      "candidate_ids": [
-        "investment:2",
         "investment:3",
         "investment:4",
+        "investment:2",
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "d4ff24a5f10eaa1b16d4fea9",
+      "article_id": "92846058d01e16e750e3ede8",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "9493adc2af3df4f858b29a4f",
+      "article_id": "3f01f733c32bcdf42ff51992",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "3a82fd3abf18c5c0614150c5",
+      "article_id": "e7e389164504934d28cd6090",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "706d67b05c46356921e02d3a",
+      "article_id": "69df7353e811ed77346c8249",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "a879b7c160b83d9a96df94e1",
+      "article_id": "9fe0b7f0823de8c0cd8dfe7e",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "6f0ea5fbaa9000684dc932a2",
+      "article_id": "563d172ef7cf8dcd6c9fa951",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "f4997f8960ac3a49be107e6a",
+      "article_id": "fb98177bf5ff7094c7ece6a6",
+      "candidate_ids": [
+        "investment:4",
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "2bbf65780b0edc1501e99163",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "3d709be04b752dad82ddb47e",
+      "article_id": "5bce5c879db87853354321f2",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "bf8c86fce3c61b5c6c1e8b15",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "d7043dc0304a4795b771c9ea",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "2e66c3eb9cd3230b63692433",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "c7fab24a32dafee752abc009",
       "candidate_ids": [
         "investment:2",
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
     },
     {
-      "article_id": "5b07cc9eb5ec3b9f552ccfa5",
+      "article_id": "198147765deffeba8c6a025a",
       "candidate_ids": [
         "relevant"
       ],
-      "reason": "verifier_unavailable"
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "2cbc9e37c3df73b5f40510af",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "c973e165ea4fee10588a8f60",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "1ae994c65f6e651d1b1e6f16",
+      "candidate_ids": [
+        "investment:2",
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "fab3e9a585fa29bb8d7fcaad",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
+    },
+    {
+      "article_id": "d65c35b14b9cb9184e0100a9",
+      "candidate_ids": [
+        "investment:5",
+        "relevant"
+      ],
+      "reason": "verifier:review_validation"
     }
   ],
   "verification": {
-    "model": "gemini-3.8-flash",
-    "requested": 2,
+    "model": "gemini-3.5-flash-lite",
+    "requested": 33,
     "changed": 0,
-    "failed": 2
+    "failed": 33,
+    "errors": {
+      "review_validation": 33
+    }
   },
   "period": {
     "from_date": "2026-08-01",
