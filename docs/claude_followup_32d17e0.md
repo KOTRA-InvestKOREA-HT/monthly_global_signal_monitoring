@@ -81,3 +81,26 @@
 - 상세 보고서 검토: `docs/report_review_latest_2026-09-15.md`
 - 검토 대상 커밋: `32d17e0ea06b1f8caf62430a8c41d1f13177c33c`
 - Codex 확인: 관련 테스트 40개 통과. 실제 모델 재판정은 미실행.
+
+## 진행 결과 (2026-09-17)
+
+49cafd7(퇴근 커밋)에 1~3항의 코드·지시·문서 수정이 이미 들어 있었다. 이어서 확인·보완한 내용은 다음과 같다.
+
+| 항목 | 상태 | 확인 방법 |
+|---|---|---|
+| 1. 보고 기간 입력·캐시 | 완료 | `groupArticles()`가 `reporting_period`를 기사에 넣고, 모델 요청은 기사 JSON 전체를 보낸다. 운영(`review_report.mjs`)·로컬(`local_report.mjs prepare`)·골든(`golden_review.mjs`)이 같은 `sourceCandidates`→`groupArticles` 경로를 쓴다. 저장된 2026-08 수집 372기사를 다시 준비하면 ID가 모두 같고, 같은 자료를 2026-09로 준비하면 겹치는 ID가 0개다. |
+| 1. 날짜 보강과 캐시 | 확인 | 날짜 필드가 ID에 들어가 재수집으로 게시일이 바뀌면 재판정한다. 모델의 게시일 제안은 `estimated` 힌트로만 저장되고 기사 날짜를 바꾸지 않으므로 재판정이 반복되지 않는다. |
+| 2. 사업동향 제외 범위 | 지시·문서 수정 완료, 모델 검증 미실행 | 시스템 지시와 `docs/local_report_review.md`가 '구체 활동 없이 목표·보고·주가·소개만 있을 때'로 한정한다. |
+| 3. Prodrive 식별 | 완료 | `target_identity`가 기술 매핑에서 행으로 합쳐져 요청과 정책 해시에 들어간다. 검색은 `search_names`로 `"Prodrive Technologies"`만 쓴다(테스트 추가). 저장된 prodrive.com JCB 기사 3건은 모델이 모든 필드를 true로 줬다고 가정해도 승인·사람 검토 모두 false다. |
+| 4. Ouster–GUSS 골든 메모 | 완료 | R 유지, 제품 채택만으로 S4 금지. |
+
+### 실제 모델 재판정
+
+로컬에 API 키가 없어 실행하지 못했다. 테스트 통과는 모델 정확도 검증이 아니다.
+대표 기사 5건을 `config/golden_followup_32d17e0.json`에 묶었다(Prodrive JCB, Schott SBTi, Chemours ESG 보고서 대조군, Applied–UC Berkeley, Ouster–GUSS). 로컬 2026-08 수집에 모두 있으며 계획 단계(요청 5회, 최대 10회)까지 확인했다.
+
+```
+node scripts/golden_review.mjs --golden config/golden_followup_32d17e0.json --data-dir outputs --out-dir <골든 출력 폴더> --run
+```
+
+Air Products–Yara, Air Liquide 현대·포스코 기사는 로컬 수집에 없어 포함하지 못했다. 해당 실행 아티팩트의 수집 폴더를 `--data-dir`로 주고 항목을 추가해야 한다.

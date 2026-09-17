@@ -18,3 +18,4 @@ tests/__pycache__/
 outputs/link_audit/
 .cache/
 outputs/link_trial/
+outputs/**/pythonlibs/
