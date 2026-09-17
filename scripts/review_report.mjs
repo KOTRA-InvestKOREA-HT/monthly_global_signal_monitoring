@@ -18,7 +18,7 @@ import { resolveReportPeriod } from './report_period.mjs';
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 export const VERIFIER = resolveVerifier();
-const VERIFICATION_VERSION = 'verifier-v1';
+const VERIFICATION_VERSION = 'verifier-v2';
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
   // 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다(build_pdf_report.signal_needs_human_review).
@@ -109,20 +109,38 @@ export function needsAcquisitionReview(article, review) {
 
 // 2차 검증에 보낼 의심 후보와 사유. 재검토 규칙에 걸린 후보, 면제가 아닌데 기술 연결로 발행될 후보, 지난번 확인을
 // 끝내지 못한 후보다. 기술 연결은 실행 35167466191·35175067142 에서 가장 자주 반복된 오판이라 발행 전에 늘 검증한다.
+// 검증 질문. 1차 답을 보여 주지 않는 대신, 규칙이 걸린 이유를 모델이 근거로 먼저 답해야 하는 질문으로 준다.
+// 저장된 판정의 재검토 사유 코드(cachedRecheck)도 같은 질문으로 바꿔 보낸다.
+export const VERIFY_QUESTIONS = {
+  candidate_event_stage: 'What is this candidate\'s own event (for example a funding round, an agreement, an appointment or a study)? ' +
+    'Is that event itself the final investment, such as a plant built or a deal closed, or an intermediate step toward one? ' +
+    'Only the final investment itself is committed or completed; an intermediate step is precursor.',
+  facility_stage: 'Has the company already decided, contracted or started building the quoted facility? ' +
+    'A decided or contracted facility with a future start-up date is committed, not planned.',
+  funding_event: 'Does the quoted financing raise new money for a stated use, or does it replace, renew, amend or extend an existing ' +
+    'facility? Refinancing an existing facility is not an S3 event.',
+  acquisition_event: 'Does the approval rest on an acquisition that is already completed, or on sites, inventory or assets that came ' +
+    'with it? A completed acquisition is not an S1 or S4 precursor; only a separate minority stake or a separate collaboration can count.',
+  technology_link: 'Name the specific product, service or activity this event is about. Is that product itself within target_technology, ' +
+    'and within target_technology_scope includes rather than its excludes? Activity in a different business of the company does not link.',
+  form3_personnel_event: 'Does the filing itself announce a new appointment, or does it only report an officer\'s ownership status? ' +
+    'A Form 3 alone is not a personnel signal.',
+  semantic_recheck_pending: 'The previous check did not complete. Judge this candidate from scratch against every criterion.',
+};
 export function verificationSuspects(article, review) {
   const reasons = new Map();
-  const add = (id, reason) => reasons.set(id, [...(reasons.get(id) || []), reason]);
-  for (const d of stageSuspects(article, review.decisions)) add(d.candidate_id, `event_stage=${d.event_stage} for an intermediate activity; completed/committed is only for the final investment itself`);
-  for (const d of facilityStageSuspects(article, review.decisions)) add(d.candidate_id, 'S2 planned although the quoted facility investment may already be decided or contracted');
-  for (const d of fundingSuspects(article, review.decisions)) add(d.candidate_id, 'S3 evidence mentions replacing, renewing, amending or refinancing existing funding');
-  for (const d of acquisitionSuspects(article, review.decisions)) add(d.candidate_id, 'approval rests on a completed acquisition');
+  const add = (id, reason) => reasons.set(id, [...new Set([...(reasons.get(id) || []), VERIFY_QUESTIONS[reason] || reason])]);
+  for (const d of stageSuspects(article, review.decisions)) add(d.candidate_id, 'candidate_event_stage');
+  for (const d of facilityStageSuspects(article, review.decisions)) add(d.candidate_id, 'facility_stage');
+  for (const d of fundingSuspects(article, review.decisions)) add(d.candidate_id, 'funding_event');
+  for (const d of acquisitionSuspects(article, review.decisions)) add(d.candidate_id, 'acquisition_event');
   for (const d of review.decisions) {
     const candidate = article.candidates.find(c => c.id === d.candidate_id);
     if (d.target_technology_supported && candidate && !candidate.relevance_exempt && publishedDecision(article, review.decisions, d)) {
-      add(d.candidate_id, 'published on a target-technology link; check the event product against target_technology and target_technology_scope');
+      add(d.candidate_id, 'technology_link');
     }
   }
-  for (const id of review.semantic_recheck_pending?.candidate_ids || []) add(id, `previous check did not complete (${review.semantic_recheck_pending.reason})`);
+  for (const id of review.semantic_recheck_pending?.candidate_ids || []) add(id, 'semantic_recheck_pending');
   if (!reasons.size) return null;
   return { candidate_ids: [...reasons.keys()], flagged_because: Object.fromEntries(reasons) };
 }
@@ -821,8 +839,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       verifications.requested++;
       try {
         const checked = await requestReview(article, policy, config.verifierApiKey, verifierFetchImpl,
-          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, flagged_because: suspects.flagged_because,
-            primary_decisions: primary.decisions }, VERIFIER);
+          // 1차 답(primary_decisions)은 보내지 않는다. 같은 모델이 자기 답을 보면 그대로 따라간다.
+          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because }, VERIFIER);
         const merged = mergeVerification(article, primary, checked, suspects);
         importReview(article, merged);
         if (merged.verification.changed.length) verifications.changed++;
@@ -941,7 +959,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         const suspects = verificationSuspects(article, review) || { candidate_ids: [], flagged_because: {} };
         for (const id of recheck.candidate_ids) {
           if (!suspects.candidate_ids.includes(id)) suspects.candidate_ids.push(id);
-          suspects.flagged_because[id] = [...(suspects.flagged_because[id] || []), recheck.reason];
+          suspects.flagged_because[id] = [...new Set([...(suspects.flagged_because[id] || []), VERIFY_QUESTIONS[recheck.reason] || recheck.reason])];
         }
         const checked = await verify(article, review, suspects);
         await write(file, checked);

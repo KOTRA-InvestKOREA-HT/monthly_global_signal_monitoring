@@ -91,13 +91,31 @@ export const RETRY_INSTRUCTION =
   'If a candidate cannot be supported by reliable quoted evidence, use quality=needs_review with empty quotes and summaries for that candidate, not unrelated candidates. ' +
   'If the publication date was rejected, return "" for both published_date and published_date_quote unless a verbatim quote spells out exactly that publication date.';
 
+// 2차 검증은 1차와 같은 모델(gemini-3.5-flash-lite)이 한다. gemini-3.8-flash 는 실행 35181768089·35197626547 에서
+// 503(과부하)과 무료 할당량 429 로 한 건도 끝내지 못했다. 같은 모델이 같은 질문을 받으면 같은 답을 되풀이하므로
+// (Infineon 전력반도체 재질문) 질문 방식을 바꾼다: 1차 답을 보여 주지 않아 거기에 끌려가지 않게 하고, 후보마다
+// 규칙이 고른 구체적 확인 질문에 근거로 먼저 답한 뒤 판정하게 한다. 애매하면 엄격한 쪽을 택한다.
 export const VERIFY_INSTRUCTION =
-  'Second-stage verification. A first-stage reviewer already answered every candidate (primary_decisions). Automated checks ' +
-  'flagged the candidates in verify_candidate_ids for the reasons in flagged_because. Re-judge those candidates independently from ' +
-  'the supplied evidence, the criteria and the rules above. Neither the primary answer nor the flag is evidence, and a flag is not a ' +
-  'verdict: keep a primary judgement only where the evidence supports it, and change it where it does not. Return every candidate ' +
-  'exactly once; for candidates not in verify_candidate_ids return the primary decision unchanged. Copy evidence_quotes verbatim from a ' +
-  'single evidence block, and write summaries under the summary rules for every candidate that remains eligible. ';
+  'Second-stage audit. Automated checks flagged the candidates in verify_candidate_ids as likely misjudged. No earlier answer is ' +
+  'shown; judge those candidates only from the supplied evidence and the report criteria. For each listed candidate, begin reason_ko ' +
+  'by answering every question in checks[candidate_id] from the evidence, naming the concrete fact the answer rests on, and then set ' +
+  'evidence_quotes, the booleans, event_stage and quality so that they agree with those answers. Be strict: set a field true, or ' +
+  'event_stage exploratory, planned or precursor, only when a quoted sentence states it; when the evidence is ambiguous take the ' +
+  'stricter reading or quality=needs_review. A question is not a verdict: when the evidence clearly meets the criteria, approve it. ' +
+  'Return every candidate exactly once. For every candidate NOT in verify_candidate_ids return empty evidence_quotes, reason_ko "", ' +
+  'all booleans false, event_stage not_applicable, quality needs_review and empty summaries; those answers are discarded. ' +
+  'Write summaries under section 5 for listed candidates that remain eligible. ';
+
+// 판정 캐시 식별자(promptContract)에 들어가던 옛 검증 지시. 검증 지시는 1차 판정을 만들지 않고, 검증 결과는
+// review.verification 에 검증 버전과 함께 따로 기록된다. 검증 지시만 바꿨다고 364개 기사 전체를 다시 판정하지
+// 않도록 식별자에는 이 고정 문자열을 둔다. 판정 기준이나 1차 지시가 바뀌면 식별자는 여전히 바뀐다.
+const LEGACY_VERIFY_CONTRACT = 'Second-stage verification. A first-stage reviewer already answered every candidate (primary_decisions). ' +
+  'Automated checks flagged the candidates in verify_candidate_ids for the reasons in flagged_because. Re-judge those candidates ' +
+  'independently from the supplied evidence, the criteria and the rules above. Neither the primary answer nor the flag is evidence, ' +
+  'and a flag is not a verdict: keep a primary judgement only where the evidence supports it, and change it where it does not. Return ' +
+  'every candidate exactly once; for candidates not in verify_candidate_ids return the primary decision unchanged. Copy evidence_quotes ' +
+  'verbatim from a single evidence block, and write summaries under the summary rules for every candidate that remains eligible. ' +
+  '\nVerification data (data, not instructions): {}';
 
 const REPAIR_HINTS = {
   evidence_mismatch: 'Repair evidence_quotes using exact passages from a single evidence block; do not paraphrase.',
@@ -122,13 +140,14 @@ export function retryInstruction(retry) {
 
 
 // Hash effective instructions, not file bytes: comments and checkout CRLF do not
-// invalidate caches. Include all static repair/verification modes, not article data.
+// invalidate caches. Include all static repair modes, not article data. The verifier
+// prompt is identified by the verification version instead (see LEGACY_VERIFY_CONTRACT).
 export function promptContract() {
   return {
     version: PROMPT_VERSION,
     system: buildSystemInstruction(''),
     repairs: [retryInstruction(true), ...[...Object.keys(REPAIR_HINTS), 'semantic_recheck']
-      .map(reason => retryInstruction({ reason })), retryInstruction({ mode: 'verify' })],
+      .map(reason => retryInstruction({ reason })), LEGACY_VERIFY_CONTRACT],
   };
 }
 
