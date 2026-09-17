@@ -94,7 +94,7 @@ test('a cached review gains a date hint once without re-deciding the article', a
   // 날짜 스키마 이전에 저장된 판정: 두 필드가 아예 없다.
   // 요약 정확성 재요청까지 끝난 판정이다. 이 테스트는 날짜 힌트 보강만 따로 본다.
   const before = { article_id: a.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia', decisions: pendingDecisions,
-    summary_accuracy_version: 'summary-accuracy-v1' };
+    summary_accuracy_version: 'summary-accuracy-v1', technology_review_version: 'technology-link-v1' };
   await fs.writeFile(file, JSON.stringify(before));
   const args = { articles: [a], reviewDir, policy: '', config, sleep: async () => {} };
   const topped = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-14', datedQuote, [{ ...pendingDecisions[0], summary_ko: '재판정된 다른 요약' }]) });
@@ -118,7 +118,7 @@ test('a failed or unavailable date hint never costs the cached decision or the r
   const a = pendingArticle('Undated'), b = article('Dated');
   const cache = article => fs.writeFile(path.join(reviewDir, `${article.id}.json`),
     JSON.stringify({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
-      decisions: article === a ? pendingDecisions : decisions }));
+      decisions: article === a ? pendingDecisions : decisions, technology_review_version: 'technology-link-v1' }));
   await Promise.all([cache(a), cache(b)]);
   const args = { articles: [a, b], reviewDir, policy: '', config, sleep: async () => {}, random: () => 0 };
   // 날짜가 확정된 기사는 보강 대상이 아니므로 호출은 미상 기사 하나에만 쓰인다.
@@ -179,7 +179,8 @@ test('bumping only the date hint version re-asks the date and keeps every conten
   const a = pendingArticle('Undated'), b = article('Dated');
   const cache = (article, ds, date_hint_version) => fs.writeFile(path.join(reviewDir, `${article.id}.json`),
     JSON.stringify({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`, provider: 'nvidia',
-      decisions: ds, date_hint_version, published_date: '', published_date_quote: '', summary_accuracy_version: 'summary-accuracy-v1' }));
+      decisions: ds, date_hint_version, published_date: '', published_date_quote: '', summary_accuracy_version: 'summary-accuracy-v1',
+      technology_review_version: 'technology-link-v1' }));
   // 이전 규칙으로 물어봐 빈 답을 받은 기사. 프롬프트·파서가 바뀌었으므로 날짜만 다시 묻는다.
   await cache(a, pendingDecisions, 'date-hint-v0');
   await cache(b, decisions, 'date-hint-v0');

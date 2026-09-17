@@ -59,7 +59,11 @@ export const SUMMARY_INSTRUCTION =
   'When the evidence dates the event differently from the announcement, state that event date. ' +
   // 같은 보고서: "찰스 파이어 래보러토리즈", "에어 liquide", 예놉틱/예노틱처럼 음차가 틀리거나 한 보고서에서 갈렸다.
   'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
-  'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ';
+  'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ' +
+  // 실행 35167466191: Qualcomm·Renishaw·Nabtesco 한국어 문안이 "~했다/~예정이다/~설계되었다"로 끝났다.
+  'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
+  // 같은 보고서: 카드는 들어가는 문장까지만 싣는데, 인수금액은 영문 셋째 문장에만, 전시 일정은 한국어에만 남았다.
+  'Put the key facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries and keep the same facts in both languages. ';
 
 // 2026-08 전체 재검토(34819154825) 조사: S3·S4·S5 규칙이 모델에 보내는 후보 어디에도 정의되지 않은 이름을
 // 가리켰다. 후보 id 는 investment:3 이고 S3 라는 표기는 없다. 규칙마다 후보 id 를 함께 적는다.
@@ -105,6 +109,23 @@ export const SYSTEM_INSTRUCTION =
   'For investment:3 (S3), only raising new money counts: issuing bonds or notes, an equity raise, a grant, an investment round or a new credit facility. ' +
   'Repurchasing, tendering for, redeeming, repaying or refinancing existing debt, share buybacks, dividends, and paying an acquisition price ' +
   'or deferred consideration spend money rather than raise it, so indicator_supported=false for S3. ' +
+  // 실행 35167466191: 3M 이 같은 규모의 기존 리볼빙 신용계약을 새 계약으로 대체한 8-K 가 S3 로 승인됐다.
+  'Replacing, renewing, amending or extending an existing credit facility is refinancing even when it is documented as a new credit ' +
+  'agreement, unless the evidence states additional new money: indicator_supported=false. An S3 precursor also needs an investment, ' +
+  'capacity or business-expansion use of the funds stated in the evidence; a general-purpose revolving facility without one is ' +
+  'leading_indicator_supported=false. The size of a facility is not an amount of new money. ' +
+  // 같은 실행: Nexeon 1억 파운드 라운드 완료를 S3 completed 로, Air Liquide 의 결정된 애리조나 생산유닛을 S2 planned 로 봤다.
+  'Completing a funding round, signing an agreement or making an appointment completes that intermediate activity, not the final ' +
+  'investment: for S1, S3, S4 and S5 that event_stage is precursor, never completed or committed. For investment:2 (S2), a facility ' +
+  'investment that is already decided, contracted or under construction is committed even when its start-up or production date is in ' +
+  'the future; a future start-up date alone does not make it planned. A results, half-year or annual report that lists investment ' +
+  'decisions taken earlier recaps them; they are not new this month unless the evidence says so. ' +
+  // 같은 실행: Infineon 우주용 전력반도체, Plansee 텅스텐 재활용, NXP 차량용 UWB 가 지정 RF 반도체·금속타겟 사업동향으로 실렸다.
+  'target_technology_supported=true requires the event\'s own product, material or process to be the mapped target technology or a ' +
+  'direct component of it. Sharing an industry, end market or application area (space, automotive, semiconductors), a different ' +
+  'product family of the same company, or a different material of the same supplier is not a direct link. ' +
+  'When a parent, sister or group company acts, attribute the event to the target only through a link the evidence states explicitly, ' +
+  'and name the acting company in the summaries. ' +
   'For investment:2 (S2), revenue guidance, earnings forecasts, order backlog and share-price commentary are not production expansion. ' +
   SUMMARY_INSTRUCTION + 'Return only decisions in the required schema. ' + DATE_INSTRUCTION;
 

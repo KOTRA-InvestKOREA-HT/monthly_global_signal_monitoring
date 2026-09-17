@@ -291,7 +291,27 @@ TEXTS = {
         "item_title": "품목별 글로벌 사업동향",
         "item_target_label": "투자유치 필요 품목·기술",
         "item_trend_label": "{month} 글로벌 사업동향",
-        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함.",
+        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 기술 관련성 확인 면제 기업은 품목 연계와 별개로 주요 사업동향을 싣고 카드에 표시함. 향후 시그널 발전 가능성을 모니터링함.",
+        "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
+        "scope_kicker": "R E V I E W   S C O P E",
+        "scope_title": "검토 범위와 미반영 항목",
+        "scope_period": "대상 정보 기간 {period}",
+        "scope_articles": "해당 월 기사 {articles}건 중 판정 완료 {reviewed}건 · 판정 실패 {failed}건",
+        "scope_adjudicated": "이 중 {count}건은 자동 판정 실패·오판정 확인 후 원문 기준으로 재판정했고, {wording}건은 판정은 그대로 두고 문안만 수정함",
+        "scope_companies": "기업 상태(77개사): AI 확인 {on} · 검토 필요 {review} · 검토 후 미포착 {off} · 근거 부족 {insufficient}",
+        "scope_reasons_heading": "근거 부족 사유(기업 수, 중복 포함)",
+        "scope_reason_collection_incomplete": "수집 작업 미완료",
+        "scope_reason_review_failed": "기사 판정 실패",
+        "scope_reason_date_pending": "시그널 후보 게시일 확인 전",
+        "scope_reason_date_deferred": "게시일·본문 미확보 기사 보류",
+        "scope_reason_needs_review": "근거 불충분으로 판단 보류",
+        "scope_reason_no_body": "본문 미수집(제목만 확보)",
+        "scope_collection": "수집 작업 상태: 완료 {completed}개사 · 미완료 {incomplete}개사. 기업별 수집 작업의 완료 여부로, 매트릭스의 ‘근거 부족’(판정 근거 확보 여부)과 다른 지표임.",
+        "scope_date_pending": "게시일 확인 전이라 본문에서 제외한 후보: 투자 시그널 {investment}건 · 사업동향 {business}건",
+        "scope_recheck_pending": "재검토 규칙에 걸렸으나 재확인을 끝내지 못한 후보 {count}건은 AI 확인이 아닌 ‘검토 필요 · 재검토 미완료’로만 실었음",
+        "scope_failed_heading": "판정 실패로 반영하지 못한 기사",
+        "scope_failed_none": "판정 실패 기사 없음",
+        "scope_review_note": "‘검토 필요’는 기업·지표 사건은 확인됐으나 조건 하나가 부족해 사람 확인이 필요한 후보이며 AI 확인 시그널이 아님. 외부 원문 전수 사실검증은 수행하지 않음. 기사별 판정·오류 상세는 실행 아티팩트(status.json, reviews/diagnostics)에 있음.",
     },
     "en": {
         "footer": "Invest KOREA · Target-Company Global Investment Signal Monitor · {issue}",
@@ -321,7 +341,27 @@ TEXTS = {
         "item_title": "Item-Linked Global Business Trends",
         "item_target_label": "Target item/tech",
         "item_trend_label": "{month} global business trend",
-        "item_note": "Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was detected in {month} — monitored for potential signal development.",
+        "item_note": "Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was detected in {month}. For companies exempt from the technology-link check, key business activity is shown and the card says so. Monitored for potential signal development.",
+        "item_exempt_note": "Technology-link check exempt · key business activity",
+        "scope_kicker": "R E V I E W   S C O P E",
+        "scope_title": "Review Scope and Omissions",
+        "scope_period": "Information period {period}",
+        "scope_articles": "{reviewed} of {articles} articles for the month reviewed · {failed} failed review",
+        "scope_adjudicated": "{count} of them were re-reviewed against the source text after an automated review failure or misjudgement; {wording} kept their decisions with wording corrected",
+        "scope_companies": "Company status (77): {on} AI-confirmed · {review} needs review · {off} reviewed without signals · {insufficient} insufficient evidence",
+        "scope_reasons_heading": "Why evidence is insufficient (companies, may overlap)",
+        "scope_reason_collection_incomplete": "Collection incomplete",
+        "scope_reason_review_failed": "Article review failed",
+        "scope_reason_date_pending": "Signal candidate awaiting publication date",
+        "scope_reason_date_deferred": "Articles held without date or body",
+        "scope_reason_needs_review": "Judgement deferred for insufficient evidence",
+        "scope_reason_no_body": "Title only, body not collected",
+        "scope_collection": "Collection jobs: {completed} companies completed · {incomplete} incomplete. This tracks whether collection finished and is a different measure from 'insufficient evidence' in the matrix.",
+        "scope_date_pending": "Candidates left out of the body pending a publication date: {investment} investment signals · {business} business trends",
+        "scope_recheck_pending": "{count} candidates flagged for a recheck that did not complete are shown only as 'Needs review · recheck pending', not as AI-confirmed",
+        "scope_failed_heading": "Articles not reflected because review failed",
+        "scope_failed_none": "No article failed review",
+        "scope_review_note": "'Needs review' marks a candidate whose company and indicator event were confirmed but which misses one condition; it is not an AI-confirmed signal. No full external fact-check of source articles was performed. Per-article decisions and errors are in the run artifact (status.json, reviews/diagnostics).",
     },
 }
 
@@ -1335,9 +1375,9 @@ def signal_needs_human_review(row):
 # 검토 필요 표시에 붙이는 사유. 무엇이 모자라 AI 승인을 못 받았는지 보여야 사람이 빨리 거른다.
 REVIEW_GAP_LABELS = {
     "ko": {"target_technology": "타겟 기술 미확인", "leading_indicator": "전조 활동 미확인",
-           "event_stage": "투자 단계 기준 밖", "quality": "근거 부족"},
+           "event_stage": "투자 단계 기준 밖", "quality": "근거 부족", "semantic_recheck": "재검토 미완료"},
     "en": {"target_technology": "target tech unconfirmed", "leading_indicator": "no leading activity",
-           "event_stage": "stage outside criteria", "quality": "insufficient evidence"},
+           "event_stage": "stage outside criteria", "quality": "insufficient evidence", "semantic_recheck": "recheck pending"},
 }
 
 
@@ -1667,10 +1707,17 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
     return max(1, len(lines))
 
 
-def best_business_row(company, relevant_rows, investment_rows, all_signal_rows):
+def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, shown_rows=()):
+    """사업현황 상자에 쓸 행. 사업동향 행이 없을 때만 투자 시그널 행으로 대신한다.
+
+    실행 35167466191 보고서의 3M 은 사업동향이 없어 시그널 칸에 이미 실린 S3 문안을 사업현황에 한 번 더
+    실었다. 시그널 칸의 대표 문안으로 쓰인 행(shown_rows)은 대신 쓰지 않는다.
+    """
+    shown = {id(row) for row in shown_rows}
     candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
     if not candidates:
-        candidates = [row for row in investment_rows if row.get("company") == company and signal_supported(row)]
+        candidates = [row for row in investment_rows
+                      if row.get("company") == company and signal_supported(row) and id(row) not in shown]
     if not candidates:
         candidates = [
             row
@@ -1678,6 +1725,7 @@ def best_business_row(company, relevant_rows, investment_rows, all_signal_rows):
             if row.get("company") == company
             and row.get("source_type") == "official"
             and signal_supported(row)
+            and id(row) not in shown
         ]
     return sort_signal_rows(candidates)[0] if candidates else None
 
@@ -1912,7 +1960,8 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     x = 30
     width = PAGE_W - 60
     signal_width = width - 38
-    business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows)
+    business_row = best_business_row(company, relevant_rows, investment_rows, all_signal_rows,
+                                     [rows[0] for rows in rows_by_signal.values() if rows])
     business_body = business_text([business_row] if business_row else [])
     target_layout = business_target_layout(report, profile, x, width)
 
@@ -2019,7 +2068,7 @@ ITEM_TARGET_TO_TREND = 24
 ITEM_TREND_LABEL_TO_BODY = 19
 ITEM_BODY_SIZE = 8.8
 ITEM_BODY_GAP = 2.0
-ITEM_BODY_MAX_LINES = 4
+ITEM_BODY_MAX_LINES = 6
 ITEM_BODY_TO_SOURCE = 11
 ITEM_SOURCE_SIZE = 7.1
 ITEM_CARD_BOTTOM_PAD = 16
@@ -2045,6 +2094,11 @@ def build_item_trend_entries(profiles, signal_index, relevant_rows):
     return entries
 
 
+def item_trend_text(row):
+    """품목동향 카드에 실을 문안 전체. HTML 보고서는 자르지 않고, reportlab 판은 item_trend_body 가 줄 수에 맞춘다."""
+    return business_prose(normalize_summary_text(summary_field(row, "ai_summary"))) or normalize_summary_text(detail_text(row, 400))
+
+
 def item_trend_body(report, row, width, size, max_lines):
     """카드 본문은 명사구 캡션이 아니라 완결된 서술 문장으로 채운다.
 
@@ -2052,7 +2106,7 @@ def item_trend_body(report, row, width, size, max_lines):
     문장 중간에서 '...'로 잘리지 않고 '무엇을 했다 / 하고 있다'로 끝난다.
     """
     font_name = report.fonts["demilight"]
-    text = business_prose(normalize_summary_text(summary_field(row, "ai_summary"))) or normalize_summary_text(detail_text(row, 400))
+    text = item_trend_text(row)
     body = fit_sentences(report.canvas, text, width, font_name, size, max_lines)
     if not body:
         return "", 1

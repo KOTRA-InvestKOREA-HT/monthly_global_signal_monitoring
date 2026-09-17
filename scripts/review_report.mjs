@@ -35,18 +35,53 @@ export function publishedSignalCounts(rows, period) {
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
 const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
 const SUMMARY_REVIEW_VERSION = 'human-review-summary-v2';
-const FUNDING_REVIEW_VERSION = 'funding-event-v1';
+const FUNDING_REVIEW_VERSION = 'funding-event-v2';
+const FACILITY_STAGE_REVIEW_VERSION = 'facility-stage-v1';
+const TECHNOLOGY_REVIEW_VERSION = 'technology-link-v1';
 const SUMMARY_ACCURACY_VERSION = 'summary-accuracy-v1';
+const SUMMARY_STYLE_VERSION = 'summary-style-v1';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
 // 판정을 자동으로 precursor 로 바꾸지는 않는다. 다시 물어볼 뿐이다.
 export function needsStageReview(article, review) {
-  return review.stage_review_version !== STAGE_REVIEW_VERSION && review.decisions.some(d =>
-    investmentStageSupported('precursor', String(d.candidate_id || '').split(':')[1]) &&
+  return review.stage_review_version !== STAGE_REVIEW_VERSION && stageSuspects(article, review.decisions).length > 0;
+}
+
+const technologyOrExempt = (article, d) => d.target_technology_supported ||
+  article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt;
+const signalNo = d => String(d.candidate_id || '').split(':')[1];
+
+// 조달·협약·임명처럼 중간 활동이 끝난 것을 최종 투자 완료로 적은 후보. 2026-08 실행 35167466191 의
+// Nexeon 1억 파운드 라운드도 새 응답에서 S3=completed 였다. 다시 물을 뿐 단계를 바꾸지는 않는다.
+export function stageSuspects(article, decisions) {
+  return decisions.filter(d => investmentStageSupported('precursor', signalNo(d)) &&
     ['committed', 'completed'].includes(d.event_stage) &&
-    d.entity_supported && d.indicator_supported && (d.target_technology_supported ||
-      article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt));
+    d.entity_supported && d.indicator_supported && technologyOrExempt(article, d));
+}
+
+// 같은 실행: Air Liquide 반기보고서의 애리조나 1.6억 달러 생산유닛(신규 계약, 2028년 가동)이 S2 planned 로
+// 승인됐다. 결정된 시설투자의 미래 가동일은 미확정 계획이 아니다. 인용에 투자·건설과 가동 시점이 함께 있는
+// 승인 가능한 S2 만 한 번 다시 묻는다. 낱말은 재검토 대상을 고를 뿐이고 결론은 새 판정이 내린다.
+const FACILITY_START = /\b(?:start[- ]?ups?|commission\w*|come on stream|operational by|begin (?:production|operations)|production (?:is )?(?:planned|scheduled|expected) to (?:begin|start))\b/i;
+const FACILITY_DECIDED = /\b(?:invest\w*|build\w*|construct\w*|contracts?)\b/i;
+export function facilityStageSuspects(article, decisions) {
+  return decisions.filter(d => signalNo(d) === '2' && ['planned', 'exploratory'].includes(d.event_stage) &&
+    d.entity_supported && d.indicator_supported && d.leading_indicator_supported && technologyOrExempt(article, d) &&
+    (d.evidence_quotes || []).some(quote => FACILITY_START.test(quote) && FACILITY_DECIDED.test(quote)));
+}
+export function needsFacilityStageReview(article, review) {
+  return review.facility_stage_review_version !== FACILITY_STAGE_REVIEW_VERSION && facilityStageSuspects(article, review.decisions).length > 0;
+}
+
+// 같은 실행: Infineon 우주망원경용 전력반도체를 위성통신·레이다 RF 반도체로, Plansee 텅스텐 재활용을
+// 티타늄·탄탈륨 타겟으로, NXP 차량용 UWB 를 우주항공 RF 반도체로 인정해 사업동향이 실렸다. 기술 연결 지시를 넣기 전에 저장된
+// 판정 중 면제가 아닌데 기술 연결로 보고서에 실리는 것만 한 번 다시 묻는다.
+export function needsTechnologyReview(article, review) {
+  if (review.technology_review_version === TECHNOLOGY_REVIEW_VERSION) return false;
+  return review.decisions.some(d => d.target_technology_supported &&
+    !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
+    publishedDecision(article, review.decisions, d));
 }
 
 // A Form 3 records an officer's reporting status but does not itself announce
@@ -85,15 +120,37 @@ export function needsReviewSummary(article, review) {
 // 유로본드가 투자 재원 확보 후보로 올라왔다. 공개매수·매입·상환·재조달이 제목이나 인용에 나오는 S3
 // 판정 중 보고서에 실릴 수 있는 것만 새 지시로 한 번 다시 묻는다. 낱말은 재검토 대상을 고를 뿐이고
 // 결론은 새 판정이 내린다.
-const NOT_NEW_FUNDING = /\b(?:tender offers?|repurchas\w*|buy-?backs?|redempt\w*|redeem\w*|repay\w*|refinanc\w*|prepay\w*)\b/i;
-export function needsFundingReview(article, review) {
-  if (review.funding_review_version === FUNDING_REVIEW_VERSION) return false;
-  return review.decisions.some(decision => {
+// 실행 35167466191: 3M 이 같은 42.5억 달러 기존 리볼빙 신용계약을 새 계약으로 대체한 8-K 가 S3 로 승인됐다.
+// 대체·갱신·변경 계약도 같은 재검토 대상이다. 인용에 대체 사실이 없어도 요약이 적었으면 잡는다.
+const NOT_NEW_FUNDING = /\b(?:tender offers?|repurchas\w*|buy-?backs?|redempt\w*|redeem\w*|repay\w*|refinanc\w*|prepay\w*|replac\w*|renew\w*|amend(?:ed|ment|ments)?)\b/i;
+export function fundingSuspects(article, decisions) {
+  return decisions.filter(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
     if (candidate?.kind !== 'investment' || Number(candidate.row?.investment_signal_no) !== 3) return false;
     if (!decision.entity_supported || !decision.indicator_supported) return false;
-    return NOT_NEW_FUNDING.test([candidate.row?.title, ...(decision.evidence_quotes || [])].join(' '));
+    return NOT_NEW_FUNDING.test([candidate.row?.title, ...(decision.evidence_quotes || []), decision.summary_en].join(' '));
   });
+}
+export function needsFundingReview(article, review) {
+  return review.funding_review_version !== FUNDING_REVIEW_VERSION && fundingSuspects(article, review.decisions).length > 0;
+}
+
+// 새 응답 하나에서 위 재검토 규칙에 걸리는 후보. 저장된 판정만 다시 묻던 탓에, 새로 받은 응답이 같은 실수를
+// 하면(Nexeon S3=completed) 다음 버전이 오를 때까지 그대로 남았다. 같은 실행 안에서 한 번만 되묻는다.
+export function freshRecheckFeedback(article, review) {
+  const ids = [...new Set([...stageSuspects(article, review.decisions), ...facilityStageSuspects(article, review.decisions),
+    ...fundingSuspects(article, review.decisions)].map(d => d.candidate_id))];
+  const items = [
+    ...stageSuspects(article, review.decisions).map(d => `${d.candidate_id}: event_stage=${d.event_stage} for a completed ` +
+      'funding, agreement or appointment. Such an intermediate activity is precursor; committed/completed is only for the final investment itself.'),
+    ...facilityStageSuspects(article, review.decisions).map(d => `${d.candidate_id}: event_stage=${d.event_stage}. An investment ` +
+      'in a facility that is already decided or contracted is committed even when its start-up date is in the future; check whether ' +
+      'the evidence shows an undecided plan and whether it is newly announced in the reporting period.'),
+    ...fundingSuspects(article, review.decisions).map(d => `${d.candidate_id}: the evidence mentions replacing, renewing, amending, ` +
+      'repaying or refinancing. Replacing an existing facility is not new funding unless additional money and an investment or expansion use are stated.'),
+  ];
+  return items.length ? { reason: 'semantic_recheck', candidate_ids: ids,
+    validation_message: `Recheck only these judgements against the rules: ${items.join(' ')}` } : null;
 }
 
 // 요약 숫자 검증을 넣기 전에 저장된 판정은 틀린 숫자를 가질 수 있다. 보고서에 실리는 문안의 숫자가
@@ -117,8 +174,34 @@ export function needsSummaryRefresh(article, review) {
   const published = review.decisions.filter(decision => publishedDecision(article, review.decisions, decision));
   if (!published.length) return false;
   if (review.summary_accuracy_version !== SUMMARY_ACCURACY_VERSION) return true;
+  if (review.summary_style_version !== SUMMARY_STYLE_VERSION &&
+    published.some(decision => summaryStyleProblems(article, decision).length > 0)) return true;
   return review.summary_numbers_version !== SUMMARY_NUMBERS_VERSION &&
     published.some(decision => decisionNumberProblems(article, decision).length > 0);
+}
+
+// 실행 35167466191 보고서: Qualcomm·Renishaw 한국어 문안이 "~했다/~예정이다"로 끝났고, 영문에는 Qualcomm·
+// Air Products·Cognex 로 적은 회사명을 한국어에서는 퀄컴·에어프로덕츠·코그넥스로 음차했다. 둘 다 정책 위반이다.
+// 음차 목록을 만들지 않는다. 영문 문장이 회사 영문명으로 시작하는데 한국어 문장은 한글 낱말+조사(은·는·이·가·의)로
+// 시작하고 영문명이 없을 때만 잡는다. 투자 시그널 문안은 회사명을 쓰지 않는 것이 규칙이므로 이름이 없는 것만으로는 잡지 않는다.
+const KOREAN_PLAIN_ENDING = /(?:다|습니다|요)[.!]?$/;
+const detailPart = text => (text.includes(' - ') ? text.slice(text.indexOf(' - ') + 3) : text).trim();
+export function summaryStyleProblems(article, decision) {
+  const ko = String(decision.summary_ko || '').trim();
+  if (!ko) return [];
+  const problems = [];
+  // 투자 시그널 표제(" - " 앞)는 명사구라 문장 끝 검사는 상세·사업동향 문장에만 한다.
+  const body = detailPart(ko);
+  if (body.split(/(?<=[.!?])\s+/).some(sentence => KOREAN_PLAIN_ENDING.test(sentence.trim()))) problems.push('plain_sentence_ending');
+  const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+  const names = [article.company, ...(candidate?.row?.query_aliases || [])].filter(Boolean)
+    .flatMap(name => [name, name.split(/\s+/)[0]]).filter(name => name.length >= 4).map(name => name.toLowerCase());
+  const enBody = detailPart(String(decision.summary_en || '')).toLowerCase();
+  const subject = body.match(/^([가-힣]{2,})(?:은|는|이|가|의)\s/);
+  if (subject && names.some(name => enBody.startsWith(name)) && !names.some(name => ko.toLowerCase().includes(name))) {
+    problems.push('company_name_not_latin');
+  }
+  return problems;
 }
 
 export function mergeRefreshedSummaries(article, review, fresh) {
@@ -129,7 +212,7 @@ export function mergeRefreshedSummaries(article, review, fresh) {
     if (!String(next.summary_ko || '').trim() || !String(next.summary_en || '').trim()) return decision;
     return { ...decision, summary_ko: next.summary_ko, summary_en: next.summary_en };
   });
-  return { ...review, decisions, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
+  return { ...review, decisions, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION, summary_style_version: SUMMARY_STYLE_VERSION };
 }
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -360,6 +443,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
+    facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION, technology_review_version: TECHNOLOGY_REVIEW_VERSION,
     summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
@@ -386,6 +470,17 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
       return { ...review, summary_number_warning: problem.message };
     } catch (error) { problem = error; }
   }
+  // 탈락 후보의 틀린 인용 하나로 기사 전체를 잃지 않게 한다. 실행 35167466191 의 Nexeon 은 두 번째 응답에서
+  // 탈락 판정인 S5 의 인용이 원문과 달라, 승인할 수 있던 조달·시설·사업동향 판정까지 함께 버려졌다.
+  // 재시도에서도 맞지 않는 인용은 빼고, 그 인용이 있던 후보가 모두 인용과 무관하게 승인도 사람 검토도 아닐 때만
+  // 받는다. 없는 인용을 통과시키지 않으며, 뺀 인용은 review 에 남겨 추적한다.
+  if (problem && retry && /evidence_quotes must be exact/.test(problem.message)) {
+    const salvaged = withoutUnverifiedRejectedQuotes(article, review);
+    if (salvaged) {
+      console.log(`Article ${article.id}: unverifiable quotes removed from rejected candidates ${salvaged.unverified_quotes_removed.map(item => item.candidate_id).join(', ')}`);
+      return salvaged;
+    }
+  }
   if (problem) {
     const failure = invalid(/published_date/.test(problem.message) ? 'date_evidence_mismatch'
       : /evidence_quotes/.test(problem.message) ? 'evidence_mismatch'
@@ -397,6 +492,26 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     throw failure;
   }
   return review;
+}
+
+export function withoutUnverifiedRejectedQuotes(article, review) {
+  const evidence = article.evidence.map(normalizeQuote);
+  const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
+    evidence.some(text => text.includes(normalizeQuote(quote)));
+  const removed = [];
+  const decisions = review.decisions.map(decision => {
+    if (!Array.isArray(decision.evidence_quotes)) return decision;
+    const unverified = decision.evidence_quotes.filter(quote => !verified(quote));
+    if (!unverified.length) return decision;
+    removed.push({ candidate_id: decision.candidate_id, removed_quotes: unverified });
+    return { ...decision, evidence_quotes: decision.evidence_quotes.filter(verified) };
+  });
+  if (!removed.length) return null;
+  const salvaged = { ...review, decisions, unverified_quotes_removed: removed };
+  let results;
+  try { results = importReview(article, salvaged, { strictNumbers: true }); } catch { return null; }
+  const touched = new Set(removed.map(item => item.candidate_id));
+  return results.some(result => touched.has(result.candidate_id) && (result.supported || result.human_review)) ? null : salvaged;
 }
 
 export async function reviewArticles(options) {
@@ -470,6 +585,8 @@ export async function reviewArticles(options) {
     requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
     date_hints: results.reduce((n, r) => n + (r.date_hints || 0), 0),
     failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
+    quote_removals: results.flatMap(r => r.quote_removals || []),
+    recheck_pending: results.flatMap(r => r.recheck_pending || []),
   };
 }
 
@@ -502,7 +619,9 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   let requests = 0, cached = 0, completed = 0, dateHints = 0;
   const failed = [];
   const diagnostics = [];
-  const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics, ...extra });
+  const quoteRemovals = [], recheckPending = [];
+  const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
+    quote_removals: quoteRemovals, recheck_pending: recheckPending, ...extra });
   // 문안만 다시 받는 보조 요청이 거절되면 모델이 무엇을 썼는지 남긴다. 2026-08 ASML 사업동향은 요약을 다시
   // 받았는데도 옛 문안이 남았고, 새 응답이 저장되지 않아 무엇이 틀렸는지 알 수 없었다.
   const recordSupplementDiagnostic = async (article, reason, detail) => {
@@ -550,7 +669,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       // 같은 기사에 요청을 쓰지 않게 한다. 할당량·전송 오류는 찍지 않고 다음 실행에 맡긴다.
       if (!error.response_code) return review;
       await recordSupplementDiagnostic(article, `summary_refresh_${error.response_code}`, error.diagnostic || {});
-      const stamped = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
+      const stamped = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION, summary_style_version: SUMMARY_STYLE_VERSION };
       await write(file, stamped);
       return stamped;
     }
@@ -561,7 +680,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       await recordSupplementDiagnostic(article, 'summary_refresh_rejected', { validation_message: error.message,
         fresh_summaries: (fresh.decisions || []).filter(d => d.summary_ko || d.summary_en)
           .map(d => ({ candidate_id: d.candidate_id, summary_ko: d.summary_ko, summary_en: d.summary_en })) });
-      merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION };
+      merged = { ...review, summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION, summary_style_version: SUMMARY_STYLE_VERSION };
     }
     await write(file, merged);
     return merged;
@@ -572,9 +691,13 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       let review = await read(file);
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
+      // 지난 실행에서 되묻기를 끝내지 못한 판정. 재검토 버전과 무관하게 다시 판정한다.
+      if (review.semantic_recheck_pending) throw new Error('semantic recheck pending');
       if (needsStageReview(article, review)) throw new Error('candidate event stage needs recheck');
       if (needsForm3Review(article, review)) throw new Error('Form 3 personnel event needs recheck');
       if (needsFundingReview(article, review)) throw new Error('S3 funding event needs recheck');
+      if (needsFacilityStageReview(article, review)) throw new Error('S2 facility stage needs recheck');
+      if (needsTechnologyReview(article, review)) throw new Error('target technology link needs recheck');
       cached++; completed++;
       review = await backfillSummaries(article, review, file);
       review = await refreshSummaries(article, review, file);
@@ -605,8 +728,32 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     }
     let providerRetries = 0, waitMs = config.delayMs;
     let maxAttempts = 2, retryFeedback = false;
+    // 되묻기 전의 유효한 응답과 되묻은 이유. 되묻기가 실패하거나 멈춰도 이 판정은 잃지 않되, 재검토가 끝난 것으로
+    // 저장하지 않는다. 앞 응답에는 최신 재검토 버전이 이미 찍혀 있어, 그대로 저장하면 다음 실행이 다시 묻지 않고
+    // 의심 판정을 승인으로 계속 발행한다(3M S3 재현). 미완료 기록을 남기고, 해당 후보는 importReview 가
+    // 승인 대신 사람 검토로 내리며, 다음 실행은 이 기사를 다시 판정한다.
+    let beforeRecheck = null, recheckFeedback = null;
+    const keep = async kept => {
+      await write(file, kept);
+      if (kept.unverified_quotes_removed) quoteRemovals.push({ article_id: article.id,
+        candidate_ids: kept.unverified_quotes_removed.map(item => item.candidate_id) });
+      if (kept.semantic_recheck_pending) recheckPending.push({ article_id: article.id,
+        candidate_ids: kept.semantic_recheck_pending.candidate_ids, reason: kept.semantic_recheck_pending.reason });
+      await backfillSummaries(article, kept, file);
+      completed++;
+      if (logReviewed) console.log(`Reviewed ${completed}/${articles.length}: ${article.company}`);
+    };
+    const keepUnrechecked = reason => keep({ ...beforeRecheck, semantic_recheck_pending: {
+      reason, candidate_ids: recheckFeedback.candidate_ids, validation_message: recheckFeedback.validation_message } });
+    const pause = async extra => {
+      if (beforeRecheck) await keepUnrechecked(extra.reason);
+      return state(extra);
+    };
     for (let attempt = 0; attempt < maxAttempts;) {
-      if (requests >= config.maxRequests) return state({ status: 'paused', reason: 'request_budget' });
+      if (requests >= config.maxRequests) {
+        if (beforeRecheck) { await keepUnrechecked('request_budget'); break; }
+        return state({ status: 'paused', reason: 'request_budget' });
+      }
       if (requests) await sleep(waitMs);
       waitMs = config.delayMs;
       requests++;
@@ -615,18 +762,19 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         review = await requestReview(article, policy, config.apiKey, fetchImpl, retryFeedback);
       } catch (error) {
         // Outage retries and invalid-output retries share the run request budget.
-        if (error.scheduling_stopped) return state({ status: 'paused', reason: 'scheduling_stopped' });
+        if (error.scheduling_stopped) return pause({ status: 'paused', reason: 'scheduling_stopped' });
         if ((error.status >= 500 || error.transport_error) && providerRetries < 2) {
           waitMs = Math.max(config.delayMs, 15000 * 2 ** providerRetries + Math.floor(random() * 1000));
           providerRetries++;
           console.log(`Article ${article.id}: transient provider error (${error.transport_reason || `HTTP ${error.status}`}${error.transport_message ? `: ${error.transport_message}` : ''}); retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
-        if (error.status === 429 || error.status >= 500) return state({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
-        if (error.transport_error) return state({ status: 'paused', reason: 'transport_error',
+        if (error.status === 429 || error.status >= 500) return pause({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
+        if (error.transport_error) return pause({ status: 'paused', reason: 'transport_error',
           ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}),
           ...(error.transport_message ? { transport_message: error.transport_message } : {}) });
         if (!error.response_code) throw error;
+        const recheckFailed = Boolean(beforeRecheck);
         retryFeedback = { reason: error.response_code,
           ...(error.diagnostic?.validation_message ? { validation_message: error.diagnostic.validation_message } : {}) };
         // A quote repair can expose a separate missing-summary error. Allow one
@@ -642,14 +790,27 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         diagnostics.push({ article_id: article.id, attempt: attempt + 1, reason: error.response_code, file: diagnosticPath });
         const failure = { article_id: article.id, reason: error.response_code };
         console.log(`Article ${article.id}: ${error.response_code} (attempt ${attempt + 1}/${maxAttempts})`);
+        // 되묻기 응답이 검증을 통과하지 못하면 앞선 판정을 재검토 미완료로 저장한다. 판정 실패 기사로는 세지 않는다.
+        if (recheckFailed) { await keepUnrechecked(error.response_code); break; }
         if (attempt === maxAttempts - 1) failed.push(failure);
         attempt++;
         continue;
       }
-      await write(file, review);
-      review = await backfillSummaries(article, review, file);
-      completed++;
-      if (logReviewed) console.log(`Reviewed ${completed}/${articles.length}: ${article.company}`);
+      const feedback = beforeRecheck ? null : freshRecheckFeedback(article, review);
+      if (feedback) {
+        // 재검토 규칙에 걸린 판정은 같은 실행에서 한 번만 되묻는다. 새 응답의 결론을 그대로 받는다.
+        beforeRecheck = review;
+        recheckFeedback = feedback;
+        retryFeedback = feedback;
+        maxAttempts = Math.max(maxAttempts, attempt + 2);
+        console.log(`Article ${article.id}: semantic recheck requested`);
+        attempt++;
+        continue;
+      }
+      if (beforeRecheck) review = { ...review, semantic_recheck: { validation_message: recheckFeedback.validation_message,
+        previous: beforeRecheck.decisions.map(({ candidate_id, event_stage, indicator_supported, leading_indicator_supported }) =>
+          ({ candidate_id, event_stage, indicator_supported, leading_indicator_supported })) } };
+      await keep(review);
       break;
     }
   }
@@ -739,6 +900,9 @@ async function main() {
       (state.provider_reason === 'rate_limit' ? 'This was a burst limit, so a rerun shortly should continue. ' : '') +
       'Existing published PDFs are unchanged.\n' : '') +
     state.failed_articles.map(item => `- Article ${item.article_id}: ${item.reason}\n`).join('') +
+    (state.quote_removals || []).map(item => `- Article ${item.article_id}: unverifiable quotes removed from rejected candidates ${item.candidate_ids.join(', ')}\n`).join('') +
+    (state.recheck_pending || []).map(item => `- Article ${item.article_id}: semantic recheck not completed (${item.reason}); ` +
+      `${item.candidate_ids.join(', ')} published only as human review and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
   if (state.status !== 'completed' && !reviewFailed.length) { process.exitCode = 75; return; }
   const reportDir = await build({ runDir, issueNumber: process.env.REPORT_ISSUE_NUMBER || '2', reviewFailed });

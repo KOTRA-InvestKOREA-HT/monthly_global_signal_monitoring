@@ -423,7 +423,11 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       }
     }
     const gaps = supported || !gated ? null : humanReviewGaps(candidate, gated);
-    const reviewGaps = gaps?.length ? gaps : null;
+    // 재검토 규칙에 걸려 되물었지만 답을 받지 못한 후보. 의심 판정을 AI 승인으로 발행하지 않는다. 승인이나 사람 검토로
+    // 실릴 판정이었다면 "재검토 미완료" 사유를 붙여 사람 검토로만 싣는다. 다음 실행이 이 기사를 다시 판정한다.
+    const recheckPending = candidate.kind === "investment" &&
+      (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) && (supported || gaps?.length > 0);
+    const reviewGaps = recheckPending ? [...(gaps || []), "semantic_recheck"] : gaps?.length ? gaps : null;
     const humanReview = Boolean(reviewGaps);
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
     // 막히지 않는다(옛 판정은 review_report 의 요약 새로고침이 한 번 다시 받는다).
@@ -438,7 +442,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     if (supported || humanReview) {
       row = {
         ...candidate.row,
-        ai_signal_supported: supported,
+        ai_signal_supported: supported && !recheckPending,
         ...(humanReview ? { ai_review_tier: "human_review", ai_review_gaps: reviewGaps } : {}),
         ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, gated[field]])),
         ...(gated.target_technology_supported !== decision.target_technology_supported ? { ai_technology_conflict: true } : {}),
@@ -452,7 +456,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       const errors = validateRows([row], candidate.kind);
       if (errors.length) throw new Error(errors.join("\n"));
     }
-    return { candidate_id: candidate.id, kind: candidate.kind, supported, human_review: humanReview, row, reason_ko: decision.reason_ko };
+    return { candidate_id: candidate.id, kind: candidate.kind, supported: supported && !recheckPending, human_review: humanReview, row, reason_ko: decision.reason_ko };
   });
 }
 
@@ -674,6 +678,19 @@ export function companyCoverageGaps(articles, reviewByArticle, publishedArticleI
   return articles.filter((article) => articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)));
 }
 
+// 근거 부족 기업이 왜 그런지. 한 기업이 여러 사유를 가질 수 있다. 실행 35167466191 보고서는 77개사 중 43개사를
+// 근거 부족으로만 표시해 수집 미완료·판정 실패·게시일 보류·근거 불충분을 구분할 수 없었다.
+export function coverageReasons(gapArticles, reviewByArticle, publishedArticleIds = new Set(), collectionStatus = '', deferredCount = 0) {
+  const reasons = new Set();
+  if (collectionStatus === 'incomplete') reasons.add('collection_incomplete');
+  if (deferredCount > 0) reasons.add('date_deferred');
+  for (const article of gapArticles) {
+    // companyCoverageGaps 가 제목뿐인 기사 전체를 돌려준 경우에는 기사별 사유가 없다. 그때는 본문 미수집이다.
+    reasons.add(articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)) || 'no_body');
+  }
+  return [...reasons];
+}
+
 export function coverageStatus(articles, reviewByArticle, collectionStatus, deferredCount = 0, publishedArticleIds = new Set()) {
   if (collectionStatus === 'incomplete' || deferredCount > 0) return 'incomplete_evidence';
   if (!articles.length) return 'no_monthly_sources';
@@ -720,19 +737,36 @@ export async function build(args) {
       const articles = snapshot.articles.filter((article) => article.company === target.company);
       const incomplete = companyCoverageGaps(articles, reviewByArticle, publishedArticles);
       const datePending = articles.filter((article) => article.date_placement === "date_pending");
+      const collectionStatus = snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status;
       return { company: target.company, monthly_articles: articles.length,
         needs_review_articles: incomplete.length,
         date_pending_articles: datePending.length,
         deferred_articles: deferredArticles.length,
-        status: coverageStatus(articles, reviewByArticle,
-          snapshot.summary.collection_coverage?.find(item => item.company === target.company)?.status, deferredArticles.length, publishedArticles),
+        status: coverageStatus(articles, reviewByArticle, collectionStatus, deferredArticles.length, publishedArticles),
+        reasons: coverageReasons(incomplete, reviewByArticle, publishedArticles, collectionStatus, deferredArticles.length),
         follow_up: [...followUpEvents(incomplete), ...deferredArticles],
         // 날짜 때문에 보류된 기사는 시그널이 없는 기업과 구분해서 남긴다.
         date_follow_up: datePending.map((article) => ({ url: article.url, title: article.title, reason: article.date_note })) };
     });
+    const collection = snapshot.summary.collection_coverage || [];
+    // 보고서 앞쪽의 검토 범위 표시용. 기사 수·기업 수·수집 상태는 서로 다른 단위이므로 이름을 나눠 둔다.
+    const reviewScope = {
+      articles: snapshot.articles.length,
+      reviewed_articles: reviews.length,
+      review_failed_articles: reviewFailedArticles.length,
+      // 원문 기준 재판정(판정 실패·오판정)과 문안만 고친 수정은 따로 센다.
+      adjudicated_articles: reviews.filter((review) => review.adjudication && review.adjudication.kind !== "wording").length,
+      wording_fixed_articles: reviews.filter((review) => review.adjudication?.kind === "wording").length,
+      recheck_pending_candidates: investment.filter((row) => (row.ai_review_gaps || []).includes("semantic_recheck")).length,
+      date_pending_investment_rows: datePending(investment).length,
+      date_pending_business_rows: datePending(relevant).length,
+      deferred_articles: deferred.length,
+      collection_completed_companies: collection.filter((item) => item.status === "completed").length,
+      collection_incomplete_companies: collection.filter((item) => item.status === "incomplete").length,
+    };
     const files = {
       "signals.json": snapshot.signals,
-      "summary.json": { ...snapshot.summary, review_coverage: coverage, review_failed_articles: reviewFailedArticles },
+      "summary.json": { ...snapshot.summary, review_coverage: coverage, review_failed_articles: reviewFailedArticles, review_scope: reviewScope },
       "coverage.json": coverage,
       "investment.json": investment, "relevant.json": relevant,
       "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },

@@ -76,6 +76,18 @@ def summary_fits_one_line(parts, measure):
             + measure.canvas.stringWidth(f" — {parts['detail']}", fonts["demilight"], size)) <= SIGNAL_BODY_WIDTH
 
 
+def summary_cut(row, *pieces):
+    """보고서에 실을 요약이 글자 수 상한에서 잘렸는가.
+
+    short_text 는 자른 곳에 "..."를 붙인다. 원래 요약에 없는 말줄임표가 생겼으면 뒷부분이 빠진 것이다.
+    한·영 문안 길이가 달라 한쪽 언어에서만 금액·일정이 빠질 수 있으므로 빌드에서 드러낸다.
+    """
+    source = report.normalize_summary_text(report.summary_field(row, "ai_summary")) if row else ""
+    if not source or source.rstrip().endswith(("...", "…")):
+        return False
+    return any(str(piece or "").rstrip().endswith(("...", "…")) for piece in pieces)
+
+
 def signal_entry(no, rows, measure):
     """One of the five signal rows: its label, and the summary if it fired."""
     label = report.SIGNAL_DESCRIPTIONS_EN[no] if report.LANG == "en" else report.SIGNAL_DESCRIPTIONS[no]
@@ -93,6 +105,8 @@ def signal_entry(no, rows, measure):
         "detail": (parts or {}).get("detail", ""),
         "plain": "" if parts else report.detail_text(row, 560),
         "inline": summary_fits_one_line(parts, measure),
+        "cut": summary_cut(row, (parts or {}).get("headline"), (parts or {}).get("detail"),
+                           "" if parts else report.detail_text(row, 560)),
         # 대표 행이 AI 미승인 검토 후보면 읽는 사람이 알 수 있게 표시한다.
         "review": report.review_label(row),
         "source": report.source_line(row),
@@ -106,7 +120,8 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
         rows_by_signal = signal_index.get(profile["company"], {})
         if not any(rows_by_signal.values()):
             continue
-        business_row = report.best_business_row(profile["company"], relevant, investment, signals)
+        shown = [rows[0] for rows in rows_by_signal.values() if rows]
+        business_row = report.best_business_row(profile["company"], relevant, investment, signals, shown)
         target_label, target_text = report.target_section_for_profile(profile)
         entries.append({
             "company": profile.get("display_name") or profile["company"],
@@ -117,7 +132,8 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
                 "heading": report.t("business_heading"),
                 "target_label": target_label,
                 "target_text": target_text,
-                "body": report.business_text([business_row] if business_row else []),
+                "body": (business_body := report.business_text([business_row] if business_row else [])),
+                "cut": summary_cut(business_row, business_body),
                 "source": report.source_line(business_row) if business_row else report.t("source_empty"),
                 "source_url": report.source_url(business_row),
             },
@@ -146,13 +162,65 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
             "industry": entry["profile"].get("detailed_industry", ""),
             "country": entry["profile"].get("country", ""),
             "target_text": report.item_target_text(entry["profile"]),
-            # Trimmed to whole sentences rather than cut mid-phrase, which is a
-            # judgement about the text and so belongs on this side.
-            "body": report.item_trend_body(measure, entry["row"], ITEM_BODY_WIDTH,
-                                           report.ITEM_BODY_SIZE, report.ITEM_BODY_MAX_LINES)[0],
+            # 면제 기업의 사업동향은 품목 직접 연계를 확인한 것이 아니다. 같은 카드 모양이라도 표시로 구분한다.
+            "exempt_note": report.t("item_exempt_note") if entry["profile"].get("exempt_from_relevance") else "",
+            # 문장 수를 줄 수에 맞춰 자르지 않고 문안 전체를 싣는다. 카드 높이는 Chrome 이 잰 값으로 장을 나눈다.
+            # 줄 수에 맞춰 자르던 때는 긴 영문의 뒷문장이 빠져, HyproMag 인수금액이 영문에만, Renishaw 전시
+            # 일정이 한글에만 남았다(실행 35167466191).
+            "body": report.item_trend_text(entry["row"]),
+            "cut": False,
             "source": report.source_line(entry["row"]),
             "source_url": report.source_url(entry["row"]),
         } for entry in entries],
+    }
+
+
+SCOPE_REASONS = ("collection_incomplete", "review_failed", "date_pending", "date_deferred", "needs_review", "no_body")
+
+
+def scope_entries(profiles, signal_index, summary, counts):
+    """보고서 앞쪽의 검토 범위. 기사 수, 기업 수, 수집 작업 상태를 섞지 않고 각각의 단위로 적는다."""
+    scope = summary.get("review_scope")
+    if not isinstance(scope, dict):
+        return None
+    covered = covered_companies(summary, [])
+    coverage = {item.get("company"): item for item in summary.get("review_coverage") or []}
+    insufficient = [p["company"] for p in profiles if company_status(p["company"], signal_index, covered) == "insufficient"]
+    reasons = []
+    for reason in SCOPE_REASONS:
+        count = sum(1 for company in insufficient if reason in (coverage.get(company, {}).get("reasons") or []))
+        if count:
+            reasons.append({"label": report.t(f"scope_reason_{reason}"), "count": count})
+    failed = summary.get("review_failed_articles") or []
+    lines = [
+        report.t("scope_period", period=report.matrix_period_label(summary)),
+        report.t("scope_articles", articles=scope.get("articles", 0), reviewed=scope.get("reviewed_articles", 0),
+                 failed=scope.get("review_failed_articles", 0)),
+    ]
+    if scope.get("adjudicated_articles") or scope.get("wording_fixed_articles"):
+        lines.append(report.t("scope_adjudicated", count=scope.get("adjudicated_articles", 0),
+                              wording=scope.get("wording_fixed_articles", 0)))
+    if scope.get("recheck_pending_candidates"):
+        lines.append(report.t("scope_recheck_pending", count=scope["recheck_pending_candidates"]))
+    lines.append(report.t("scope_companies", on=counts["detected"], review=counts["review"], off=counts["reviewed_off"],
+                          insufficient=counts["insufficient"]))
+    return {
+        "kicker": report.t("scope_kicker"),
+        "title": report.t("scope_title"),
+        "lines": lines,
+        "reasons_heading": report.t("scope_reasons_heading"),
+        "reasons": reasons,
+        "notes": [
+            report.t("scope_date_pending", investment=scope.get("date_pending_investment_rows", 0),
+                     business=scope.get("date_pending_business_rows", 0)),
+            report.t("scope_collection", completed=scope.get("collection_completed_companies", 0),
+                     incomplete=scope.get("collection_incomplete_companies", 0)),
+        ],
+        "failed_heading": report.t("scope_failed_heading"),
+        "failed": [{"company": item.get("company", ""), "title": item.get("title", ""), "url": item.get("url", "")}
+                   for item in failed],
+        "failed_none": report.t("scope_failed_none"),
+        "review_note": report.t("scope_review_note"),
     }
 
 
@@ -227,6 +295,7 @@ def build(args):
                 "signals": [report.signal_cell_state(signal_index, profile["company"], no) for no in range(1, 6)],
             } for profile in profiles],
         },
+        "scope": scope_entries(profiles, signal_index, summary, counts),
         "details": {
             "kicker": "C O M P A N Y   S I G N A L S",
             "title": report.t("detail_title"),

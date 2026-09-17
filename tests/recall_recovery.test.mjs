@@ -154,7 +154,7 @@ test('an S3 decision that could publish and mentions a debt buyback is asked aga
     target_technology_supported: false, leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass',
     evidence_quotes: ['The Company made the Tender Offers as a balanced capital allocation strategy.'] };
   assert.equal(needsFundingReview(article, { decisions: [decision] }), true);
-  assert.equal(needsFundingReview(article, { decisions: [decision], funding_review_version: 'funding-event-v1' }), false);
+  assert.equal(needsFundingReview(article, { decisions: [decision], funding_review_version: 'funding-event-v2' }), false);
   assert.equal(needsFundingReview(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
   const round = { candidates: [{ ...article.candidates[0], row: { content_text: BODY, investment_signal_no: 3, title: 'Nexeon completes £100m investment round' } }] };
   assert.equal(needsFundingReview(round, { decisions: [{ ...decision, evidence_quotes: ['marks the completion of the investment round'] }] }), false);

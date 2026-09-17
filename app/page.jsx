@@ -111,6 +111,7 @@ const REVIEW_GAP_LABEL = {
   leading_indicator: "전조 활동 미확인",
   event_stage: "투자 단계 기준 밖",
   quality: "근거 부족",
+  semantic_recheck: "재검토 미완료",
 };
 
 function reviewGapText(item) {

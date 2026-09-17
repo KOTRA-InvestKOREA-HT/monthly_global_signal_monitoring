@@ -155,6 +155,28 @@ function matrixPages(state, model) {
       </div>` : ''}`)).join('');
 }
 
+// 검토 범위. 실행 35167466191 보고서는 근거 부족 43개사(56%)를 한 색으로만 보여 줘, 수집이 안 된 것인지
+// 판정이 실패한 것인지 게시일이 보류된 것인지 알 수 없었다. 기사 수·기업 수·수집 작업 상태를 각각의 단위로 적는다.
+function scopePage(state, scope) {
+  return page(state, `
+      ${header(scope.kicker, scope.title)}
+      <div class="scope">
+        <ul class="scope-lines">${scope.lines.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>
+        ${scope.reasons.length ? `
+        <p class="scope-heading">${escapeHtml(scope.reasons_heading)}</p>
+        <ul class="scope-reasons">${scope.reasons.map(reason => `
+          <li><span>${escapeHtml(reason.label)}</span><strong>${escapeHtml(reason.count)}</strong></li>`).join('')}
+        </ul>` : ''}
+        <ul class="scope-notes">${scope.notes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}</ul>
+        <p class="scope-heading">${escapeHtml(scope.failed_heading)}</p>
+        ${scope.failed.length ? `<ul class="scope-failed">${scope.failed.map(item => `
+          <li><strong>${escapeHtml(item.company)}</strong> ${/^https?:\/\//i.test(item.url || '')
+            ? `<a href="${escapeHtml(item.url)}">${escapeHtml(item.title)}</a>` : escapeHtml(item.title)}</li>`).join('')}
+        </ul>` : `<p class="scope-none">${escapeHtml(scope.failed_none)}</p>`}
+        <p class="scope-note">${escapeHtml(scope.review_note)}</p>
+      </div>`);
+}
+
 // A signal's summary is one paragraph: the headline in semibold, then the rest
 // after an em dash. Whether the two share a line is settled upstream, because
 // only the side holding the font metrics can measure it.
@@ -222,7 +244,8 @@ const itemCard = (items, card) => `
             <span class="pill">${escapeHtml(items.target_label)}</span>
             <span class="target-text">${escapeHtml(card.target_text)}</span>
           </p>
-          <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span></p>
+          <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span>${card.exempt_note
+            ? `<span class="exempt-note">${escapeHtml(card.exempt_note)}</span>` : ''}</p>
           <p class="item-body">${escapeHtml(card.body)}</p>
           ${sourceLine(card.source, card.source_url)}
         </article>`;
@@ -261,6 +284,7 @@ export function renderReport(model, { assets = '', itemBreaks = [] } = {}) {
 <body>
 ${coverPage(state, model, assets)}
 ${matrixPages(state, model)}
+${model.scope ? scopePage(state, model.scope) : ''}
 ${model.details ? detailPages(state, model, assets) : ''}
 ${itemPages(state, model, itemBreaks)}
 </body>
@@ -456,18 +480,30 @@ body {
   text-overflow: ellipsis;
 }
 .item-trend-label { margin-top: 10.4pt; }
+/* 줄 수로 자르지 않는다. 카드는 문안만큼 커지고, 장 나누기는 빌더가 잰 높이로 한다. */
 .item-body {
   margin: 4.7pt 16.1pt 0;
   font-size: 8.8pt;
   line-height: 10.8pt;
   color: #000;
   word-break: keep-all;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  overflow: hidden;
 }
 .item-card .source { margin: 2pt 16.1pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+.item-trend-label .exempt-note { font-size: 7.6pt; color: ${COLORS.muted}; }
+
+/* ---- review scope ---- */
+.scope { position: absolute; top: 116pt; left: 30pt; right: 30pt; font-size: 9pt; line-height: 1.55; color: ${COLORS.text}; word-break: keep-all; }
+.scope ul { margin: 0; padding: 0; list-style: none; }
+.scope-lines li { padding: 5pt 0; border-bottom: 0.45pt solid ${COLORS.tableLine}; font-weight: 600; }
+.scope-heading { margin: 18pt 0 6pt; font-size: 9pt; font-weight: 800; color: ${COLORS.navy}; }
+.scope-reasons { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18pt; }
+.scope-reasons li { display: flex; justify-content: space-between; padding: 3pt 0; border-bottom: 0.45pt dotted ${COLORS.tableLine}; }
+.scope-notes { margin-top: 14pt !important; }
+.scope-notes li, .scope-failed li { position: relative; padding: 2pt 0 2pt 10pt; font-size: 8.4pt; color: ${COLORS.bodyGrey}; }
+.scope-notes li::before, .scope-failed li::before { content: '·'; position: absolute; left: 2pt; }
+.scope-failed a { color: inherit; }
+.scope-none { margin: 0; font-size: 8.4pt; color: ${COLORS.bodyGrey}; }
+.scope-note { margin: 18pt 0 0; padding-top: 8pt; border-top: 0.9pt solid ${COLORS.boxLine}; font-size: 7.8pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
 /* The drawn page decides how many lines of each summary to show by trying a

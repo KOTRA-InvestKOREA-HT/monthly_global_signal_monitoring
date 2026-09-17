@@ -596,3 +596,18 @@ test("an investment candidate cannot claim the target technology its own article
   const agreed = importReview(a, review(a, [decision(), { ...business, target_technology_supported: true }]));
   assert.deepEqual(agreed.map((r) => r.supported), [true, true]);
 });
+
+test('coverage reasons tell collection, review failure, date and evidence gaps apart', async () => {
+  const { coverageReasons } = await import("../scripts/local_report.mjs");
+  const body = { row: { content_text: "Evidence text that is long enough to be an article body. ".repeat(6) } };
+  const read = { id: "read", date_placement: "in_period", candidates: [body] };
+  const failed = { id: "failed", date_placement: "in_period", candidates: [body] };
+  const titleOnly = { id: "title", date_placement: "in_period", candidates: [{ row: {} }] };
+  const deferred = { decisions: [{ quality: "needs_review", entity_supported: true, indicator_supported: false }] };
+  const reviews = new Map([["read", deferred], ["title", { decisions: [{ quality: "pass", entity_supported: false, indicator_supported: false }] }]]);
+  assert.deepEqual(coverageReasons([read, failed], reviews, new Set(), "incomplete", 2),
+    ["collection_incomplete", "date_deferred", "needs_review", "review_failed"]);
+  // 제목뿐인 기사만 있는 기업은 기사별 사유가 없어도 본문 미수집으로 적는다.
+  assert.deepEqual(coverageReasons([titleOnly], reviews, new Set(), "completed", 0), ["no_body"]);
+  assert.deepEqual(coverageReasons([], reviews, new Set(), "completed", 0), []);
+});
