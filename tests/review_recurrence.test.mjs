@@ -466,3 +466,43 @@ test('an exhausted verifier quota is not retried and the error is recorded', asy
   assert.equal(state.provider_reason, 'credits_exhausted');
   assert.deepEqual(state.verification.errors, { '429:credits_exhausted': 1 });
 });
+
+// 실행 35198796190: 검증 지시대로 대상 밖 후보에 빈 reason_ko 를 돌려주자 검증 응답 33건이 모두 형식 검사에서 거부됐다.
+test('verifier answers for candidates outside verify_candidate_ids are replaced by the primary decisions before validation', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-unlisted-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const s5 = { ...rejectedS5, evidence_quotes: [] };
+  const primary = [approvedS2, approvedS3, s5, business];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => (String(url).includes('generativelanguage')
+      ? geminiReply([approvedS2, approvedS3, { ...s5, reason_ko: '', entity_supported: false, event_stage: 'not_applicable' }, business])
+      : reply(primary)) });
+  assert.equal(state.status, 'completed');
+  assert.equal(state.verification.failed, 0);
+  assert.deepEqual(state.recheck_pending, []);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:5'), s5);
+});
+
+test('a verifier whose every answer is rejected pauses the run instead of publishing without the suspicious candidates', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-rejected-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = ['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD'].map((company, i) => {
+    const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
+      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
+    return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
+  });
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  let verifierCalls = 0;
+  const state = await reviewArticles({ articles, reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      verifierCalls++;
+      return geminiReply(primary.map(d => ({ ...d, reason_ko: '' })));
+    } });
+  assert.equal(verifierCalls, 3);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'verifier_unavailable');
+  assert.equal(state.recheck_pending.length, 4);
+});

@@ -102,8 +102,9 @@ export const VERIFY_INSTRUCTION =
   'evidence_quotes, the booleans, event_stage and quality so that they agree with those answers. Be strict: set a field true, or ' +
   'event_stage exploratory, planned or precursor, only when a quoted sentence states it; when the evidence is ambiguous take the ' +
   'stricter reading or quality=needs_review. A question is not a verdict: when the evidence clearly meets the criteria, approve it. ' +
-  'Return every candidate exactly once. For every candidate NOT in verify_candidate_ids return empty evidence_quotes, reason_ko "", ' +
-  'all booleans false, event_stage not_applicable, quality needs_review and empty summaries; those answers are discarded. ' +
+  'Return every candidate exactly once. For every candidate NOT in verify_candidate_ids return empty evidence_quotes, ' +
+  'reason_ko "검증 대상 아님", all booleans false, event_stage not_applicable, quality needs_review and empty summaries; ' +
+  'those answers are discarded. ' +
   'Write summaries under section 5 for listed candidates that remain eligible. ';
 
 // 판정 캐시 식별자(promptContract)에 들어가던 옛 검증 지시. 검증 지시는 1차 판정을 만들지 않고, 검증 결과는
