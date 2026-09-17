@@ -198,6 +198,6 @@ test('a published summary whose numbers the article does not state is refreshed 
   assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [{ ...decision, summary_ko: '자동차 매출이 61% 급증함' }] }), false);
   assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', decisions: [decision] }), true,
     'the Korean and English percentages still disagree');
-  assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', summary_style_version: 'summary-style-v1',
+  assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', summary_style_version: 'summary-style-v2',
     decisions: [decision] }), false);
 });

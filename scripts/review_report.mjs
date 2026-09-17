@@ -5,8 +5,8 @@ import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, humanReviewGaps, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
-import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
-import { PROMPT_VERSION, reviewPromptDigest } from './review_prompts.mjs';
+import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
+import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
@@ -18,7 +18,8 @@ import { resolveReportPeriod } from './report_period.mjs';
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 export const VERIFIER = resolveVerifier();
-const VERIFICATION_VERSION = 'verifier-v2';
+const VERIFICATION_VERSION = 'verifier-v3';
+const VERIFICATION_COUNTS = ['requested', 'verified', 'partial', 'pending', 'changed', 'failed', 'rejected_responses'];
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
   // 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다(build_pdf_report.signal_needs_human_review).
@@ -44,7 +45,7 @@ const FACILITY_STAGE_REVIEW_VERSION = 'facility-stage-v1';
 const TECHNOLOGY_REVIEW_VERSION = 'technology-link-v2';
 const ACQUISITION_REVIEW_VERSION = 'acquisition-event-v1';
 const SUMMARY_ACCURACY_VERSION = 'summary-accuracy-v1';
-const SUMMARY_STYLE_VERSION = 'summary-style-v1';
+const SUMMARY_STYLE_VERSION = 'summary-style-v2';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
 // 그래서 Nexeon 의 1억 파운드 조달(investment:3)처럼 나머지 조건이 모두 true 인데
 // 단계 판정 하나로 탈락한 건이 재검토 대상에 아예 오르지 못했다. 범위를 정책과 맞춘다.
@@ -126,7 +127,16 @@ export const VERIFY_QUESTIONS = {
   form3_personnel_event: 'Does the filing itself announce a new appointment, or does it only report an officer\'s ownership status? ' +
     'A Form 3 alone is not a personnel signal.',
   semantic_recheck_pending: 'The previous check did not complete. Judge this candidate from scratch against every criterion.',
+  verification_changed: 'The verification rules changed since this candidate was last verified. Judge it from scratch against every criterion.',
 };
+
+// 2차 검증 식별자. 1차 판정 캐시(reviewPolicy)와 따로 둔다. 검증 지시·질문·응답 스키마·검증 모델·추론 설정·검증 버전 중
+// 하나라도 바뀌면 저장된 검증 결과를 재사용하지 않고, 1차 판정은 그대로 둔 채 지난번 검증한 후보만 다시 검증한다.
+export function verificationDigest(verifier = VERIFIER) {
+  if (!verifier) return null;
+  return crypto.createHash('sha256').update(JSON.stringify({ version: VERIFICATION_VERSION, instruction: VERIFY_INSTRUCTION,
+    questions: VERIFY_QUESTIONS, schema: decisionProperties, model: verifier.model, thinking: verifier.thinkingLevel || '' })).digest('hex');
+}
 export function verificationSuspects(article, review) {
   const reasons = new Map();
   const add = (id, reason) => reasons.set(id, [...new Set([...(reasons.get(id) || []), VERIFY_QUESTIONS[reason] || reason])]);
@@ -150,7 +160,7 @@ const RECHECK_VERSIONS = () => ({ stage_review_version: STAGE_REVIEW_VERSION, fo
   technology_review_version: TECHNOLOGY_REVIEW_VERSION, acquisition_review_version: ACQUISITION_REVIEW_VERSION });
 
 // 검증 결과를 1차 판정에 합친다. 의심 후보의 판정만 검증 모델의 것으로 바꾸고 나머지는 1차 판정 그대로 둔다.
-export function mergeVerification(article, primary, checked, suspects, model = VERIFIER?.model) {
+export function mergeVerification(article, primary, checked, suspects, model = VERIFIER?.model, digest = verificationDigest()) {
   const ids = new Set(suspects.candidate_ids);
   const verified = new Map(checked.decisions.map(d => [d.candidate_id, d]));
   const decisions = primary.decisions.map(d => (ids.has(d.candidate_id) && verified.has(d.candidate_id) ? verified.get(d.candidate_id) : d));
@@ -166,21 +176,23 @@ export function mergeVerification(article, primary, checked, suspects, model = V
     ...rest, ...RECHECK_VERSIONS(), decisions,
     ...(removed.length ? { unverified_quotes_removed: removed } : {}),
     ...(pending.length ? { semantic_recheck_pending: { reason: 'verifier_evidence_unverified', candidate_ids: pending } } : {}),
-    verification: { version: VERIFICATION_VERSION, model, candidate_ids: [...ids], flagged_because: suspects.flagged_because,
+    verification: { version: VERIFICATION_VERSION, digest, model, candidate_ids: [...ids], flagged_because: suspects.flagged_because,
       changed: [...ids].filter(id => {
         const before = primary.decisions.find(d => d.candidate_id === id), after = decisions.find(d => d.candidate_id === id);
         return before && after && (outcome(primary.decisions, before) !== outcome(decisions, after) || before.event_stage !== after.event_stage);
       }),
-      primary: primary.decisions.filter(d => ids.has(d.candidate_id)).map(({ candidate_id, entity_supported, target_technology_supported,
+      // 다시 검증할 때도 처음 1차 판정을 남긴다. 검증 결과만 남아 처음 판단으로 되돌아볼 근거를 잃지 않게 한다.
+      primary: [...(primary.verification?.primary || []), ...primary.decisions.filter(d => ids.has(d.candidate_id) &&
+        !(primary.verification?.primary || []).some(p => p.candidate_id === d.candidate_id)).map(({ candidate_id, entity_supported, target_technology_supported,
         indicator_supported, leading_indicator_supported, event_stage, quality, reason_ko }) => ({ candidate_id, entity_supported,
-        target_technology_supported, indicator_supported, leading_indicator_supported, event_stage, quality, reason_ko })) },
+        target_technology_supported, indicator_supported, leading_indicator_supported, event_stage, quality, reason_ko }))] },
   };
 }
 
 // 저장된 판정을 다시 묻는 이유와 대상 후보. 다시 묻다가 실패하면 이 후보들을 재검토 미완료로 남긴다.
 // 실행 35175067142 의 Vestas 는 기술 연결 재검토가 두 번 실패했는데 옛 판정이 그대로 남아, 실행 상태는 실패인데
 // 보고서는 검토 완료로 셌다.
-export function cachedRecheck(article, review) {
+export function cachedRecheck(article, review, { verifierDigest = null } = {}) {
   const ids = items => [...new Set(items.map(d => d.candidate_id))];
   if (review.semantic_recheck_pending) return { reason: 'semantic_recheck_pending', candidate_ids: review.semantic_recheck_pending.candidate_ids || [] };
   if (needsStageReview(article, review)) return { reason: 'candidate_event_stage', candidate_ids: ids(stageSuspects(article, review.decisions)) };
@@ -191,6 +203,10 @@ export function cachedRecheck(article, review) {
   if (needsTechnologyReview(article, review)) return { reason: 'technology_link', candidate_ids: ids(review.decisions.filter(d =>
     d.target_technology_supported && !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
     publishedDecision(article, review.decisions, d))) };
+  // 검증 지시·질문·모델 등이 바뀌었으면 지난번 검증한 후보만 다시 검증한다. 1차 판정은 재사용한다.
+  if (verifierDigest && review.verification && review.verification.digest !== verifierDigest) {
+    return { reason: 'verification_changed', candidate_ids: review.verification.candidate_ids || [] };
+  }
   return null;
 }
 
@@ -336,8 +352,14 @@ export function summaryStyleProblems(article, decision) {
   if (subject && names.some(name => enBody.startsWith(name)) && !names.some(name => ko.toLowerCase().includes(name))) {
     problems.push('company_name_not_latin');
   }
+  // 실행 35200022672: Charles River S4 영문 519자가 보고서 시그널 칸을 넘어 PDF 생성이 실패했다.
+  // 투자 시그널 문안만 본다. 사업동향 칸은 더 길게 싣는다.
+  if (candidate?.kind === 'investment' && (detailPart(String(decision.summary_en || '')).length > SIGNAL_SUMMARY_LIMITS.en ||
+    body.length > SIGNAL_SUMMARY_LIMITS.ko)) problems.push('summary_too_long');
   return problems;
 }
+// 보고서 시그널 칸의 상세 문안 글자 상한(build_pdf_report.py summary_parts 의 detail_limit). 넘으면 "..."로 잘려 빌드가 실패한다.
+export const SIGNAL_SUMMARY_LIMITS = { en: 440, ko: 230 };
 
 export function mergeRefreshedSummaries(article, review, fresh) {
   const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
@@ -535,7 +557,11 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
 const REVIEW_REQUEST_TIMEOUT_MS = 300000;
 
 // keepDecisions: 2차 검증에서 검증 대상이 아닌 후보의 1차 판정. 검증 응답의 그 후보 답은 버리므로 형식 검사에도 넣지 않는다.
-export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER, { keepDecisions = null } = {}) {
+// repairAttempt: 이 응답이 검증 피드백을 받고 다시 쓴 답인지. 날짜 힌트 폐기·숫자 경고·후보 salvage 같은 완화는 보정 기회를
+// 한 번 준 뒤에만 쓴다. 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
+// 실행 35200022672 의 Applied Materials·Boeing S4 가 보정 요청 없이 곧바로 인용을 걷어내고 미완료가 됐다.
+export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER,
+  { keepDecisions = null, repairAttempt = Boolean(retry) && retry?.mode !== 'verify' } = {}) {
   const invalid = code => invalidResponse(code, provider.label);
   let response;
   try {
@@ -618,7 +644,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 인용이 그 날짜를 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는
   // 날짜 하나 때문에 잃으면 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
   // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않는다.
-  if (problem && retry && /published_date/.test(problem.message)) {
+  if (problem && repairAttempt && /published_date/.test(problem.message)) {
     const withoutHint = { ...review, published_date: '', published_date_quote: '' };
     try {
       importReview(article, withoutHint);
@@ -628,7 +654,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   }
   // 숫자 검증은 틀린 숫자를 알려 한 번 되묻는다. 재시도에서도 숫자만 걸리면 판정은 받고 경고를 남긴다.
   // 표기 차이로 생긴 오탐 하나로 근거 있는 판정 전체를 잃으면 그 기사는 보고서에서 빠지고 생성까지 막힌다.
-  if (problem && retry && /summary numbers/.test(problem.message)) {
+  if (problem && repairAttempt && /summary numbers/.test(problem.message)) {
     try {
       importReview(article, review);
       console.log(`Article ${article.id}: summary numbers still unconfirmed after retry; kept with a warning`);
@@ -640,7 +666,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 재시도에서도 걸리면 맞지 않는 인용을 빼고, 그 후보가 발행될 판정이었다면 문안을 비우고 재검토 미완료로 남긴다.
   // 미완료 후보는 AI 승인으로 싣지 않으며(투자 후보는 사람 검토, 사업동향은 제외) 다음 실행이 다시 판정한다.
   // 없는 인용을 통과시키지 않고, 나머지 후보는 모든 검증을 그대로 거친다.
-  if (problem && retry && CANDIDATE_EVIDENCE_PROBLEM.test(problem.message)) {
+  if (problem && repairAttempt && CANDIDATE_EVIDENCE_PROBLEM.test(problem.message)) {
     const salvaged = salvageCandidateEvidence(article, review);
     if (salvaged) {
       console.log(`Article ${article.id}: candidate evidence salvaged` +
@@ -782,10 +808,9 @@ export async function reviewArticles(options) {
     quote_removals: results.flatMap(r => r.quote_removals || []),
     recheck_pending: results.flatMap(r => r.recheck_pending || []),
     verification: results.reduce((total, r) => ({ model: total.model || r.verification?.model || null,
-      requested: total.requested + (r.verification?.requested || 0), changed: total.changed + (r.verification?.changed || 0),
-      failed: total.failed + (r.verification?.failed || 0),
+      ...Object.fromEntries(VERIFICATION_COUNTS.map(key => [key, total[key] + (r.verification?.[key] || 0)])),
       errors: Object.entries(r.verification?.errors || {}).reduce((errors, [key, n]) => ({ ...errors, [key]: (errors[key] || 0) + n }), total.errors) }),
-      { model: null, requested: 0, changed: 0, failed: 0, errors: {} }),
+      { model: null, ...Object.fromEntries(VERIFICATION_COUNTS.map(key => [key, 0])), errors: {} }),
     // 1차 판정이 먼저 멈춰 실행 상태가 그쪽 사유를 보여 줘도, 검증이 왜 멈췄는지 따로 남긴다.
     ...(verifierStop.stopped ? { verifier_stop: verifierStop.stopped } : {}),
   };
@@ -823,9 +848,21 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   const quoteRemovals = [], recheckPending = [];
   // errors 는 실패한 검증 요청의 HTTP 상태·분류별 횟수다. 실행 35182571472 는 검증 12회가 모두 실패했는데 무엇으로 실패했는지
   // 남지 않아, 할당량인지 과부하인지 아티팩트만으로 가릴 수 없었다.
-  const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null, requested: 0, changed: 0, failed: 0, errors: {} };
+  // verified: 검증 대상 후보가 모두 검증을 통과한 기사(모델이 근거로 탈락시킨 것도 통과다). partial: 일부 후보만 통과.
+  // pending: 통과한 후보 없이 미완료. failed: 끝내 검증 응답을 못 받은 기사. rejected_responses: 형식 검사에서 거부된 응답 수.
+  const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null,
+    ...Object.fromEntries(VERIFICATION_COUNTS.map(key => [key, 0])), errors: {} };
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
     quote_removals: quoteRemovals, recheck_pending: recheckPending, verification: verifications, ...extra });
+  // 검증 응답이 거부된 시도마다 1차 판정처럼 진단을 남긴다. 실행 35200022672 의 Nabtesco 는 어느 인용이 틀렸는지 남지 않았다.
+  const recordVerifierDiagnostic = async (article, suspects, error, attempt) => {
+    const diagnosticPath = `${path.basename(reviewDir)}/diagnostics/${article.id}/${crypto.randomUUID()}-verify-attempt-${attempt}.json`;
+    await write(path.join(path.dirname(reviewDir), diagnosticPath), {
+      schema_version: 1, stage: 'verify', article_id: article.id, company: article.company, model: VERIFIER?.model,
+      verification_version: VERIFICATION_VERSION, ...runIdentity(), created_at: new Date().toISOString(), attempt,
+      verify_candidate_ids: suspects.candidate_ids, reason: error.response_code, ...(error.diagnostic || {}) });
+    diagnostics.push({ article_id: article.id, attempt, stage: 'verify', reason: error.response_code, file: diagnosticPath });
+  };
   // 의심 후보를 2차 검증 모델에 보낸다. 실패·한도·할당량이면 그 후보를 재검토 미완료로 둔 1차 판정을 돌려준다.
   // 실행 35181768089: 검증 첫 요청이 503 한 번을 받자 보조 요청 전체가 멈춰, 검증 2건만 시도되고 34개 기사의 의심 후보가
   // 미완료로 빠진 보고서가 발행됐다(AI 확인 1개사). 검증은 1차 판정처럼 일시 오류를 재시도하고, 그래도 쓸 수 없으면
@@ -849,12 +886,23 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           // 1차 답(primary_decisions)은 보내지 않는다. 같은 모델이 자기 답을 보면 그대로 따라간다.
           { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because,
             ...(validationFeedback ? { previous_response_rejected: validationFeedback } : {}) }, VERIFIER,
-          { keepDecisions: primary.decisions });
+          { keepDecisions: primary.decisions, repairAttempt: Boolean(validationFeedback) });
         const merged = mergeVerification(article, primary, checked, suspects);
         importReview(article, merged);
         if (merged.verification.changed.length) verifications.changed++;
-        verifierStop.succeeded = (verifierStop.succeeded || 0) + 1;
-        console.log(`Article ${article.id}: verified ${suspects.candidate_ids.join(', ')}${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
+        // 보정 응답에서 인용·문안을 걷어내 미완료가 된 후보는 검증에 성공한 것이 아니다. 모델이 근거로 탈락시킨 후보는 성공이다.
+        const stillPending = suspects.candidate_ids.filter(id => merged.semantic_recheck_pending?.candidate_ids?.includes(id));
+        const outcome = !stillPending.length ? 'verified' : stillPending.length < suspects.candidate_ids.length ? 'partial' : 'pending';
+        verifications[outcome]++;
+        merged.verification.outcome = outcome;
+        if (outcome === 'verified') verifierStop.succeeded = (verifierStop.succeeded || 0) + 1;
+        if (outcome === 'pending') verifierStop.rejected = (verifierStop.rejected || 0) + 1;
+        console.log(`Article ${article.id}: ${outcome === 'verified' ? 'verified' : outcome === 'partial' ? 'partially verified' : 'verification pending'} ` +
+          `${suspects.candidate_ids.join(', ')}${stillPending.length ? `; pending ${stillPending.join(', ')}` : ''}` +
+          `${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
+        if (outcome === 'pending' && !verifierStop.succeeded && verifierStop.rejected >= 3) {
+          verifierStop.stopped ??= { reason: 'verifier_unavailable', response_code: 'verification_pending' };
+        }
         return merged;
       } catch (error) {
         // 모델 이름·키·요청 형식 오류는 기사마다 반복될 설정 문제다. 모든 의심 후보를 조용히 미완료로 돌리지 않고 실행을 멈춘다.
@@ -878,8 +926,16 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         }
         // 1차 판정처럼 형식 결함(요약 누락, 인용 불일치 등)은 무엇이 틀렸는지 알려 주고 한 번 더 묻는다.
         // 검증 메시지는 우리가 만든 문구(회사명·후보 id·결함)라 모델 출력이 섞이지 않는다.
+        if (error.response_code) {
+          verifications.rejected_responses++;
+          await recordVerifierDiagnostic(article, suspects, error, validationFeedback ? 2 : 1);
+        }
         if (error.response_code && !validationFeedback) {
-          validationFeedback = { reason: error.response_code, validation_message: error.diagnostic?.validation_message || error.message };
+          const unmatched = (error.diagnostic?.decisions || []).filter(d => suspects.candidate_ids.includes(d.candidate_id))
+            .flatMap(d => (d.quotes || []).filter(q => q.quote && !(q.matching_block_indices || []).length)
+              .map(q => ({ candidate_id: d.candidate_id, quote: q.quote, source_text_from_same_start: q.nearest_evidence || '' }))).slice(0, 4);
+          validationFeedback = { reason: error.response_code, validation_message: error.diagnostic?.validation_message || error.message,
+            ...(unmatched.length ? { unmatched_quotes: unmatched } : {}) };
           console.log(`Article ${article.id}: verifier answer rejected (${error.response_code}); asking once more`);
           continue;
         }
@@ -944,7 +1000,14 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     requests++;
     let fresh;
     try {
-      fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl);
+      // 칸을 넘는 투자 시그널 문안은 무엇을 줄여야 하는지 알려 준다. 판정은 옮기지 않고 문안만 옮기는 기존 경로다.
+      const tooLong = review.decisions.filter(d => publishedDecision(article, review.decisions, d) &&
+        summaryStyleProblems(article, d).includes('summary_too_long')).map(d => d.candidate_id);
+      fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl, tooLong.length ? { reason: 'summary_too_long',
+        candidate_ids: tooLong, validation_message: `Investment summaries for ${tooLong.join(', ')} do not fit the report card. ` +
+          `Rewrite both so that summary_en is at most ${SIGNAL_SUMMARY_LIMITS.en - 60} characters and summary_ko at most ` +
+          `${SIGNAL_SUMMARY_LIMITS.ko - 30} characters, keeping the same key facts (amounts, counterparties, dates) in both languages. ` +
+          'Keep every judgement field unchanged.' } : false, PROVIDER, { repairAttempt: false });
     } catch (error) {
       if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
       console.log(`Article ${article.id}: summary refresh unavailable (${error.response_code || error.status || 'error'})`);
@@ -977,13 +1040,22 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (review.reviewer !== `${PROVIDER.model}/${VERSION}` || review.provider !== PROVIDER.id) throw new Error('cache provider mismatch');
       importReview(article, review);
       // 지난 실행에서 재검토를 끝내지 못한 판정과 새 재검토 규칙에 걸린 판정은 다시 판정한다.
-      const recheck = cachedRecheck(article, review);
+      const currentVerification = config.verifierApiKey ? verificationDigest() : null;
+      const recheck = cachedRecheck(article, review, { verifierDigest: currentVerification });
       if (recheck && config.verifierApiKey) {
         // 저장된 판정 전체를 다시 사지 않고, 걸린 후보만 2차 검증한다. 나머지 후보의 판정은 흔들지 않는다.
         const suspects = verificationSuspects(article, review) || { candidate_ids: [], flagged_because: {} };
         for (const id of recheck.candidate_ids) {
           if (!suspects.candidate_ids.includes(id)) suspects.candidate_ids.push(id);
           suspects.flagged_because[id] = [...new Set([...(suspects.flagged_because[id] || []), VERIFY_QUESTIONS[recheck.reason] || recheck.reason])];
+        }
+        // 검증 규칙이 바뀐 뒤라면 이번 재검토 사유와 별개로 지난번 검증한 후보도 빠짐없이 다시 검증한다.
+        // 지난 검증 결과만 보고 후보를 고르면, 그때 잘못 탈락한 후보는 더 이상 의심 대상으로 잡히지 않는다.
+        if (review.verification && review.verification.digest !== currentVerification) {
+          for (const id of review.verification.candidate_ids || []) {
+            if (!suspects.candidate_ids.includes(id)) suspects.candidate_ids.push(id);
+            suspects.flagged_because[id] = [...new Set([...(suspects.flagged_because[id] || []), VERIFY_QUESTIONS.verification_changed])];
+          }
         }
         const checked = await verify(article, review, suspects);
         await write(file, checked);
@@ -1150,6 +1222,31 @@ export function publishableReviewFailures(state) {
   return ids.length && state.completed + ids.length === state.total ? ids : [];
 }
 
+// 실패한 단계. 마지막 catch 가 어디서 멈췄는지 남긴다.
+let failedStage = 'setup';
+const BUILD_FAILURE_FILE = path.resolve('outputs/review_work/build_failure.json');
+
+// 실행 35200022672: 판정은 끝났는데 영문 PDF 잘림으로 실패하자, 마지막 catch 가 상세 판정 상태를 "failed" 한 줄로 덮어썼다.
+// 이번 실행이 남긴 판정 상태만 review_state 로 보존하고, 어느 단계에서 무엇으로 실패했는지 함께 남긴다.
+export function failureStatus({ previous = null, error, stage, identity = runIdentity(), buildFailure = null,
+  period = { from_date: process.env.REPORT_FROM_DATE || null, to_date: process.env.REPORT_TO_DATE || null } }) {
+  // 시작할 때 이번 실행의 표시로 덮어쓰므로(startingStatus) 같은 실행의 것만 남는다. running 은 판정 전에 멈춘 것이다.
+  const sameRun = Boolean(previous) && JSON.stringify(previous.run || null) === JSON.stringify(identity.run || null) &&
+    previous.status !== 'running';
+  const { run, period: previousPeriod, provider, model, ...reviewState } = sameRun ? previous : {};
+  return {
+    status: 'failed', reason: error.status ? 'provider_error' : 'validation_or_execution', failed_stage: stage,
+    error_message: String(error.message || '').slice(0, 500),
+    http_status: error.status || null, provider: PROVIDER.id, model: MODEL, ...identity,
+    ...(error.provider_message ? { provider_message: error.provider_message } : {}),
+    ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}),
+    ...(error.transport_reason ? { transport_reason: error.transport_reason, transport_message: error.transport_message } : {}),
+    ...(buildFailure ? { build_failure: buildFailure } : {}),
+    ...(sameRun ? { review_state: reviewState } : {}),
+    period,
+  };
+}
+
 async function main() {
   const period = resolveReportPeriod();
   const { from_date: from, to_date: to } = period;
@@ -1160,6 +1257,7 @@ async function main() {
   const root = path.resolve('outputs/review_work');
   // 수집·판정보다 먼저 쓴다. 여기서부터 죽더라도 아티팩트는 이번 실행을 말한다.
   await write(path.join(root, 'status.json'), startingStatus(period));
+  await fs.rm(BUILD_FAILURE_FILE, { force: true });
   const policyDoc = await fs.readFile('docs/local_report_review.md', 'utf8');
   // Share the reviewed judgement contract, excluding instructions for the local CLI workflow.
   const policyText = policySection(policyDoc);
@@ -1177,6 +1275,7 @@ async function main() {
     await fs.rm(path.join(root, 'reviews'), { recursive: true, force: true });
     console.log('Discarded saved article reviews; every article will be reviewed again');
   }
+  failedStage = 'collection';
   try {
     await fs.access(sourceFile);
     const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));
@@ -1199,6 +1298,7 @@ async function main() {
   const snapshot = { policy, period, summary, signals, articles, targets, technology, indicators, date_deferred: candidates.deferred };
   const runDir = path.join(root, `${from.slice(0, 7)}-${digest(snapshot)}`);
   await write(path.join(runDir, 'snapshot.json'), snapshot);
+  failedStage = 'review';
   const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
   await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL, ...runIdentity() });
   console.log(JSON.stringify(state));
@@ -1225,14 +1325,18 @@ async function main() {
       'Existing published PDFs are unchanged.\n' : '') +
     state.failed_articles.map(item => `- Article ${item.article_id}: ${item.reason}\n`).join('') +
     (state.quote_removals || []).map(item => `- Article ${item.article_id}: unverifiable quotes removed from rejected candidates ${item.candidate_ids.join(', ')}\n`).join('') +
-    (state.verification?.requested ? `Second-stage verification (${state.verification.model}): ${state.verification.requested} requests, ` +
-      `${state.verification.changed} articles changed, ${state.verification.failed} articles unavailable` +
+    (state.verification?.requested ? `Second-stage verification (${state.verification.model}): ${state.verification.requested} requests; articles ` +
+      `${state.verification.verified || 0} verified, ${state.verification.partial || 0} partially verified, ${state.verification.pending || 0} pending, ` +
+      `${state.verification.failed} unavailable, ${state.verification.changed} changed; ${state.verification.rejected_responses || 0} rejected responses` +
       `${Object.keys(state.verification.errors || {}).length ? `; errors ${JSON.stringify(state.verification.errors)}` : ''}\n` : '') +
     (state.recheck_pending || []).map(item => `- Article ${item.article_id}: semantic recheck not completed (${item.reason}); ` +
       `${item.candidate_ids.join(', ')} published only as human review and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
   if (state.status !== 'completed' && !reviewFailed.length) { process.exitCode = 75; return; }
+  failedStage = 'build';
+  process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
   const reportDir = await build({ runDir, issueNumber: process.env.REPORT_ISSUE_NUMBER || '2', reviewFailed });
+  failedStage = 'publish';
   const finalState = reviewFailed.length ? { ...state, status: 'completed_with_review_failures' } : state;
   const investment = await read(path.join(reportDir, 'investment.json'));
   const relevant = await read(path.join(reportDir, 'relevant.json'));
@@ -1252,14 +1356,10 @@ async function main() {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(async error => {
   console.error(error.message);
-  await write(path.resolve('outputs/review_work/status.json'), {
-    status: 'failed', reason: error.status ? 'provider_error' : 'validation_or_execution',
-    http_status: error.status || null, provider: PROVIDER.id, model: MODEL, ...runIdentity(),
-    ...(error.provider_message ? { provider_message: error.provider_message } : {}),
-    ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}),
-    ...(error.transport_reason ? { transport_reason: error.transport_reason, transport_message: error.transport_message } : {}),
-    period: { from_date: process.env.REPORT_FROM_DATE || null, to_date: process.env.REPORT_TO_DATE || null },
-  }).catch(() => {});
+  const statusFile = path.resolve('outputs/review_work/status.json');
+  const previous = await read(statusFile).catch(() => null);
+  const buildFailure = await read(BUILD_FAILURE_FILE).catch(() => null);
+  await write(statusFile, failureStatus({ previous, error, stage: failedStage, buildFailure })).catch(() => {});
   if (error.provider_message) console.error(`${PROVIDER.label} 응답: ${error.provider_message}`);
   if (error.status === 401 || error.status === 403) {
     const apiKey = PROVIDER.keyEnv.map(name => process.env[name]).find(Boolean);

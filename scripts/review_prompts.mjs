@@ -107,10 +107,11 @@ export const VERIFY_INSTRUCTION =
   'those answers are discarded. ' +
   'Write summaries under section 5 for listed candidates that remain eligible. ';
 
-// 판정 캐시 식별자(promptContract)에 들어가던 옛 검증 지시. 검증 지시는 1차 판정을 만들지 않고, 검증 결과는
-// review.verification 에 검증 버전과 함께 따로 기록된다. 검증 지시만 바꿨다고 364개 기사 전체를 다시 판정하지
-// 않도록 식별자에는 이 고정 문자열을 둔다. 판정 기준이나 1차 지시가 바뀌면 식별자는 여전히 바뀐다.
-const LEGACY_VERIFY_CONTRACT = 'Second-stage verification. A first-stage reviewer already answered every candidate (primary_decisions). ' +
+// 1차 판정 캐시 호환용 고정 문자열(마이그레이션). 이 문자열은 현재 쓰는 검증 지시가 아니다.
+// 검증 지시가 1차 판정 캐시 식별자에 들어 있던 시절(ebabbba)의 값을 그대로 둬, 그때 저장된 1차 판정을 다시 사지 않게 한다.
+// 실제 검증 지시·질문·모델은 review_report.mjs 의 verificationDigest() 가 따로 식별하고, 바뀌면 검증만 다시 한다.
+// 1차 지시나 판정 기준이 바뀌어 전체 캐시가 어차피 무효화될 때 이 항목을 빼면 된다.
+const PRIMARY_CACHE_VERIFY_COMPAT = 'Second-stage verification. A first-stage reviewer already answered every candidate (primary_decisions). ' +
   'Automated checks flagged the candidates in verify_candidate_ids for the reasons in flagged_because. Re-judge those candidates ' +
   'independently from the supplied evidence, the criteria and the rules above. Neither the primary answer nor the flag is evidence, ' +
   'and a flag is not a verdict: keep a primary judgement only where the evidence supports it, and change it where it does not. Return ' +
@@ -142,13 +143,13 @@ export function retryInstruction(retry) {
 
 // Hash effective instructions, not file bytes: comments and checkout CRLF do not
 // invalidate caches. Include all static repair modes, not article data. The verifier
-// prompt is identified by the verification version instead (see LEGACY_VERIFY_CONTRACT).
+// prompt is identified separately by verificationDigest() (see PRIMARY_CACHE_VERIFY_COMPAT).
 export function promptContract() {
   return {
     version: PROMPT_VERSION,
     system: buildSystemInstruction(''),
     repairs: [retryInstruction(true), ...[...Object.keys(REPAIR_HINTS), 'semantic_recheck']
-      .map(reason => retryInstruction({ reason })), LEGACY_VERIFY_CONTRACT],
+      .map(reason => retryInstruction({ reason })), PRIMARY_CACHE_VERIFY_COMPAT],
   };
 }
 

@@ -231,6 +231,11 @@ async function main() {
   // 급히 발행해야 할 때만 REPORT_ALLOW_CUT_TEXT=true 로 넘기고, 그때도 잘린 곳을 출력에 남긴다.
   const cut = cutTexts(model, layout.clipped);
   if (cut.length && process.env.REPORT_ALLOW_CUT_TEXT !== 'true') {
+    // 부모 실행(review_report.mjs)은 하위 프로세스의 오류 문구를 받지 못한다. 어느 언어·회사·칸이 넘쳤는지 파일로 넘긴다.
+    if (process.env.REPORT_BUILD_FAILURE_FILE) {
+      await fs.writeFile(process.env.REPORT_BUILD_FAILURE_FILE, JSON.stringify({ stage: 'render', error_code: 'cut_text',
+        lang: model.lang, cut_text: cut }, null, 2), 'utf8').catch(() => {});
+    }
     throw new Error(`Report text would be cut (${model.lang}): ${JSON.stringify(cut)}. Shorten the summaries or set REPORT_ALLOW_CUT_TEXT=true.`);
   }
   await fs.writeFile(htmlPath, html, 'utf8');
