@@ -684,20 +684,24 @@ export async function reviewArticles(options) {
   let stopped = null, fatal = null, progressCompleted = 0;
   // 보강 중단은 실행 전체가 공유한다. 기사마다 따로 판단하면 할당량이 끝난 뒤에도 남은 미상 기사
   // 수만큼 계속 두드린다. 판정 중단(stopped)과는 별개다: 보강이 멈춰도 판정은 계속 나간다.
-  const supplementStop = { stopped: false };
+  const supplementStop = { stopped: false }, verifierStop = { stopped: null };
   const results = [];
   // 보조 요청인지는 어느 게이트를 통해 왔는지로 정한다. 이 구분은 게이트 안에만 있고
   // RequestInit 으로 새어나가지 않는다.
-  const gate = supplement => async (url, init) => {
+  // kind: 'judgement'(1차 판정), 'supplement'(날짜·문안 보강), 'verifier'(2차 검증). 검증 요청의 실패는 판정을 멈추지 않고,
+  // 보강이 멈춰도 검증은 막히지 않는다. 검증을 멈출지는 reviewArticlesSerial 의 verify 가 정한다.
+  const gate = kind => async (url, init) => {
+    const supplement = kind !== 'judgement';
+    const blocked = () => stopped || fatal || (kind === 'supplement' && supplementStop.stopped) || (kind === 'verifier' && verifierStop.stopped);
     const slot = queue.then(async () => {
-      if (stopped || fatal || (supplement && supplementStop.stopped)) return false;
+      if (blocked()) return false;
       if (requests >= config.maxRequests) {
         // 날짜 보강은 보조 작업이다. 예산이 바닥나면 실행을 멈추지 않고 스스로 물러난다.
         if (!supplement) stopped = { status: 'paused', reason: 'request_budget' };
         return false;
       }
       while (nextStart > performance.now()) await sleep(nextStart - performance.now());
-      if (stopped || fatal || (supplement && supplementStop.stopped)) return false;
+      if (blocked()) return false;
       requests++;
       nextStart = performance.now() + config.delayMs;
       return true;
@@ -714,17 +718,18 @@ export async function reviewArticles(options) {
     }
     return response;
   };
-  const gatedFetch = gate(false), supplementFetch = gate(true);
+  const gatedFetch = gate('judgement'), supplementFetch = gate('supplement'), verifierFetch = gate('verifier');
   await Promise.all(Array.from({ length: Math.min(concurrency, articles.length) }, async () => {
     while (index < articles.length && !fatal) {
       const article = articles[index++];
       try {
         const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch,
-          supplementFetchImpl: supplementFetch, supplementStop, logReviewed: false });
+          supplementFetchImpl: supplementFetch, supplementStop, verifierFetchImpl: verifierFetch, verifierStop, logReviewed: false });
         results.push(result);
         progressCompleted += result.completed;
         if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
-        if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped'].includes(result.reason)) {
+        // 검증기 중단은 판정을 멈추지 않는다. 남은 기사의 1차 판정은 계속 받고, 실행 상태는 끝에서 verifierStop 으로 정한다.
+        if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped', 'verifier_unavailable'].includes(result.reason)) {
           // The gate stops queued work knowing only the status code; the worker
           // also read the provider's own explanation. Preferring the gate's
           // report discarded provider_reason on every 429, which is exactly
@@ -740,7 +745,9 @@ export async function reviewArticles(options) {
   const failed_articles = results.flatMap(r => r.failed_articles);
   const completed = results.reduce((n, r) => n + r.completed, 0);
   return {
-    ...(completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
+    ...(stopped && completed < articles.length ? stopped
+      : verifierStop.stopped ? { status: 'paused', ...verifierStop.stopped, reason: verifierStop.stopped.reason === 'request_budget' ? 'request_budget' : 'verifier_unavailable' }
+      : completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
     requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
     date_hints: results.reduce((n, r) => n + (r.date_hints || 0), 0),
     failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
@@ -777,7 +784,7 @@ export function mergeReviewSummaries(article, review, fresh) {
 }
 
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
-  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false } }) {
+  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null } }) {
   let requests = 0, cached = 0, completed = 0, dateHints = 0;
   const failed = [];
   const diagnostics = [];
@@ -786,33 +793,62 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
     quote_removals: quoteRemovals, recheck_pending: recheckPending, verification: verifications, ...extra });
   // 의심 후보를 2차 검증 모델에 보낸다. 실패·한도·할당량이면 그 후보를 재검토 미완료로 둔 1차 판정을 돌려준다.
+  // 실행 35181768089: 검증 첫 요청이 503 한 번을 받자 보조 요청 전체가 멈춰, 검증 2건만 시도되고 34개 기사의 의심 후보가
+  // 미완료로 빠진 보고서가 발행됐다(AI 확인 1개사). 검증은 1차 판정처럼 일시 오류를 재시도하고, 그래도 쓸 수 없으면
+  // 실행을 일시정지해 보고서를 새로 만들지 않는다. 날짜·문안 보강의 중단과도 분리한다.
   const verify = async (article, primary, suspects) => {
     const unverified = reason => ({ ...primary, semantic_recheck_pending: { reason,
       candidate_ids: [...new Set([...(primary.semantic_recheck_pending?.candidate_ids || []), ...suspects.candidate_ids])] } });
-    if (supplementStop.stopped || requests >= config.maxRequests) return unverified('verifier_unavailable');
-    if (requests) await sleep(config.delayMs);
-    requests++;
-    verifications.requested++;
-    try {
-      const checked = await requestReview(article, policy, config.verifierApiKey, supplementFetchImpl,
-        { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, flagged_because: suspects.flagged_because,
-          primary_decisions: primary.decisions }, VERIFIER);
-      const merged = mergeVerification(article, primary, checked, suspects);
-      importReview(article, merged);
-      if (merged.verification.changed.length) verifications.changed++;
-      console.log(`Article ${article.id}: verified ${suspects.candidate_ids.join(', ')}${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
-      return merged;
-    } catch (error) {
-      // 모델 이름·키·요청 형식 오류는 기사마다 반복될 설정 문제다. 모든 의심 후보를 조용히 미완료로 돌리지 않고 실행을 멈춘다.
-      if ([400, 401, 403, 404].includes(error.status)) {
-        throw Object.assign(new Error(`Verifier ${VERIFIER.model} rejected the request (HTTP ${error.status}). ` +
-          'Check GEMINI_VERIFIER_MODEL and the Gemini key, or set REVIEW_VERIFIER=off.'), { status: error.status, verifier_config: true });
+    if (verifierStop.stopped) return unverified('verifier_unavailable');
+    let retries = 0, waitMs = config.delayMs;
+    for (;;) {
+      if (requests >= config.maxRequests) {
+        verifierStop.stopped ??= { reason: 'request_budget' };
+        return unverified('request_budget');
       }
-      verifications.failed++;
-      // 할당량·전송 오류는 남은 기사에서도 같으므로 이번 실행의 보조 요청을 멈춘다. 판정 요청은 계속된다.
-      if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
-      console.log(`Article ${article.id}: verification unavailable (${error.response_code || error.status || error.transport_reason || error.message})`);
-      return unverified(`verifier:${error.response_code || error.status || error.transport_reason || 'error'}`);
+      if (requests) await sleep(waitMs);
+      waitMs = config.delayMs;
+      requests++;
+      verifications.requested++;
+      try {
+        const checked = await requestReview(article, policy, config.verifierApiKey, verifierFetchImpl,
+          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, flagged_because: suspects.flagged_because,
+            primary_decisions: primary.decisions }, VERIFIER);
+        const merged = mergeVerification(article, primary, checked, suspects);
+        importReview(article, merged);
+        if (merged.verification.changed.length) verifications.changed++;
+        console.log(`Article ${article.id}: verified ${suspects.candidate_ids.join(', ')}${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
+        return merged;
+      } catch (error) {
+        // 모델 이름·키·요청 형식 오류는 기사마다 반복될 설정 문제다. 모든 의심 후보를 조용히 미완료로 돌리지 않고 실행을 멈춘다.
+        if ([400, 401, 403, 404].includes(error.status)) {
+          throw Object.assign(new Error(`Verifier ${VERIFIER.model} rejected the request (HTTP ${error.status}). ` +
+            'Check GEMINI_VERIFIER_MODEL and the Gemini key, or set REVIEW_VERIFIER=off.'), { status: error.status, verifier_config: true });
+        }
+        if (error.scheduling_stopped) {
+          verifierStop.stopped ??= { reason: 'scheduling_stopped' };
+          return unverified('verifier_unavailable');
+        }
+        const transient = error.status === 429 || error.status >= 500 || error.transport_error;
+        if (transient && retries < 2) {
+          waitMs = Math.max(config.delayMs, 15000 * 2 ** retries + Math.floor(random() * 1000));
+          retries++;
+          console.log(`Article ${article.id}: verifier temporarily unavailable (${error.transport_reason || `HTTP ${error.status}`}); retry ${retries}/2 after ${waitMs}ms`);
+          continue;
+        }
+        verifications.failed++;
+        console.log(`Article ${article.id}: verification unavailable (${error.response_code || error.status || error.transport_reason || error.message})`);
+        if (transient) {
+          // 재시도 뒤에도 쓸 수 없다. 남은 기사에서도 같을 것이므로 검증을 멈추고 실행을 일시정지로 끝낸다.
+          verifierStop.stopped ??= { reason: 'verifier_unavailable', http_status: error.status || null,
+            ...(error.provider_reason ? { provider_reason: error.provider_reason } : {}),
+            ...(error.provider_message ? { provider_message: error.provider_message } : {}),
+            ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}) };
+          return unverified('verifier_unavailable');
+        }
+        // 검증 응답 자체가 검증을 통과하지 못한 경우(인용 불일치 등)는 이 기사만의 문제다. 이 후보만 미완료로 둔다.
+        return unverified(`verifier:${error.response_code || 'error'}`);
+      }
     }
   };
   // 문안만 다시 받는 보조 요청이 거절되면 모델이 무엇을 썼는지 남긴다. 2026-08 ASML 사업동향은 요약을 다시
@@ -1046,6 +1082,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       break;
     }
   }
+  // 검증기를 쓸 수 없어 멈췄으면 판정은 끝났어도 보고서를 새로 만들지 않는다. 받은 판정은 미완료로 저장돼 다음 실행이 검증한다.
+  if (verifierStop.stopped) return state({ status: 'paused', ...verifierStop.stopped, reason: verifierStop.stopped.reason === 'request_budget' ? 'request_budget' : 'verifier_unavailable' });
   return state(failed.length ? { status: 'paused', reason: 'invalid_responses' } : { status: 'completed' });
 }
 
