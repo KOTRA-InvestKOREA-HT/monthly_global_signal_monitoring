@@ -355,18 +355,27 @@ test('suspicious candidates of a fresh answer go to the verifier model, and only
   assert.equal(again, 0);
 });
 
-test('when the verifier fails, the suspicious candidates stay pending instead of being published as approved', async t => {
+// 실행 35181768089: 검증 첫 요청이 503 한 번을 받자 보조 요청이 모두 멈춰, 의심 후보 42건이 빠진 보고서가 발행됐다.
+test('a verifier that stays unavailable after retries pauses the run so no report is built without verification', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-failed-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const a = nexeon();
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  let verifierCalls = 0;
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
-    fetchImpl: async url => (String(url).includes('generativelanguage') ? new Response('', { status: 429 }) : reply(primary)) });
-  assert.equal(state.status, 'completed');
+    fetchImpl: async url => (String(url).includes('generativelanguage') ? (verifierCalls++, new Response('', { status: 503 })) : reply(primary)) });
+  // 1차 판정처럼 두 번 재시도한 뒤 멈춘다.
+  assert.equal(verifierCalls, 3);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'verifier_unavailable');
+  assert.equal(state.http_status, 503);
+  const { publishableReviewFailures } = await import('../scripts/review_report.mjs');
+  assert.deepEqual(publishableReviewFailures(state), [], 'a verifier pause must not build the report');
   assert.equal(state.verification.failed, 1);
   assert.equal(state.recheck_pending.length, 1);
+  // 받은 1차 판정은 미완료로 저장돼 다음 실행에서 검증만 다시 한다.
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
-  assert.match(stored.semantic_recheck_pending.reason, /^verifier:/);
+  assert.equal(stored.semantic_recheck_pending.reason, 'verifier_unavailable');
   assert.equal(importReview(a, stored).filter(r => r.supported).length, 0);
   // 다음 실행은 1차 판정을 다시 사지 않고 검증만 다시 시도한다.
   const urls = [];
@@ -389,4 +398,46 @@ test('a verifier model the API rejects stops the run instead of quietly withhold
       fetchImpl: async url => (String(url).includes('generativelanguage') ? new Response('{"error":{"message":"model not found"}}', { status: 404 }) : reply(primary)) }),
       /Verifier gemini-3\.8-flash rejected the request \(HTTP 404\)/);
   }
+});
+
+test('a single verifier 503 is retried and the verification completes', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-retry-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  let verifierCalls = 0;
+  const waits = [];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async ms => { waits.push(ms); },
+    random: () => 0, fetchImpl: async url => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      return ++verifierCalls === 1 ? new Response('{"error":{"message":"The model is overloaded"}}', { status: 503 }) : geminiReply(primary);
+    } });
+  assert.equal(verifierCalls, 2);
+  assert.ok(waits.includes(15000));
+  assert.equal(state.status, 'completed');
+  assert.deepEqual(state.recheck_pending, []);
+  assert.equal(state.verification.requested, 2);
+});
+
+test('with parallel workers one unavailable verifier stops verification for every article without stopping judgements', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-parallel-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = ['Nexeon', 'NexeonB', 'NexeonC'].map((company, i) => {
+    const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
+      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
+    return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
+  });
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  let judgements = 0, verifierCalls = 0;
+  const state = await reviewArticles({ articles, reviewDir, policy: '', config: { ...verifierConfig, concurrency: 3, delayMs: 0 },
+    sleep: async () => {}, fetchImpl: async url => {
+      if (String(url).includes('generativelanguage')) { verifierCalls++; return new Response('', { status: 503 }); }
+      judgements++; return reply(primary);
+    } });
+  assert.equal(judgements, 3);
+  assert.equal(state.completed, 3);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'verifier_unavailable');
+  assert.ok(verifierCalls <= 9, `verifier calls ${verifierCalls}`);
+  assert.equal(state.recheck_pending.length, 3);
 });
