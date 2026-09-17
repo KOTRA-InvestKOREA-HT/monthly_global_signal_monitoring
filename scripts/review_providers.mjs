@@ -225,7 +225,9 @@ export const PROVIDERS = { gemini: GEMINI, nvidia: NVIDIA };
 // 프로바이더를 바꾸면 그 판정들은 캐시에서 거부되고 다시 판정된다.
 // 2차 검증 모델. 1차 제공자와 무관하게 Gemini 를 쓴다. REVIEW_VERIFIER=off 로 끄고, GEMINI_VERIFIER_MODEL 로 모델을 바꾼다.
 // 검증 모델은 판정 캐시 식별자에 넣지 않는다. 검증 결과에 모델 이름을 남긴다.
-export const DEFAULT_VERIFIER_MODEL = 'gemini-3.8-flash';
+// gemini-3.8-flash 는 실행 35181768089·35197626547 에서 503 과부하와 별도 무료 할당량 소진으로 검증을 한 건도 끝내지
+// 못했다. 1차와 같은 모델로 두고, 오판을 되풀이하지 않도록 검증 질문 방식(VERIFY_INSTRUCTION)을 다르게 한다.
+export const DEFAULT_VERIFIER_MODEL = 'gemini-3.5-flash-lite';
 export function resolveVerifier(env = process.env) {
   if (['off', 'false', '0', 'no'].includes(String(env.REVIEW_VERIFIER || '').trim().toLowerCase())) return null;
   const model = String(env.GEMINI_VERIFIER_MODEL || DEFAULT_VERIFIER_MODEL).trim();

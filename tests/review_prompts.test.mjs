@@ -54,7 +54,14 @@ test('judgement rules have one source and are included once in actual provider r
   }
 });
 
-test('effective prompt changes invalidate policy and article cache identity, including repairs and verifier', () => {
+// 검증 지시는 1차 판정을 만들지 않는다. 검증 지시만 바꿔서 전체 기사가 다시 판정되면 안 된다.
+test('changing only the verifier prompt keeps the primary review cache identity', () => {
+  const contract = prompt.promptContract();
+  assert.equal(contract.repairs.some(text => text.includes(prompt.VERIFY_INSTRUCTION)), false);
+  assert.equal(prompt.promptContract().repairs.at(-1).startsWith('Second-stage verification. A first-stage reviewer'), true);
+});
+
+test('effective prompt changes invalidate policy and article cache identity, including repairs', () => {
   const contract = prompt.promptContract();
   const base = prompt.reviewPromptDigest(policy, contract);
   assert.match(base, /^[a-f0-9]{64}$/);
@@ -127,7 +134,8 @@ test('repair instructions are targeted; semantic checks are not presented as val
   assert.match(semantic, /A flag is not a verdict/);
   assert.doesNotMatch(semantic, /failed validation/);
   const verify = prompt.retryInstruction({ mode: 'verify', verify_candidate_ids: ['investment:3'] });
-  assert.match(verify, /not in verify_candidate_ids return the primary decision unchanged/);
+  assert.match(verify, /No earlier answer is shown/);
+  assert.match(verify, /answering every question in checks\[candidate_id\]/);
   assert.doesNotMatch(verify, /failed validation/);
   assert.match(prompt.retryInstruction({ reason: 'unknown_future_error' }), /previous response failed validation/);
 });

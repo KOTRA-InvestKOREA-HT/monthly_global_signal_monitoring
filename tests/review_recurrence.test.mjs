@@ -334,16 +334,20 @@ test('suspicious candidates of a fresh answer go to the verifier model, and only
     } });
   assert.equal(calls.length, 2);
   assert.match(calls[1].url, new RegExp(VERIFIER.model.replace(/\./g, '\\.')));
-  assert.equal(VERIFIER.model, 'gemini-3.8-flash');
-  const verifyBody = JSON.parse(calls[1].body);
-  assert.match(JSON.stringify(verifyBody), /Second-stage verification/);
-  assert.match(JSON.stringify(verifyBody), /verify_candidate_ids/);
+  assert.equal(VERIFIER.model, 'gemini-3.5-flash-lite');
+  const verifyBody = JSON.stringify(JSON.parse(calls[1].body));
+  assert.match(verifyBody, /Second-stage audit/);
+  assert.match(verifyBody, /verify_candidate_ids/);
+  // 같은 모델이 자기 답에 끌려가지 않도록 1차 답은 보내지 않고, 후보별 확인 질문을 보낸다.
+  assert.doesNotMatch(verifyBody, /primary_decisions/);
+  assert.match(verifyBody, /Name the specific product, service or activity/);
+  assert.match(verifyBody, /Is that event itself the final investment/);
   assert.equal(state.verification.requested, 1);
   assert.equal(state.verification.changed, 1);
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.deepEqual(stored.verification.candidate_ids.sort(), ['investment:2', 'investment:3', 'relevant']);
   assert.deepEqual(stored.verification.changed.sort(), ['investment:3', 'relevant']);
-  assert.equal(stored.verification.model, 'gemini-3.8-flash');
+  assert.equal(stored.verification.model, 'gemini-3.5-flash-lite');
   // 의심 대상이 아닌 S5 는 1차 판정 그대로다.
   assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:5'), s5);
   const results = Object.fromEntries(importReview(a, stored).map(r => [r.candidate_id, r.supported]));
@@ -397,7 +401,7 @@ test('a verifier model the API rejects stops the run instead of quietly withhold
   for (const concurrency of [1, 2]) {
     await assert.rejects(reviewArticles({ articles: [a], reviewDir, policy: '', config: { ...verifierConfig, concurrency }, sleep: async () => {},
       fetchImpl: async url => (String(url).includes('generativelanguage') ? new Response('{"error":{"message":"model not found"}}', { status: 404 }) : reply(primary)) }),
-      /Verifier gemini-3\.8-flash rejected the request \(HTTP 404\)/);
+      /Verifier gemini-3\.5-flash-lite rejected the request \(HTTP 404\)/);
   }
 });
 
