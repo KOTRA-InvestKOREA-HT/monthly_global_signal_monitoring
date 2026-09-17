@@ -534,7 +534,8 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
 // 120초로는 느린 한 건이 transport 오류로 실행을 멈출 수 있어 넉넉히 둔다.
 const REVIEW_REQUEST_TIMEOUT_MS = 300000;
 
-export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER) {
+// keepDecisions: 2차 검증에서 검증 대상이 아닌 후보의 1차 판정. 검증 응답의 그 후보 답은 버리므로 형식 검사에도 넣지 않는다.
+export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER, { keepDecisions = null } = {}) {
   const invalid = code => invalidResponse(code, provider.label);
   let response;
   try {
@@ -592,6 +593,12 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   if (Array.isArray(parsed.decisions)) parsed.decisions = parsed.decisions.map(decision =>
     article.candidates.some(c => c.id === decision.candidate_id && c.kind === 'relevant')
       ? { ...decision, leading_indicator_supported: true, event_stage: 'not_applicable' } : decision);
+  // 실행 35198796190: 검증 지시가 대상 밖 후보에 빈 reason_ko 를 요구해, 검증 응답 33건이 모두 형식 검사에서 거부됐다.
+  // 대상 밖 후보의 답은 어차피 쓰지 않으므로 1차 판정으로 바꿔 넣고 검사한다. 대상 후보는 모든 검사를 그대로 거친다.
+  if (keepDecisions && retry?.mode === 'verify') {
+    const listed = new Set(retry.verify_candidate_ids);
+    parsed.decisions = [...keepDecisions.filter(d => !listed.has(d.candidate_id)), ...parsed.decisions.filter(d => listed.has(d.candidate_id))];
+  }
   const separated = separateVerifiedQuotes(article, parsed.decisions);
   // 게시일 제안은 기사 단위 필드다. 여기서 review 로 옮기지 않으면 스키마를 고쳐도 dateHints 는
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
@@ -840,10 +847,12 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       try {
         const checked = await requestReview(article, policy, config.verifierApiKey, verifierFetchImpl,
           // 1차 답(primary_decisions)은 보내지 않는다. 같은 모델이 자기 답을 보면 그대로 따라간다.
-          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because }, VERIFIER);
+          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because }, VERIFIER,
+          { keepDecisions: primary.decisions });
         const merged = mergeVerification(article, primary, checked, suspects);
         importReview(article, merged);
         if (merged.verification.changed.length) verifications.changed++;
+        verifierStop.succeeded = (verifierStop.succeeded || 0) + 1;
         console.log(`Article ${article.id}: verified ${suspects.candidate_ids.join(', ')}${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
         return merged;
       } catch (error) {
@@ -876,7 +885,14 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
             ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}) };
           return unverified('verifier_unavailable');
         }
-        // 검증 응답 자체가 검증을 통과하지 못한 경우(인용 불일치 등)는 이 기사만의 문제다. 이 후보만 미완료로 둔다.
+        // 검증 응답 자체가 검증을 통과하지 못한 경우(인용 불일치 등)는 보통 이 기사만의 문제다. 이 후보만 미완료로 둔다.
+        // 다만 실행 35198796190 처럼 한 건도 통과하지 못하고 연달아 거부되면 검증 방식 자체의 결함이다. 그대로 두면
+        // 의심 후보가 전부 빠진 보고서(사업동향 39건 → 6건)가 발행되므로 검증을 멈추고 실행을 일시정지한다.
+        verifierStop.rejected = (verifierStop.rejected || 0) + 1;
+        if (!verifierStop.succeeded && verifierStop.rejected >= 3) {
+          verifierStop.stopped ??= { reason: 'verifier_unavailable', response_code: error.response_code || 'error' };
+          return unverified('verifier_unavailable');
+        }
         return unverified(`verifier:${error.response_code || 'error'}`);
       }
     }
