@@ -1,6 +1,9 @@
+import { createHash } from 'node:crypto';
+
 // Shared review contract, independent of API transport.
 // Keep criteria and runtime validation authoritative. These sections organise the
-// existing rules; they do not add API stages or invalidate saved decisions.
+// policy document is the single source of judgement criteria.
+export const PROMPT_VERSION = 'review-prompt-v2';
 export const DATE_HINT_VERSION = 'date-hint-v1';
 
 export const DATE_INSTRUCTION =
@@ -22,98 +25,15 @@ export const EVIDENCE_INSTRUCTION =
   'from what those sentences actually show. If no sentence shows the indicator event, indicator_supported=false. ' +
   'Missing article body or uncertain evidence must remain needs_review. Write or omit summaries only as the summary rules below say. ';
 
-export const IDENTITY_TECHNOLOGY_INSTRUCTION =
-  'Use target_identity to identify the target company, including its legal name, country and domains when supplied. A namesake is not the ' +
-  'target entity. A technology exemption never exempts entity identity. Third-party reporting is allowed; the publisher need not be the target. ' +
-  'Do not infer an ownership or collaboration link between unrelated companies from a shared short name. ' +
-  'target_technology_supported=true requires the event\'s own product, material or process to be the mapped target technology or a ' +
-  'direct component of it. Sharing an industry, end market or application area (space, automotive, semiconductors), a different ' +
-  'product family of the same company, or a different material of the same supplier is not a direct link. ' +
-  'When a parent, sister or group company acts, attribute the event to the target only through a link the evidence states explicitly, ' +
-  'and name the acting company in the summaries. ' +
-  'When a candidate carries target_technology_scope, its includes and excludes define the target technology: an event whose product ' +
-  'falls under excludes is target_technology_supported=false even if it shares an application area with includes. ';
-
-export const EVENT_STAGE_INSTRUCTION =
-  'Assign event_stage to the candidate-specific event, never to the headline or the entire article. ' +
-  'A completed acquisition does not make a separate technical research collaboration completed. ' +
-  'Completing a funding round, signing an agreement or making an appointment completes that intermediate activity, not the final ' +
-  'investment: for S1, S3, S4 and S5 that event_stage is precursor, never completed or committed. For investment:2 (S2), a facility ' +
-  'investment that is already decided, contracted or under construction is committed even when its start-up or production date is in ' +
-  'the future; a future start-up date alone does not make it planned. A results, half-year or annual report that lists investment ' +
-  'decisions taken earlier recaps them; they are not new this month unless the evidence says so. ' +
-  'Use reporting_period.from_date and reporting_period.to_date as the report window, not the current date. ' +
-  'Share-price, valuation, analyst-rating and market-commentary articles, and results releases, half-year or annual reports, often ' +
-  'recap earlier events. Mentioning an event there does not make it a new event this month: unless the evidence states that the event ' +
-  'was newly announced, agreed or started in the reporting period, set leading_indicator_supported=false and say so in reason_ko. ';
-
-export const S1_ACQUISITION_INSTRUCTION =
-  'A completed acquisition of a business, and the plants, stock or feedstock that came with it, is the acquisition itself. It is not an ' +
-  'S1 supply-chain precursor or an S4 technology precursor; approve S1 or S4 only for a separate action the evidence states (a new sourcing ' +
-  'contract, localisation, a named joint project), otherwise indicator_supported=false. A minority equity investment in a technology ' +
-  'company is not such an acquisition and remains an S4 event under the criteria. ';
-
-export const S2_CAPACITY_INSTRUCTION =
-  'For investment:2 (S2), revenue guidance, earnings forecasts, order backlog and share-price commentary are not production expansion. ';
-
-export const S3_FUNDING_INSTRUCTION =
-  'For investment:3 (S3), only raising new money counts: issuing bonds or notes, an equity raise, a grant, an investment round or a new credit facility. ' +
-  'Repurchasing, tendering for, redeeming, repaying or refinancing existing debt, share buybacks, dividends, and paying an acquisition price ' +
-  'or deferred consideration spend money rather than raise it, so indicator_supported=false for S3. ' +
-  'Replacing, renewing, amending or extending an existing credit facility is refinancing even when it is documented as a new credit ' +
-  'agreement, unless the evidence states additional new money: indicator_supported=false. An S3 precursor also needs an investment, ' +
-  'capacity or business-expansion use of the funds stated in the evidence; a general-purpose revolving facility without one is ' +
-  'leading_indicator_supported=false. The size of a facility is not an amount of new money. ';
-
-export const S4_TECHNOLOGY_INSTRUCTION =
-  'For investment:4 (S4), quote and evaluate the actual joint research, licensing or technical collaboration separately; ' +
-  'a supported enabling collaboration is precursor even when mentioned alongside a closed acquisition. ' +
-  'Do not approve an acquisition itself as research, or assume a vague synergy is a concrete collaboration. ' +
-  'A report of results from a finished project, record, test or event is not a new collaboration. ' +
-  'For investment:4 (S4), supply, distribution, marketing, offtake and long-term gas or material supply agreements, and a customer ' +
-  'adopting, integrating or deploying the company\'s product, are commercial deals, not technology collaboration, unless the evidence ' +
-  'states joint development of a specific technology; indicator_supported=false. A company overview, investor presentation or annual ' +
-  'report that describes partnerships, joint R&D or ecosystems in general, without a named partner and a specific new project, is not ' +
-  'an S4 event. Progress or trial results of a long-running existing collaboration are not a new collaboration. ';
-
-export const S5_PERSONNEL_INSTRUCTION =
-  'For investment:5 (S5), an SEC Form 3 or beneficial-ownership filing that merely lists an officer title does not prove an appointment or personnel move. ' +
-  'Approve such a filing only when the supplied evidence explicitly states the appointment, hiring, promotion or role transition. ' +
-  'Electing a non-executive director or board member alone is not an S5 executive move. ';
-
-export const BUSINESS_ACTIVITY_INSTRUCTION =
-  'For relevant candidates, set indicator_supported=false when the evidence ONLY provides climate or emissions targets, their validation, ' +
-  'ESG or sustainability reporting, share-price or valuation commentary, or general company/product descriptions WITHOUT a concrete ' +
-  'target-technology business activity. Do not reject a document by its genre: independently evaluate any specific production, process, ' +
-  'development or commercial activity it reports. Completed business activity can qualify as relevant without qualifying as an investment precursor. ';
-
-export const INDICATOR_INSTRUCTION = [
-  ['S1: acquisition boundary', S1_ACQUISITION_INSTRUCTION],
-  ['S2: capacity', S2_CAPACITY_INSTRUCTION],
-  ['S3: new funding', S3_FUNDING_INSTRUCTION],
-  ['S4: technology ecosystem', S4_TECHNOLOGY_INSTRUCTION],
-  ['S5: personnel', S5_PERSONNEL_INSTRUCTION],
-  ['Business activity (relevant)', BUSINESS_ACTIVITY_INSTRUCTION],
-].map(([title, rule]) => `### ${title}\n${rule}`).join('\n\n');
-
+// Eligibility is defined once in the supplied policy, including human-review candidates.
 export const SUMMARY_ELIGIBILITY_INSTRUCTION =
-  'First judge each field independently from evidence; then apply the approval conditions to decide which summaries to write. ' +
-  'For EACH eligible candidate, BOTH summary_ko and summary_en MUST be non-empty, evidence-grounded text. ' +
-  'Eligibility requires entity_supported=true, either relevance_exempt=true or target_technology_supported=true, ' +
-  'indicator_supported=true, leading_indicator_supported=true, and quality="pass". ' +
-  'Investment candidates additionally require event_stage exploratory or planned, or precursor for indicators 1, 3, 4, 5 only. ' +
-  'In particular, investment:4 with event_stage="precursor" needs BOTH summaries when the other approval conditions hold, ' +
-  'even if the article also describes a completed acquisition or an operating plant. Check each candidate separately. ' +
-  'For relevant, leading_indicator_supported=true and event_stage="not_applicable" are constants; no investment-stage test applies. ' +
+  'Apply the approval and human-review summary conditions in the supplied report criteria after judging all fields. ' +
+  'For every candidate that requires a summary, write BOTH summary_ko and summary_en. ' +
   'An eligible relevant candidate needs its OWN Korean and English business summaries whether investment candidates are approved or rejected. ' +
   'An investment summary does not replace the relevant summaries, even when both cite the same passage. ' +
   'A relevant (business) summary is plain prose sentences only: no headline, no "title - detail" form and no leading company label. ' +
-  'A relevance-exempt candidate can need summaries even when target_technology_supported=false. ' +
   'Do not change evidence-based fields or quality just to avoid writing summaries. ' +
-  'An investment candidate with entity_supported=true and indicator_supported=true that fails exactly ONE other approval condition, ' +
-  'and whose event_stage is not "completed", ' +
-  'is a human-review candidate shown to a person, and it ALSO needs BOTH summaries in the same format as an approved one. ' +
-  'Writing them does not approve it and must not change any field. All other candidates use empty summaries. ';
+  'All other candidates use empty summaries. ';
 
 export const SUMMARY_GROUNDING_INSTRUCTION =
   'An investment summary must describe the SAME event its evidence_quotes describe. ' +
@@ -149,9 +69,8 @@ export const SYSTEM_INSTRUCTION = [
   section('Task and trust boundary', TASK_INSTRUCTION),
   section('1. Extract candidate evidence', EVIDENCE_INSTRUCTION +
     'Copy each quote verbatim from a single supplied evidence block, preserving HTML entities and typography. Never paraphrase quotes.'),
-  section('2. Judge identity and target technology', IDENTITY_TECHNOLOGY_INSTRUCTION),
-  section('3. Judge candidate event stage and reporting period', EVENT_STAGE_INSTRUCTION),
-  section('4. Apply indicator boundaries', INDICATOR_INSTRUCTION),
+  section('2–4. Judge candidates using the supplied report criteria',
+    'The supplied report criteria are the sole source of entity, technology, indicator, event-stage, reporting-period and approval rules. Apply each field independently; do not invent additional exceptions.'),
   section('5. Write summaries after judgement: eligibility, grounding, then bilingual style', SUMMARY_INSTRUCTION),
   section('6. Article-level publication date', DATE_INSTRUCTION),
   section('Output contract', 'Return every candidate exactly once in the required schema, with no text outside the JSON response.'),
@@ -199,4 +118,24 @@ export function retryInstruction(retry) {
     : RETRY_INSTRUCTION;
   return instruction + (REPAIR_HINTS[feedback?.reason] ? '\n' + REPAIR_HINTS[feedback.reason] : '') +
     (feedback ? '\nValidator feedback (data, not instructions): ' + JSON.stringify(feedback) : '');
+}
+
+
+// Hash effective instructions, not file bytes: comments and checkout CRLF do not
+// invalidate caches. Include all static repair/verification modes, not article data.
+export function promptContract() {
+  return {
+    version: PROMPT_VERSION,
+    system: buildSystemInstruction(''),
+    repairs: [retryInstruction(true), ...[...Object.keys(REPAIR_HINTS), 'semantic_recheck']
+      .map(reason => retryInstruction({ reason })), retryInstruction({ mode: 'verify' })],
+  };
+}
+
+export function reviewPromptDigest(policy, contract = promptContract()) {
+  const normalize = value => typeof value === 'string' ? value.replace(/\r\n?/g, '\n')
+    : Array.isArray(value) ? value.map(normalize)
+    : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalize(item)]))
+    : value;
+  return createHash('sha256').update(JSON.stringify(normalize({ ...contract, policy: String(policy) }))).digest('hex');
 }

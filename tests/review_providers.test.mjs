@@ -210,8 +210,8 @@ test('the Gemini thinking level is overridable, validated and part of the cache 
 test('the S rules name the candidate ids the model actually receives', () => {
   const { SYSTEM_INSTRUCTION } = provider_module;
   assert.match(SYSTEM_INSTRUCTION, /S1 to S5 .* mean the candidates investment:1 to investment:5/);
-  for (const no of [2, 3, 4, 5]) assert.match(SYSTEM_INSTRUCTION, new RegExp(`For investment:${no} \\(S${no}`));
-  assert.match(SYSTEM_INSTRUCTION, /deferred consideration spend money/);
+  assert.match(SYSTEM_INSTRUCTION, /supplied report criteria are the sole source/);
+  assert.doesNotMatch(SYSTEM_INSTRUCTION, /deferred consideration spend money/);
 });
 
 test('the provider is selected by name and each keeps its own key, model and pacing', () => {

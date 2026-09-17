@@ -43,9 +43,9 @@ for (const provider of [GEMINI, NVIDIA]) {
     assert.equal(retrySystem.split(SUMMARY_INSTRUCTION).length - 1, 1);
     assert.match(retry, /missing summary_ko or summary_en, especially relevant/);
     assert.match(system, /whether investment candidates are approved or rejected/);
-    assert.match(system, /either relevance_exempt=true or target_technology_supported=true/);
+    assert.match(system, /approval and human-review summary conditions in the supplied report criteria/);
     assert.match(system, /Do not change evidence-based fields or quality/);
-    assert.match(system, /investment:4 with event_stage="precursor" needs BOTH summaries/);
+    assert.match(system, /write BOTH summary_ko and summary_en/);
     const feedback = { reason: 'review_validation', validation_message: 'S4: missing ai_summary_ko' };
     const targeted = body(feedback);
     const targetedText = provider.id === 'gemini' ? targeted.contents[0].parts[1].text : targeted.messages[2].content;
