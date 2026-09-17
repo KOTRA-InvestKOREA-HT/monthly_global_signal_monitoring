@@ -372,6 +372,7 @@ test('a verifier that stays unavailable after retries pauses the run so no repor
   const { publishableReviewFailures } = await import('../scripts/review_report.mjs');
   assert.deepEqual(publishableReviewFailures(state), [], 'a verifier pause must not build the report');
   assert.equal(state.verification.failed, 1);
+  assert.deepEqual(state.verification.errors, { '503:unspecified': 3 });
   assert.equal(state.recheck_pending.length, 1);
   // 받은 1차 판정은 미완료로 저장돼 다음 실행에서 검증만 다시 한다.
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
@@ -440,4 +441,24 @@ test('with parallel workers one unavailable verifier stops verification for ever
   assert.equal(state.reason, 'verifier_unavailable');
   assert.ok(verifierCalls <= 9, `verifier calls ${verifierCalls}`);
   assert.equal(state.recheck_pending.length, 3);
+});
+
+// 실행 35182571472: 무료 등급 일일 할당량이 소진된 상태에서 검증 요청이 재시도로 반복됐다.
+test('an exhausted verifier quota is not retried and the error is recorded', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-quota-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  let verifierCalls = 0;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async url => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      verifierCalls++;
+      return new Response('{"error":{"message":"You exceeded your current quota"}}', { status: 429 });
+    } });
+  assert.equal(verifierCalls, 1);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'verifier_unavailable');
+  assert.equal(state.provider_reason, 'credits_exhausted');
+  assert.deepEqual(state.verification.errors, { '429:credits_exhausted': 1 });
 });

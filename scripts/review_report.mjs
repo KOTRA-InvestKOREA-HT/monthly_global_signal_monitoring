@@ -755,7 +755,11 @@ export async function reviewArticles(options) {
     recheck_pending: results.flatMap(r => r.recheck_pending || []),
     verification: results.reduce((total, r) => ({ model: total.model || r.verification?.model || null,
       requested: total.requested + (r.verification?.requested || 0), changed: total.changed + (r.verification?.changed || 0),
-      failed: total.failed + (r.verification?.failed || 0) }), { model: null, requested: 0, changed: 0, failed: 0 }),
+      failed: total.failed + (r.verification?.failed || 0),
+      errors: Object.entries(r.verification?.errors || {}).reduce((errors, [key, n]) => ({ ...errors, [key]: (errors[key] || 0) + n }), total.errors) }),
+      { model: null, requested: 0, changed: 0, failed: 0, errors: {} }),
+    // 1차 판정이 먼저 멈춰 실행 상태가 그쪽 사유를 보여 줘도, 검증이 왜 멈췄는지 따로 남긴다.
+    ...(verifierStop.stopped ? { verifier_stop: verifierStop.stopped } : {}),
   };
 }
 
@@ -789,7 +793,9 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   const failed = [];
   const diagnostics = [];
   const quoteRemovals = [], recheckPending = [];
-  const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null, requested: 0, changed: 0, failed: 0 };
+  // errors 는 실패한 검증 요청의 HTTP 상태·분류별 횟수다. 실행 35182571472 는 검증 12회가 모두 실패했는데 무엇으로 실패했는지
+  // 남지 않아, 할당량인지 과부하인지 아티팩트만으로 가릴 수 없었다.
+  const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null, requested: 0, changed: 0, failed: 0, errors: {} };
   const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
     quote_removals: quoteRemovals, recheck_pending: recheckPending, verification: verifications, ...extra });
   // 의심 후보를 2차 검증 모델에 보낸다. 실패·한도·할당량이면 그 후보를 재검토 미완료로 둔 1차 판정을 돌려준다.
@@ -829,8 +835,11 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           verifierStop.stopped ??= { reason: 'scheduling_stopped' };
           return unverified('verifier_unavailable');
         }
+        const errorKey = [error.status || error.transport_reason || error.response_code || 'error', error.provider_reason].filter(Boolean).join(':');
+        verifications.errors[errorKey] = (verifications.errors[errorKey] || 0) + 1;
         const transient = error.status === 429 || error.status >= 500 || error.transport_error;
-        if (transient && retries < 2) {
+        // 할당량 소진은 몇십 초 기다려도 풀리지 않는다. 재시도로 요청만 쓰지 않고 바로 멈춘다.
+        if (transient && retries < 2 && error.provider_reason !== 'credits_exhausted') {
           waitMs = Math.max(config.delayMs, 15000 * 2 ** retries + Math.floor(random() * 1000));
           retries++;
           console.log(`Article ${article.id}: verifier temporarily unavailable (${error.transport_reason || `HTTP ${error.status}`}); retry ${retries}/2 after ${waitMs}ms`);
@@ -1171,8 +1180,9 @@ async function main() {
       'Existing published PDFs are unchanged.\n' : '') +
     state.failed_articles.map(item => `- Article ${item.article_id}: ${item.reason}\n`).join('') +
     (state.quote_removals || []).map(item => `- Article ${item.article_id}: unverifiable quotes removed from rejected candidates ${item.candidate_ids.join(', ')}\n`).join('') +
-    (state.verification?.requested ? `Second-stage verification (${state.verification.model}): ${state.verification.requested} articles, ` +
-      `${state.verification.changed} changed, ${state.verification.failed} unavailable\n` : '') +
+    (state.verification?.requested ? `Second-stage verification (${state.verification.model}): ${state.verification.requested} requests, ` +
+      `${state.verification.changed} articles changed, ${state.verification.failed} articles unavailable` +
+      `${Object.keys(state.verification.errors || {}).length ? `; errors ${JSON.stringify(state.verification.errors)}` : ''}\n` : '') +
     (state.recheck_pending || []).map(item => `- Article ${item.article_id}: semantic recheck not completed (${item.reason}); ` +
       `${item.candidate_ids.join(', ')} published only as human review and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
