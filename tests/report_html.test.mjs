@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { renderReport, COLORS, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
-import { itemBreaks } from '../scripts/build_html_report.mjs';
+import { itemBreaks, cutTexts } from '../scripts/build_html_report.mjs';
 
 const row = (no, company, signals = [false, false, false, false, false]) => ({ target_no: no, company, signals });
 
@@ -287,4 +287,52 @@ test('source lines link to the original article when a web address is known', ()
   // No address, or a non-web one, stays plain text.
   const plain = renderReport(withDetails(['Ouster'], () => [firing(4, { source_url: 'javascript:alert(1)' })]));
   assert.equal(occurrences(plain, '<a href="javascript'), 0);
+});
+
+// 실행 35167466191 보고서는 근거 부족 43개사를 한 색으로만 보여 사유를 알 수 없었다.
+test('the review scope page follows the matrix and lists reasons, failures and the review-candidate note', () => {
+  const base = withDetails(['Nexeon']);
+  base.scope = {
+    kicker: 'R E V I E W   S C O P E', title: '검토 범위와 미반영 항목',
+    lines: ['대상 정보 기간 8월', '해당 월 기사 364건 중 판정 완료 360건 · 판정 실패 4건'],
+    reasons_heading: '근거 부족 사유', reasons: [{ label: '수집 작업 미완료', count: 12 }, { label: '기사 판정 실패', count: 3 }],
+    notes: ['수집 작업 상태: 완료 64개사 · 미완료 13개사'],
+    failed_heading: '판정 실패로 반영하지 못한 기사',
+    failed: [{ company: 'Nexeon', title: 'National Wealth Fund backs <Nexeon>', url: 'https://www.nexeonglobal.com/media/x' }],
+    failed_none: '판정 실패 기사 없음', review_note: '검토 필요는 AI 확인 시그널이 아님',
+  };
+  const html = renderReport(base);
+  assert.equal(pages(html), 4);
+  assert.ok(html.indexOf('R E V I E W') > html.indexOf('S I G N A L   M A T R I X'));
+  assert.ok(html.indexOf('R E V I E W') < html.indexOf('C O M P A N Y   S I G N A L S'));
+  assert.match(html, /수집 작업 미완료<\/span><strong>12<\/strong>/);
+  assert.match(html, /<a href="https:\/\/www.nexeonglobal.com\/media\/x">National Wealth Fund backs &lt;Nexeon&gt;<\/a>/);
+  assert.equal(occurrences(html, '판정 실패 기사 없음'), 0);
+  assert.equal(pages(renderReport(withDetails(['Nexeon']))), 3, 'a model without scope keeps its old page count');
+});
+
+test('a card for a technology-exempt company says so next to the trend label', () => {
+  const base = withItems(['Air Liquide', 'Albemarle']);
+  base.items.cards[0].exempt_note = '기술 관련성 확인 면제 · 주요 사업동향';
+  const html = renderReport(base);
+  assert.equal(occurrences(html, 'class="exempt-note"'), 1);
+  assert.ok(html.indexOf('기술 관련성 확인 면제') < html.indexOf('Albemarle'));
+});
+
+// 실행 35167466191: 품목동향 카드가 줄 수에 들어가는 문장까지만 실어 HyproMag 금액은 영문에만, Renishaw 일정은 한글에만 남았다.
+test('trend card text is never clamped, so a longer language keeps every sentence', () => {
+  const html = renderReport(withItems(['HyproMag']));
+  const rule = /.item-body {[^}]*}/.exec(html)[0];
+  assert.doesNotMatch(rule, /line-clamp|overflow/);
+});
+
+test('every cut summary, from character limits or rendered clipping, is reported with its company', () => {
+  const base = withDetails(['3M', 'Nexeon'], () => [firing(3)]);
+  base.items = { cards: [{ company: 'HyproMag', cut: false }, { company: 'Renishaw', cut: true }] };
+  assert.deepEqual(cutTexts(base), [{ company: 'Renishaw', part: 'item' }]);
+  base.details.pages[0].signals[2].cut = true;
+  base.details.pages[1].business.cut = true;
+  assert.deepEqual(cutTexts(base, [{ company: 'Air Liquide', part: 'business-body' }]), [
+    { company: '3M', part: 'signal 3' }, { company: 'Nexeon', part: 'business' }, { company: 'Renishaw', part: 'item' },
+    { company: 'Air Liquide', part: 'business-body', rendered: true }]);
 });

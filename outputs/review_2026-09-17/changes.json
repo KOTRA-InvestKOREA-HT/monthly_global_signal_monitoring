@@ -1,0 +1,695 @@
+[
+  {
+    "article_id": "f339eb0a85d7d0d8dbd194e7",
+    "company": "Nexeon",
+    "title": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026",
+    "kind": "rereview_failed_article",
+    "note": "Nexeon 1억 파운드 투자 라운드. 두 번의 모델 응답이 인용 불일치로 저장되지 않아 보고서에서 빠졌다. 두 번째 응답은 S3를 completed 로 봤다.",
+    "candidates": [
+      {
+        "candidate_id": "investment:1",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "영국 배터리 공급망 강화는 투자 기관과 정부 측의 정책 목적 설명이며, Nexeon이 직접 취한 공급선 다변화·현지 조달 전환 조치는 본문에 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:2",
+        "before": "no_review",
+        "after": "approved",
+        "before_stage": null,
+        "after_stage": "planned",
+        "before_reason": null,
+        "after_reason": "조달 자금으로 영국 내 파일럿 제조시설을 개발하고 첨단 제조기술 조직을 확대한다고 명시해 실리콘 음극재 생산 거점 신설 계획이 확인됨. 시설은 아직 개발 단계이므로 planned.",
+        "before_summary_ko": null,
+        "after_summary_ko": "영국 파일럿 제조시설 개발 계획 - National Wealth Fund 자금으로 영국 내 실리콘 음극재 파일럿 제조시설을 개발하고 첨단 제조기술 조직을 확대할 계획임."
+      },
+      {
+        "candidate_id": "investment:3",
+        "before": "no_review",
+        "after": "approved",
+        "before_stage": null,
+        "after_stage": "precursor",
+        "before_reason": null,
+        "after_reason": "총 1억 파운드 투자 라운드 완료는 조달 활동의 완료이지 최종 시설투자의 완료가 아님. 자금 용도로 영국 파일럿 제조시설 개발과 제조기술 조직 확대가 명시돼 투자 목적 조달의 전조(precursor)임.",
+        "before_summary_ko": null,
+        "after_summary_ko": "1억 파운드 투자 라운드 완료로 설비 재원 확보 - National Wealth Fund의 5,260만 파운드 투입으로 총 1억 파운드 라운드가 완료됐으며, 자금은 영국 파일럿 제조시설 개발에 쓰일 예정임."
+      },
+      {
+        "candidate_id": "investment:4",
+        "before": "no_review",
+        "after": "approved",
+        "before_stage": null,
+        "after_stage": "precursor",
+        "before_reason": null,
+        "after_reason": "Honda의 오픈 이노베이션 투자 조직인 Honda Xcelerator Ventures가 실리콘 음극재 기술 기업인 Nexeon에 신규 투자자로 참여함(기술 기업 지분투자). 공동개발 과제는 명시되지 않아 협력으로 확대 해석하지 않음.",
+        "before_summary_ko": null,
+        "after_summary_ko": "Honda Xcelerator Ventures 등 신규 전략 투자자 참여 - Honda의 오픈 이노베이션 투자 조직인 Honda Xcelerator Ventures와 Korea Development Bank가 이번 라운드에 신규 투자자로 참여했음."
+      },
+      {
+        "candidate_id": "investment:5",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "경영진 선임·교체·영입이나 한국 방문 사건이 없음. CEO·CFO 발언 인용만 있음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "no_review",
+        "after": "approved",
+        "before_stage": null,
+        "after_stage": "not_applicable",
+        "before_reason": null,
+        "after_reason": "실리콘 음극재 기업 Nexeon의 투자 라운드 완료와 규모 확대·상업화 자금 확보라는 구체적 사업 활동이 확인됨.",
+        "before_summary_ko": null,
+        "after_summary_ko": "Nexeon은 National Wealth Fund의 5,260만 파운드 투자로 총 1억 파운드 규모 투자 라운드를 완료했음. Korea Development Bank와 Honda Xcelerator Ventures가 신규 투자자로 참여했음. 자금은 실리콘 음극재 사업의 규모 확대·상업화와 영국 파일럿 제조시설 개발에 쓰일 예정임."
+      }
+    ]
+  },
+  {
+    "article_id": "a02a239ca2b6bb4a409a4103",
+    "company": "Siemens-Gamesa",
+    "title": "Q3 FY26 Earnings Release and Financial Results",
+    "kind": "rereview_failed_article",
+    "note": "Siemens Energy Q3 FY26 실적 발표. 두 응답 모두 relevant 인용 불일치로 실패. 같은 실적의 주주서한(4d8f3b6d…)은 이미 사업동향으로 승인됨.",
+    "candidates": [
+      {
+        "candidate_id": "investment:1",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "공급망·지정학 리스크에 대한 Siemens Gamesa의 구체적 대응 조치가 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:2",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "해상풍력 매출 증가 설명만 있고 생산능력 증설·신규 공장 계획은 없음. 그룹 차원의 capacity expansion 언급은 Siemens Gamesa에 귀속되지 않음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:3",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "신규 자금 조달 사건이 없음. 자사주 매입 현금흐름은 자금 지출임.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:4",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "공동연구·라이선스 등 기술 협력 사건이 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:5",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "핵심 경영진 선임·이동 사건이 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "no_review",
+        "after": "approved",
+        "before_stage": null,
+        "after_stage": "not_applicable",
+        "before_reason": null,
+        "after_reason": "실적 발표 안에 해상풍력 사업 증가에 따른 Siemens Gamesa 매출 증가와 흑자 전환이 명시돼 해상풍력터빈 사업 동향으로 인정함. 같은 분기 주주서한 기사와 내용이 겹침.",
+        "before_summary_ko": null,
+        "after_summary_ko": "Siemens Gamesa는 2026 회계연도 3분기에 2022 회계연도 이후 처음으로 흑자를 기록했으며 2026년 손익분기점 달성을 향해 나아가고 있음. 매출은 해상풍력 사업 증가에 힘입어 전년 동기 대비 크게 늘었음."
+      }
+    ]
+  },
+  {
+    "article_id": "c2f5c757eab28908e6515374",
+    "company": "Skyworks",
+    "title": "2025 SWKS Annual Report",
+    "kind": "rereview_failed_article",
+    "note": "Skyworks 2025 연차보고서·2026 주총 안내. 게시일 미상(date_pending). 두 응답 모두 S5 인용 불일치로 실패.",
+    "candidates": [
+      {
+        "candidate_id": "investment:1",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "연차보고서의 회사 소개로, 보고 기간 내 공급망 대응 조치가 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:2",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "생산시설 증설·신규 거점 계획이 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:3",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "신규 자금 조달 사건이 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:4",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "2025년 10월 발표된 Qorvo 합병을 회고할 뿐 보고 기간 내 새 기술 협력 과제가 없음. 합병 자체는 S4 사건이 아님.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:5",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "경영진 명단과 직함만 나열돼 있고 보고 기간 내 선임·교체 사건이 명시되지 않음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "not_applicable",
+        "before_reason": null,
+        "after_reason": "연차보고서·주총 안내의 일반 회사 소개와 과거 합병 발표 회고로, 자율주행차 IMU/RF/베이스밴드 칩과 직접 연결된 구체적 사업 활동이 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "5b07cc9eb5ec3b9f552ccfa5",
+    "company": "Skyworks",
+    "title": "Skyworks/Qorvo Deal Ahead of Schedule - ocbj.com",
+    "kind": "rereview_failed_article",
+    "note": "OCBJ 8/3 Skyworks/Qorvo 기사. 1차는 요약 숫자 오류(22억 달러), 2차는 relevant 인용 불일치로 실패.",
+    "candidates": [
+      {
+        "candidate_id": "investment:1",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "공급망·지정학 리스크 대응 조치가 없음. 합병 규제 승인 절차는 S1 사건이 아님.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:2",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "생산시설 증설 계획이 없음. 매출 전망은 S2 근거가 아님.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:3",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "배당 중단과 자사주 매입 승인은 자금 조달이 아님. 합병 자금 조달 계획은 구체적 조달 사건으로 서술되지 않음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:4",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "Qorvo 인수 자체는 S4 기술 협력 사건이 아님. 인수 발표도 2025년 10월임.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "investment:5",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "unclear",
+        "before_reason": null,
+        "after_reason": "합병 후 경영진(CFO, COO/CTO) 구성 발표가 있으나 기사 게시일(8월 3일) 기준 \"지난주\"인 7월 말 발표를 되짚은 것으로 보고 기간 내 신규 발표가 아님. RF 통신칩 합병 경영진으로 자율주행차 칩 연결도 확인되지 않음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "no_review",
+        "after": "rejected",
+        "before_stage": null,
+        "after_stage": "not_applicable",
+        "before_reason": null,
+        "after_reason": "Qorvo 인수 종결 시점을 앞당긴다는 구체적 사업 동향이 있으나, 스마트폰·통신용 RF 칩 기업 간 합병으로 자율주행차 IMU/RF/베이스밴드 칩과의 직접 연결이 본문에 없음.",
+        "before_summary_ko": null,
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "fde5ad838758c10519286600",
+    "company": "3M",
+    "title": "8-K - Current report",
+    "kind": "correction",
+    "note": "3M 8-K 신용계약. S3 승인 → 탈락. 기술 관련성 면제(3M)는 유지.",
+    "candidates": [
+      {
+        "candidate_id": "investment:3",
+        "before": "approved",
+        "after": "rejected",
+        "before_stage": "precursor",
+        "after_stage": "unclear",
+        "before_reason": "3M Company가 JPMorgan Chase Bank 및 대주단과 새로운 42억 5000만 달러 규모의 무담보 리볼빙 신용공여 계약을 체결하여 신규 자금 조달 기반을 확보했음.",
+        "after_reason": "새 신용계약은 같은 규모(42억 5000만 달러)의 기존 5년 만기 리볼빙 신용계약을 대체하고 기존 약정을 종료한 갱신·차환임. 순증 신규 자금이나 투자·사업 확장 용도가 명시되지 않아 S3 투자 재원 확보 사건으로 보지 않음. 기술 관련성 면제는 조달 사건 요건을 면제하지 않음.",
+        "before_summary_ko": "42억 5000만 달러 규모 리볼빙 신용공여 계약 체결 - 3M Company가 2026년 8월 17일 JPMorgan Chase Bank 및 대주단과 42억 5000만 달러 규모의 무담보 리볼빙 신용공여 계약을 체결하여 기존 신용계약을 대체했음.",
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "b6009dba54b6af864abf5adb",
+    "company": "Air Liquide",
+    "title": "air liquide first half 2026 financial report",
+    "kind": "correction",
+    "note": "Air Liquide 2026 상반기 재무보고서. S2 planned 승인 → committed·당월 신규성 없음으로 탈락. 사업동향 문안을 투자 결정 내용으로 교체.",
+    "candidates": [
+      {
+        "candidate_id": "investment:2",
+        "before": "approved",
+        "after": "rejected",
+        "before_stage": "planned",
+        "after_stage": "committed",
+        "before_reason": "미국 애리조나주에 반도체 플랜트 확장을 지원하기 위한 신규 대규모 생산 유닛을 2028년까지 가동할 계획임.",
+        "after_reason": "애리조나 1억 6,000만 달러 생산유닛은 신규 장기계약에 따라 투자가 결정된 시설로, 2028년 가동 예정은 확정 투자의 일정이지 미확정 계획이 아님(committed). 반기보고서가 상반기 투자 결정 목록을 정리한 것이며 8월에 새로 발표된 사건이라는 근거가 없음. 별도의 미확정 후속 증설 계획도 없음.",
+        "before_summary_ko": "미국 애리조나주 대규모 생산유닛 신설 계획 - 미국 애리조나주에서 반도체 플랜트 확장에 고순도 가스를 공급하기 위한 대규모 생산유닛을 2028년까지 가동할 계획임.",
+        "after_summary_ko": ""
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "2026년 상반기 실적 및 주요 사업 활동, 투자 결정 등이 상세히 보고됨.",
+        "after_reason": "상반기 산업·금융 투자 결정과 반도체 고객용 가스 생산유닛 투자 등 구체적 사업 활동이 보고됨. 기술 관련성 면제 기업이며 타겟 기술(이온교환막)과의 직접 연결은 확인되지 않음.",
+        "before_summary_ko": "2026년 상반기 그룹 매출은 환율 및 에너지 영향을 제외하고 4.3% 증가한 138억 2800만 유로를 기록했으며, 영업이익률은 20.9%로 상승함. 미국 및 아시아 지역을 중심으로 대규모 투자 결정이 활발히 이루어짐.",
+        "after_summary_ko": "Air Liquide의 2026년 상반기 산업·금융 투자 결정액은 29억 유로로 전년 동기 대비 27% 늘어 최대치를 기록했음. 여기에는 미국 애리조나주 반도체 공장 확장에 고순도 가스를 공급할 대규모 생산유닛 투자(1억 6,000만 달러)가 포함되며, 해당 유닛은 2028년까지 가동 예정임."
+      }
+    ]
+  },
+  {
+    "article_id": "fc8638acf32baa3386674317",
+    "company": "Infineon",
+    "title": "Infineon HiRel power semiconductors support successful launch of NASA Nancy Grace Roman Space Telescope Technology news Aug 31, 2026",
+    "kind": "correction",
+    "note": "Infineon 사업동향 승인 → 기술 연결 미확인으로 탈락.",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "rejected",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "Infineon Technologies AG의 방사선 경화형 HiRel 전력 반도체 부품이 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 성공적으로 발사됨.",
+        "after_reason": "우주망원경에 탑재된 방사선 경화 HiRel 전력 반도체 사건임. 지정 품목은 위성통신·레이다용 RF 반도체로, 우주용이라는 적용 분야 공통점만으로 전력 반도체와 RF 반도체의 직접 기술 연결을 인정하지 않음.",
+        "before_summary_ko": "Infineon Technologies AG의 방사선 경화형 HiRel 전력 반도체 부품이 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 성공적으로 발사됨. 해당 부품은 극한의 우주 방사선 환경에서 안정적인 전력 공급을 제공하여 미션을 지원함.",
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "e62873f81fe53ca3b1e9b01b",
+    "company": "Plansee",
+    "title": "Security of supply doesn’t happen overnight",
+    "kind": "correction",
+    "note": "Plansee 사업동향 승인 → 기술 연결 미확인으로 탈락.",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "rejected",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "사용된 공구 및 텅스텐 스크랩을 수거하여 자체 기술로 재활용하는 텅스텐 이차 원료 활용 및 공급 안정화 사업 활동을 구체적으로 다룸.",
+        "after_reason": "텅스텐 공구·스크랩 재활용과 텅스텐 원료 조달에 관한 인터뷰로, 지정 품목인 티타늄·탄탈륨 금속타겟과 소재·용도가 다름. 같은 금속 소재 기업이라는 이유로 직접 연결을 인정하지 않음.",
+        "before_summary_ko": "사용된 공구와 텅스텐 함유 스크랩을 수거하여 자체 기술로 고품질 텅스텐을 재활용하며, 전체 텅스텐 수요의 약 90퍼센트를 이차 원료에서 조달함.",
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "544145cbe1b47486a06adf03",
+    "company": "NXP",
+    "title": "NXP Trimension Ultra-Wideband Powers BMW Group’s Digital Key Plus and Presence Detection",
+    "kind": "correction",
+    "note": "NXP 사업동향 승인 → 매핑 적용 분야(우주항공) 밖으로 판단해 탈락. 매핑 범위를 넓히기로 결정하면 재검토 필요.",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "rejected",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "타겟 품목인 레이다 반도체(UWB 레이다 및 레인징 솔루션)가 BMW 그룹 차량에 도입 및 탑재되는 구체적 사업 활동이 확인됨.",
+        "after_reason": "차량 실내 디지털 키·탑승자 감지용 UWB 단거리 레이다가 BMW 차량에 적용되는 사건임. 기술 매핑은 우주항공 산업의 위성통신·레이다용 RF 반도체이며, 레이다 기능이 있다는 공통점만으로 자동차 UWB 칩을 해당 품목과 직접 연결하지 않음. 매핑 적용 범위 확인이 필요함.",
+        "before_summary_ko": "NXP Semiconductors의 Trimension Ultra-Wideband(UWB) 레이다 및 레인징 솔루션이 BMW 그룹의 2026년형 차량 프로그램을 시작으로 전체 함대에 탑재될 예정임. 해당 솔루션은 스마트폰이나 스마트 워치를 이용한 디지털 키 플러스와 차량 내 탑승자 감지 등의 안전 및 편의 기능을 제공함.",
+        "after_summary_ko": ""
+      }
+    ]
+  },
+  {
+    "article_id": "ae55f545a376db882a62ca66",
+    "company": "HyproMag",
+    "title": "Mkango Completes Acquisition Of Remloy",
+    "kind": "correction",
+    "note": "HyproMag 사업동향 유지. 사건 주체가 모회사 Mkango임을 문안에 밝히고 HyProMag와의 명시적 연결과 인수금액(800만 유로)을 한·영 양쪽에 반영.",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "Mkango Resources Ltd.가 Heraeus Amloy Technologies GmbH로부터 Remloy 희토류 자석 재활용 사업 인수를 완료하고, 독일 Bitterfeld에 위치한 공장을 통해 NdFeB 합금 분말 생산 사업을 수행함.",
+        "after_reason": "인수 주체는 HyProMag Limited를 100% 보유한 Maginito의 지배회사 Mkango임. 본문이 Remloy 폐자석 재고의 HyProMag 그룹 공급과 인력·시너지 연계를 명시해 타겟과의 연결이 확인되며, 폐영구자석 재활용 사업으로 타겟 기술과 연결됨.",
+        "before_summary_ko": "Mkango Resources Ltd.는 Heraeus Amloy Technologies GmbH로부터 Remloy 희토류 자석 재활용 사업 인수를 완료함. 독일 Bitterfeld에 위치한 Remloy 공장은 폐영구자석을 용융 공정으로 재활용하여 NdFeB 합금 분말을 생산함.",
+        "after_summary_ko": "HyProMag의 지배회사 Mkango Resources Ltd.가 Heraeus Amloy Technologies GmbH로부터 Remloy 희토류 자석 재활용 사업을 800만 유로에 인수 완료했음. Remloy의 독일 Bitterfeld 공장은 폐영구자석을 용융 공정으로 재활용해 NdFeB 합금 분말을 생산함. Mkango는 Remloy 폐자석 재고를 HyProMag 그룹 처리 원료로 공급하는 방안을 시너지로 제시했음."
+      }
+    ]
+  },
+  {
+    "article_id": "58da11f5299fc5e2a2bd3a1d",
+    "company": "Evonik Industries",
+    "title": "August 27, 2026 Health Care Evonik expands lipid-based drug delivery capabilities with new GMP manufacturing facility in Vancouver Evonik is investing in a new GMP drug product manufacturing facility for lipid-based drug delivery in Vancouver, Canada. The facility will increase Evonik’s development and manufacturing capacity, helping pharmaceutical and biotech customers bring lipid-based pharmaceutical products including vaccines, therapeutics, and other advanced medicines from development through commercial scale.",
+    "kind": "wording",
+    "note": "Evonik 음차 제거",
+    "candidates": [
+      {
+        "candidate_id": "investment:2",
+        "before": "rejected",
+        "after": "rejected",
+        "before_stage": "committed",
+        "after_stage": "committed",
+        "before_reason": "캐나다 밴쿠버에 지질 기반 약물 전달체(LNP)를 위한 새로운 GMP 제조 시설 투자 계획을 발표했으나, 타겟 기술이 타이어용 친환경 침강실리카 제조기술과 일치하지 않음.",
+        "after_reason": "캐나다 밴쿠버에 지질 기반 약물 전달체(LNP)를 위한 새로운 GMP 제조 시설 투자 계획을 발표했으나, 타겟 기술이 타이어용 친환경 침강실리카 제조기술과 일치하지 않음.",
+        "before_summary_ko": "캐나다 밴쿠버 LNP 제조 시설 투자를 통한 생산 능력 확충 - 에보닉은 캐나다 밴쿠버에 지질 기반 약물 전달체(LNP) 생산을 위한 1억 5000만 캐나다달러 규모의 신규 GMP 제조 시설 투자를 발표했으며, 2029년 말 생산 개시를 목표로 함.",
+        "after_summary_ko": "캐나다 밴쿠버 LNP 제조 시설 투자를 통한 생산 능력 확충 - Evonik은 캐나다 밴쿠버에 지질 기반 약물 전달체(LNP) 생산을 위한 1억 5000만 캐나다달러 규모의 신규 GMP 제조 시설 투자를 발표했으며, 2029년 말 생산 개시를 목표로 함."
+      },
+      {
+        "candidate_id": "investment:3",
+        "before": "human_review",
+        "after": "human_review",
+        "before_stage": "precursor",
+        "after_stage": "precursor",
+        "before_reason": "캐나다 연방 정부 전략대응기금으로부터 외부 자금(보조금) 지원을 확보했으나, 타겟 기술이 타이어용 친환경 침강실리카 제조기술과 일치하지 않음.",
+        "after_reason": "캐나다 연방 정부 전략대응기금으로부터 외부 자금(보조금) 지원을 확보했으나, 타겟 기술이 타이어용 친환경 침강실리카 제조기술과 일치하지 않음.",
+        "before_summary_ko": "캐나다 정부 기금 지원을 통한 신규 시설 투자 재원 확보 - 에보닉의 밴쿠버 신규 GMP 제조 시설 프로젝트는 캐나다 연방 정부 전략대응기금으로부터 최대 6800만 캐나다달러의 외부 자금 지원을 받음.",
+        "after_summary_ko": "캐나다 정부 기금 지원을 통한 신규 시설 투자 재원 확보 - Evonik의 밴쿠버 신규 GMP 제조 시설 프로젝트는 캐나다 연방 정부 Strategic Response Fund로부터 최대 6800만 캐나다달러의 외부 자금 지원을 받음."
+      }
+    ]
+  },
+  {
+    "article_id": "029c1f295b1cb977e1b98b68",
+    "company": "Jenoptik",
+    "title": "Results of the first half-year 2026 (January to June) (PDF | 0,54 MB)",
+    "kind": "wording",
+    "note": "Jenoptik 음차·문체",
+    "candidates": [
+      {
+        "candidate_id": "investment:2",
+        "before": "human_review",
+        "after": "human_review",
+        "before_stage": "planned",
+        "after_stage": "planned",
+        "before_reason": "젠옵틱이 2026년 상반기 실적 발표에서 OEM 사업 부문의 생산 능력 확대를 단기 중점 과제로 제시함.",
+        "after_reason": "젠옵틱이 2026년 상반기 실적 발표에서 OEM 사업 부문의 생산 능력 확대를 단기 중점 과제로 제시함.",
+        "before_summary_ko": "OEM 사업 부문의 생산 능력 확대 계획 추진 - 젠옵틱은 2026년 상반기 실적 발표에서 OEM 사업 부문의 생산 능력 확대를 단기 중점 과제로 추진할 계획이라고 밝혔다.",
+        "after_summary_ko": "OEM 사업 부문의 생산 능력 확대 계획 추진 - Jenoptik은 2026년 상반기 실적 발표에서 OEM 사업 부문의 생산 능력 확대를 단기 중점 과제로 제시했음."
+      }
+    ]
+  },
+  {
+    "article_id": "7bbcfbfcc8fca19098658a1a",
+    "company": "Boeing",
+    "title": "Archer to Shape Physical AI Future of Aerospace and Defense with Acquisition of Boeing's Wisk Aero, Insitu and SkyGrid Subsidiaries; Boeing to Invest in Archer and Collaborate",
+    "kind": "wording",
+    "note": "Boeing·Archer 음차 제거",
+    "candidates": [
+      {
+        "candidate_id": "investment:4",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "planned",
+        "after_stage": "planned",
+        "before_reason": "보잉이 Archer와 전략적 파트너십 및 기술 공유 협약을 체결하고 지분을 취득하기로 하였으며, Wisk 핵심 자율비행 기술 접근권을 유지하는 기술 협력이 성립됨.",
+        "after_reason": "보잉이 Archer와 전략적 파트너십 및 기술 공유 협약을 체결하고 지분을 취득하기로 하였으며, Wisk 핵심 자율비행 기술 접근권을 유지하는 기술 협력이 성립됨.",
+        "before_summary_ko": "아처와 전략적 파트너십 및 기술 공유 협약 체결 - 보잉이 Archer와 전략적 파트너십을 맺고 지분을 취득하며, Wisk의 자율비행 기술에 대한 지속적인 접근권을 유지하는 기술 공유 협약을 체결했음.",
+        "after_summary_ko": "Archer와 전략적 파트너십 및 기술 공유 협약 체결 - Boeing이 Archer와 전략적 파트너십을 맺고 지분을 취득하며, Wisk의 자율비행 핵심 기술 접근권을 유지하는 기술 공유 협약을 체결했음."
+      },
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "보잉이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하고 Archer의 지분을 취득하며 기술 공유 협력을 체결하는 사업 재편 및 제휴 활동이 보도됨.",
+        "after_reason": "보잉이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하고 Archer의 지분을 취득하며 기술 공유 협력을 체결하는 사업 재편 및 제휴 활동이 보도됨.",
+        "before_summary_ko": "보잉이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하는 최종 계약을 체결했음. 이와 함께 보잉은 Archer의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축했음.",
+        "after_summary_ko": "Boeing이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하는 최종 계약을 체결했음. 이와 함께 Boeing은 Archer의 지분을 취득하고 전략적 파트너로서 기술 공유 및 협력 관계를 구축했음."
+      }
+    ]
+  },
+  {
+    "article_id": "8d6959be1cc4b2b3d6ce9c50",
+    "company": "Renishaw",
+    "title": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
+    "kind": "wording",
+    "note": "Renishaw 개조식 통일, 전시 일정을 앞 문장으로 올려 양 언어 카드에 모두 남게 함",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "Renishaw가 반도체 제조 모션 제어를 위한 차세대 RLE 간섭계 레이저 엔코더 제품군(RLE100, RLE200, RLE300)을 출시하고 관련 사업 활동을 발표함.",
+        "after_reason": "Renishaw가 반도체 제조 모션 제어를 위한 차세대 RLE 간섭계 레이저 엔코더 제품군(RLE100, RLE200, RLE300)을 출시하고 관련 사업 활동을 발표함.",
+        "before_summary_ko": "Renishaw는 반도체 제조 분야의 첨단 모션 제어를 위한 차세대 RLE 간섭계 레이저 엔코더 제품군인 RLE100, RLE200, RLE300을 출시했다. 이 신규 제품군은 향상된 메트롤로지 성능과 유연한 설계 통합 기능을 제공하며, 타이베이의 SEMICON Taiwan 2026과 샌프란시스코의 SEMICON West 2026에서 선보일 예정이다. 모듈형 플러그 앤 플레이 아키텍처와 향상된 진단 기능을 통해 유지보수 비용을 절감하고 가동 중단을 최소화하도록 설계되었다.",
+        "after_summary_ko": "Renishaw는 반도체 제조의 첨단 모션 제어용 차세대 RLE 간섭계 레이저 엔코더 제품군(RLE100, RLE200, RLE300)을 출시했음. 신규 제품군은 SEMICON Taiwan 2026(타이베이)과 SEMICON West 2026(샌프란시스코)에서 선보일 예정임. 모듈형 구조와 실시간 진단 기능으로 유지보수성을 높였음."
+      }
+    ]
+  },
+  {
+    "article_id": "38d97eca35b7abd2bb30b4ec",
+    "company": "Ouster",
+    "title": "Ouster Announces Results for Second Quarter 2026",
+    "kind": "wording",
+    "note": "Ouster 금액 표기(55백만 달러)",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "타겟 품목인 라이다 센서의 매출 및 17,000대 이상 출하 등 구체적인 제품 및 사업 실적이 발표됨.",
+        "after_reason": "타겟 품목인 라이다 센서의 매출 및 17,000대 이상 출하 등 구체적인 제품 및 사업 실적이 발표됨.",
+        "before_summary_ko": "Ouster는 2026년 2분기에 전년 동기 대비 56% 증가한 55백만 달러의 총 매출과 17,000대 이상의 라이다 및 카메라 센서 출하를 기록했음. 제품 매출은 53백만 달러로, 물류 자동화, 야드 물류, 지능형 교통 분야의 산업 및 스마트 인프라 고객들의 수요에 의해 견인되었음.",
+        "after_summary_ko": "Ouster는 2026년 2분기 총 매출 5500만 달러(전년 동기 대비 56% 증가)를 기록하고 라이다 및 카메라 센서를 17,000대 이상 출하했음. 수요는 물류 자동화, 야드 물류, 지능형 교통 분야의 산업·스마트 인프라 고객이 이끌었음."
+      }
+    ]
+  },
+  {
+    "article_id": "02734e904b0832801764cc19",
+    "company": "Ouster",
+    "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+    "kind": "wording",
+    "note": "Ouster–GUSS \"함대\" 오역",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "Ouster의 디지털 라이다 센서 제품이 John Deere의 자회사 GUSS Automation의 차세대 자율주행 농기계 함대에 채택 및 통합될 예정임.",
+        "after_reason": "Ouster의 디지털 라이다 센서 제품이 John Deere의 자회사 GUSS Automation의 차세대 자율주행 농기계 함대에 채택 및 통합될 예정임.",
+        "before_summary_ko": "John Deere의 자회사인 GUSS Automation이 고가 농작물 과수원용 차세대 자율주행 농기계 함대에 Ouster의 차세대 Rev8 OS0 네이티브 컬러 디지털 라이다 센서를 통합할 계획임. 이번 통합을 통해 복잡한 야외 과수원 환경에서 자율주행 농기계의 정밀도와 장애물 감지 능력을 향상시킬 예정임.",
+        "after_summary_ko": "John Deere의 자회사 GUSS Automation이 과수원용 차세대 자율주행 작업차량군(Autonomous Orchard Machine Fleet)에 Ouster의 Rev8 OS0 네이티브 컬러 디지털 라이다 센서를 통합할 계획임. 복잡한 과수원 환경에서 자율주행 차량의 주행 정밀도와 장애물 감지 능력을 높이는 것이 목적임."
+      }
+    ]
+  },
+  {
+    "article_id": "27186feff58111c990b345e8",
+    "company": "Nabtesco",
+    "title": "FY2026/12 Q2 Result Briefing Q&A (PDF 302KB) Aug 05, 2026 Investor Relations Timely disclosure Investor Relations Financial statements Second quarter",
+    "kind": "wording",
+    "note": "Nabtesco 개조식 통일",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "로봇용 감속기 품목인 RV mini 및 CMP 부문의 사업 확장 계획, 수주 및 출하 진행 상황, 적용 분야 확대 전략이 구체적으로 기술되어 있음.",
+        "after_reason": "로봇용 감속기 품목인 RV mini 및 CMP 부문의 사업 확장 계획, 수주 및 출하 진행 상황, 적용 분야 확대 전략이 구체적으로 기술되어 있음.",
+        "before_summary_ko": "Nabtesco는 CMP 부문에서 RV mini 및 일반 산업용 애플리케이션 판매 확대와 Hamamatsu Plant 가동률 상승을 통해 사업 규모를 확장할 계획이다. RV mini는 6축 수직다관절 산업용 로봇의 손목 축 애플리케이션 진입을 시작으로 협동로봇과 공작기계 채택을 검토 중이며, 하반기부터 기존 고객에 대한 출하가 시작되어 JPY 0.2 billion 미만의 매출을 기록했다. 또한 상반기 이익에 JPY 0.5 billion의 가격 전가 효과가 포함되었다.",
+        "after_summary_ko": "Nabtesco는 CMP 부문에서 RV mini와 일반 산업용 애플리케이션 판매 확대, Hamamatsu Plant 가동률 상승으로 사업 규모를 키울 계획임. RV mini는 6축 수직다관절 산업용 로봇의 손목 축 용도에 먼저 진입하고 협동로봇·공작기계 채택도 검토 중이며, 하반기부터 기존 고객 출하가 시작됐음."
+      }
+    ]
+  },
+  {
+    "article_id": "3a82fd3abf18c5c0614150c5",
+    "company": "Qualcomm",
+    "title": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 247wallst.com",
+    "kind": "wording",
+    "note": "Qualcomm 개조식 통일",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "오토모티브 및 IoT 부문의 실적 성과와 BMW와의 확장 계약 등 타겟 품목 관련 사업 동향이 상세히 보도됨.",
+        "after_reason": "오토모티브 및 IoT 부문의 실적 성과와 BMW와의 확장 계약 등 타겟 품목 관련 사업 동향이 상세히 보도됨.",
+        "before_summary_ko": "오토모티브 부문 매출은 전년 동기 대비 61% 증가하여 15억 9,000만 달러를 기록했고, IoT 부문 매출은 9% 상승하여 18억 3,000만 달러를 기록했다. 또한 BMW와의 확장 계약을 통해 차세대 ADAS 및 디지털 콕핏의 선도 컴퓨팅 실리콘 공급업체로 선정되었으며, 2026 회계연도 말 기준 오토모티브 연환산 런레이트 목표를 60억 달러에서 약 70억 달러로 상향 조정했다.",
+        "after_summary_ko": "Qualcomm의 오토모티브 부문 매출은 전년 동기 대비 61% 증가한 15억 9,000만 달러로 최대치를 기록했고, IoT 부문 매출은 9% 증가한 18억 3,000만 달러였음. BMW와의 확대 계약으로 차세대 ADAS·디지털 콕핏의 주력 컴퓨팅 실리콘 공급사가 됐으며, 2026 회계연도 말 오토모티브 연환산 매출 목표를 60억 달러에서 약 70억 달러로 올렸음."
+      }
+    ]
+  },
+  {
+    "article_id": "6f0ea5fbaa9000684dc932a2",
+    "company": "Qualcomm",
+    "title": "Qualcomm Q3 Results Put Auto Growth and Handset Weakness in Focus - Yahoo Finance",
+    "kind": "wording",
+    "note": "Qualcomm 음차·개조식",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "타겟 품목인 자율주행 및 차량용 칩과 맞춤형 실리콘 사업에서 기록적인 매출 성장, 연간 매출 전망 상향 조정, 하이스케일러 대상 맞춤형 실리콘 수주 등 구체적인 사업 성과와 활동이 상세히 보도됨.",
+        "after_reason": "타겟 품목인 자율주행 및 차량용 칩과 맞춤형 실리콘 사업에서 기록적인 매출 성장, 연간 매출 전망 상향 조정, 하이스케일러 대상 맞춤형 실리콘 수주 등 구체적인 사업 성과와 활동이 상세히 보도됨.",
+        "before_summary_ko": "퀄컴은 2026 회계연도 3분기 자동차 부문 매출이 전년 동기 대비 61% 급증한 15억 9000만 달러를 기록하며 23개 분기 연속 두 자릿수 성장세를 이어갔다. 디지털 콕핏, 첨단 운전자 보조 시스템, 자율주행 부문의 출하량 확대가 성장을 견인했으며, 회사는 2026 회계연도 연환산 자동차 매출 전망치를 약 70억 달러로 상향 조정했다. 또한 데이터 센터 및 맞춤형 실리콘 분야에서 글로벌 하이스케일러들과의 수주를 바탕으로 2026년 12월 분기부터 매출 발생이 예상된다고 밝혔다.",
+        "after_summary_ko": "Qualcomm의 2026 회계연도 3분기 자동차 부문 매출은 전년 동기 대비 61% 증가한 15억 9000만 달러로, 23개 분기 연속 두 자릿수 성장을 기록했음. 디지털 콕핏, 첨단 운전자 보조, 자율주행 출하 확대가 성장을 이끌었으며 2026 회계연도 말 연환산 자동차 매출 전망을 약 70억 달러로 올렸음. 글로벌 하이퍼스케일러 대상 맞춤형 실리콘 수주 2건은 2026년 12월 분기부터 매출이 발생할 예정임."
+      }
+    ]
+  },
+  {
+    "article_id": "1ca13a566d0581926822f9dd",
+    "company": "Air Products",
+    "title": "Here's Why You Should Retain Air Products Stock in Your Portfolio - Yahoo Finance",
+    "kind": "wording",
+    "note": "Air Products 음차 제거",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "에어프로덕츠의 산업용 가스 프로젝트 투자, NEOM 그린수소 프로젝트 추진, 그리고 생산성 향상 및 비용 절감 이니셔티브 등 구체적인 사업 활동을 다루고 있음.",
+        "after_reason": "에어프로덕츠의 산업용 가스 프로젝트 투자, NEOM 그린수소 프로젝트 추진, 그리고 생산성 향상 및 비용 절감 이니셔티브 등 구체적인 사업 활동을 다루고 있음.",
+        "before_summary_ko": "에어프로덕츠는 연간 약 15억 달러 규모의 전통 산업용 가스 프로젝트 투자를 계획 중이며, 사우디아라비아에서 NEOM 그린수소 프로젝트를 지속해서 추진하고 있음. 또한 비용 구조 개선을 위한 생산성 향상 프로그램과 인력 감축을 시행하고 있음.",
+        "after_summary_ko": "Air Products는 전통 산업용 가스 프로젝트에 연간 약 15억 달러를 투자할 계획이며, 사우디아라비아 NEOM 그린수소 프로젝트를 계속 추진하고 있음. 비용 구조 개선을 위한 생산성 향상 프로그램과 인력 감축도 시행하고 있음."
+      }
+    ]
+  },
+  {
+    "article_id": "9493adc2af3df4f858b29a4f",
+    "company": "Cognex",
+    "title": "Cognex Q2 Earnings Beat on Margin Gains Despite Revenue Miss - Zacks Investment Research",
+    "kind": "wording",
+    "note": "Cognex 음차 제거",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "코그넥스가 OneVision 플랫폼을 데이터 센터 공급망으로 확장하고 서버 랙 검사 애플리케이션 및 인공지능 기반 비전 애플리케이션 전개를 추진하는 등 타겟 품목 및 기술과 직접 연계된 사업 동향을 보여줌.",
+        "after_reason": "코그넥스가 OneVision 플랫폼을 데이터 센터 공급망으로 확장하고 서버 랙 검사 애플리케이션 및 인공지능 기반 비전 애플리케이션 전개를 추진하는 등 타겟 품목 및 기술과 직접 연계된 사업 동향을 보여줌.",
+        "before_summary_ko": "코그넥스가 데이터 센터 공급망으로 OneVision 플랫폼을 확장하고, 서버 랙 검사 애플리케이션을 통해 품질 관리 요구사항을 충족하며 인공지능 기반 비전 애플리케이션 배포를 가속화함.",
+        "after_summary_ko": "Cognex가 OneVision 플랫폼을 데이터센터 공급망으로 확장했음. 서버 랙 검사 애플리케이션으로 복잡한 품질 관리 요구에 대응하고, AI 기반 비전 애플리케이션의 구성·배포를 가속하고 있음."
+      }
+    ]
+  },
+  {
+    "article_id": "978af39518d19cbf2868939a",
+    "company": "Australian Strategic Metals",
+    "title": "Energy Fuels completes acquisition of ASM",
+    "kind": "wording",
+    "note": "ASM members' scheme of arrangement 원문 방치",
+    "candidates": [
+      {
+        "candidate_id": "relevant",
+        "before": "approved",
+        "after": "approved",
+        "before_stage": "not_applicable",
+        "after_stage": "not_applicable",
+        "before_reason": "Energy Fuels Inc.에 의한 Australian Strategic Materials의 100% 지분 인수 완료 및 ASX 공식 목록 제외 등 타겟 품목과 연계된 주요 사업 활동이 확인됨.",
+        "after_reason": "Energy Fuels Inc.에 의한 Australian Strategic Materials의 100% 지분 인수 완료 및 ASX 공식 목록 제외 등 타겟 품목과 연계된 주요 사업 활동이 확인됨.",
+        "before_summary_ko": "Energy Fuels Inc.가 members' scheme of arrangement를 통해 Australian Strategic Materials의 100% 지분 인수를 완료함에 따라 Australian Strategic Materials가 ASX 공식 목록에서 제외되었으며, 주주들에게 주식 및 현금 대가가 지급됨.",
+        "after_summary_ko": "Energy Fuels Inc.가 주주 대상 인수 절차(members' scheme of arrangement)를 통해 Australian Strategic Materials 지분 100% 인수를 완료했음. 이에 따라 Australian Strategic Materials는 ASX 공식 상장 목록에서 제외됐고 주주들에게 주식 및 현금 대가가 지급됐음."
+      }
+    ]
+  }
+]

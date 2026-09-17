@@ -78,28 +78,45 @@ async function printPdf(htmlPath, pdfPath) {
 // Ask the browser how tall each trend card came out. The drawn report adds up
 // line counts and padding constants to predict this; the engine that laid the
 // cards out already knows, so the sheets are cut from measurement instead.
-const CARD_HEIGHTS = `<script>
-document.title = 'CARDS' + JSON.stringify([...document.querySelectorAll('.item-card')]
-  .map(card => card.getBoundingClientRect().height / (96 / 72))) + 'END';
+// 같은 측정에서 줄 수 제한(line-clamp)에 걸려 화면에서 잘린 문안도 찾는다. 글자 수 상한은 뷰 모델이
+// 표시하고, 렌더링 단계에서 잘린 것은 여기서만 알 수 있다.
+const LAYOUT_PROBE = `<script>
+const clipped = [...document.querySelectorAll('.summary, .business-body, .item-body')]
+  .filter(el => el.scrollHeight > el.clientHeight + 1)
+  .map(el => ({ company: el.closest('.detail, .item-card')?.querySelector('h3')?.textContent || '', part: el.className }));
+document.title = 'CARDS' + encodeURIComponent(JSON.stringify({ cards: [...document.querySelectorAll('.item-card')]
+  .map(card => card.getBoundingClientRect().height / (96 / 72)), clipped })) + 'END';
 </script>`;
 
-async function cardHeights(html, near) {
+async function measureLayout(html, near) {
   const probePath = path.join(path.dirname(near), '.card-probe.html');
-  await fs.writeFile(probePath, html.replace('</body>', `${CARD_HEIGHTS}</body>`), 'utf8');
+  await fs.writeFile(probePath, html.replace('</body>', `${LAYOUT_PROBE}</body>`), 'utf8');
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-cards-'));
   const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run',
     `--user-data-dir=${work}`, '--virtual-time-budget=10000', '--dump-dom', pathToFileURL(probePath).href];
   try {
     for (const command of browserCandidates()) {
       const dom = await run(command, args, { capture: true }).catch(() => null);
-      const found = dom && /CARDS(\[.*?\])END/s.exec(dom);
-      if (found) return JSON.parse(found[1]);
+      // 회사명의 & 같은 글자가 DOM 직렬화에서 바뀌지 않도록 인코딩해 둔다.
+      const found = dom && /CARDS([A-Za-z0-9%._~!*'()-]*)END/.exec(dom);
+      if (found) return JSON.parse(decodeURIComponent(found[1]));
     }
   } finally {
     await fs.rm(work, { recursive: true, force: true });
     await fs.rm(probePath, { force: true });
   }
-  throw new Error('Could not measure the trend cards.');
+  throw new Error('Could not measure the report layout.');
+}
+
+// 보고서에 싣지 못하고 잘린 문안. 뷰 모델이 글자 수 상한으로 자른 것(cut)과 Chrome 이 줄 수 제한으로 가린 것을 합친다.
+export function cutTexts(model, clipped = []) {
+  const cut = [];
+  for (const page of model.details?.pages || []) {
+    for (const signal of page.signals || []) if (signal.cut) cut.push({ company: page.company, part: `signal ${signal.no}` });
+    if (page.business?.cut) cut.push({ company: page.company, part: 'business' });
+  }
+  for (const card of model.items?.cards || []) if (card.cut) cut.push({ company: card.company, part: 'item' });
+  return [...cut, ...clipped.map(item => ({ ...item, rendered: true }))];
 }
 
 // A card that would cross the band's bottom starts the next sheet instead.
@@ -205,9 +222,16 @@ async function main() {
   const assets = pathToFileURL(path.join(ROOT, 'assets')).href;
   let html = renderReport(model, { assets });
   let breaks = [];
+  const layout = await measureLayout(html, htmlPath);
   if (model.items?.cards?.length > 1) {
-    breaks = itemBreaks(await cardHeights(html, htmlPath));
+    breaks = itemBreaks(layout.cards);
     if (breaks.length) html = renderReport(model, { assets, itemBreaks: breaks });
+  }
+  // 문안 일부가 빠진 보고서는 만들지 않는다. 한·영 중 한쪽에서만 금액·일정이 빠져도 겉으로는 드러나지 않는다.
+  // 급히 발행해야 할 때만 REPORT_ALLOW_CUT_TEXT=true 로 넘기고, 그때도 잘린 곳을 출력에 남긴다.
+  const cut = cutTexts(model, layout.clipped);
+  if (cut.length && process.env.REPORT_ALLOW_CUT_TEXT !== 'true') {
+    throw new Error(`Report text would be cut (${model.lang}): ${JSON.stringify(cut)}. Shorten the summaries or set REPORT_ALLOW_CUT_TEXT=true.`);
   }
   await fs.writeFile(htmlPath, html, 'utf8');
   const browser = await printPdf(htmlPath, outPath);
@@ -217,6 +241,7 @@ async function main() {
     matrix_counts: model.matrix.counts,
     item_cards: model.items?.cards?.length ?? 0,
     item_pages: model.items?.cards?.length ? breaks.length + 1 : 0,
+    cut_text: cut,
   }, null, 2));
 }
 
