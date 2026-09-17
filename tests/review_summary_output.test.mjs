@@ -36,7 +36,11 @@ for (const provider of [GEMINI, NVIDIA]) {
     const system = provider.id === 'gemini' ? initial.systemInstruction.parts[0].text : initial.messages[0].content;
     const retry = provider.id === 'gemini' ? retried.contents[0].parts[1].text : retried.messages[2].content;
     assert.ok(system.includes(SUMMARY_INSTRUCTION));
-    assert.ok(retry.includes(SUMMARY_INSTRUCTION));
+    // Retries inherit the system contract; do not append the full summary rules again.
+    const retrySystem = provider.id === 'gemini' ? retried.systemInstruction.parts[0].text : retried.messages[0].content;
+    assert.equal(retrySystem, system);
+    assert.equal(retry.includes(SUMMARY_INSTRUCTION), false);
+    assert.equal(retrySystem.split(SUMMARY_INSTRUCTION).length - 1, 1);
     assert.match(retry, /missing summary_ko or summary_en, especially relevant/);
     assert.match(system, /whether investment candidates are approved or rejected/);
     assert.match(system, /either relevance_exempt=true or target_technology_supported=true/);
