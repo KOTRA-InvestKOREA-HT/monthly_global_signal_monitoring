@@ -501,8 +501,29 @@ test('a verifier whose every answer is rejected pauses the run instead of publis
       verifierCalls++;
       return geminiReply(primary.map(d => ({ ...d, reason_ko: '' })));
     } });
-  assert.equal(verifierCalls, 3);
+  // 기사마다 한 번 더 물은 뒤 거부로 센다. 세 기사 연속 거부되면 멈춘다.
+  assert.equal(verifierCalls, 6);
   assert.equal(state.status, 'paused');
   assert.equal(state.reason, 'verifier_unavailable');
   assert.equal(state.recheck_pending.length, 4);
+});
+
+test('a rejected verifier answer is asked once more with the validation message and can then succeed', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-revalidate-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const bodies = [];
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async (url, init) => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      bodies.push(init.body);
+      // 첫 검증 응답은 승인할 S3 의 요약을 빠뜨린다.
+      return geminiReply(bodies.length === 1 ? primary.map(d => d.candidate_id === 'investment:3' ? { ...d, summary_ko: '', summary_en: '' } : d) : primary);
+    } });
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1], /previous_response_rejected/);
+  assert.equal(state.status, 'completed');
+  assert.equal(state.verification.failed, 0);
+  assert.deepEqual(state.recheck_pending, []);
 });
