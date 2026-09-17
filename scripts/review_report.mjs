@@ -834,7 +834,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     const unverified = reason => ({ ...primary, semantic_recheck_pending: { reason,
       candidate_ids: [...new Set([...(primary.semantic_recheck_pending?.candidate_ids || []), ...suspects.candidate_ids])] } });
     if (verifierStop.stopped) return unverified('verifier_unavailable');
-    let retries = 0, waitMs = config.delayMs;
+    let retries = 0, waitMs = config.delayMs, validationFeedback = null;
     for (;;) {
       if (requests >= config.maxRequests) {
         verifierStop.stopped ??= { reason: 'request_budget' };
@@ -847,7 +847,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       try {
         const checked = await requestReview(article, policy, config.verifierApiKey, verifierFetchImpl,
           // 1차 답(primary_decisions)은 보내지 않는다. 같은 모델이 자기 답을 보면 그대로 따라간다.
-          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because }, VERIFIER,
+          { mode: 'verify', verify_candidate_ids: suspects.candidate_ids, checks: suspects.flagged_because,
+            ...(validationFeedback ? { previous_response_rejected: validationFeedback } : {}) }, VERIFIER,
           { keepDecisions: primary.decisions });
         const merged = mergeVerification(article, primary, checked, suspects);
         importReview(article, merged);
@@ -873,6 +874,13 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           waitMs = Math.max(config.delayMs, 15000 * 2 ** retries + Math.floor(random() * 1000));
           retries++;
           console.log(`Article ${article.id}: verifier temporarily unavailable (${error.transport_reason || `HTTP ${error.status}`}); retry ${retries}/2 after ${waitMs}ms`);
+          continue;
+        }
+        // 1차 판정처럼 형식 결함(요약 누락, 인용 불일치 등)은 무엇이 틀렸는지 알려 주고 한 번 더 묻는다.
+        // 검증 메시지는 우리가 만든 문구(회사명·후보 id·결함)라 모델 출력이 섞이지 않는다.
+        if (error.response_code && !validationFeedback) {
+          validationFeedback = { reason: error.response_code, validation_message: error.diagnostic?.validation_message || error.message };
+          console.log(`Article ${article.id}: verifier answer rejected (${error.response_code}); asking once more`);
           continue;
         }
         verifications.failed++;
