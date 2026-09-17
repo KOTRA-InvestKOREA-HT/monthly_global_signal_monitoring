@@ -15864,7 +15864,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-17T00:40:12Z",
+    "collected_at": "2026-09-17T02:37:06Z",
     "collector": "official_page",
     "query": "https://texcell.com/actualites/",
     "source_type": "official",
@@ -15878,7 +15878,7 @@
     "link_reason": "article_link",
     "link_rank": 1,
     "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-17T00:40:12Z"
+    "content_fetched_at": "2026-09-17T02:37:06Z"
   },
   {
     "target_no": 57,
@@ -15894,7 +15894,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-17T00:40:12Z",
+    "collected_at": "2026-09-17T02:37:06Z",
     "collector": "official_page",
     "query": "https://texcell.com/actualites/",
     "source_type": "official",
@@ -15908,7 +15908,7 @@
     "link_reason": "article_link",
     "link_rank": 1,
     "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-17T00:40:12Z"
+    "content_fetched_at": "2026-09-17T02:37:06Z"
   },
   {
     "target_no": 62,
@@ -21203,6 +21203,130 @@
     "content_fetched_at": "2026-09-17T00:40:12Z"
   },
   {
+    "target_no": 57,
+    "company": "Texcell",
+    "title": "ABL Diagnostics discloses 16.1 million shares and voting rights structure - scanx.trade",
+    "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOY0RzdkY5bnJKZnh2eXkzcm5mbzhMZ3g1aVllUU5HQVBGR0piSjE5VThNMVo0SV95Qy1fYWFEMDBxTzg4S3ZwUDdzdW1ZemdGSUNDOHN3Zk5jZWhwS3d2SmVTcVhsSU1lUkpRRnBrSloyaUs2ZWpZZkRndW00R21SSmdSbUl5ZExHaVdHM1dROVo2SEhjajNtUFFIVEpBeVdUMVdBaGJORlB0Q01jRlJTMXNPWlFNY3JmOGNuaUo5RGJ3a1hl?oc=5",
+    "source": "Google News: scanx.trade",
+    "publisher": "scanx.trade",
+    "publisher_home_url": "https://scanx.trade/",
+    "published_at": "2026-08-27T16:28:47Z",
+    "published_month": "2026-08",
+    "published_at_source": "jsonld",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-08-27T16:28:47Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-27T16:28:47Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-27T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-12T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-27T16:28:47Z",
+        "month": "2026-08",
+        "source": "modified_jsonld",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-17T02:37:06Z",
+    "collector": "google_news_rss",
+    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "ABL Diagnostics discloses 16.1 million shares and voting rights structure \n1 min read | Published on 27 Aug 2026, 09:58 PM | Updated on 27 Aug 2026, 09:58 PM \nReviewed by Anirudha B ScanX News Team \nAdd as a preferred source on Google \nKey Highlights \nTotal share capital comprises 16,114,656 shares as of August 12, 2026\nTheoretical voting rights stand at 30,501,420 due to double voting provisions\nExercisable voting rights total 30,471,564 for active shareholder decisions\nDouble voting rights apply to shares held by same shareholder for two years\npowered by \n*this image is generated using AI for illustrative purposes only.\nABL Diagnostics (Euronext: ABLD) disclosed its share capital and voting rights structure as of August 12, 2026, in a regulatory filing. The Paris-listed molecular biology diagnostics firm reported a total share capital comprising 16,114,656 shares.\nThe company’s filing, mandated by Articles L. 233-8 II of the French Commercial Code and Article 223-16 of the AMF General Regulation, provides a breakdown of voting power attached to these shares.\nShare Capital and Voting Rights\nAs per the disclosure, the total number of shares constituting the share capital stands at 16,114,656 . The associated voting rights are detailed below:\nMetric \nCount \nTotal Shares \n16,114,656 \nTheoretical Voting Rights \n30,501,420 \nExercisable Voting Rights \n30,471,564 \nTheoretical voting rights include all shares to which voting rights are attached, even if suspended or deprived. Exercisable voting rights represent those currently active for shareholder decisions.\nDouble Voting Rights Mechanism\nThe disparity between the number of shares and theoretical voting rights stems from a double voting right mechanism. Resolutions adopted on March 23, 2022, grant double voting rights to all fully paid-up shares registered in the name of the same shareholder for at least two years. This provision has been effective since March 23, 2022.\nBusiness Overview\nHeadquartered in Woippy, France, ABL Diagnostics specializes in innovative molecular biology tests. Its core product portfolio includes:\nMolecular polymerase chain reaction (PCR) detection via UltraGene.\nGenotyping by DNA sequencing through DeepChek.\nThe company markets its solutions globally through an internal sales team and exclusive distributors. Key customers include academic clinical pathology laboratories, private reference labs, and researchers.\nRecent strategic moves include the acquisition of TEXCELL’s operations, expanding ABL Diagnostics’ activities in virology, biosafety testing, and biopharmaceutical development support. Additionally, since the second half of 2025, the firm has marketed products from its sister company CDL Pharma under an intra-group strategy agreement.\nHow might the double voting rights structure impact potential takeover defenses or future M&A activity for ABL Diagnostics?\nfuzz it \nWhat is the projected revenue contribution from the newly acquired TEXCELL operations in virology and biosafety testing for the upcoming fiscal year?\nfuzz it \nCould the intra-group strategy with CDL Pharma lead to further consolidation within the ABL group or cross-selling opportunities in new therapeutic areas?\nfuzz it \n18 \nRead Next Article",
+    "content_source_url": "https://scanx.trade/stock-market-news/companies/abl-diagnostics-discloses-16-1-million-shares-voting-rights-structure/49393716",
+    "content_excerpt": "ABL Diagnostics discloses 16.1 million shares and voting rights structure 1 min read | Published on 27 Aug 2026, 09:58 PM | Updated on 27 Aug 2026, 09:58 PM Reviewed by Anirudha B ScanX News Team Add as a preferred source on Google Key Highlights Total share capital comprises 16,114,656 shares as of August 12, 2026 Theoretical voting rights stand at 30,501,420 due to double voting provisions Exercisable voting rights total 30,471,564 for active shareholder decisions Double voting rights apply to shares held by same shareholder for two years powered by *this image is generated using AI for illustrative purposes only. ABL Diagnostics (Euronext: ABLD) disclosed its share capital and voting rights structure as of August 12, 2026, in a regulatory filing. The Paris-listed molecular biology diagn...",
+    "content_word_count": 471,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-17T02:37:06Z"
+  },
+  {
+    "target_no": 57,
+    "company": "Texcell",
+    "title": "ABL Diagnostics seeks shareholder approval for Euronext Growth listing transfer - scanx.trade",
+    "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOaV9abWtESm1faEc3Y3hyVUR1cXdLZzZ5TE92dEZ2bG1iN3MtWGl2LWFLV19INVpnNEtPbHExQ3l1b1EwcktHOUFZdlNhYUFkcUc1aXRva1ZxeWUzaVhaVW82SUl6d2JrOTNoeEFYTVloLWRBdWJjMlJWanpUWWZMM20wc0pFTDE0c3FVbkhzVUhTTTg2VGNiM3FYZTlPV0hHdERmYUs5V0tuWTVsX0ZEc3lZZ2RKT3M5NXlVaHRSVlU?oc=5",
+    "source": "Google News: scanx.trade",
+    "publisher": "scanx.trade",
+    "publisher_home_url": "https://scanx.trade/",
+    "published_at": "2026-08-27T16:28:06Z",
+    "published_month": "2026-08",
+    "published_at_source": "jsonld",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-08-27T16:28:06Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-27T16:28:06Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-27T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-17T00:00:00Z",
+        "month": "2026-09",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-27T16:28:06Z",
+        "month": "2026-08",
+        "source": "modified_jsonld",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-17T02:37:06Z",
+    "collector": "google_news_rss",
+    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "ScanX News ABL Diagnostics seeks shareholder approval for Euronext Growth listing transfer \nABL Diagnostics proposes move to Euronext Growth Paris \n3 min read | Published on 08 Aug 2026, 12:46 AM | Updated on 08 Aug 2026, 12:46 AM \nReviewed by Riya D ScanX News Team \nAdd as a preferred source on Google \nKey Highlights ABL Diagnostics proposes shifting its listing to Euronext Growth Paris to cut costs and simplify compliance, seeking shareholder approval on September 17, 2026. The move requires meeting a €2.5 million free float threshold, currently at €2.41 million, which the company expects to satisfy. Key changes include relaxed reporting timelines and governance rules, while maintaining market abuse regulations and minority protections.\npowered by \n*this image is generated using AI for illustrative purposes only.\nABL Diagnostics has announced a proposal to transfer the listing of its securities from the regulated market of Euronext Paris to the Euronext Growth Paris multilateral trading facility. The Board of Directors, meeting on August 6, 2026, decided to convene a shareholders’ meeting on September 17, 2026, to seek approval for this move. The transfer is designed to simplify operations and reduce regulatory constraints and costs associated with the regulated market, while keeping the company accessible to both professional and retail investors through the Euronext Growth platform.\nThe transfer requires shareholder approval at the general meeting and subsequent approval from Euronext Paris. If approved, the direct listing on Euronext Growth Paris will occur via an accelerated procedure for admitting existing shares to trading, without issuing new shares. AllInvest Securities will support the company as a listing sponsor. The company must meet eligibility conditions on the day of the transfer request, including a market capitalization of less than €1 billion and a minimum public distribution (free float) of €2.5 million.\nCurrently, the free float represents 5.99% of ABL Diagnostics’ share capital, valued at €2.41 million based on the closing price of €2.50 on August 6, 2026. This falls short of the €2.5 million minimum required for Euronext Growth. However, the company states that this condition will be met by the time of the transfer. Expanding the free float aligns with the company’s strategy since its 2021 merger, aiming for up to 30% of capital in free float subject to market conditions. Initiatives such as a liquidity contract and share sales by the reference shareholder have been undertaken to achieve this.\nRegulatory and Operational Changes\nThe transfer brings several changes to reporting and governance requirements. ABL Diagnostics will publish an annual report within four months of the financial year-end, including financial statements, a reduced management report, and Statutory Auditors’ reports. Half-year reports will also be published within four months of the first half-year end, extending from the three-month period currently applicable on Euronext Paris. These half-year financial statements will no longer require audit by Statutory Auditors, though a review may be maintained.\nThe company will remain subject to Regulation (EU) No. 596/2014 on market abuse (MAR) for permanent market information, continuing to disseminate regulated and inside information via a professional broadcaster. Officers must still report trades, and insider lists must be maintained. Governance rules regarding Board parity and audit committees may no longer apply, depending on thresholds. Additionally, the “say on pay” regime for executive compensation policy approval will be removed.\nShareholder Rights and Timetable\nGeneral meeting formalities will be simplified, with preparatory documents published online on the notice date rather than twenty-one days prior. Minority shareholder protection remains ensured through mandatory public offer mechanisms if the 50% threshold of share capital or voting rights is crossed. For three years post-delisting, the company remains subject to the public offer regime for crossings of the 30% threshold under transitional provisions. Liquidity may change as Euronext Growth is an unregulated market, potentially affecting investor preference, though the existing liquidity contract with AllInvest Securities will continue.\nDate \nEvent \nAugust 6, 2026 \nBoard decision to propose transfer; initial public release \nSeptember 17, 2026 \nGeneral meeting votes on the proposed transfer \nSeptember 17, 2026 \nBoard implements transfer if approved; application filed with Euronext \nNo earlier than November 17, 2026 \nEffective transfer to Euronext Growth Paris if approved \nWhat the Numbers Show\nThe current free float value of €2.41 million is just below the €2.5 million minimum requirement for Euronext Growth. This narrow gap indicates that only a modest increase in public shareholding or share price appreciation is needed to meet the eligibility criteria by the transfer date. The company’s assertion that the condition will be met suggests confidence in near-term liquidity initiatives or market movements. This minimal shortfall underscores that the primary driver for the transfer is structural cost reduction rather than addressing a significant liquidity deficit.\nHow might the removal of the 'say on pay' regime and relaxed governance rules impact ABL Diagnostics' ability to attract institutional investors post-transfer?\nfuzz it \nWhat specific mechanisms will the company employ to bridge the €90,000 gap in free float value before the November 2026 transfer deadline?\nfuzz it \nCould the shift to Euronext Growth lead to increased share price volatility due to reduced liquidity and fewer regulatory safeguards for retail investors?\nfuzz it \n16 \nRead Next Article",
+    "content_source_url": "https://scanx.trade/stock-market-news/companies/abl-diagnostics-seeks-shareholder-approval-euronext-growth-listing/49393676",
+    "content_excerpt": "ScanX News ABL Diagnostics seeks shareholder approval for Euronext Growth listing transfer ABL Diagnostics proposes move to Euronext Growth Paris 3 min read | Published on 08 Aug 2026, 12:46 AM | Updated on 08 Aug 2026, 12:46 AM Reviewed by Riya D ScanX News Team Add as a preferred source on Google Key Highlights ABL Diagnostics proposes shifting its listing to Euronext Growth Paris to cut costs and simplify compliance, seeking shareholder approval on September 17, 2026. The move requires meeting a €2.5 million free float threshold, currently at €2.41 million, which the company expects to satisfy. Key changes include relaxed reporting timelines and governance rules, while maintaining market abuse regulations and minority protections. powered by *this image is generated using AI for illustr...",
+    "content_word_count": 855,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-17T02:37:06Z"
+  },
+  {
     "target_no": 3,
     "company": "Corning",
     "title": "Corning (GLW) Up 23.2% Since Last Earnings Report: Can It Continue? - Yahoo Finance",
@@ -21481,79 +21605,6 @@
     "collected_at": "2026-09-17T00:40:12Z",
     "collector": "google_news_rss",
     "query": "(\"ABB\" OR \"ABB Group\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
-    "source_type": "fallback",
-    "source_kind": "news",
-    "is_press_release": false,
-    "source_label_ko": "대체출처",
-    "source_priority": 90,
-    "official_source_url": "",
-    "source_direct_url": "",
-    "content_fetch_status": "publisher_url_unresolved"
-  },
-  {
-    "target_no": 57,
-    "company": "Texcell",
-    "title": "ABL Diagnostics discloses 16.1 million shares and voting rights structure - scanx.trade",
-    "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOY0RzdkY5bnJKZnh2eXkzcm5mbzhMZ3g1aVllUU5HQVBGR0piSjE5VThNMVo0SV95Qy1fYWFEMDBxTzg4S3ZwUDdzdW1ZemdGSUNDOHN3Zk5jZWhwS3d2SmVTcVhsSU1lUkpRRnBrSloyaUs2ZWpZZkRndW00R21SSmdSbUl5ZExHaVdHM1dROVo2SEhjajNtUFFIVEpBeVdUMVdBaGJORlB0Q01jRlJTMXNPWlFNY3JmOGNuaUo5RGJ3a1hl?oc=5",
-    "source": "Google News: scanx.trade",
-    "publisher": "scanx.trade",
-    "publisher_home_url": "https://scanx.trade/",
-    "published_at": "2026-08-27T07:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "feed",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-27T07:00:00Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "google_news_rss",
-    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
-    "source_type": "fallback",
-    "source_kind": "news",
-    "is_press_release": false,
-    "source_label_ko": "대체출처",
-    "source_priority": 90,
-    "official_source_url": "",
-    "source_direct_url": "",
-    "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-17T00:40:12Z"
-  },
-  {
-    "target_no": 57,
-    "company": "Texcell",
-    "title": "ABL Diagnostics seeks shareholder approval for Euronext Growth listing transfer - scanx.trade",
-    "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOaV9abWtESm1faEc3Y3hyVUR1cXdLZzZ5TE92dEZ2bG1iN3MtWGl2LWFLV19INVpnNEtPbHExQ3l1b1EwcktHOUFZdlNhYUFkcUc1aXRva1ZxeWUzaVhaVW82SUl6d2JrOTNoeEFYTVloLWRBdWJjMlJWanpUWWZMM20wc0pFTDE0c3FVbkhzVUhTTTg2VGNiM3FYZTlPV0hHdERmYUs5V0tuWTVsX0ZEc3lZZ2RKT3M5NXlVaHRSVlU?oc=5",
-    "source": "Google News: scanx.trade",
-    "publisher": "scanx.trade",
-    "publisher_home_url": "https://scanx.trade/",
-    "published_at": "2026-08-27T07:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "feed",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-27T07:00:00Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "google_news_rss",
-    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -25096,6 +25147,68 @@
     "content_fetched_at": "2026-09-17T00:40:12Z"
   },
   {
+    "target_no": 57,
+    "company": "Texcell",
+    "title": "ABL Diagnostics proposes move to Euronext Growth Paris - scanx.trade",
+    "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNQ0stOFBJR05IZnJYb2Y5VlJTVVRwQnF5SlpNLXZKcUFDSnpGUnoyR3cxbjc1Y0I5djVpeW9hQ2R2UEpfM2pWSU8yWWZtSGRkS0VHdktUb0FfVkx6bm1FaFlrU0E3MXhMTHVqVXFTNks5Tm4xYXJlOUFkc2VxTHVUeVhCcEpkTDZlZC1vUmxDTElsWjM5NFlYN0xNWnhsRTludHNXYVFJVXM5NjlGR0xFSQ?oc=5",
+    "source": "Google News: scanx.trade",
+    "publisher": "scanx.trade",
+    "publisher_home_url": "https://scanx.trade/",
+    "published_at": "2026-08-07T19:16:28Z",
+    "published_month": "2026-08",
+    "published_at_source": "jsonld",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-08-07T19:16:28Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-07T19:16:28Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-07T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-17T00:00:00Z",
+        "month": "2026-09",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-07T19:16:28Z",
+        "month": "2026-08",
+        "source": "modified_jsonld",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-17T02:37:06Z",
+    "collector": "google_news_rss",
+    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "ABL Diagnostics proposes move to Euronext Growth Paris \n3 min read | Published on 08 Aug 2026, 12:46 AM | Updated on 08 Aug 2026, 12:46 AM \nReviewed by Riya D ScanX News Team \nAdd as a preferred source on Google \nKey Highlights ABL Diagnostics proposes shifting its listing to Euronext Growth Paris to cut costs and simplify compliance, seeking shareholder approval on September 17, 2026. The move requires meeting a €2.5 million free float threshold, currently at €2.41 million, which the company expects to satisfy. Key changes include relaxed reporting timelines and governance rules, while maintaining market abuse regulations and minority protections.\npowered by \n*this image is generated using AI for illustrative purposes only.\nABL Diagnostics has announced a proposal to transfer the listing of its securities from the regulated market of Euronext Paris to the Euronext Growth Paris multilateral trading facility. The Board of Directors, meeting on August 6, 2026, decided to convene a shareholders’ meeting on September 17, 2026, to seek approval for this move. The transfer is designed to simplify operations and reduce regulatory constraints and costs associated with the regulated market, while keeping the company accessible to both professional and retail investors through the Euronext Growth platform.\nThe transfer requires shareholder approval at the general meeting and subsequent approval from Euronext Paris. If approved, the direct listing on Euronext Growth Paris will occur via an accelerated procedure for admitting existing shares to trading, without issuing new shares. AllInvest Securities will support the company as a listing sponsor. The company must meet eligibility conditions on the day of the transfer request, including a market capitalization of less than €1 billion and a minimum public distribution (free float) of €2.5 million.\nCurrently, the free float represents 5.99% of ABL Diagnostics’ share capital, valued at €2.41 million based on the closing price of €2.50 on August 6, 2026. This falls short of the €2.5 million minimum required for Euronext Growth. However, the company states that this condition will be met by the time of the transfer. Expanding the free float aligns with the company’s strategy since its 2021 merger, aiming for up to 30% of capital in free float subject to market conditions. Initiatives such as a liquidity contract and share sales by the reference shareholder have been undertaken to achieve this.\nRegulatory and Operational Changes\nThe transfer brings several changes to reporting and governance requirements. ABL Diagnostics will publish an annual report within four months of the financial year-end, including financial statements, a reduced management report, and Statutory Auditors’ reports. Half-year reports will also be published within four months of the first half-year end, extending from the three-month period currently applicable on Euronext Paris. These half-year financial statements will no longer require audit by Statutory Auditors, though a review may be maintained.\nThe company will remain subject to Regulation (EU) No. 596/2014 on market abuse (MAR) for permanent market information, continuing to disseminate regulated and inside information via a professional broadcaster. Officers must still report trades, and insider lists must be maintained. Governance rules regarding Board parity and audit committees may no longer apply, depending on thresholds. Additionally, the “say on pay” regime for executive compensation policy approval will be removed.\nShareholder Rights and Timetable\nGeneral meeting formalities will be simplified, with preparatory documents published online on the notice date rather than twenty-one days prior. Minority shareholder protection remains ensured through mandatory public offer mechanisms if the 50% threshold of share capital or voting rights is crossed. For three years post-delisting, the company remains subject to the public offer regime for crossings of the 30% threshold under transitional provisions. Liquidity may change as Euronext Growth is an unregulated market, potentially affecting investor preference, though the existing liquidity contract with AllInvest Securities will continue.\nDate \nEvent \nAugust 6, 2026 \nBoard decision to propose transfer; initial public release \nSeptember 17, 2026 \nGeneral meeting votes on the proposed transfer \nSeptember 17, 2026 \nBoard implements transfer if approved; application filed with Euronext \nNo earlier than November 17, 2026 \nEffective transfer to Euronext Growth Paris if approved \nWhat the Numbers Show\nThe current free float value of €2.41 million is just below the €2.5 million minimum requirement for Euronext Growth. This narrow gap indicates that only a modest increase in public shareholding or share price appreciation is needed to meet the eligibility criteria by the transfer date. The company’s assertion that the condition will be met suggests confidence in near-term liquidity initiatives or market movements. This minimal shortfall underscores that the primary driver for the transfer is structural cost reduction rather than addressing a significant liquidity deficit.\nHow might the removal of the 'say on pay' regime and relaxed governance rules impact ABL Diagnostics' ability to attract institutional investors post-transfer?\nfuzz it \nWhat specific mechanisms will the company employ to bridge the €90,000 gap in free float value before the November 2026 transfer deadline?\nfuzz it \nCould the shift to Euronext Growth lead to increased share price volatility due to reduced liquidity and fewer regulatory safeguards for retail investors?\nfuzz it \n20 \nRead Next Article",
+    "content_source_url": "https://scanx.trade/stock-market-news/companies/abl-diagnostics-proposes-move-to-euronext-growth-paris/47675777",
+    "content_excerpt": "ABL Diagnostics proposes move to Euronext Growth Paris 3 min read | Published on 08 Aug 2026, 12:46 AM | Updated on 08 Aug 2026, 12:46 AM Reviewed by Riya D ScanX News Team Add as a preferred source on Google Key Highlights ABL Diagnostics proposes shifting its listing to Euronext Growth Paris to cut costs and simplify compliance, seeking shareholder approval on September 17, 2026. The move requires meeting a €2.5 million free float threshold, currently at €2.41 million, which the company expects to satisfy. Key changes include relaxed reporting timelines and governance rules, while maintaining market abuse regulations and minority protections. powered by *this image is generated using AI for illustrative purposes only. ABL Diagnostics has announced a proposal to transfer the listing of it...",
+    "content_word_count": 843,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-17T02:37:06Z"
+  },
+  {
     "target_no": 19,
     "company": "Skyworks",
     "title": "Could Qorvo’s (QRVO) Skyworks Merger Unlock a Major Turnaround? - Yahoo Finance",
@@ -25163,42 +25276,6 @@
     "content_word_count": 589,
     "content_fetch_status": "fetched",
     "content_fetched_at": "2026-09-17T00:40:12Z"
-  },
-  {
-    "target_no": 57,
-    "company": "Texcell",
-    "title": "ABL Diagnostics proposes move to Euronext Growth Paris - scanx.trade",
-    "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNQ0stOFBJR05IZnJYb2Y5VlJTVVRwQnF5SlpNLXZKcUFDSnpGUnoyR3cxbjc1Y0I5djVpeW9hQ2R2UEpfM2pWSU8yWWZtSGRkS0VHdktUb0FfVkx6bm1FaFlrU0E3MXhMTHVqVXFTNks5Tm4xYXJlOUFkc2VxTHVUeVhCcEpkTDZlZC1vUmxDTElsWjM5NFlYN0xNWnhsRTludHNXYVFJVXM5NjlGR0xFSQ?oc=5",
-    "source": "Google News: scanx.trade",
-    "publisher": "scanx.trade",
-    "publisher_home_url": "https://scanx.trade/",
-    "published_at": "2026-08-07T07:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "feed",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-07T07:00:00Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "google_news_rss",
-    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
-    "source_type": "fallback",
-    "source_kind": "news",
-    "is_press_release": false,
-    "source_label_ko": "대체출처",
-    "source_priority": 90,
-    "official_source_url": "",
-    "source_direct_url": "",
-    "content_fetch_status": "publisher_url_unresolved"
   },
   {
     "target_no": 8,

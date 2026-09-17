@@ -71,15 +71,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Mkango Resources Ltd.가 Heraeus Amloy Technologies GmbH로부터 Remloy 희토류 자석 재활용 사업 인수를 완료하고, 독일 Bitterfeld에 위치한 공장을 통해 NdFeB 합금 분말 생산 사업을 수행함.",
-    "ai_summary_ko": "Mkango Resources Ltd.는 Heraeus Amloy Technologies GmbH로부터 Remloy 희토류 자석 재활용 사업 인수를 완료함. 독일 Bitterfeld에 위치한 Remloy 공장은 폐영구자석을 용융 공정으로 재활용하여 NdFeB 합금 분말을 생산함.",
-    "ai_summary_en": "Mkango Resources Ltd. has completed the acquisition of the Remloy rare earth magnet recycling business from Heraeus Amloy Technologies GmbH for €8 million. Remloy operates a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process to produce NdFeB alloy powders.",
+    "ai_summary_reason": "모회사 Mkango Resources가 독일 Bitterfeld에 희토류 자석 리사이클링 공장을 보유한 Remloy 인수를 완료하여 희토류 자석 리사이클링 사업 역량을 확보함.",
+    "ai_summary_ko": "Mkango Resources가 Heraeus Amloy Technologies로부터 Remloy의 희토류 자석 리사이클링 사업 인수를 완료했음. Remloy는 독일 Bitterfeld에 공장을 운영하며 NdFeB 합금 분말을 생산하고 있어 HyProMag의 리사이클링 공정과 상호 보완적인 사업을 영위하고 있음.",
+    "ai_summary_en": "Mkango Resources has completed the acquisition of the Remloy rare earth magnet recycling business from Heraeus Amloy Technologies GmbH. Remloy operates a plant in Bitterfeld, Germany, recycling end-of-life rare earth magnets into NdFeB alloy powders, complementing HyProMag's recycling processes.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "ae55f545a376db882a62ca66",
     "ai_evidence_quotes": [
-      "Mkango Resources Ltd. ( AIM/TSX-V: MKA) (“Mkango” or the “Company”) is pleased to announce that following the announcement on 20 May 2026, the Company has completed the acquisition of the Remloy rare earth magnet recycling business (“Remloy”) from Heraeus Amloy Technologies GmbH for €8 million (US$9.3 million [1] ) in cash of which €5 million (US$5.8 million 1 ) was settled by Mkango on closing (the “Transaction”).",
-      "Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop recycling) to produce neodymium-iron-boron (“NdFeB”) alloy powders for the bonded and hot deformed magnet markets."
+      "Mkango Resources Ltd. ( AIM/TSX-V: MKA) (“Mkango” or the “Company”) is pleased to announce that following the announcement on 20 May 2026, the Company has completed the acquisition of the Remloy rare earth magnet recycling business (“Remloy”) from Heraeus Amloy Technologies GmbH for €8 million (US$9.3 million [1] ) in cash",
+      "Remloy has developed a plant in Bitterfeld, Germany, which recycles end-of-life rare earth magnets via a melting process (medium loop rare earth magnet recycling) to produce neodymium-iron-boron (“NdFeB”) alloy powders for the bonded and hot deformed magnet markets"
     ]
   },
   {
@@ -169,14 +169,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Energy Fuels Inc.에 의한 Australian Strategic Materials의 100% 지분 인수 완료 및 ASX 공식 목록 제외 등 타겟 품목과 연계된 주요 사업 활동이 확인됨.",
-    "ai_summary_ko": "Energy Fuels Inc.가 members' scheme of arrangement를 통해 Australian Strategic Materials의 100% 지분 인수를 완료함에 따라 Australian Strategic Materials가 ASX 공식 목록에서 제외되었으며, 주주들에게 주식 및 현금 대가가 지급됨.",
-    "ai_summary_en": "Energy Fuels Inc. has completed its 100% acquisition of Australian Strategic Materials by way of a scheme of arrangement, with Australian Strategic Materials being removed from the ASX official list and consideration issued to eligible shareholders.",
+    "ai_summary_reason": "타겟 품목 관련 기업 ASM의 100% 인수 완료 및 ASX 상장 폐지 등 구체적인 사업 활동이 확인됨.",
+    "ai_summary_ko": "Energy Fuels의 ASM 100% 인수 완료 - Energy Fuels가 멤버십 배치 방식을 통해 ASM의 지분 100% 인수를 완료함. ASM은 2026년 8월 31일 자로 ASX 공식 목록에서 제외되었음",
+    "ai_summary_en": "Energy Fuels completed its 100% acquisition of ASM through a scheme of arrangement, with ASM removed from the official ASX list on August 31, 2026.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "978af39518d19cbf2868939a",
     "ai_evidence_quotes": [
-      "Australian Strategic Materials (ASM) is pleased to confirm that Energy Fuels Inc. has completed its 100% acquisition of ASM , by way of a members’ scheme of arrangement ( Share Scheme )."
+      "Energy Fuels Inc. has completed its 100% acquisition of ASM , by way of a members’ scheme of arrangement ( Share Scheme ).",
+      "Implementation of the Share Scheme took place on 28 August 2026, and ASM was removed from the official list of ASX on 31 August 2026."
     ]
   },
   {
@@ -252,9 +253,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Infineon Technologies AG의 방사선 경화형 HiRel 전력 반도체 부품이 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 성공적으로 발사됨.",
-    "ai_summary_ko": "Infineon Technologies AG의 방사선 경화형 HiRel 전력 반도체 부품이 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 성공적으로 발사됨. 해당 부품은 극한의 우주 방사선 환경에서 안정적인 전력 공급을 제공하여 미션을 지원함.",
-    "ai_summary_en": "Infineon Technologies AG's radiation-hardened HiRel power semiconductor components are aboard NASA's Nancy Grace Roman Space Telescope, which was successfully launched. These components provide reliable power delivery in the extreme radiation environment of space to support the mission.",
+    "ai_summary_reason": "Infineon의 방사선 경화형 HiRel 전력 반도체 부품이 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 성공적으로 발사된 사업 활동 내용이 확인됨.",
+    "ai_summary_ko": "Infineon의 방사선 경화형 HiRel 전력 반도체 소자가 NASA의 Nancy Grace Roman Space Telescope에 탑재되어 케네디 우주센터에서 성공적으로 발사되었음. 해당 소자는 MIL-PRF 표준을 충족하며 L2 궤도에서의 지속적인 운영에 필요한 성능을 제공함.",
+    "ai_summary_en": "Infineon radiation-hardened HiRel power devices are aboard the Nancy Grace Roman Space Telescope, which successfully launched from the Kennedy Space Center in Florida. The rad-hard power semiconductor components are qualified to MIL-PRF standards to support sustained operation at the second Sun-Earth Lagrange point.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "fc8638acf32baa3386674317",
@@ -335,15 +336,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Renishaw가 반도체 제조 모션 제어를 위한 차세대 RLE 간섭계 레이저 엔코더 제품군(RLE100, RLE200, RLE300)을 출시하고 관련 사업 활동을 발표함.",
-    "ai_summary_ko": "Renishaw는 반도체 제조 분야의 첨단 모션 제어를 위한 차세대 RLE 간섭계 레이저 엔코더 제품군인 RLE100, RLE200, RLE300을 출시했다. 이 신규 제품군은 향상된 메트롤로지 성능과 유연한 설계 통합 기능을 제공하며, 타이베이의 SEMICON Taiwan 2026과 샌프란시스코의 SEMICON West 2026에서 선보일 예정이다. 모듈형 플러그 앤 플레이 아키텍처와 향상된 진단 기능을 통해 유지보수 비용을 절감하고 가동 중단을 최소화하도록 설계되었다.",
-    "ai_summary_en": "Renishaw has launched its next-generation RLE interferometric laser encoder product range, comprising the RLE100, RLE200, and RLE300 systems designed for advanced motion control in semiconductor manufacturing. The new family delivers enhanced metrology performance, flexible design integration, and improved serviceability with a modular architecture and real-time diagnostics. The company will present the new encoder systems at SEMICON Taiwan 2026 in Taipei and SEMICON West 2026 in San Francisco.",
+    "ai_summary_reason": "Renishaw가 반도체 제조 모션 컨트롤을 위한 차세대 RLE 레이저 간섭계 엔코더 제품군(RLE100, RLE200, RLE300)을 출시하는 등 타겟 기술과 직접 연계된 구체적인 제품 출시 사업 활동이 확인됨.",
+    "ai_summary_ko": "Renishaw에서 반도체 제조 모션 컨트롤을 위한 차세대 RLE 레이저 간섭계 엔코더 제품군인 RLE100, RLE200, RLE300을 출시했음. 신제품 라인업은 향상된 메트롤로지 성능과 유연한 설계 통합, 실시간 진단 기능을 갖추고 있음. 2026년 9월 SEMICON Taiwan 2026과 2026년 10월 SEMICON West 2026에서 공개될 예정임.",
+    "ai_summary_en": "Renishaw has launched its next-generation RLE interferometric laser encoder family, comprising the RLE100, RLE200, and RLE300 systems for advanced motion control in semiconductor manufacturing. The new product range delivers enhanced metrology performance, flexible design integration, and real-time diagnostic capabilities. These systems will be presented at SEMICON Taiwan 2026 and SEMICON West 2026.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "8d6959be1cc4b2b3d6ce9c50",
     "ai_evidence_quotes": [
       "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
-      "Renishaw, a global leader in engineering technologies, will present its new family of RLE laser interferometer encoder systems at SEMICON Taiwan 2026, Taipei City and SEMICON West 2026, San Francisco."
+      "The new product range comprises three systems RLE100, RLE200 and RLE300 providing precision position feedback for a wide range of semiconductor manufacturing motion control applications."
     ]
   },
   {
@@ -432,98 +433,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Ouster의 디지털 라이다 센서 제품이 John Deere의 자회사 GUSS Automation의 차세대 자율주행 농기계 함대에 채택 및 통합될 예정임.",
-    "ai_summary_ko": "John Deere의 자회사인 GUSS Automation이 고가 농작물 과수원용 차세대 자율주행 농기계 함대에 Ouster의 차세대 Rev8 OS0 네이티브 컬러 디지털 라이다 센서를 통합할 계획임. 이번 통합을 통해 복잡한 야외 과수원 환경에서 자율주행 농기계의 정밀도와 장애물 감지 능력을 향상시킬 예정임.",
-    "ai_summary_en": "GUSS Automation, a wholly owned subsidiary of John Deere, plans to incorporate Ouster's Rev8 OS0 native color digital lidar sensors into its next-generation Autonomous Orchard Machine Fleet. The integration aims to enhance navigation precision and obstacle detection capabilities for autonomous agricultural vehicles operating in complex outdoor orchard environments.",
+    "ai_summary_reason": "GUSS Automation이 Ouster의 Rev8 OS0 디지털 라이다 센서를 차세대 Autonomous Orchard Machine Fleet에 통합할 계획임을 발표함.",
+    "ai_summary_ko": "GUSS Automation이 Ouster의 Rev8 OS0 디지털 라이다 센서를 차세대 Autonomous Orchard Machine Fleet에 통합할 계획임. 이번 통합을 통해 자율주행 농기계의 정밀도와 환경 인식 능력이 향상될 예정임.",
+    "ai_summary_en": "GUSS Automation plans to incorporate Ouster's Rev8 OS0 digital lidar sensors into the next generation of its Autonomous Orchard Machine Fleet. The integration is expected to enhance precision and perception capabilities for autonomous agricultural machinery.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "02734e904b0832801764cc19",
     "ai_evidence_quotes": [
       "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
       "today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet."
-    ]
-  },
-  {
-    "target_no": 47,
-    "company": "Hexagon AB",
-    "title": "Hexagon to acquire Guidance Marine, strengthening maritime positioning portfolio 26 August 2026",
-    "url": "https://hexagon.com/company/newsroom/press-releases/2026/hexagon-to-acquire-guidance-marine-strengthening-maritime-positioning-portfolio",
-    "source": "Hexagon AB - Investors / Investor Relations",
-    "published_at": "2026-08-26T00:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "listing",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-26T00:00:00Z",
-        "month": "2026-08",
-        "source": "listing",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-26T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "official_page",
-    "query": "https://investors.hexagon.com/en/",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://investors.hexagon.com/en/",
-    "source_direct_url": "https://hexagon.com/company/newsroom/press-releases/2026/hexagon-to-acquire-guidance-marine-strengthening-maritime-positioning-portfolio",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Hexagon to acquire Guidance Marine, strengthening maritime positioning portfolio\n26 August 2026\nHexagon today announced an agreement to acquire Guidance Marine, a UK-based company focused on sensors that measure a vessel's position relative to nearby structures, such as offshore platforms, wind turbines, quaysides and other vessels, enabling ships to hold station and manoeuvre safely within metres of fixed and floating assets.\nFounded in 1991 and headquartered in Leicester, United Kingdom, Guidance Marine serves customers in more than 40 countries. Its radar, laser, vision and microwave-based sensing solutions are used in offshore energy, marine construction, port and harbour operations and naval applications, and are integrated with all major Dynamic Positioning (DP) systems, the automated controls that hold a vessel on station without anchoring.\nGuidance Marine's technologies are highly complementary to Hexagon's existing marine capabilities. Hexagon's GNSS, positioning correction services, anti-jamming and assured positioning solutions establish a vessel's absolute position, while Guidance Marine's sensors determine its position relative to the structures and assets around it. Bringing the two together strengthens Hexagon's ability to serve a vessel's full positioning requirement from a single, integrated portfolio, and deepens its relationships with DP system suppliers and vessel operators.\nThe transaction also broadens Hexagon's exposure to offshore wind, marine construction and port automation, where tighter tolerances and increasing levels of vessel autonomy are driving demand for precision station-keeping. Guidance Marine's installed base across more than 40 countries and its established OEM relationships accelerate Hexagon's access to these applications.\n“We’re excited to welcome the team at Guidance Marine to Hexagon. Their capabilities will expand the range of positioning capabilities available across our marine business,” said Gordon Dale, President, Autonomous Solutions Business Area, Hexagon. “Guidance Marine brings proven expertise in relative positioning, which complements Hexagon’s existing navigation and positioning solutions for the fast-growing maritime market.”\nCompletion is expected by the end of 2026, at which point Guidance Marine will become part of Hexagon's NovAtel Positioning Division within the Autonomous Solutions Business Area. Guidance Marine generated revenues of approximately €22 million in the financial year ended 31 December 2025, with an operating margin above Hexagon’s average. \nFor further information, please contact: \nTom Hull, Head of Investor Relations, Hexagon AB, +44 7442 678 437, [email protected] \nPress Release \nMedia downloads\nAbout Hexagon: \nHexagon is the global leader in measurement technologies. Our precision measurement, positioning, and autonomous solutions transform the world’s most vital industries. From aerospace & defence, automotive, construction, general manufacturing, to mining and more, we provide the confidence that customers rely on to build, navigate, and innovate. \nHexagon (Nasdaq Stockholm: HEXA B) has approximately 16,000 employees in 50 countries and net sales of approximately 3.7bn EUR. \nLearn more at hexagon.com \nMedia Enquiries\nPR Team\r\nHexagon AB\r\nEmail us",
-    "content_source_url": "https://hexagon.com/company/newsroom/press-releases/2026/hexagon-to-acquire-guidance-marine-strengthening-maritime-positioning-portfolio",
-    "content_excerpt": "Hexagon to acquire Guidance Marine, strengthening maritime positioning portfolio 26 August 2026 Hexagon today announced an agreement to acquire Guidance Marine, a UK-based company focused on sensors that measure a vessel's position relative to nearby structures, such as offshore platforms, wind turbines, quaysides and other vessels, enabling ships to hold station and manoeuvre safely within metres of fixed and floating assets. Founded in 1991 and headquartered in Leicester, United Kingdom, Guidance Marine serves customers in more than 40 countries. Its radar, laser, vision and microwave-based sensing solutions are used in offshore energy, marine construction, port and harbour operations and naval applications, and are integrated with all major Dynamic Positioning (DP) systems, the automate...",
-    "content_word_count": 449,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-17T00:40:12Z",
-    "query_aliases": [
-      "Hexagon"
-    ],
-    "industry": "로봇",
-    "target_technology": "로봇용 라이다",
-    "target_technology_en": "robot LiDAR",
-    "technology_group": "robot_lidar",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "로봇용 라이다",
-    "pdf_company": "Hexagon AB",
-    "pdf_row_no": 13,
-    "pdf_sequence": "10",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "Hexagon AB가 레이저 및 레이더 센서 기반 해양 위치측정 솔루션을 제공하는 Guidance Marine을 인수하는 계약을 체결하여 타겟 품목 및 기술과 연계된 사업 동향이 확인됨.",
-    "ai_summary_ko": "레이저 및 레이더 센서 기반 해양 위치측정 기업 인수 - Hexagon AB가 선박 위치측정 및 자율운항 센서 솔루션을 제공하는 영국 Guidance Marine을 인수하는 계약을 체결함.",
-    "ai_summary_en": "Hexagon AB announced an agreement to acquire Guidance Marine, a UK-based specialist in laser, radar, vision, and microwave-based sensing solutions, to strengthen its maritime positioning and autonomy portfolio.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "ad02be7bdc34020b7d7606c2",
-    "ai_evidence_quotes": [
-      "Hexagon to acquire Guidance Marine, strengthening maritime positioning portfolio 26 August 2026 Hexagon today announced an agreement to acquire Guidance Marine, a UK-based company focused on sensors that measure a vessel's position relative to nearby structures, such as offshore platforms, wind turbines, quaysides and other vessels, enabling ships to hold station and manoeuvre safely within metres of fixed and floating assets."
     ]
   },
   {
@@ -599,9 +517,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Charles River가 Medigen Vaccine Biologics Corp.의 차세대 다가 엔테로바이러스 백신 개발을 위해 NGS 기반 바이러스 씨드 뱅크 검증 및 CMC 활동을 지원하는 전략적 협력을 체결함.",
-    "ai_summary_ko": "Charles River가 Medigen Vaccine Biologics Corp.와 전략적 협력을 체결했음. 회사는 차세대 염기서열 분석 및 첨단 분석 플랫폼을 활용하여 Medigen Vaccine Biologics Corp.의 차세대 다가 엔테로바이러스 백신 개발을 위한 바이러스 씨드 뱅크 특성분석과 CMC 활동을 지원함. 이를 통해 글로벌 규제 기준 충족 및 임상 개발 가속화를 도모함.",
-    "ai_summary_en": "Charles River has entered into a strategic partnership with Medigen Vaccine Biologics Corp. to support its next-generation multivalent enterovirus vaccine program. Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing and biologics testing solutions, to perform virus seed bank characterization, validation, and Chemistry, Manufacturing, and Controls (CMC) activities, aiming to accelerate high-quality vaccine development and global regulatory readiness.",
+    "ai_summary_reason": "타겟 기술인 바이러스 검증 및 MCB/WCB 특성분석과 직접 연관된 Medigen Vaccine Biologics Corp.와의 차세대 백신 개발 협력 및 NGS 분석 지원 사업 활동이 확인됨.",
+    "ai_summary_ko": "Medigen Vaccine Biologics Corp.와 협력하여 차세대 다가 엔테로바이러스 백신의 바이러스 시드뱅크 특성분석 및 검증을 수행 중임. Next-Generation Sequencing 및 첨단 분석 플랫폼으로 백신 개발과 규제 승인 준비를 가속화할 예정임.",
+    "ai_summary_en": "Charles River Laboratories is collaborating with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for a next-generation multivalent enterovirus vaccine. The company is leveraging its Advanced Next-Generation Sequencing and analytical platforms to accelerate vaccine development and support global regulatory readiness.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "6a36fdb5099a8264d067330c",
@@ -700,201 +618,6 @@
     ]
   },
   {
-    "target_no": 1,
-    "company": "Australian Strategic Metals",
-    "title": "ASM Securityholders vote in favour of Schemes",
-    "url": "https://asm-au.com/asm-securityholders-approve-schemes/",
-    "source": "Australian Strategic Metals - Official RSS",
-    "publisher": "",
-    "publisher_home_url": "",
-    "published_at": "2026-08-12T07:50:21Z",
-    "published_month": "2026-08",
-    "published_at_source": "jsonld",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "2026-08-14T02:58:39Z",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-12T07:50:21Z",
-        "month": "2026-08",
-        "source": "jsonld",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-12T07:50:21Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-12T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-14T02:58:39Z",
-        "month": "2026-08",
-        "source": "modified_jsonld",
-        "kind": "modified",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "official_feed",
-    "query": "https://asm-au.com/feed/",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://asm-au.com/feed/",
-    "source_direct_url": "https://asm-au.com/asm-securityholders-approve-schemes/",
-    "content_text": "Australian Strategic Materials ( ASM ) Securityholders have voted overwhelmingly in favour of the Schemes of Arrangement under which Energy Fuels will acquire 100% of ASM.\nEnergy Fuels (NYSE American: UUUU, TSX: EFR) is a leading US producer of uranium, rare earth elements, and other critical minerals.\nAt the Scheme Meetings held in Perth on 12 August 2026, Shareholders and Optionholders approved their respective resolutions by the majorities required under the Corporations Act 2001 (Cth):\nShare Scheme: 98.23% of votes cast were in favour, by 83.62% of Shareholders voting (in person or by proxy); and\nOption Scheme: 99.97% of votes cast were in favour, by 87.78% of Optionholders voting (in person or by proxy),\nexceeding the required thresholds.\n“We are pleased Securityholders have recognised the value and strategic rationale of this transaction. Bringing together ASM’s metals and alloys capability with Energy Fuels’ rare earth oxide production creates a differentiated mine to metal platform and places our people, technology and assets within a larger, better-capitalised group. \nRowena Smith, Managing Director & CEO \nNext Steps\nImplementation of the Schemes remains subject to approval by the Federal Court of Australia and the satisfaction or waiver of the remaining conditions. The indicative timetable is:\nSecond Court Hearing for approval of the Schemes: 18 August 2026\nLast day of trading in ASM securities on the ASX: close of trading on 19 August 2026\nImplementation Date, on which the consideration is provided to ASM shareholders: 28 August 2026\nRead the ASX Announcement",
-    "content_source_url": "https://asm-au.com/asm-securityholders-approve-schemes/",
-    "content_excerpt": "Australian Strategic Materials ( ASM ) Securityholders have voted overwhelmingly in favour of the Schemes of Arrangement under which Energy Fuels will acquire 100% of ASM. Energy Fuels (NYSE American: UUUU, TSX: EFR) is a leading US producer of uranium, rare earth elements, and other critical minerals. At the Scheme Meetings held in Perth on 12 August 2026, Shareholders and Optionholders approved their respective resolutions by the majorities required under the Corporations Act 2001 (Cth): Share Scheme: 98.23% of votes cast were in favour, by 83.62% of Shareholders voting (in person or by proxy); and Option Scheme: 99.97% of votes cast were in favour, by 87.78% of Optionholders voting (in person or by proxy), exceeding the required thresholds. “We are pleased Securityholders have recognise...",
-    "content_word_count": 246,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-17T00:40:12Z",
-    "query_aliases": [
-      "ASM",
-      "Australian Strategic Materials"
-    ],
-    "industry": "철강금속",
-    "target_technology": "사용후 영구자석 고순도 희토류 추출",
-    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
-    "technology_group": "rare_earth_magnet_recycling",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "사용후 영구류자 추석출 고순도 희토",
-    "pdf_company": "AustralMiaent aSltsrategic",
-    "pdf_row_no": 66,
-    "pdf_sequence": "KO추T가RA",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "희토류 및 핵심 광물 사업을 영위하는 Australian Strategic Materials의 주주들이 Energy Fuels에 의한 100% 인수 안건을 압도적인 찬성률로 가결함에 따라, 타겟 품목 및 기술과 직접 연계된 기업 인수합병 사업 활동이 확인됨.",
-    "ai_summary_ko": "Australian Strategic Materials의 주주들이 Energy Fuels에 의한 100% 인수 안건을 압도적인 찬성률로 가결했음. 이번 거래를 통해 양사의 역량이 결합되어 희토류 및 핵심 광물 분야의 통합 플랫폼이 구축될 예정이며, 연방 법원의 승인 및 잔여 절차를 거쳐 2026년 8월 28일에 최종 완료될 예정임.",
-    "ai_summary_en": "Securityholders of Australian Strategic Materials voted in favour of the Schemes of Arrangement under which Energy Fuels will acquire 100% of ASM. The transaction combines ASM's capabilities with Energy Fuels' rare earth oxide production to create a platform, with implementation expected on 28 August 2026 subject to court approval.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "96fac164dd5b25f149007888",
-    "ai_evidence_quotes": [
-      "Australian Strategic Materials ( ASM ) Securityholders have voted overwhelmingly in favour of the Schemes of Arrangement under which Energy Fuels will acquire 100% of ASM."
-    ]
-  },
-  {
-    "target_no": 42,
-    "company": "Jenoptik",
-    "title": "12 August 2026 Jenoptik reports significant increase in orders and earnings in the first half of 2026 Strong order intake momentum, particularly in the OEM businesses. Revenue slightly above prior year; profitability significantly improved. Guidance for 2026 specified. read more",
-    "url": "https://www.jenoptik.com/news/pressreleases/2026/08/12/significant-increase-in-orders-and-earnings-in-h1-2026",
-    "source": "Jenoptik - Press Releases / Press Releases",
-    "published_at": "2026-08-12T00:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "time_tag",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-12T00:00:00Z",
-        "month": "2026-08",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-12T00:00:00Z",
-        "month": "2026-08",
-        "source": "listing",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-12T00:00:00Z",
-        "month": "2026-08",
-        "source": "url",
-        "kind": "context",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-12T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "official_page",
-    "query": "https://www.jenoptik.com/news/pressreleases",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://www.jenoptik.com/news/pressreleases",
-    "source_direct_url": "https://www.jenoptik.com/news/pressreleases/2026/08/12/significant-increase-in-orders-and-earnings-in-h1-2026",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Home \r\nNews \r\nPress Releases \r\nResults of the first half year 2026 \r\nRecommend Facebook LinkedIn \nJenoptik reports significant increase in orders and earnings in the first half of 2026\n12 August 2026 \nStrong order intake momentum, particularly in the OEM businesses\nRevenue slightly above prior year; profitability significantly improved\nGuidance for 2026 specified\n&ldquo;In the first half of the year, we saw particularly strong demand, especially in our OEM businesses, which focus on the semiconductor equipment, medical technology, life sciences and defense end markets. As this development was partly driven by some major orders, this very strong momentum may not continue in the second half of the year,&rdquo; said Dr. Ralf Kuschnereit, Chief Technology Officer and Chief Operating Officer of JENOPTIK AG. &ldquo;Nevertheless, we expect 2026 to become a successful year for Jenoptik and have accordingly specified our guidance to the upper half of the previous range,&rdquo; commented Dr. Prisca Havranek-Kosicek, Chief Financial Officer of JENOPTIK AG.\nRevenue slightly up year-on-year\nThe photonics group Jenoptik achieved revenue of 503.2 million euros in the first half of 2026, representing an increase of 1.0 percent compared with the same period last year (498.4 million euros).\nThe Strategic Business Unit (SBU) Semiconductor & Advanced Manufacturing recorded revenue of 230.4 million euros in the first half of 2026, 10.2 percent above prior year (209.1 million euros), driven by stronger business both in the lithography and inspection areas of the semiconductor equipment industry. The SBU Biophotonics generated higher revenue in the defense sector during the reporting period, while the very strong revenue of the prior year could not be reached in the medical technology business, as expected. Consequently, revenue of the SBU Biophotonics of 113.9 million euros was 4.5 percent below the prior year&rsquo;s figure of 119.2 million euros.\nThe SBU Metrology & Production Solutions recorded revenue of 79.7 million euros, which was below the first half of 2025 in all areas (prior year: 92.0 million euros), partly due to the continuing difficult market situation in the automotive industry. By contrast, the SBU Smart Mobility Solutions increased its revenue by 10.7 percent to 68.3 million euros (prior year: 61.7 million euros) driven by a strong performance in almost all regions.\nProfitability significantly improved\nThe Group&rsquo;s EBITDA improved substantially in the first six months of 2026 to 98.9 million euros, an increase of 25.5 percent compared with the prior year&rsquo;s figure of 78.8 million euros. Improved capacity utilization in the SBU Semiconductor & Advanced Manufacturing, in addition to the cost-cutting measures implemented in 2025 and a changed product mix, represented the main earnings driver in the reporting period. EBITDA margin reached 19.7 percent accordingly (prior year: 15.8 percent).\nGroup earnings after tax came in at 39.7 million euros (prior year: 25.3 million euros, including income from discontinued operations of 2.6 million euros). Earnings per share amounted to 0.69 euros (prior year: 0.42 euros).\nStrong order intake dynamics, particularly in the OEM businesses\nThe Group&rsquo;s order intake improved significantly in the first half of the year, rising by 53.0 percent to 723.4 million euros (prior year: 472.7 million euros), primarily due to strong momentum in the OEM businesses. Hence, order intake of the SBU Semiconductor & Advanced Manufacturing rose by 85.3 percent (including a major order as reported in the first quarter) due to strong demand in both the lithography and inspection businesses. The SBU Biophotonics also recorded a significantly higher order intake (up 44.9 percent), driven by the defense as well as medical technology & life science sectors. This, however, includes a multi-year major medical technology order in the low double-digit million-euro range, which was booked in the second quarter.\nThe Group&rsquo;s book-to-bill ratio was 1.44 during the reporting period (prior year: 0.95). The order backlog increased to 824.8 million euros accordingly (31/12/2025: 590.8 million euros).\nAs expected, capital expenditure , at 19.7 million euros, remained well below the prior year&rsquo;s figure of 32.6 million euros and was primarily attributable to technical equipment and machinery.\nFinancial and balance sheet quality remained robust\nFree cash flow before interest and taxes improved to 47.2 million euros in the first half year of 2026 (prior year: 43.2 million euros), despite an increase in working capital tied up due to higher demand.\nWith an equity ratio of 58.4 percent (31/12/2025: 60.2 percent), net debt of 307.5 million euros (31/12/2025: 317.4 million euros) and a leverage ratio (net debt to EBITDA) of 1.4x (31/12/2025: 1.6x), Jenoptik continues to maintain very sound financial and balance sheet ratios.\nGuidance for the fiscal year 2026 specified\nThe outlook for 2026 remains affected by significant market uncertainties due to macroeconomic and political developments that are difficult to predict.\nIn view of the strong growth platforms in the core markets of semiconductor, medical, metrology and smart mobility, and in particular the very strong demand from the semiconductor equipment sector, the Executive Board now expects revenue growth for the fiscal year 2026 to be in the upper half of the previous guidance range (previously: single-digit percentage range / 2025: 1,046.0 million euros). It also expects the EBITDA margin to reach the upper half of the previously guided range of 19.0 to 21.0 percent, i.e. between 20.0 and 21.0 percent (2025: 18.4 percent). Despite the significant decline in the first half of 2026, the Executive Board anticipates that capital expenditure will be slightly below the previous year&rsquo;s level of 77.4 million euros for the full year. In particular, capacity for optics at the Jena site is set to be expanded.\nThis forecast is subject to the political and economic conditions not deteriorating. Possible changes to the portfolio are not taken into account in this forecast.\nThe presentation on the first half-year of 2026 and the Interim Report for January through June 2026 are available on the Jenoptik website at Investors / Reports and Presentations. &nbsp;Images are available for download in the Jenoptik image database at media.jenoptik.com. \nKey figures at a glance (PDF) \nThis press release may contain statements relating to the future which are based on current assumptions and forecasts made by the corporate management of the Jenoptik Group. A variety of known and unknown risks, uncertainties, and other factors may cause the actual results, the financial situation, the development, or the performance of the company to diverge significantly from the information provided here. Such factors may include geopolitical conflicts, changes in currency exchange rates and interest rates, pandemics, the introduction of competing products, or a change in business strategy. The company does not assume any obligation to update such forward-looking statements in the light of future developments. About Jenoptik\nJenoptik is a global technology group operating in the photonics market. Our core markets primarily include semiconductor technology, medical technology, metrology as well as smart mobility. Approximately 4,300 people worldwide work for the Jenoptik Group, which is headquartered in Jena (Germany). JENOPTIK AG is listed on the German Stock Exchange in Frankfurt and traded on the MDax and TecDax. In fiscal year 2025, Jenoptik generated revenue of 1,046 million euros.\nContact\r\nAndreas Theisen\nHead of Investor Relations\n+49 3641 65-2291 \r\n+49 3641 65-2804 \r\nContact us",
-    "content_source_url": "https://www.jenoptik.com/news/pressreleases/2026/08/12/significant-increase-in-orders-and-earnings-in-h1-2026",
-    "content_excerpt": "Home News Press Releases Results of the first half year 2026 Recommend Facebook LinkedIn Jenoptik reports significant increase in orders and earnings in the first half of 2026 12 August 2026 Strong order intake momentum, particularly in the OEM businesses Revenue slightly above prior year; profitability significantly improved Guidance for 2026 specified &ldquo;In the first half of the year, we saw particularly strong demand, especially in our OEM businesses, which focus on the semiconductor equipment, medical technology, life sciences and defense end markets. As this development was partly driven by some major orders, this very strong momentum may not continue in the second half of the year,&rdquo; said Dr. Ralf Kuschnereit, Chief Technology Officer and Chief Operating Officer of JENOPTIK...",
-    "content_word_count": 1176,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-17T00:40:12Z",
-    "query_aliases": [
-      "JENOPTIK"
-    ],
-    "industry": "기계",
-    "target_technology": "3D 비전센서",
-    "target_technology_en": "3D vision sensor",
-    "technology_group": "3d_vision_sensor",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "3D 비전센서",
-    "pdf_company": "Jenoptik",
-    "pdf_row_no": 2,
-    "pdf_sequence": "2",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "2026년 상반기 실적 발표를 통해 반도체 및 첨단 제조, 포토닉스 핵심 사업 부문의 매출, 수주, 수익성 개선 등 구체적인 사업 성과와 활동 내역이 확인됨.",
-    "ai_summary_ko": "2026년 상반기 그룹 매출이 5억 320만 유로를 기록해 전년 동기 대비 1.0퍼센트 증가했으며, 반도체 및 첨단 제조 사업 부문의 강력한 성장에 힘입어 수익성이 대폭 향상됨.",
-    "ai_summary_en": "Group revenue in the first half of 2026 reached 503.2 million euros, representing a 1.0 percent increase year-on-year, with significantly improved profitability driven by strong growth in the Semiconductor and Advanced Manufacturing business unit.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "468cf2995ba357010838ad7e",
-    "ai_evidence_quotes": [
-      "The photonics group Jenoptik achieved revenue of 503.2 million euros in the first half of 2026, representing an increase of 1.0 percent compared with the same period last year (498.4 million euros).",
-      "The Strategic Business Unit (SBU) Semiconductor & Advanced Manufacturing recorded revenue of 230.4 million euros in the first half of 2026, 10.2 percent above prior year (209.1 million euros), driven by stronger business both in the lithography and inspection areas of the semiconductor equipment industry."
-    ]
-  },
-  {
     "target_no": 24,
     "company": "Ouster",
     "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
@@ -980,9 +703,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Ouster가 자사의 디지털 라이다 기반 솔루션인 Ouster BlueCity를 유타주 교차로 160곳에 추가 배치하는 계약 확정 소식을 보도하여 타겟 품목과 직접 연계된 구체적 사업 활동이 확인됨.",
-    "ai_summary_ko": "유타주 교통 현대화 사업 계약 확장 - Ouster는 Econolite가 유타주 교통부로부터 계약을 수주하여 Ouster BlueCity 솔루션을 추가 160개 교차로에 배치한다고 발표했음.",
-    "ai_summary_en": "Ouster announced that Econolite was awarded an expansion contract from the Utah Department of Transportation to deploy the Ouster BlueCity lidar traffic management solution across an additional 160 intersections statewide.",
+    "ai_summary_reason": "Ouster의 라이다 센서 및 소프트웨어를 활용한 Ouster BlueCity 솔루션이 Utah Department of Transportation의 교통 현대화 확장 사업을 통해 160개 교차로에 추가 배치되는 구체적인 타겟 품목 연계 사업 활동이 확인됨.",
+    "ai_summary_ko": "Ouster의 Ouster BlueCity 솔루션이 Utah Department of Transportation의 교통 현대화 사업을 통해 160개 교차로에 추가로 배치됨. 이번 확장은 Econolite와의 파트너십을 통해 진행되며 OS1 Max Rev8 디지털 라이다 센서를 활용해 교통 관리 및 안전성을 향상시킴.",
+    "ai_summary_en": "Ouster's BlueCity solution is being deployed at an additional 160 intersections across Utah through an expansion contract awarded to Econolite by the Utah Department of Transportation. The deployment leverages OS1 Max Rev8 digital lidar sensors to enhance corridor-level traffic management and safety.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "5a07fabe369c8080df8e6f0d",
@@ -1063,112 +786,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "보잉이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하고 Archer의 지분을 취득하며 기술 공유 협력을 체결하는 사업 재편 및 제휴 활동이 보도됨.",
-    "ai_summary_ko": "보잉이 자회사 Wisk Aero, SkyGrid, Insitu를 Archer에 매각하는 최종 계약을 체결했음. 이와 함께 보잉은 Archer의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축했음.",
-    "ai_summary_en": "Boeing signed definitive agreements to divest its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation, while taking a strategic equity stake in Archer and establishing an ongoing technology-sharing and collaboration arrangement.",
+    "ai_summary_reason": "Boeing이 Wisk Aero 자회사를 포함한 자산 매각 및 Archer Aviation과의 기술 협력을 체결함.",
+    "ai_summary_ko": "Boeing은(는) 2026년 8월 10일에 자회사인 Wisk Aero, SkyGrid, Insitu를 Archer Aviation Inc.에 매각하는 계약을 체결했음. 또한 Boeing은(는) 동사와 지속적인 협력 및 기술 공유 체제를 구축하고 지분을 인수할 예정임.",
+    "ai_summary_en": "On August 10, 2026, Boeing signed definitive agreements to divest its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation Inc. Additionally, Boeing will take a stake in Archer Aviation Inc. and establish an ongoing collaboration and technology-sharing arrangement.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "7bbcfbfcc8fca19098658a1a",
     "ai_evidence_quotes": [
-      "The Boeing Company (NYSE: BA) and Archer Aviation Inc. (NYSE: ACHR) today announced the companies have signed definitive agreements in which Archer will acquire Boeing's Wisk Aero, SkyGrid and Insitu subsidiaries.",
+      "ARLINGTON, Va. and SILICON VALLEY, Calif. , Aug. 10, 2026 / PRNewswire / -- The Boeing Company (NYSE: BA) and Archer Aviation Inc. (NYSE: ACHR) today announced the companies have signed definitive agreements in which Archer will acquire Boeing's Wisk Aero, SkyGrid and Insitu subsidiaries.",
       "Boeing to take stake and become a strategic partner to Archer; establishes ongoing Archer and Boeing collaboration and technology sharing arrangement."
-    ]
-  },
-  {
-    "target_no": 24,
-    "company": "Ouster",
-    "title": "Ouster Announces Results for Second Quarter 2026",
-    "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
-    "source": "Ouster - Official RSS",
-    "publisher": "",
-    "publisher_home_url": "",
-    "published_at": "2026-08-06T20:06:06Z",
-    "published_month": "2026-08",
-    "published_at_source": "jsonld",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-06T20:06:06Z",
-        "month": "2026-08",
-        "source": "jsonld",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-06T20:06:06Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-06T00:00:00Z",
-        "month": "2026-08",
-        "source": "text",
-        "kind": "context",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-06T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "official_feed",
-    "query": "https://investors.ouster.com/rss.xml",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://investors.ouster.com/rss.xml",
-    "source_direct_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
-    "content_text": "Ouster Announces Results for Second Quarter 2026\nAugust 6, 2026\nPDF Version \nRecord product revenue, achieving 14th straight quarter of growth \nLidar and camera shipments of more than 17,000 units \nSAN FRANCISCO --(BUSINESS WIRE)--Aug. 6, 2026--\nOuster, Inc . (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, announced financial results for the three months ended June 30, 2026 .\n“We delivered a strong second quarter, with $55 million in revenue and more than 17,000 total sensors shipped. These results reflect the strength of our unified sensing and perception platform and the continued momentum we have been seeing across our markets. Customers around the world have continued to scale their investments in Physical AI, and Ouster is well positioned to benefit as autonomy moves into more complex, real-world applications,” said Ouster CEO Angus Pacala .\n“The introduction of Rev8 was a pivotal moment for Ouster and the reaction from customers has been electric. Rev8’s native color and industry-leading performance are solidifying our market leadership and deepening relationships across key accounts. In addition to Rev8, the April launch of the ZED X Nano was the most successful launch in Stereolabs history. Our focus remains on providing the industry’s most performant products and solutions, dramatically simplifying system integration, and accelerating time to market for the world’s most innovative companies.”\nSecond Quarter 2026 Highlights: \n$55 million in revenue, up 56% year over year and up 12% sequentially.\nShipped more than 17,000 lidar and camera sensors for revenue, of which lidar was approximately 53% of the total.\nGAAP gross margin of 49%, up 400 bps year over year and up 600 bps sequentially.\nGAAP net loss of $18 million , an improvement of $2 million year over year and down $1 million sequentially.\nNon-GAAP gross margin 1 of 53%, up 200 bps year over year and 700 bps sequentially.\nAdjusted EBITDA 1 loss of $4 million , an improvement of $1 million year over year and $2 million sequentially.\nCash, cash equivalents, restricted cash, and short-term investments of $263 million as of June 30, 2026 .\n1 Adjusted EBITDA and non-GAAP gross margin are non-GAAP financial measures. See Non-GAAP Financial Measures for additional information and reconciliations of these measures to their respective most directly comparable financial measures calculated in accordance with U.S . GAAP.\nRevenue \nOuster delivered second quarter revenue of $55 million , an increase of 56% year over year and 12% sequentially. Product revenue of $53 million was an increase of 51% year over year and 9% sequentially, primarily driven by customers in the industrial and smart infrastructure verticals for use cases in warehouse automation, yard logistics, and intelligent transportation. The Company shipped over 17,000 units - of which lidar was approximately 53% of the total.\nGross Margin \nGAAP gross margin was 49%, compared with 45% in the second quarter of 2025 and 43% in the first quarter of 2026. Volume growth and operating efficiencies lifted profitability year over year. Non-GAAP gross margin was 53%, compared with 52% in the second quarter of 2025 and 46% in the first quarter of 2026. Non-GAAP gross margin excludes the impact of stock-based compensation expenses, and certain other items outside of ordinary operations.\nThird Quarter 2026 Outlook: \nFor the third quarter of 2026, Ouster expects to achieve $54.5 million to $57.5 million in total revenue.\nUpcoming Investor Events \nOuster management will participate in the following upcoming investor events:\nOppenheimer 29th Annual Technology, Internet & Communications Conference - August 11, 2026 (Virtual)\nRosenblatt Securities' 6th Annual Age of AI Scaling Summit - August 18, 2026 (Virtual)\nConference Call Information \nOuster will host a conference call and live webcast for analysts and investors at 5:00 p.m. ET today, August 6, 2026 to discuss its financial results and business outlook. Interested parties may listen to a live webcast of the conference call. Registration for the webcast can be completed by visiting the following website: https://edge.media-server.com/mmc/p/dgjwyrjv . The webcast will be available for replay for at least 30 days after the conference call on Ouster’s investor website at https://investors.ouster.com/. \nAbout Ouster \nOuster (Nasdaq: OUST) is a leader in sensing and perception for Physical AI across industrial, robotics, automotive, and smart infrastructure. With a unified platform of high-performance digital lidar, cameras, AI compute, sensor fusion and perception software, and AI models, Ouster delivers solutions that improve quality of life in the physical world. Headquartered in San Francisco, CA , Ouster has a global presence serving thousands of customers with offices in the Americas , Europe , and Asia-Pacific . For more information about our products, visit www.ouster.com , contact our sales team , or connect with us on X or LinkedIn .\nForward-Looking Statements \nThis press release contains forward-looking statements within the meaning of the Private Securities Litigation Reform Act of 1995. The Company intends such forward-looking statements to be covered by the safe harbor provisions for forward-looking statements contained in Section 27A of the Securities Act of 1933, as amended and Section 21E of the Securities Exchange Act of 1934, as amended. Such statements are based upon current plans, estimates and expectations of management that are subject to various risks and uncertainties that could cause actual results to differ materially from such statements. The inclusion of forward-looking statements should not be regarded as a representation that such plans, estimates and expectations will be achieved. Words such as “anticipate,” “expect,” “project,” “intend,” “believe,” “may,” “will,” “should,” “plan,” “could,” “continue,” “target,” “contemplate,” “estimate,” “forecast,” “guidance,” “predict,” “possible,” “potential,” “pursue,” “likely,” and the negative of these terms and similar expressions are intended to identify forward-looking statements, though not all forward-looking statements use these words or expressions. All statements, other than statements of historical fact, including statements regarding our future financial results and financial condition, our strategy, our market positioning, development of and demand for our products, trends in investments in and adoption of Physical AI and autonomy, the impact of Ouster’s recent acquisition of Stereolabs, and future investor conference attendance, constitute forward-looking statements. All forward-looking statements are subject to risks and uncertainties that may cause actual results to differ materially from those that we expected, including, but not limited to, risks related to Ouster’s limited operating history and history of losses; the substantial research and development costs needed to develop and commercialize new products; Ouster’s limited sales history and the ability to maintain confidence in the Company’s long-term business prospect among customers in target markets; fluctuations in its operating results; its ability to maintain competitive average selling prices, high sales volumes and reduce product costs; competition in Ouster’s industry; the negotiating power and product standards of its customers; the adoption of its products and the growth of the lidar market generally; product quality and liability risks; Ouster’s future capital needs and ability to secure additional capital on favorable terms or at all; market acceptance of lidar and Ouster’s forecasts for market growth; Ouster’s ability to manage growth, including growing the sales and marketing organization; risks related to international operations, including international manufacturing; cancellation or postponement of contracts or unsuccessful implementations; the Company’s ability to manage its inventory; credit risk of customers; Ouster’s ability to use tax attributes; Ouster’s dependence on key third party suppliers, in particular Benchmark Electronics, Inc., Fabrinet, and other suppliers; supply chain constraints and challenges; conditions in the industries the Company targets or the global economy; Ouster’s ability to recruit and retain key personnel; its ability to complete, successfully integrate or achieve the anticipated benefits of new acquisitions or investments, including the Stereolabs acquisition; changes to trade policy, tariffs, and import/export regulations may have a material adverse effect on Ouster’s business, financial condition and results of operations; risks related to the use of AI tools by us and others, including risks related to cybersecurity, data regulations, product performance, and data privacy; Ouster’s ability to adequately protect and enforce its intellectual property rights; legal and regulatory risks; risks related to operating as a public company; and other important factors discussed in the Company’s Annual Report on Form 10-K for the year ended December 31, 2025 , and updated by the Company’s Quarterly Report on Form 10-Q for the quarterly period ended June 30, 2026 , once filed, and as may be further updated from time to time in the Company’s other filings with the SEC . Readers are urged to consider these factors carefully and in the totality of the circumstances when evaluating these forward-looking statements, and not to place undue reliance on any of them. Any such forward-looking statements represent management’s reasonable estimates and beliefs as of the date of this press release. While Ouster may elect to update such forward-looking statements at some point in the future, it disclaims any obligation to do so, other than as may be required by law, even if subsequent events cause its views to change.\nIn addition, see information below concerning non-GAAP financial measures.\nNon-GAAP Financial Measures \nIn addition to its results determined in accordance with generally accepted accounting principles in the United States (“GAAP”), Ouster believes the non-GAAP measures of Non-GAAP Gross Profit, Non-GAAP Gross Margin and Adjusted EBITDA are useful in evaluating its operating performance. Ouster calculates Non-GAAP Gross Profit as gross profit (loss) excluding amortization of acquired intangibles, acquisition and integration-related charges, and stock-based compensation expense. Non-GAAP Gross Margin is calculated as Non-GAAP Gross Profit divided by revenues. Adjusted EBITDA is calculated as net loss excluding interest expense (income), net, other (income) expense, net, stock-based compensation expense, provision for (benefit from) income taxes, amortization of acquired intangibles, acquisition and integration-related charges, depreciation expenses, certain litigation expenses, gain on lease termination and other items. Ouster believes that Non-GAAP Gross Profit, Non-GAAP Gross Margin, and Adjusted EBITDA may be helpful to investors because it provides consistency and comparability with past financial performance and may be helpful in comparison with other companies, some of which use similar non-GAAP information to supplement their GAAP results. Adjusted EBITDA is also used by the Board and management as a performance metric for compensation purposes. The non-GAAP financial information is presented for supplemental informational purposes only and should not be considered a substitute for financial information presented in accordance with GAAP, and may be different from similarly titled non-GAAP measures used by other companies. Reconciliation tables of the most comparable GAAP financial measures to the non-GAAP financial measures are included at the end of this press release.\nOUSTER, INC. \nCONDENSED CONSOLIDATED BALANCE SHEETS \n(unaudited) \n(in thousands) \nJune 30 ,\n2026 \nDecember 31 ,\n2025 \nAssets \nCurrent assets:\nCash and cash equivalents\n$\n91,759\n$\n67,413\nRestricted cash, current\n336\n1,467\nShort-term investments\n169,322\n141,172\nAccounts receivable, net\n22,096\n27,753\nInventory\n31,429\n23,566\nPrepaid expenses and other current assets\n30,743\n17,517\nTotal current assets\n345,685\n278,888\nProperty and equipment, net\n35,241\n31,891\nOperating lease, right-of-use assets\n13,022\n13,452\nGoodwill \n38,525\n—\nUnbilled receivable, non-current portion\n5,254\n8,560\nIntangible assets, net\n32,908\n13,316\nRestricted cash, non-current\n1,100\n1,100\nOther non-current assets\n3,083\n2,309\nTotal assets\n$\n474,818\n$\n349,516\nLiabilities and stockholders’ equity \nCurrent liabilities:\nAccounts payable\n$\n22,315\n$\n19,984\nAccrued and other current liabilities\n38,759\n26,200\nContract liabilities, current\n17,166\n20,705\nOperating lease liability, current portion\n4,780\n4,142\nTotal current liabilities\n83,020\n71,031\nOperating lease liability, non-current portion\n11,617\n12,938\nContract liabilities, non-current portion\n3,324\n3,106\nDeferred tax liability\n4,936\n—\nOther non-current liabilities\n613\n703\nTotal liabilities\n103,510\n87,778\nCommitments and contingencies\nStockholders’ equity:\nCommon stock\n48\n48\nAdditional paid-in capital\n1,381,020\n1,235,580\nAccumulated deficit\n(1,009,027\n)\n(973,448\n)\nAccumulated other comprehensive (loss) income\n(733\n)\n(442\n)\nTotal stockholders’ equity\n371,308\n261,738\nTotal liabilities and stockholders’ equity\n$\n474,818\n$\n349,516\nOUSTER, INC. \nCONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS AND COMPREHENSIVE LOSS \n(unaudited) \n(in thousands, except share and per share data) \nThree Months Ended June 30 , \nThree Months Ended March 31 , \nSix Months Ended June 30 , \n2026 \n2025 \n2026 \n2026 \n2025 \nRevenue:\nProduct revenue\n$\n52,763\n$\n35,015\n$\n48,231\n$\n100,994\n$\n66,120\nRoyalties\n1,863\n34\n347\n2,210\n1,561\nTotal revenue\n54,626\n35,049\n48,578\n103,204\n67,681\nCost of revenue\n27,941\n19,207\n27,740\n55,681\n38,356\nGross profit\n26,685\n15,842\n20,838\n47,523\n29,325\nOperating expenses:\nResearch and development\n19,341\n17,147\n16,082\n35,423\n32,132\nSales and marketing\n9,186\n6,978\n7,840\n17,026\n13,401\nGeneral and administrative\n18,203\n18,539\n16,128\n34,331\n34,444\nTotal operating expenses\n46,730\n42,664\n40,050\n86,780\n79,977\nLoss from operations\n(20,045\n)\n(26,822\n)\n(19,212\n)\n(39,257\n)\n(50,652\n)\nOther income (expense):\nInterest income\n2,116\n2,620\n2,328\n4,444\n4,325\nOther income (expense), net\n(60\n)\n(26\n)\n(29\n)\n(89\n)\n277\nTotal other income, net\n2,056\n2,594\n2,299\n4,355\n4,602\nLoss before income taxes\n(17,989\n)\n(24,228\n)\n(16,913\n)\n(34,902\n)\n(46,050\n)\nProvision for (benefit from) income tax expense\n125\n(3,616\n)\n552\n677\n(3,421\n)\nNet loss\n$\n(18,114\n)\n$\n(20,612\n)\n$\n(17,465\n)\n$\n(35,579\n)\n$\n(42,629\n)\nOther comprehensive income (loss)\nChanges in unrealized gain (loss) on available for sale securities\n$\n(171\n)\n$\n(70\n)\n$\n(120\n)\n$\n(291\n)\n$\n(24\n)\nForeign currency translation adjustments\n—\n401\n—\n—\n481\nTotal comprehensive loss\n$\n(18,285\n)\n$\n(20,281\n)\n$\n(17,585\n)\n$\n(35,870\n)\n$\n(42,172\n)\nNet loss per common share:\nBasic and diluted\n$\n(0.27\n)\n$\n(0.38\n)\n$\n(0.28\n)\n$\n(0.56\n)\n$\n(0.80\n)\nWeighted-average shares used to compute basic and diluted loss per share\n65,990,437\n54,466,143\n61,824,843\n63,587,322\n53,482,635\nOUSTER, INC. \nCONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS \n(unaudited) \n(in thousands) \nSix Months Ended June 30 , \n2026 \n2025 \nCASH FLOWS FROM OPERATING ACTIVITIES \nNet loss\n$\n(35,579\n)\n$\n(42,629\n)\nAdjustments to reconcile net loss to net cash used in operating activities:\nDepreciation and amortization\n5,936\n3,654\nLoss on write-off and disposal of property and equipment\n—\n85\nGain on lease termination\n—\n(65\n)\nStock-based compensation\n18,879\n21,724\nDeferred taxes\n(571\n)\n—\nReduction of revenue related to stock warrant issued to customer\n2,375\n1,021\nAmortization of right-of-use asset\n1,663\n2,509\nAccretion on short-term investments\n(1,115\n)\n(1,488\n)\nChange in fair value of warrant liabilities\n—\n229\n(Recovery) provision for inventory write-down\n(52\n)\n465\n(Recovery) provision for doubtful accounts\n(86\n)\n137\nRealized gain on sale of available for sale securities\n(14\n)\n(4\n)\nChanges in operating assets and liabilities, net of effects of business acquisition:\nAccounts receivable\n10,643\n6,471\nInventory\n(5,652\n)\n2,049\nPrepaid expenses and other assets\n(9,868\n)\n(3,640\n)\nAccounts payable\n841\n6,425\nAccrued and other liabilities\n44\n3,978\nContract liabilities\n(5,600\n)\n(3,836\n)\nOperating lease liability\n(1,883\n)\n(3,273\n)\nNet cash used in operating activities\n(20,039\n)\n(6,188\n)\nCASH FLOWS FROM INVESTING ACTIVITIES \nPurchases of property and equipment\n(5,209\n)\n(1,441\n)\nPurchase of short-term investments\n(122,307\n)\n(79,686\n)\nProceeds from sales and maturities of short-term investments\n94,995\n57,250\nAcquisition of Stereolabs, net of cash acquired\n(27,493\n)\n—\nNet cash used in investing activities\n(60,014\n)\n(23,877\n)\nCASH FLOWS FROM FINANCING ACTIVITIES \nProceeds from ESPP purchase\n1,332\n980\nProceeds from exercise of stock options\n2,342\n48\nPayments received to fund employees tax obligation for vested RSUs\n1,629\n357\nProceeds from the issuance of common stock under at-the-market offering, net of commissions and fees\n97,985\n58,798\nAt-the-market offering costs for the issuance of common stock\n(20\n)\n(10\n)\nNet cash provided by financing activities\n103,268\n60,173\nEffect of exchange rates on cash and cash equivalents\n—\n480\nNet increase in cash, cash equivalents and restricted cash\n23,215\n30,588\nCash, cash equivalents and restricted cash at beginning of period\n69,980\n48,099\nCash, cash equivalents and restricted cash at end of period\n$\n93,195\n$\n78,687\nOUSTER, INC. \nRECONCILIATION OF GAAP TO NON-GAAP FINANCIAL MEASURES \n(unaudited) \n(in thousands) \nThree Months Ended June 30 , \nThree Months Ended March 31 , \nSix Months Ended June 30 , \n2026 \n2025 \n2026 \n2026 \n2025 \nGAAP net loss \n$\n(18,114\n)\n$\n(20,612\n)\n$\n(17,465\n)\n$\n(35,579\n)\n$\n(42,629\n)\nInterest income, net\n(2,116\n)\n(2,620\n)\n(2,328\n)\n(4,444\n)\n(4,325\n)\nOther income, net\n60\n26\n29\n89\n(277\n)\nStock-based compensation expense (1) \n11,385\n13,226\n7,494\n18,879\n21,724\nProvision for (benefit from) income tax expense\n125\n(3,616\n)\n552\n677\n(3,421\n)\nAmortization of acquired intangibles (2) \n2,099\n1,127\n1,709\n3,808\n2,247\nDepreciation expense (2) \n1,135\n732\n994\n2,128\n1,407\nAcquisition and integration-related charges (4) \n986\n—\n2,252\n3,238\n—\nLitigation (recovery) expenses (3) \n(13\n)\n6,234\n(119\n)\n(132\n)\n12,027\nGain on lease termination\n—\n—\n—\n—\n(65\n)\nAdjusted EBITDA \n$\n(4,453\n)\n$\n(5,503\n)\n$\n(6,882\n)\n$\n(11,336\n)\n$\n(13,312\n)\n(1) Includes stock-based compensation expense as follows:\nThree Months Ended June 30 , \nThree Months Ended March 31 , \nSix Months Ended June 30 , \n2026 \n2025 \n2026 \n2026 \n2025 \nCost of revenue\n$\n1,395\n$\n1,799\n$\n826\n$\n2,221\n$\n2,935\nResearch and development\n4,332\n6,303\n2,616\n6,948\n10,608\nSales and marketing\n1,177\n1,733\n766\n1,943\n2,839\nGeneral and administrative\n4,481\n3,391\n3,286\n7,767\n5,342\nTotal stock-based compensation\n$\n11,385\n$\n13,226\n$\n7,494\n$\n18,879\n$\n21,724\n(2) Includes depreciation and amortization expense as follows:\nThree Months Ended June 30 , \nThree Months Ended March 31 , \nSix Months Ended June 30 , \n2026 \n2025 \n2026 \n2026 \n2025 \nCost of revenue\n$\n1,583\n$\n942\n$\n1,311\n$\n2,893\n$\n1,866\nResearch and development\n907\n678\n880\n1,787\n1,320\nSales and marketing\n472\n174\n316\n788\n346\nGeneral and administrative\n272\n65\n196\n468\n122\nTotal depreciation and amortization expense\n$\n3,234\n$\n1,859\n$\n2,703\n$\n5,936\n$\n3,654\n(3) Represents litigation costs consisting primarily of legal fees and the estimated and actual costs to resolve the outstanding litigation cases offset by the estimated amounts recoverable and recovered under insurance, indemnity and contribution agreements for such costs.\n(4) Includes legal and accounting fees and transition related services and are not considered normal, recurring, cash operating expenses necessary to operate the Company's business.\nThree Months Ended June 30 , \nThree Months Ended March 31 , \nSix Months Ended June 30 , \n2026 \n2025 \n2026 \n2026 \n2025 \nGross profit on GAAP basis \n$\n26,685\n$\n15,842\n$\n20,838\n$\n47,523\n$\n29,325\nStock-based compensation\n1,395\n1,799\n826\n2,221\n2,935\nAmortization of acquired intangible assets\n1,127\n461\n862\n1,989\n918\nGross profit on non-GAAP basis \n$\n29,207\n$\n18,102\n$\n22,526\n$\n51,733\n$\n33,178\nGross margin on GAAP basis \n49\n%\n45\n%\n43\n%\n46\n%\n43\n%\nGross margin on non-GAAP basis \n53\n%\n52\n%\n46\n%\n50\n%\n49\n%\nView source version on businesswire.com : https://www.businesswire.com/news/home/20260806343526/en/ \nFor Investors\ninvestors@ouster.io \nFor Media\npress@ouster.io \nSource: Ouster, Inc.",
-    "content_source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
-    "content_excerpt": "Ouster Announces Results for Second Quarter 2026 August 6, 2026 PDF Version Record product revenue, achieving 14th straight quarter of growth Lidar and camera shipments of more than 17,000 units SAN FRANCISCO --(BUSINESS WIRE)--Aug. 6, 2026-- Ouster, Inc . (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, announced financial results for the three months ended June 30, 2026 . “We delivered a strong second quarter, with $55 million in revenue and more than 17,000 total sensors shipped. These results reflect the strength of our unified sensing and perception platform and the continued momentum we have been seeing across our markets. Customers around the world have continued to scale their investments in Physical AI, and Ouster is well positioned t...",
-    "content_word_count": 3113,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-17T00:40:12Z",
-    "query_aliases": [
-      "Ouster Inc"
-    ],
-    "industry": "로봇",
-    "target_technology": "로봇용 라이다",
-    "target_technology_en": "robot LiDAR",
-    "technology_group": "robot_lidar",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "로봇용 라이다",
-    "pdf_company": "Ouster",
-    "pdf_row_no": 14,
-    "pdf_sequence": "11",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "타겟 품목인 라이다 센서의 매출 및 17,000대 이상 출하 등 구체적인 제품 및 사업 실적이 발표됨.",
-    "ai_summary_ko": "Ouster는 2026년 2분기에 전년 동기 대비 56% 증가한 55백만 달러의 총 매출과 17,000대 이상의 라이다 및 카메라 센서 출하를 기록했음. 제품 매출은 53백만 달러로, 물류 자동화, 야드 물류, 지능형 교통 분야의 산업 및 스마트 인프라 고객들의 수요에 의해 견인되었음.",
-    "ai_summary_en": "Ouster announced its financial results for the second quarter of 2026, achieving $55 million in total revenue, up 56% year-over-year, and shipping more than 17,000 lidar and camera sensors. Product revenue reached $53 million, driven primarily by customers in the industrial and smart infrastructure verticals for warehouse automation, yard logistics, and intelligent transportation use cases.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "38d97eca35b7abd2bb30b4ec",
-    "ai_evidence_quotes": [
-      "Ouster delivered second quarter revenue of $55 million , an increase of 56% year over year and 12% sequentially.",
-      "Shipped more than 17,000 lidar and camera sensors for revenue, of which lidar was approximately 53% of the total."
     ]
   },
   {
@@ -1251,9 +877,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "무기화학 사업 부문에서 침강실리카에 대한 수요 증가로 매출이 소폭 상승했다는 구체적인 사업 성과가 확인됨.",
-    "ai_summary_ko": "Evonik Industries는 2026년 2분기 실적 발표를 통해 무기화학 사업 부문에서 침강실리카에 대한 수요 증가에 힘입어 매출이 소폭 상승했다고 밝혔음.",
-    "ai_summary_en": "Evonik Industries reported in its second-quarter 2026 earnings release that sales in the Inorganics business increased slightly, supported by higher demand for precipitated silicas.",
+    "ai_summary_reason": "타겟 품목인 침강실리카에 대한 수요 증가와 이에 따른 Inorganics 사업부문의 매출 증가 등 구체적인 사업 활동이 확인됨.",
+    "ai_summary_ko": "Evonik의 Inorganics 사업부문은 침강실리카에 대한 수요 증가에 힘입어 약간 더 높은 매출을 기록했음. 해당 사업부문은 시장 내 우호적인 수요 및 공급 여건 속에서 실적 향상을 달성했음.",
+    "ai_summary_en": "In the Inorganics business segment, Evonik posted slightly higher sales benefiting from higher demand for precipitated silicas. This performance was supported by favorable market demand and supply conditions.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "6aadaa90edd4ce73bc9fd548",
@@ -1333,119 +959,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "타겟 품목인 레이다 반도체(UWB 레이다 및 레인징 솔루션)가 BMW 그룹 차량에 도입 및 탑재되는 구체적 사업 활동이 확인됨.",
-    "ai_summary_ko": "NXP Semiconductors의 Trimension Ultra-Wideband(UWB) 레이다 및 레인징 솔루션이 BMW 그룹의 2026년형 차량 프로그램을 시작으로 전체 함대에 탑재될 예정임. 해당 솔루션은 스마트폰이나 스마트 워치를 이용한 디지털 키 플러스와 차량 내 탑승자 감지 등의 안전 및 편의 기능을 제공함.",
-    "ai_summary_en": "NXP Semiconductors announced that its Trimension Ultra-Wideband ranging and radar solutions will be deployed across the BMW Group's fleet, starting with selected 2026 vehicle programs. The technology enables safety and convenience applications, including Digital Key Plus and in-cabin presence detection.",
+    "ai_summary_reason": "타겟 기술인 레이다 반도체와 직접 연계된 NXP의 Trimension UWB 및 레이다 솔루션이 BMW Group의 차량 플릿에 공급 및 적용됨.",
+    "ai_summary_ko": "NXP Semiconductors는 2026년 8월 BMW Group의 차량 플릿에 Trimension NCJ29D6 솔루션을 포함한 Trimension Ultra-Wideband 레이다 및 거리 측정 시스템을 공급하기 시작한다고 밝혔음. 해당 솔루션을 통해 디지털 키 플러스와 차량 내 재실 감지 등의 안전 및 편의 기능이 구현됨.",
+    "ai_summary_en": "NXP Semiconductors announced on August 4, 2026, that its Trimension NCJ29D6 Ultra-Wideband ranging and radar solutions will be deployed across the BMW Group's fleet, starting with selected 2026 vehicle programs. The solution enables safety and convenience applications such as digital key plus and in-cabin presence detection.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "544145cbe1b47486a06adf03",
     "ai_evidence_quotes": [
       "NXP’s Trimension™ Ultra-Wideband (UWB) ranging and radar solutions will be deployed by the BMW Group across its fleet, starting with selected 2026 vehicle programs",
       "NXP Semiconductors N.V. (NASDAQ: NXPI) today announced that its Trimension NCJ29D6 family will be deployed in the BMW Group’s fleet, starting with selected 2026 vehicle programs."
-    ]
-  },
-  {
-    "target_no": 56,
-    "company": "Plansee",
-    "title": "Security of supply doesn’t happen overnight",
-    "url": "https://plansee-group.com/en/articles/detail/versorgungssicherheit-2026",
-    "source": "Plansee - Press & Stories / Press Releases / Stories",
-    "published_at": "2026-08-03T07:09:55Z",
-    "published_month": "2026-08",
-    "published_at_source": "jsonld",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "2026-08-03T11:33:56Z",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-03T07:09:55Z",
-        "month": "2026-08",
-        "source": "jsonld",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-03T00:00:00Z",
-        "month": "2026-08",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-03T00:00:00Z",
-        "month": "2026-08",
-        "source": "listing",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": null,
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "month"
-      },
-      {
-        "date": "2026-08-03T11:33:56Z",
-        "month": "2026-08",
-        "source": "modified_jsonld",
-        "kind": "modified",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-17T00:40:12Z",
-    "collector": "official_page",
-    "query": "https://plansee-group.com/en/news-media/press-stories",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://plansee-group.com/en/news-media/press-stories",
-    "source_direct_url": "https://plansee-group.com/en/articles/detail/versorgungssicherheit-2026",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 1,
-    "content_text": "all articles \n03. August 2026 \nNews \nSecurity of supply doesn’t happen overnight\nKarlheinz Wex, Chairman of the Executive Board of the Plansee Group, on raw material security, recycling, and Europe’s industrial future\nPublished by: Plansee Group \n&middot; \nLast updated:\n03. August 2026 \nMr. Wex, why is everyone talking about tungsten right now? \nTungsten is a metal with unique properties. It has the highest melting point of any metal, is extremely dense, and is indispensable for numerous industrial applications. About 65 percent of tungsten is used to manufacture all kinds of tools. Whether milling, drilling, turning, or forming: without tungsten carbide, many modern manufacturing processes would not exist. At the same time, tungsten components are needed, for example, in CT scanners, power transmission switches, and smartphones. Although tungsten occupies a niche market, virtually the entire manufacturing industry and many high-tech applications depend on it. \nWhy has the situation on the tungsten market become so tense? \nChina now dominates both the mining and processing of tungsten. More than 80 percent of the world’s mined tungsten comes from China, and tungsten exports have been severely restricted for over a year. China has even become a net importer. As a result, the Western market is drying up. This has led to massive price increases and growing supply risks for the industry. \nHow dependent are European industries on tungsten? \nVery dependent. The manufacturing industry is particularly affected. Companies that produce engines, gearboxes, machine components, or precision products use tools made from tungsten carbide. But the electronics industry, medical technology, and security-related applications also require tungsten. That is why the supply of this raw material is of great importance for Europe’s competitiveness and security. \nDid this development come as a surprise to Plansee? \nNo. We recognized nearly 20 years ago that dependence on China posed a strategic risk. That is why we began diversifying our supply early on. In 2008, we acquired a company in the U.S. that specializes in the manufacture of tungsten primary and intermediate products. At the same time, we further developed and expanded our own recycling technologies. Our goal has always been to create a stable, independent, and sustainable supply of tungsten for our customers around the world. \nWhat role does recycling play in this? \nRecycling is now the foundation of our tungsten supply. About 90 percent of the tungsten used by Plansee and Ceratizit comes from secondary materials. To achieve this, we collect used tools, tungsten-containing scrap, and grinding sludge, and reprocess them into high-quality tungsten using our own methods. This requires a great deal of expertise, but it makes us significantly less dependent on fluctuations in the raw materials markets. \nHow does this recycling cycle work in practice? \nScrap is the foundation. Through our collection systems and buyback agreements with customers, we collect used carbide tools and other tungsten-containing materials throughout Europe and the U.S. These are sorted and then processed using various methods to produce usable tungsten once again. Recycled tungsten is indistinguishable in quality from primary material. \nHow does recycling contribute to sustainability? \nVery significantly. The carbon footprint of recycled material is about four times smaller than that of tungsten from mining. In addition, fewer natural resources are required. What was originally primarily a strategic move to ensure supply security is now also proving to be an important contribution to more sustainability. \nCan recycling meet the entire demand for tungsten in the future? \nNo. Global demand for tungsten stands at around 120,000 metric tons per year. In the long term, recycling will likely be able to cover up to 50 percent of this demand. Beyond that, we’ll reach natural limits because some of the material is lost during use—for example, through wear and tear on tungsten tools in tunnel or road construction. That’s why primary sources will remain necessary in the future. \nHow important are new mining projects for security of supply? \nThey are an important factor. A good example is the Sangdong Mine in South Korea. It was shut down decades ago and is now being brought back into operation. We have supported the project together with our partner Almonty for many years and have secured large portions of the production volumes on a long-term basis. Reactivating or bringing a mine into operation often takes ten years or longer. That is why such projects must be supported early on and financed reliably. \nWhat can Europe do to better secure its supply of raw materials? \nSeveral measures are needed. First, the recycling rate should be increased. Second, framework conditions must be created so that new mining projects can be implemented economically. Third, strategic reserves should be built up, but during times of sufficient supply and not during a shortage. Overall, a long-term and consistent strategy for critical raw materials is needed. \nYou also advocate for measures regarding tungsten scrap. Why? \nTungsten scrap is a valuable raw material. Today, significant quantities are exported from Europe, partly to China. From our perspective, the material should be kept within regional cycles, such as in Europe or the U.S. One sensible solution, for example, would be to allow scrap exports only if the same amount is returned after reprocessing. This would improve supply security without disrupting international value chains. \nWhat is your most important message to policymakers and industry? \nSecurity of supply does not happen overnight. When it comes to critical raw materials, there is no one-size-fits-all solution. Each raw material must be considered on its own merits. For tungsten, we need significantly more recycling, new sources of raw materials, investments in processing capacity, and long-term partnerships. Anyone who wants to ensure security of supply must make decisions today whose effects will be seen in five or ten years. This is precisely the path Plansee has been following for many years. \nDownload\nDownload\nDownload\nMedia contact \nDénes Széchényi\nHead of Group Communications\nNr. +43-5672-600-2243\nMobile +43-664-81 52 598\ndenes.szechenyi@plansee-group.com\nAbout the Plansee Group: Focus on Molybdenum and Tungsten\nWith its products, the Plansee Group enables applications at the cutting edge of what is technically and physically feasible – in electronics, medical technology, energy supply, mechanical engineering, the construction industry, mobility, and security and defense. \nHeadquartered in Reutte, Tyrol, the group specializes in the powder metallurgical processing of the high-performance materials molybdenum and tungsten . The value chain extends from the processing of scrap and ore concentrates through the manufacture of intermediate products and blanks to the development and production of customer-specific components and tools. \nThe Plansee Group, with its parent company Plansee Holding AG, unites two strong business areas : \n· Plansee High-Performance Materials, specializing in metallic products made of molybdenum and tungsten. \n· Ceratizit, focused on tools made of hard metal (tungsten carbide) for the trades, machining, and industrial manufacturing. \nThe Plansee Group ensures long-term security of supply for its key materials through recycling and long-term partnerships with mining operators. The Plansee Group holds a 31 percent stake in the Chilean molybdenum processor Molymet and a 10 percent stake in the tungsten mining operator Almonty. \nWith 11,120 employees at 36 production sites, the Plansee Group generated consolidated revenue of 2.35 billion euros in fiscal year 2025/26. The fiscal year ends on the last day of February.",
-    "content_source_url": "https://plansee-group.com/en/articles/detail/versorgungssicherheit-2026",
-    "content_excerpt": "all articles 03. August 2026 News Security of supply doesn’t happen overnight Karlheinz Wex, Chairman of the Executive Board of the Plansee Group, on raw material security, recycling, and Europe’s industrial future Published by: Plansee Group &middot; Last updated: 03. August 2026 Mr. Wex, why is everyone talking about tungsten right now? Tungsten is a metal with unique properties. It has the highest melting point of any metal, is extremely dense, and is indispensable for numerous industrial applications. About 65 percent of tungsten is used to manufacture all kinds of tools. Whether milling, drilling, turning, or forming: without tungsten carbide, many modern manufacturing processes would not exist. At the same time, tungsten components are needed, for example, in CT scanners, power trans...",
-    "content_word_count": 1195,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-17T00:40:12Z",
-    "query_aliases": [
-      "Plansee Group"
-    ],
-    "industry": "반도체",
-    "target_technology": "금속타겟(티타늄, 탄탈륨)",
-    "target_technology_en": "metal target titanium/tantalum",
-    "technology_group": "metal_target_ti_ta",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "금속타겟(티타늄, 탄탈륨)",
-    "pdf_company": "Plansee",
-    "pdf_row_no": 39,
-    "pdf_sequence": "29",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "사용된 공구 및 텅스텐 스크랩을 수거하여 자체 기술로 재활용하는 텅스텐 이차 원료 활용 및 공급 안정화 사업 활동을 구체적으로 다룸.",
-    "ai_summary_ko": "사용된 공구와 텅스텐 함유 스크랩을 수거하여 자체 기술로 고품질 텅스텐을 재활용하며, 전체 텅스텐 수요의 약 90퍼센트를 이차 원료에서 조달함.",
-    "ai_summary_en": "The Plansee Group collects used tools and tungsten-containing scrap to reprocess them into high-quality tungsten using its own methods, with approximately 90 percent of its tungsten originating from secondary materials.",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "e62873f81fe53ca3b1e9b01b",
-    "ai_evidence_quotes": [
-      "About 90 percent of the tungsten used by Plansee and Ceratizit comes from secondary materials. To achieve this, we collect used tools, tungsten-containing scrap, and grinding sludge, and reprocess them into high-quality tungsten using our own methods."
     ]
   },
   {
@@ -1595,9 +1117,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Nexeon이 한국 군산의 실리콘-탄소 음극재 생산 시설에 대해 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득한 구체적인 사업 활동이 확인됨.",
-    "ai_summary_ko": "Nexeon은 한국 군산 생산 시설에 대해 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득했음. 이번 인증은 Nexeon의 군산 사업 운영에 있어 중요한 이정표이며, 주요 배터리 셀 제조사와 자동차 고객에게 고품질의 실리콘-탄소 음극재를 지속적으로 공급하기 위한 기반을 강화함.",
-    "ai_summary_en": "Nexeon has achieved ISO 9001:2015 certification for its production facility in Gunsan, South Korea, establishing a benchmark standard for quality management systems. The certification marks an important milestone in the development of the Gunsan operation, supporting the company in delivering consistently high-quality silicon-carbon materials to leading battery cell and automotive customers.",
+    "ai_summary_reason": "Nexeon이 Gunsan에 위치한 첫 상업용 생산 시설에서 실리콘-탄소 음극재 생산과 관련하여 품질 경영 시스템 표준인 ISO 9001:2015 인증을 획득한 구체적인 사업 활동이 확인됨.",
+    "ai_summary_ko": "Nexeon은 Gunsan에 위치한 생산 시설에 대해 품질 경영 시스템 표준인 ISO 9001:2015 인증을 획득했음. 이번 인증은 Gunsan 사업장의 운영 발전에서 중요한 이정표임. Gunsan 공장은 전 세계 OEM 및 배터리 제조사 고객들의 수요를 지원하기 위해 첨단 실리콘-탄소 음극재를 대량 생산하는 첫 상업용 규모의 생산 시설임.",
+    "ai_summary_en": "Nexeon has achieved ISO 9001:2015 certification for its production facility in Gunsan, South Korea, establishing a comprehensive quality management system for its silicon-carbon anode materials. The certification marks an important milestone in the development of the Gunsan operation, which is the company's first commercial-scale production plant designed for the volume manufacture of advanced silicon-carbon anode materials to support global OEM and battery manufacturer customers.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "77d7c9a7faefc8455c4b79d4",
@@ -1679,14 +1201,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "반기보고서에서 중국 및 한국 자동차 제조사 등의 산업용 로봇 수요 호조로 정밀 감속기 매출이 전년 동기 대비 증가했다고 보고함.",
-    "ai_summary_ko": "중국 및 한국의 자동차 제조사와 일반 산업의 산업용 로봇 수요 호조에 힘입어 정밀 감속기 매출이 전년 동기 대비 증가했음.",
-    "ai_summary_en": "Sales of precision reduction gears increased year-on-year due to favorable demand for industrial robots mainly from automobile manufacturers in China and South Korea and general industries.",
+    "ai_summary_reason": "Nabtesco Corporation의 2026년 상반기 보고서에서 컴포넌트 솔루션 사업 부문의 정밀감속기(precision reduction gears) 매출이 중국 및 한국의 자동차 제조사 등의 산업용 로봇 수요 호조로 전년 동기 대비 23.6% 증가한 45,521백만 엔을 기록하는 등 타겟 품목과 연계된 구체적인 사업 실적이 보고됨.",
+    "ai_summary_ko": "Nabtesco Corporation은 2026년 상반기 연결 재무제표를 통해 컴포넌트 솔루션 사업 부문의 매출이 중국 및 한국의 자동차 제조사 등을 중심으로 한 산업용 로봇 수요 호조에 힘입어 전년 동기 대비 23.6% 증가한 45,521백만 엔을 기록했다고 발표했음.",
+    "ai_summary_en": "Nabtesco Corporation announced in its semiannual report for the first half of 2026 that net sales in its component solutions business increased by 23.6% year-on-year to 45,521 million yen, driven by favorable demand for precision reduction gears for industrial robots mainly from automobile manufacturers in China and South Korea.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "026a9660e33f8351263189a8",
     "ai_evidence_quotes": [
-      "Sales of precision reduction gears increased year-on-year due to favorable demand for industrial robots mainly from automobile manufacturers in China and South Korea and general industries."
+      "① Component Solutions Business Sales increased by ¥8,700 million, or 23.6% to ¥45,521 million and operating income increased by ¥2,985 million or 160.8% to ¥4,841 million. Sales of precision reduction gears increased year-on-year due to favorable demand for industrial robots mainly from automobile manufacturers in China and South Korea and general industries."
     ]
   },
   {
@@ -1762,14 +1284,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "정밀감속기(PRG)가 포함된 CMP 부문에서 주문 증가세가 지속되고 있으며, RV mini®의 고객사 인도 개시 등 타겟 품목과 직접 연계된 구체적인 사업 활동이 확인됨.",
-    "ai_summary_ko": "CMP 부문 내 정밀감속기 주문이 지속적으로 증가하고 있으며, RV mini 제품의 고객사 인도가 개시됨.",
-    "ai_summary_en": "Orders for precision reduction gears in the CMP segment continue to increase steadily, and deliveries of the RV mini to customers have begun.",
+    "ai_summary_reason": "Nabtesco의 정밀감속기(Precision Reduction Gears) 부문에서 2026년 2분기 주문 증가 및 RV mini 공급 개시 등 타겟 기술과 직접 연계된 사업 활동이 확인됨.",
+    "ai_summary_ko": "Nabtesco는 2026년 2분기 정밀감속기 주문이 전기 대비 11% 및 전년 동기 대비 23% 증가했음. 또한 RV mini 공급이 2026년 하반기부터 시작됨.",
+    "ai_summary_en": "Nabtesco reported that orders for Precision Reduction Gears increased 11% quarter-on-quarter and 23% year-on-year in the second quarter of 2026. In addition, delivery of the RV mini started from the second half of 2026.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "d4c93c9a8457c7e09a7ec72c",
     "ai_evidence_quotes": [
-      "First, regarding the “acceleration of growth in the CMP”, we continue to see a steady increase in orders for precision reduction gears, including those for general industrial applications. In addition, we launched the RV mini® as planned and have already begun deliveries to customers."
+      "Precision Reduction Gears's orders in 26/Q2 weresteadily increasing at QoQ+11% YoY+23%.",
+      "Order Delivery of “RV mini” started from 2026 H2"
     ]
   },
   {
@@ -1873,16 +1396,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Albemarle Corporation의 2026년 2분기 실적 발표 내용으로, 에너지 저장 및 특수화학 품목의 매출, 조정 EBITDA, 실적 전망 등 구체적인 사업 동향이 포함되어 있음.",
-    "ai_summary_ko": "Albemarle Corporation은 2026년 2분기 동안 에너지 저장 부문의 가격 상승과 특수화학 제품의 가격 및 판매량 증가에 힘입어 17억 달러의 순매출을 기록했음. 조정 상각전영업이익(EBITDA)은 8억 5,800만 달러로 집계되었으며, 지속적인 비용 절감과 생산성 향상 노력을 반영함.",
-    "ai_summary_en": "Albemarle Corporation reported net sales of $1.7 billion for the second quarter of 2026, up 31% year-over-year driven primarily by higher pricing in Energy Storage and increased pricing and volumes in Specialties. Adjusted EBITDA reached $858 million, supported by ongoing cost and productivity improvements.",
+    "ai_summary_reason": "Albemarle Corporation이 2026년 2분기 실적을 발표하며 에너지 스토리지 부문에서 리튬 염 및 스포주멘 판매를 포함한 매출 13억 달러를 기록함.",
+    "ai_summary_ko": "Albemarle Corporation은 2026년 2분기 실적 발표를 통해 에너지 스토리지 부문에서 매출 13억 달러를 기록했음. 해당 분기 동안 에너지 스토리지 판매량은 65킬로톤(LCE 기준)을 나타냈음.",
+    "ai_summary_en": "Albemarle Corporation announced its second-quarter 2026 results, reporting net sales of $1.3 billion in its Energy Storage segment. Energy Storage sales volume reached 65 kilotons on a lithium carbonate equivalent basis for the quarter.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "ee57660720d13e8a13b51943",
     "ai_evidence_quotes": [
-      "Albemarle Reports Second Quarter 2026 Results CHARLOTTE, N.C. , Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026.",
       "Net sales of $1.7 billion, up 31% due to higher pricing in Energy Storage (+73%) and higher pricing and volumes in Specialties (price +11%, volume +8%).",
-      "Adjusted EBITDA (a) of $858 million; up 155% due primarily to higher pricing in Energy Storage, increased pricing and volumes in Specialties and ongoing cost and productivity improvements."
+      "Energy Storage net sales for the second quarter of 2026 were $1.3 billion, an increase of $559 million, or 78%, due to higher pricing."
     ]
   },
   {
@@ -1972,15 +1494,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Norsk Hydro가 미국 Michigan주 Cassopolis 재활용 시설에서 생산한 Hydro CIRCAL을 General Motors의 Cadillac OPTIQ 전방 범퍼 시스템용으로 공급하는 타겟 기술 관련 사업 활동이 확인됨.",
-    "ai_summary_ko": "미국 Michigan주 Cassopolis 재활용 시설에서 생산된 75% 이상 post-consumer scrap 기반의 알루미늄 합금 Hydro CIRCAL이 General Motors의 Cadillac OPTIQ 전방 범퍼 시스템용으로 공급됨. 이를 통해 mobility 부문의 자원 순환성 증대와 북미 지역 공급망 회복력이 지원됨.",
-    "ai_summary_en": "Norsk Hydro announced that General Motors' Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy containing at least 75 percent post-consumer scrap supplied from Hydro's recycling facility in Cassopolis, Michigan.",
+    "ai_summary_reason": "Norsk Hydro가 미시간주 Cassopolis 재활용 시설에서 생산한 고재활용 알루미늄 합금 Hydro CIRCAL을 General Motors의 2026년형 Cadillac OPTIQ 전방 범퍼 시스템에 공급하는 구체적인 타겟 기술 관련 사업 활동이 확인됨.",
+    "ai_summary_ko": "Norsk Hydro가 미국 미시간주 Cassopolis 재활용 시설에서 생산한 최소 75퍼센트 포스트컨슈머 스크랩 기반 알루미늄 합금 Hydro CIRCAL을 General Motors의 2026년형 Cadillac OPTIQ 전방 범퍼 시스템에 공급하는 사업임. Shape Corp.가 General Motors의 사양에 맞춰 해당 전방 범퍼 시스템을 엔지니어링 및 조립할 예정임.",
+    "ai_summary_en": "Norsk Hydro is supplying its Hydro CIRCAL high-recycled aluminium alloy to General Motors for the 2026 Cadillac OPTIQ front bumper system. The advanced aluminium alloy, composed of at least 75 percent post-consumer scrap, is produced at Hydro's recycling facility in Cassopolis, Michigan, with Shape Corp. engineering and assembling the bumper system to GM specifications.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "bae8b2275930394fd96891a2",
     "ai_evidence_quotes": [
-      "Hydro brings high-recycled aluminium to General Motors EV with Hydro CIRCAL General Motors’ Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy composed of at least 75 percent post‑consumer scrap produced at Hydro’s newest U.S. recycling facility in Cassopolis, Michigan.",
-      "Hydro will supply Hydro CIRCAL from its U.S. recycling facility in Cassopolis, Michigan."
+      "General Motors’ Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy composed of at least 75 percent post‑consumer scrap produced at Hydro’s newest U.S. recycling facility in Cassopolis, Michigan.",
+      "Hydro will supply Hydro CIRCAL from its U.S. recycling facility in Cassopolis, Michigan. Shape Corp. will engineer and assemble the front bumper system to GM specifications, with integration into the Cadillac OPTIQ platform."
     ]
   },
   {
@@ -2056,16 +1578,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "로봇용 감속기 품목인 RV mini 및 CMP 부문의 사업 확장 계획, 수주 및 출하 진행 상황, 적용 분야 확대 전략이 구체적으로 기술되어 있음.",
-    "ai_summary_ko": "Nabtesco는 CMP 부문에서 RV mini 및 일반 산업용 애플리케이션 판매 확대와 Hamamatsu Plant 가동률 상승을 통해 사업 규모를 확장할 계획이다. RV mini는 6축 수직다관절 산업용 로봇의 손목 축 애플리케이션 진입을 시작으로 협동로봇과 공작기계 채택을 검토 중이며, 하반기부터 기존 고객에 대한 출하가 시작되어 JPY 0.2 billion 미만의 매출을 기록했다. 또한 상반기 이익에 JPY 0.5 billion의 가격 전가 효과가 포함되었다.",
-    "ai_summary_en": "Nabtesco plans to expand its business scale in the CMP division by increasing sales of RV mini and general industrial applications and raising the utilization rate at the Hamamatsu Plant. RV mini deliveries to existing customers have started from the second half, recording sales of slightly less than JPY 0.2 billion, while entering wrist-axis applications of six-axis vertically articulated industrial robots and considering adoption in collaborative robots and machine tools. Additionally, a JPY 0.5 billion price pass-through effect was included in the first-half profit on a year-on-year basis.",
+    "ai_summary_reason": "로봇용 감속기와 직접 관련된 RV mini 제품의 하반기 출하가 시작되었으며, 기존 고객사에 대한 납품 확대 및 신규 로봇 모델 채택 추진 등 구체적인 사업 활동 내용이 확인됨.",
+    "ai_summary_ko": "Nabtesco는 로봇용 감속기 관련 신제품 RV mini의 하반기 출하를 시작하고 2억 엔에 못 미치는 매출을 기록했음. 향후 6축 수직다관절 산업용 로봇의 손목축 응용을 시작으로 협동로봇과 공작기계 등으로 적용 범위를 확대할 예정임.",
+    "ai_summary_en": "Nabtesco has started shipments of the RV mini reducer from the second half of the year, recording sales of slightly less than JPY 0.2 billion. The company plans to expand application scope starting with wrist-axis applications in six-axis vertically articulated industrial robots, while also considering adoption in collaborative robots and machine tools.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "27186feff58111c990b345e8",
     "ai_evidence_quotes": [
-      "Over the medium to long term, we aim to expand the scale of the business through increasing sales of RV mini and general industrial applications, and higher utilization rate at the Hamamatsu Plant.",
-      "RV mini is designed with specifications that allow it to be adopted in equipment for general industrial applications, and we are receiving inquiries. We will first enter the wrist-axis application of six-axis vertically articulated industrial robots, while also considering adoption in collaborative robots and machine tools.",
-      "Although we cannot provide a specific numerical target for next year, deliveries to existing customers have started from H2, and we intend to increase the number of robot models from customers in which RV mini is installed."
+      "Shipments have started from H2, with sales of slightly less than JPY 0.2 billion.",
+      "RV mini is designed with specifications that allow it to be adopted in equipment for general industrial applications, and we are receiving inquiries. We will first enter the wrist-axis application of six-axis vertically articulated industrial robots, while also considering adoption in collaborative robots and machine tools."
     ]
   },
   {
@@ -2141,14 +1662,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "정밀 감속기(PRG) 부문에서 지속적인 수주 증가와 RV mini 납품 개시 등 타겟 품목과 직접 연계된 사업 성과 및 계획이 보고됨.",
-    "ai_summary_ko": "Nabtesco Corporation은 2026년도 사업 운영 계획에 따라 정밀 감속기 부문에서 지속적인 수주 증가를 기록하고 있으며 고객사를 대상으로 한 RV mini 납품을 개시하는 등 관련 사업을 원활히 전개하고 있음.",
-    "ai_summary_en": "Nabtesco Corporation is steadily increasing orders in the precision reduction gears segment and has started delivering RV mini products to customers as part of its 2026 business operation plan.",
+    "ai_summary_reason": "타겟 품목인 정밀 감속기의 수주 동향, 생산능력 및 신제품 RV mini 납품 개시 등 구체적인 사업 및 품목 연계 활동이 확인됨.",
+    "ai_summary_ko": "Nabtesco는 2026년 상반기 실적 발표를 통해 정밀 감속기 부문의 수주 증가와 공장 가동률 상승에 힘입어 실적이 개선되었다고 밝혔음. 또한 고객사를 상대로 한 신제품 RV mini의 납품을 2026년 하반기부터 개시할 예정이며, Tsu Plant, Changzhou Plant, Hamamatsu Plant를 중심으로 생산 능력을 운영하고 있음.",
+    "ai_summary_en": "Nabtesco reported improved financial results for the first half of 2026, driven by increased order intake and higher factory utilization rates in the Precision Reduction Gears business. The company also stated that deliveries of the new RV mini product to customers will start in the second half of 2026, while maintaining operations across its Tsu Plant, Changzhou Plant, and Hamamatsu Plant.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "ccdfa39bb2d2aa0cfa67cea6",
     "ai_evidence_quotes": [
-      "・Start RV mini deliveries to customers"
+      "Start RV mini deliveries to customers",
+      "Order trend in Precision Reduction Gears Production capacity and Utilization Ratio 500 ■Production capacity 2026/Q2 Orders 2024/3Q onward 450 QoQ +11% YoY +23% 90 400 170 1,150 350 thousands units /year 300 890 250 Tsu Plant (Japan) Changzhou Plant (China) Hamamatsu Plant (Japan)"
     ]
   },
   {
@@ -2209,16 +1731,16 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Vestas가 2026년 3분기 페루, 이탈리아, 독일 등에서 신규 풍력터빈 공급 계약을 체결한 내역이 공개됨.",
-    "ai_summary_ko": "Vestas가 2026년 3분기 페루와 이탈리아, 독일 등 글로벌 시장에서 신규 풍력터빈 공급 계약을 체결했음. 발표된 육상 및 해상 풍력터빈 주문을 통해 안정적인 수주 실적을 기록했음.",
-    "ai_summary_en": "Vestas secured new wind turbine supply contracts in global markets such as Peru, Italy, and Germany during the third quarter of 2026. The company recorded stable order intake through announced onshore and offshore wind turbine orders.",
+    "ai_summary_reason": "Vestas가 2026년 3분기 동안 Statkraft Peru, JUWI 등으로부터 신규 풍력 터빈 공급 계약을 체결한 내역을 공개함.",
+    "ai_summary_ko": "풍력 터빈 수주 실적 공개 - Vestas는 2026년 3분기 동안 Statkraft Peru, JUWI 등과의 신규 풍력 터빈 공급 계약을 발표함.",
+    "ai_summary_en": "Wind Turbine Order Announcements - Vestas announced new wind turbine supply orders with partners including Statkraft Peru and JUWI during the third quarter of 2026.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "aa65c24dc99ded80fbfcfae0",
     "ai_evidence_quotes": [
-      "13-08-26 Vestas secures order with Statkraft Peru for new wind project 72",
-      "24-08-26 Vestas announces a new 65 MW order in Italy 65",
-      "26-08-26 Vestas announces two new orders from JUWI in Germany 87"
+      "Vestas secures order with Statkraft Peru for new wind project 72",
+      "Vestas announces a new 65 MW order in Italy 65",
+      "Vestas announces two new orders from JUWI in Germany 87"
     ]
   },
   {
@@ -2279,14 +1801,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Maxon이 2026/2027년판 전면 개정된 카탈로그를 발표하고, 백래시가 없는 GSW planetary gearheads 및 모터·제어기 등 로보틱스 및 정밀 구동 시스템 관련 신제품 라인업을 공개함.",
-    "ai_summary_ko": "Maxon은 2026/2027년판 전면 개정된 카탈로그를 발표하고, 백래시가 없는 GSW planetary gearheads를 비롯한 고속 고토크용 ECX PRIME 4극 모터, 팬이 장착된 ECX FLAT 플랫 모터, EC frameless high‑torque 모터 등 신제품 포트폴리오를 공개했음. 이번 카탈로그 개정을 통해 로보틱스를 비롯한 의료, 항공우주, 산업 자동화, 모빌리티 분야의 시장 솔루션을 체계적으로 선보였음.",
-    "ai_summary_en": "Maxon has released its completely revised maxon catalog 2026/2027, featuring portfolio streamlining and a new product lineup including backlash-free GSW planetary gearheads, ECX PRIME 4-pole motors, ECX FLAT flat motors, and EC frameless high-torque motors. The updated catalog highlights the company's market solutions across robotics, aerospace, industrial automation, and medical sectors.",
+    "ai_summary_reason": "Maxon이 2026/2027년 카탈로그를 전면 개정하여 출시하고, 백래시가 없는 GSW planetary gearheads 등 타겟 품목과 연계된 신제품 포트폴리오를 공개함.",
+    "ai_summary_ko": "Maxon이 2026/2027년 카탈로그를 전면 개정하여 새롭게 출시했음. 이번 신규 카탈로그에는 백래시가 없는 GSW planetary gearheads 및 다양한 고성능 모터 제품군이 포트폴리오 확장 항목으로 포함되었음.",
+    "ai_summary_en": "Maxon has released the completely revised maxon catalog 2026/2027. The new catalog includes an expanded product portfolio featuring backlash-free GSW planetary gearheads and various advanced motor solutions.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "6d7017133c1a203542476c9b",
     "ai_evidence_quotes": [
-      "The completely revised maxon catalog 2026/2027 has been released maxon has fundamentally revised its catalog.",
+      "The completely revised maxon catalog 2026/2027 has been released",
       "The portfolio has been expanded with several highlights, including the brushless ECX PRIME 4-pole motors for high speeds and torque, the powerful ECX FLAT flat motors with fan, new diameters of the EC frameless high‑torque motors, and the backlash-free GSW planetary gearheads."
     ]
   },
@@ -2348,16 +1870,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "타겟 품목인 로봇용 감속기 및 구동 장치와 관련된 하노버 메세 2026 전시 및 제품 포트폴리오 공개 활동이 구체적으로 확인됨.",
-    "ai_summary_ko": "maxon은 하노버 메세 2026에서 고효율 로봇 관절인 HEJ 90 및 HEJ 70, GSW 스트레인 웨이브 기어 시리즈 등 로봇용 감속기와 최신 드라이브 포트폴리오를 선보임.",
-    "ai_summary_en": "Maxon will showcase its latest robotics drives and portfolio additions, including High Efficiency Joints such as the HEJ 90 and smaller HEJ 70, along with GSW strain wave gear series, at Hannover Messe 2026.",
+    "ai_summary_reason": "Maxon이 Hannover Messe 2026에 참가해 로봇용 High Efficiency Joints(HEJ) 및 GSW strain wave gear 시리즈 등 타겟 기술과 직접 연계된 드라이브 및 감속기 포트폴리오를 선보이는 사업 활동이 확인됨.",
+    "ai_summary_ko": "Hannover Messe 2026 전시회에서 로봇용 High Efficiency Joints(HEJ) 제품군과 신규 GSW strain wave gear 시리즈를 포함한 최신 포트폴리오와 드라이브 솔루션을 공개할 예정임. 다양한 산업용 드라이브와 정밀 제어 시스템을 선보이며 로봇 및 자동화 분야의 기술력을 시연할 계획임.",
+    "ai_summary_en": "At Hannover Messe 2026, maxon will showcase its latest product portfolio including High Efficiency Joints (HEJ) for robotics and the GSW strain wave gear series. The company will present various drive solutions and precision control systems to demonstrate its advanced automation and robotics capabilities.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "b2f983fe825417e6948fc286",
     "ai_evidence_quotes": [
-      "At Hannover Messe 2026, maxon will present itself with an updated trade fair appearance. From April 20 to 24, the maxon Germany team will showcase the latest highlights from our product portfolio.",
-      "Robotics solutions: maxon’s High Efficiency Joints (HEJ) bring motion to robotics. They enable humanoid robots to operate in unstructured environments and are also suitable for industrial applications. At Hannover Messe, we will present the proven High Efficiency Joint 90, as well as the new, smaller HEJ 70.",
-      "Since launching our new GSW strain wave gear series, we have continuously developed it further. Our gearheads transmit high torques precisely and efficiently and can be combined with a wide range of maxon drives. In Hannover, we will, for example, present the GSW 20 in combination with an ECX PRIME drive."
+      "At Hannover Messe 2026, maxon will present itself with an updated trade fair appearance.",
+      "Gearheads: Since launching our new GSW strain wave gear series, we have continuously developed it further."
     ]
   },
   {
@@ -2418,15 +1939,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Maxon이 SPS 2025 전시회에서 로봇 및 자동화용 고효율 조인트(HEJ)와 스트레인 웨이브 기어헤드 등 신규 드라이브 및 구동 솔루션을 공개하는 사업 활동을 보도함.",
-    "ai_summary_ko": "Maxon이 SPS 2025 전시회에서 로봇공학과 자동화, 모빌리티를 위한 고통합형 고효율 조인트(HEJ) 및 스트레인 웨이브 기어헤드 등 신규 구동 솔루션과 제품군을 공개함. 컴팩트한 설계와 안전 인증을 갖춘 다양한 서보 드라이브 및 제어기 라인업을 선보이며 관련 기술 사업을 전개함.",
-    "ai_summary_en": "Maxon is presenting new drive solutions and product portfolios, including High Efficiency Joints (HEJ) and strain wave gearheads for robotics, automation, and mobility at the SPS 2025 trade fair. The company is advancing its business by showcasing compact, safety-certified servo drives and controllers designed for demanding industrial environments.",
+    "ai_summary_reason": "Maxon이 SPS 2025 전시회에서 High Efficiency Joints(HEJ) 및 Strain wave gearheads 등 로봇용 구동 및 감속기 신제품 포트폴리오를 공개하고 관련 제품 개발 및 생산 현황을 발표함.",
+    "ai_summary_ko": "Maxon은 SPS 2025 전시회에서 High Efficiency Joints(HEJ) 및 Strain wave gearheads 등 로봇용 신제품 구동 솔루션을 공개할 예정임. HEJ 50 모델은 현재 생산 중이며 2026년 초부터 제공될 예정임.",
+    "ai_summary_en": "Maxon will present a wide range of new drive solutions for robotics and automation at the SPS 2025 trade fair, including the High Efficiency Joints (HEJ) series and new Strain wave gearheads. The HEJ 50 variant is currently in production and will be available from early 2026, while the HEJ Hercules model is under development.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "d7b063a5473e7577d0046941",
     "ai_evidence_quotes": [
       "At the SPS trade fair from November 25 to 27, 2025, maxon will present a wide range of new products. From highly integrated robotic actuators to powerful servo drives and controllers: a diverse technology portfolio awaits visitors at the maxon booth in Hall 3, Stand 468.",
-      "One focus at the maxon booth will be the further developed robotics solutions, in particular the High Efficiency Joints (HEJ).",
       "With the new Strain wave gearheads, maxon expands its portfolio, especially for applications with high demands on precision in torque transmission."
     ]
   },
@@ -2488,15 +2008,16 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "maxon Group이 Synapticon과 파트너십을 맺고 모션 컨트롤 분야의 고성능 드라이브 솔루션을 공동 개발하기로 함.",
-    "ai_summary_ko": "maxon Group은 모션 컨트롤 분야의 전문성을 확대하기 위해 독일 기업인 Synapticon에 전략적 소수 지분을 인수하고 파트너십을 체결함. 양사는 통합 기능 안전성을 갖춘 고성능 드라이브 솔루션을 공동 개발할 계획임.",
-    "ai_summary_en": "The maxon Group has acquired a strategic minority stake in the German company Synapticon to expand its expertise in motion control. The partners are collaborating on the joint development of high-performance drive solutions with integrated functional safety.",
+    "ai_summary_reason": "maxon Group이(가) Synapticon과 파트너십을 맺고 모션 컨트롤 및 고성능 드라이브 솔루션을 공동 개발하기로 하였으며, 지분 투자를 단행함.",
+    "ai_summary_ko": "maxon Group은(는) 독일 Synapticon의 전략적 소수 지분을 인수하고 모션 컨트롤 분야의 전문성을 확대하기 위한 전략적 파트너십을 체결했음. 양사는 최적화된 부품을 결합하여 통합 기능 안전성을 갖춘 고성능 드라이브 솔루션을 공동 개발할 계획임. 이번 협력을 통해 로봇 공학 및 산업 자동화 시장을 위한 메카트로닉스 드라이브 시스템 포트폴리오를 강화할 예정임.",
+    "ai_summary_en": "maxon Group has acquired a strategic minority stake in Synapticon to expand its expertise in motion control through a strategic partnership. The companies aim to jointly develop high-performance drive solutions with integrated functional safety based on combined components. This collaboration strengthens maxon's portfolio of mechatronic drive systems for rapidly growing markets such as robotics and industrial automation.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "436856f5d9879292f2143b93",
     "ai_evidence_quotes": [
       "The Swiss maxon Group is expanding its expertise in the field of motion control through a strategic partnership with the German company Synapticon.",
-      "The goal of the collaboration is the joint development of high-performance drive solutions with integrated functional safety, based on optimally combined components from both companies."
+      "The goal of the collaboration is the joint development of high-performance drive solutions with integrated functional safety, based on optimally combined components from both companies.",
+      "As part of this partnership, the maxon Group has acquired a minority stake in Synapticon."
     ]
   },
   {
@@ -2557,15 +2078,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "정밀 드라이브 시스템 및 통합 메카트로닉 시스템, High Efficiency Joints 등 타겟 품목과 직접 연계된 제품 포트폴리오 강화 및 투자 활동이 확인됨.",
-    "ai_summary_ko": "maxon은 2024년 회계연도 동안 CHF 594.7 million의 매출을 기록했으며, integrated mechatronic systems 및 High Efficiency Joints 등 정밀 드라이브 솔루션 포트폴리오를 강화하고 로봇 및 의료 시스템 분야의 제품 플랫폼에 투자했음.",
-    "ai_summary_en": "maxon reported a 2024 fiscal year revenue of CHF 594.7 million and strengthened its precision drive solutions portfolio, including integrated mechatronic systems and High Efficiency Joints, while investing in product platforms for robotics and medical systems.",
+    "ai_summary_reason": "Maxon 그룹의 2024 회계연도 매출, 연구개발비, 정밀 구동계 및 메카트로닉스 시스템 사업 성과와 양산 준비 현황이 구체적으로 보도되어 타겟 기술과 연계된 사업 동향이 명확함.",
+    "ai_summary_ko": "Maxon 그룹은 2024 회계연도에 전년 대비 10.5% 감소한 5억 9,470만 스위스프랑(CHF 594.7 million)의 매출을 기록했음. 연구개발(R&D) 투자액은 4,780만 스위스프랑(CHF 47.8 million)으로 매출의 약 8%를 차지했으며, 단품 모터에서 통합 메카트로닉스 시스템 및 High Efficiency Joints 등 정밀 구동계 솔루션으로 포트폴리오 전환을 추진하고 있음. 또한 물류 셔틀과 자율주행 물류 차량 등 주요 시스템 프로젝트에서 양산 준비를 완료했음.",
+    "ai_summary_en": "The maxon Group reported a 2024 fiscal year revenue of CHF 594.7 million, representing a 10.5 percent decline compared to the previous year. Research and development expenditures totaled CHF 47.8 million, maintaining approximately 8 percent of sales, while the company increasingly shifted its portfolio from individual components to integrated mechatronic systems, High Efficiency Joints, and complete drive solutions for robotics and medical systems. Additionally, maxon achieved series production readiness in several system projects such as logistics shuttles and autonomous logistics vehicles.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "71d7341cd043fa9e6433bd38",
     "ai_evidence_quotes": [
       "For the second consecutive year, the maxon Group reports a decline in revenue. However, thanks to proactive measures, the company considers the 2024 revenue of CHF 594.7 million a satisfactory result under the circumstances.",
-      "The increasing demand for integrated mechatronic systems is evident in the portfolio. maxon is therefore making significant investments in these product platforms.",
+      "Development expenditure totaled CHF 47.8 million in 2024 (previous year: CHF 53.6 million, -10.8 per cent), which corresponds to around 8 % of sales (previous year: 8.1 %).",
       "Our High Efficiency Joints – compact drive solutions with integrated motor, transmission, and control technology – are tailored to growing markets such as collaborative robotics, exoskeletons, and precision medical systems."
     ]
   },
@@ -2635,16 +2156,15 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "타겟 품목인 풍력터빈 및 해상풍력터빈과 직접 관련된 2026년 2분기 매출, 수주, 인도량 등 구체적인 사업 및 영업 실적 활동이 상세히 보고됨.",
-    "ai_summary_ko": "2026년 2분기 Vestas는 매출 EUR 4,723m와 EBIT 마진 9.4퍼센트를 기록하며 수익성이 크게 개선되었음. 해당 기간 풍력터빈 수주 3,349MW와 해상풍력터빈 인도량 776MW를 달성하는 등 주요 사업 활동을 전개함.",
-    "ai_summary_en": "In the second quarter of 2026, Vestas reported revenue of EUR 4,723m and an EBIT margin of 9.4 percent, demonstrating significant profitability improvement. During the period, the company conducted core business activities, achieving a wind turbine order intake of 3,349 MW and offshore deliveries of 776 MW.",
+    "ai_summary_reason": "Vestas가 2026년 2분기 동안 해상풍력터빈 및 전력 솔루션 부문에서 47억 2,300만 유로의 매출과 3,349 MW의 풍력 터빈 주문을 기록하며 핵심 사업 활동 및 실적 성장을 달성함.",
+    "ai_summary_ko": "2분기 매출 47억 2300만 유로 기록 - Vestas가 2026년 2분기에 전년 동기 대비 26.1퍼센트 증가한 47억 2300만 유로의 매출과 3349 MW 규모의 풍력 터빈 주문 접수를 달성했음.",
+    "ai_summary_en": "Vestas reported quarterly revenue of EUR 4.7bn and wind turbine order intake of 3.3 GW for the second quarter of 2026, driven by growth in Power Solutions.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "3f6cb9741b942102370b1713",
     "ai_evidence_quotes": [
       "In the second quarter of 2026, Vestas generated revenue of EUR 4,723m – an increase of 26.1 percent compared to the second quarter of 2025.",
-      "The quarterly intake of firm and unconditional wind turbine orders amounted to 3,349 MW, a 67 percent increase from second quarter 2025.",
-      "Offshore deliveries increased from 320 MW in the second quarter of 2025 to 776 MW in the second quarter of 2026."
+      "The quarterly intake of firm and unconditional wind turbine orders amounted to 3,349 MW, a 67 percent increase from second quarter 2025."
     ]
   },
   {
@@ -2804,9 +2324,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Siemens Gamesa가 2026년 회계연도 3분기에 2022년 이후 처음으로 분기 흑자를 기록하고 2026년 손익분기점 달성을 향해 나아가고 있다는 사업 실적 및 동향이 보고됨.",
-    "ai_summary_ko": "Siemens Gamesa는 2026년 회계연도 3분기에 2022년 이후 처음으로 분기 흑자 전환을 달성했으며, 2026년 손익분기점 도달을 향해 순항하고 있음. 해당 부문은 전사 실적 개선에 크게 기여함.",
-    "ai_summary_en": "Siemens Gamesa reported a positive result for the first time since fiscal year 2022 in the third quarter of fiscal year 2026 and is on track to reach break-even for 2026, making a significant contribution to overall financial improvement.",
+    "ai_summary_reason": "Siemens Gamesa가 2022 회계연도 이후 처음으로 흑자 전환에 성공하고 2026년 손익분기점 달성 순항 중임을 보고하는 구체적인 실적 및 사업 동향이 확인됨.",
+    "ai_summary_ko": "Siemens Gamesa는 2026년 3분기에 2022 회계연도 이후 처음으로 흑자 전환에 성공하며 긍정적인 실적을 기록했음. 해당 기간 동안 매출 2,743백만 유로와 특수항목 제외 영업이익률 2.7%를 기록했음.",
+    "ai_summary_en": "Siemens Gamesa reported a positive result and returned to profitability in the third quarter of fiscal year 2026 for the first time since fiscal year 2022. During the quarter, revenue reached €2,743m with a profit margin before special items of 2.7%.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "4d8f3b6d25a573877926ceba",
@@ -2880,19 +2400,20 @@
     "date_note": "",
     "ai_signal_supported": true,
     "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
+    "ai_target_technology_supported": false,
     "ai_indicator_supported": true,
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "2026년 상반기 실적 및 주요 사업 활동, 투자 결정 등이 상세히 보고됨.",
-    "ai_summary_ko": "2026년 상반기 그룹 매출은 환율 및 에너지 영향을 제외하고 4.3% 증가한 138억 2800만 유로를 기록했으며, 영업이익률은 20.9%로 상승함. 미국 및 아시아 지역을 중심으로 대규모 투자 결정이 활발히 이루어짐.",
-    "ai_summary_en": "Group revenue in the first half of 2026 reached 13,828 million euros, up 4.3% excluding currency and energy impacts, with the operating margin rising to 20.9% and dynamic large-scale investment decisions across the Americas and Asia.",
+    "ai_summary_reason": "2026년 상반기 실적 및 미국 내 대규모 설비 투자 결정 등 구체적인 사업 활동 내용이 확인됨.",
+    "ai_summary_ko": "Air Liquide 그룹의 2026년 상반기 매출액은 통화 및 에너지 영향을 제외하고 전년 동기 대비 +4.3% 증가한 13,828백만 유로를 기록했음. 같은 기간 산업 및 재정 투자 결정액은 29억 유로로 전년 동기 대비 +27% 급증했으며, 미국 루이지애나주의 Hyundai-Posco Louisiana LLC와 인디애나주의 SK hynix 등을 위한 대규모 설비 투자가 포함됨.",
+    "ai_summary_en": "Air Liquide reported group revenue of 13,828 million euros in the first half of 2026, up +4.3% excluding currency and energy impacts. Industrial and financial investment decisions reached a record 2.9 billion euros in the first half of 2026, up +27% compared to the first half of 2025, including major facility investments in the United States for customers such as Hyundai-Posco Louisiana LLC and SK hynix.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "b6009dba54b6af864abf5adb",
     "ai_evidence_quotes": [
-      "Group revenue stood at 13,828 million euros in the 1st half of 2026, up +4.3% excluding currency and energy impacts, including the acquisition of DIG Airgas(1)."
+      "Group revenue stood at 13,828 million euros in the 1st half of 2026, up +4.3% excluding currency and energy impacts, including the acquisition of DIG Airgas(1).",
+      "In the 1st half of 2026, industrial and financial investment decisions were particularly dynamic. They reached a record level of 2.9 billion euros, up +27% compared to the 1st half of 2025."
     ]
   },
   {
@@ -2953,15 +2474,17 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "실험실 자동화 및 의료 기기에 활용되는 정밀 구동 시스템, 모터 및 제어기 제품군과 이들의 실제 적용 사례에 대한 구체적인 사업 활동 내용이 포함됨.",
-    "ai_summary_ko": "maxon은 실험실 자동화 및 분석 기기를 위한 정밀 구동 시스템과 브러시리스 및 브러시 DC 모터, 기어헤드를 개발 및 공급함. Andrew Alliance 및 Stago 등의 장비에 맞춤형 드라이브 솔루션을 제공하여 고정밀 다축 제어와 정밀한 액체 핸들링 작업을 지원함.",
-    "ai_summary_en": "maxon develops and supplies precision drive systems, DC motors, and gearheads for laboratory automation and analytical instruments. It provides customized drive solutions integrated into equipment such as Andrew Alliance and Stago systems to support high-precision multi-axis control and accurate liquid handling operations.",
+    "ai_summary_reason": "Maxon사는 실험실 자동화(액체 핸들링 로봇, 혈액 분석 장비 등)에 사용되는 정밀 브러시 및 브러시리스 DC 모터, 감속기, 제어기 등 타겟 품목과 직접 연계된 구체적인 제품 라인업과 응용 사례를 제공함.",
+    "ai_summary_ko": "스위스 정밀 구동 시스템 제조사 Maxon은 실험실 자동화 분야를 위한 브러시 및 브러시리스 DC 모터, 감속기, 제어기 등 다양한 정밀 드라이브 솔루션을 공급함. Andrew Alliance의 Andrew+ 액체 핸들링 로봇과 Stago의 StarMax 혈액 분석 장비 등에 Maxon의 모터와 구동 부품이 적용되어 고정밀 다축 제어 및 자동화를 지원함.",
+    "ai_summary_en": "Swiss precision drive systems manufacturer Maxon supplies a comprehensive portfolio of brush and brushless DC motors, gearheads, and controllers tailored for laboratory automation applications. Maxon's motors and drive components are integrated into systems such as Andrew Alliance's Andrew+ liquid handling robot and Stago's StarMax blood analysis equipment to enable high-precision multi-axis control and automation.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "d4ff24a5f10eaa1b16d4fea9",
     "ai_evidence_quotes": [
-      "Precision Drive Systems Drive solutions for laboratory automation. Reliable designs with high precision.",
-      "maxon delivers robust drive solutions used in electronic pipettes and laboratory tools for accurate and repeatable delivery of samples and reagents in the fields of molecular biology, analytical chemistry and medicine."
+      "maxon – a strong global brand maxon, with headquarters in Sachseln/Central Switzerland, has production sites in Switzerland, Germany, Hungary, South Korea, USA, France, Netherlands, Great Britain and China as well as sales companies in more than 30 countries.",
+      "maxon delivers robust drive solutions used in electronic pipettes and laboratory tools for accurate and repeatable delivery of samples and reagents in the fields of molecular biology, analytical chemistry and medicine.",
+      "Andrew Alliance chose three EC 45 flat motors designed and manufactured by maxon for the robot arm actuation—one each for the shoulder, elbow, and wrist.",
+      "The cooperation has now become so close that maxon assembles the complete conveyor system for the pipette racks in its own production facility in Lyon and ships it to Stago for final assembly."
     ]
   },
   {
@@ -3071,16 +2594,14 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "코그넥스가 OneVision 플랫폼을 데이터 센터 공급망으로 확장하고 서버 랙 검사 애플리케이션 및 인공지능 기반 비전 애플리케이션 전개를 추진하는 등 타겟 품목 및 기술과 직접 연계된 사업 동향을 보여줌.",
-    "ai_summary_ko": "코그넥스가 데이터 센터 공급망으로 OneVision 플랫폼을 확장하고, 서버 랙 검사 애플리케이션을 통해 품질 관리 요구사항을 충족하며 인공지능 기반 비전 애플리케이션 배포를 가속화함.",
-    "ai_summary_en": "Cognex is expanding its OneVision platform into the data center supply chain with a server-rack inspection application addressing complex quality control requirements and accelerating the deployment of AI-powered vision applications.",
+    "ai_summary_reason": "Cognex가 데이터 센터 공급망으로 OneVision 플랫폼을 확장하고 서버 랙 검사 응용 프로그램을 통해 품질 관리 요구 사항을 처리하며, 수백 명의 고객이 AI 비전 응용 프로그램 배포에 활용하고 있는 사업 동향이 확인됨.",
+    "ai_summary_ko": "Cognex의 데이터 센터 공급망 OneVision 플랫폼 확장 및 서버 랙 검사 응용 프로그램을 통한 품질 관리 요구 사항 충족임. 수백 명의 고객이 AI 기반 비전 응용 프로그램의 구성 및 배포를 가속화하기 위해 OneVision을 활용 중임.",
+    "ai_summary_en": "Cognex is extending its OneVision platform into the data center supply chain, addressing complex quality-control requirements with its server-rack inspection application. Hundreds of customers are using OneVision to accelerate the configuration and deployment of AI vision applications.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "9493adc2af3df4f858b29a4f",
     "ai_evidence_quotes": [
-      "The company is extending OneVision into the data center supply chain.",
-      "Its server-rack inspection application addresses complex quality-control requirements and expands the platform beyond traditional factory automation.",
-      "Hundreds of customers are using OneVision to accelerate the configuration and deployment of AI-powered vision applications."
+      "The company is extending OneVision into the data center supply chain. Its server-rack inspection application addresses complex quality-control requirements and expands the platform beyond traditional factory automation. Hundreds of customers are using OneVision to accelerate the configuration and deployment of AI-powered vision applications."
     ]
   },
   {
@@ -3176,15 +2697,16 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "오토모티브 및 IoT 부문의 실적 성과와 BMW와의 확장 계약 등 타겟 품목 관련 사업 동향이 상세히 보도됨.",
-    "ai_summary_ko": "오토모티브 부문 매출은 전년 동기 대비 61% 증가하여 15억 9,000만 달러를 기록했고, IoT 부문 매출은 9% 상승하여 18억 3,000만 달러를 기록했다. 또한 BMW와의 확장 계약을 통해 차세대 ADAS 및 디지털 콕핏의 선도 컴퓨팅 실리콘 공급업체로 선정되었으며, 2026 회계연도 말 기준 오토모티브 연환산 런레이트 목표를 60억 달러에서 약 70억 달러로 상향 조정했다.",
-    "ai_summary_en": "Automotive revenue surged 61% year over year to a record $1.59 billion, and IoT rose 9% to $1.83 billion. In addition, Qualcomm won an expanded agreement with BMW to become lead compute silicon provider for next-generation ADAS and digital cockpit, and raised its automotive annualized run rate target to roughly $7 billion exiting fiscal 2026, up from $6 billion.",
+    "ai_summary_reason": "Qualcomm의 회계 3분기 실적 및 사업 동향 기사로, 자동차 부문 매출 15억 9000만 달러 기록, BMW와의 차세대 ADAS 및 디지털 콕핏용 컴퓨팅 실리콘 공급 계약 확대, 그리고 글로벌 하이퍼스칼라와의 커스텀 실리콘 웨이퍼 생산 시작 등의 구체적인 타겟 품목 관련 사업 활동이 확인됨.",
+    "ai_summary_ko": "Qualcomm은 자동차 부문 매출이 전년 동기 대비 61% 증가한 15억 9000만 달러를 기록하였고, BMW와의 차세대 ADAS 및 디지털 콕핏용 주력 컴퓨팅 실리콘 공급 계약을 확대했음. 또한 2개의 글로벌 하이퍼스칼라와의 커스텀 실리콘 협력이 12월 분기부터 매출 창출을 시작할 예정이며, 2027년 회계연도 데이터 센터 매출이 50억 달러에 이를 것으로 전망됨.",
+    "ai_summary_en": "Qualcomm reported that its automotive segment revenue surged 61% year over year to a record $1.59 billion and expanded its agreement with BMW to become the lead compute silicon provider for next-generation ADAS and digital cockpit systems. Additionally, two custom silicon engagements with global-scale hyperscalers are set to begin generating revenue in the December quarter, with data center revenue guided to reach $5 billion in fiscal 2027.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "3a82fd3abf18c5c0614150c5",
     "ai_evidence_quotes": [
-      "automotive surged 61% year over year to a record $1.59 billion, its 23rd consecutive quarter of double-digit growth, and IoT rose 9% to $1.83 billion.",
-      "Qualcomm won an expanded agreement with BMW to become lead compute silicon provider for next-generation ADAS and digital cockpit, and raised its automotive annualized run rate target to roughly $7 billion exiting fiscal 2026, up from $6 billion."
+      "Qualcomm’s segment mix told a diversification story. Handset revenue dropped 20% to $5.09 billion, automotive surged 61% year over year to a record $1.59 billion, its 23rd consecutive quarter of double-digit growth, and IoT rose 9% to $1.83 billion.",
+      "Qualcomm won an expanded agreement with BMW to become lead compute silicon provider for next-generation ADAS and digital cockpit, and raised its automotive annualized run rate target to roughly $7 billion exiting fiscal 2026, up from $6 billion.",
+      "Two custom silicon engagements with global-scale hyperscalers begin generating revenue in the December quarter, and wafer production has started."
     ]
   },
   {
@@ -3287,9 +2809,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Moderna가 Merck와 공동으로 진행한 mRNA 기반 흑색종 백신 후기 임상 초기 결과를 발표하며 구체적인 품목 연계 사업 및 임상 성과를 보여줌.",
-    "ai_summary_ko": "Moderna와 Merck가 mRNA 기반 암 백신을 활용한 실험용 흑색종 치료제의 후기 임상 초기 결과를 발표했음. 해당 병용 치료법은 수술을 받은 환자들의 암 재발 또는 전이 가능성을 낮추는 것으로 확인되었으며, 양사는 향후 폐암 및 방광암 등을 포함한 10개 이상의 추가 연구를 진행할 계획임.",
-    "ai_summary_en": "Moderna and Merck announced initial results from a late-stage trial for an experimental melanoma treatment using an mRNA-based cancer vaccine. The combination therapy reduced the likelihood of cancer returning or spreading for participants who had their melanoma surgically removed, and the companies plan more than 10 additional studies in other cancers including lung and bladder cancer.",
+    "ai_summary_reason": "Moderna와 Merck가 mRNA 기반 암 백신인 intismeran을 활용한 흑색종 치료제 말기 임상 시험의 초기 결과를 발표함.",
+    "ai_summary_ko": "Moderna와 Merck는 1,000명 이상의 참가자를 대상으로 한 mRNA 기반 암 백신 intismeran의 흑색종 치료제 말기 임상 시험 초기 결과를 발표했음. 해당 치료제는 수술로 흑색종을 제거한 환자들의 암 재발 또는 전이 가능성을 낮추는 것으로 나타났음.",
+    "ai_summary_en": "Moderna and Merck announced initial results from a late-stage trial for an experimental melanoma treatment using the mRNA-based cancer vaccine intismeran. According to the companies, the treatment reduced the likelihood of cancer returning or spreading in over 1,000 participants who had their melanoma surgically removed.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "706d67b05c46356921e02d3a",
@@ -3440,9 +2962,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Moderna와 Merck의 공동 암 백신 후보인 intismeran autogene에 대한 1,137명 규모의 임상 시험 결과가 공개되어 수술 후 흑색종 재발 및 전이 위험 감소 효과가 확인됨.",
-    "ai_summary_ko": "Moderna와 Merck가 공동 개발 중인 암 백신 intismeran autogene에 대한 1,137명 규모의 임상 시험에서 수술 후 흑색종의 재발 또는 전이 위험을 감소시키는 것으로 나타났음. 해당 백신은 과거 회의와 초기 회의적 시선 속에서도 임상 데이터로 효과를 입증하고 있음.",
-    "ai_summary_en": "A clinical study involving 1,137 volunteers showed that Moderna and Merck's cancer vaccine, intismeran autogene, reduced the risk of melanoma recurrence or spread after surgery. The treatment continues to demonstrate efficacy despite past skepticism and hurdles.",
+    "ai_summary_reason": "Moderna가 Merck와 공동 개발 중인 암 백신 intismeran autogene의 1,137명 대상 임상 연구에서 수술 후 흑색종의 재발 또는 전이 위험 감소 효과가 확인됨.",
+    "ai_summary_ko": "Moderna와 Merck가 공동 개발한 암 백신 intismeran autogene에 대한 1,137명 자원자 대상 임상 시험 결과, 수술 후 흑색종의 재발 또는 전이 위험을 낮추는 것으로 나타났음.",
+    "ai_summary_en": "A 1,137-volunteer clinical trial showed that the cancer vaccine intismeran autogene, developed by Moderna and Merck, reduced the odds that surgically removed melanoma would return or spread.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "a879b7c160b83d9a96df94e1",
@@ -3544,16 +3066,16 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "타겟 품목인 자율주행 및 차량용 칩과 맞춤형 실리콘 사업에서 기록적인 매출 성장, 연간 매출 전망 상향 조정, 하이스케일러 대상 맞춤형 실리콘 수주 등 구체적인 사업 성과와 활동이 상세히 보도됨.",
-    "ai_summary_ko": "퀄컴은 2026 회계연도 3분기 자동차 부문 매출이 전년 동기 대비 61% 급증한 15억 9000만 달러를 기록하며 23개 분기 연속 두 자릿수 성장세를 이어갔다. 디지털 콕핏, 첨단 운전자 보조 시스템, 자율주행 부문의 출하량 확대가 성장을 견인했으며, 회사는 2026 회계연도 연환산 자동차 매출 전망치를 약 70억 달러로 상향 조정했다. 또한 데이터 센터 및 맞춤형 실리콘 분야에서 글로벌 하이스케일러들과의 수주를 바탕으로 2026년 12월 분기부터 매출 발생이 예상된다고 밝혔다.",
-    "ai_summary_en": "Qualcomm reported that its fiscal third-quarter automotive revenues surged 61% year over year to $1.59 billion, marking its 23rd consecutive quarter of double-digit growth driven by digital cockpit, advanced driver-assistance, and automated-driving shipments. The company raised its fiscal 2026 exit outlook for annualized automotive sales to about $7 billion. Additionally, Qualcomm advanced its data center and custom silicon roadmap, with two custom silicon wins with global-scale hyperscalers expected to begin generating revenues in the December 2026 quarter.",
+    "ai_summary_reason": "자동차 부문 매출이 전년 동기 대비 61% 급증하여 역대 최고 실적을 기록했으며, 디지털 콕핏, 첨단 운전자 보조 및 자율주행 관련 출하량 증가와 연간 자동차 매출 전망치 상향 조정 등 타겟 기술과 직접 연계된 구체적인 사업 활동이 확인됨.",
+    "ai_summary_ko": "Qualcomm의 회계연도 3분기 자동차 부문 매출은 전년 동기 대비 61% 증가한 15억 9000만 달러를 기록하며 역대 최고 실적을 경신했음. 디지털 콕핏, 첨단 운전자 보조 시스템 및 자율주행 관련 출하량 증가가 실적을 견인했으며, 회사는 연간 자동차 부문 매출 전망치를 약 70억 달러로 상향 조정했음.",
+    "ai_summary_en": "Qualcomm posted a 61% year-over-year surge in automotive revenues to $1.59 billion in the fiscal third quarter, marking a record quarter driven by higher shipments tied to digital cockpit, advanced driver-assistance, and automated-driving launches. The company raised its fiscal 2026 exit outlook for annualized automotive sales to approximately $7 billion.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "6f0ea5fbaa9000684dc932a2",
     "ai_evidence_quotes": [
       "Automotive revenues surged 61% year over year to $1.59 billion, marking a record quarter and the 23rd consecutive quarter of double-digit year-over-year growth.",
-      "Qualcomm raised its fiscal 2026 exit outlook for annualized automotive sales to about $7 billion.",
-      "Two custom silicon wins with global-scale hyperscalers are expected to begin generating revenues in the December 2026 quarter."
+      "Favorable mix and higher average selling prices added $381 million to automotive revenues, while higher shipments tied to digital cockpit, advanced driver-assistance and automated-driving launches contributed $223 million.",
+      "Qualcomm raised its fiscal 2026 exit outlook for annualized automotive sales to about $7 billion."
     ]
   },
   {
@@ -3656,9 +3178,9 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Moderna가 Merck와 공동 개발 중인 mRNA 기반 암 백신 intismeran의 임상 초기 연구 결과를 발표하여 타겟 기술과 직접 연계된 개발 및 사업 활동이 확인됨.",
-    "ai_summary_ko": "Moderna가 Merck와 공동 개발 중인 실험용 mRNA 기반 암 백신 intismeran의 임상 초기 연구 결과를 발표함. 흑색종 환자를 대상으로 한 연구에서 intismeran과 Keytruda 병용 투여군이 Keytruda 단독 투여군보다 암 재발이나 전이 없이 더 오래 생존한 것으로 나타남. 양사는 다가오는 국제 의학 학술대회에서 해당 연구 결과를 발표할 계획임.",
-    "ai_summary_en": "Moderna announced initial results from a clinical study of its experimental mRNA-based cancer vaccine, intismeran, which is being co-developed with Merck. In the study involving melanoma patients, the combination of intismeran and Merck's Keytruda demonstrated improved progression-free survival compared to Keytruda alone. The companies plan to present the study results at an upcoming international medical meeting.",
+    "ai_summary_reason": "타겟 기술인 mRNA 기반 백신(intismeran)의 임상 시험 결과 주요 시험을 통과하고 환자 생존 기간 연장 효과가 확인되는 등 구체적 사업 활동이 보도됨.",
+    "ai_summary_ko": "Moderna와 Merck는 2026년 8월 20일 개인 맞춤형 mRNA 기반 암 백신 intismeran과 Keytruda를 병용 투여한 임상 연구에서 흑색종 환자의 생존 기간이 연장되는 등 주요 시험을 통과했다고 밝혔음. 양사는 향후 국제 의학 학술대회에서 해당 연구 결과를 발표할 예정임.",
+    "ai_summary_en": "Moderna and Merck announced on August 20, 2026, that initial study results showed their experimental mRNA-based cancer vaccine intismeran, when paired with Keytruda, successfully passed a key test by helping melanoma patients live longer without cancer returning. The companies plan to present the study results at an upcoming international medical meeting.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "f4997f8960ac3a49be107e6a",
@@ -3761,8 +3283,8 @@
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "에어프로덕츠의 산업용 가스 프로젝트 투자, NEOM 그린수소 프로젝트 추진, 그리고 생산성 향상 및 비용 절감 이니셔티브 등 구체적인 사업 활동을 다루고 있음.",
-    "ai_summary_ko": "에어프로덕츠는 연간 약 15억 달러 규모의 전통 산업용 가스 프로젝트 투자를 계획 중이며, 사우디아라비아에서 NEOM 그린수소 프로젝트를 지속해서 추진하고 있음. 또한 비용 구조 개선을 위한 생산성 향상 프로그램과 인력 감축을 시행하고 있음.",
-    "ai_summary_en": "Air Products is planning investments of about $1.5 billion annually in traditional industrial gas projects and is continuing to pursue the NEOM green hydrogen project in Saudi Arabia. The company is also implementing productivity improvement programs and headcount reductions to improve its cost structure.",
+    "ai_summary_ko": "Air Products는 사우디아라비아에서 NEOM 그린 수소 프로젝트를 추진 중이며, Yara International과 재생 암모니아 마케팅 및 유통 계약을 체결했음. 해당 프로젝트는 연간 최대 1.2 million tons의 재생 암모니아를 공급할 예정임.",
+    "ai_summary_en": "Air Products is pursuing the NEOM green hydrogen project in Saudi Arabia and has finalized a marketing and distribution agreement with Yara International for renewable ammonia. The project is expected to supply up to 1.2 million tons per year of renewable ammonia.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "1ca13a566d0581926822f9dd",
@@ -3920,15 +3442,132 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "ASML이 Low-NA EUV 및 DUV 장비 생산 능력을 2027년과 2028년에 걸쳐 각각 30%씩 확대할 계획을 가지고 있음을 다룸.",
-    "ai_summary_ko": "ASML은 2027년에 Low-NA EUV 및 DUV 침적 장비 생산 능력을 30% 확대하고 2028년에 추가로 30%를 확대할 계획임. 고객사의 주문과 계약금 지급을 바탕으로 생산 능력이 각각 85/110대 및 170/220대로 증가할 예정임.",
-    "ai_summary_en": "ASML plans to expand its Low-NA EUV and DUV immersion capacity by 30% in 2027 and another potential 30% in 2028. Driven by customer orders and down payments, capacity is projected to reach 85/110 Low-NA EUV systems and 170/220 DUV immersion systems by 2027-2028.",
+    "ai_summary_reason": "ASML이 2027년과 2028년에 걸쳐 Low-NA EUV 및 DUV 침적 장비 생산능력을 확대할 계획임을 밝히는 등 타겟 기술과 직접 연계된 사업 동향을 보여줌.",
+    "ai_summary_ko": "ASML은 2027년에 Low-NA EUV 및 DUV 침적 장비 생산능력을 30% 확대하고 2028년에 추가로 30%를 확대할 예정임. 이에 따라 생산 능력이 2027~2028년 동안 Low-NA EUV 시스템 85~110대, DUV 침적 시스템 170~220대로 각각 증가할 것임.",
+    "ai_summary_en": "ASML intends to expand Low-NA EUV and DUV immersion capacity by 30% in 2027 and another potential 30% in 2028. This expansion will bring capacity to 85/110 Low-NA EUV systems and 170/220 DUV immersion systems by 2027-28, compared with 65 and 130 units respectively.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "3d709be04b752dad82ddb47e",
     "ai_evidence_quotes": [
-      "We are updating our long-term ASML forecasts, as the firm intends to expand Low-NA EUV and DUV immersion capacity by 30% in 2027 and another potential 30% in 2028.",
-      "Expansion would bring capacity to 85/110 Low-NA EUV systems by 2027-28 and 170/220 DUV immersion systems by 2027-28, compared with today’s 65 and 130 units, respectively."
+      "“We are updating our long-term ASML forecasts, as the firm intends to expand Low-NA EUV and DUV immersion capacity by 30% in 2027 and another potential 30% in 2028."
+    ]
+  },
+  {
+    "target_no": 19,
+    "company": "Skyworks",
+    "title": "Skyworks/Qorvo Deal Ahead of Schedule - ocbj.com",
+    "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBSYUJRbF9URXZBVjZEM3g4bXFnbjZTSzBqdmtSTmlyblpLbmp6SHpmR2NUSVpzU281UVU5M2lzSkJMMm5oN2wwTHpUaFNtZEhDZ0hCS0FOT0VzeUVZeDF2RXNHWXo0Yy1fdHpaR2RPN0kzRVFUTW80Q0NRMA?oc=5",
+    "source": "Google News: ocbj.com",
+    "publisher": "ocbj.com",
+    "publisher_home_url": "https://www.ocbj.com/",
+    "published_at": "2026-08-03T15:26:29Z",
+    "published_month": "2026-08",
+    "published_at_source": "meta",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-07-31T21:28:26Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-03T15:26:29Z",
+        "month": "2026-08",
+        "source": "meta",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T15:26:29Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T15:26:29Z",
+        "month": "2026-08",
+        "source": "itemprop",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-07-31T21:28:26Z",
+        "month": "2026-07",
+        "source": "modified_meta",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T15:26:29Z",
+        "month": "2026-08",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-17T00:40:12Z",
+    "collector": "google_news_rss",
+    "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:50d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "Home Technology \nOC Homepage Technology \nSkyworks/Qorvo Deal Ahead of Schedule\nBy Kevin Costelloe \nAugust 3, 2026 \n198 \nFacebook\nTwitter\nLinkedin\nEmail\nPrint\nPhil Brace\nCEO\nSkyworks Solutions \nSemiconductor company Skyworks Solutions said it expects to complete its approximately $22 billion acquisition of rival Qorvo by the end of the year, earlier than previously anticipated, creating a larger player in the increasingly competitive chip market.\nThe Irvine-based chipmaker had originally expected the deal to close in early 2027 following regulatory approvals. But Chief Executive Phil Brace said July 28 that he foresees the closure by the end of the year, possibly sooner, as he released third-quarter results that topped analysts’ estimates.\n“We are now optimistic that we can close within the calendar year, and we will be preparing to close as early as within the fiscal year,” he said. The company’s fiscal year closes Oct. 2.\nThe Irvine-based company announced last week it would discontinue its quarterly dividend of 71 cents per share to prioritize acquisitions and debt reductions as well as a new $2 billion buyback authorization.\nIn the trading session after the results were announced, Skyworks’ shares declined by 5.4% to $61.19 and a $9.2 billion market cap. The shares have fallen by about two-thirds since reaching their all-time high of more than $190 each in 2021 (Nasdaq: SWKS).\nRevenue Decline to Continue\nSkyworks, which sells wireless ​communication chips to the automotive, ​industrial and consumer electronics industries, including smartphones, has been struggling to regain sales momentum. Analysts are projecting Skyworks’ fiscal 2026 sales will drop 4% to $3.92 billion, which would be its fourth consecutive yearly decline.\nSkyworks reported fiscal third-quarter revenue fell 3% to $935 million, with adjusted earnings per share of $1.08. Analysts cited by Yahoo predicted $926 million and $1.03, respectively.\nThe company is again projecting another quarterly decline in sales and profit. It estimated fourth quarter sales will be $1.01 billion to $1.06 billion and adjusted earnings of $1.27. A year ago, the company reported sales of $1.1 billion and an adjusted profit of $1.76 a share.\nRaymond James VP Melissa Fairbanks said in a note to clients she is looking for greater margin expansion and growth in broader industry markets for Skyworks “before turning more constructive on the shares.”\nThe analyst also wants to see “continued progress on the Qorvo transaction.”\nThe Qorvo Deal\nSkyworks on Oct. 28 announced it would form a “combined enterprise” with Qorvo of Greensboro, North Carolina, for radio frequency chips used in communications, smartphones, data transmission and wireless technology.\nThe combination with Qorvo will provide an estimated $7.7 billion in annual revenue and adjusted yearly profit of $2.1 billion, Skyworks said.\nUnder the terms of the agreement, Qorvo shareholders will receive $32.50 in cash per share and 0.960 of a Skyworks common share for each Qorvo share held at the close of the transaction, which implies a combined enterprise value of approximately $22 billion (Nasdaq: QRVO).\nSince the deal was announced, Skyworks’ share price has dropped about 24% while Qorvo’s has declined 8.1% in the same period.\nBoth are heavily reliant on Apple Inc., which accounted for about 57% of Skyworks’ revenue in the just-reported quarter.\nLast week, the company also announced its leadership team once the merger is completed.\nBesides Brace, who will be the CEO of the combined company,, other Skyworks executives named were Philip Carter as chief financial officer and Reza Kasnavi as chief operations and technology officer.\nQorvo CEO Bob Bruggeworth will be joining the board of the combined company.\nBrace said financing and leadership plans will make the company “ready to execute from day one.”\nSkyworks will be holding its Tech Day 2026 on Aug. 26 in San Jose, where topics will include the company’s “strategic entry into the AI data center market.”\nSkyworks says it has about 10,000 employees in 17 countries.\nWant more from the best local business newspaper in the country?\nSign-up for our FREE Daily eNews update to get the latest Orange County news delivered right to your inbox!\nSign Up Now \nWould you like to subscribe to Orange County Business Journal?\nOne-Year for Only $99\nWeekly in-depth coverage in print and digital formats\nSpecial Features: OC's Wealthiest, Top Priced Home Sales, Giving Guide, OC500, Charity Event Guide, Best Places to Work, Indispensables, Largest Charitable Gifts\nThe annual Book of Lists: Orange County's top companies across every industry\nSubscribe \nShare\nFacebook\nTwitter\nLinkedin\nEmail\nPrint\nPrevious article David Wilson Further Cuts Ties to Orange County \nNext article Orange County Serves Up Volleyball Growth \nKevin Costelloe Tech reporter at Orange County Business Journal\nFeatured Articles \nTourism \r\nVidCon Event Moves from Anaheim to Nashville \nRestaurants \r\nMountain Mike’s Pizza Names Sheena Dougher as CMO \nTechnology \r\nIrvine-Based Alteryx Forms Partnership with Golden Analytics \nRelated Articles \nTourism \r\nVidCon Event Moves from Anaheim to Nashville \nRestaurants \r\nMountain Mike’s Pizza Names Sheena Dougher as CMO \nTechnology \r\nIrvine-Based Alteryx Forms Partnership with Golden Analytics \nNewsletter Feed \r\nNewport Beach Investor Buys Catalina Apartments for $8.6M \nHealth Care \r\nAdagio Medical Advances Next-Gen Heart Ablation Device",
+    "content_source_url": "https://www.ocbj.com/oc-homepage/skyworks-qorvo-deal-ahead-of-schedule/",
+    "content_excerpt": "Home Technology OC Homepage Technology Skyworks/Qorvo Deal Ahead of Schedule By Kevin Costelloe August 3, 2026 198 Facebook Twitter Linkedin Email Print Phil Brace CEO Skyworks Solutions Semiconductor company Skyworks Solutions said it expects to complete its approximately $22 billion acquisition of rival Qorvo by the end of the year, earlier than previously anticipated, creating a larger player in the increasingly competitive chip market. The Irvine-based chipmaker had originally expected the deal to close in early 2027 following regulatory approvals. But Chief Executive Phil Brace said July 28 that he foresees the closure by the end of the year, possibly sooner, as he released third-quarter results that topped analysts’ estimates. “We are now optimistic that we can close within the calen...",
+    "content_word_count": 835,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-17T00:40:12Z",
+    "query_aliases": [
+      "Skyworks Solutions"
+    ],
+    "industry": "모빌리티",
+    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
+    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
+    "technology_group": "autonomous_imu_rf_baseband",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "자율주행이차스 IM밴U드(고칩주)파부, 베",
+    "pdf_company": "Skyworks",
+    "pdf_row_no": 17,
+    "pdf_sequence": "13",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "타겟 품목인 무선 통신 칩 관련 실적 및 사업 동향이 보도되었음.",
+    "ai_summary_ko": "무선 통신 칩을 자동차 및 산업용 시장 등에 공급하는 Skyworks Solutions는 회계 3분기 매출이 3% 감소한 9억 3500만 달러를 기록했음. 회사는 다음 분기에도 매출 및 수익 감소가 이어질 것으로 예상됨.",
+    "ai_summary_en": "Skyworks Solutions, which sells wireless communication chips to automotive, industrial, and consumer electronics industries, reported that its fiscal third-quarter revenue fell 3% to $935 million, with an adjusted earnings per share of $1.08. The company is projecting another quarterly decline in sales and profit for the upcoming period.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "5b07cc9eb5ec3b9f552ccfa5",
+    "ai_evidence_quotes": [
+      "Skyworks, which sells wireless ​communication chips to the automotive, ​industrial and consumer electronics industries, including smartphones, has been struggling to regain sales momentum.",
+      "Skyworks reported fiscal third-quarter revenue fell 3% to $935 million, with adjusted earnings per share of $1.08."
     ]
   }
 ]
