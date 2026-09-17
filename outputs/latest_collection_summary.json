@@ -1,11 +1,11 @@
 {
-  "run_started_at": "2026-09-17T02:37:06Z",
+  "run_started_at": "2026-09-17T04:24:11Z",
   "collection_resume_version": 1,
   "collection_input_digest": "60de225c0ac1fa1e137f1479f408f290c9427660bf1e0923bcfd3d0e3b2b8222",
   "html_network": {
     "attempts": 13,
     "skipped": 3,
-    "elapsed_ms": 10405
+    "elapsed_ms": 10224
   },
   "cached_company_count": 75,
   "retryable_company_count": 2,
@@ -473,95 +473,95 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-17T02:37:23Z",
+  "run_finished_at": "2026-09-17T04:24:25Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Cognex",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Corning",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Charles River",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Dupont",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "TIMET",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Air Products",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Chemours",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -582,70 +582,70 @@
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Onsemi",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Qualcomm",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Skyworks",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Eli Lilly and Company",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "GE Healthcare",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Boeing",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "3M",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Ouster",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Applied Materials",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -659,7 +659,7 @@
     },
     {
       "company": "Prodrive",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 0,
       "cached": true
@@ -673,7 +673,7 @@
     },
     {
       "company": "Besi",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -687,35 +687,35 @@
     },
     {
       "company": "Norsk Hydro",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Vestas",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heidenhain",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Infineon",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Schmalz",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 3,
       "cached": true
@@ -729,49 +729,49 @@
     },
     {
       "company": "Merck",
-      "elapsed_ms": 4,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Schott Pharma",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "BASF",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 2,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "EMM(Umicore)",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 6,
       "cached": true
@@ -785,70 +785,70 @@
     },
     {
       "company": "Solvay",
-      "elapsed_ms": 4,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Syensqo",
-      "elapsed_ms": 4,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Hexagon AB",
-      "elapsed_ms": 4,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 3,
       "cached": true
     },
     {
       "company": "ABB",
-      "elapsed_ms": 3,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Maxon",
-      "elapsed_ms": 3,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Siemens-Gamesa",
-      "elapsed_ms": 104,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Renishaw",
-      "elapsed_ms": 105,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Nexeon",
-      "elapsed_ms": 105,
+      "elapsed_ms": 7,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 104,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "HyproMag",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 4,
       "cached": true
@@ -862,42 +862,42 @@
     },
     {
       "company": "Plansee",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 16857,
+      "elapsed_ms": 14317,
       "request_count": 7,
       "result_count": 5,
       "cached": false
     },
     {
       "company": "Veolia",
-      "elapsed_ms": 219,
+      "elapsed_ms": 45,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 218,
+      "elapsed_ms": 46,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Safran",
-      "elapsed_ms": 219,
+      "elapsed_ms": 45,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -911,105 +911,105 @@
     },
     {
       "company": "DNP",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Hitachi Metals",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Toppan Holdings",
-      "elapsed_ms": 3,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 5,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Glass",
-      "elapsed_ms": 4,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "JSR",
-      "elapsed_ms": 3,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Tokyo Electron",
-      "elapsed_ms": 2,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Tosoh",
-      "elapsed_ms": 4,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Mitsubishi Chemical",
-      "elapsed_ms": 4,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Sumitomo Chemical",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 2,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Toray",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Cheng Uei Precision",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 10168,
+      "elapsed_ms": 10526,
       "request_count": 5,
       "result_count": 0,
       "cached": false
@@ -2891,9 +2891,9 @@
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260917T023706Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260917T023706Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260917T023706Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260917T042411Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260917T042411Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260917T042411Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -2902,12 +2902,20 @@
     {
       "company": "Australian Strategic Metals",
       "monthly_articles": 5,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "recheck_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "Energy Fuels completes acquisition of ASM",
+          "url": "https://asm-au.com/energy-fuels-completes-acquisition-of-asm/",
+          "publishers": []
+        }
+      ],
       "date_follow_up": []
     },
     {
@@ -2919,7 +2927,7 @@
       "status": "incomplete_evidence",
       "reasons": [
         "collection_incomplete",
-        "date_pending",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
@@ -3018,12 +3026,20 @@
     {
       "company": "Charles River",
       "monthly_articles": 2,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "recheck_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing",
+          "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+          "publishers": []
+        }
+      ],
       "date_follow_up": []
     },
     {
@@ -3040,16 +3056,26 @@
     {
       "company": "Moderna",
       "monthly_articles": 10,
-      "needs_review_articles": 3,
+      "needs_review_articles": 5,
       "date_pending_articles": 5,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
+        "recheck_pending",
         "needs_review",
-        "date_pending",
         "no_body"
       ],
       "follow_up": [
+        {
+          "title": "What does Moderna's melanoma treatment mean for cancer research? We asked 2 local experts - WBUR",
+          "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNMGI4Y2VMQTRkMjViTFpET1VBdGVFeWhPUnZMb1ZVZmhIWFRwVGJFNTRGbGR4T0pydmRTM0F0UWIwclZEOG9tdldPTVJlTTk4YU1uaVJUdFF0QkJ3MFNqUTNHUFVaOWxrOGowdWJYbDJVdzBGdXdOblZ4eDhkeWFzN2dDYw?oc=5",
+          "publishers": [
+            {
+              "publisher": "WBUR",
+              "home_url": "https://www.wbur.org/"
+            }
+          ]
+        },
         {
           "title": "Moderna Shares Are Up 350% in 2026. Is the Stock a Buy Now? - Morningstar",
           "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQcmRXdXh4bTlrRjdrMHA4cm5iX3lkUDVFZDV6TjdoRTJORERGQTZueW1aWlo0MUhENmVoTFl3a3ZEX2ZlV2hUc0NTYmdfNUJsVkkwQncyS1g4NkozZjVqbFdFMVVTUlI2dlVTcWhJdmFzaW02cUNOaEx1WFEzbzFsNWRqRFNyVVRzUDNzd0xJYkQxYU5DblE?oc=5",
@@ -3067,6 +3093,16 @@
             {
               "publisher": "STAT",
               "home_url": "https://www.statnews.com/"
+            }
+          ]
+        },
+        {
+          "title": "Moderna shares surge after it says experimental mRNA cancer treatment passed key test - PBS",
+          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPQmJkYzZmTkRWTGtQbl9PanQ0WnNfYjhmbVNSNWxDbW5qQ25CdXFiZW9LME4xRXF6Y2thVjB3TlZCLWtQOWFoYWRkaHBKMDBYVUpOYS1jZXItQ2ZpM2dHRENMX3EtcWg2YWc1NUZxWUU1Qk9TT2RqSWVXSDF5d29Ib0tsRFZVcG9yS3pFMjlKaWxGeDFpdFMwVVVaY1VvLTY1dzZJVnphYW5VdVZpbzJOc1NnenVJa2c1QTAzeDJ3?oc=5",
+          "publishers": [
+            {
+              "publisher": "PBS",
+              "home_url": "https://www.pbs.org/"
             }
           ]
         },
@@ -3158,14 +3194,20 @@
     {
       "company": "Albemarle",
       "monthly_articles": 1,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 1,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_deferred"
+        "date_deferred",
+        "recheck_pending"
       ],
       "follow_up": [
+        {
+          "title": "Press Releases August 05, 2026 Albemarle Reports Second Quarter 2026 Results CHARLOTTE, N.C., Aug. 5, 2026 /PRNewswire/ -- Albemarle Corporation (NYSE: ALB), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced its results for the second quarter ended June 30, 2026. Second Quarter 2026 and Recent Highlights (Unless",
+          "url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+          "publishers": []
+        },
         {
           "company": "Albemarle",
           "url": "https://s201.q4cdn.com/960975307/files/doc_financials/2025/ar/4fa9927a-565b-49d2-be16-b9d891af459d.pdf",
@@ -3334,15 +3376,26 @@
     {
       "company": "Qualcomm",
       "monthly_articles": 6,
-      "needs_review_articles": 1,
+      "needs_review_articles": 3,
       "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
         "collection_incomplete",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
+        {
+          "title": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 247wallst.com",
+          "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPcHduMkZpWXVXYVBYUmdBN3BZWnQ3Tnl5M3ZlaWN2TWQzVnZKSVJWSC1GVjByVXJtUm1pSlJfcUhLSEotMkZHcDlBaF9IaFZNMkNSMnZMeWRvUFhSOFl0YmttQnVJcGMxM1JTaFVBMVhOZjlJVlNRRHBIa2k4RWVhR3VaaTUyR2Q5T0hMOWdRR2gxOWRvSDFZRl9WTzBvc3kyQ1laOWFB?oc=5",
+          "publishers": [
+            {
+              "publisher": "247wallst.com",
+              "home_url": "https://247wallst.com/"
+            }
+          ]
+        },
         {
           "title": "Vietnam urges Qualcomm, Samsung to deepen AI, chip investment as it seeks tech upgrade - reuters.com",
           "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQQTc4ZllBd3lIX2pNeDV1eXNUa0pxbVZUektmdmhtVTVhdjQ3NHBQMi1FZ0p1UnVxOTBxdzV5WEYya2ZtNFc2TUpYMTRyWURXS2NMbVA3eV9oM1dINWx6dkEwbFFlWFNTOXdhV3VNaUlqYXpranNDcHZJdUlfR1FpSlFMS0ZDZUVVLWFRR2poQUluUnM3enQtNUFIanpDd1hUdUdCYVB4XzRHMjdvbEhaRDVxeE44RTMzM3FkQ0UwNkRuOFJVUzF4cExrNE9rUQ?oc=5",
@@ -3350,6 +3403,16 @@
             {
               "publisher": "reuters.com",
               "home_url": "https://www.reuters.com/"
+            }
+          ]
+        },
+        {
+          "title": "Qualcomm Q3 Results Put Auto Growth and Handset Weakness in Focus - Yahoo Finance",
+          "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNdGZNYTNlUnVFQnVfbU1SS2Z5S1EzLTFWVjJCQTBDOTVXYWp2emFURUVYLUlWUmtpT0toQmI0R3BzWWRQZFpkazZwa1JnZ0ZteFVtMUFrcko3UnRIMnE1aFdPelVzZnVrQ1ZfYi1WZEVJZy16c3ZXZlpjXzA1OV9uTDlDT1YtYVlTVlNnME10V3FVdW5oZmowXw?oc=5",
+          "publishers": [
+            {
+              "publisher": "Yahoo Finance",
+              "home_url": "https://finance.yahoo.com/"
             }
           ]
         }
@@ -3365,19 +3428,30 @@
     {
       "company": "Skyworks",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
+      "needs_review_articles": 2,
       "date_pending_articles": 3,
       "deferred_articles": 1,
       "status": "incomplete_evidence",
       "reasons": [
         "date_deferred",
-        "review_failed"
+        "review_failed",
+        "recheck_pending"
       ],
       "follow_up": [
         {
           "title": "2025 SWKS Annual Report",
           "url": "https://www.skyworksinc.com/-/media/SkyWorks/Documents/IR/2025-SWKS-Annual-Report.pdf",
           "publishers": []
+        },
+        {
+          "title": "Skyworks/Qorvo Deal Ahead of Schedule - ocbj.com",
+          "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBSYUJRbF9URXZBVjZEM3g4bXFnbjZTSzBqdmtSTmlyblpLbmp6SHpmR2NUSVpzU281UVU5M2lzSkJMMm5oN2wwTHpUaFNtZEhDZ0hCS0FOT0VzeUVZeDF2RXNHWXo0Yy1fdHpaR2RPN0kzRVFUTW80Q0NRMA?oc=5",
+          "publishers": [
+            {
+              "publisher": "ocbj.com",
+              "home_url": "https://www.ocbj.com/"
+            }
+          ]
         },
         {
           "company": "Skyworks",
@@ -3463,7 +3537,7 @@
       "status": "incomplete_evidence",
       "reasons": [
         "date_deferred",
-        "date_pending"
+        "recheck_pending"
       ],
       "follow_up": [
         {
@@ -3526,14 +3600,25 @@
     {
       "company": "Ouster",
       "monthly_articles": 6,
-      "needs_review_articles": 1,
+      "needs_review_articles": 3,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
+        {
+          "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+          "publishers": []
+        },
+        {
+          "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+          "publishers": []
+        },
         {
           "title": "Rosenblatt Securities' 6th Annual Age of AI Scaling Summit (Virtual)",
           "url": "https://investors.ouster.com/events/event-details/rosenblatt-securities-6th-annual-age-ai-scaling-summit-virtual",
@@ -3602,7 +3687,7 @@
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_pending",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
@@ -3695,14 +3780,20 @@
     {
       "company": "Norsk Hydro",
       "monthly_articles": 6,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 1,
       "deferred_articles": 2,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_deferred"
+        "date_deferred",
+        "recheck_pending"
       ],
       "follow_up": [
+        {
+          "title": "Hydro brings high-recycled aluminium to General Motors EV with Hydro CIRCAL The 2026 Cadillac OPTIQ with Hydro CIRCAL recycled aluminium. (Photo: General Motors) General Motors’ Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy composed of at least 75 percent ... August 5, 2026",
+          "url": "https://www.hydro.com/en/global/media/news/2026/hydro-brings-high-recycled-aluminium-to-general-motors-ev-with-hydro-circal/",
+          "publishers": []
+        },
         {
           "company": "Norsk Hydro",
           "url": "https://www.hydro.com/en/global/media/on-the-agenda/",
@@ -3732,7 +3823,7 @@
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_pending",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
@@ -4072,12 +4163,20 @@
     {
       "company": "Evonik Industries",
       "monthly_articles": 6,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "recheck_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "August 04, 2026 Company Evonik reports strong second quarter Essen, Germany. As announced on June 26, Evonik delivered strong earnings in the second quarter. The ongoing conflict in the Middle East caused supply chain bottlenecks, mainly outside Europe, resulting in an economic windfall.",
+          "url": "https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
+          "publishers": []
+        }
+      ],
       "date_follow_up": []
     },
     {
@@ -4355,7 +4454,7 @@
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_pending",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
@@ -4451,18 +4550,24 @@
     {
       "company": "Siemens-Gamesa",
       "monthly_articles": 6,
-      "needs_review_articles": 2,
+      "needs_review_articles": 3,
       "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
         "review_failed",
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
         {
           "title": "Q3 FY26 Earnings Release and Financial Results",
           "url": "https://assets.siemens-energy.com/dam/30018eed-275d-4e73-811e-b49d004cdc3d/2026-08-05-Earnings_Release_Q3_FY26_EN-pdf_Original%20file.pdf",
+          "publishers": []
+        },
+        {
+          "title": "Q3 FY26 Shareholder Letter",
+          "url": "https://assets.siemens-energy.com/dam/0b495c25-2b14-4685-8a37-b4a400b939f0/2026-08-12-Shareholder-Letter-Q3-FY2026_EN-pdf_Original%20file.pdf",
           "publishers": []
         },
         {
@@ -4487,14 +4592,25 @@
     {
       "company": "Renishaw",
       "monthly_articles": 4,
-      "needs_review_articles": 2,
+      "needs_review_articles": 3,
       "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
+        "recheck_pending",
         "needs_review"
       ],
       "follow_up": [
+        {
+          "title": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
+          "url": "https://www.renishaw.com/en/renishaw-launches-next-generation-rle-interferometric-laser-encoders-for-advanced-motion-control-in-semiconductor-manufacturing--50149",
+          "publishers": [
+            {
+              "publisher": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing",
+              "home_url": "https://www.renishaw.com/en/renishaw-launches-next-generation-rle-interferometric-laser-encoders-for-advanced-motion-control-in-semiconductor-manufacturing--50149"
+            }
+          ]
+        },
         {
           "title": "presentation 2026 interim results 145574",
           "url": "https://www.renishaw.com/resourcecentre/en/download/presentation-2026-interim-results--145574",
@@ -4522,17 +4638,22 @@
     {
       "company": "Nexeon",
       "monthly_articles": 2,
-      "needs_review_articles": 1,
+      "needs_review_articles": 2,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "review_failed"
+        "recheck_pending"
       ],
       "follow_up": [
         {
           "title": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026",
           "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+          "publishers": []
+        },
+        {
+          "title": "Nexeon Achieves ISO 9001 Certification for Gunsan Plant August 28, 2026",
+          "url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
           "publishers": []
         }
       ],
@@ -4572,12 +4693,20 @@
     {
       "company": "HyproMag",
       "monthly_articles": 3,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "recheck_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "Mkango Completes Acquisition Of Remloy",
+          "url": "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
+          "publishers": []
+        }
+      ],
       "date_follow_up": []
     },
     {
@@ -4980,12 +5109,13 @@
     {
       "company": "Nabtesco",
       "monthly_articles": 9,
-      "needs_review_articles": 4,
+      "needs_review_articles": 8,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "needs_review"
+        "needs_review",
+        "recheck_pending"
       ],
       "follow_up": [
         {
@@ -5006,6 +5136,26 @@
         {
           "title": "FY2026/12 Q2 Results Briefing Web-conference Material",
           "url": "https://www.nabtesco.com/en/news/20260804-18326/",
+          "publishers": []
+        },
+        {
+          "title": "FY2026 Semiannual Report (PDF 699KB) Aug 14, 2026 Investor Relations Securities report",
+          "url": "https://www.nabtesco.com/cms/wp-content/uploads/Semiannual-Report2026E.pdf",
+          "publishers": []
+        },
+        {
+          "title": "FY2026/12 Q2 Results Briefing Web-conference Material with script (PDF 1MB) Aug 06, 2026 Investor Relations Financial statements Second quarter",
+          "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_Material_for_FY2026_Q2e_script.pdf",
+          "publishers": []
+        },
+        {
+          "title": "FY2026/12 Q2 Result Briefing Q&A (PDF 302KB) Aug 05, 2026 Investor Relations Timely disclosure Investor Relations Financial statements Second quarter",
+          "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_QA_for_FY2026_Q2_e.pdf",
+          "publishers": []
+        },
+        {
+          "title": "FY2026/12 Q2 Results Briefing Web-conference Material (PDF 5MB) Aug 04, 2026 Investor Relations Financial statements Second quarter",
+          "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_Material_for_FY2026_Q2e.pdf",
           "publishers": []
         }
       ],
@@ -5362,12 +5512,6 @@
   ],
   "review_failed_articles": [
     {
-      "company": "Nexeon",
-      "title": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026",
-      "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
-      "article_id": "f339eb0a85d7d0d8dbd194e7"
-    },
-    {
       "company": "Siemens-Gamesa",
       "title": "Q3 FY26 Earnings Release and Financial Results",
       "url": "https://assets.siemens-energy.com/dam/30018eed-275d-4e73-811e-b49d004cdc3d/2026-08-05-Earnings_Release_Q3_FY26_EN-pdf_Original%20file.pdf",
@@ -5382,13 +5526,13 @@
   ],
   "review_scope": {
     "articles": 364,
-    "reviewed_articles": 361,
-    "review_failed_articles": 3,
+    "reviewed_articles": 362,
+    "review_failed_articles": 2,
     "adjudicated_articles": 0,
     "wording_fixed_articles": 0,
-    "recheck_pending_candidates": 0,
+    "recheck_pending_candidates": 42,
     "date_pending_investment_rows": 8,
-    "date_pending_business_rows": 14,
+    "date_pending_business_rows": 1,
     "deferred_articles": 26,
     "collection_completed_companies": 64,
     "collection_incomplete_companies": 13

@@ -1,20 +1,12 @@
 {
   "status": "completed_with_review_failures",
   "reason": "invalid_responses",
-  "requests": 63,
-  "cached": 316,
-  "completed": 360,
+  "requests": 22,
+  "cached": 312,
+  "completed": 362,
   "total": 364,
   "date_hints": 0,
   "failed_articles": [
-    {
-      "article_id": "f339eb0a85d7d0d8dbd194e7",
-      "reason": "summary_ungrounded"
-    },
-    {
-      "article_id": "b6e6d8cc9e55a874665f4c06",
-      "reason": "evidence_mismatch"
-    },
     {
       "article_id": "a02a239ca2b6bb4a409a4103",
       "reason": "evidence_mismatch"
@@ -26,99 +18,286 @@
   ],
   "diagnostics": [
     {
-      "article_id": "7bbcfbfcc8fca19098658a1a",
-      "attempt": 1,
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/7bbcfbfcc8fca19098658a1a/87635ce2-96e5-4966-acdf-38c3e1239012-attempt-1.json"
-    },
-    {
-      "article_id": "6aadaa90edd4ce73bc9fd548",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/6aadaa90edd4ce73bc9fd548/01713784-3297-4195-aa8c-4a977856e079-attempt-1.json"
-    },
-    {
-      "article_id": "e62873f81fe53ca3b1e9b01b",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/e62873f81fe53ca3b1e9b01b/92baddb8-787c-447e-a3ac-f67c9cdb31ab-attempt-1.json"
-    },
-    {
-      "article_id": "f339eb0a85d7d0d8dbd194e7",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/f339eb0a85d7d0d8dbd194e7/147e012c-250e-45c3-9e09-3d4783afd91f-attempt-1.json"
-    },
-    {
-      "article_id": "f339eb0a85d7d0d8dbd194e7",
-      "attempt": 2,
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/f339eb0a85d7d0d8dbd194e7/6496318f-df1b-4640-8067-59fc77a66a2e-attempt-2.json"
-    },
-    {
-      "article_id": "d4c93c9a8457c7e09a7ec72c",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/d4c93c9a8457c7e09a7ec72c/861cdab4-3b31-4405-8599-45d5bf2f7fb2-attempt-1.json"
-    },
-    {
-      "article_id": "436856f5d9879292f2143b93",
-      "attempt": 1,
-      "reason": "review_validation",
-      "file": "reviews/diagnostics/436856f5d9879292f2143b93/8b18f866-5583-4a55-8e9f-6f328c62939b-attempt-1.json"
-    },
-    {
-      "article_id": "b6e6d8cc9e55a874665f4c06",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/b6e6d8cc9e55a874665f4c06/def841fc-ccb0-4ea5-8c4f-2087a4f3f968-attempt-1.json"
-    },
-    {
-      "article_id": "b6e6d8cc9e55a874665f4c06",
-      "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/b6e6d8cc9e55a874665f4c06/e2f530a6-4b9d-4f28-8f4d-f74b3521db37-attempt-2.json"
-    },
-    {
-      "article_id": "4d8f3b6d25a573877926ceba",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/4d8f3b6d25a573877926ceba/afe28883-d70f-4d5f-ba2f-f50d86af6f4b-attempt-1.json"
-    },
-    {
       "article_id": "a02a239ca2b6bb4a409a4103",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/cdfc6cac-b7fa-46a7-86f0-672ab892904d-attempt-1.json"
-    },
-    {
-      "article_id": "a02a239ca2b6bb4a409a4103",
-      "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/9ee9e67c-6c89-4514-bd9c-69988bc34631-attempt-2.json"
-    },
-    {
-      "article_id": "c2f5c757eab28908e6515374",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/314e2fb4-675f-4e47-8b9b-f578725b723c-attempt-1.json"
-    },
-    {
-      "article_id": "c2f5c757eab28908e6515374",
-      "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/fe661a38-0916-4816-aa17-e02d3150b6ae-attempt-2.json"
-    },
-    {
-      "article_id": "5b07cc9eb5ec3b9f552ccfa5",
       "attempt": 1,
       "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/5b07cc9eb5ec3b9f552ccfa5/f50d7878-f063-45a8-bba4-fed22f26b13c-attempt-1.json"
+      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/6fc66f46-e921-454d-9c1e-a20889e5cc71-attempt-1.json"
+    },
+    {
+      "article_id": "a02a239ca2b6bb4a409a4103",
+      "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/a02a239ca2b6bb4a409a4103/f95fe690-b981-4d82-a976-8ef4ec47468e-attempt-2.json"
+    },
+    {
+      "article_id": "c2f5c757eab28908e6515374",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/223592eb-0667-4c1a-ae2c-8419ceb42224-attempt-1.json"
+    },
+    {
+      "article_id": "c2f5c757eab28908e6515374",
+      "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/c2f5c757eab28908e6515374/f4e3d079-b1bc-4de5-8bd7-e55850521ea6-attempt-2.json"
     }
   ],
   "concurrency": 4,
   "quote_removals": [],
-  "recheck_pending": [],
+  "recheck_pending": [
+    {
+      "article_id": "ae55f545a376db882a62ca66",
+      "candidate_ids": [
+        "investment:1",
+        "relevant"
+      ],
+      "reason": "verifier:503"
+    },
+    {
+      "article_id": "978af39518d19cbf2868939a",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier:error"
+    },
+    {
+      "article_id": "8d6959be1cc4b2b3d6ce9c50",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "02734e904b0832801764cc19",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "6a36fdb5099a8264d067330c",
+      "candidate_ids": [
+        "investment:4",
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "5a07fabe369c8080df8e6f0d",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "7bbcfbfcc8fca19098658a1a",
+      "candidate_ids": [
+        "investment:4",
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "6aadaa90edd4ce73bc9fd548",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "77d7c9a7faefc8455c4b79d4",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "026a9660e33f8351263189a8",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "d4c93c9a8457c7e09a7ec72c",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "ee57660720d13e8a13b51943",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "bae8b2275930394fd96891a2",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "27186feff58111c990b345e8",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "ccdfa39bb2d2aa0cfa67cea6",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "aa65c24dc99ded80fbfcfae0",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "6d7017133c1a203542476c9b",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "b2f983fe825417e6948fc286",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "d7b063a5473e7577d0046941",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "436856f5d9879292f2143b93",
+      "candidate_ids": [
+        "investment:4",
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "71d7341cd043fa9e6433bd38",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "3f6cb9741b942102370b1713",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "b6e6d8cc9e55a874665f4c06",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "4d8f3b6d25a573877926ceba",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "f339eb0a85d7d0d8dbd194e7",
+      "candidate_ids": [
+        "investment:2",
+        "investment:3",
+        "investment:4",
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "d4ff24a5f10eaa1b16d4fea9",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "9493adc2af3df4f858b29a4f",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "3a82fd3abf18c5c0614150c5",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "706d67b05c46356921e02d3a",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "a879b7c160b83d9a96df94e1",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "6f0ea5fbaa9000684dc932a2",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "f4997f8960ac3a49be107e6a",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "3d709be04b752dad82ddb47e",
+      "candidate_ids": [
+        "investment:2",
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    },
+    {
+      "article_id": "5b07cc9eb5ec3b9f552ccfa5",
+      "candidate_ids": [
+        "relevant"
+      ],
+      "reason": "verifier_unavailable"
+    }
+  ],
+  "verification": {
+    "model": "gemini-3.8-flash",
+    "requested": 2,
+    "changed": 0,
+    "failed": 2
+  },
   "period": {
     "from_date": "2026-08-01",
     "to_date": "2026-08-31"
