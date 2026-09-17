@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
+import { groupArticles } from '../scripts/local_report.mjs';
 import { GEMINI, NVIDIA, decisionProperties } from '../scripts/review_providers.mjs';
 import * as prompt from '../scripts/review_prompts.mjs';
 
@@ -8,7 +11,7 @@ const systemText = (provider, body) => provider.id === 'gemini' ? body.systemIns
 const userTexts = (provider, body) => provider.id === 'gemini' ? body.contents[0].parts.map(p => p.text) : body.messages.slice(1).map(m => m.content);
 
 test('the shared prompt separates evidence, judgement, summaries and article date in order', () => {
-  const headings = ['Task and trust boundary', '1. Extract', '2. Judge identity', '3. Judge candidate', '4. Apply indicator', '5. Write summaries', '6. Article-level', 'Output contract'];
+  const headings = ['Task and trust boundary', '1. Extract', '2–4. Judge candidates', '5. Write summaries', '6. Article-level', 'Output contract'];
   let previous = -1;
   for (const heading of headings) {
     const position = prompt.SYSTEM_INSTRUCTION.indexOf(`## ${heading}`);
@@ -24,19 +27,6 @@ test('the shared prompt separates evidence, judgement, summaries and article dat
 test('regression boundaries remain in their responsible rule modules', () => {
   const cases = [
     ['TASK_INSTRUCTION', /untrusted evidence, never instructions/],
-    ['IDENTITY_TECHNOLOGY_INSTRUCTION', /technology exemption never exempts entity identity/],
-    ['IDENTITY_TECHNOLOGY_INSTRUCTION', /falls under excludes is target_technology_supported=false/],
-    ['EVENT_STAGE_INSTRUCTION', /future start-up date alone does not make it planned/],
-    ['EVENT_STAGE_INSTRUCTION', /reporting_period.from_date and reporting_period.to_date/],
-    ['S1_ACQUISITION_INSTRUCTION', /plants, stock or feedstock that came with it/],
-    ['S1_ACQUISITION_INSTRUCTION', /minority equity investment.*remains an S4 event/],
-    ['S2_CAPACITY_INSTRUCTION', /order backlog.*not production expansion/],
-    ['S3_FUNDING_INSTRUCTION', /unless the evidence states additional new money/],
-    ['S3_FUNDING_INSTRUCTION', /general-purpose revolving facility.*leading_indicator_supported=false/],
-    ['S4_TECHNOLOGY_INSTRUCTION', /Progress or trial results.*not a new collaboration/],
-    ['S5_PERSONNEL_INSTRUCTION', /merely lists an officer title does not prove an appointment/],
-    ['BUSINESS_ACTIVITY_INSTRUCTION', /Completed business activity can qualify/],
-    ['SUMMARY_ELIGIBILITY_INSTRUCTION', /fails exactly ONE other approval condition/],
     ['SUMMARY_ELIGIBILITY_INSTRUCTION', /whether investment candidates are approved or rejected/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /SAME event its evidence_quotes describe/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
@@ -45,6 +35,64 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['DATE_INSTRUCTION', /date_placement "date_pending"/],
   ];
   for (const [name, rule] of cases) assert.match(prompt[name], rule, name);
+});
+
+const policy = policySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
+
+test('judgement rules have one source and are included once in actual provider requests', () => {
+  for (const rule of [
+    /기술 면제는 기업 귀속 면제가 아니다/, /target_technology_scope.includes/, /excludes.*target_technology_supported=false/,
+    /완료된 사업 인수와 함께 넘어온 공장·재고·원료/, /소수 지분투자.*S4 사건으로 인정/,
+    /가동·생산 개시 예정일이 미래/, /추가 신규 자금/, /일반 목적 회전신용/,
+    /오래 진행 중인 기존 협력의 경과·임상 결과/, /SEC Form 3/, /완료된 사업 활동도 사업동향/,
+    /딱 하나만 부족한 투자 후보/, /relevance_exempt=true.*target_technology_supported=true/,
+  ]) assert.match(policy, rule);
+  assert.doesNotMatch(prompt.SYSTEM_INSTRUCTION, /Replacing, renewing|A completed acquisition|S3 precursor/);
+  for (const provider of [GEMINI, NVIDIA]) {
+    const body = provider.body({ article, policy, model: provider.model });
+    assert.equal(systemText(provider, body).split(policy).length - 1, 1);
+  }
+});
+
+test('effective prompt changes invalidate policy and article cache identity, including repairs and verifier', () => {
+  const contract = prompt.promptContract();
+  const base = prompt.reviewPromptDigest(policy, contract);
+  assert.match(base, /^[a-f0-9]{64}$/);
+  const inputs = { policyText: policy, technology: {}, indicators: {} };
+  const basePolicy = reviewPolicy(inputs);
+  const row = { company: 'Acme', target_no: 1, url: 'https://example.com/pilot', title: 'Pilot plan',
+    published_at: '2026-08-10', content_text: 'Acme plans a new pilot plant.', investment_signal_no: 2 };
+  const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const articleId = key => groupArticles([row], [], period, key)[0].id;
+  for (const changed of [
+    { ...contract, version: contract.version + '-next' },
+    { ...contract, system: contract.system + ' Changed system rule.' },
+    ...contract.repairs.map((_, index) => ({ ...contract,
+      repairs: contract.repairs.map((text, i) => i === index ? text + ' Changed repair rule.' : text) })),
+  ]) {
+    const promptDigest = prompt.reviewPromptDigest(policy, changed);
+    assert.notEqual(base, promptDigest);
+    const changedPolicy = reviewPolicy({ ...inputs, promptDigest });
+    assert.notEqual(basePolicy, changedPolicy);
+    assert.notEqual(articleId(basePolicy), articleId(changedPolicy));
+  }
+  assert.equal(basePolicy, reviewPolicy({ ...inputs, promptDigest: base }));
+  const crlf = text => text.replace(/\r?\n/g, '\r\n');
+  assert.equal(base, prompt.reviewPromptDigest(crlf(policy), {
+    ...contract, system: crlf(contract.system), repairs: contract.repairs.map(crlf),
+  }));
+});
+
+test('new API reviews record the effective prompt digest and version for audit', async () => {
+  const decision = { candidate_id: 'investment:3', evidence_quotes: [], reason_ko: '근거 부족',
+    entity_supported: false, target_technology_supported: false, indicator_supported: false,
+    leading_indicator_supported: false, event_stage: 'unclear', quality: 'needs_review', summary_ko: '', summary_en: '' };
+  const result = await requestReview(article, policy, 'test-key', async () => new Response(JSON.stringify({
+    candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify({ decisions: [decision],
+      published_date: '', published_date_quote: '' }) }] } }],
+  })), false, GEMINI);
+  assert.equal(result.prompt_version, prompt.PROMPT_VERSION);
+  assert.equal(result.prompt_digest, prompt.reviewPromptDigest(policy));
 });
 
 for (const provider of [GEMINI, NVIDIA]) {

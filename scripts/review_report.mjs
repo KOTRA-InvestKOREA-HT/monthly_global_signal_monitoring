@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, humanReviewGaps, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION } from './review_providers.mjs';
+import { PROMPT_VERSION, reviewPromptDigest } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
@@ -399,13 +400,14 @@ export function policySection(doc) {
 // 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
 // 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
 // golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
-export function reviewPolicy({ policyText, technology, indicators, provider = PROVIDER }) {
+export function reviewPolicy({ policyText, technology, indicators, provider = PROVIDER, promptDigest = reviewPromptDigest(policyText) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
   // 평가가 운영과 다른 정책을 재고, 체크아웃 설정이 다른 사람이 캐시를 통째로 무효화한다.
   const normalized = String(policyText).split('\r\n').join('\n');
-  // 추론 단계도 판정 결과를 바꾸므로 식별자에 넣는다.
-  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', normalized, technology, indicators])}`;
+  // 추론 단계와 실제 프롬프트(재시도·2차 검증 포함)도 판정 결과를 바꾸므로 식별자에 넣는다.
+  // 프롬프트 버전 수동 갱신을 잊어도 내용 digest가 달라져 이전 review 파일을 재사용하지 않는다.
+  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, technology, indicators])}`;
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
@@ -577,6 +579,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
+    prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy),
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
     facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION, technology_review_version: TECHNOLOGY_REVIEW_VERSION,
@@ -764,8 +767,8 @@ export async function reviewArticles(options) {
 }
 
 // 같은 날짜 규칙으로 이미 물어본 판정은 다시 묻지 않는다. 빈 문자열도 물어본 것이다.
-// 날짜 프롬프트나 인용문 날짜 파서를 고쳐 DATE_HINT_VERSION 을 올리면, 내용 판정은 그대로 둔 채
-// 이 기사들의 날짜만 다시 묻는다. 그것이 힌트 버전을 판정 캐시 식별자와 분리해 둔 이유다.
+// 프롬프트가 같고 날짜 파서만 바뀌어 DATE_HINT_VERSION 을 올리면 내용 판정을 유지하며 날짜만 묻는다.
+// 날짜 프롬프트 자체가 바뀌면 이제 prompt digest가 달라져 전체 판정 캐시 키도 바뀐다.
 function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
