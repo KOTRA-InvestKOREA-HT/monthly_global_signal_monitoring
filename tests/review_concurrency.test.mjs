@@ -58,27 +58,71 @@ test('global budget counts retries and preserves other completed articles', asyn
   assert.equal(resumed.cached, 2);
 });
 
+// 어느 기사의 요청인지는 본문에서 읽는다. 호출 순서로 추측하면 안 된다: 워커는 게이트에 닿기 전에
+// 캐시 파일을 먼저 읽고, 그 읽기가 끝나는 순서는 부하에 따라 달라진다. CPU 부하를 준 probe 40회에서
+// 첫 요청이 Company0 33회, Company1 6회, Company2 1회로 갈렸다.
+const companyOf = init => {
+  const body = JSON.parse(init.body);
+  const texts = body.messages ? body.messages.map(message => message.content)
+    : body.contents.flatMap(content => content.parts.map(part => part.text));
+  for (const text of texts) {
+    try { const parsed = JSON.parse(text); if (parsed?.company) return parsed.company; } catch { /* 기사 본문이 아닌 부분 */ }
+  }
+  throw new Error('request body carries no article');
+};
+
 test('quota stops queued calls but drains successful in-flight results', async t => {
   const args = await setup(t);
-  let calls = 0;
-  const state = await reviewArticles({ ...args, fetchImpl: async () => {
-    if (++calls === 1) { await sleep(60); return ok(); }
-    return new Response('', { status: 429 });
-  } });
-  assert.equal(calls, 2);
+  // Company1 의 429 는 Company0 의 요청이 시작된 뒤에만 나간다. 성공한 요청이 할당량 중단보다
+  // 먼저 떠 있어야 "이미 떠 있던 성공 응답을 끝까지 저장하는가"를 검사할 수 있다.
+  // 워커 둘만 둔다. 워커가 셋이면 Company2 도 429 가 나오기 전에 정당하게 출발할 수 있어
+  // (게이트가 Company1 → Company2 → Company0 순으로 열리는 경우) 할당량 이후 차단을 검사할 수 없다.
+  let company0Started;
+  const company0Start = new Promise(resolve => { company0Started = resolve; });
+  const requested = [], afterQuota = [];
+  const state = await reviewArticles({ ...args, config: { ...args.config, delayMs: 60, concurrency: 2 },
+    fetchImpl: async (url, init) => {
+      const company = companyOf(init);
+      requested.push(company);
+      if (company === 'Company0') { company0Started(); await sleep(120); return ok(); }
+      if (company === 'Company1') { await company0Start; return new Response('', { status: 429 }); }
+      afterQuota.push(company);
+      return new Response('', { status: 429 });
+    } });
+  // 할당량 뒤에는 대기 중이던 어떤 기사도 새 요청을 시작하지 않는다.
+  assert.deepEqual(afterQuota, []);
+  assert.deepEqual([...requested].sort(), ['Company0', 'Company1']);
   assert.equal(state.reason, 'quota');
   assert.equal(state.completed, 1);
+  // 이미 비용을 쓴 성공 응답은 검증과 캐시 기록까지 끝난다. 429 로 끝난 기사는 남기지 않는다.
   await fs.access(path.join(args.reviewDir, `${args.articles[0].id}.json`));
+  await assert.rejects(fs.access(path.join(args.reviewDir, `${args.articles[1].id}.json`)));
+  // 그리고 다음 실행이 그 판정을 다시 사지 않는다.
+  const resumedRequests = [];
+  const resumed = await reviewArticles({ ...args,
+    fetchImpl: async (url, init) => { resumedRequests.push(companyOf(init)); return ok(); } });
+  assert.equal(resumed.status, 'completed');
+  assert.equal(resumed.cached, 1);
+  assert.equal(resumedRequests.includes('Company0'), false);
+  assert.equal(resumedRequests.length, 4);
 });
 
+// 위와 같은 이유로 호출 순서를 가정하지 않는다. 인증 실패는 실행을 즉시 거부하므로, 떠 있던
+// 성공 응답의 캐시 기록을 기다리는지가 여기서 확인할 점이다.
 test('authentication failure waits for in-flight cache writes before rejecting', async t => {
   const args = await setup(t);
-  let calls = 0;
-  await assert.rejects(reviewArticles({ ...args, fetchImpl: async () => {
-    if (++calls === 1) { await sleep(60); return ok(); }
-    return new Response('', { status: 403 });
-  } }), /HTTP 403/);
-  assert.equal(calls, 2);
+  let company0Started;
+  const company0Start = new Promise(resolve => { company0Started = resolve; });
+  const requested = [];
+  await assert.rejects(reviewArticles({ ...args, config: { ...args.config, delayMs: 60, concurrency: 2 },
+    fetchImpl: async (url, init) => {
+      const company = companyOf(init);
+      requested.push(company);
+      if (company === 'Company0') { company0Started(); await sleep(120); return ok(); }
+      await company0Start;
+      return new Response('', { status: 403 });
+    } }), /HTTP 403/);
+  assert.deepEqual([...requested].sort(), ['Company0', 'Company1']);
   await fs.access(path.join(args.reviewDir, `${args.articles[0].id}.json`));
 });
 
