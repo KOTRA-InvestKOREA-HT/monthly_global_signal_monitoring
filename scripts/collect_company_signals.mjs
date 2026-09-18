@@ -15,7 +15,10 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v14-out-of-period-behind-fallback';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v15-business-trend-discovery';
+// 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
+// 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
+export const TREND_DISCOVERY_PER_COMPANY = 2;
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -79,6 +82,9 @@ const domainGuard = createDomainGuard();
 
 // 링크 판정 규칙과 그 결과 집계. main 이 인자를 읽고 정한다.
 let linkPolicy = DEFAULT_LINK_POLICY;
+// 사업동향 탐색이 쓰는 기술 매핑과 키워드 목록. main() 이 채우고, 없으면 탐색을 건너뛴다.
+let trendTechnology = null;
+let trendKeywordConfig = null;
 const linkVerdictCounts = new Map();
 
 function countLinkVerdict(verdict) {
@@ -139,6 +145,10 @@ export function parseArgs(argv) {
     // Keep recovered accept links; uncertain document verification is opt-in.
     linkPolicy: DEFAULT_LINK_POLICY,
     maxVerifyPerCompany: DEFAULT_MAX_VERIFY_PER_COMPANY,
+    // 사업동향 탐색. 공식 자료가 있어도 돌린다(아래 collectTrendDiscovery 주석).
+    technologyMap: "data/company_technology_map.json",
+    keywordConfig: "config/technology_keywords.json",
+    maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY,
   };
   const keyMap = {
     "--companies": "companies",
@@ -164,6 +174,9 @@ export function parseArgs(argv) {
     "--fetch-retries": "fetchRetries",
     "--link-policy": "linkPolicy",
     "--max-verify-per-company": "maxVerifyPerCompany",
+    "--technology-map": "technologyMap",
+    "--keyword-config": "keywordConfig",
+    "--max-trend-discovery": "maxTrendDiscovery",
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
@@ -185,6 +198,7 @@ export function parseArgs(argv) {
         "maxDetailPerCompany",
         "fetchRetries",
         "maxVerifyPerCompany",
+        "maxTrendDiscovery",
       ].includes(mapped)
     ) {
       args[mapped] = Number.parseInt(value, 10);
@@ -1702,6 +1716,123 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
   return { rows: enriched, requestCount, errors };
 }
 
+// 사업동향(kind=relevant) 탐색. 기존 google_news 대체 수집은 공식 자료가 없을 때만 돌기 때문에,
+// 공식 보도자료가 한 건이라도 있으면 타겟 품목을 다루는 외부 기사를 통째로 놓쳤다. 2026-08 실행의
+// Norsk Hydro 가 그랬다: 공식 뉴스룸에서 전력계약·알루미나 감산 네 건을 가져왔으므로 대체 수집이
+// 생략됐고, 같은 달 GM Cadillac OPTIQ 에 Hydro CIRCAL 을 공급한다는 발표는 수집되지 않았다.
+// 그래서 대체 수집과 별개로, 공식 자료가 있든 없든 "회사명 + 타겟 기술" 질의를 한 번 더 돌린다.
+//
+// 비용은 세 가지로 묶는다. 기업당 요청은 1회, 후보는 기술 키워드가 제목·발췌에 실제로 있는 기사만,
+// 그 가운데 최대 maxTrendDiscovery 건이다. 키워드는 LLM 에 보낼 후보를 고르는 데만 쓰고 판정에는
+// 쓰지 않는다. 판정은 기존과 같이 기사 1건당 한 번의 호출에서 S1~S5 와 사업동향을 함께 본다.
+
+// 질의어는 영문 뉴스 기준이라 영문 키워드만 쓴다. 한글 키워드는 hl=en-US 결과에 거의 걸리지 않으면서
+// 질의만 길게 만든다. 키워드가 많으면 Google 이 뒤쪽을 버리므로 가장 구체적인 것부터 제한해 넣는다.
+export const TREND_QUERY_KEYWORD_LIMIT = 6;
+const isLatinKeyword = (term) => /^[\x20-\x7e]+$/.test(term);
+
+// 수집 식별자에 넣는 탐색 입력. 기술 매핑과 키워드 목록이 바뀌면 캐시된 수집을 다시 돌려야 한다.
+// 상한이 0이면 탐색을 아예 돌리지 않으므로 두 파일은 식별자에 넣지 않는다.
+export function trendDigestInputs(args, technology = trendTechnology, keywordConfig = trendKeywordConfig) {
+  if (!(args.maxTrendDiscovery > 0)) return null;
+  return { maxTrendDiscovery: args.maxTrendDiscovery, technology, keywordConfig };
+}
+
+export function trendKeywords(technology, keywordConfig) {
+  if (!technology) return [];
+  const group = keywordConfig?.groups?.[technology.technology_group];
+  const terms = [technology.target_technology_en, ...(group?.keywords || []), technology.target_technology]
+    .map((term) => String(term || "").trim())
+    .filter(Boolean);
+  // 대소문자만 다른 중복을 없애고 원래 순서를 지킨다.
+  return [...new Map(terms.map((term) => [term.toLowerCase(), term])).values()];
+}
+
+export function buildTrendQuery(company, technology, keywordConfig, days) {
+  const keywords = trendKeywords(technology, keywordConfig);
+  // 영문 키워드가 하나도 없으면 질의를 만들지 않는다. 회사명만으로 검색하면 기술과 무관한
+  // 기사가 쏟아져 사전 필터가 전부 걸러내고 요청만 버린다.
+  const terms = keywords.filter(isLatinKeyword).slice(0, TREND_QUERY_KEYWORD_LIMIT);
+  if (!terms.length) return "";
+  const names = relevantAliases(company);
+  const nameClause = names.length > 1 ? `(${names.map((name) => `"${name}"`).join(" OR ")})` : `"${names[0]}"`;
+  return `${nameClause} (${terms.map((term) => `"${term}"`).join(" OR ")}) when:${days}d`;
+}
+
+// 사전 필터. 제목과 발췌에 타겟 기술 키워드가 실제로 있는 기사만 남긴다. Google 질의는 OR 를
+// 느슨하게 해석해 회사명만 맞는 기사도 돌려주므로, 여기서 결정적으로 한 번 더 거른다.
+// 이 판단은 후보 선택일 뿐 판정이 아니다. 걸러 남은 기사도 최종 판정은 LLM 이 한다.
+const normalizeForMatch = (value) => String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+
+export function matchedTrendKeywords(row, keywords) {
+  const haystack = normalizeForMatch(`${row.title || ""} ${row.discovery_snippet || ""}`);
+  if (!haystack) return [];
+  return keywords.filter((term) => {
+    const needle = normalizeForMatch(term);
+    if (needle.length < 3) return false;
+    return haystack.includes(needle);
+  });
+}
+
+// 이미 수집된 기사와 겹치는지. 질의문 뒤의 추적 파라미터를 뗀 URL 과 공백을 정리한 제목으로 본다.
+// dedupeRows 와 같은 기준이라 뒤에서 한 번 더 걸러도 결과가 달라지지 않는다.
+export function isDuplicateTrendRow(row, existingRows) {
+  const urlKey = (value) => String(value || "").replace(/[?#].*$/, "").toLowerCase();
+  const titleKey = (value) => normalizeForMatch(value);
+  const urls = new Set(existingRows.map((item) => urlKey(item.url)).filter(Boolean));
+  const titles = new Set(existingRows.map((item) => titleKey(item.title)).filter(Boolean));
+  const rowUrl = urlKey(row.url);
+  if (rowUrl && urls.has(rowUrl)) return true;
+  const rowTitle = titleKey(row.title);
+  return Boolean(rowTitle) && rowTitle.length > 15 && titles.has(rowTitle);
+}
+
+// 키워드 목록은 일부러 넓다("scrap", "recycling" 같은 항목이 있다). 그래서 통과한 기사 가운데
+// 자리 두 개를 어디에 줄지는 얼마나 구체적으로 맞았는지로 정한다. 맞은 키워드가 많을수록,
+// 가장 긴 키워드가 길수록 앞에 둔다. 거르는 기준은 그대로이고 순서만 정하는 것이다.
+function trendSpecificity(matched) {
+  return [matched.length, Math.max(...matched.map((term) => term.length))];
+}
+
+export function selectTrendRows(rows, existingRows, keywords, limit) {
+  const scored = [];
+  for (const row of rows) {
+    const matched = matchedTrendKeywords(row, keywords);
+    if (matched.length) scored.push({ row, matched, rank: trendSpecificity(matched) });
+  }
+  // 동점이면 검색 결과 순서를 지킨다.
+  scored.sort((a, b) => (b.rank[0] - a.rank[0]) || (b.rank[1] - a.rank[1]));
+  const selected = [];
+  const seen = [...existingRows];
+  for (const { row, matched } of scored) {
+    if (selected.length >= limit) break;
+    if (isDuplicateTrendRow(row, seen)) continue;
+    selected.push({ ...row, trend_discovery: true, trend_matched_terms: matched });
+    seen.push(row);
+  }
+  return selected;
+}
+
+async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt) {
+  const query = buildTrendQuery(company, technology, keywordConfig, dateRange.lookbackDays);
+  if (!query) return { rows: [], requestCount: 0, query: "" };
+  const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
+  const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  // RSS 의 <description> 은 사전 필터가 보는 snippet 이다. parseRssOrAtom 은 공식 피드와 공용이라
+  // 필드를 늘리지 않고, 여기서 제목으로 맞춰 붙인다. 본문을 받아오기 전이라 이것이 가진 전부다.
+  const snippets = new Map();
+  for (const item of blocks(xml, "item")) {
+    const title = cleanText(tagText(item, "title"));
+    if (title) snippets.set(title, cleanText(tagText(item, "description")));
+  }
+  const rows = filterByDateRange(
+    parseRssOrAtom(xml, company, collectedAt, "google_news_trend", query, "Google News"),
+    dateRange,
+  ).map((row) => ({ ...row, ...fallbackSourceFields(90), official_source_url: "",
+    discovery_snippet: snippets.get(row.title) || "" }));
+  return { rows, requestCount: 1, query };
+}
+
 async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
   const query = buildQuery(company, dateRange.lookbackDays);
   const params = new URLSearchParams({
@@ -2179,6 +2310,36 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
   }
+
+  // 사업동향 탐색은 대체 수집과 달리 공식 자료가 있어도 돌린다. 기업 자리(maxPerCompany)를 두고
+  // 다투게 하면 공식 보도자료를 밀어내므로, 그 상한을 적용한 뒤에 최대 maxTrendDiscovery 건만 덧붙인다.
+  const technology = trendTechnology?.companies?.find(
+    (item) => item.company === company.company && item.target_no === company.target_no);
+  stats.trend_discovery = "not_selected";
+  if (selectedSources.includes("google_news") && args.maxTrendDiscovery > 0 && technology) {
+    stats.trend_discovery = "run";
+    try {
+      const discovered = await collectTrendDiscovery(company, technology, trendKeywordConfig, dateRange,
+        args.timeoutSeconds, collectedAt);
+      requestCount += discovered.requestCount;
+      if (discovered.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
+      if (!discovered.query) stats.trend_discovery = "no_query";
+      stats.trend_discovery_found = discovered.rows.length;
+      const keywords = trendKeywords(technology, trendKeywordConfig);
+      const selected = selectTrendRows(discovered.rows, rows, keywords, args.maxTrendDiscovery);
+      stats.trend_discovery_kept = selected.length;
+      if (selected.length) {
+        const recovered = selected.map(row => recoverPublisherRow(row, publisherCandidates, sourceConfig));
+        const detailed = await enrichOfficialRowsWithContent(recovered, args, collectedAt, company, slot);
+        requestCount += detailed.requestCount;
+        errors.push(...detailed.errors);
+        rows = [...rows, ...detailed.rows];
+      }
+    } catch (error) {
+      stats.trend_discovery = "error";
+      errors.push({ target_no: company.target_no, company: company.company, source: "google_news_trend", error: error.message });
+    }
+  }
   return { rows, requestCount, errors, stats };
 }
 
@@ -2197,6 +2358,12 @@ async function main() {
   linkPolicy = args.linkPolicy === "proposed" ? "proposed" : "current";
 
   const sourceConfig = await loadJson(args.sourceConfig, {});
+  // 파일이 없으면 탐색만 건너뛴다. 나머지 수집은 그대로 돈다.
+  trendTechnology = await loadJson(args.technologyMap, null);
+  trendKeywordConfig = await loadJson(args.keywordConfig, null);
+  if (args.maxTrendDiscovery > 0 && !(trendTechnology && trendKeywordConfig)) {
+    console.warn(`Skipping business-trend discovery: ${args.technologyMap} or ${args.keywordConfig} is unavailable`);
+  }
   // SEC 는 연락처가 든 User-Agent 없이 요청하지 않는다. 설정이 없으면 그 출처만 건너뛰고 요약에 남긴다.
   const { sources: selectedSources, skipped: skippedSources } = resolveSources(args.sources);
   for (const skipped of skippedSources) console.warn(`Skipping source ${skipped}`);
@@ -2241,7 +2408,7 @@ async function main() {
   const summary = {
     run_started_at: collectedAt,
     collection_resume_version: 1,
-    collection_input_digest: collectionInputDigest(companies, sourceConfig),
+    collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args)),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,
@@ -2254,6 +2421,11 @@ async function main() {
     company_collection_stats: companies.map((company, index) => ({ company: company.company, ...(companyResults[index].stats || {}) })),
     companies_cut_by_company_cap: companyResults.filter(result => result.stats?.cut_by_company_cap > 0).length,
     fallback_skipped_company_count: companyResults.filter(result => result.stats?.fallback === 'skipped_has_monthly_source').length,
+    // 사업동향 탐색이 실제로 몇 건을 보탰는지. 이 숫자가 곧 늘어난 LLM 호출 수다.
+    trend_discovery_company_count: companyResults.filter(result => result.stats?.trend_discovery === 'run').length,
+    trend_discovery_found: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_found || 0), 0),
+    trend_discovery_kept: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_kept || 0), 0),
+    trend_discovery_per_company: args.maxTrendDiscovery,
     skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
     publisher_resolution_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
     company_count: companies.length,

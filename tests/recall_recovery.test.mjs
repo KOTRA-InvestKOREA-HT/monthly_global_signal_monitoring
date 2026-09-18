@@ -107,20 +107,20 @@ test('an old approved Form 3 S5 decision gets one fresh semantic review', () => 
     row: { ...article.candidates[0].row, source_kind: 'press_release' } }] }, { decisions: [decision] }), false);
 });
 
-test('a saved review whose human-review candidate lacks prose is asked once for summaries', () => {
+test('a saved review whose published candidate lacks prose is asked once for summaries', () => {
   const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } }] };
   const decision = { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true,
     target_technology_supported: false, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
     summary_ko: '', summary_en: '' };
   assert.equal(needsReviewSummary(article, { decisions: [decision] }), true);
-  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'human-review-summary-v2' }), false);
+  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'published-summary-v3' }), false);
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, summary_ko: '요약 - 상세', summary_en: 'Summary - detail' }] }), false);
-  // Neither an approved decision nor one without an indicator event is a review candidate.
-  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: true }] }), false);
+  // 기술을 인정한 판정도 문안이 비면 똑같이 묻는다. 지표 사건이 없어 실리지 않는 판정만 묻지 않는다.
+  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: true }] }), true);
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
 });
 
-test('summary backfill copies prose only into empty human-review decisions and keeps every judgement', () => {
+test('summary backfill copies prose only into empty published decisions and keeps every judgement', () => {
   const article = { candidates: [
     { id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } },
     { id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3 } },
@@ -131,13 +131,13 @@ test('summary backfill copies prose only into empty human-review decisions and k
     { candidate_id: 'investment:3', entity_supported: false, indicator_supported: false, target_technology_supported: false,
       leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' },
   ] };
-  // The fresh answer flips judgements; only prose for the review candidate may cross over.
+  // The fresh answer flips judgements; only prose for the published candidate may cross over.
   const fresh = { decisions: [
     { ...review.decisions[0], target_technology_supported: true, summary_ko: '표제 - 상세', summary_en: 'Headline - detail' },
     { ...review.decisions[1], entity_supported: true, summary_ko: '다른 문안', summary_en: 'Other prose' },
   ] };
   const merged = mergeReviewSummaries(article, review, fresh);
-  assert.equal(merged.summary_review_version, 'human-review-summary-v2');
+  assert.equal(merged.summary_review_version, 'published-summary-v3');
   assert.equal(merged.decisions[0].target_technology_supported, false);
   assert.equal(merged.decisions[0].summary_ko, '표제 - 상세');
   assert.equal(merged.decisions[0].summary_en, 'Headline - detail');
@@ -191,7 +191,9 @@ test('summary refresh copies new prose into published decisions only and never m
 test('a published summary whose numbers the article does not state is refreshed once', () => {
   const article = { evidence: ['Automotive revenues surged 61% year over year.'],
     candidates: [{ id: 'relevant', kind: 'relevant', relevance_exempt: true, row: { content_text: BODY } }] };
+  // 사업동향 판정은 leading_indicator_supported=true, event_stage=not_applicable 가 고정값이다.
   const decision = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, quality: 'pass',
+    leading_indicator_supported: true, event_stage: 'not_applicable',
     summary_ko: '자동차 매출이 69% 급증함', summary_en: 'Automotive revenue surged 61%.' };
   const stamped = { summary_accuracy_version: 'summary-accuracy-v1' };
   assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [decision] }), true);
