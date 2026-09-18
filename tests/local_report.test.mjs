@@ -89,7 +89,7 @@ test('not_applicable investment stages record a rejection and still validate evi
     assert.equal(result[0].row, null);
   }
   // An indicator match that also lacks both a leading event and a stage misses
-  // more than one condition, so it is not a human-review row either.
+  // more than one condition, so it is not a near-miss dashboard row either.
   for (const flags of [{ indicator_supported: true }, { indicator_supported: true, quality: 'needs_review' }]) {
     const result = importReview(a, review(a, [{ ...rejected, ...flags }]));
     assert.equal(result[0].supported, false);

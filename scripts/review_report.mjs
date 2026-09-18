@@ -971,7 +971,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     try {
       const fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl, {
         reason: 'published_summaries_missing',
-        validation_message: `summary_ko and summary_en are empty for human-review candidates: ${missing.join(', ')}` });
+        validation_message: `summary_ko and summary_en are empty for approved candidates: ${missing.join(', ')}` });
       const merged = mergeReviewSummaries(article, review, fresh);
       importReview(article, merged);
       await write(file, merged);
@@ -979,7 +979,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     } catch (error) {
       // 문안 보강은 보조 작업이다. 할당량·전송 오류면 남은 기사에서도 같으므로 이번 실행에서는 멈춘다.
       if (error.status || error.transport_error || error.scheduling_stopped) supplementStop.stopped = true;
-      console.log(`Article ${article.id}: human-review summary unavailable (${error.response_code || error.status || 'error'})`);
+      console.log(`Article ${article.id}: approved-candidate summary unavailable (${error.response_code || error.status || 'error'})`);
       return review;
     }
   };
@@ -1328,7 +1328,7 @@ async function main() {
       `${state.verification.failed} unavailable, ${state.verification.changed} changed; ${state.verification.rejected_responses || 0} rejected responses` +
       `${Object.keys(state.verification.errors || {}).length ? `; errors ${JSON.stringify(state.verification.errors)}` : ''}\n` : '') +
     (state.recheck_pending || []).map(item => `- Article ${item.article_id}: semantic recheck not completed (${item.reason}); ` +
-      `${item.candidate_ids.join(', ')} published only as human review and asked again next run\n`).join('') +
+      `${item.candidate_ids.join(', ')} held back from the report, kept for the dashboard and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
   if (state.status !== 'completed' && !reviewFailed.length) { process.exitCode = 75; return; }
   failedStage = 'build';

@@ -45,8 +45,10 @@ test('judgement rules have one source and are included once in actual provider r
     /완료된 사업 인수와 함께 넘어온 공장·재고·원료/, /소수 지분투자.*S4 사건으로 인정/,
     /가동·생산 개시 예정일이 미래/, /추가 신규 자금/, /일반 목적 회전신용/,
     /오래 진행 중인 기존 협력의 경과·임상 결과/, /SEC Form 3/, /완료된 사업 활동도 사업동향/,
-    /딱 하나만 부족한 투자 후보/, /relevance_exempt=true.*target_technology_supported=true/,
+    /요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다/, /relevance_exempt=true.*target_technology_supported=true/,
   ]) assert.match(policy, rule);
+  // 근접 후보는 nearMissCandidate 가 코드로 정하고 보고서에 싣지 않는다. 모델에게 그 계층을 설명하지 않는다.
+  assert.doesNotMatch(policy, /사람 검토/);
   assert.doesNotMatch(prompt.SYSTEM_INSTRUCTION, /Replacing, renewing|A completed acquisition|S3 precursor/);
   for (const provider of [GEMINI, NVIDIA]) {
     const body = provider.body({ article, policy, model: provider.model });
@@ -58,7 +60,7 @@ test('judgement rules have one source and are included once in actual provider r
 test('changing only the verifier prompt keeps the primary review cache identity', () => {
   const contract = prompt.promptContract();
   assert.equal(contract.repairs.some(text => text.includes(prompt.VERIFY_INSTRUCTION)), false);
-  assert.equal(prompt.promptContract().repairs.at(-1).startsWith('Second-stage verification. A first-stage reviewer'), true);
+  assert.equal(contract.repairs.some(text => /Second-stage/.test(text)), false);
 });
 
 test('effective prompt changes invalidate policy and article cache identity, including repairs', () => {
