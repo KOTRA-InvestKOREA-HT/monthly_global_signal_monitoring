@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 import {
   TREND_DISCOVERY_PER_COMPANY, TREND_QUERY_KEYWORD_LIMIT, buildTrendQuery, trendKeywords,
-  matchedTrendKeywords, isDuplicateTrendRow, selectTrendRows, trendDigestInputs,
+  matchedTrendKeywords, isDuplicateTrendRow, selectTrendRows, trendDigestInputs, trendSearchWindow,
 } from '../scripts/collect_company_signals.mjs';
 
 const company = { target_no: 31, company: 'Norsk Hydro', query_aliases: ['Hydro'] };
@@ -15,17 +15,20 @@ const keywordConfig = { groups: { nonferrous_scrap_recycling: { keywords: [
   'recycled aluminium', 'post-consumer scrap', 'scrap utilisation', 'aluminium recycling',
   '재활용 알루미늄', '스크랩', 'secondary aluminium', 'closed loop recycling', 'remelting'] } } };
 
+// 보고 기간. 검색 창은 이 기간에 맞추고 실행 시점과 무관해야 한다.
+const august = { mode: 'explicit', fromDate: '2026-08-01', toDate: '2026-08-31', lookbackDays: 50 };
+
 const row = (overrides = {}) => ({ company: 'Norsk Hydro', title: 'Hydro brings high-recycled aluminium to GM',
   url: 'https://news.google.com/rss/articles/a', discovery_snippet: 'Hydro CIRCAL uses post-consumer scrap',
   ...overrides });
 
 test('the query pairs the company names with its own technology terms', () => {
-  const query = buildTrendQuery(company, technology, keywordConfig, 45);
+  const query = buildTrendQuery(company, technology, keywordConfig, august);
   // 이름 선택은 기존 relevantAliases 를 그대로 쓴다. "Hydro" 처럼 흔한 약칭은 검색에서 빠진다.
   assert.match(query, /^"Norsk Hydro" \(/);
   assert.match(query, /"non-ferrous scrap utilisation"/);
   assert.match(query, /"recycled aluminium"/);
-  assert.match(query, /when:45d$/);
+  assert.match(query, /after:2026-08-01 before:2026-09-01$/);
   // 한글 키워드는 영문 뉴스 결과에 걸리지 않으면서 질의만 길게 만든다.
   assert.equal(query.includes('재활용 알루미늄'), false);
   // 질의어 수를 묶어 둔다. Google 이 뒤쪽 항을 버리면 검색 자체가 무의미해진다.
@@ -35,14 +38,26 @@ test('the query pairs the company names with its own technology terms', () => {
 test('a company whose alias survives the name rule searches both names', () => {
   const withAlias = { target_no: 1, company: 'Australian Strategic Metals',
     query_aliases: ['Australian Strategic Materials'] };
-  const query = buildTrendQuery(withAlias, technology, keywordConfig, 30);
+  const query = buildTrendQuery(withAlias, technology, keywordConfig, august);
   assert.match(query, /^\("Australian Strategic Metals" OR "Australian Strategic Materials"\) \(/);
-  assert.match(query, /when:30d$/);
+});
+
+// when:Nd 는 요청 시점 기준이라, 마감 한참 뒤에 돌리면 그 사이 새 기사가 결과 자리를 채우고
+// 정작 그 달 기사가 밀려난다. 보고 기간을 받으면 그 기간을 직접 지정한다.
+test('an explicit reporting period is searched by date, not by days before now', () => {
+  assert.equal(trendSearchWindow(august), 'after:2026-08-01 before:2026-09-01');
+  // 끝날을 포함해야 하므로 before 는 하루 뒤다. 월말·연말 경계도 넘어간다.
+  assert.equal(trendSearchWindow({ mode: 'explicit', fromDate: '2026-12-01', toDate: '2026-12-31' }),
+    'after:2026-12-01 before:2027-01-01');
+  // 기간을 지정하지 않은 조회용 실행은 예전처럼 상대 창을 쓴다.
+  assert.equal(trendSearchWindow({ mode: 'lookback', lookbackDays: 30 }), 'when:30d');
+  assert.equal(trendSearchWindow({ mode: 'explicit', fromDate: '', toDate: '', lookbackDays: 45 }), 'when:45d');
+  assert.equal(trendSearchWindow(undefined), 'when:45d');
 });
 
 test('no latin technology term means no query and no request', () => {
   const koreanOnly = { groups: { g: { keywords: ['비전센서', '머신비전'] } } };
-  const query = buildTrendQuery(company, { technology_group: 'g', target_technology: '3D 비전센서' }, koreanOnly, 45);
+  const query = buildTrendQuery(company, { technology_group: 'g', target_technology: '3D 비전센서' }, koreanOnly, august);
   assert.equal(query, '');
 });
 

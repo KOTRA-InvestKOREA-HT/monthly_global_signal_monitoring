@@ -1748,7 +1748,22 @@ export function trendKeywords(technology, keywordConfig) {
   return [...new Map(terms.map((term) => [term.toLowerCase(), term])).values()];
 }
 
-export function buildTrendQuery(company, technology, keywordConfig, days) {
+// 검색 창을 보고 기간에 맞춘다. when:Nd 는 "요청 시점에서 N일 전"이라, 마감 한참 뒤에 수집을
+// 돌리면 그 사이의 새 기사가 결과 자리를 채우고 정작 그 달 기사는 밀려난다. 2026-09-18 에
+// Norsk Hydro 를 when:50d 로 찾으면 6건 가운데 8월은 2건뿐이었고, 같은 질의를 after/before 로
+// 바꾸면 3건이 모두 8월이었다(8/20 기사는 when 쪽에 아예 없었다).
+// after 는 적은 날짜를 포함하고 before 는 제외한다. 확인: after:2026-08-03 before:2026-08-06 →
+// 8/3·8/4·8/5 만 돌아온다. 그래서 끝날은 하루를 더해 넘긴다.
+export function trendSearchWindow(dateRange) {
+  if (dateRange?.mode === "explicit" && dateRange.fromDate && dateRange.toDate) {
+    const dayAfter = new Date(Date.parse(`${dateRange.toDate}T00:00:00Z`) + DAY_MS).toISOString().slice(0, 10);
+    return `after:${dateRange.fromDate} before:${dayAfter}`;
+  }
+  // 기간을 명시하지 않은 조회용 실행은 예전처럼 상대 창을 쓴다.
+  return `when:${dateRange?.lookbackDays || 45}d`;
+}
+
+export function buildTrendQuery(company, technology, keywordConfig, dateRange) {
   const keywords = trendKeywords(technology, keywordConfig);
   // 영문 키워드가 하나도 없으면 질의를 만들지 않는다. 회사명만으로 검색하면 기술과 무관한
   // 기사가 쏟아져 사전 필터가 전부 걸러내고 요청만 버린다.
@@ -1756,7 +1771,7 @@ export function buildTrendQuery(company, technology, keywordConfig, days) {
   if (!terms.length) return "";
   const names = relevantAliases(company);
   const nameClause = names.length > 1 ? `(${names.map((name) => `"${name}"`).join(" OR ")})` : `"${names[0]}"`;
-  return `${nameClause} (${terms.map((term) => `"${term}"`).join(" OR ")}) when:${days}d`;
+  return `${nameClause} (${terms.map((term) => `"${term}"`).join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
 
 // 사전 필터. 제목과 발췌에 타겟 기술 키워드가 실제로 있는 기사만 남긴다. Google 질의는 OR 를
@@ -1814,7 +1829,7 @@ export function selectTrendRows(rows, existingRows, keywords, limit) {
 }
 
 async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt) {
-  const query = buildTrendQuery(company, technology, keywordConfig, dateRange.lookbackDays);
+  const query = buildTrendQuery(company, technology, keywordConfig, dateRange);
   if (!query) return { rows: [], requestCount: 0, query: "" };
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
   const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
