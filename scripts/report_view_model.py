@@ -29,14 +29,12 @@ company_status = report.company_status
 
 
 def matrix_counts(profiles, signal_index, summary, signal_rows):
-    """각주의 세 묶음. 행마다 붙인 상태를 세는 것이라 표와 숫자가 어긋날 수 없다."""
+    """각주의 두 묶음. 행마다 붙인 상태를 세는 것이라 표와 숫자가 어긋날 수 없다."""
     covered = covered_companies(summary, signal_rows)
     statuses = [company_status(p["company"], signal_index, covered) for p in profiles]
     return {
         "detected": statuses.count("detected"),
-        "review": statuses.count("review"),
         "reviewed_off": statuses.count("reviewed"),
-        "insufficient": statuses.count("insufficient"),
         "total": len(profiles),
     }
 
@@ -107,8 +105,6 @@ def signal_entry(no, rows, measure):
         "inline": summary_fits_one_line(parts, measure),
         "cut": summary_cut(row, (parts or {}).get("headline"), (parts or {}).get("detail"),
                            "" if parts else report.detail_text(row, 560)),
-        # 대표 행이 AI 미승인 검토 후보면 읽는 사람이 알 수 있게 표시한다.
-        "review": report.review_label(row),
         "source": report.source_line(row),
         "source_url": report.source_url(row),
     }
@@ -161,9 +157,8 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
             "company": entry["profile"].get("display_name") or entry["profile"]["company"],
             "industry": entry["profile"].get("detailed_industry", ""),
             "country": entry["profile"].get("country", ""),
-            "target_text": report.item_target_text(entry["profile"]),
-            # 면제 기업의 사업동향은 품목 직접 연계를 확인한 것이 아니다. 같은 카드 모양이라도 표시로 구분한다.
-            "exempt_note": report.t("item_exempt_note") if entry["profile"].get("exempt_from_relevance") else "",
+            # 유치필요 품목이 지정되지 않은 면제 9개사는 품목 줄 없이 지난달 동향만 싣는다.
+            "target_text": "" if entry["profile"].get("exempt_from_relevance") else report.item_target_text(entry["profile"]),
             # 문장 수를 줄 수에 맞춰 자르지 않고 문안 전체를 싣는다. 카드 높이는 Chrome 이 잰 값으로 장을 나눈다.
             # 줄 수에 맞춰 자르던 때는 긴 영문의 뒷문장이 빠져, HyproMag 인수금액이 영문에만, Renishaw 전시
             # 일정이 한글에만 남았다(실행 35167466191).
@@ -172,55 +167,6 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
             "source": report.source_line(entry["row"]),
             "source_url": report.source_url(entry["row"]),
         } for entry in entries],
-    }
-
-
-SCOPE_REASONS = ("collection_incomplete", "review_failed", "recheck_pending", "date_pending", "date_deferred", "needs_review", "no_body")
-
-
-def scope_entries(profiles, signal_index, summary, counts):
-    """보고서 앞쪽의 검토 범위. 기사 수, 기업 수, 수집 작업 상태를 섞지 않고 각각의 단위로 적는다."""
-    scope = summary.get("review_scope")
-    if not isinstance(scope, dict):
-        return None
-    covered = covered_companies(summary, [])
-    coverage = {item.get("company"): item for item in summary.get("review_coverage") or []}
-    insufficient = [p["company"] for p in profiles if company_status(p["company"], signal_index, covered) == "insufficient"]
-    reasons = []
-    for reason in SCOPE_REASONS:
-        count = sum(1 for company in insufficient if reason in (coverage.get(company, {}).get("reasons") or []))
-        if count:
-            reasons.append({"label": report.t(f"scope_reason_{reason}"), "count": count})
-    failed = summary.get("review_failed_articles") or []
-    lines = [
-        report.t("scope_period", period=report.matrix_period_label(summary)),
-        report.t("scope_articles", articles=scope.get("articles", 0), reviewed=scope.get("reviewed_articles", 0),
-                 failed=scope.get("review_failed_articles", 0)),
-    ]
-    if scope.get("adjudicated_articles") or scope.get("wording_fixed_articles"):
-        lines.append(report.t("scope_adjudicated", count=scope.get("adjudicated_articles", 0),
-                              wording=scope.get("wording_fixed_articles", 0)))
-    if scope.get("recheck_pending_candidates"):
-        lines.append(report.t("scope_recheck_pending", count=scope["recheck_pending_candidates"]))
-    lines.append(report.t("scope_companies", on=counts["detected"], review=counts["review"], off=counts["reviewed_off"],
-                          insufficient=counts["insufficient"]))
-    return {
-        "kicker": report.t("scope_kicker"),
-        "title": report.t("scope_title"),
-        "lines": lines,
-        "reasons_heading": report.t("scope_reasons_heading"),
-        "reasons": reasons,
-        "notes": [
-            report.t("scope_date_pending", investment=scope.get("date_pending_investment_rows", 0),
-                     business=scope.get("date_pending_business_rows", 0)),
-            report.t("scope_collection", completed=scope.get("collection_completed_companies", 0),
-                     incomplete=scope.get("collection_incomplete_companies", 0)),
-        ],
-        "failed_heading": report.t("scope_failed_heading"),
-        "failed": [{"company": item.get("company", ""), "title": item.get("title", ""), "url": item.get("url", "")}
-                   for item in failed],
-        "failed_none": report.t("scope_failed_none"),
-        "review_note": report.t("scope_review_note"),
     }
 
 
@@ -280,13 +226,9 @@ def build(args):
             "company_heading": report.t("matrix_company"),
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
-            "legend_unknown": report.t("matrix_legend_unknown"),
-            "legend_review": report.t("matrix_legend_review"),
             "indicators": report.t("matrix_indicators"),
-            "footnote": report.t("matrix_footnote", on=counts["detected"], review=counts["review"],
-                                 off=counts["reviewed_off"] + counts["insufficient"],
-                                 total=counts["total"], reviewed_off=counts["reviewed_off"],
-                                 insufficient=counts["insufficient"]),
+            "footnote": report.t("matrix_footnote", on=counts["detected"],
+                                 off=counts["reviewed_off"], total=counts["total"]),
             "counts": counts,
             "rows": [{
                 "target_no": profile["target_no"],
@@ -295,7 +237,6 @@ def build(args):
                 "signals": [report.signal_cell_state(signal_index, profile["company"], no) for no in range(1, 6)],
             } for profile in profiles],
         },
-        "scope": scope_entries(profiles, signal_index, summary, counts),
         "details": {
             "kicker": "C O M P A N Y   S I G N A L S",
             "title": report.t("detail_title"),

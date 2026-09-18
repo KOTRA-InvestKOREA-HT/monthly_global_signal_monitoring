@@ -72,7 +72,8 @@ test('an approvable candidate with unverifiable evidence becomes pending while t
   assert.equal(s3.summary_ko, '');
   const results = Object.fromEntries(importReview(a, salvaged).map(r => [r.candidate_id, r]));
   assert.equal(results['investment:3'].supported, false);
-  assert.deepEqual(results['investment:3'].row.ai_review_gaps, ['semantic_recheck']);
+  // 문안을 비운 후보는 싣지 않는다. 예전에는 '사람 검토'로 실렸다.
+  assert.equal(results['investment:3'].row, null);
   assert.equal(results['investment:2'].supported, true);
   assert.equal(results.relevant.supported, true);
   // 인용 밖 고유명사를 쓴 승인 후보도 같은 방식으로 그 후보만 미완료가 된다.
@@ -145,8 +146,8 @@ test('a saved review whose recheck fails is kept as pending instead of silently 
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.deepEqual(stored.decisions, saved.decisions);
   assert.deepEqual(stored.semantic_recheck_pending.candidate_ids.sort(), ['investment:2', 'investment:3', 'relevant']);
-  // 미완료 후보는 AI 승인으로 싣지 않는다. 다음 실행은 다시 묻는다.
-  assert.equal(importReview(a, stored).filter(r => r.supported).length, 0);
+  // 판정과 문안이 그대로 남아 있으므로 후보는 계속 실린다. 미완료 기록이 다음 실행에서 다시 묻게 한다.
+  assert.equal(importReview(a, stored).filter(r => r.supported).length, 3);
   let calls = 0;
   await reviewArticles({ ...args, fetchImpl: async () => { calls++; return reply([approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business]); } });
   assert.equal(calls, 1);
@@ -176,12 +177,12 @@ test('a recheck that fails is saved as pending, is not published as approved, an
   assert.deepEqual(first.recheck_pending, [{ article_id: a.id, candidate_ids: ['investment:2'], reason: 'evidence_mismatch' }]);
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.deepEqual(stored.semantic_recheck_pending.candidate_ids, ['investment:2']);
-  // 보고서에는 AI 확인이 아니라 재검토 미완료 사람 검토 후보로만 실린다.
+  // 사람 검토 계층을 없앤 뒤로 재검토 미완료 후보도 인용과 문안을 갖췄으면 그대로 실린다.
+  // 미완료 기록은 review 파일에 남아 다음 실행이 이 기사를 다시 판정한다.
   const [result] = importReview(a, stored);
-  assert.equal(result.supported, false);
-  assert.equal(result.human_review, true);
-  assert.equal(result.row.ai_signal_supported, false);
-  assert.deepEqual(result.row.ai_review_gaps, ['semantic_recheck']);
+  assert.equal(result.supported, true);
+  assert.equal(result.row.ai_signal_supported, true);
+  assert.equal(result.row.ai_review_tier, undefined);
 
   // 다음 실행은 캐시를 재사용하지 않고 다시 판정한다. 이번에는 committed 로 답해 되묻기 대상이 아니다.
   let next = 0;
@@ -378,10 +379,11 @@ test('a verifier that stays unavailable after retries pauses the run so no repor
   assert.equal(state.verification.failed, 1);
   assert.deepEqual(state.verification.errors, { '503:unspecified': 3 });
   assert.equal(state.recheck_pending.length, 1);
-  // 받은 1차 판정은 미완료로 저장돼 다음 실행에서 검증만 다시 한다.
+  // 받은 1차 판정은 미완료로 저장돼 다음 실행에서 검증만 다시 한다. 실행은 이 상태로 멈추므로
+  // 보고서가 만들어지지 않는다(위 publishableReviewFailures 확인). 판정 자체는 그대로 남는다.
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.equal(stored.semantic_recheck_pending.reason, 'verifier_unavailable');
-  assert.equal(importReview(a, stored).filter(r => r.supported).length, 0);
+  assert.equal(importReview(a, stored).filter(r => r.supported).length, 3);
   // 다음 실행은 1차 판정을 다시 사지 않고 검증만 다시 시도한다.
   const urls = [];
   await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},

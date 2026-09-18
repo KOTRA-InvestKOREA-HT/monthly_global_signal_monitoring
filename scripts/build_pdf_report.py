@@ -275,11 +275,9 @@ TEXTS = {
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
         "matrix_company": "기업",
         "matrix_legend_on": "AI 확인 시그널",
-        "matrix_legend_review": "검토 필요 · 사람 확인 전",
-        "matrix_legend_off": "검토함 · 신호 없음",
-        "matrix_legend_unknown": "근거 부족 · 재조사 대상",
+        "matrix_legend_off": "신호없음",
         "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        "matrix_footnote": "AI 확인 {on}개사 · 검토 필요 {review}개사 · 검토 후 미포착 {reviewed_off}개사 · 근거 부족 {insufficient}개사",
+        "matrix_footnote": "AI 확인 시그널 {on}개사 · 신호없음 {off}개사",
         "detail_title": "기업별 시그널 상세",
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
@@ -293,26 +291,6 @@ TEXTS = {
         "item_trend_label": "{month} 글로벌 사업동향",
         "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 기술 관련성 확인 면제 기업은 품목 연계와 별개로 주요 사업동향을 싣고 카드에 표시함. 향후 시그널 발전 가능성을 모니터링함.",
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
-        "scope_kicker": "R E V I E W   S C O P E",
-        "scope_title": "검토 범위와 미반영 항목",
-        "scope_period": "대상 정보 기간 {period}",
-        "scope_articles": "해당 월 기사 {articles}건 중 판정 완료 {reviewed}건 · 판정 실패 {failed}건",
-        "scope_adjudicated": "이 중 {count}건은 자동 판정 실패·오판정 확인 후 원문 기준으로 재판정했고, {wording}건은 판정은 그대로 두고 문안만 수정함",
-        "scope_companies": "기업 상태(77개사): AI 확인 {on} · 검토 필요 {review} · 검토 후 미포착 {off} · 근거 부족 {insufficient}",
-        "scope_reasons_heading": "근거 부족 사유(기업 수, 중복 포함)",
-        "scope_reason_collection_incomplete": "수집 작업 미완료",
-        "scope_reason_review_failed": "기사 판정 실패",
-        "scope_reason_recheck_pending": "재검토 미완료",
-        "scope_reason_date_pending": "시그널 후보 게시일 확인 전",
-        "scope_reason_date_deferred": "게시일·본문 미확보 기사 보류",
-        "scope_reason_needs_review": "근거 불충분으로 판단 보류",
-        "scope_reason_no_body": "본문 미수집(제목만 확보)",
-        "scope_collection": "수집 작업 상태: 완료 {completed}개사 · 미완료 {incomplete}개사. 기업별 수집 작업의 완료 여부로, 매트릭스의 ‘근거 부족’(판정 근거 확보 여부)과 다른 지표임.",
-        "scope_date_pending": "게시일 확인 전이라 본문에서 제외한 후보: 투자 시그널 {investment}건 · 사업동향 {business}건",
-        "scope_recheck_pending": "재검토나 근거 확인을 끝내지 못한 후보 {count}건은 AI 확인으로 싣지 않았음(투자 시그널은 ‘검토 필요 · 재검토 미완료’, 사업동향은 제외). 다음 실행에서 다시 판정함",
-        "scope_failed_heading": "판정 실패로 반영하지 못한 기사",
-        "scope_failed_none": "판정 실패 기사 없음",
-        "scope_review_note": "‘검토 필요’는 기업·지표 사건은 확인됐으나 조건 하나가 부족해 사람 확인이 필요한 후보이며 AI 확인 시그널이 아님. 외부 원문 전수 사실검증은 수행하지 않음. 기사별 판정·오류 상세는 실행 아티팩트(status.json, reviews/diagnostics)에 있음.",
     },
     "en": {
         "footer": "Invest KOREA · Target-Company Global Investment Signal Monitor · {issue}",
@@ -326,11 +304,9 @@ TEXTS = {
         "matrix_desc": "Investment signals (pre-confirmation) across the 77 target companies for {period}. A highlighted cell marks a signal detected during the month; lagging data such as completed deals are excluded.",
         "matrix_company": "Company",
         "matrix_legend_on": "AI-confirmed signal",
-        "matrix_legend_review": "Needs review, unconfirmed",
-        "matrix_legend_off": "Reviewed, no signal",
-        "matrix_legend_unknown": "Insufficient evidence, revisit",
+        "matrix_legend_off": "No signal",
         "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move",
-        "matrix_footnote": "{on} AI-confirmed · {review} needs review · {reviewed_off} reviewed without signals · {insufficient} insufficient evidence",
+        "matrix_footnote": "{on} companies with AI-confirmed signals · {off} with no signal",
         "detail_title": "Company Signal Details",
         "no_signal": "No signal this month",
         "business_heading": "GLOBAL BUSINESS STATUS",
@@ -344,26 +320,6 @@ TEXTS = {
         "item_trend_label": "{month} global business trend",
         "item_note": "Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was detected in {month}. For companies exempt from the technology-link check, key business activity is shown and the card says so. Monitored for potential signal development.",
         "item_exempt_note": "Technology-link check exempt · key business activity",
-        "scope_kicker": "R E V I E W   S C O P E",
-        "scope_title": "Review Scope and Omissions",
-        "scope_period": "Information period {period}",
-        "scope_articles": "{reviewed} of {articles} articles for the month reviewed · {failed} failed review",
-        "scope_adjudicated": "{count} of them were re-reviewed against the source text after an automated review failure or misjudgement; {wording} kept their decisions with wording corrected",
-        "scope_companies": "Company status (77): {on} AI-confirmed · {review} needs review · {off} reviewed without signals · {insufficient} insufficient evidence",
-        "scope_reasons_heading": "Why evidence is insufficient (companies, may overlap)",
-        "scope_reason_collection_incomplete": "Collection incomplete",
-        "scope_reason_review_failed": "Article review failed",
-        "scope_reason_recheck_pending": "Recheck not completed",
-        "scope_reason_date_pending": "Signal candidate awaiting publication date",
-        "scope_reason_date_deferred": "Articles held without date or body",
-        "scope_reason_needs_review": "Judgement deferred for insufficient evidence",
-        "scope_reason_no_body": "Title only, body not collected",
-        "scope_collection": "Collection jobs: {completed} companies completed · {incomplete} incomplete. This tracks whether collection finished and is a different measure from 'insufficient evidence' in the matrix.",
-        "scope_date_pending": "Candidates left out of the body pending a publication date: {investment} investment signals · {business} business trends",
-        "scope_recheck_pending": "{count} candidates whose recheck or evidence check did not complete are not shown as AI-confirmed (investment signals appear as 'Needs review · recheck pending'; business trends are left out). They are reviewed again next run",
-        "scope_failed_heading": "Articles not reflected because review failed",
-        "scope_failed_none": "No article failed review",
-        "scope_review_note": "'Needs review' marks a candidate whose company and indicator event were confirmed but which misses one condition; it is not an AI-confirmed signal. No full external fact-check of source articles was performed. Per-article decisions and errors are in the run artifact (status.json, reviews/diagnostics).",
     },
 }
 
@@ -1295,45 +1251,42 @@ def is_relevance_exempt(row):
 def signal_supported(row):
     """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
 
-    정확성 우선 원칙에 따라 판정 누락과 needs_review는 발행하지 않는다. 새 스키마의 세부 판정이
-    있으면 기업 귀속·지표·선행성도 모두 참이어야 하고, 관련성 면제 대상이 아니면 타겟 기술
-    근거도 함께 요구한다. 요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
+    validate_report_inputs.mjs 의 승인 규칙을 그대로 옮긴 것이다. 두 곳이 어긋나면 판정 단계가
+    승인한 행을 발행 단계가 조용히 떨어뜨린다. 기업 귀속과 지표 사건은 어떤 행에서도 필수이고,
+    투자 시그널은 나머지 네 조건(타겟 기술·선행성·투자 단계·근거 충분성) 가운데 하나까지 비어도
+    싣는다. 완료된 사건은 어떤 지표에서도 싣지 않는다. 사업동향은 예전 엄격 기준 그대로다.
+    요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
     """
     if not row or row.get("ai_signal_supported") is not True:
         return False
-    if row.get("ai_summary_quality") != "pass":
+    if row.get("ai_entity_supported") is not True or row.get("ai_indicator_supported") is not True:
         return False
     target_technology_required = not is_relevance_exempt(row)
-    required_fields = [
-        "ai_entity_supported",
-        "ai_indicator_supported",
-        "ai_leading_indicator_supported",
-    ]
-    if target_technology_required:
-        required_fields.append("ai_target_technology_supported")
-    for field in required_fields:
-        if row.get(field) is not True:
-            return False
+    technology_met = not target_technology_required or row.get("ai_target_technology_supported") is True
     stage = row.get("ai_event_stage")
-    if row.get("investment_signal_no") is not None:
-        allowed = stage in {"exploratory", "planned"} or (
-            stage == "precursor" and str(row.get("investment_signal_no")) in {"1", "3", "4", "5"}
+    # 기술을 인정해 놓고 사유에서 직접 연관성을 부인하면 그 자체로 모순이다.
+    if target_technology_required and row.get("ai_target_technology_supported") is True:
+        reason = clean_text(row.get("ai_summary_reason")).lower()
+        denial_patterns = (
+            r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
+            r"직접 관련.*(?:근거.*제시되지|확인되지)",
+            r"자체는 언급되지",
+            r"not directly (?:related|linked)",
+            r"no direct (?:evidence|link|connection|relevance)",
         )
-    else:
-        allowed = stage == "not_applicable"
-    if not allowed:
+        if any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns):
+            return False
+    if row.get("investment_signal_no") is None:
+        return (technology_met and row.get("ai_leading_indicator_supported") is True
+                and row.get("ai_summary_quality") == "pass" and stage == "not_applicable")
+    if stage == "completed":
         return False
-    if not target_technology_required:
-        return True
-    reason = clean_text(row.get("ai_summary_reason")).lower()
-    denial_patterns = (
-        r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
-        r"직접 관련.*(?:근거.*제시되지|확인되지)",
-        r"자체는 언급되지",
-        r"not directly (?:related|linked)",
-        r"no direct (?:evidence|link|connection|relevance)",
+    stage_met = stage in {"exploratory", "planned"} or (
+        stage == "precursor" and str(row.get("investment_signal_no")) in {"1", "3", "4", "5"}
     )
-    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns)
+    unmet = [technology_met, row.get("ai_leading_indicator_supported") is True,
+             stage_met, row.get("ai_summary_quality") == "pass"].count(False)
+    return unmet <= 1
 
 
 # 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독
@@ -1356,51 +1309,23 @@ def is_periodic_disclosure(row):
     return bool(PERIODIC_DISCLOSURE_PATTERN.search(str(row.get("title") or "")))
 
 
-def signal_needs_human_review(row):
-    """AI 승인 조건은 못 채웠지만 기업 귀속과 지표 사건이 확인돼 사람이 거르도록 넣은 행인지.
+def signal_publishable(row):
+    """시그널 칸에 올릴 수 있는 행.
 
     한·영 문안이 모두 있어야 싣는다. 문안 없이 원문 발췌로 칸을 채우면 한국어판에 영어·일본어
     본문이나 "PDF 3.29 MB" 같은 링크 문구가 그대로 나간다(2026-08 실행). 두 언어판의 매트릭스가
-    같도록 한쪽 문안만 있는 행도 뺀다. 빠진 행은 대시보드에는 남는다.
+    같도록 한쪽 문안만 있는 행도 뺀다. 판정 단계가 이미 같은 기준으로 거르므로 여기는 이중 확인이다.
     """
     return (
-        bool(row)
-        and row.get("ai_signal_supported") is False
-        and row.get("ai_review_tier") == "human_review"
-        and row.get("ai_entity_supported") is True
-        and row.get("ai_indicator_supported") is True
+        signal_supported(row)
         and bool(clean_text(row.get("ai_summary_ko")))
         and bool(clean_text(row.get("ai_summary_en")))
     )
 
 
-# 검토 필요 표시에 붙이는 사유. 무엇이 모자라 AI 승인을 못 받았는지 보여야 사람이 빨리 거른다.
-REVIEW_GAP_LABELS = {
-    "ko": {"target_technology": "타겟 기술 미확인", "leading_indicator": "전조 활동 미확인",
-           "event_stage": "투자 단계 기준 밖", "quality": "근거 부족", "semantic_recheck": "재검토 미완료"},
-    "en": {"target_technology": "target tech unconfirmed", "leading_indicator": "no leading activity",
-           "event_stage": "stage outside criteria", "quality": "insufficient evidence", "semantic_recheck": "recheck pending"},
-}
-
-
-def review_label(row):
-    """검토 필요 표시와 그 사유. 사람 검토 후보가 아니면 빈 문자열."""
-    if not signal_needs_human_review(row):
-        return ""
-    labels = REVIEW_GAP_LABELS["en" if LANG == "en" else "ko"]
-    reasons = [labels.get(gap, gap) for gap in (row.get("ai_review_gaps") or [])]
-    return " · ".join(["Needs review" if LANG == "en" else "검토 필요", *reasons])
-
-
-def signal_publishable(row):
-    """시그널 칸에 올릴 수 있는 행. 사람 검토 후보는 대시보드의 무시 목록으로 빠진다."""
-    return signal_supported(row) or signal_needs_human_review(row)
-
-
 def sort_signal_rows(rows, prefer_single_event=False):
     def key(row):
-        # AI 승인 행이 같은 칸의 사람 검토 후보보다 먼저 대표 문안이 된다.
-        supported = 0 if signal_supported(row) else 1 if signal_needs_human_review(row) else 2
+        supported = 0 if signal_publishable(row) else 1
         # 시그널 칸을 고를 때만 쓴다. 사업현황 상자는 실적 공시가 본래의 근거이므로
         # best_business_row 는 이 선호를 켜지 않는다.
         single_event = (1 if prefer_single_event and is_periodic_disclosure(row) else 0)
@@ -1421,7 +1346,7 @@ def index_investment_signals(rows):
     index = defaultdict(lambda: defaultdict(list))
     for row in rows:
         # 매트릭스의 켜진 칸은 '당월 포착된 시그널'을 뜻한다. 근거가 확인되지 않은 행이 칸을 켜면
-        # 문서가 스스로 정의한 뜻과 어긋난다. 사람 검토 후보는 기업·지표 사건이 확인된 행만 들어온다.
+        # 문서가 스스로 정의한 뜻과 어긋난다.
         if not signal_publishable(row):
             continue
         company = row.get("company")
@@ -1447,34 +1372,24 @@ def covered_companies(summary, signal_rows):
 
 
 def signal_cell_state(signal_index, company, no):
-    """매트릭스 한 칸. on=AI 확인 시그널, review=사람 검토 후보뿐, ""=없음.
+    """매트릭스 한 칸. on=AI 확인 시그널, ""=신호없음.
 
-    2026-08 보고서는 검토 후보만 있는 칸도 AI 확인 칸과 같은 금색으로 칠해, 받는 사람이 둘을
-    구분할 수 없었다. 한 칸에 둘이 섞이면 AI 확인이 이긴다.
+    조건 하나가 부족한 후보도 같은 시그널로 싣기로 해, 칸은 두 상태만 갖는다.
     """
-    rows = signal_index.get(company, {}).get(no) or []
-    if not rows:
-        return ""
-    return "review" if all(signal_needs_human_review(row) for row in rows) else "on"
+    return "on" if signal_index.get(company, {}).get(no) else ""
 
 
 def company_status(company, signal_index, covered):
     """매트릭스 한 행의 상태.
 
     detected     이번 달 AI 확인 시그널이 있다
-    review       사람 검토 후보만 있다
-    reviewed     검토를 끝냈고 시그널이 없었다
-    insufficient 검토를 끝내지 못했다. 없다는 뜻이 아니라 모른다는 뜻이다
+    reviewed     시그널이 없다
 
-    각주는 이 상태를 숫자로 말한다. report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을
-    한 곳에 둬야 두 렌더러가 같은 표를 그린다.
+    covered 는 더 이상 행 상태를 가르지 않는다. 각주는 이 상태를 숫자로 말하고,
+    report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을 한 곳에 둬야 두 렌더러가 같은 표를 그린다.
     """
     states = [signal_cell_state(signal_index, company, no) for no in range(1, 6)]
-    if "on" in states:
-        return "detected"
-    if "review" in states:
-        return "review"
-    return "reviewed" if company in covered else "insufficient"
+    return "detected" if "on" in states else "reviewed"
 
 
 def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=False):
@@ -1500,25 +1415,13 @@ def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=F
         c.line(x, y, x + table_w, y)
         report.text(index_x, y + 3.7, str(profile["target_no"]), 6, colors.HexColor("#737C86"), align="center")
         report.text(name_x, y + 3.7, profile.get("display_name") or profile["company"], 6, TEXT)
-        status = company_status(profile["company"], signal_index, covered)
         for idx in range(5):
-            state = signal_cell_state(signal_index, profile["company"], idx + 1)
-            if state == "on":
+            # 칸은 두 가지뿐이다. 금색으로 채우면 AI 확인 시그널, 회색이면 신호없음.
+            if signal_cell_state(signal_index, profile["company"], idx + 1) == "on":
                 c.setFillColor(GOLD)
-                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
-            elif state == "review":
-                # 금색 테두리만: 사람 검토 전 후보. 채운 칸(AI 확인)과 같은 뜻으로 읽히면 안 된다.
-                c.setStrokeColor(GOLD)
-                c.setLineWidth(1.1)
-                c.roundRect(signal_xs[idx] + 0.5, y + 3.5, 7.2, 7.2, 2, fill=0, stroke=1)
-            elif status == "insufficient":
-                # 테두리만: 검토를 못 해 모른다. 속을 채우면 "보고 없었다"로 읽힌다.
-                c.setStrokeColor(TABLE_LINE)
-                c.setLineWidth(0.6)
-                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=0, stroke=1)
             else:
                 c.setFillColor(LIGHT)
-                c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
+            c.roundRect(signal_xs[idx], y + 3.0, 8.2, 8.2, 2, fill=1, stroke=0)
 
 
 def draw_matrix(report, profiles, signal_index, summary, signal_rows):
@@ -1538,23 +1441,9 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     c = report.canvas
     legend_color = colors.HexColor("#596579")
     legend_x = 32
-    for mark, label in (("on", t("matrix_legend_on")), ("review", t("matrix_legend_review")),
-                        ("off", t("matrix_legend_off")), ("unknown", t("matrix_legend_unknown"))):
-        if mark == "on":
-            c.setFillColor(GOLD)
-            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
-        elif mark == "review":
-            c.setStrokeColor(GOLD)
-            c.setLineWidth(1.1)
-            c.roundRect(legend_x + 0.5, y + 9.5, 7, 7, 2, fill=0, stroke=1)
-        elif mark == "off":
-            c.setFillColor(LIGHT)
-            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
-        else:
-            # 테두리만 회색: 검토를 못 해 모른다.
-            c.setStrokeColor(TABLE_LINE)
-            c.setLineWidth(0.6)
-            c.roundRect(legend_x, y + 9, 8, 8, 2, fill=0, stroke=1)
+    for mark, label in (("on", t("matrix_legend_on")), ("off", t("matrix_legend_off"))):
+        c.setFillColor(GOLD if mark == "on" else LIGHT)
+        c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
         report.text(legend_x + 13, y + 9, label, 8, legend_color)
         legend_x += 13 + c.stringWidth(label, report.fonts["demilight"], 8) + 18
     report.text(
@@ -1569,11 +1458,8 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     footnote = t(
         "matrix_footnote",
         on=statuses.count("detected"),
-        review=statuses.count("review"),
-        off=statuses.count("reviewed") + statuses.count("insufficient"),
+        off=statuses.count("reviewed"),
         total=len(profiles),
-        reviewed_off=statuses.count("reviewed"),
-        insufficient=statuses.count("insufficient"),
     )
     report.text(
         32,

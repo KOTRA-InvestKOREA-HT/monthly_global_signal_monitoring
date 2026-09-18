@@ -112,14 +112,15 @@ test("an exempt company may be approved without target-technology evidence", () 
   assert.deepEqual(validateRows([row], "investment"), []);
 });
 
-test("a company still under the technology gate is not given that latitude", () => {
+// 면제가 아닌 기업도 기술 연결 하나만 비면 싣는다. 거기에 조건이 하나 더 비면 떨어진다.
+test("an unconfirmed technology link alone still publishes, but not with a second gap", () => {
   const row = investmentRow({
     ai_target_technology_supported: false,
     ai_summary_reason: "유치필요 기술과의 직접적 연관성은 확인되지 않음",
   });
-  const errors = validateRows([row], "investment");
-  assert.ok(errors.some((error) => error.includes("lacks target-technology evidence")));
-  assert.ok(errors.some((error) => error.includes("reason denies direct relevance")));
+  assert.deepEqual(validateRows([row], "investment"), []);
+  const errors = validateRows([{ ...row, ai_leading_indicator_supported: false }], "investment");
+  assert.ok(errors.some((error) => error.includes("misses 2 approval conditions")));
 });
 
 test("an exempt row still needs entity, indicator and leading evidence", () => {
