@@ -1,0 +1,19 @@
+{
+  "description": "기업별 사업동향 검색어. technology_keywords.json 은 기술 그룹 단위라 제품 브랜드나 업계에서 실제로 쓰는 표현을 담지 못한다. 여기 적은 말은 Google News 질의의 앞자리를 차지하고, 사전 필터도 함께 통과시킨다. 선택 사항이라 비어 있어도 수집은 그대로 돈다.",
+  "guidance": [
+    "그 기업 기사에만 나오는 말을 적는다. 제품·브랜드명(Hydro CIRCAL), 업계 약칭, 흔한 철자 변형이 대상이다.",
+    "미국식·영국식 철자를 함께 적는다(aluminium/aluminum). 사전 필터는 문자열 일치라 둘을 따로 본다.",
+    "세 글자 미만은 사전 필터가 무시한다. 너무 일반적인 낱말은 그 기업의 아무 기사나 통과시키므로 적지 않는다.",
+    "이 파일을 고치면 수집 식별자가 바뀌어 캐시된 수집을 다시 돈다. 다음 달 실행 전에 고치는 것이 좋다."
+  ],
+  "companies": {
+    "Norsk Hydro": [
+      "Hydro CIRCAL",
+      "recycled aluminium",
+      "recycled aluminum",
+      "recycled alu",
+      "recycled alloy",
+      "recycled content aluminum"
+    ]
+  }
+}

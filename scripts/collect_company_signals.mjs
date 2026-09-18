@@ -18,7 +18,7 @@ import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArt
 export const CONTENT_COLLECTION_VERSION = 'article-body-v15-business-trend-discovery';
 // 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
 // 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
-export const TREND_DISCOVERY_PER_COMPANY = 2;
+export const TREND_DISCOVERY_PER_COMPANY = 1;
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -85,6 +85,7 @@ let linkPolicy = DEFAULT_LINK_POLICY;
 // 사업동향 탐색이 쓰는 기술 매핑과 키워드 목록. main() 이 채우고, 없으면 탐색을 건너뛴다.
 let trendTechnology = null;
 let trendKeywordConfig = null;
+let trendSearchTerms = null;
 const linkVerdictCounts = new Map();
 
 function countLinkVerdict(verdict) {
@@ -148,6 +149,7 @@ export function parseArgs(argv) {
     // 사업동향 탐색. 공식 자료가 있어도 돌린다(아래 collectTrendDiscovery 주석).
     technologyMap: "data/company_technology_map.json",
     keywordConfig: "config/technology_keywords.json",
+    searchTerms: "config/trend_search_terms.json",
     maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY,
   };
   const keyMap = {
@@ -176,6 +178,7 @@ export function parseArgs(argv) {
     "--max-verify-per-company": "maxVerifyPerCompany",
     "--technology-map": "technologyMap",
     "--keyword-config": "keywordConfig",
+    "--search-terms": "searchTerms",
     "--max-trend-discovery": "maxTrendDiscovery",
   };
   for (let index = 0; index < argv.length; index += 1) {
@@ -1733,19 +1736,67 @@ const isLatinKeyword = (term) => /^[\x20-\x7e]+$/.test(term);
 
 // 수집 식별자에 넣는 탐색 입력. 기술 매핑과 키워드 목록이 바뀌면 캐시된 수집을 다시 돌려야 한다.
 // 상한이 0이면 탐색을 아예 돌리지 않으므로 두 파일은 식별자에 넣지 않는다.
-export function trendDigestInputs(args, technology = trendTechnology, keywordConfig = trendKeywordConfig) {
+export function trendDigestInputs(args, technology = trendTechnology, keywordConfig = trendKeywordConfig,
+  searchTerms = trendSearchTerms) {
   if (!(args.maxTrendDiscovery > 0)) return null;
-  return { maxTrendDiscovery: args.maxTrendDiscovery, technology, keywordConfig };
+  return { maxTrendDiscovery: args.maxTrendDiscovery, technology, keywordConfig, searchTerms };
 }
 
-export function trendKeywords(technology, keywordConfig) {
+// 기업별로 손으로 적는 검색어. 카탈로그는 기술 그룹 단위라 제품명·시장 표현을 담지 못한다.
+// Norsk Hydro 의 8월 사업동향이 그 틈으로 빠졌다: 외부 보도 제목이 "recycled alu alloy" 였고
+// 그룹 키워드에는 그 표현도, 미국식 철자 "aluminum" 도 없었다. 여기 적으면 질의에 먼저 들어가고
+// 사전 필터도 같이 통과시킨다. 없으면 없는 대로 카탈로그만 쓴다.
+export function companySearchTerms(company, searchTerms) {
+  const entry = searchTerms?.companies?.[company?.company] || searchTerms?.[company?.company];
+  return (Array.isArray(entry) ? entry : []).map((term) => String(term || "").trim()).filter(Boolean);
+}
+
+export function trendKeywords(technology, keywordConfig, company = null, searchTerms = null) {
   if (!technology) return [];
   const group = keywordConfig?.groups?.[technology.technology_group];
-  const terms = [technology.target_technology_en, ...(group?.keywords || []), technology.target_technology]
+  const terms = [...companySearchTerms(company, searchTerms), technology.target_technology_en,
+    ...(group?.keywords || []), technology.target_technology]
     .map((term) => String(term || "").trim())
     .filter(Boolean);
   // 대소문자만 다른 중복을 없애고 원래 순서를 지킨다.
   return [...new Map(terms.map((term) => [term.toLowerCase(), term])).values()];
+}
+
+// 질의어 여섯 자리를 무엇으로 채울지. 설정 파일 순서는 사람이 적은 순서일 뿐 구체성과 무관하다.
+// 카탈로그는 일부러 넓어서 "scrap", "recycling" 같은 항목이 앞자리를 차지하면, 회사명과 AND 로
+// 묶여도 그 회사의 아무 기사나 걸려 여섯 자리를 낭비한다. 구체적인 것부터 넣는다.
+//
+// 등급 0: 기업별로 손으로 적은 검색어. 제품명·시장 표현이라 가장 구체적이다.
+// 등급 1: 두 낱말 이상의 구(句). "recycled aluminium", "machine vision" 처럼 뜻이 좁다.
+// 등급 2: 한 낱말이되 일반어도 약어도 아닌 것. "remelting", "electrodialysis" 처럼 분야어다.
+// 등급 3: 일반어와 짧은 대문자 약어. "scrap", "recycling", "PEM", "AEM" 이 여기 든다.
+//         앞 등급으로 여섯 자리가 차지 않을 때만 쓴다.
+// 등급 4: 기술 매핑에서 자동 생성된 영문명. 실제 기사 표현인 카탈로그에도 같은 말이 있으면 제외한다.
+const GENERIC_TREND_TERMS = new Set([
+  "scrap", "recycling", "recycled", "recovery", "materials", "material", "metal", "metals",
+  "non-ferrous", "nonferrous", "semiconductor", "semiconductors", "battery", "batteries",
+  "chemical", "chemicals", "equipment", "manufacturing", "production", "technology", "technologies",
+  "membrane", "membranes", "sensor", "sensors", "motor", "motors", "robot", "robotics",
+]);
+const isAcronym = (term) => /^[A-Z0-9-]{2,6}$/.test(term);
+
+export function trendTermRank(term, overrides = [], generated = []) {
+  if (overrides.some((item) => item.toLowerCase() === term.toLowerCase())) return 0;
+  if (generated.some((item) => item.toLowerCase() === term.toLowerCase())) return 4;
+  const words = term.split(/\s+/).filter(Boolean);
+  if (words.length > 1) return 1;
+  if (GENERIC_TREND_TERMS.has(term.toLowerCase()) || isAcronym(term)) return 3;
+  return 2;
+}
+
+export function rankTrendQueryTerms(keywords, overrides = [], generated = []) {
+  return keywords
+    .filter(isLatinKeyword)
+    .map((term, index) => ({ term, rank: trendTermRank(term, overrides, generated), index }))
+    // 같은 등급에서는 카탈로그 순서를 지킨다. 그 순서는 실제 기사에서 쓰는 대표 표현을 먼저 적어 둔
+    // 순서라, 글자 수만 긴 드문 표현이 앞서는 것을 막고 실행마다 질의가 흔들리지 않게 한다.
+    .sort((a, b) => (a.rank - b.rank) || (a.index - b.index))
+    .map((item) => item.term);
 }
 
 // 검색 창을 보고 기간에 맞춘다. when:Nd 는 "요청 시점에서 N일 전"이라, 마감 한참 뒤에 수집을
@@ -1763,13 +1814,43 @@ export function trendSearchWindow(dateRange) {
   return `when:${dateRange?.lookbackDays || 45}d`;
 }
 
-export function buildTrendQuery(company, technology, keywordConfig, dateRange) {
-  const keywords = trendKeywords(technology, keywordConfig);
+// 질의는 recall 을 맡고 정밀도는 사전 필터가 맡는다. 기업별 제품명·시장 표현을 가장 먼저 쓰고,
+// 나머지는 구체적인 카탈로그 표현, 분야 단일어, 일반 단일어·약어 순으로 채운다. target_technology_en
+// 같은 자동 생성 문구는 길다는 이유만으로 구체적인 표현처럼 보일 수 있지만 기자가 그대로 쓰지 않는다.
+// 같은 시점 A/B 에서 이를 앞세우자 Albemarle 결과가 13건에서 0건, Nabtesco 가 2건에서 0건이 됐다.
+// 따라서 자동 생성 문구는 사전 필터에는 남기되, 카탈로그에 같은 표현이 없을 때만 질의 맨 뒤로 민다.
+export function selectTrendQueryTerms(keywords, overrides = [], limit = TREND_QUERY_KEYWORD_LIMIT,
+  generated = []) {
+  return rankTrendQueryTerms(keywords, overrides, generated).slice(0, limit);
+}
+
+function trendCompanyNames(company, overrides) {
+  const names = relevantAliases(company);
+  // 일반 Google 검색에서는 Hydro 같은 짧고 흔한 별칭을 빼야 하지만, 기업별 제품명·시장 표현과
+  // 함께 찾을 때는 오탐 범위가 충분히 좁다. Norsk Hydro 정식명만 쓰면 제목이 "Hydro brings ..."
+  // 로 시작하는 CIRCAL 기사가 검색 결과에서 빠졌다. 수동 검색어가 있는 기업에만 별칭을 복원한다.
+  if (overrides.length) {
+    for (const alias of company.query_aliases || []) {
+      if (String(alias || "").trim().length >= 3) names.push(String(alias).trim());
+    }
+  }
+  return [...new Map(names.map((name) => [name.toLowerCase(), name])).values()].slice(0, 3);
+}
+
+export function buildTrendQuery(company, technology, keywordConfig, dateRange, searchTerms = null) {
+  const overrides = companySearchTerms(company, searchTerms);
+  const keywords = trendKeywords(technology, keywordConfig, company, searchTerms);
+  const catalogTerms = keywordConfig?.groups?.[technology.technology_group]?.keywords || [];
+  const appearsInCatalog = (term) => catalogTerms.some((item) =>
+    String(item || "").trim().toLowerCase() === String(term || "").trim().toLowerCase());
+  const generatedOnly = [technology.target_technology_en, technology.target_technology]
+    .filter((term) => term && !appearsInCatalog(term));
   // 영문 키워드가 하나도 없으면 질의를 만들지 않는다. 회사명만으로 검색하면 기술과 무관한
   // 기사가 쏟아져 사전 필터가 전부 걸러내고 요청만 버린다.
-  const terms = keywords.filter(isLatinKeyword).slice(0, TREND_QUERY_KEYWORD_LIMIT);
+  const terms = selectTrendQueryTerms(keywords, overrides, TREND_QUERY_KEYWORD_LIMIT,
+    generatedOnly);
   if (!terms.length) return "";
-  const names = relevantAliases(company);
+  const names = trendCompanyNames(company, overrides);
   const nameClause = names.length > 1 ? `(${names.map((name) => `"${name}"`).join(" OR ")})` : `"${names[0]}"`;
   return `${nameClause} (${terms.map((term) => `"${term}"`).join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
@@ -1785,6 +1866,12 @@ export function matchedTrendKeywords(row, keywords) {
   return keywords.filter((term) => {
     const needle = normalizeForMatch(term);
     if (needle.length < 3) return false;
+    // 넓은 단일어는 형태가 다른 단어의 일부로 맞지 않게 한다. "scrap"이 "scrapped cars"를
+    // 통과시켜 Hydro와 무관한 Mercedes 기사를 LLM 후보로 만든 실측 오탐을 막는다.
+    if (/^[a-z0-9-]+$/i.test(needle)) {
+      const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, "i").test(haystack);
+    }
     return haystack.includes(needle);
   });
 }
@@ -1828,8 +1915,8 @@ export function selectTrendRows(rows, existingRows, keywords, limit) {
   return selected;
 }
 
-async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt) {
-  const query = buildTrendQuery(company, technology, keywordConfig, dateRange);
+async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt, searchTerms = null) {
+  const query = buildTrendQuery(company, technology, keywordConfig, dateRange, searchTerms);
   if (!query) return { rows: [], requestCount: 0, query: "" };
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
   const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
@@ -2335,12 +2422,12 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
     stats.trend_discovery = "run";
     try {
       const discovered = await collectTrendDiscovery(company, technology, trendKeywordConfig, dateRange,
-        args.timeoutSeconds, collectedAt);
+        args.timeoutSeconds, collectedAt, trendSearchTerms);
       requestCount += discovered.requestCount;
       if (discovered.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       if (!discovered.query) stats.trend_discovery = "no_query";
       stats.trend_discovery_found = discovered.rows.length;
-      const keywords = trendKeywords(technology, trendKeywordConfig);
+      const keywords = trendKeywords(technology, trendKeywordConfig, company, trendSearchTerms);
       const selected = selectTrendRows(discovered.rows, rows, keywords, args.maxTrendDiscovery);
       stats.trend_discovery_kept = selected.length;
       if (selected.length) {
@@ -2376,6 +2463,8 @@ async function main() {
   // 파일이 없으면 탐색만 건너뛴다. 나머지 수집은 그대로 돈다.
   trendTechnology = await loadJson(args.technologyMap, null);
   trendKeywordConfig = await loadJson(args.keywordConfig, null);
+  // 기업별 검색어는 선택 사항이다. 파일이 없으면 카탈로그만 쓴다.
+  trendSearchTerms = await loadJson(args.searchTerms, {});
   if (args.maxTrendDiscovery > 0 && !(trendTechnology && trendKeywordConfig)) {
     console.warn(`Skipping business-trend discovery: ${args.technologyMap} or ${args.keywordConfig} is unavailable`);
   }
