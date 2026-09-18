@@ -36,22 +36,20 @@ test('approved totals distinguish report rows, pending dates and outside-period 
     { company: 'B', published_at: '2026-08-12', published_at_source: 'url' },
     { company: 'C', published_at: '2026-07-01', published_at_source: 'feed' },
   ];
-  assert.deepEqual(publishedSignalCounts(rows, period), { approved_count: 4, human_review_count: 0, report_signal_count: 2, approved_companies_in_report: 1,
+  assert.deepEqual(publishedSignalCounts(rows, period), { approved_count: 4, report_signal_count: 2,
     date_pending_count: 1, out_of_period_count: 1, companies_in_report: 1 });
 });
 
-test('human-review rows count toward the report only when both summaries exist, as in the PDF', () => {
+// 승인된 행만 이 파일에 들어온다. 게시일이 확정된 행만 보고서 건수로 센다.
+test('report counts follow the publication date, not a review tier', () => {
   const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
-  const review = { company: 'R', published_at: '2026-08-10', published_at_source: 'feed',
-    ai_signal_supported: false, ai_review_tier: 'human_review' };
   const counts = publishedSignalCounts([
     { company: 'A', published_at: '2026-08-10', published_at_source: 'feed' },
-    { ...review, ai_summary_ko: '표제 - 상세', ai_summary_en: 'Headline - detail' },
-    { ...review, company: 'S', ai_summary_ko: '', ai_summary_en: '' },
+    { company: 'R', published_at: '2026-08-10', published_at_source: 'feed' },
+    { company: 'S', published_at: '2026-08-12', published_at_source: 'url' },
   ], period);
-  assert.equal(counts.approved_count, 1);
-  assert.equal(counts.human_review_count, 2);
+  assert.equal(counts.approved_count, 3);
   assert.equal(counts.report_signal_count, 2);
   assert.equal(counts.companies_in_report, 2);
-  assert.equal(counts.approved_companies_in_report, 1);
+  assert.equal(counts.date_pending_count, 1);
 });

@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, humanReviewGaps, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
+import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION } from './collect_company_signals.mjs';
@@ -22,23 +22,17 @@ const VERIFICATION_VERSION = 'verifier-v3';
 const VERIFICATION_COUNTS = ['requested', 'verified', 'partial', 'pending', 'changed', 'failed', 'rejected_responses'];
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
-  // 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다(build_pdf_report.signal_needs_human_review).
-  // 여기서도 같은 기준으로 세야 요약 파일의 보고서 건수·기업 수가 PDF와 맞는다.
-  const inReport = row => reportEligible(row, period) && (row.ai_review_tier !== 'human_review' ||
-    Boolean(String(row.ai_summary_ko || '').trim() && String(row.ai_summary_en || '').trim()));
-  const published = rows.filter(inReport);
-  // 사람 검토 후보도 보고서에 들어가지만 AI 승인은 아니므로 따로 센다.
-  const humanReview = rows.filter(row => row.ai_review_tier === 'human_review');
-  return { approved_count: rows.length - humanReview.length, human_review_count: humanReview.length,
+  // 승인된 행만 이 파일에 들어온다. 보고서에 실리는지는 게시일 상태가 정한다.
+  const published = rows.filter(row => reportEligible(row, period));
+  return { approved_count: rows.length,
     report_signal_count: published.length,
-    approved_companies_in_report: new Set(published.filter(row => row.ai_review_tier !== 'human_review').map(row => row.company)).size,
     date_pending_count: rows.filter(row => periodPlacement(row, period).placement === 'date_pending').length,
     out_of_period_count: rows.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
     companies_in_report: new Set(published.map(row => row.company)).size };
 }
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';
 const FORM3_REVIEW_VERSION = 'form3-personnel-event-v1';
-const SUMMARY_REVIEW_VERSION = 'human-review-summary-v2';
+const SUMMARY_REVIEW_VERSION = 'published-summary-v3';
 const FUNDING_REVIEW_VERSION = 'funding-event-v2';
 const FACILITY_STAGE_REVIEW_VERSION = 'facility-stage-v1';
 // v2: 2차 검증기를 넣은 뒤, 1차 모델만 확인했던 저장된 기술 연결 승인을 한 번 검증기로 보낸다.
@@ -165,8 +159,7 @@ export function mergeVerification(article, primary, checked, suspects, model = V
   const verified = new Map(checked.decisions.map(d => [d.candidate_id, d]));
   const decisions = primary.decisions.map(d => (ids.has(d.candidate_id) && verified.has(d.candidate_id) ? verified.get(d.candidate_id) : d));
   const outcome = (all, d) => {
-    const { supported, gaps } = decisionOutcome(article, all, d);
-    return supported ? 'approved' : gaps?.length ? 'human_review' : 'rejected';
+    return decisionOutcome(article, all, d).supported ? 'approved' : 'rejected';
   };
   const pending = [...(primary.semantic_recheck_pending?.candidate_ids || []).filter(id => !ids.has(id)),
     ...(checked.semantic_recheck_pending?.candidate_ids || []).filter(id => ids.has(id))];
@@ -228,15 +221,18 @@ export function needsForm3Review(article, review) {
     return supported;
   });
 }
-// 사람 검토 후보는 한·영 문안이 있어야 PDF에 실린다. 원문 발췌를 대신 싣으면 한국어판에 영어·일본어
+// 보고서에 실릴 후보는 한·영 문안이 있어야 한다. 원문 발췌를 대신 싣으면 한국어판에 영어·일본어
 // 본문이나 "PDF 3.29 MB" 같은 링크 문구가 그대로 나간다(2026-08 실행). 문안이 빈 후보를 짚어 한 번 더
-// 묻고, 그래도 없으면 대시보드에만 남긴다. 버전을 찍으므로 같은 기사를 반복해서 묻지 않는다.
+// 묻고, 그래도 없으면 그 후보는 빠진다. 버전을 찍으므로 같은 기사를 반복해서 묻지 않는다.
 export function missingReviewSummaryIds(article, review) {
+  // 재검토를 기다리는 후보는 빼둔다. 인용이 원문과 맞지 않아 문안을 비운 후보가 여기 들어오는데,
+  // 같은 근거로 문안만 다시 받아 봐야 같은 결함이 나온다. 다음 실행이 기사를 통째로 다시 판정한다.
+  const pending = new Set(review.semantic_recheck_pending?.candidate_ids || []);
   return review.decisions.filter(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-    const gated = candidate ? decisionForApproval(article, review.decisions, decision) : null;
-    const gaps = gated ? humanReviewGaps(candidate, gated) : null;
-    return Boolean(gaps?.length) && !(String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim());
+    if (!candidate || pending.has(decision.candidate_id)) return false;
+    return decisionOutcome(article, review.decisions, decision).supported &&
+      !(String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim());
   }).map(decision => decision.candidate_id);
 }
 export function needsReviewSummary(article, review) {
@@ -286,15 +282,9 @@ export function freshRecheckFeedback(article, review) {
 // 기사에 없을 때만 문안을 한 번 다시 받는다.
 const SUMMARY_NUMBERS_VERSION = 'summary-numbers-v1';
 
-// 보고서에 실리는 판정. 승인된 투자 시그널, 사람 검토 후보, 승인된 사업동향이다.
+// 보고서에 실리는 판정. 승인된 투자 시그널과 승인된 사업동향이다.
 function publishedDecision(article, decisions, decision) {
-  const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-  const gated = candidate && decisionForApproval(article, decisions, decision);
-  if (!gated || !gated.entity_supported || !gated.indicator_supported) return false;
-  if (candidate.kind === 'relevant') {
-    return Boolean((candidate.relevance_exempt || gated.target_technology_supported) && gated.quality === 'pass');
-  }
-  return Array.isArray(humanReviewGaps(candidate, gated));
+  return decisionOutcome(article, decisions, decision).supported;
 }
 
 // 요약 정확성 지시(시제·실제 사건·국가명·관계 과장 금지)를 넣기 전에 저장된 판정은 옛 문안이다.
@@ -664,7 +654,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 후보 하나의 인용·문안 근거 결함으로 기사 전체를 잃지 않게 한다. 실행 35167466191·35175067142 의 Nexeon 은
   // 두 번 모두 한 후보(S5 인용, S3 문안)가 검증에 걸려 1억 파운드 조달 기사 전체가 보고서에서 빠졌다.
   // 재시도에서도 걸리면 맞지 않는 인용을 빼고, 그 후보가 발행될 판정이었다면 문안을 비우고 재검토 미완료로 남긴다.
-  // 미완료 후보는 AI 승인으로 싣지 않으며(투자 후보는 사람 검토, 사업동향은 제외) 다음 실행이 다시 판정한다.
+  // 문안이나 인용이 비면 그 후보는 보고서에서 빠지고, 다음 실행이 이 기사를 다시 판정한다.
   // 없는 인용을 통과시키지 않고, 나머지 후보는 모든 검증을 그대로 거친다.
   if (problem && repairAttempt && CANDIDATE_EVIDENCE_PROBLEM.test(problem.message)) {
     const salvaged = salvageCandidateEvidence(article, review);
@@ -715,7 +705,7 @@ export function salvageCandidateEvidence(article, review) {
       const results = importReview(article, current, { strictNumbers: true });
       if (!removed.length && pending.size <= (review.semantic_recheck_pending?.candidate_ids?.length || 0)) return null;
       // 발행될 후보가 모두 미완료로 돌아가면 살릴 판정이 없다. 그 기사는 지금처럼 판정 실패로 둔다.
-      if (pending.size && !results.some(r => !pending.has(r.candidate_id) && (r.supported || r.human_review))) return null;
+      if (pending.size && !results.some(r => !pending.has(r.candidate_id) && r.supported)) return null;
       return current;
     } catch (error) {
       const failed = /(investment:\d+|relevant): (?:evidence_quotes must be exact|approved candidate needs an evidence quote|summary names)/.exec(error.message);
@@ -823,18 +813,17 @@ function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
-// 저장된 판정은 그대로 두고, 문안이 빈 사람 검토 후보에만 새 응답의 문안을 옮긴다. 날짜 힌트와 같은
+// 저장된 판정은 그대로 두고, 문안이 빈 발행 후보에만 새 응답의 문안을 옮긴다. 날짜 힌트와 같은
 // 이유로 판정 자체는 재현성 없는 재판정으로 덮지 않는다. 옮긴 문안도 가져오기 단계에서 근거 없는
 // 고유명사 검사를 받는다. 새 응답에 문안이 없어도 버전을 찍어 같은 기사를 반복해서 묻지 않는다.
 export function mergeReviewSummaries(article, review, fresh) {
   const freshById = new Map((fresh?.decisions || []).map(decision => [decision.candidate_id, decision]));
   const decisions = review.decisions.map(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-    const gated = candidate ? decisionForApproval(article, review.decisions, decision) : null;
-    const gaps = gated ? humanReviewGaps(candidate, gated) : null;
+    const publish = Boolean(candidate) && decisionOutcome(article, review.decisions, decision).supported;
     const next = freshById.get(decision.candidate_id);
     const hasProse = String(decision.summary_ko || '').trim() && String(decision.summary_en || '').trim();
-    if (!gaps?.length || hasProse || !next) return decision;
+    if (!publish || hasProse || !next) return decision;
     return { ...decision, summary_ko: next.summary_ko || '', summary_en: next.summary_en || '' };
   });
   return { ...review, decisions, summary_review_version: SUMMARY_REVIEW_VERSION };
@@ -969,7 +958,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       schema_version: 1, article_id: article.id, model: MODEL, created_at: new Date().toISOString(), reason, ...detail });
     diagnostics.push({ article_id: article.id, attempt: 0, reason, file: diagnosticPath });
   };
-  // 문안이 빈 사람 검토 후보를 짚어 한 번 더 묻는다. 판정은 옮기지 않고 문안만 옮긴다. 새로 판정한
+  // 문안이 빈 발행 후보를 짚어 한 번 더 묻는다. 판정은 옮기지 않고 문안만 옮긴다. 새로 판정한
   // 기사도 같은 실행 안에서 보강한다. 실패하거나 한도에 걸리면 다음 실행에서 다시 묻는다.
   const backfillSummaries = async (article, review, file) => {
     const missing = missingReviewSummaryIds(article, review);
@@ -979,7 +968,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     requests++;
     try {
       const fresh = await requestReview(article, policy, config.apiKey, supplementFetchImpl, {
-        reason: 'human_review_summaries_missing',
+        reason: 'published_summaries_missing',
         validation_message: `summary_ko and summary_en are empty for human-review candidates: ${missing.join(', ')}` });
       const merged = mergeReviewSummaries(article, review, fresh);
       importReview(article, merged);
@@ -1103,8 +1092,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     let maxAttempts = 2, retryFeedback = false;
     // 되묻기 전의 유효한 응답과 되묻은 이유. 되묻기가 실패하거나 멈춰도 이 판정은 잃지 않되, 재검토가 끝난 것으로
     // 저장하지 않는다. 앞 응답에는 최신 재검토 버전이 이미 찍혀 있어, 그대로 저장하면 다음 실행이 다시 묻지 않고
-    // 의심 판정을 승인으로 계속 발행한다(3M S3 재현). 미완료 기록을 남기고, 해당 후보는 importReview 가
-    // 승인 대신 사람 검토로 내리며, 다음 실행은 이 기사를 다시 판정한다.
+    // 의심 판정을 승인으로 계속 발행한다(3M S3 재현). 미완료 기록을 남기면 importReview 가 그 후보의
+    // 인용·문안 결함을 실행 중단 대신 제외로 처리하고, 다음 실행은 이 기사를 다시 판정한다.
     let beforeRecheck = null, recheckFeedback = null;
     const keep = async kept => {
       await write(file, kept);
