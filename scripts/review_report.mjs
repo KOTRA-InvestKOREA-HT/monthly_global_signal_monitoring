@@ -1273,9 +1273,10 @@ async function main() {
     const sourceConfig = await read('config/company_sources.json');
     // 탐색 입력은 수집기와 같은 값을 넘겨야 한다. 한쪽만 넣으면 식별자가 매번 어긋나 수집을 다시 돈다.
     const keywordConfig = await read('config/technology_keywords.json');
+    const searchTerms = await read('config/trend_search_terms.json').catch(() => ({}));
     if (collectionNeedsRefresh(previous, { version: CONTENT_COLLECTION_VERSION,
       inputDigest: collectionInputDigest(targets, sourceConfig,
-        { maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY, technology, keywordConfig }) })) throw new Error('Refresh stale or incomplete collection');
+        { maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY, technology, keywordConfig, searchTerms }) })) throw new Error('Refresh stale or incomplete collection');
   }
   catch {
     // 응답 헤더가 Node 기본 한도(16KB)를 넘는 사이트가 있다. Cytiva 뉴스룸과 Yahoo Finance 는 이 한도에서
@@ -1284,6 +1285,7 @@ async function main() {
       '--sources', 'official_feeds,official_pages,official_sitemaps,sec_filings,google_news', '--from-date', from, '--to-date', to,
       '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'missing', '--fallback-min-results', '1', '--rate-limit-seconds', '0.5', '--company-concurrency', '4',
       '--technology-map', 'data/company_technology_map.json', '--keyword-config', 'config/technology_keywords.json',
+      '--search-terms', 'config/trend_search_terms.json',
       '--max-trend-discovery', String(TREND_DISCOVERY_PER_COMPANY)], { stdio: 'inherit' });
     if (result.error || result.status !== 0) throw new Error('Collection failed');
   }

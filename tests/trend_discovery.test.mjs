@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {
   TREND_DISCOVERY_PER_COMPANY, TREND_QUERY_KEYWORD_LIMIT, buildTrendQuery, trendKeywords,
   matchedTrendKeywords, isDuplicateTrendRow, selectTrendRows, trendDigestInputs, trendSearchWindow,
+  rankTrendQueryTerms, trendTermRank, selectTrendQueryTerms, companySearchTerms,
 } from '../scripts/collect_company_signals.mjs';
 
 const company = { target_no: 31, company: 'Norsk Hydro', query_aliases: ['Hydro'] };
@@ -26,8 +27,9 @@ test('the query pairs the company names with its own technology terms', () => {
   const query = buildTrendQuery(company, technology, keywordConfig, august);
   // 이름 선택은 기존 relevantAliases 를 그대로 쓴다. "Hydro" 처럼 흔한 약칭은 검색에서 빠진다.
   assert.match(query, /^"Norsk Hydro" \(/);
-  assert.match(query, /"non-ferrous scrap utilisation"/);
   assert.match(query, /"recycled aluminium"/);
+  // 자동 생성된 기술명은 실제 기사 표현 여섯 자리를 밀어내지 않는다.
+  assert.equal(query.includes('non-ferrous scrap utilisation'), false);
   assert.match(query, /after:2026-08-01 before:2026-09-01$/);
   // 한글 키워드는 영문 뉴스 결과에 걸리지 않으면서 질의만 길게 만든다.
   assert.equal(query.includes('재활용 알루미늄'), false);
@@ -86,6 +88,13 @@ test('a two-character term never matches, so short keywords cannot open the gate
   assert.deepEqual(matchedTrendKeywords(row({ title: 'AI at Hydro' }), ['AI']), []);
 });
 
+test('a generic single term matches a word, not part of another word', () => {
+  assert.deepEqual(matchedTrendKeywords(row({ title: 'Cars made from post-consumer scrap', discovery_snippet: '' }),
+    ['scrap']), ['scrap']);
+  assert.deepEqual(matchedTrendKeywords(row({ title: 'Mercedes builds EVs from scrapped cars', discovery_snippet: '' }),
+    ['scrap']), []);
+});
+
 test('an article already collected for the company is not added again', () => {
   const existing = [{ url: 'https://www.hydro.com/news/circal?utm_source=rss', title: 'Hydro brings high-recycled aluminium to GM' }];
   // 같은 주소는 추적 파라미터만 달라도 같은 기사다.
@@ -110,7 +119,7 @@ test('selection filters, dedupes and stops at the per-company cap', () => {
     row({ title: 'Hydro expands aluminium recycling in Michigan', url: 'https://example.com/4' }),
     row({ title: 'Hydro opens a scrap utilisation line', url: 'https://example.com/5' }),
   ];
-  const selected = selectTrendRows(found, existing, terms, TREND_DISCOVERY_PER_COMPANY);
+  const selected = selectTrendRows(found, existing, terms, 2);
   assert.equal(selected.length, 2, 'the cap holds');
   assert.deepEqual(selected.map(item => item.url), ['https://example.com/2', 'https://example.com/4']);
   // 왜 뽑혔는지 행에 남는다. 이 값은 판정에 쓰이지 않고 사람이 되짚을 때만 쓴다.
@@ -136,6 +145,8 @@ test('the limited slots go to the most specific matches, not the first results',
 });
 
 test('the collection identity carries the discovery inputs, and drops them when discovery is off', () => {
+  // 2026-08 전수 probe 뒤 비용 상한을 1건으로 확정했다(최종 로직 31개 후보).
+  assert.equal(TREND_DISCOVERY_PER_COMPANY, 1);
   const on = trendDigestInputs({ maxTrendDiscovery: 2 }, technology, keywordConfig);
   assert.equal(on.maxTrendDiscovery, 2);
   assert.equal(on.keywordConfig, keywordConfig);
@@ -144,4 +155,66 @@ test('the collection identity carries the discovery inputs, and drops them when 
     { groups: { nonferrous_scrap_recycling: { keywords: ['recycled aluminium'] } } });
   assert.notEqual(JSON.stringify(on), JSON.stringify(edited));
   assert.equal(trendDigestInputs({ maxTrendDiscovery: 0 }, technology, keywordConfig), null);
+});
+
+// 질의어 여섯 자리는 설정 파일 순서가 아니라 구체성으로 채운다. 카탈로그가 일부러 넓어서,
+// "scrap" 같은 일반어가 앞자리를 차지하면 그 회사의 아무 기사나 걸려 자리를 낭비한다.
+test('query terms are ranked by specificity, not by config order', () => {
+  const keywords = ['scrap', 'PEM', 'recycled aluminium', 'remelting', 'recycling', 'closed loop recycling'];
+  assert.deepEqual(rankTrendQueryTerms(keywords),
+    ['recycled aluminium', 'closed loop recycling', 'remelting', 'scrap', 'PEM', 'recycling']);
+});
+
+test('generic single words and short acronyms rank last', () => {
+  // 등급 3: 일반어와 짧은 대문자 약어. 앞 등급으로 자리가 차지 않을 때만 쓴다.
+  for (const term of ['scrap', 'recycling', 'PEM', 'AEM', 'EUV']) assert.equal(trendTermRank(term), 3, term);
+  // 등급 2: 한 낱말이되 분야어.
+  for (const term of ['remelting', 'electrodialysis']) assert.equal(trendTermRank(term), 2, term);
+  // 등급 1: 두 낱말 이상의 구.
+  for (const term of ['recycled aluminium', 'machine vision']) assert.equal(trendTermRank(term), 1, term);
+  // 등급 0: 기업별로 손으로 적은 검색어. 대소문자는 가리지 않는다.
+  assert.equal(trendTermRank('scrap', ['SCRAP']), 0);
+});
+
+test('the same keywords always produce the same query order', () => {
+  const keywords = ['alpha beta', 'gamma delta', 'epsilon'];
+  assert.deepEqual(rankTrendQueryTerms(keywords), rankTrendQueryTerms(keywords));
+  // 같은 등급이면 원래 순서를 지켜 질의가 실행마다 흔들리지 않는다.
+  assert.deepEqual(rankTrendQueryTerms(['aa bb', 'cc dd']), ['aa bb', 'cc dd']);
+});
+
+test('selection prioritizes curated terms and demotes generic and generated terms', () => {
+  const keywords = ['generated technology phrase', 'scrap', 'PEM', 'machine vision', 'remelting', 'recycling'];
+  assert.deepEqual(selectTrendQueryTerms(keywords, ['remelting'], 4, ['generated technology phrase']),
+    ['remelting', 'machine vision', 'scrap', 'PEM']);
+  assert.equal(trendTermRank('generated technology phrase', [], ['generated technology phrase']), 4);
+});
+
+// 카탈로그는 기술 그룹 단위라 제품명·시장 표현을 담지 못한다. Norsk Hydro 의 8월 기사가 그 틈으로 빠졌다:
+// 외부 보도 제목이 "recycled alu alloy" 였고 그룹 키워드에는 그 표현도 미국식 철자도 없었다.
+test('per-company search terms lead the query and open the pre-filter', () => {
+  const searchTerms = { companies: { 'Norsk Hydro':
+    ['Hydro CIRCAL', 'recycled aluminium', 'recycled aluminum', 'recycled alu'] } };
+  const query = buildTrendQuery(company, technology, keywordConfig, august, searchTerms);
+  // 기업별 제품명으로 범위를 좁힌 경우에는 짧은 별칭도 복원한다. 목표 기사 제목은 Norsk Hydro가
+  // 아니라 "Hydro brings ... Hydro CIRCAL"로 시작한다.
+  assert.match(query, /^\("Norsk Hydro" OR "Hydro"\) \(/);
+  for (const term of ['Hydro CIRCAL', 'recycled aluminium', 'recycled aluminum', 'recycled alu']) {
+    assert.ok(query.includes(`"${term}"`), term);
+  }
+  // 사전 필터도 같은 말을 받는다. 그래야 그 기사가 실제로 후보가 된다.
+  const terms = trendKeywords(technology, keywordConfig, company, searchTerms);
+  assert.deepEqual(matchedTrendKeywords({ title: 'GM commits to Circal recycled alu alloy' }, terms), ['recycled alu']);
+  // 다른 기업의 검색어는 가져오지 않는다.
+  assert.deepEqual(companySearchTerms({ company: 'Jenoptik' }, searchTerms), []);
+  // 파일이 없어도 카탈로그만으로 그대로 돈다.
+  assert.deepEqual(companySearchTerms(company, null), []);
+  assert.ok(buildTrendQuery(company, technology, keywordConfig, august, null).length > 0);
+});
+
+test('the collection identity also covers the per-company search terms', () => {
+  const base = trendDigestInputs({ maxTrendDiscovery: 2 }, technology, keywordConfig, { companies: {} });
+  const edited = trendDigestInputs({ maxTrendDiscovery: 2 }, technology, keywordConfig,
+    { companies: { 'Norsk Hydro': ['CIRCAL'] } });
+  assert.notEqual(JSON.stringify(base), JSON.stringify(edited));
 });
