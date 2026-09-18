@@ -193,8 +193,7 @@ class ItemPageBalanceTests(unittest.TestCase):
 
 
 class MatrixStatusTests(unittest.TestCase):
-    """34546694524 2쪽: 각주는 포착·검토함·근거부족 셋을 숫자로 말하는데 표의 꺼진 칸은
-    한 가지 모양이라, 77개사 중 어느 59개사를 다시 뒤져야 하는지 읽을 수 없었다."""
+    """매트릭스는 두 상태만 말한다: AI 확인 시그널이 있거나, 신호없음이거나."""
 
     def setUp(self):
         self.index = {"Acme": {3: [{"x": 1}]}, "Quiet": {}, "Unknown": {}}
@@ -204,28 +203,23 @@ class MatrixStatusTests(unittest.TestCase):
             {"company": "Unknown", "status": "incomplete_evidence"},
         ]}
 
-    def test_the_three_states_are_distinguished(self):
+    def test_the_two_states_are_distinguished(self):
         covered = pdf.covered_companies(self.summary, [])
         self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
         self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
-        # 검토를 끝내지 못한 기업은 "신호 없음"이 아니라 "모름"이다.
-        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "insufficient")
-
-    def test_a_company_whose_sources_had_nothing_this_month_was_reviewed(self):
-        summary = {"review_coverage": [{"company": "Quiet", "status": "no_monthly_sources"}]}
-        covered = pdf.covered_companies(summary, [])
-        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
+        # 검토를 끝내지 못한 기업도 표에서는 신호없음과 같은 칸이다. 검토 범위 페이지가 그 수를 따로 말한다.
+        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "reviewed")
 
     def test_a_company_with_a_signal_is_detected_even_if_coverage_is_incomplete(self):
         covered = pdf.covered_companies({"review_coverage": []}, [])
         self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
 
-    def test_without_coverage_the_official_source_decides(self):
+    def test_coverage_no_longer_changes_a_row_state(self):
         rows = [{"company": "Quiet", "source_type": "official"},
                 {"company": "Unknown", "source_type": "fallback"}]
         covered = pdf.covered_companies({}, rows)
         self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
-        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "insufficient")
+        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "reviewed")
 
     def test_the_footnote_counts_are_the_row_statuses_counted(self):
         # 각주와 표가 어긋나지 않는다는 것이 상태를 행에 붙인 이유다.
@@ -236,16 +230,14 @@ class MatrixStatusTests(unittest.TestCase):
         statuses = [pdf.company_status(p["company"], self.index, covered) for p in profiles]
         self.assertEqual(counts["detected"], statuses.count("detected"))
         self.assertEqual(counts["reviewed_off"], statuses.count("reviewed"))
-        self.assertEqual(counts["insufficient"], statuses.count("insufficient"))
-        self.assertEqual(counts["review"], statuses.count("review"))
-        self.assertEqual(sum(counts[k] for k in ("detected", "review", "reviewed_off", "insufficient")), counts["total"])
+        self.assertEqual(counts["detected"] + counts["reviewed_off"], counts["total"])
 
 
-class HumanReviewSignalTests(unittest.TestCase):
-    def test_review_rows_need_both_summaries_to_fill_a_cell(self):
-        # 2026-08 run: review rows without prose printed raw English/Japanese article text in the Korean PDF.
-        base = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": False,
-                "ai_review_tier": "human_review", "ai_entity_supported": True, "ai_indicator_supported": True,
+class PublishedSignalTests(unittest.TestCase):
+    def test_rows_need_both_summaries_to_fill_a_cell(self):
+        # 2026-08 run: rows without prose printed raw English/Japanese article text in the Korean PDF.
+        base = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": True,
+                "ai_entity_supported": True, "ai_indicator_supported": True,
                 "ai_target_technology_supported": False, "ai_leading_indicator_supported": True,
                 "ai_summary_quality": "pass", "ai_event_stage": "planned", "ai_summary_reason": "x"}
         with_prose = dict(base, title="with", ai_summary_ko="표제 - 상세", ai_summary_en="Headline - detail")
@@ -260,24 +252,25 @@ APPROVED_ROW = {"company": "A", "investment_signal_no": 2, "ai_signal_supported"
                 "ai_entity_supported": True, "ai_indicator_supported": True, "ai_leading_indicator_supported": True,
                 "ai_target_technology_supported": True, "ai_event_stage": "planned", "ai_summary_reason": "x",
                 "ai_summary_ko": "표제 - 상세", "ai_summary_en": "Headline - detail"}
-REVIEW_ROW = dict(APPROVED_ROW, ai_signal_supported=False, ai_review_tier="human_review",
-                  ai_target_technology_supported=False, investment_signal_no=4)
+# 조건 하나(기술 연결)가 비어도 승인되어 실리는 행.
+RELAXED_ROW = dict(APPROVED_ROW, ai_target_technology_supported=False, investment_signal_no=4)
 
 
-class MatrixReviewStateTests(unittest.TestCase):
-    """2026-08: review-only cells were painted like AI-confirmed cells and counted as detected."""
+class MatrixCellStateTests(unittest.TestCase):
+    """조건 하나가 부족한 후보도 같은 시그널로 싣는다. 칸은 켜짐과 꺼짐 두 가지뿐이다."""
 
     def setUp(self):
-        self.index = {"Mixed": {2: [APPROVED_ROW], 4: [REVIEW_ROW]}, "ReviewOnly": {4: [REVIEW_ROW]},
-                      "Both": {4: [APPROVED_ROW, REVIEW_ROW]}}
+        self.index = {"Mixed": {2: [APPROVED_ROW], 4: [RELAXED_ROW]}, "RelaxedOnly": {4: [RELAXED_ROW]},
+                      "Both": {4: [APPROVED_ROW, RELAXED_ROW]}}
 
-    def test_cells_and_rows_separate_confirmed_from_review(self):
+    def test_every_published_candidate_lights_the_same_cell(self):
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 2), "on")
-        self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 4), "review")
+        self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 4), "on")
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 1), "")
         self.assertEqual(pdf.signal_cell_state(self.index, "Both", 4), "on")
         self.assertEqual(pdf.company_status("Mixed", self.index, set()), "detected")
-        self.assertEqual(pdf.company_status("ReviewOnly", self.index, set()), "review")
+        self.assertEqual(pdf.company_status("RelaxedOnly", self.index, set()), "detected")
+
 
 
 class SentenceBoundaryTests(unittest.TestCase):
@@ -358,17 +351,9 @@ class SummarySplitTests(unittest.TestCase):
         self.assertTrue(parts["detail"].startswith("Evonik appointed"))
 
 
-class ReviewLabelAndSourceTests(unittest.TestCase):
+class SourceLinkTests(unittest.TestCase):
     def tearDown(self):
         pdf.set_language("ko")
-
-    def test_review_label_names_the_missing_condition(self):
-        row = dict(REVIEW_ROW, ai_review_gaps=["target_technology"])
-        pdf.set_language("ko")
-        self.assertEqual(pdf.review_label(row), "검토 필요 · 타겟 기술 미확인")
-        pdf.set_language("en")
-        self.assertEqual(pdf.review_label(row), "Needs review · target tech unconfirmed")
-        self.assertEqual(pdf.review_label(APPROVED_ROW), "")
 
     def test_source_url_prefers_the_publisher_over_a_news_relay(self):
         relay = {"url": "https://news.google.com/rss/articles/x", "source_direct_url": "https://www.example.com/news/a"}

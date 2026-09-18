@@ -121,42 +121,43 @@ test("only supported decisions need bilingual prose; rejection does not become a
   for (const overrides of [{ entity_supported: false }, { indicator_supported: false }]) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
     assert.equal(result.supported, false);
-    assert.equal(result.human_review, false);
     assert.equal(result.row, null);
   }
   assert.equal(importReview(a, review(a))[0].row.ai_summary_source, "local_agent_review");
 });
 
-test("an entity-and-indicator match the AI rejected stays as a human-review row with its gaps", () => {
+// 조건 하나가 모자란 투자 후보도 승인해 싣는다. 사람 검토 계층은 없앴다.
+test("an investment candidate one condition short is still approved and published", () => {
   const a = article();
   const cases = [
-    [{ target_technology_supported: false, reason_ko: "no direct evidence of the target material" }, ["target_technology"]],
-    [{ quality: "needs_review" }, ["quality"]],
-    [{ event_stage: "committed" }, ["event_stage"]],
-    [{ event_stage: "unclear" }, ["event_stage"]],
+    { target_technology_supported: false, reason_ko: "no direct evidence of the target material" },
+    { quality: "needs_review" },
+    { event_stage: "committed" },
+    { event_stage: "unclear" },
   ];
-  for (const [overrides, gaps] of cases) {
-    const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
-    assert.equal(result.supported, false);
-    assert.equal(result.human_review, true);
-    assert.equal(result.row.ai_signal_supported, false);
-    assert.equal(result.row.ai_review_tier, "human_review");
-    assert.deepEqual(result.row.ai_review_gaps, gaps);
-    assert.equal(result.row.ai_summary_ko, "");
+  for (const overrides of cases) {
+    const result = importReview(a, review(a, [decision(overrides)]))[0];
+    assert.equal(result.supported, true, JSON.stringify(overrides));
+    assert.equal(result.row.ai_signal_supported, true);
+    assert.equal(result.row.ai_review_tier, undefined);
+    assert.ok(result.row.ai_summary_ko);
   }
-  // Far misses (two or more unmet conditions) and already-completed events are not review candidates.
+  // 문안이 없으면 싣지 않는다. 예전에는 문안 없는 행이 사람 검토로 실렸다.
+  const noProse = importReview(a, review(a, [decision({ quality: "needs_review", summary_ko: "", summary_en: "" })]))[0];
+  assert.equal(noProse.supported, false);
+  assert.equal(noProse.row, null);
+  // Far misses (two or more unmet conditions) and already-completed events are never published.
   for (const overrides of [{ event_stage: "completed" }, { target_technology_supported: false, event_stage: "committed" },
     { leading_indicator_supported: false, event_stage: "unclear" }, { target_technology_supported: false, quality: "needs_review" }]) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
-    assert.equal(result.supported, false);
-    assert.equal(result.human_review, false);
+    assert.equal(result.supported, false, JSON.stringify(overrides));
     assert.equal(result.row, null);
   }
-  // Business-trend candidates never enter the review tier.
+  // 사업동향은 예전 엄격 기준 그대로다. 기술 연결이 없으면 실리지 않는다.
   const business = groupArticles([], [{ ...source, investment_signal_no: undefined }], period)[0];
   const rejected = importReview(business, review(business, [decision({ candidate_id: business.candidates[0].id,
     event_stage: "not_applicable", target_technology_supported: false, summary_ko: "", summary_en: "" })]))[0];
-  assert.equal(rejected.human_review, false);
+  assert.equal(rejected.supported, false);
   assert.equal(rejected.row, null);
 });
 
@@ -176,7 +177,10 @@ test("relevance exemption never bypasses entity or leading-event requirements", 
   const a = groupArticles([{ ...source, excluded_from_relevance: true }], [], period)[0];
   assert.equal(importReview(a, review(a, [decision({ target_technology_supported: false })]))[0].supported, true);
   assert.equal(importReview(a, review(a, [decision({ target_technology_supported: false, entity_supported: false })]))[0].supported, false);
-  assert.equal(importReview(a, review(a, [decision({ event_stage: "committed" })]))[0].supported, false);
+  assert.equal(importReview(a, review(a, [decision({ entity_supported: false })]))[0].supported, false);
+  // 단계 하나만 어긋난 것은 이제 싣는다. 완료된 사건은 여전히 싣지 않는다.
+  assert.equal(importReview(a, review(a, [decision({ event_stage: "committed" })]))[0].supported, true);
+  assert.equal(importReview(a, review(a, [decision({ event_stage: "completed" })]))[0].supported, false);
 });
 
 test("CLI prepares isolated files and refuses incomplete builds without changing source data", async () => {
@@ -244,7 +248,10 @@ test("raw source review includes keyword misses and technology rejects for all f
 test("confirmed research precursor is accepted but cannot turn completed factories into signals", () => {
   const a = groupArticles([{ ...source, investment_signal_no: 4 }], [], period)[0];
   assert.equal(importReview(a, review(a, [decision({candidate_id: "investment:4", event_stage: "precursor"})]))[0].supported, true);
-  assert.equal(importReview(article(), review(article(), [decision({event_stage: "precursor"})]))[0].supported, false);
+  // 생산 확대(S2)에는 precursor 를 쓸 수 없다. 단계 하나만 어긋난 것이므로 싣기는 하되,
+  // 완료된 사건은 어떤 지표에서도 싣지 않는다.
+  assert.equal(importReview(article(), review(article(), [decision({event_stage: "precursor"})]))[0].supported, true);
+  assert.equal(importReview(article(), review(article(), [decision({event_stage: "completed"})]))[0].supported, false);
 });
 
 
@@ -541,15 +548,14 @@ test("named HTML entities in collected text match the characters a quote uses", 
 });
 
 // 34915776314: Ouster 는 제목 159자 하나로 S4 와 사업동향이 승인됐다.
-test("a title-only article is neither approved nor sent to human review, and shows as a coverage gap", () => {
+test("a title-only article is never approved, and shows as a coverage gap", () => {
   const titleOnly = { ...source, content_text: "" };
   const a = groupArticles([titleOnly], [{ ...titleOnly, investment_signal_no: undefined }], period)[0];
   const quoted = { evidence_quotes: [source.title] };
   const decisions = [decision(quoted), decision({ ...quoted, candidate_id: "relevant", event_stage: "not_applicable",
     summary_ko: "파일럿 시설을 검토함.", summary_en: "Example plans a pilot." })];
   const results = importReview(a, review(a, decisions));
-  assert.deepEqual(results.map((r) => [r.candidate_id, r.supported, r.human_review]),
-    [["investment:2", false, false], ["relevant", false, false]]);
+  assert.deepEqual(results.map((r) => [r.candidate_id, r.supported]), [["investment:2", false], ["relevant", false]]);
   assert.equal(articleCoverageGap(a, review(a, decisions)), "no_body");
 });
 
@@ -575,7 +581,6 @@ test('a namesake official article cannot approve the target, while target and th
     target_technology_supported: false, event_stage: 'not_applicable', evidence_quotes: [quote],
     summary_ko: 'Prodrive가 차량 개발 사업을 지원했음.', summary_en: 'Prodrive supported the vehicle project.' })]))[0];
   assert.equal(verdict(make('https://www.prodrive.com/news/jcb')).supported, false);
-  assert.equal(verdict(make('https://www.prodrive.com/news/jcb')).human_review, false);
   assert.equal(verdict(make('https://prodrive-technologies.com/news/project')).supported, true);
   assert.equal(verdict(make('https://news.example.com/report')).supported, true);
   assert.equal(verdict(make('https://www.prodrive.com/news/joint', `${quote} Prodrive Technologies is the joint developer.`)).supported, true);
@@ -587,9 +592,8 @@ test("an investment candidate cannot claim the target technology its own article
   const business = decision({ candidate_id: "relevant", event_stage: "not_applicable", target_technology_supported: false,
     summary_ko: "파일럿 시설을 검토함.", summary_en: "Example is considering a pilot plant." });
   const [investment] = importReview(a, review(a, [decision(), business]));
-  assert.equal(investment.supported, false);
-  assert.equal(investment.human_review, true);
-  assert.deepEqual(investment.row.ai_review_gaps, ["target_technology"]);
+  // 기술 인정은 취소되지만, 모자란 조건이 하나뿐이므로 시그널로는 실린다.
+  assert.equal(investment.supported, true);
   assert.equal(investment.row.ai_target_technology_supported, false);
   assert.equal(investment.row.ai_technology_conflict, true);
   // 사업동향도 기술을 인정하면 투자 후보 승인은 그대로다.

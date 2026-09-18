@@ -260,15 +260,16 @@ test('body text colours clear the WCAG AA contrast floor on white', () => {
   assert.ok(onWhite(COLORS.grey) >= 3, `grey ${COLORS.grey} is ${onWhite(COLORS.grey).toFixed(2)}:1`);
 });
 
-test('review-only cells are outlined apart from confirmed cells and get their own legend entry', () => {
+test('the matrix draws two cell states only: a confirmed signal or none', () => {
   const m = model(77);
-  m.matrix.legend_review = '검토 필요';
-  m.matrix.rows[0].signals = ['on', 'review', '', false, true];
+  m.matrix.rows[0].signals = ['on', '', '', false, true];
   const html = renderReport(m);
-  // One review cell plus the legend; two confirmed cells (a legacy true included) plus the legend.
-  assert.equal(occurrences(html, '<i class="review">'), 2);
+  // Two confirmed cells (a legacy true included) plus the legend swatch.
   assert.equal(occurrences(html, '<i class="on">'), 3);
-  assert.ok(html.includes('검토 필요'));
+  // Every other cell is the plain off swatch; no outlined review or unknown state survives.
+  assert.equal(occurrences(html, '<i class="review">'), 0);
+  assert.equal(occurrences(html, '<i class="unknown">'), 0);
+  assert.equal(occurrences(html, '검토 필요'), 0);
 });
 
 test('the business box labels its target with a plain pill, not an emoji marker', () => {
@@ -290,33 +291,37 @@ test('source lines link to the original article when a web address is known', ()
 });
 
 // 실행 35167466191 보고서는 근거 부족 43개사를 한 색으로만 보여 사유를 알 수 없었다.
-test('the review scope page follows the matrix and lists reasons, failures and the review-candidate note', () => {
+// 검토 범위 페이지는 보고서에서 뺐다. 뷰 모델을 예전 실행에서 가져와 scope 가 남아 있어도 장이 늘지 않아야 한다.
+test('a leftover scope section in an old view model adds no page', () => {
   const base = withDetails(['Nexeon']);
   base.scope = {
     kicker: 'R E V I E W   S C O P E', title: '검토 범위와 미반영 항목',
     lines: ['대상 정보 기간 8월', '해당 월 기사 364건 중 판정 완료 360건 · 판정 실패 4건'],
-    reasons_heading: '근거 부족 사유', reasons: [{ label: '수집 작업 미완료', count: 12 }, { label: '기사 판정 실패', count: 3 }],
+    reasons_heading: '근거 부족 사유', reasons: [{ label: '수집 작업 미완료', count: 12 }],
     notes: ['수집 작업 상태: 완료 64개사 · 미완료 13개사'],
     failed_heading: '판정 실패로 반영하지 못한 기사',
     failed: [{ company: 'Nexeon', title: 'National Wealth Fund backs <Nexeon>', url: 'https://www.nexeonglobal.com/media/x' }],
-    failed_none: '판정 실패 기사 없음', review_note: '검토 필요는 AI 확인 시그널이 아님',
+    failed_none: '판정 실패 기사 없음',
   };
   const html = renderReport(base);
-  assert.equal(pages(html), 4);
-  assert.ok(html.indexOf('R E V I E W') > html.indexOf('S I G N A L   M A T R I X'));
-  assert.ok(html.indexOf('R E V I E W') < html.indexOf('C O M P A N Y   S I G N A L S'));
-  assert.match(html, /수집 작업 미완료<\/span><strong>12<\/strong>/);
-  assert.match(html, /<a href="https:\/\/www.nexeonglobal.com\/media\/x">National Wealth Fund backs &lt;Nexeon&gt;<\/a>/);
-  assert.equal(occurrences(html, '판정 실패 기사 없음'), 0);
-  assert.equal(pages(renderReport(withDetails(['Nexeon']))), 3, 'a model without scope keeps its old page count');
+  assert.equal(pages(html), 3);
+  assert.equal(occurrences(html, 'R E V I E W   S C O P E'), 0);
+  assert.equal(occurrences(html, '검토 범위와 미반영 항목'), 0);
+  assert.equal(occurrences(html, '근거 부족 사유'), 0);
+  assert.equal(pages(renderReport(withDetails(['Nexeon']))), 3, 'a model without scope renders the same pages');
 });
 
-test('a card for a technology-exempt company says so next to the trend label', () => {
+// 유치필요 품목이 지정되지 않은 면제 9개사는 품목 줄 없이 지난달 동향만 싣는다.
+test('a card without a target item drops the item line and keeps the trend', () => {
   const base = withItems(['Air Liquide', 'Albemarle']);
-  base.items.cards[0].exempt_note = '기술 관련성 확인 면제 · 주요 사업동향';
+  base.items.cards[0].target_text = '';
   const html = renderReport(base);
-  assert.equal(occurrences(html, 'class="exempt-note"'), 1);
-  assert.ok(html.indexOf('기술 관련성 확인 면제') < html.indexOf('Albemarle'));
+  assert.equal(occurrences(html, 'class="item-target"'), 1);
+  assert.equal(occurrences(html, 'class="exempt-note"'), 0);
+  assert.equal(occurrences(html, '기술 관련성 확인 면제'), 0);
+  // 두 카드 모두 동향 라벨과 본문은 그대로 실린다.
+  assert.equal(occurrences(html, 'class="item-trend-label"'), 2);
+  assert.equal(occurrences(html, 'class="item-body"'), 2);
 });
 
 // 실행 35167466191: 품목동향 카드가 줄 수에 들어가는 문장까지만 실어 HyproMag 금액은 영문에만, Renishaw 일정은 한글에만 남았다.

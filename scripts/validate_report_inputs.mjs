@@ -66,35 +66,39 @@ export function validateRows(rows, kind) {
     for (const field of REQUIRED_DECISIONS) {
       if (typeof row[field] !== "boolean") errors.push(`${id}: missing boolean ${field}`);
     }
-    // 사람 검토 후보는 AI 승인 조건을 다 채우지 못한 행이라 문안이 없을 수 있다. 대신 무엇을
-    // 확인했는지(기업·지표)는 반드시 참이어야 하고, 투자 시그널에만 존재한다.
-    const humanReview = row.ai_signal_supported === false && row.ai_review_tier === "human_review";
-    if (humanReview) {
-      if (kind !== "investment") errors.push(`${id}: human-review tier is only for investment rows`);
-      if (row.ai_entity_supported !== true || row.ai_indicator_supported !== true) {
-        errors.push(`${id}: human-review row lacks entity or indicator evidence`);
-      }
-    } else {
-      if (!cleanText(row.ai_summary_ko)) errors.push(`${id}: missing ai_summary_ko`);
-      if (!cleanText(row.ai_summary_en)) errors.push(`${id}: missing ai_summary_en`);
-    }
+    // 보고서에 실리는 행은 모두 한·영 문안을 갖춰야 한다. 문안이 없는 후보는 빌드 단계에서 빠진다.
+    if (!cleanText(row.ai_summary_ko)) errors.push(`${id}: missing ai_summary_ko`);
+    if (!cleanText(row.ai_summary_en)) errors.push(`${id}: missing ai_summary_en`);
     if (!cleanText(row.ai_summary_reason)) errors.push(`${id}: missing ai_summary_reason`);
     if (!cleanText(row.ai_event_stage)) errors.push(`${id}: missing ai_event_stage`);
 
     if (row.ai_signal_supported === true) {
       const targetTechnologyRequired = !isRelevanceExempt(row);
-      if (row.ai_summary_quality !== "pass") errors.push(`${id}: supported row is not quality=pass`);
+      // 기업 귀속과 지표 사건은 어떤 행에서도 양보하지 않는다. 이 둘이 없으면 시그널이라고 부를 근거가 없다.
       if (row.ai_entity_supported !== true) errors.push(`${id}: supported row lacks entity evidence`);
-      if (targetTechnologyRequired && row.ai_target_technology_supported !== true) {
-        errors.push(`${id}: supported row lacks target-technology evidence`);
-      }
       if (row.ai_indicator_supported !== true) errors.push(`${id}: supported row lacks indicator evidence`);
-      if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
-      if (targetTechnologyRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
+      // 기술을 인정해 놓고 사유에서 직접 연관성을 부인하는 행은 그 자체로 모순이다.
+      // 기술이 미확인인 채로 실린 행에서는 같은 문장이 사실 그대로의 기록이므로 막지 않는다.
+      if (targetTechnologyRequired && row.ai_target_technology_supported === true &&
+          DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
         errors.push(`${id}: supported row reason denies direct relevance`);
       }
-      if (kind === "investment" && !investmentStageSupported(row.ai_event_stage, row.investment_signal_no)) {
-        errors.push(`${id}: supported investment row has non-leading event stage ${row.ai_event_stage}`);
+      const technologyMet = !targetTechnologyRequired || row.ai_target_technology_supported === true;
+      if (kind === "investment") {
+        // 투자 시그널은 나머지 네 조건 가운데 하나까지 비어도 싣는다. 둘 이상이면 승인과 거리가 멀다.
+        const unmet = [technologyMet, row.ai_leading_indicator_supported === true,
+          investmentStageSupported(row.ai_event_stage, row.investment_signal_no),
+          row.ai_summary_quality === "pass"].filter((met) => !met).length;
+        if (row.ai_event_stage === "completed") errors.push(`${id}: supported investment row reports a completed event`);
+        if (unmet > 1) {
+          errors.push(`${id}: supported investment row misses ${unmet} approval conditions ` +
+            `(target technology, leading indicator, event stage, evidence quality); at most one may be unmet`);
+        }
+      } else {
+        // 사업동향은 예전 엄격 기준 그대로다. 투자 단계 검사는 원래 적용하지 않는다.
+        if (row.ai_summary_quality !== "pass") errors.push(`${id}: supported row is not quality=pass`);
+        if (!technologyMet) errors.push(`${id}: supported row lacks target-technology evidence`);
+        if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
       }
     }
   });

@@ -2,8 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-export function collectionInputDigest(targets, sourceConfig) {
-  return crypto.createHash('sha256').update(JSON.stringify({ targets, sourceConfig })).digest('hex');
+// 사업동향 탐색의 질의어와 사전 필터는 기술 매핑·키워드 목록에서 나온다. 그 두 파일을 고쳐도
+// 식별자가 그대로면 캐시된 수집이 재사용돼 바뀐 키워드가 다음 달까지 반영되지 않는다. 함께 해시한다.
+export function collectionInputDigest(targets, sourceConfig, trendInputs = null) {
+  return crypto.createHash('sha256').update(JSON.stringify({ targets, sourceConfig, trendInputs })).digest('hex');
 }
 
 export function collectionNeedsRefresh(summary, { version, inputDigest, now = Date.now() }) {

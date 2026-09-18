@@ -104,14 +104,9 @@ function coverPage(state, model, assets) {
       </div>`, { cover: true });
 }
 
-// 꺼진 칸이 두 가지 뜻을 갖는다. 검토를 끝내고 신호가 없었던 것과, 검토를 못 해서
-// 모르는 것이다. 지금까지 같은 색이라 읽는 사람이 어느 기업을 다시 뒤져야 하는지 알 수
-// 없었다. 34546694524 에서 77개사 중 59개사가 뒤쪽이다. 속을 채운 점은 "보고 없었다",
-// 테두리만 있는 점은 "못 봤다"로 읽힌다.
-const offMark = row => (row.status === 'insufficient' ? 'unknown' : 'off');
-// 사람 검토 후보만 있는 칸은 금색 테두리만 그린다. AI 확인 칸(채움)과 같은 뜻으로 읽히면 안 된다.
+// 칸은 두 가지뿐이다. 채운 금색이면 AI 확인 시그널, 회색이면 신호없음.
 // 예전 뷰 모델은 칸을 true/false 로 줬으므로 true 도 확인 칸으로 읽는다.
-const cellMark = (state, row) => (state === true || state === 'on' ? 'on' : state === 'review' ? 'review' : offMark(row));
+const cellMark = state => (state === true || state === 'on' ? 'on' : 'off');
 
 const matrixTable = (heading, rows) => `
         <table class="matrix">
@@ -125,7 +120,7 @@ const matrixTable = (heading, rows) => `
             <tr>
               <td class="no">${escapeHtml(row.target_no)}</td>
               <td class="company">${escapeHtml(row.company)}</td>
-              ${row.signals.map(state => `<td class="cell"><i class="${cellMark(state, row)}"></i></td>`).join('')}
+              ${row.signals.map(state => `<td class="cell"><i class="${cellMark(state)}"></i></td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>`;
@@ -146,35 +141,11 @@ function matrixPages(state, model) {
       <div class="matrix-tail">
         <div class="matrix-legend">
           <span><i class="on"></i>${escapeHtml(matrix.legend_on)}</span>
-          ${matrix.legend_review ? `<span><i class="review"></i>${escapeHtml(matrix.legend_review)}</span>` : ''}
           <span><i class="off"></i>${escapeHtml(matrix.legend_off)}</span>
-          <span><i class="unknown"></i>${escapeHtml(matrix.legend_unknown)}</span>
         </div>
         <p class="matrix-indicators">${escapeHtml(matrix.indicators)}</p>
         <p class="matrix-footnote">${escapeHtml(matrix.footnote)}</p>
       </div>` : ''}`)).join('');
-}
-
-// 검토 범위. 실행 35167466191 보고서는 근거 부족 43개사(56%)를 한 색으로만 보여 줘, 수집이 안 된 것인지
-// 판정이 실패한 것인지 게시일이 보류된 것인지 알 수 없었다. 기사 수·기업 수·수집 작업 상태를 각각의 단위로 적는다.
-function scopePage(state, scope) {
-  return page(state, `
-      ${header(scope.kicker, scope.title)}
-      <div class="scope">
-        <ul class="scope-lines">${scope.lines.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>
-        ${scope.reasons.length ? `
-        <p class="scope-heading">${escapeHtml(scope.reasons_heading)}</p>
-        <ul class="scope-reasons">${scope.reasons.map(reason => `
-          <li><span>${escapeHtml(reason.label)}</span><strong>${escapeHtml(reason.count)}</strong></li>`).join('')}
-        </ul>` : ''}
-        <ul class="scope-notes">${scope.notes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}</ul>
-        <p class="scope-heading">${escapeHtml(scope.failed_heading)}</p>
-        ${scope.failed.length ? `<ul class="scope-failed">${scope.failed.map(item => `
-          <li><strong>${escapeHtml(item.company)}</strong> ${/^https?:\/\//i.test(item.url || '')
-            ? `<a href="${escapeHtml(item.url)}">${escapeHtml(item.title)}</a>` : escapeHtml(item.title)}</li>`).join('')}
-        </ul>` : `<p class="scope-none">${escapeHtml(scope.failed_none)}</p>`}
-        <p class="scope-note">${escapeHtml(scope.review_note)}</p>
-      </div>`);
 }
 
 // A signal's summary is one paragraph: the headline in semibold, then the rest
@@ -200,7 +171,6 @@ const signalRow = signal => `
             <div class="signal-body">
               <p class="signal-head">
                 <span class="pill">${escapeHtml(signal.label)}</span>
-                ${signal.review ? `<span class="review">${escapeHtml(signal.review)}</span>` : ''}
                 ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
               </p>
               ${signal.active ? `${summary(signal)}${sourceLine(signal.source, signal.source_url)}` : ''}
@@ -240,12 +210,11 @@ const itemCard = (items, card) => `
             ${card.industry ? `<span class="pill industry">${escapeHtml(card.industry)}</span>` : ''}
             <span class="country">${escapeHtml(card.country)}</span>
           </div>
-          <p class="item-target">
+          ${card.target_text ? `<p class="item-target">
             <span class="pill">${escapeHtml(items.target_label)}</span>
             <span class="target-text">${escapeHtml(card.target_text)}</span>
-          </p>
-          <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span>${card.exempt_note
-            ? `<span class="exempt-note">${escapeHtml(card.exempt_note)}</span>` : ''}</p>
+          </p>` : ''}
+          <p class="item-trend-label"><span class="pill">${escapeHtml(items.trend_label)}</span></p>
           <p class="item-body">${escapeHtml(card.body)}</p>
           ${sourceLine(card.source, card.source_url)}
         </article>`;
@@ -284,7 +253,6 @@ export function renderReport(model, { assets = '', itemBreaks = [] } = {}) {
 <body>
 ${coverPage(state, model, assets)}
 ${matrixPages(state, model)}
-${model.scope ? scopePage(state, model.scope) : ''}
 ${model.details ? detailPages(state, model, assets) : ''}
 ${itemPages(state, model, itemBreaks)}
 </body>
@@ -489,21 +457,6 @@ body {
   word-break: keep-all;
 }
 .item-card .source { margin: 2pt 16.1pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
-.item-trend-label .exempt-note { font-size: 7.6pt; color: ${COLORS.muted}; }
-
-/* ---- review scope ---- */
-.scope { position: absolute; top: 116pt; left: 30pt; right: 30pt; font-size: 9pt; line-height: 1.55; color: ${COLORS.text}; word-break: keep-all; }
-.scope ul { margin: 0; padding: 0; list-style: none; }
-.scope-lines li { padding: 5pt 0; border-bottom: 0.45pt solid ${COLORS.tableLine}; font-weight: 600; }
-.scope-heading { margin: 18pt 0 6pt; font-size: 9pt; font-weight: 800; color: ${COLORS.navy}; }
-.scope-reasons { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18pt; }
-.scope-reasons li { display: flex; justify-content: space-between; padding: 3pt 0; border-bottom: 0.45pt dotted ${COLORS.tableLine}; }
-.scope-notes { margin-top: 14pt !important; }
-.scope-notes li, .scope-failed li { position: relative; padding: 2pt 0 2pt 10pt; font-size: 8.4pt; color: ${COLORS.bodyGrey}; }
-.scope-notes li::before, .scope-failed li::before { content: '·'; position: absolute; left: 2pt; }
-.scope-failed a { color: inherit; }
-.scope-none { margin: 0; font-size: 8.4pt; color: ${COLORS.bodyGrey}; }
-.scope-note { margin: 18pt 0 0; padding-top: 8pt; border-top: 0.9pt solid ${COLORS.boxLine}; font-size: 7.8pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
 /* The drawn page decides how many lines of each summary to show by trying a
@@ -574,7 +527,6 @@ body {
 .signal:last-child { padding-bottom: 0; }
 .signal-head { display: flex; align-items: baseline; gap: 18pt; height: 16pt; margin: 0; }
 .signal-head .pill { flex: 0 1 auto; min-width: 0; padding: 2pt 8pt; font-size: 7.6pt; }
-.signal-head .review { flex: 0 0 auto; font-size: 8.5pt; color: #B45309; border: 0.6pt solid #B45309; border-radius: 3pt; padding: 0 3pt; white-space: nowrap; }
 .signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 10pt; color: ${COLORS.faint}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .signal-head .dash { margin-left: auto; margin-right: 12pt; font-size: 10pt; color: ${COLORS.faint}; }
 .summary {
@@ -669,12 +621,10 @@ table.matrix td {
 table.matrix td.no { width: 22pt; color: ${COLORS.rowNo}; text-align: center; }
 table.matrix td.cell { text-align: center; }
 table.matrix td.company { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-i.on, i.review, i.off, i.unknown { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
+i.on, i.off { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
+/* 금색: AI 확인 시그널. 회색: 신호없음. */
 i.on { background: ${COLORS.gold}; }
-i.review { background: transparent; box-shadow: inset 0 0 0 1.2pt ${COLORS.gold}; }
-/* 채운 점: 검토했고 신호가 없었다. 테두리만: 검토를 못 해 모른다. */
 i.off { background: ${COLORS.light}; }
-i.unknown { background: transparent; box-shadow: inset 0 0 0 0.6pt ${COLORS.tableLine}; }
 .matrix-tail { position: absolute; top: 671pt; left: 25pt; right: 17pt; }
 .matrix-legend {
   display: flex;
