@@ -36,7 +36,7 @@ test('approved totals distinguish report rows, pending dates and outside-period 
     { company: 'B', published_at: '2026-08-12', published_at_source: 'url' },
     { company: 'C', published_at: '2026-07-01', published_at_source: 'feed' },
   ];
-  assert.deepEqual(publishedSignalCounts(rows, period), { approved_count: 4, report_signal_count: 2,
+  assert.deepEqual(publishedSignalCounts(rows, period), { approved_count: 4, near_miss_count: 0, report_signal_count: 2,
     date_pending_count: 1, out_of_period_count: 1, companies_in_report: 1 });
 });
 

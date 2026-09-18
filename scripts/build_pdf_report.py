@@ -1252,41 +1252,46 @@ def signal_supported(row):
     """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
 
     validate_report_inputs.mjs 의 승인 규칙을 그대로 옮긴 것이다. 두 곳이 어긋나면 판정 단계가
-    승인한 행을 발행 단계가 조용히 떨어뜨린다. 기업 귀속과 지표 사건은 어떤 행에서도 필수이고,
-    투자 시그널은 나머지 네 조건(타겟 기술·선행성·투자 단계·근거 충분성) 가운데 하나까지 비어도
-    싣는다. 완료된 사건은 어떤 지표에서도 싣지 않는다. 사업동향은 예전 엄격 기준 그대로다.
-    요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
+    승인한 행을 발행 단계가 조용히 떨어뜨린다. 정확성 우선 원칙에 따라 판정 누락과 needs_review 는
+    발행하지 않고, 기업 귀속·지표·선행성이 모두 참이어야 하며, 관련성 면제 대상이 아니면 타겟 기술
+    근거도 함께 요구한다. 승인되지 않은 근접 후보(ai_signal_supported=False)는 대시보드용이라
+    여기서 걸러진다. 요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
     """
     if not row or row.get("ai_signal_supported") is not True:
         return False
-    if row.get("ai_entity_supported") is not True or row.get("ai_indicator_supported") is not True:
+    if row.get("ai_summary_quality") != "pass":
         return False
     target_technology_required = not is_relevance_exempt(row)
-    technology_met = not target_technology_required or row.get("ai_target_technology_supported") is True
-    stage = row.get("ai_event_stage")
-    # 기술을 인정해 놓고 사유에서 직접 연관성을 부인하면 그 자체로 모순이다.
-    if target_technology_required and row.get("ai_target_technology_supported") is True:
-        reason = clean_text(row.get("ai_summary_reason")).lower()
-        denial_patterns = (
-            r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
-            r"직접 관련.*(?:근거.*제시되지|확인되지)",
-            r"자체는 언급되지",
-            r"not directly (?:related|linked)",
-            r"no direct (?:evidence|link|connection|relevance)",
-        )
-        if any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns):
+    required_fields = [
+        "ai_entity_supported",
+        "ai_indicator_supported",
+        "ai_leading_indicator_supported",
+    ]
+    if target_technology_required:
+        required_fields.append("ai_target_technology_supported")
+    for field in required_fields:
+        if row.get(field) is not True:
             return False
-    if row.get("investment_signal_no") is None:
-        return (technology_met and row.get("ai_leading_indicator_supported") is True
-                and row.get("ai_summary_quality") == "pass" and stage == "not_applicable")
-    if stage == "completed":
+    stage = row.get("ai_event_stage")
+    if row.get("investment_signal_no") is not None:
+        allowed = stage in {"exploratory", "planned"} or (
+            stage == "precursor" and str(row.get("investment_signal_no")) in {"1", "3", "4", "5"}
+        )
+    else:
+        allowed = stage == "not_applicable"
+    if not allowed:
         return False
-    stage_met = stage in {"exploratory", "planned"} or (
-        stage == "precursor" and str(row.get("investment_signal_no")) in {"1", "3", "4", "5"}
+    if not target_technology_required:
+        return True
+    reason = clean_text(row.get("ai_summary_reason")).lower()
+    denial_patterns = (
+        r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
+        r"직접 관련.*(?:근거.*제시되지|확인되지)",
+        r"자체는 언급되지",
+        r"not directly (?:related|linked)",
+        r"no direct (?:evidence|link|connection|relevance)",
     )
-    unmet = [technology_met, row.get("ai_leading_indicator_supported") is True,
-             stage_met, row.get("ai_summary_quality") == "pass"].count(False)
-    return unmet <= 1
+    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns)
 
 
 # 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독

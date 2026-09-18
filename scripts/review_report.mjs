@@ -22,12 +22,14 @@ const VERIFICATION_VERSION = 'verifier-v3';
 const VERIFICATION_COUNTS = ['requested', 'verified', 'partial', 'pending', 'changed', 'failed', 'rejected_responses'];
 const VERSION = 'article-review-v1';
 export function publishedSignalCounts(rows, period) {
-  // 승인된 행만 이 파일에 들어온다. 보고서에 실리는지는 게시일 상태가 정한다.
-  const published = rows.filter(row => reportEligible(row, period));
-  return { approved_count: rows.length,
+  // 투자 시그널 파일에는 승인 행과 대시보드용 근접 후보가 함께 들어 있다. 보고서 건수는 승인 행만
+  // 세고, 그 가운데 게시일이 확정된 것만 실린다. 근접 후보는 어느 쪽에도 들어가지 않는다.
+  const approved = rows.filter(row => row.ai_signal_supported !== false);
+  const published = approved.filter(row => reportEligible(row, period));
+  return { approved_count: approved.length, near_miss_count: rows.length - approved.length,
     report_signal_count: published.length,
-    date_pending_count: rows.filter(row => periodPlacement(row, period).placement === 'date_pending').length,
-    out_of_period_count: rows.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
+    date_pending_count: approved.filter(row => periodPlacement(row, period).placement === 'date_pending').length,
+    out_of_period_count: approved.filter(row => periodPlacement(row, period).placement === 'out_of_period').length,
     companies_in_report: new Set(published.map(row => row.company)).size };
 }
 const STAGE_REVIEW_VERSION = 'candidate-event-v3';

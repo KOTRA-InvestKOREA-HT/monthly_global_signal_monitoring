@@ -96,25 +96,19 @@ test('the comparison names what moved per candidate and flags a new approval', (
   const src = source('Alpha', 'https://example.com/Alpha');
   const baselineArticle = build([src], 'old-policy')[0];
   const article = build([src], 'new-policy')[0];
-  // 지표까지 탈락했던 판정이 지표를 되찾으면 승인으로 올라선다. 기술 연결 하나가 비는 것은 이제 승인을 막지 않는다.
+  // 지표를 되찾아도 기술 연결이 비어 있으면 승인되지 않는다. 승인 조건은 하나도 양보하지 않는다.
   const baselineReview = review(baselineArticle, { target_technology_supported: false, indicator_supported: false });
   const compared = compareArticle({ article, baselineArticle, baselineReview,
     review: review(article, { target_technology_supported: false }), entry: { expect: 'negative' } });
   const row = compared.candidates[0];
   assert.equal(row.candidate_id, 'investment:2');
   assert.equal(row.before.supported, false);
-  assert.equal(row.after.supported, true);
+  assert.equal(row.after.supported, false);
   assert.equal(row.before.indicator_supported, false);
   assert.equal(row.after.indicator_supported, true);
   assert.deepEqual(row.changed, ['indicator_supported']);
-  assert.equal(row.transition, 'newly_approved');
-  // 조건이 둘 이상 비면 그대로 탈락이다.
-  const twoGaps = compareArticle({ article, baselineArticle, baselineReview,
-    review: review(article, { target_technology_supported: false, leading_indicator_supported: false }),
-    entry: { expect: 'negative' } });
-  assert.equal(twoGaps.candidates[0].after.supported, false);
-  assert.equal(twoGaps.candidates[0].transition, 'kept_negative');
-  // 면제 후보도 같은 판정이 승인이다. 기대가 negative 였다면 사람이 봐야 한다.
+  assert.equal(row.transition, 'kept_negative');
+  // 면제 후보라면 같은 판정이 승인으로 바뀐다. 기대가 negative 였다면 사람이 봐야 한다.
   const exemptSrc = { ...src, excluded_from_relevance: true };
   const exemptBaseline = build([exemptSrc], 'old-policy')[0];
   const exempt = build([exemptSrc], 'new-policy')[0];
