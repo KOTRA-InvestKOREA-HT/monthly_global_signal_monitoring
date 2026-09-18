@@ -94,29 +94,15 @@ function isUndated(item) {
   return dateStatus(item) === "unknown";
 }
 
-// 분류는 키워드 일치만 보므로, 위험고지 상용문구에 키워드가 한 번 스친 보도자료도 시그널로 올라온다.
-// 요약 단계에서 본문을 읽고 근거가 없다고 판정한 항목은 보고서에서 빠지고 화면에만 남는다.
-// 판정 필드가 없는 과거 데이터는 판정 자체가 없었던 것이므로 근거 있음으로 본다.
-function isUnsupportedSignal(item) {
-  return item?.ai_signal_supported === false && !isHumanReviewSignal(item);
+// 승인 조건 하나를 못 채웠거나 재검토가 끝나지 않아 보고서에서 내려온 후보. 기업 귀속과 지표
+// 사건은 확인된 행이라 사람이 다시 볼 값어치가 있어 화면에만 남긴다. 승인 행과 달리 보고서
+// 본문과 매트릭스에는 실리지 않는다. 판정 필드가 없는 과거 자료는 판정 자체가 없었으므로 제외한다.
+function isNearMissSignal(item) {
+  return item?.ai_signal_supported === false;
 }
 
-// AI 승인 조건은 못 채웠지만 기업·지표 사건이 확인돼 보고서에 넣은 후보. 사람이 보고 무시로 거른다.
-function isHumanReviewSignal(item) {
-  return item?.ai_review_tier === "human_review";
-}
-
-const REVIEW_GAP_LABEL = {
-  target_technology: "타겟 기술 연결 미확인",
-  leading_indicator: "전조 활동 미확인",
-  event_stage: "투자 단계 기준 밖",
-  quality: "근거 부족",
-  semantic_recheck: "재검토 미완료",
-};
-
-function reviewGapText(item) {
-  const gaps = (item?.ai_review_gaps || []).map((gap) => REVIEW_GAP_LABEL[gap] || gap);
-  return [...gaps, item?.ai_summary_reason].filter(Boolean).join(" · ");
+function nearMissReasonText(item) {
+  return String(item?.ai_summary_reason || "").trim();
 }
 
 function PublishedDate({ item }) {
@@ -468,11 +454,11 @@ function investmentSortKey(item, mode) {
   const company = String(item.company || "");
   const published = new Date(item.published_at || 0).getTime() || 0;
   const press = isPressRelease(item) ? 0 : 1;
-  const unsupported = isUnsupportedSignal(item) ? 1 : 0;
+  const nearMiss = isNearMissSignal(item) ? 1 : 0;
   if (mode === "company") {
-    return [targetNo, company, unsupported, signalNo, press, -published];
+    return [targetNo, company, nearMiss, signalNo, press, -published];
   }
-  return [unsupported, signalNo, targetNo, company, press, -published];
+  return [nearMiss, signalNo, targetNo, company, press, -published];
 }
 
 function compareSortKeys(left, right) {
@@ -712,7 +698,7 @@ export default function HomePage() {
   const pressReleaseCount = displayedSignals.filter((item) => isPressRelease(item)).length;
   const undatedCount = displayedSignals.filter((item) => isUndated(item)).length;
   const dateHeldCount = displayedSignals.filter((item) => isDateHeld(item)).length;
-  const unsupportedSignalCount = displayedInvestmentSignals.filter((item) => isUnsupportedSignal(item)).length;
+  const nearMissSignalCount = displayedInvestmentSignals.filter((item) => isNearMissSignal(item)).length;
 
   return (
     <main className="shell">
@@ -905,9 +891,9 @@ export default function HomePage() {
           <span>날짜 보류</span>
           <strong className={dateHeldCount ? "statusWarning" : ""}>{dateHeldCount}</strong>
         </div>
-        <div>
-          <span>근거 미확인 시그널</span>
-          <strong className={unsupportedSignalCount ? "statusWarning" : ""}>{unsupportedSignalCount}</strong>
+        <div title="승인 조건을 하나 못 채웠거나 재검토가 끝나지 않아 월간 보고서에서 내려온 후보입니다. 화면에만 남습니다">
+          <span>근접 후보(미발행)</span>
+          <strong className={nearMissSignalCount ? "statusWarning" : ""}>{nearMissSignalCount}</strong>
         </div>
         <div>
           <span>기술 관련 후보</span>
@@ -985,14 +971,9 @@ export default function HomePage() {
                     <div className="signalStack">
                       <span className="signalNo">{item.investment_signal_no}</span>
                       <strong>{item.investment_signal_label}</strong>
-                      {isHumanReviewSignal(item) ? (
-                        <span className="undatedBadge" title={`AI 승인 기준 미충족(${reviewGapText(item)}). 월간 보고서에 포함되므로 해당 없으면 무시하세요`}>
-                          검토 필요
-                        </span>
-                      ) : null}
-                      {isUnsupportedSignal(item) ? (
-                        <span className="undatedBadge" title="본문에서 이 시그널의 근거를 확인하지 못해 월간 보고서에서는 제외됩니다">
-                          근거 미확인
+                      {isNearMissSignal(item) ? (
+                        <span className="undatedBadge" title={`승인 조건을 모두 채우지 못해 월간 보고서에는 실리지 않았습니다. ${nearMissReasonText(item)}`.trim()}>
+                          근접 후보
                         </span>
                       ) : null}
                     </div>
