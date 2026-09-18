@@ -109,14 +109,15 @@ test('an old approved Form 3 S5 decision gets one fresh semantic review', () => 
 
 test('a saved review whose published candidate lacks prose is asked once for summaries', () => {
   const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } }] };
+  // 발행되는 승인 후보만 문안을 다시 받는다. 대시보드에만 남는 근접 후보는 묻지 않는다(요청 낭비).
   const decision = { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true,
-    target_technology_supported: false, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
+    target_technology_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
     summary_ko: '', summary_en: '' };
   assert.equal(needsReviewSummary(article, { decisions: [decision] }), true);
   assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'published-summary-v3' }), false);
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, summary_ko: '요약 - 상세', summary_en: 'Summary - detail' }] }), false);
-  // 기술을 인정한 판정도 문안이 비면 똑같이 묻는다. 지표 사건이 없어 실리지 않는 판정만 묻지 않는다.
-  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: true }] }), true);
+  // 기술이 미확인이면 승인되지 않으므로 묻지 않는다. 지표 사건이 없는 판정도 마찬가지다.
+  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: false }] }), false);
   assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
 });
 
@@ -126,19 +127,19 @@ test('summary backfill copies prose only into empty published decisions and keep
     { id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3 } },
   ] };
   const review = { article_id: 'x', decisions: [
-    { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true, target_technology_supported: false,
+    { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true, target_technology_supported: true,
       leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', summary_ko: '', summary_en: '' },
     { candidate_id: 'investment:3', entity_supported: false, indicator_supported: false, target_technology_supported: false,
       leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' },
   ] };
   // The fresh answer flips judgements; only prose for the published candidate may cross over.
   const fresh = { decisions: [
-    { ...review.decisions[0], target_technology_supported: true, summary_ko: '표제 - 상세', summary_en: 'Headline - detail' },
+    { ...review.decisions[0], quality: 'needs_review', summary_ko: '표제 - 상세', summary_en: 'Headline - detail' },
     { ...review.decisions[1], entity_supported: true, summary_ko: '다른 문안', summary_en: 'Other prose' },
   ] };
   const merged = mergeReviewSummaries(article, review, fresh);
   assert.equal(merged.summary_review_version, 'published-summary-v3');
-  assert.equal(merged.decisions[0].target_technology_supported, false);
+  assert.equal(merged.decisions[0].quality, 'pass', '판정은 옮기지 않고 문안만 옮긴다');
   assert.equal(merged.decisions[0].summary_ko, '표제 - 상세');
   assert.equal(merged.decisions[0].summary_en, 'Headline - detail');
   assert.deepEqual(merged.decisions[1], review.decisions[1]);

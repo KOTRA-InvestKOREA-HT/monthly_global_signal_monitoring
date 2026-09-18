@@ -238,7 +238,7 @@ class PublishedSignalTests(unittest.TestCase):
         # 2026-08 run: rows without prose printed raw English/Japanese article text in the Korean PDF.
         base = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": True,
                 "ai_entity_supported": True, "ai_indicator_supported": True,
-                "ai_target_technology_supported": False, "ai_leading_indicator_supported": True,
+                "ai_target_technology_supported": True, "ai_leading_indicator_supported": True,
                 "ai_summary_quality": "pass", "ai_event_stage": "planned", "ai_summary_reason": "x"}
         with_prose = dict(base, title="with", ai_summary_ko="표제 - 상세", ai_summary_en="Headline - detail")
         without = dict(base, title="without", ai_summary_ko="", ai_summary_en="")
@@ -247,29 +247,41 @@ class PublishedSignalTests(unittest.TestCase):
         self.assertEqual([row["title"] for row in index["A"][2]], ["with"])
         self.assertIsNone(pdf.index_investment_signals([without, ko_only]).get("A"))
 
+    def test_an_unapproved_near_miss_row_never_fills_a_cell(self):
+        """대시보드용 근접 후보는 보고서에 실리지 않는다. 승인 조건은 하나도 양보하지 않는다."""
+        approved = dict(APPROVED_ROW, title="approved")
+        for gap in ({"ai_target_technology_supported": False}, {"ai_leading_indicator_supported": False},
+                    {"ai_summary_quality": "needs_review"}, {"ai_event_stage": "committed"}):
+            near_miss = dict(approved, ai_signal_supported=False, title="near miss", **gap)
+            self.assertFalse(pdf.signal_publishable(near_miss), gap)
+            index = pdf.index_investment_signals([near_miss, approved])
+            self.assertEqual([row["title"] for row in index["A"][2]], ["approved"], gap)
+            # 승인 표시만 바꾸고 조건을 그대로 두어도 실리지 않는다.
+            self.assertFalse(pdf.signal_publishable(dict(approved, **gap)), gap)
+
 
 APPROVED_ROW = {"company": "A", "investment_signal_no": 2, "ai_signal_supported": True, "ai_summary_quality": "pass",
                 "ai_entity_supported": True, "ai_indicator_supported": True, "ai_leading_indicator_supported": True,
                 "ai_target_technology_supported": True, "ai_event_stage": "planned", "ai_summary_reason": "x",
                 "ai_summary_ko": "표제 - 상세", "ai_summary_en": "Headline - detail"}
-# 조건 하나(기술 연결)가 비어도 승인되어 실리는 행.
-RELAXED_ROW = dict(APPROVED_ROW, ai_target_technology_supported=False, investment_signal_no=4)
+# 같은 기업의 다른 지표에 실리는 두 번째 승인 행.
+SECOND_ROW = dict(APPROVED_ROW, investment_signal_no=4, ai_event_stage="precursor")
 
 
 class MatrixCellStateTests(unittest.TestCase):
-    """조건 하나가 부족한 후보도 같은 시그널로 싣는다. 칸은 켜짐과 꺼짐 두 가지뿐이다."""
+    """칸은 켜짐과 꺼짐 두 가지뿐이다. 실릴 수 있는 행이 있으면 켜진다."""
 
     def setUp(self):
-        self.index = {"Mixed": {2: [APPROVED_ROW], 4: [RELAXED_ROW]}, "RelaxedOnly": {4: [RELAXED_ROW]},
-                      "Both": {4: [APPROVED_ROW, RELAXED_ROW]}}
+        self.index = {"Mixed": {2: [APPROVED_ROW], 4: [SECOND_ROW]}, "SecondOnly": {4: [SECOND_ROW]},
+                      "Both": {4: [APPROVED_ROW, SECOND_ROW]}}
 
-    def test_every_published_candidate_lights_the_same_cell(self):
+    def test_every_published_row_lights_the_same_cell(self):
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 2), "on")
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 4), "on")
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 1), "")
         self.assertEqual(pdf.signal_cell_state(self.index, "Both", 4), "on")
         self.assertEqual(pdf.company_status("Mixed", self.index, set()), "detected")
-        self.assertEqual(pdf.company_status("RelaxedOnly", self.index, set()), "detected")
+        self.assertEqual(pdf.company_status("SecondOnly", self.index, set()), "detected")
 
 
 

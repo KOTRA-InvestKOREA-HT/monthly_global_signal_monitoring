@@ -313,16 +313,20 @@ function dateStatedInQuote(quote) {
   return month ? { day: "", month } : null;
 }
 
-// 엄격 조건에서 딱 하나가 모자란 투자 후보도 승인한다. 보고서는 승인과 미승인 두 가지만 말하므로
-// 사람 검토라는 중간 단계는 두지 않는다. 캐시 재검토와 문안 보강도 같은 기준을 쓴다.
+// 승인 조건은 하나도 양보하지 않는다. 한때 "딱 하나만 모자란" 투자 후보를 승인한 적이 있는데,
+// 그렇게 실린 8건 가운데 6건이 타겟 기술 미확인이었고 2건은 이미 확정된 시설투자(committed)였다.
+// 타겟 기술 오인·전조 아닌 사건·근거 부족은 이 보고서가 지금까지 잡아온 바로 그 오류라, 그 방어벽을
+// 승인 단계에서 낮추지 않는다.
 //
-// 느슨한 승인은 "아깝게 떨어진" 투자 후보만이다. 기업 귀속과 지표 사건이 확인되고, 나머지 승인
-// 조건 가운데 모자란 것이 하나 이하여야 한다. 둘 이상 모자라면 승인과 거리가 멀다. 2026-08 실행에서
-// 감산 조치·지분 평가이익·타 사업 채권 발행이 이렇게 들어와 목록만 늘렸다.
+// 대신 아깝게 떨어진 후보는 대시보드에서 볼 수 있게 남긴다. 기업 귀속과 지표 사건이 확인되고
+// 나머지 조건 가운데 모자란 것이 하나뿐인 투자 후보다. 둘 이상 모자라면 승인과 거리가 멀다.
+// 2026-08 실행에서 감산 조치·지분 평가이익·타 사업 채권 발행이 그렇게 들어와 목록만 늘렸다.
 // 이미 끝난 사건(completed)도 뺀다. 이 보고서는 앞으로의 투자 전조를 찾으므로, 실적·연차 자료가
-// 다시 적은 완료된 증설·조달·가동 현황은 정의상 신호가 아니다. 확정됐으나 진행 전인 committed와
-// 단계를 판단하지 못한 unclear는 실을 가치가 있어 남긴다.
-export function relaxedApproval(candidate, decision) {
+// 다시 적은 완료된 증설·조달·가동 현황은 정의상 신호가 아니다.
+//
+// 이 행은 ai_signal_supported=false 로 나가고 보고서·매트릭스에는 실리지 않는다. 대시보드가
+// 사람에게 보여 주는 "확인해 볼 만한 근접 후보" 목록일 뿐이다.
+export function nearMissCandidate(candidate, decision) {
   if (candidate?.kind !== "investment" || !decision.entity_supported || !decision.indicator_supported) return false;
   if (decision.event_stage === "completed") return false;
   const unmet = [
@@ -331,7 +335,7 @@ export function relaxedApproval(candidate, decision) {
     investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no),
     decision.quality === "pass",
   ].filter((met) => !met).length;
-  return unmet <= 1;
+  return unmet === 1;
 }
 
 // 모델 판정 가운데 코드로 확인할 수 있는 두 가지를 승인 전에 적용한다. 저장된 판정에도 그대로 걸린다.
@@ -370,12 +374,11 @@ export function decisionOutcome(article, decisions, decision) {
   if (!candidate) return { supported: false };
   const gated = decisionForApproval(article, decisions, decision);
   if (!gated) return { supported: false, gated };
-  const strict = gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
+  const supported = gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
     gated.indicator_supported && gated.leading_indicator_supported && gated.quality === "pass" &&
     (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no));
-  // strict 는 예전 승인 기준을 그대로 통과한 후보다. 여기에 걸린 후보의 인용·문안 결함은 계속 실행을 세우고,
-  // 새로 승인 범위에 들어온 후보는 결함이 있으면 조용히 빼기만 한다(예전에는 사람 검토로 실렸다).
-  return { supported: strict || relaxedApproval(candidate, gated), strict, gated };
+  // nearMiss 는 승인이 아니다. 대시보드에만 남는 근접 후보라 보고서에는 실리지 않는다.
+  return { supported, nearMiss: !supported && nearMissCandidate(candidate, gated), gated };
 }
 
 export function importReview(article, review, { strictNumbers = false } = {}) {
@@ -433,13 +436,14 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     const noInvestmentEvent = candidate.kind === "investment" &&
       decision.event_stage === "not_applicable" && !approvableExceptStage;
     if (!stages.includes(decision.event_stage) && !noInvestmentEvent) throw new Error(`${context}: invalid event_stage`);
-    const { supported, strict, gated } = decisionOutcome(article, review.decisions, decision);
-    // 재검토를 끝내지 못한 후보. 인용이 원문과 맞지 않아 뺀 후보도 여기에 들어오므로 엄격 검사를 걸지 않고,
-    // 인용이나 문안이 모자라면 아래에서 조용히 뺀다. 다음 실행이 이 기사를 다시 판정한다.
-    const recheckPending = (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) && supported;
-    // 예전 승인 기준을 그대로 통과한 후보만 인용·문안 결함으로 실행을 세운다. 결함을 고칠 재시도가
-    // 이 검사를 위해 존재하기 때문이다. 새로 승인 범위에 들어온 후보는 세우지 않고 빼기만 한다.
-    const enforce = strict && !recheckPending;
+    const { supported, nearMiss, gated } = decisionOutcome(article, review.decisions, decision);
+    // 재검토를 끝내지 못한 후보. 의심 판정을 AI 승인으로 발행하지 않는다. 인용이 원문과 맞지 않아
+    // 뺀 후보도 여기에 들어오므로 엄격 검사를 걸지 않는다. 다음 실행이 이 기사를 다시 판정한다.
+    const recheckPending = (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) &&
+      (supported || nearMiss);
+    // 승인 후보의 인용·문안 결함만 실행을 세운다. 결함을 고칠 재시도가 이 검사를 위해 존재한다.
+    // 대시보드에만 남는 근접 후보는 세우지 않는다.
+    const enforce = supported && !recheckPending;
     const quotes = decision.evidence_quotes;
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
       throw new Error(`${context}: evidence_quotes must be exact passages from this article`);
@@ -455,40 +459,38 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     }
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
     // 막히지 않는다(옛 판정은 review_report 의 요약 새로고침이 한 번 다시 받는다).
-    if (strictNumbers && supported) {
+    if (strictNumbers && (supported || nearMiss)) {
       const numbers = decisionNumberProblems(article, decision);
       if (numbers.length) throw new Error(`${context}: summary numbers ${numbers.join(", ")} are not stated in this article`);
     }
-    // 엄격 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 나머지 후보의 문안은 그 검사를 받지 않았으므로
-    // 같은 결함이 있으면 문안을 비운다. 문안이 비면 아래에서 그 후보를 빼게 된다.
+    // 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 근접 후보의 문안은 그 검사를 받지 않았으므로
+    // 같은 결함이 있으면 문안만 비우고 후보는 남긴다.
     const groundedSummary = enforce || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
-    const summaryKo = groundedSummary ? clean(decision.summary_ko) : "";
-    const summaryEn = groundedSummary ? clean(decision.summary_en) : "";
+    const approved = supported && !recheckPending;
+    // 재검토를 끝내지 못해 승인에서 내려온 후보도 대시보드에는 남긴다. 판정 자체는 살아 있고
+    // 다음 실행이 다시 물으므로, 조용히 사라지면 그 사이 무엇이 보류됐는지 볼 수 없다.
+    const keepForDashboard = nearMiss || (supported && recheckPending);
     let row = null;
-    if (supported) {
-      const candidateRow = {
+    if (approved || keepForDashboard) {
+      row = {
         ...candidate.row,
-        ai_signal_supported: true,
+        // 근접 후보는 승인이 아니다. 매트릭스와 상세 카드는 이 값이 true 인 행만 싣는다.
+        ai_signal_supported: approved,
         ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, gated[field]])),
         ...(gated.target_technology_supported !== decision.target_technology_supported ? { ai_technology_conflict: true } : {}),
         ai_event_stage: decision.event_stage, ai_summary_quality: decision.quality,
         ai_summary_reason: clean(decision.reason_ko),
-        ai_summary_ko: summaryKo,
-        ai_summary_en: summaryEn,
+        ai_summary_ko: groundedSummary ? clean(decision.summary_ko) : "",
+        ai_summary_en: groundedSummary ? clean(decision.summary_en) : "",
         ai_summary_source: review.provider ? `${review.provider}_article_review` : "local_agent_review", ai_summary_reviewer: review.reviewer,
         ai_summary_cache_key: article.id, ai_evidence_quotes: quotes,
       };
-      // 승인 행은 인용과 한·영 문안을 모두 갖춰야 싣는다.
-      const errors = [...validateRows([candidateRow], candidate.kind),
-        ...(quotes.length ? [] : [`${context}: approved candidate needs an evidence quote`])];
-      // 예전 승인 기준을 통과한 후보의 결함은 재시도가 고쳐야 할 일이므로 그대로 실행을 세운다.
-      if (errors.length && enforce) throw new Error(errors.join("\n"));
-      // 새로 승인 범위에 들어온 후보는 결함이 있으면 싣지 않고 넘어간다. 예전에는 문안 없는 이런 후보가
-      // '사람 검토'로 실려 한국어판에 영문 발췌가 그대로 나갔다. 빠진 후보는 판정 로그에 남고
-      // 다음 실행이 문안을 다시 받아온다.
-      if (!errors.length) row = candidateRow;
+      if (approved && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
+      const errors = validateRows([row], candidate.kind);
+      if (errors.length) throw new Error(errors.join("\n"));
     }
-    return { candidate_id: candidate.id, kind: candidate.kind, supported: Boolean(row), row, reason_ko: decision.reason_ko };
+    return { candidate_id: candidate.id, kind: candidate.kind, supported: approved,
+      near_miss: Boolean(row) && !approved, row, reason_ko: decision.reason_ko };
   });
 }
 
@@ -753,7 +755,10 @@ export async function build(args) {
   // 승인된 판정은 날짜 상태와 무관하게 모두 남긴다. 게시월이 확정된 행만 PDF 본문에 들어가고,
   // 날짜 보류 행은 같은 파일에 남아 대시보드의 검토 후보가 된다. PDF 생성기가 같은 기준으로 거른다.
   const approved = (kind) => results.filter((item) => item.supported && item.kind === kind).map((item) => item.row);
-  const investment = approved("investment");
+  // 투자 시그널 파일에는 근접 후보도 함께 넣는다. ai_signal_supported=false 라 보고서에는 실리지 않고,
+  // 대시보드에서 "아깝게 떨어진 건"으로 사람이 확인하는 용도다. 사업동향에는 근접 단계가 없다.
+  const investment = results.filter((item) => item.kind === "investment" && (item.supported || item.near_miss))
+    .map((item) => item.row);
   const relevant = approved("relevant");
   const datePending = (rows) => rows.filter((row) => !reportEligible(row, snapshot.period));
   const errors = [...validateRows(investment, "investment"), ...validateRows(relevant, "relevant")];
@@ -828,7 +833,10 @@ export async function build(args) {
         "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)]);
     }
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
-      reviewed_candidates: results.length, approved_investment: investment.length, approved_business: relevant.length,
+      reviewed_candidates: results.length,
+      approved_investment: investment.filter((row) => row.ai_signal_supported).length,
+      near_miss_investment: investment.filter((row) => !row.ai_signal_supported).length,
+      approved_business: relevant.length,
       date_pending_investment: datePending(investment).length, date_pending_business: datePending(relevant).length,
       incomplete_companies: coverage.filter((item) => item.status !== "reviewed").length,
       review_failed_articles: reviewFailedArticles.length,
