@@ -16,7 +16,8 @@
     "modified_jsonld",
     "modified_time_tag",
     "gdelt_seen",
-    "model_quote"
+    "model_quote",
+    "modified_cms"
   ],
   "priority": [
     "meta",
@@ -32,7 +33,8 @@
     "gdelt_seen",
     "modified_meta",
     "modified_jsonld",
-    "modified_time_tag"
+    "modified_time_tag",
+    "modified_cms"
   ],
   "notes": {
     "feed": "공식 RSS/Atom의 pubDate·published. 발행처가 구조화해 제공한 게시일이다.",
@@ -40,6 +42,7 @@
     "body_text": "본문에서 처음 찾은 날짜. 사건 발생일일 수 있어 게시일로 확정하지 않는다.",
     "modified_meta": "수정일. 7월 기사에 붙은 8월 수정일을 8월 신규 기사로 잡지 않으려고 따로 둔다.",
     "gdelt_seen": "GDELT가 기사를 수집한 시각. 수집일은 게시일을 대신하지 않는다.",
-    "model_quote": "모델이 본문 인용과 함께 제안한 날짜. 인용이 확인돼도 확정으로 올리지 않는다."
+    "model_quote": "모델이 본문 인용과 함께 제안한 날짜. 인용이 확인돼도 확정으로 올리지 않는다.",
+    "modified_cms": "CMS 페이지 데이터에 실린 수정 시각(CoreMedia modificationDate 등). 게시일을 한 줄도 보여 주지 않는 뉴스룸에서 기간 밖 기사를 가려내는 유일한 근거다."
   }
 }

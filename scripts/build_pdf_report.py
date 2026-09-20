@@ -1379,7 +1379,8 @@ def covered_companies(summary, signal_rows):
 def signal_cell_state(signal_index, company, no):
     """매트릭스 한 칸. on=AI 확인 시그널, ""=신호없음.
 
-    조건 하나가 부족한 후보도 같은 시그널로 싣기로 해, 칸은 두 상태만 갖는다.
+    승인 조건을 하나라도 못 채운 근접 후보는 index_investment_signals 가 이미 빼므로 칸을
+    켜지 않는다. 그 후보는 대시보드에만 남는다.
     """
     return "on" if signal_index.get(company, {}).get(no) else ""
 

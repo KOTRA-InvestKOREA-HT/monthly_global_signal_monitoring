@@ -15,7 +15,7 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v15-business-trend-discovery';
+export const CONTENT_COLLECTION_VERSION = 'article-body-v16-listing-date-window';
 // 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
 // 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
 export const TREND_DISCOVERY_PER_COMPANY = 1;
@@ -331,6 +331,11 @@ function tagAttribute(block, tag, name) {
   return match ? extractAttribute(match[1], name) : "";
 }
 
+// CoreMedia 는 "2025-07-15T08:13:26Z[GMT]" 처럼 시간대 이름을 대괄호로 덧붙인다. Date 는 못 읽는다.
+function stripTimeZoneName(value) {
+  return value ? String(value).replace(/\[[^\]]+\]\s*$/, "") : value;
+}
+
 function parseDate(value) {
   if (!value) return null;
   const gdelt = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
@@ -589,6 +594,11 @@ function extractDateFromItemprop(html) {
 export function collectHtmlDateEvidence(html, url = "") {
   const jsonLdPublished = html.match(/"datePublished"\s*:\s*"([^"]+)"/i);
   const jsonLdModified = html.match(/"dateModified"\s*:\s*"([^"]+)"/i);
+  // CMS가 페이지에 심어 둔 수정 시각. maxon 뉴스룸은 목록에도 기사에도 날짜를 한 줄도 보여 주지
+  // 않아 게시일 근거가 전혀 없었고, 2025-07 기사 여덟 건이 미상으로 들어와 2026-08 보고서 후보까지
+  // 올라왔다. 수정 시각은 게시일 이후이므로, 그것이 보고 기간보다 앞서면 게시일도 기간 밖이다.
+  // 게시 근거가 아니라 수정 근거이므로 추정 등급이고, 이 값만으로 본문에 실리지는 않는다.
+  const cmsModified = html.match(/"(?:modificationDate|lastModified)"\s*:\s*"([^"]+)"/i);
   const headText = cleanHtmlText(html.slice(0, 5000));
   return [
     dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
@@ -597,6 +607,7 @@ export function collectHtmlDateEvidence(html, url = "") {
     dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
     dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
     dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),
+    dateEvidence(stripTimeZoneName(cmsModified?.[1]), "modified_cms", "modified"),
     dateEvidence(extractDateFromText(headText) || extractMonthFromText(headText), "text", "context"),
     dateEvidence(extractDateFromUrl(url), "url", "context"),
   ].filter(Boolean);
@@ -917,6 +928,22 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
   return rows.filter((row) => row.title && row.url);
 }
 
+// 목록 항목의 게시일은 제목 링크 바로 앞에 붙는데, 그 사이에 툴팁 속성이 잔뜩 든 마크업이
+// 끼면 고정폭 창이 날짜를 밀어낸다. Boeing 보도자료 목록의 <div class="wd_date">Aug 10, 2026</div>
+// 가 그래서 사라지고 URL 날짜만 남아 "게시일 추정"으로 보류됐다. 창을 항목 안에서만 넓힌다.
+// 항목 경계를 넘지 않으므로 앞 기사의 날짜를 이 기사 것으로 읽을 일은 없다.
+const ITEM_BOUNDARY = /<\/?(?:li|article|tr)\b[^>]*>/gi;
+const ANCHOR_CONTEXT_CHARS = 260;
+const ANCHOR_ITEM_CHARS = 2000;
+
+function itemContextStart(html, index) {
+  const from = Math.max(0, index - ANCHOR_ITEM_CHARS);
+  const before = html.slice(from, index);
+  let boundary = -1;
+  for (const match of before.matchAll(ITEM_BOUNDARY)) boundary = match.index + match[0].length;
+  return boundary === -1 ? Math.max(0, index - ANCHOR_CONTEXT_CHARS) : from + boundary;
+}
+
 export function parseAnchors(html, baseUrl) {
   const anchors = [];
   const anchorRegex = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
@@ -932,7 +959,8 @@ export function parseAnchors(html, baseUrl) {
         url: stripTracking(new URL(href, baseUrl).toString()),
         title: cleanText(match[2]),
         context: cleanText(
-          html.slice(Math.max(0, match.index - 260), Math.min(html.length, match.index + match[0].length + 260)),
+          html.slice(itemContextStart(html, match.index),
+            Math.min(html.length, match.index + match[0].length + ANCHOR_CONTEXT_CHARS)),
         ),
       });
     } catch {
