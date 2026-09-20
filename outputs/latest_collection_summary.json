@@ -1,11 +1,11 @@
 {
-  "run_started_at": "2026-09-18T12:12:02Z",
+  "run_started_at": "2026-09-20T00:24:21Z",
   "collection_resume_version": 1,
   "collection_input_digest": "5c536ce85314f7053a7301dd87008c4b6b93798741e3b17fb6e8e6fa1e274554",
   "html_network": {
-    "attempts": 948,
-    "skipped": 5,
-    "elapsed_ms": 451077
+    "attempts": 961,
+    "skipped": 14,
+    "elapsed_ms": 523136
   },
   "cached_company_count": 0,
   "retryable_company_count": 3,
@@ -151,7 +151,7 @@
     {
       "company": "Ouster",
       "status": "completed",
-      "retryable": false,
+      "retryable": true,
       "cached": false
     },
     {
@@ -330,8 +330,8 @@
     },
     {
       "company": "HyproMag",
-      "status": "incomplete",
-      "retryable": true,
+      "status": "completed",
+      "retryable": false,
       "cached": false
     },
     {
@@ -473,543 +473,543 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-18T12:18:19Z",
+  "run_finished_at": "2026-09-20T00:30:37Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 36944,
+      "elapsed_ms": 53760,
       "request_count": 18,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "Cognex",
-      "elapsed_ms": 18338,
+      "elapsed_ms": 23893,
       "request_count": 9,
       "result_count": 7,
       "cached": false
     },
     {
       "company": "Corning",
-      "elapsed_ms": 20000,
+      "elapsed_ms": 22959,
       "request_count": 18,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Charles River",
-      "elapsed_ms": 5983,
+      "elapsed_ms": 7042,
       "request_count": 13,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 16972,
+      "elapsed_ms": 11848,
       "request_count": 18,
       "result_count": 5,
       "cached": false
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 26294,
+      "elapsed_ms": 32855,
       "request_count": 21,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 33225,
-      "request_count": 21,
-      "result_count": 10,
+      "elapsed_ms": 12039,
+      "request_count": 18,
+      "result_count": 7,
       "cached": false
     },
     {
       "company": "Dupont",
-      "elapsed_ms": 11959,
+      "elapsed_ms": 13643,
       "request_count": 8,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 12649,
+      "elapsed_ms": 11140,
       "request_count": 11,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "TIMET",
-      "elapsed_ms": 3507,
+      "elapsed_ms": 3303,
       "request_count": 4,
       "result_count": 1,
       "cached": false
     },
     {
       "company": "Air Products",
-      "elapsed_ms": 35172,
+      "elapsed_ms": 13459,
       "request_count": 12,
       "result_count": 7,
       "cached": false
     },
     {
       "company": "Chemours",
-      "elapsed_ms": 20899,
+      "elapsed_ms": 8123,
       "request_count": 14,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 19900,
+      "elapsed_ms": 20197,
       "request_count": 16,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "DOW",
-      "elapsed_ms": 15266,
+      "elapsed_ms": 17284,
       "request_count": 12,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "Thermo Fisher",
-      "elapsed_ms": 20315,
+      "elapsed_ms": 21236,
       "request_count": 9,
       "result_count": 7,
       "cached": false
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 11852,
+      "elapsed_ms": 9143,
       "request_count": 15,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Onsemi",
-      "elapsed_ms": 17596,
+      "elapsed_ms": 16707,
       "request_count": 21,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Qualcomm",
-      "elapsed_ms": 32685,
+      "elapsed_ms": 17444,
       "request_count": 13,
       "result_count": 7,
       "cached": false
     },
     {
       "company": "Skyworks",
-      "elapsed_ms": 30913,
-      "request_count": 18,
+      "elapsed_ms": 31744,
+      "request_count": 22,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Eli Lilly and Company",
-      "elapsed_ms": 10174,
+      "elapsed_ms": 10862,
       "request_count": 16,
-      "result_count": 11,
+      "result_count": 8,
       "cached": false
     },
     {
       "company": "GE Healthcare",
-      "elapsed_ms": 9414,
+      "elapsed_ms": 12775,
       "request_count": 14,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Boeing",
-      "elapsed_ms": 26731,
+      "elapsed_ms": 28179,
       "request_count": 24,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "3M",
-      "elapsed_ms": 12327,
-      "request_count": 19,
-      "result_count": 8,
+      "elapsed_ms": 14242,
+      "request_count": 18,
+      "result_count": 7,
       "cached": false
     },
     {
       "company": "Ouster",
-      "elapsed_ms": 10765,
-      "request_count": 16,
+      "elapsed_ms": 14124,
+      "request_count": 15,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Applied Materials",
-      "elapsed_ms": 13889,
+      "elapsed_ms": 11875,
       "request_count": 18,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Magnix",
-      "elapsed_ms": 1993,
+      "elapsed_ms": 2473,
       "request_count": 3,
       "result_count": 0,
       "cached": false
     },
     {
       "company": "Prodrive",
-      "elapsed_ms": 2464,
+      "elapsed_ms": 2572,
       "request_count": 4,
       "result_count": 0,
       "cached": false
     },
     {
       "company": "ASML",
-      "elapsed_ms": 25405,
+      "elapsed_ms": 198522,
       "request_count": 18,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Besi",
-      "elapsed_ms": 33336,
-      "request_count": 18,
-      "result_count": 11,
+      "elapsed_ms": 127812,
+      "request_count": 17,
+      "result_count": 10,
       "cached": false
     },
     {
       "company": "NXP",
-      "elapsed_ms": 12833,
-      "request_count": 12,
-      "result_count": 6,
+      "elapsed_ms": 13343,
+      "request_count": 14,
+      "result_count": 8,
       "cached": false
     },
     {
       "company": "Norsk Hydro",
-      "elapsed_ms": 12906,
+      "elapsed_ms": 26547,
       "request_count": 17,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Vestas",
-      "elapsed_ms": 281407,
+      "elapsed_ms": 278241,
       "request_count": 18,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Heidenhain",
-      "elapsed_ms": 19627,
+      "elapsed_ms": 15733,
       "request_count": 17,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "Infineon",
-      "elapsed_ms": 9311,
-      "request_count": 18,
-      "result_count": 8,
+      "elapsed_ms": 10403,
+      "request_count": 19,
+      "result_count": 9,
       "cached": false
     },
     {
       "company": "Schmalz",
-      "elapsed_ms": 169368,
-      "request_count": 6,
+      "elapsed_ms": 264364,
+      "request_count": 5,
       "result_count": 3,
       "cached": false
     },
     {
       "company": "Bayer",
-      "elapsed_ms": 170763,
+      "elapsed_ms": 177484,
       "request_count": 21,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Merck",
-      "elapsed_ms": 21827,
+      "elapsed_ms": 24106,
       "request_count": 15,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Schott Pharma",
-      "elapsed_ms": 254726,
+      "elapsed_ms": 252849,
       "request_count": 6,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "BASF",
-      "elapsed_ms": 253492,
+      "elapsed_ms": 251672,
       "request_count": 18,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 235343,
-      "request_count": 19,
+      "elapsed_ms": 243098,
+      "request_count": 18,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 241778,
+      "elapsed_ms": 229014,
       "request_count": 4,
-      "result_count": 3,
+      "result_count": 1,
       "cached": false
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 19883,
+      "elapsed_ms": 23339,
       "request_count": 16,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "EMM(Umicore)",
-      "elapsed_ms": 43028,
+      "elapsed_ms": 40174,
       "request_count": 17,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "Umicore",
-      "elapsed_ms": 240052,
-      "request_count": 15,
+      "elapsed_ms": 227416,
+      "request_count": 14,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Solvay",
-      "elapsed_ms": 228224,
+      "elapsed_ms": 218625,
       "request_count": 12,
       "result_count": 3,
       "cached": false
     },
     {
       "company": "Syensqo",
-      "elapsed_ms": 4056,
+      "elapsed_ms": 4917,
       "request_count": 6,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "Hexagon AB",
-      "elapsed_ms": 5494,
+      "elapsed_ms": 210275,
       "request_count": 9,
-      "result_count": 3,
+      "result_count": 4,
       "cached": false
     },
     {
       "company": "ABB",
-      "elapsed_ms": 223097,
+      "elapsed_ms": 210767,
       "request_count": 17,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Maxon",
-      "elapsed_ms": 219803,
+      "elapsed_ms": 209917,
       "request_count": 14,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Siemens-Gamesa",
-      "elapsed_ms": 216969,
-      "request_count": 15,
-      "result_count": 9,
+      "elapsed_ms": 203871,
+      "request_count": 16,
+      "result_count": 10,
       "cached": false
     },
     {
       "company": "Renishaw",
-      "elapsed_ms": 203612,
+      "elapsed_ms": 191634,
       "request_count": 22,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Nexeon",
-      "elapsed_ms": 6905,
+      "elapsed_ms": 8901,
       "request_count": 10,
       "result_count": 2,
       "cached": false
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 193863,
+      "elapsed_ms": 176825,
       "request_count": 18,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "HyproMag",
-      "elapsed_ms": 190563,
-      "request_count": 12,
+      "elapsed_ms": 174394,
+      "request_count": 27,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "EVG",
-      "elapsed_ms": 178527,
+      "elapsed_ms": 155577,
       "request_count": 6,
-      "result_count": 8,
+      "result_count": 7,
       "cached": false
     },
     {
       "company": "Plansee",
-      "elapsed_ms": 2991,
+      "elapsed_ms": 3337,
       "request_count": 4,
       "result_count": 1,
       "cached": false
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 173710,
-      "request_count": 5,
-      "result_count": 5,
+      "elapsed_ms": 149636,
+      "request_count": 6,
+      "result_count": 6,
       "cached": false
     },
     {
       "company": "Veolia",
-      "elapsed_ms": 24524,
+      "elapsed_ms": 28300,
       "request_count": 36,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 167491,
+      "elapsed_ms": 143671,
       "request_count": 6,
       "result_count": 6,
       "cached": false
     },
     {
       "company": "Safran",
-      "elapsed_ms": 164546,
+      "elapsed_ms": 141606,
       "request_count": 9,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 32270,
-      "request_count": 14,
-      "result_count": 9,
+      "elapsed_ms": 142334,
+      "request_count": 16,
+      "result_count": 10,
       "cached": false
     },
     {
       "company": "Arkema",
-      "elapsed_ms": 162236,
+      "elapsed_ms": 28882,
       "request_count": 16,
-      "result_count": 9,
+      "result_count": 8,
       "cached": false
     },
     {
       "company": "DNP",
-      "elapsed_ms": 14363,
+      "elapsed_ms": 12109,
       "request_count": 29,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Hitachi Metals",
-      "elapsed_ms": 5975,
-      "request_count": 8,
-      "result_count": 2,
+      "elapsed_ms": 8252,
+      "request_count": 12,
+      "result_count": 6,
       "cached": false
     },
     {
       "company": "Toppan Holdings",
-      "elapsed_ms": 141754,
+      "elapsed_ms": 118659,
       "request_count": 14,
-      "result_count": 9,
+      "result_count": 7,
       "cached": false
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 42806,
+      "elapsed_ms": 34192,
       "request_count": 14,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "Asahi Glass",
-      "elapsed_ms": 134440,
+      "elapsed_ms": 110726,
       "request_count": 9,
-      "result_count": 6,
+      "result_count": 4,
       "cached": false
     },
     {
       "company": "JSR",
-      "elapsed_ms": 133014,
+      "elapsed_ms": 107725,
       "request_count": 12,
-      "result_count": 6,
+      "result_count": 5,
       "cached": false
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "elapsed_ms": 133742,
+      "elapsed_ms": 107916,
       "request_count": 17,
       "result_count": 10,
       "cached": false
     },
     {
       "company": "Tokyo Electron",
-      "elapsed_ms": 125454,
+      "elapsed_ms": 100695,
       "request_count": 13,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Tosoh",
-      "elapsed_ms": 7150,
+      "elapsed_ms": 6000,
       "request_count": 12,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "Mitsubishi Chemical",
-      "elapsed_ms": 17874,
+      "elapsed_ms": 15986,
       "request_count": 14,
       "result_count": 8,
       "cached": false
     },
     {
       "company": "Sumitomo Chemical",
-      "elapsed_ms": 34267,
+      "elapsed_ms": 29937,
       "request_count": 20,
       "result_count": 9,
       "cached": false
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 99791,
+      "elapsed_ms": 81646,
       "request_count": 15,
       "result_count": 11,
       "cached": false
     },
     {
       "company": "Toray",
-      "elapsed_ms": 2726,
-      "request_count": 7,
-      "result_count": 1,
+      "elapsed_ms": 14868,
+      "request_count": 10,
+      "result_count": 4,
       "cached": false
     },
     {
       "company": "Cheng Uei Precision",
-      "elapsed_ms": 92038,
+      "elapsed_ms": 73310,
       "request_count": 9,
       "result_count": 2,
       "cached": false
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 11416,
+      "elapsed_ms": 22582,
       "request_count": 6,
       "result_count": 0,
       "cached": false
@@ -1024,7 +1024,7 @@
       "usable_monthly": 5,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 8,
+      "trend_discovery_found": 7,
       "trend_discovery_kept": 1
     },
     {
@@ -1037,7 +1037,7 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 7,
+      "trend_discovery_found": 9,
       "trend_discovery_kept": 1
     },
     {
@@ -1085,14 +1085,14 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 21,
+      "trend_discovery_found": 24,
       "trend_discovery_kept": 1
     },
     {
       "company": "West Pharmaceutical",
-      "candidates": 11,
-      "cut_by_company_cap": 1,
-      "out_of_period_after_fetch": 9,
+      "candidates": 7,
+      "cut_by_company_cap": 0,
+      "out_of_period_after_fetch": 6,
       "usable_monthly": 1,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
@@ -1179,7 +1179,7 @@
       "usable_monthly": 1,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 3,
+      "trend_discovery_found": 2,
       "trend_discovery_kept": 1
     },
     {
@@ -1192,7 +1192,7 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 9,
+      "trend_discovery_found": 12,
       "trend_discovery_kept": 1
     },
     {
@@ -1214,7 +1214,7 @@
       "usable_monthly": 1,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 10,
+      "trend_discovery_found": 9,
       "trend_discovery_kept": 1
     },
     {
@@ -1232,7 +1232,7 @@
     },
     {
       "company": "Skyworks",
-      "candidates": 3,
+      "candidates": 7,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 0,
       "usable_monthly": 0,
@@ -1245,13 +1245,13 @@
     },
     {
       "company": "Eli Lilly and Company",
-      "candidates": 12,
-      "cut_by_company_cap": 2,
+      "candidates": 15,
+      "cut_by_company_cap": 5,
       "out_of_period_after_fetch": 0,
       "usable_monthly": 6,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 8,
+      "trend_discovery_found": 9,
       "trend_discovery_kept": 1
     },
     {
@@ -1262,7 +1262,7 @@
       "usable_monthly": 6,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 2,
+      "trend_discovery_found": 1,
       "trend_discovery_kept": 0
     },
     {
@@ -1270,7 +1270,7 @@
       "candidates": 10,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 1,
-      "usable_monthly": 3,
+      "usable_monthly": 5,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 4,
@@ -1278,9 +1278,9 @@
     },
     {
       "company": "3M",
-      "candidates": 8,
+      "candidates": 7,
       "cut_by_company_cap": 0,
-      "out_of_period_after_fetch": 4,
+      "out_of_period_after_fetch": 3,
       "usable_monthly": 3,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
@@ -1291,22 +1291,22 @@
       "company": "Ouster",
       "candidates": 11,
       "cut_by_company_cap": 1,
-      "out_of_period_after_fetch": 4,
+      "out_of_period_after_fetch": 0,
       "usable_monthly": 6,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 18,
+      "trend_discovery_found": 17,
       "trend_discovery_kept": 1
     },
     {
       "company": "Applied Materials",
-      "candidates": 13,
-      "cut_by_company_cap": 3,
+      "candidates": 14,
+      "cut_by_company_cap": 4,
       "out_of_period_after_fetch": 3,
       "usable_monthly": 4,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 23,
+      "trend_discovery_found": 25,
       "trend_discovery_kept": 1
     },
     {
@@ -1345,7 +1345,7 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 44,
+      "trend_discovery_found": 42,
       "trend_discovery_kept": 1
     },
     {
@@ -1358,15 +1358,15 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 3,
-      "trend_discovery_kept": 1
+      "trend_discovery_found": 2,
+      "trend_discovery_kept": 0
     },
     {
       "company": "NXP",
-      "candidates": 6,
+      "candidates": 8,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 0,
-      "usable_monthly": 4,
+      "usable_monthly": 5,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 1,
@@ -1393,7 +1393,7 @@
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 19,
+      "trend_discovery_found": 21,
       "trend_discovery_kept": 1
     },
     {
@@ -1411,10 +1411,10 @@
     },
     {
       "company": "Infineon",
-      "candidates": 8,
+      "candidates": 9,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 1,
-      "usable_monthly": 6,
+      "usable_monthly": 7,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 0,
@@ -1452,7 +1452,7 @@
       "usable_monthly": 2,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 22,
+      "trend_discovery_found": 21,
       "trend_discovery_kept": 0
     },
     {
@@ -1472,13 +1472,13 @@
       "company": "BASF",
       "candidates": 18,
       "cut_by_company_cap": 8,
-      "out_of_period_after_fetch": 9,
+      "out_of_period_after_fetch": 8,
       "usable_monthly": 0,
       "fallback": "run",
       "fallback_found": 6,
       "fallback_kept": 6,
       "trend_discovery": "run",
-      "trend_discovery_found": 1,
+      "trend_discovery_found": 2,
       "trend_discovery_kept": 1
     },
     {
@@ -1499,8 +1499,8 @@
       "out_of_period_after_fetch": 0,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 3,
-      "fallback_kept": 3,
+      "fallback_found": 1,
+      "fallback_kept": 1,
       "trend_discovery": "run",
       "trend_discovery_found": 0,
       "trend_discovery_kept": 0
@@ -1573,7 +1573,7 @@
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 1,
-      "trend_discovery_kept": 0
+      "trend_discovery_kept": 1
     },
     {
       "company": "ABB",
@@ -1592,21 +1592,21 @@
       "company": "Maxon",
       "candidates": 12,
       "cut_by_company_cap": 2,
-      "out_of_period_after_fetch": 2,
+      "out_of_period_after_fetch": 6,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 4,
-      "fallback_kept": 2,
+      "fallback_found": 5,
+      "fallback_kept": 5,
       "trend_discovery": "run",
       "trend_discovery_found": 0,
       "trend_discovery_kept": 0
     },
     {
       "company": "Siemens-Gamesa",
-      "candidates": 8,
+      "candidates": 9,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 2,
-      "usable_monthly": 4,
+      "usable_monthly": 5,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 9,
@@ -1647,15 +1647,13 @@
     },
     {
       "company": "HyproMag",
-      "candidates": 1,
-      "cut_by_company_cap": 0,
-      "out_of_period_after_fetch": 1,
-      "usable_monthly": 0,
-      "fallback": "run",
-      "fallback_found": 2,
-      "fallback_kept": 2,
+      "candidates": 11,
+      "cut_by_company_cap": 1,
+      "out_of_period_after_fetch": 0,
+      "usable_monthly": 3,
+      "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 3,
+      "trend_discovery_found": 5,
       "trend_discovery_kept": 1
     },
     {
@@ -1665,8 +1663,8 @@
       "out_of_period_after_fetch": 3,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 4,
-      "fallback_kept": 4,
+      "fallback_found": 3,
+      "fallback_kept": 3,
       "trend_discovery": "run",
       "trend_discovery_found": 2,
       "trend_discovery_kept": 1
@@ -1684,7 +1682,7 @@
     },
     {
       "company": "Texcell",
-      "candidates": 2,
+      "candidates": 3,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 0,
       "usable_monthly": 0,
@@ -1729,30 +1727,32 @@
       "fallback_found": 6,
       "fallback_kept": 4,
       "trend_discovery": "run",
-      "trend_discovery_found": 3,
+      "trend_discovery_found": 2,
       "trend_discovery_kept": 0
     },
     {
       "company": "Air Liquide",
-      "candidates": 9,
-      "cut_by_company_cap": 0,
-      "out_of_period_after_fetch": 7,
-      "usable_monthly": 1,
-      "fallback": "skipped_has_monthly_source",
+      "candidates": 11,
+      "cut_by_company_cap": 1,
+      "out_of_period_after_fetch": 10,
+      "usable_monthly": 0,
+      "fallback": "run",
+      "fallback_found": 6,
+      "fallback_kept": 6,
       "trend_discovery": "run",
       "trend_discovery_found": 1,
       "trend_discovery_kept": 0
     },
     {
       "company": "Arkema",
-      "candidates": 12,
-      "cut_by_company_cap": 2,
+      "candidates": 14,
+      "cut_by_company_cap": 4,
       "out_of_period_after_fetch": 5,
       "usable_monthly": 1,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 1,
-      "trend_discovery_kept": 1
+      "trend_discovery_found": 0,
+      "trend_discovery_kept": 0
     },
     {
       "company": "DNP",
@@ -1767,9 +1767,9 @@
     },
     {
       "company": "Hitachi Metals",
-      "candidates": 2,
+      "candidates": 6,
       "cut_by_company_cap": 0,
-      "out_of_period_after_fetch": 0,
+      "out_of_period_after_fetch": 4,
       "usable_monthly": 2,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
@@ -1783,8 +1783,8 @@
       "out_of_period_after_fetch": 4,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 4,
-      "fallback_kept": 3,
+      "fallback_found": 2,
+      "fallback_kept": 1,
       "trend_discovery": "run",
       "trend_discovery_found": 0,
       "trend_discovery_kept": 0
@@ -1807,8 +1807,8 @@
       "out_of_period_after_fetch": 0,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 4,
-      "fallback_kept": 4,
+      "fallback_found": 2,
+      "fallback_kept": 2,
       "trend_discovery": "run",
       "trend_discovery_found": 0,
       "trend_discovery_kept": 0
@@ -1820,16 +1820,16 @@
       "out_of_period_after_fetch": 3,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 3,
-      "fallback_kept": 3,
+      "fallback_found": 2,
+      "fallback_kept": 2,
       "trend_discovery": "run",
       "trend_discovery_found": 1,
       "trend_discovery_kept": 0
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "candidates": 13,
-      "cut_by_company_cap": 3,
+      "candidates": 14,
+      "cut_by_company_cap": 4,
       "out_of_period_after_fetch": 8,
       "usable_monthly": 0,
       "fallback": "run",
@@ -1847,7 +1847,7 @@
       "usable_monthly": 3,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 7,
+      "trend_discovery_found": 8,
       "trend_discovery_kept": 1
     },
     {
@@ -1898,10 +1898,10 @@
     },
     {
       "company": "Toray",
-      "candidates": 1,
+      "candidates": 4,
       "cut_by_company_cap": 0,
       "out_of_period_after_fetch": 0,
-      "usable_monthly": 1,
+      "usable_monthly": 4,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
       "trend_discovery_found": 0,
@@ -1934,13 +1934,13 @@
       "trend_discovery_kept": 0
     }
   ],
-  "companies_cut_by_company_cap": 19,
+  "companies_cut_by_company_cap": 20,
   "fallback_skipped_company_count": 42,
   "trend_discovery_company_count": 77,
-  "trend_discovery_found": 288,
-  "trend_discovery_kept": 31,
+  "trend_discovery_found": 294,
+  "trend_discovery_kept": 30,
   "trend_discovery_per_company": 1,
-  "skipped_unresolved_publisher_count": 77,
+  "skipped_unresolved_publisher_count": 79,
   "publisher_resolution_count": 0,
   "company_count": 77,
   "canonical_company_count": 77,
@@ -1957,69 +1957,201 @@
   "date_range_mode": "explicit",
   "from_date": "2026-08-01",
   "to_date": "2026-08-31",
-  "lookback_days": 51,
+  "lookback_days": 53,
   "max_per_source": 6,
   "max_per_company": 10,
   "company_concurrency": 4,
   "fetch_official_content": true,
-  "content_collection_version": "article-body-v15-business-trend-discovery",
+  "content_collection_version": "article-body-v16-listing-date-window",
   "content_char_limit": 24000,
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 1070,
+  "request_count": 1094,
   "fetch_retries": 2,
-  "retry_count": 10,
-  "result_count": 558,
-  "official_result_count": 394,
-  "press_release_result_count": 205,
-  "undated_result_count": 76,
+  "retry_count": 8,
+  "result_count": 555,
+  "official_result_count": 393,
+  "press_release_result_count": 209,
+  "undated_result_count": 74,
   "date_status_counts": {
-    "estimated": 90,
-    "confirmed": 358,
-    "conflicting": 34,
-    "unknown": 76
+    "estimated": 85,
+    "confirmed": 360,
+    "conflicting": 36,
+    "unknown": 74
   },
-  "month_only_result_count": 13,
-  "date_conflict_result_count": 34,
-  "undated_with_body_count": 50,
+  "month_only_result_count": 15,
+  "date_conflict_result_count": 36,
+  "undated_with_body_count": 47,
   "link_policy": "proposed",
   "link_verdict_counts": {
-    "hard_reject": 44675,
-    "fetch_to_verify": 3615,
-    "accept": 6791
+    "hard_reject": 44780,
+    "accept": 6859,
+    "fetch_to_verify": 3588
   },
   "max_verify_per_company": 0,
-  "excluded_non_article_count": 44708,
+  "excluded_non_article_count": 44827,
   "excluded_non_article_reasons": {
-    "no_article_affordance": 32869,
-    "site_root": 2213,
-    "boilerplate_or_social": 3295,
-    "offsite_link": 2020,
-    "navigation_label": 551,
-    "category_or_pagination": 458,
-    "index_page": 3003,
+    "navigation_label": 553,
+    "no_article_affordance": 32885,
+    "index_page": 3048,
+    "offsite_link": 2021,
+    "site_root": 2224,
+    "boilerplate_or_social": 3328,
+    "category_or_pagination": 453,
     "not_http": 2,
     "asset_file": 90,
-    "no_article_title": 19,
+    "no_article_title": 33,
     "verified_index_page": 10,
-    "feed_url": 6,
+    "feed_url": 8,
     "broken_url": 168,
     "unreadable_undated_file": 4
   },
-  "excluded_non_article_sample_count": 234,
+  "excluded_non_article_sample_count": 241,
   "excluded_non_article_samples": [
     {
-      "company": "Corning",
-      "title": "",
-      "url": "https://www.corning.com/worldwide/en.html",
-      "reason": "no_article_affordance"
+      "company": "Charles River",
+      "title": "Investor Relations Home",
+      "url": "https://ir.criver.com/investor-overview",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Charles River",
+      "title": "Corporate Governance",
+      "url": "https://ir.criver.com/corporate-governance/highlights",
+      "reason": "navigation_label"
     },
     {
       "company": "Corning",
-      "title": "",
-      "url": "https://www.corning.com/worldwide/en.html",
-      "reason": "no_article_affordance"
+      "title": "About Us",
+      "url": "https://www.corning.com/worldwide/en/about-us/company-profile.html",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Corning",
+      "title": "About Us",
+      "url": "https://www.corning.com/worldwide/en/about-us/company-profile.html",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Cytiva",
+      "title": "About Us",
+      "url": "https://www.danaher.com/about-danaher",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Cytiva",
+      "title": "About Us",
+      "url": "https://www.danaher.com/about-danaher",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "Management",
+      "url": "https://asm-au.com/about/management/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "Corporate Directory",
+      "url": "https://asm-au.com/about/corporate-directory/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Moderna",
+      "title": "Products",
+      "url": "https://www.modernatx.com/products",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Products",
+      "url": "https://www.westpharma.com/products",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Products",
+      "url": "https://www.westpharma.com/products",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Solutions",
+      "url": "https://www.albemarle.com/us/en/what-we-offer/solutions",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Corporate Governance",
+      "url": "https://investors.albemarle.com/governance/corporate-governance/governance-documents/default.aspx",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "TIMET",
+      "title": "Products",
+      "url": "https://www.timet.com/documents/products/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "TIMET",
+      "title": "Products",
+      "url": "https://www.timet.com/documents/products/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Chemours",
+      "title": "Corporate Governance",
+      "url": "https://investors.chemours.com/corporate-governance/documents-charters",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Chemours",
+      "title": "Corporate Governance",
+      "url": "https://investors.chemours.com/corporate-governance/documents-charters",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Corporate Governance",
+      "url": "https://www.borgwarner.com/investors/corporate-governance",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Corporate Governance",
+      "url": "https://www.borgwarner.com/investors/corporate-governance",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "DOW",
+      "title": "Products",
+      "url": "https://www.dow.com/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "DOW",
+      "title": "Corporate Governance",
+      "url": "https://corporate.dow.com/en-us/about-dow/corporate-governance.html",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Corporate Governance",
+      "url": "https://ir.amkor.com/corporate-governance/highlights",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Corporate Governance",
+      "url": "https://ir.amkor.com/corporate-governance/highlights",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Products",
+      "url": "https://www.onsemi.com/products",
+      "reason": "navigation_label"
     },
     {
       "company": "Charles River",
@@ -2031,6 +2163,18 @@
       "company": "Charles River",
       "title": "Stock Information",
       "url": "https://ir.criver.com/stock-information/stock-quote",
+      "reason": "no_article_affordance"
+    },
+    {
+      "company": "Corning",
+      "title": "",
+      "url": "https://www.corning.com/worldwide/en.html",
+      "reason": "no_article_affordance"
+    },
+    {
+      "company": "Corning",
+      "title": "",
+      "url": "https://www.corning.com/worldwide/en.html",
       "reason": "no_article_affordance"
     },
     {
@@ -2070,9 +2214,21 @@
       "reason": "no_article_affordance"
     },
     {
+      "company": "West Pharmaceutical",
+      "title": "About West",
+      "url": "https://www.westpharma.com/about-west",
+      "reason": "no_article_affordance"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Locations",
+      "url": "https://www.westpharma.com/global-locations",
+      "reason": "no_article_affordance"
+    },
+    {
       "company": "Albemarle",
       "title": "",
-      "url": "https://www.albemarle.com/cdn-cgi/content?id=FsCpVcB6kIITPFW1Scwo_RqfsAeB8HO8Mg829FhurCQ-1789733543.1330132-1.2.1.1-GLzkdyC4V7bf4THMs84NYtJH1znMf.uHnHFqNxoF8es1JYUTeBQW91P46vcsB1GO",
+      "url": "https://www.albemarle.com/cdn-cgi/content?id=QO1vWTSZIAQqLA3qWyEXny6SM7WGP6f_O2qMh6puEtA-1789863886.8158858-1.2.1.1-tdUM9xdxVGiYNzqO3dlQX59O5AW1IqI.o8BKO8M_WvvaMtB1rI6SyuWxTEGYADRS",
       "reason": "no_article_affordance"
     },
     {
@@ -2094,18 +2250,6 @@
       "reason": "no_article_affordance"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "About West",
-      "url": "https://www.westpharma.com/about-west",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Locations",
-      "url": "https://www.westpharma.com/global-locations",
-      "reason": "no_article_affordance"
-    },
-    {
       "company": "Air Products",
       "title": "Argon",
       "url": "https://www.airproducts.com/gases/argon",
@@ -2115,6 +2259,18 @@
       "company": "Air Products",
       "title": "Carbon Dioxide",
       "url": "https://www.airproducts.com/gases/carbon-dioxide",
+      "reason": "no_article_affordance"
+    },
+    {
+      "company": "Chemours",
+      "title": "Events & Presentations",
+      "url": "https://investors.chemours.com/events-presentations",
+      "reason": "no_article_affordance"
+    },
+    {
+      "company": "Chemours",
+      "title": "Financial Information",
+      "url": "https://investors.chemours.com/financial-information/quarterly-reports",
       "reason": "no_article_affordance"
     },
     {
@@ -2142,16 +2298,292 @@
       "reason": "no_article_affordance"
     },
     {
-      "company": "Chemours",
-      "title": "Events & Presentations",
-      "url": "https://investors.chemours.com/events-presentations",
-      "reason": "no_article_affordance"
+      "company": "Charles River",
+      "title": "News Releases",
+      "url": "https://ir.criver.com/news-releases",
+      "reason": "index_page"
+    },
+    {
+      "company": "Charles River",
+      "title": "News Releases",
+      "url": "https://ir.criver.com/news-releases",
+      "reason": "index_page"
+    },
+    {
+      "company": "Cytiva",
+      "title": "News",
+      "url": "https://www.danaher.com/newsroom",
+      "reason": "index_page"
+    },
+    {
+      "company": "Cytiva",
+      "title": "News",
+      "url": "https://www.danaher.com/newsroom",
+      "reason": "index_page"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "About ASM Expand",
+      "url": "https://asm-au.com/about/",
+      "reason": "index_page"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "Sustainability Expand",
+      "url": "https://asm-au.com/sustainability/",
+      "reason": "index_page"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "News & Events",
+      "url": "https://www.westpharma.com/news-and-events",
+      "reason": "index_page"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Blog",
+      "url": "https://www.westpharma.com/blog",
+      "reason": "index_page"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Sustainability",
+      "url": "https://www.albemarle.com/us/en/sustainability",
+      "reason": "index_page"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Overview",
+      "url": "https://www.albemarle.com/us/en/sustainability",
+      "reason": "index_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company Overview",
+      "url": "https://www.airproducts.com/company",
+      "reason": "index_page"
+    },
+    {
+      "company": "Air Products",
+      "title": "Company Overview",
+      "url": "https://www.airproducts.com/company",
+      "reason": "index_page"
     },
     {
       "company": "Chemours",
-      "title": "Financial Information",
-      "url": "https://investors.chemours.com/financial-information/quarterly-reports",
-      "reason": "no_article_affordance"
+      "title": "Overview",
+      "url": "https://investors.chemours.com/investor-relations",
+      "reason": "index_page"
+    },
+    {
+      "company": "Chemours",
+      "title": "News Releases",
+      "url": "https://investors.chemours.com/news-releases",
+      "reason": "index_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "go back to BorgWarner home page",
+      "url": "https://www.borgwarner.com/home",
+      "reason": "index_page"
+    },
+    {
+      "company": "BorgWarner",
+      "title": "Company",
+      "url": "https://www.borgwarner.com/company",
+      "reason": "index_page"
+    },
+    {
+      "company": "DOW",
+      "title": "News",
+      "url": "https://corporate.dow.com/en-us/news.html",
+      "reason": "index_page"
+    },
+    {
+      "company": "DOW",
+      "title": "Press Releases",
+      "url": "https://corporate.dow.com/en-us/news/press-releases.html",
+      "reason": "index_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Press Releases",
+      "url": "https://ir.amkor.com/press-releases",
+      "reason": "index_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "News",
+      "url": "https://amkor.com/news/",
+      "reason": "index_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Newsroom",
+      "url": "https://www.onsemi.com/company/newsroom",
+      "reason": "index_page"
+    },
+    {
+      "company": "Onsemi",
+      "title": "News & Insights",
+      "url": "https://www.onsemi.com/company/newsroom/news-and-insights",
+      "reason": "index_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "About",
+      "url": "https://www.skyworksinc.com/About-Us",
+      "reason": "index_page"
+    },
+    {
+      "company": "Skyworks",
+      "title": "Events",
+      "url": "https://www.skyworksinc.com/About/Events",
+      "reason": "index_page"
+    },
+    {
+      "company": "Charles River",
+      "title": "Charles River Laboratories at the Baird 2026 Global Healthcare Conference",
+      "url": "https://event.summitcast.com/view/ec9NeVzPhdriPTAJnHFkeS/guest_book?session_id=SBbc5UkZoDMCVwQYe8YWg2",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Corning",
+      "title": "Read More",
+      "url": "https://www.wsj.com/tech/corning-fiber-optics-ai-e045ba3b",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Corning",
+      "title": "Watch Now",
+      "url": "https://fortune.com/videos/watch/wendell-weeks-on-risk%2C-resilience-%26-reinvention-at-corning/670a6da5-be51-4f8e-b371-af0aaeed6131",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Cytiva",
+      "title": "Open Statement of changes in beneficial ownership of securities in HTML.",
+      "url": "https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320299953&type=HTML&symbol=DHR&cdn=2a34c4e22cdb33f95f6c485831bcab59&companyName=Danaher+Corporation&formType=4&dateFiled=2026-08-24",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Cytiva",
+      "title": "Open Statement of changes in beneficial ownership of securities in DOC file.",
+      "url": "https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320299953&type=DOC&symbol=DHR&cdn=2a34c4e22cdb33f95f6c485831bcab59&companyName=Danaher+Corporation&formType=4&dateFiled=2026-08-24",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Moderna",
+      "title": "Join the meeting here, recommended to login beginning at 7:45 AM ET >",
+      "url": "https://central.virtualshareholdermeeting.com/vsm/web?pvskey=MRNA2025",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Moderna",
+      "title": "Vote here >",
+      "url": "https://central.proxyvote.com/pv/web",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "31 Aug 2026 Removal from Official List",
+      "url": "https://wcsecure.weblink.com.au/clients/australianstrategicmaterials/headline.aspx?headlineid=61341232",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "28 Aug 2026 Implementation of Schemes",
+      "url": "https://wcsecure.weblink.com.au/clients/australianstrategicmaterials/headline.aspx?headlineid=61341033",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "",
+      "url": "https://x.com/WestPharma",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "",
+      "url": "https://www.glassdoor.com/Overview/Working-at-West-Pharmaceutical-Services-EI_IE729.11,39.htm",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Download the Media Fact Sheet",
+      "url": "https://cdn.mediavalet.com/usva/albemarle/Wo1HWYHR9kWLF_R-xxFylg/xIwy2ydm5ECwS9OK98ZfHg/Original/Albemarle%20Corporate%20Fact%20Sheet.pdf",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Albemarle",
+      "title": "Powered By Q4 Inc. 5.187.1.9 (opens in new window)",
+      "url": "https://www.q4inc.com/Powered-by-Q4/",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "TIMET",
+      "title": "View Machine Reading Files",
+      "url": "https://www.bcbstx.com/asomrf?EIN=135630895",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Air Products",
+      "title": "Search Job Openings",
+      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Air Products",
+      "title": "Search Job Openings",
+      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Connect with us Sign up for email updates from Amkor",
+      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Connect with us Sign up for email updates from Amkor",
+      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Search & Apply",
+      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Onsemi",
+      "title": "Engineering Jobs",
+      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/requisitions?selectedCategoriesFacet=300000006382317",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Skyworks",
+      "title": "",
+      "url": "http://weibo.com/skyworkssolutions",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Skyworks",
+      "title": "",
+      "url": "http://weibo.com/skyworkssolutions",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "Consumer Health Privacy Notice",
+      "url": "https://www.lillyhub.com/legal/lillyusa/chpn.html",
+      "reason": "offsite_link"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "Accessibility Statement",
+      "url": "https://www.lillyhub.com/ux/lillyusa/english/accessibility.html",
+      "reason": "offsite_link"
     },
     {
       "company": "Corning",
@@ -2208,6 +2640,18 @@
       "reason": "site_root"
     },
     {
+      "company": "West Pharmaceutical",
+      "title": "Investors",
+      "url": "https://investor.westpharma.com/",
+      "reason": "site_root"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Home",
+      "url": "https://www.westpharma.com/",
+      "reason": "site_root"
+    },
+    {
       "company": "Albemarle",
       "title": "",
       "url": "https://www.albemarle.com/us/en",
@@ -2232,18 +2676,6 @@
       "reason": "site_root"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Investors",
-      "url": "https://investor.westpharma.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Home",
-      "url": "https://www.westpharma.com/",
-      "reason": "site_root"
-    },
-    {
       "company": "Air Products",
       "title": "",
       "url": "https://www.airproducts.com/",
@@ -2253,6 +2685,18 @@
       "company": "Air Products",
       "title": "Featured Applications",
       "url": "https://www.airproducts.com/",
+      "reason": "site_root"
+    },
+    {
+      "company": "Chemours",
+      "title": "",
+      "url": "https://www.chemours.com/en",
+      "reason": "site_root"
+    },
+    {
+      "company": "Chemours",
+      "title": "",
+      "url": "https://www.chemours.com/en",
       "reason": "site_root"
     },
     {
@@ -2271,18 +2715,6 @@
       "company": "DOW",
       "title": "Investors",
       "url": "https://investors.dow.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Chemours",
-      "title": "",
-      "url": "https://www.chemours.com/en",
-      "reason": "site_root"
-    },
-    {
-      "company": "Chemours",
-      "title": "",
-      "url": "https://www.chemours.com/en",
       "reason": "site_root"
     },
     {
@@ -2346,6 +2778,18 @@
       "reason": "boilerplate_or_social"
     },
     {
+      "company": "West Pharmaceutical",
+      "title": "Careers",
+      "url": "https://www.westpharma.com/careers",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "West Pharmaceutical",
+      "title": "Contact Us",
+      "url": "https://www.westpharma.com/support/contact-us",
+      "reason": "boilerplate_or_social"
+    },
+    {
       "company": "Albemarle",
       "title": "Careers",
       "url": "https://www.albemarle.com/us/en/careers",
@@ -2370,18 +2814,6 @@
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "West Pharmaceutical",
-      "title": "Careers",
-      "url": "https://www.westpharma.com/careers",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Contact Us",
-      "url": "https://www.westpharma.com/support/contact-us",
-      "reason": "boilerplate_or_social"
-    },
-    {
       "company": "Air Products",
       "title": "Careers chevron-thin-down",
       "url": "https://www.airproducts.com/careers",
@@ -2391,6 +2823,18 @@
       "company": "Air Products",
       "title": "Careers Overview",
       "url": "https://www.airproducts.com/careers",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Chemours",
+      "title": "Contact Us",
+      "url": "https://investors.chemours.com/resources/contact-us",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Chemours",
+      "title": "",
+      "url": "https://www.linkedin.com/company/chemours",
       "reason": "boilerplate_or_social"
     },
     {
@@ -2418,18 +2862,6 @@
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "Chemours",
-      "title": "Contact Us",
-      "url": "https://investors.chemours.com/resources/contact-us",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Chemours",
-      "title": "",
-      "url": "https://www.linkedin.com/company/chemours",
-      "reason": "boilerplate_or_social"
-    },
-    {
       "company": "Amkor Technology",
       "title": "&nbsp;",
       "url": "https://www.linkedin.com/company/7135/",
@@ -2440,294 +2872,6 @@
       "title": "&nbsp;",
       "url": "https://twitter.com/AmkorTechnology",
       "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Corning",
-      "title": "Read More",
-      "url": "https://www.wsj.com/tech/corning-fiber-optics-ai-e045ba3b",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Corning",
-      "title": "Watch Now",
-      "url": "https://fortune.com/videos/watch/wendell-weeks-on-risk%2C-resilience-%26-reinvention-at-corning/670a6da5-be51-4f8e-b371-af0aaeed6131",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Charles River",
-      "title": "Charles River Laboratories at the Baird 2026 Global Healthcare Conference",
-      "url": "https://event.summitcast.com/view/ec9NeVzPhdriPTAJnHFkeS/guest_book?session_id=SBbc5UkZoDMCVwQYe8YWg2",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Cytiva",
-      "title": "Open Statement of changes in beneficial ownership of securities in HTML.",
-      "url": "https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320299953&type=HTML&symbol=DHR&cdn=2a34c4e22cdb33f95f6c485831bcab59&companyName=Danaher+Corporation&formType=4&dateFiled=2026-08-24",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Cytiva",
-      "title": "Open Statement of changes in beneficial ownership of securities in DOC file.",
-      "url": "https://app.quotemedia.com/data/downloadFiling?webmasterId=101533&ref=320299953&type=DOC&symbol=DHR&cdn=2a34c4e22cdb33f95f6c485831bcab59&companyName=Danaher+Corporation&formType=4&dateFiled=2026-08-24",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Moderna",
-      "title": "Join the meeting here, recommended to login beginning at 7:45 AM ET >",
-      "url": "https://central.virtualshareholdermeeting.com/vsm/web?pvskey=MRNA2025",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Moderna",
-      "title": "Vote here >",
-      "url": "https://central.proxyvote.com/pv/web",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "31 Aug 2026 Removal from Official List",
-      "url": "https://wcsecure.weblink.com.au/clients/australianstrategicmaterials/headline.aspx?headlineid=61341232",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "28 Aug 2026 Implementation of Schemes",
-      "url": "https://wcsecure.weblink.com.au/clients/australianstrategicmaterials/headline.aspx?headlineid=61341033",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Download the Media Fact Sheet",
-      "url": "https://cdn.mediavalet.com/usva/albemarle/Wo1HWYHR9kWLF_R-xxFylg/xIwy2ydm5ECwS9OK98ZfHg/Original/Albemarle%20Corporate%20Fact%20Sheet.pdf",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Powered By Q4 Inc. 5.187.1.9 (opens in new window)",
-      "url": "https://www.q4inc.com/Powered-by-Q4/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "TIMET",
-      "title": "View Machine Reading Files",
-      "url": "https://www.bcbstx.com/asomrf?EIN=135630895",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "",
-      "url": "https://x.com/WestPharma",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "",
-      "url": "https://www.glassdoor.com/Overview/Working-at-West-Pharmaceutical-Services-EI_IE729.11,39.htm",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Air Products",
-      "title": "Search Job Openings",
-      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Air Products",
-      "title": "Search Job Openings",
-      "url": "https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Connect with us Sign up for email updates from Amkor",
-      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Connect with us Sign up for email updates from Amkor",
-      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Search & Apply",
-      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Engineering Jobs",
-      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/requisitions?selectedCategoriesFacet=300000006382317",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "Consumer Health Privacy Notice",
-      "url": "https://www.lillyhub.com/legal/lillyusa/chpn.html",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "Accessibility Statement",
-      "url": "https://www.lillyhub.com/ux/lillyusa/english/accessibility.html",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Skyworks",
-      "title": "",
-      "url": "http://weibo.com/skyworkssolutions",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Skyworks",
-      "title": "",
-      "url": "http://weibo.com/skyworkssolutions",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Corning",
-      "title": "About Us",
-      "url": "https://www.corning.com/worldwide/en/about-us/company-profile.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Corning",
-      "title": "About Us",
-      "url": "https://www.corning.com/worldwide/en/about-us/company-profile.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Charles River",
-      "title": "Investor Relations Home",
-      "url": "https://ir.criver.com/investor-overview",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Charles River",
-      "title": "Corporate Governance",
-      "url": "https://ir.criver.com/corporate-governance/highlights",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Cytiva",
-      "title": "About Us",
-      "url": "https://www.danaher.com/about-danaher",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Cytiva",
-      "title": "About Us",
-      "url": "https://www.danaher.com/about-danaher",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Management",
-      "url": "https://asm-au.com/about/management/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Corporate Directory",
-      "url": "https://asm-au.com/about/corporate-directory/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Moderna",
-      "title": "Products",
-      "url": "https://www.modernatx.com/products",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Solutions",
-      "url": "https://www.albemarle.com/us/en/what-we-offer/solutions",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Corporate Governance",
-      "url": "https://investors.albemarle.com/governance/corporate-governance/governance-documents/default.aspx",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "TIMET",
-      "title": "Products",
-      "url": "https://www.timet.com/documents/products/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "TIMET",
-      "title": "Products",
-      "url": "https://www.timet.com/documents/products/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Products",
-      "url": "https://www.westpharma.com/products",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Products",
-      "url": "https://www.westpharma.com/products",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Corporate Governance",
-      "url": "https://www.borgwarner.com/investors/corporate-governance",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Corporate Governance",
-      "url": "https://www.borgwarner.com/investors/corporate-governance",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "DOW",
-      "title": "Products",
-      "url": "https://www.dow.com/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "DOW",
-      "title": "Corporate Governance",
-      "url": "https://corporate.dow.com/en-us/about-dow/corporate-governance.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Chemours",
-      "title": "Corporate Governance",
-      "url": "https://investors.chemours.com/corporate-governance/documents-charters",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Chemours",
-      "title": "Corporate Governance",
-      "url": "https://investors.chemours.com/corporate-governance/documents-charters",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Corporate Governance",
-      "url": "https://ir.amkor.com/corporate-governance/highlights",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Products",
-      "url": "https://www.onsemi.com/products",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Solutions",
-      "url": "https://www.onsemi.com/solutions",
-      "reason": "navigation_label"
     },
     {
       "company": "Corning",
@@ -2748,18 +2892,6 @@
       "reason": "category_or_pagination"
     },
     {
-      "company": "Australian Strategic Metals",
-      "title": "2",
-      "url": "https://asm-au.com/news/page/2/",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "3",
-      "url": "https://asm-au.com/news/page/3/",
-      "reason": "category_or_pagination"
-    },
-    {
       "company": "Cytiva",
       "title": "Quarterly Earnings",
       "url": "https://investors.danaher.com/quarterly-earnings?cat=30",
@@ -2769,6 +2901,18 @@
       "company": "Cytiva",
       "title": "View all quarterly results",
       "url": "https://investors.danaher.com/quarterly-earnings?cat=30",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "2",
+      "url": "https://asm-au.com/news/page/2/",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Australian Strategic Metals",
+      "title": "3",
+      "url": "https://asm-au.com/news/page/3/",
       "reason": "category_or_pagination"
     },
     {
@@ -2832,18 +2976,6 @@
       "reason": "category_or_pagination"
     },
     {
-      "company": "Eli Lilly and Company",
-      "title": "Current page 1",
-      "url": "https://investor.lilly.com/financial-information/sec-filings?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=1&page=0",
-      "reason": "category_or_pagination"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "Page 2",
-      "url": "https://investor.lilly.com/financial-information/sec-filings?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=1&page=1",
-      "reason": "category_or_pagination"
-    },
-    {
       "company": "Skyworks",
       "title": "Current page 1",
       "url": "https://investors.skyworksinc.com/press-releases?page=0",
@@ -2853,6 +2985,18 @@
       "company": "Skyworks",
       "title": "Page 2",
       "url": "https://investors.skyworksinc.com/press-releases?page=1",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "Current page 1",
+      "url": "https://investor.lilly.com/financial-information/sec-filings?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=1&page=0",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "title": "Page 2",
+      "url": "https://investor.lilly.com/financial-information/sec-filings?&field_nir_sec_cik_target_id=&field_nir_sec_date_filed_value=&&&items_per_page_toggle=1&page=1",
       "reason": "category_or_pagination"
     },
     {
@@ -2872,150 +3016,6 @@
       "title": "Page 1",
       "url": "https://investors.3m.com/news-events/press-releases?page=1",
       "reason": "category_or_pagination"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_page"
-    },
-    {
-      "company": "Charles River",
-      "title": "News Releases",
-      "url": "https://ir.criver.com/news-releases",
-      "reason": "index_page"
-    },
-    {
-      "company": "Cytiva",
-      "title": "News",
-      "url": "https://www.danaher.com/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Cytiva",
-      "title": "News",
-      "url": "https://www.danaher.com/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "About ASM Expand",
-      "url": "https://asm-au.com/about/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Australian Strategic Metals",
-      "title": "Sustainability Expand",
-      "url": "https://asm-au.com/sustainability/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Sustainability",
-      "url": "https://www.albemarle.com/us/en/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Overview",
-      "url": "https://www.albemarle.com/us/en/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "News & Events",
-      "url": "https://www.westpharma.com/news-and-events",
-      "reason": "index_page"
-    },
-    {
-      "company": "West Pharmaceutical",
-      "title": "Blog",
-      "url": "https://www.westpharma.com/blog",
-      "reason": "index_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "Company Overview",
-      "url": "https://www.airproducts.com/company",
-      "reason": "index_page"
-    },
-    {
-      "company": "Air Products",
-      "title": "Company Overview",
-      "url": "https://www.airproducts.com/company",
-      "reason": "index_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "go back to BorgWarner home page",
-      "url": "https://www.borgwarner.com/home",
-      "reason": "index_page"
-    },
-    {
-      "company": "BorgWarner",
-      "title": "Company",
-      "url": "https://www.borgwarner.com/company",
-      "reason": "index_page"
-    },
-    {
-      "company": "DOW",
-      "title": "News",
-      "url": "https://corporate.dow.com/en-us/news.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "DOW",
-      "title": "Press Releases",
-      "url": "https://corporate.dow.com/en-us/news/press-releases.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "Chemours",
-      "title": "Overview",
-      "url": "https://investors.chemours.com/investor-relations",
-      "reason": "index_page"
-    },
-    {
-      "company": "Chemours",
-      "title": "News Releases",
-      "url": "https://investors.chemours.com/news-releases",
-      "reason": "index_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "Press Releases",
-      "url": "https://ir.amkor.com/press-releases",
-      "reason": "index_page"
-    },
-    {
-      "company": "Amkor Technology",
-      "title": "News",
-      "url": "https://amkor.com/news/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Newsroom",
-      "url": "https://www.onsemi.com/company/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Onsemi",
-      "title": "News & Insights",
-      "url": "https://www.onsemi.com/company/newsroom/news-and-insights",
-      "reason": "index_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/news",
-      "reason": "index_page"
-    },
-    {
-      "company": "Eli Lilly and Company",
-      "title": "",
-      "url": "https://www.lilly.com/news",
-      "reason": "index_page"
     },
     {
       "company": "Cytiva",
@@ -3090,6 +3090,12 @@
       "reason": "asset_file"
     },
     {
+      "company": "Jenoptik",
+      "title": "",
+      "url": "https://www.jenoptik.com/-/media/websiteimages/visuals/investors-sustainability/jenoptik-finanzbericht.jpg?impolicy=resize&width=1920",
+      "reason": "asset_file"
+    },
+    {
       "company": "Evonik Industries",
       "title": "Excel",
       "url": "https://www.evonik.com/content/dam/evonik/documents/260508_Evonik%20-%20Financials%20Q1%202026.zip",
@@ -3099,12 +3105,6 @@
       "company": "Evonik Industries",
       "title": "Excel",
       "url": "https://www.evonik.com/content/dam/evonik/documents/260804_Evonik%20-%20Financials%20Q2%202026.zip",
-      "reason": "asset_file"
-    },
-    {
-      "company": "Jenoptik",
-      "title": "",
-      "url": "https://www.jenoptik.com/-/media/websiteimages/visuals/investors-sustainability/jenoptik-finanzbericht.jpg?impolicy=resize&width=1920",
       "reason": "asset_file"
     },
     {
@@ -3150,6 +3150,18 @@
       "reason": "asset_file"
     },
     {
+      "company": "Safran",
+      "title": "Download logo (JPG/PNG)",
+      "url": "https://web.safran-group.com/cgs/logo-safran-jpg-png.zip",
+      "reason": "asset_file"
+    },
+    {
+      "company": "Safran",
+      "title": "Download logo (JPG/PNG)",
+      "url": "https://web.safran-group.com/cgs/logo-safran-jpg-png.zip",
+      "reason": "asset_file"
+    },
+    {
       "company": "Veolia",
       "title": "2025 Universal Registration Document - XBRL (in french) ( ZIP - 25.27 MB )",
       "url": "https://www.veolia.com/sites/g/files/dvc4206/files/document/2026/03/veolia-2025-12-31-1-fr_1.zip",
@@ -3162,21 +3174,27 @@
       "reason": "asset_file"
     },
     {
-      "company": "Air Liquide",
-      "title": "21.27 MB (MP3)",
-      "url": "https://www.airliquide.com/sites/airliquide.com/files/2025-08/airliquide-1.mp3",
-      "reason": "asset_file"
+      "company": "Eli Lilly and Company",
+      "title": "0000059478-26-000085.pdf",
+      "url": "https://investor.lilly.com/static-files/012b2404-7284-4a1c-893a-54695330a09c",
+      "reason": "no_article_title"
     },
     {
-      "company": "Arkema",
-      "title": "XBRL format",
-      "url": "https://www.arkema.com/files/live/sites/shared_arkema/files/downloads/investorrelations/en/finance/ixbrl_viewer.zip",
-      "reason": "asset_file"
+      "company": "Eli Lilly and Company",
+      "title": "0001310215-26-000015.pdf",
+      "url": "https://investor.lilly.com/static-files/b247778b-70b0-4a01-856c-c07b6a541abe",
+      "reason": "no_article_title"
     },
     {
       "company": "Skyworks",
       "title": "0000080255-26-000530",
       "url": "https://investors.skyworksinc.com/sec-filings/sec-filing/schedule-13g/0000080255-26-000530",
+      "reason": "no_article_title"
+    },
+    {
+      "company": "Skyworks",
+      "title": "0000080255-26-000530.pdf",
+      "url": "https://investors.skyworksinc.com/static-files/7be9ae89-a2a1-4a5c-9bfc-e741d2c30584",
       "reason": "no_article_title"
     },
     {
@@ -3210,9 +3228,21 @@
       "reason": "no_article_title"
     },
     {
+      "company": "HyproMag",
+      "title": "2",
+      "url": "https://mkango.ca/news/2026/page2",
+      "reason": "no_article_title"
+    },
+    {
       "company": "Rio Tinto",
       "title": "",
       "url": "https://cdn-rio.dataweavers.io/-/media/content/documents/invest/financial-news-and-performance/production/2026/2026-second-qor.pdf?rev=a8742ba99f15474fbc3d8d86b24ccca3",
+      "reason": "no_article_title"
+    },
+    {
+      "company": "HyproMag",
+      "title": "3",
+      "url": "https://mkango.ca/news/2026/page3",
       "reason": "no_article_title"
     },
     {
@@ -3222,15 +3252,15 @@
       "reason": "no_article_title"
     },
     {
-      "company": "Veolia",
-      "title": "Listen",
-      "url": "https://app-eu.readspeaker.com/cgi-bin/rsent?customerid=6558&lang=en_us&readid=listing__title%2Creadspeaker-content%2Chero-banner&readclass=listing__title%2Creadspeaker-content%2Chero-banner&url=https%3A//www.veolia.com/en/newsroom/press-releases",
-      "reason": "no_article_title"
-    },
-    {
       "company": "DNP",
       "title": "マンション内エレベーターサイネージと販促物を連動させた広告サービスを開始",
       "url": "https://www.dnp.co.jp/news/detail/20178515_1587.html?from=rss",
+      "reason": "no_article_title"
+    },
+    {
+      "company": "Veolia",
+      "title": "Listen",
+      "url": "https://app-eu.readspeaker.com/cgi-bin/rsent?customerid=6558&lang=en_us&readid=listing__title%2Creadspeaker-content%2Chero-banner&readclass=listing__title%2Creadspeaker-content%2Chero-banner&url=https%3A//www.veolia.com/en/newsroom/press-releases",
       "reason": "no_article_title"
     },
     {
@@ -3342,6 +3372,18 @@
       "reason": "feed_url"
     },
     {
+      "company": "HyproMag",
+      "title": "RSS Feed",
+      "url": "https://mkango.ca/rss/",
+      "reason": "feed_url"
+    },
+    {
+      "company": "HyproMag",
+      "title": "RSS Feed",
+      "url": "https://mkango.ca/rss/",
+      "reason": "feed_url"
+    },
+    {
       "company": "NXP",
       "title": "accessibility instructions",
       "url": "https://www.nxp.com/company/about-nxp/accessibility:ACCESSIBILITY",
@@ -3366,25 +3408,25 @@
       "reason": "broken_url"
     },
     {
-      "company": "Umicore",
+      "company": "EMM(Umicore)",
       "title": "(opens in new tab)",
       "url": "https://www.umicore.com/en/media/newsroom/currentAnnouncement.cta.url",
       "reason": "broken_url"
     },
     {
-      "company": "Umicore",
+      "company": "EMM(Umicore)",
       "title": "(opens in new tab)",
       "url": "https://www.umicore.com/en/investor-relations/currentAnnouncement.cta.url",
       "reason": "broken_url"
     },
     {
-      "company": "EMM(Umicore)",
+      "company": "Umicore",
       "title": "(opens in new tab)",
       "url": "https://www.umicore.com/en/media/newsroom/currentAnnouncement.cta.url",
       "reason": "broken_url"
     },
     {
-      "company": "EMM(Umicore)",
+      "company": "Umicore",
       "title": "(opens in new tab)",
       "url": "https://www.umicore.com/en/investor-relations/currentAnnouncement.cta.url",
       "reason": "broken_url"
@@ -3415,33 +3457,33 @@
     }
   ],
   "excluded_non_article_sample_reasons": {
+    "navigation_label": 24,
     "no_article_affordance": 24,
+    "index_page": 24,
+    "offsite_link": 24,
     "site_root": 24,
     "boilerplate_or_social": 24,
-    "offsite_link": 24,
-    "navigation_label": 24,
     "category_or_pagination": 24,
-    "index_page": 24,
     "not_http": 2,
     "asset_file": 24,
-    "no_article_title": 15,
+    "no_article_title": 20,
     "verified_index_page": 10,
-    "feed_url": 3,
+    "feed_url": 5,
     "broken_url": 8,
     "unreadable_undated_file": 4
   },
   "published_at_source_counts": {
     "text": 6,
-    "jsonld": 130,
-    "time_tag": 32,
-    "body_text": 71,
-    "listing": 58,
-    "url": 13,
-    "feed": 143,
-    "none": 76,
-    "meta": 29
+    "jsonld": 119,
+    "time_tag": 36,
+    "body_text": 68,
+    "feed": 152,
+    "listing": 65,
+    "url": 11,
+    "none": 74,
+    "meta": 24
   },
-  "fallback_result_count": 164,
+  "fallback_result_count": 162,
   "companies_with_results": 74,
   "companies_with_official_results": 67,
   "companies_without_results": [
@@ -3456,7 +3498,7 @@
     "Charles River": 6,
     "Cytiva": 5,
     "Moderna": 11,
-    "West Pharmaceutical": 10,
+    "West Pharmaceutical": 7,
     "Dupont": 6,
     "Albemarle": 6,
     "TIMET": 1,
@@ -3469,62 +3511,62 @@
     "Onsemi": 10,
     "Qualcomm": 7,
     "Skyworks": 8,
-    "Eli Lilly and Company": 11,
+    "Eli Lilly and Company": 8,
     "GE Healthcare": 8,
     "Boeing": 11,
-    "3M": 8,
+    "3M": 7,
     "Ouster": 11,
     "Applied Materials": 10,
     "Magnix": 0,
     "Prodrive": 0,
     "ASML": 11,
-    "Besi": 11,
-    "NXP": 6,
+    "Besi": 10,
+    "NXP": 8,
     "Norsk Hydro": 11,
     "Vestas": 11,
     "Heidenhain": 9,
-    "Infineon": 8,
+    "Infineon": 9,
     "Schmalz": 3,
     "Bayer": 10,
     "Merck": 8,
     "Schott Pharma": 4,
     "BASF": 11,
     "Evonik Industries": 11,
-    "Heraeus": 3,
+    "Heraeus": 1,
     "Jenoptik": 9,
     "EMM(Umicore)": 6,
     "Umicore": 10,
     "Solvay": 3,
     "Syensqo": 4,
-    "Hexagon AB": 3,
+    "Hexagon AB": 4,
     "ABB": 11,
     "Maxon": 10,
-    "Siemens-Gamesa": 9,
+    "Siemens-Gamesa": 10,
     "Renishaw": 11,
     "Nexeon": 2,
     "Rio Tinto": 9,
     "HyproMag": 4,
-    "EVG": 8,
+    "EVG": 7,
     "Plansee": 1,
-    "Texcell": 5,
+    "Texcell": 6,
     "Veolia": 9,
     "Airbus": 6,
     "Safran": 10,
-    "Air Liquide": 9,
-    "Arkema": 9,
+    "Air Liquide": 10,
+    "Arkema": 8,
     "DNP": 8,
-    "Hitachi Metals": 2,
-    "Toppan Holdings": 9,
+    "Hitachi Metals": 6,
+    "Toppan Holdings": 7,
     "Nabtesco": 9,
-    "Asahi Glass": 6,
-    "JSR": 6,
+    "Asahi Glass": 4,
+    "JSR": 5,
     "Shin-Etsu Chemicals": 10,
     "Tokyo Electron": 8,
     "Tosoh": 4,
     "Mitsubishi Chemical": 8,
     "Sumitomo Chemical": 8,
     "Asahi Kasei": 11,
-    "Toray": 1,
+    "Toray": 4,
     "Cheng Uei Precision": 2,
     "Shanghai Electric Wind Power": 0
   },
@@ -3535,7 +3577,7 @@
     "Charles River": 6,
     "Cytiva": 4,
     "Moderna": 4,
-    "West Pharmaceutical": 10,
+    "West Pharmaceutical": 7,
     "Dupont": 0,
     "Albemarle": 5,
     "TIMET": 1,
@@ -3548,21 +3590,21 @@
     "Onsemi": 9,
     "Qualcomm": 0,
     "Skyworks": 2,
-    "Eli Lilly and Company": 10,
+    "Eli Lilly and Company": 7,
     "GE Healthcare": 8,
     "Boeing": 10,
-    "3M": 8,
+    "3M": 7,
     "Ouster": 10,
     "Applied Materials": 9,
     "Magnix": 0,
     "Prodrive": 0,
     "ASML": 4,
     "Besi": 4,
-    "NXP": 6,
+    "NXP": 8,
     "Norsk Hydro": 10,
     "Vestas": 4,
     "Heidenhain": 9,
-    "Infineon": 8,
+    "Infineon": 9,
     "Schmalz": 1,
     "Bayer": 9,
     "Merck": 8,
@@ -3577,22 +3619,22 @@
     "Syensqo": 4,
     "Hexagon AB": 3,
     "ABB": 4,
-    "Maxon": 8,
-    "Siemens-Gamesa": 8,
+    "Maxon": 5,
+    "Siemens-Gamesa": 9,
     "Renishaw": 10,
     "Nexeon": 2,
     "Rio Tinto": 8,
-    "HyproMag": 1,
+    "HyproMag": 3,
     "EVG": 3,
     "Plansee": 1,
-    "Texcell": 2,
+    "Texcell": 3,
     "Veolia": 9,
     "Airbus": 0,
     "Safran": 6,
-    "Air Liquide": 9,
+    "Air Liquide": 4,
     "Arkema": 8,
     "DNP": 8,
-    "Hitachi Metals": 2,
+    "Hitachi Metals": 6,
     "Toppan Holdings": 6,
     "Nabtesco": 9,
     "Asahi Glass": 2,
@@ -3603,11 +3645,11 @@
     "Mitsubishi Chemical": 8,
     "Sumitomo Chemical": 8,
     "Asahi Kasei": 7,
-    "Toray": 1,
+    "Toray": 4,
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 106,
+  "error_count": 109,
   "errors": [
     {
       "target_no": 2,
@@ -3655,14 +3697,6 @@
       "error": "HTTP 403 Forbidden"
     },
     {
-      "target_no": 2,
-      "company": "Cognex",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPR2JLVmJnREFQR3c4OTZ6LVlMWGtaeEp1Ym1ua21meUFnc3Fra2Uwdk1tQmRjVU1aS0xhY2tRWTFSVjFGOW01UWp2QkRZSldFdDNlQ2s5YllLMEN2Vm12TFR4U215eHI1cElGRnZ1UFhXVGZhbndFVVQtR0RkaV9laGUyNGd5LVNDRDRJdTJJLWdwQ2ZYQ3RRNFcyMnBWNEQ0a2daUHJIWEtST0U2RzlVdERXSzFJLVFGUl9Z?oc=5",
-      "source_name": "Google News: Seeking Alpha",
-      "error": "HTTP 403"
-    },
-    {
       "target_no": 3,
       "company": "Corning",
       "source": "official_pages",
@@ -3705,14 +3739,6 @@
       "error": "HTTP 403"
     },
     {
-      "target_no": 6,
-      "company": "Moderna",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPcU1aVElRX2E5RzdKbHdQOXN3Mzh3UFhJc09GTDU5Tm1BUnBJYm92WnlTMkFNcXU3R2dnRGstRFJkc1ZsSEhkeWlCdjE2bmNBVEVwYlRWRTVNdEQwWVNPdkREV3RhLXk5RmNleFFnMlIyVWZzSTBGLVgxbkFQV29xQXo1QXNKSWVSVmhQSEs4T0xLZ1F1LUh4TlFkczJUTWk5OWd0ZmZOR3kydmV5?oc=5",
-      "source_name": "Google News: Bloomberg.com",
-      "error": "HTTP 403"
-    },
-    {
       "target_no": 8,
       "company": "Dupont",
       "source": "official_pages",
@@ -3743,8 +3769,16 @@
       "target_no": 8,
       "company": "Dupont",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOM2pJSUxQTWkwZFBZeHZkcjQ0SnZQQ1p3ck5rM0V0Vi1VZGRtMlZ6QzNJNHVNMVM3OTc1dGc1LXNyV3pza2RiOWQ0bTh6SklSWE5lUWhrTFppYTF3cnQ2U2Utc0RtbjBzeTd3cGxjcmtLMDE0T09xZlNJd1lWaHBlSjY4RkF4cUlBN1NyZTdVTmtQVE0?oc=5",
-      "source_name": "Google News: WSJ",
+      "source_url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPY3JvQzdUV0xrV21mREVSUXFPNjFua01wN1pVV1RFWXNvQnhLZXJYeEMwRkcxV0NmbDBGbGJSUmhGV2RTMzlSaGRvVDJoY00zMHRMS3ktRFE1NklMeEJTQ3pBemwwRkd5ZWQ2ekVRUWFzTmZveEJwOW1FMnE0N3ljdnhPYjAxYVFQNDBCWFV3eTZTTWRQaFRhcVJCMGdURFJxWFlUY21Jaw?oc=5",
+      "source_name": "Google News: Benzinga",
+      "error": "HTTP 403"
+    },
+    {
+      "target_no": 8,
+      "company": "Dupont",
+      "source": "official_detail",
+      "source_url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQTk9GckNiTUNodFhOdzAxX3kwMGlXVmxxanJhd2o3UWZ2UkZmdmxxWGRhVDAycmdrUlQyeVF6WEFnSkhNTjJvbVgwakdYNkdvdUs1ZTR0Ml9MMTIyRDZaVGhnc2M4a2MxY3RwQVFmQ2pxdk9qb2ZsQUp2aEUzb1BlRDRaRVNnQTFCbmppbTdZTkN6dGcxbWY1R0Vablp5TnlLaTRDRWdGMzUxek1vU0ExQW1aVWs2OTJjVUIzMHpLTXNwWEk?oc=5",
+      "source_name": "Google News: reuters.com",
       "error": "HTTP 401"
     },
     {
@@ -3759,9 +3793,9 @@
       "target_no": 8,
       "company": "Dupont",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQTk9GckNiTUNodFhOdzAxX3kwMGlXVmxxanJhd2o3UWZ2UkZmdmxxWGRhVDAycmdrUlQyeVF6WEFnSkhNTjJvbVgwakdYNkdvdUs1ZTR0Ml9MMTIyRDZaVGhnc2M4a2MxY3RwQVFmQ2pxdk9qb2ZsQUp2aEUzb1BlRDRaRVNnQTFCbmppbTdZTkN6dGcxbWY1R0Vablp5TnlLaTRDRWdGMzUxek1vU0ExQW1aVWs2OTJjVUIzMHpLTXNwWEk?oc=5",
-      "source_name": "Google News: reuters.com",
-      "error": "HTTP 401"
+      "source_url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxPX0U4Zm15cS1JWllRZUpidXNWS3FGQU41czM0bGlpVkR3dlVyTHZmREZYZEREMmV3azdMSktHb0VuYVJUTVhqSHJmMllFM3lZd2h5LUdKeE0yaDNiek55aUJiRVBMOG9TdmxnY1UwZVBiRHJiT3FJeUk4dmEyMzJFQjBiWWIxbElOcm5rNEpNLVcxTEphSkV0WDBKbDkwY1dwXzBVYTl1by05Qzg5Nk1oT2EzQVA3b2Z1YWFxWlpoN2VFWVA3dXRhOFJkUHQwWDF3UEIzUlVIRFJJV1oteU0xM3NkY2tkMUV3dEJhVUl0RFBiVEZCUUQ0ZmhJbE9sS1U?oc=5",
+      "source_name": "Google News: Business Wire",
+      "error": "HTTP 403"
     },
     {
       "target_no": 9,
@@ -3861,7 +3895,7 @@
       "target_no": 15,
       "company": "Thermo Fisher",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMimAJBVV95cUxQTzRGZkR3c1dLSzhxeV9FR1lWSTItTkxGNlljZjdoRm1kV1d5MFZiVjltbHFWMzdlaXdJUVBkRi1sZU1aOVAxSEtCQ3Y0eWVpOU5TUEFlOWVNVERxbWJHR0pqbmFfSkM3cWxIa3hjYmxzXzdGVDNTSV9seFdZdVVRR3NHNVkxS25qU3kyYmwyRHY3Zmh1V3hHRmVrTlh5TnctdFJYWUZTRUFOYkJHYXltZzJTNVBudEZvV3k3aFQtQ19TZWRVamlXdVQ5NHNBMHc3djl2VXpQSldad2FvNUU5U3k2VkEtazRkaTRhMGZ6X1hpQXN4ak5FUFRZMzZ5anNReVFIQ1FKRDBsLTlRdnQwSUc2dERSQmxX?oc=5",
+      "source_url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxOQVQybWI0VXpNMGVnNWRUU1MtTVdCTml2bTFYcmJ4YzMzUjdSYW1DSlRJMm9TRHR0dThNR2ZxaEFwMEVQbVRSc0JnQ01QMnpxOEpCY3VGT3cxenVsWXZlMHVxdjk2WjlxVW94Q0s2OUN0WWRYNndnNXNvdUpGY2d1TElXTFJEcXdsY1p0ak5oWjhsVHpkTEt1d3o1d2R4aHVOcWNFQy1Dd3RjeHkwSWxjV2xBTTdRX2hiVlpjMVB5WU5vTHJiTjBCaURqaVNSRUFuTURWZXNDRHNfMl9HclBKeHVKaG9lcl82MDY1TklMSVdoaExiQk9ENEE3LVJlOWJ5?oc=5",
       "source_name": "Google News: Business Wire",
       "error": "HTTP 403"
     },
@@ -3869,7 +3903,7 @@
       "target_no": 15,
       "company": "Thermo Fisher",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxOQVQybWI0VXpNMGVnNWRUU1MtTVdCTml2bTFYcmJ4YzMzUjdSYW1DSlRJMm9TRHR0dThNR2ZxaEFwMEVQbVRSc0JnQ01QMnpxOEpCY3VGT3cxenVsWXZlMHVxdjk2WjlxVW94Q0s2OUN0WWRYNndnNXNvdUpGY2d1TElXTFJEcXdsY1p0ak5oWjhsVHpkTEt1d3o1d2R4aHVOcWNFQy1Dd3RjeHkwSWxjV2xBTTdRX2hiVlpjMVB5WU5vTHJiTjBCaURqaVNSRUFuTURWZXNDRHNfMl9HclBKeHVKaG9lcl82MDY1TklMSVdoaExiQk9ENEE3LVJlOWJ5?oc=5",
+      "source_url": "https://news.google.com/rss/articles/CBMimAJBVV95cUxQTzRGZkR3c1dLSzhxeV9FR1lWSTItTkxGNlljZjdoRm1kV1d5MFZiVjltbHFWMzdlaXdJUVBkRi1sZU1aOVAxSEtCQ3Y0eWVpOU5TUEFlOWVNVERxbWJHR0pqbmFfSkM3cWxIa3hjYmxzXzdGVDNTSV9seFdZdVVRR3NHNVkxS25qU3kyYmwyRHY3Zmh1V3hHRmVrTlh5TnctdFJYWUZTRUFOYkJHYXltZzJTNVBudEZvV3k3aFQtQ19TZWRVamlXdVQ5NHNBMHc3djl2VXpQSldad2FvNUU5U3k2VkEtazRkaTRhMGZ6X1hpQXN4ak5FUFRZMzZ5anNReVFIQ1FKRDBsLTlRdnQwSUc2dERSQmxX?oc=5",
       "source_name": "Google News: Business Wire",
       "error": "HTTP 403"
     },
@@ -3950,16 +3984,8 @@
       "company": "Qualcomm",
       "source": "official_detail",
       "source_url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQQTc4ZllBd3lIX2pNeDV1eXNUa0pxbVZUektmdmhtVTVhdjQ3NHBQMi1FZ0p1UnVxOTBxdzV5WEYya2ZtNFc2TUpYMTRyWURXS2NMbVA3eV9oM1dINWx6dkEwbFFlWFNTOXdhV3VNaUlqYXpranNDcHZJdUlfR1FpSlFMS0ZDZUVVLWFRR2poQUluUnM3enQtNUFIanpDd1hUdUdCYVB4XzRHMjdvbEhaRDVxeE44RTMzM3FkQ0UwNkRuOFJVUzF4cExrNE9rUQ?oc=5",
-      "source_name": "Google News: Reuters",
+      "source_name": "Google News: reuters.com",
       "error": "HTTP 401"
-    },
-    {
-      "target_no": 19,
-      "company": "Skyworks",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPUms5VTlBdkR6MFZhNXMtQWhLdkhsY000UU1nZGdaQ1BFV09YOHp4N1hLMk5JNXN2NmwxWU5oQTZJdHg2OFpRSDlnS3pNUXk1aEIxMmZQdUt4WkRzNEFHSkRTbTJXUk94TG1URUJ1YVpKd2Q3cWt2UEdqTkFESUh0ZERzSXZRNGpDd3hfcVRxdmxjYi0xT0U3eVRZNjZjY2x1T0N4aXVkYzJqZUo4Qmc?oc=5",
-      "source_name": "Google News: Seeking Alpha",
-      "error": "HTTP 403"
     },
     {
       "target_no": 20,
@@ -3975,30 +4001,6 @@
       "company": "Eli Lilly and Company",
       "source": "official_detail",
       "source_url": "https://www.lilly.com/news/media/social-media-guidelines",
-      "source_name": "Eli Lilly and Company - Media / Media Center",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 20,
-      "company": "Eli Lilly and Company",
-      "source": "official_detail",
-      "source_url": "https://www.lilly.com/news/media/ebglyss",
-      "source_name": "Eli Lilly and Company - Media / Media Center",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 20,
-      "company": "Eli Lilly and Company",
-      "source": "official_detail",
-      "source_url": "https://www.lilly.com/news/media/foundayo",
-      "source_name": "Eli Lilly and Company - Media / Media Center",
-      "error": "HTTP 403 Forbidden"
-    },
-    {
-      "target_no": 20,
-      "company": "Eli Lilly and Company",
-      "source": "official_detail",
-      "source_url": "https://www.lilly.com/news/media/inluriyo",
       "source_name": "Eli Lilly and Company - Media / Media Center",
       "error": "HTTP 403 Forbidden"
     },
@@ -4019,12 +4021,117 @@
       "error": "HTTP 403"
     },
     {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_pages",
+      "source_url": "https://investors.ouster.com/financial-information/sec-filings",
+      "source_name": "Ouster - SEC Filings / Regulatory Filings",
+      "kind": "filing",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "source_name": "Ouster - Official RSS",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+      "source_name": "Ouster - Official RSS",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "source_name": "Ouster - Official RSS",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-upcoming-investor-events-1",
+      "source_name": "Ouster - Official RSS",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "source_name": "Ouster - Official RSS",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+      "source_name": "Ouster - News Releases / Press Releases",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/ouster-raises-bar-high-altitude-drone-mapping-worlds-first",
+      "source_name": "Ouster - News Releases / Press Releases",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/flyability-and-ouster-showcase-proven-lidar-partnership-intergeo",
+      "source_name": "Ouster - News Releases / Press Releases",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+      "source_name": "Ouster - News Releases / Press Releases",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
+      "target_no": 24,
+      "company": "Ouster",
+      "source": "official_detail",
+      "source_url": "https://investors.ouster.com/events/event-details/rosenblatt-securities-6th-annual-age-ai-scaling-summit-virtual",
+      "source_name": "Ouster - Investor Relations / Investor Relations",
+      "error": "domain_cooldown: investors.ouster.com"
+    },
+    {
       "target_no": 28,
       "company": "ASML",
       "source": "official_detail",
       "source_url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1oRmJvLWJUVU5KM3pxdElNb0VhN1VDR3BVZkRaTExPZTk1SU9faGNLRG42T3A1aFFCM0ZxV0J1MmVMRFdTZDkxR3poM3NaS3UxQ0dLSmtoWjdpQmtxYWpNU0ppMFpObTRRb3JmOA?oc=5",
       "source_name": "Google News: Seeking Alpha",
       "error": "HTTP 403"
+    },
+    {
+      "target_no": 28,
+      "company": "ASML",
+      "source": "official_detail",
+      "source_url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQTm1kY041Z2xrZklyajJwU2pyZmtzd2p2N1RDTXRpakRvLURpaGlFWnBSRHRDQWVjUkVzUjI3RHhaYUhjUmRqb2x5REptd1JkbHJrOTFpbFphdjkxS0lEVlhSNVktUFp2TUJlNjU4Tk9MeGtrNVdiR2huTGZJZzR3VkwyTUdUcWxhZms0U3djMnZKY3Q5VXphWjQxSC1GZ3VxNm1FVkZ0Mk03dzl1RkoyaW5naWNtWlFRUEtlYVVEQUlaakk?oc=5",
+      "source_name": "Google News: CarePlus VietNam",
+      "error": "HTTP 404"
+    },
+    {
+      "target_no": 28,
+      "company": "ASML",
+      "source": "official_detail",
+      "source_url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxON21BZ2FHMjQtdTVyeTV2RHR5aUJGMVh4c1ByM1NsXzNhM1puRW1COVhYaHZvTnEzWEU4SG1IcVlkcm9scTdrZnFDUEt5T3lnekpDQVBBTUhwN3hTdGltQ1NjQk1uemc4TTAxZW5xTUl2NGdwY2dBdEF4VlVLN1k4X0E2amwyNjZDbVFVVk5rSktZaUVRV09fY0UxYTg1cjM0U0VNN3B2d3M5ZFMwdkRiZGxZaFFFMHNqWk1SZzFNaUViQVYwR0syUmYySk1KY1RjbE130gHYAUFVX3lxTE5aQklMeWJlRXNiamRqeUhWdGtvTDVFMFFzSVdOSDFBT1doM24xWjZSR1hhdDBvOC1wZUpDMF8yTjBkMUpMQmhhVVVLVkRVcU9UaUhnUkg1OERJc1VDTFhqdG9jR0xTTWtRVU1nTFlVY0ZxYTZURTBnUjFGa2dGOWk5QTkySTBRaVJyenAyWTdBMW41TW1rNldxRmNvVXM3OGEtaGZEdDc0eDA2SGRmclV3TGFfOGdFVkNlbElDZEc3dG9OdWdqRXZyb0xqZUtURTVETUk3dndQYQ?oc=5",
+      "source_name": "Google News: simplywall.st",
+      "error": "publisher_url_unresolved"
     },
     {
       "target_no": 28,
@@ -4047,15 +4154,23 @@
       "company": "Besi",
       "source": "official_detail",
       "source_url": "https://news.google.com/rss/articles/CBMi4gNBVV95cUxOQnRJQnVLU0xJZTZCek95ajZ1QmpYaEZsUEwyRS1SQzFwWDZWd1UxbFkzWWFkNW5YZTBxa21zRjhPSVoyOTkwQnBJQWJFazlqN0kta2tvLUhSN1JYOVJPdEtNZmJJYWwwemk5ZUo0TWZPZEhXV1doR0hUVXNfWloyanI1R0ItVnJlb3B3Qmh5d3U1aUUxSXVqYWN1SG1DTWNyRE9KOUt5ZjdlVTQ2N1RhWjZWQ0FCMHlRd2x5dG5HbVNVRDd0b3ZsbW5GQ09fbTVPNXNSS0xJTlpueklsdUtPd2JUeHAxNXZJOVFvbXNRdEJUMVR6VVdieVFvMWxJNGtmWFU4Q1B1d3FxLXNoS3k5VkFhTGpWRThIYUJJUlNpaUViR3BjV1RtRllIZ2F3QUxpMGlWMmxIZnRaYktuV0M3SXNhRWRreUFXbkhzcEdiTDF4ekliWXRybTJLTmstbXNnVklpR1FYM2s4VFl1clJ2bTM0Q2hTb3Rsbm85YmN3ZElnY2VfUkNQWVhkcmZtRldvdTRTTDFXc3dNYk4tdk5raXZMa19kamk2T0s2MnBHQkVhUWhJQU10S3lqQ0JMQ2JFR2dhdllPZk11cEoza1ZOYU14SXM5N1Z2aFlMSzhKM0ZCQQ?oc=5",
-      "source_name": "Google News: unicef.org",
-      "error": "HTTP 403"
+      "source_name": "Google News: UNICEF",
+      "error": "publisher_url_unresolved"
     },
     {
       "target_no": 29,
       "company": "Besi",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOWDVldzAyaHRhX0Q2UHlZajdaUVZrdmNtNVZJUEp2ZG1tM3pBWFhBMzhIaERIc1ZVei01c2oyY2gyRHp0RWY1U0lqNVBLLWh2YjhfNU5LNEdjSzdPTWxVQmtsSFRPY1dGYlNfTzcyUHZwVGFMX3ZzYl9vdEtmRmJQWkxyUXNBeC1kam5RVXdhUlUtRjZLcVhrU3dYSmJDSmdXdDUwa3ZfeEVxNm40OWhJSzg0blFPVVg0d0FGS1QwZGJ5ejNad1cwSU9ySzRPeWItVzNrQWtTRy01LUlxVmswdDVBRmszaEJUemc?oc=5",
-      "source_name": "Google News: Tom's Hardware",
+      "source_url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPczk5d2Z1MXRORzd2Wno1aWM2cGdOemFvTGhGU1dyVzFqWlh1aWZJLXRqRFd4Qm9wQl9DcDNlZHZGdE13ZFZQSDYzSkpPWlpvb0RKeGlyNnZQQXJ2UDZEMmF3MXF2NHItSGZYSDR6djdLWEJVdDVZRmpKNHBDa3lXdTFmU0VxVFJVdmpaMzRCVEw4VWdOaG5v?oc=5",
+      "source_name": "Google News: Yahoo Finance",
+      "error": "publisher_url_unresolved"
+    },
+    {
+      "target_no": 31,
+      "company": "Norsk Hydro",
+      "source": "official_detail",
+      "source_url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQcmxzeGMyQ0ZiZk1Kc0laWEcyc1Y4b1hucm5xeU5SbkFXMU0wQm1MeTAtMkNLSGk2bmg3R284SWVMRWVLYnlfcW0zNkdDTEM5WHBEM1J5SkVFMkcyNndLZmMzOGwwV1NHbEhhejJQYi1ORmppNTItQWQ1aFpqY3QwZWt0ZkdVRXZHbV90Y1VjVXrSAZYBQVVfeXFMTm1VOC1XNkV0NjRkN2l6WlNSQlFOa0ZFTGxqM0VTV2pMbnNNN08wU0dWcmR3Vm5JQ3l3QUt2ZXc5Yl91MmFXa3o1aWFmWHpqTlFMbnpiZkszNHZPcUVRM0pMM0N5eXZic1RqN1ZlLWZ5XzlHRGlibnA2S2pya0hVWmRuMjBoRXpYeEl5S2FIUXp1cVE0N1Bn?oc=5",
+      "source_name": "Google News: American Recycler",
       "error": "publisher_url_unresolved"
     },
     {
@@ -4090,14 +4205,6 @@
       "source": "official_detail",
       "source_url": "https://news.google.com/rss/articles/CBMiuAJBVV95cUxPNklXUjljOGRDWkZGVDJSY1BZVXQzMHlRTTlWUFNrRFFUbGpLRWFIcGtZcUlwV1dIUm1rZTBUM3JBTkVtaE5VZ1ZtOEdLRnJBZS1WdFJVZzZ2NnowdTlJcXZDTUltb2dGN2JXYkdTZ0JKWVBLZUJkQVdPYVlLQk1oX0Rzbm00YUVNT0FuN19temhKZFl2NzJqLWU4bFdwOUNuazFNcjZ0cVhtZUVUb2R4aGV0Tk5tR3Y2cFRPR25FZ1ZjT0JPcGY1cWw1Xzk2Y2JNdHRscndDSDJiSmJoelV4dlBDd3VLVk5zYVlRcVdxZWRuTG5iV1hLZTdZVk9qOXhTaFNkUVo5RjdTM1dUVVE1c19WMVA3elNMTC13aEJISmFfb0x3WjFUTnFNWWRuRERsOTZ2TDVnQUI?oc=5",
       "source_name": "Google News: WLUK",
-      "error": "publisher_url_unresolved"
-    },
-    {
-      "target_no": 35,
-      "company": "Schmalz",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQdkZOZXpKMFhmSlhvTEktZUZhc2p2MWU3QnNGMDNaX0hreUNpT1NTRUlXOGZJVzNFeW9oQkRNQXdxaWR3SGg5TmRGLWhiYzFmTWFDa2V0SDVPeWdzX2lnSkluYWN6dVJaRDFUc1diZUNaZEM1c1hPYTNOdU9IYUI4OF9IOTJuSFdk?oc=5",
-      "source_name": "Google News: The Arkansas Democrat-Gazette",
       "error": "publisher_url_unresolved"
     },
     {
@@ -4184,40 +4291,24 @@
       "target_no": 38,
       "company": "Schott Pharma",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOVjZtSVdpU3ZqTTRyZmdnR01IS2xzLUctMDk0Z3J1MWxCMkJ2blM5MUZaR0U4aFVoV1ViZ19tbDd1cmFtN09yV0FZbWdyOU1qS2YtV0JsOXRrTG1RaVVwQzVOQjJaRFplWHRQZlBXaUQ1U1JDR19qamhBNlJDLUJWa09HcHRhZzFPemlHLXZONlQ5LXhlcXdWVnUybHpveDJHUGtxQmUxb0FlT0JQT29YV3UxejUzdmtHbmpwU1lub1Q1S2pyRVM5NC0xOUJSM0Zy?oc=5",
-      "source_name": "Google News: marketscreener.com",
+      "source_url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPR0hGZk5hVjA4dkZUSHJ3RllGOTRYcmljR3JZd25OOFNxTDMzdmxfYTIzd2JkQXRFZE9PVjZLTFd2NmNqOVhYSWxDM0stN21aLVJzNGR1a29TanRUYWs4ZlRudUlzbnM1UmdXS1k4blZncTdoVXlpQThaWjdhWmx6cHU4a2tGd1pmZUdQVkk1QlM4RTNibjFqbjZGajBTVkxpMW8zYzRhQUNhN01OOHFxU0I4WnkzUi1Vd2ZOYTRubjZoMFpDNC1GQmh4RVAwWFFyMEhj?oc=5",
+      "source_name": "Google News: ad-hoc-news.de",
       "error": "publisher_url_unresolved"
     },
     {
       "target_no": 39,
       "company": "BASF",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQYlJUbFY2TFFLUjVxdzFPQkFXX01qZWZwZEoxTnBHZ0hrclQ5Q3ZMcGotV1RyOXRkbnl3WXV6ZTI3cEVPSFBMZVVNbGZYX0lFUGxoN0RPOWhqX0Jwc04xejZfZ3hUNThVdHRXUVJDdUdua09HUjVoTXZ0SXVxaUFfRWdTNW81LTdCOENxNnBpdlVvX1o0Q3c?oc=5",
-      "source_name": "Google News: Morningstar",
-      "error": "publisher_url_unresolved"
-    },
-    {
-      "target_no": 40,
-      "company": "Evonik Industries",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFA4NlNzTFp4RTZTSDNQWUlDSklfSGpVZ1VlZVBkbk1abnRPclpFZElhc3FGN0l3cTcwVy1MUVBpOTNaeG5KU2pLNzRwLWdmZEpqWUo3WjgyYVoxMXQwQTFwOWxGRWdGTF9KS3Z2aVVSeTVhSEFELVlOLVhEWXZFUQ?oc=5",
-      "source_name": "Google News: Fortune Business Insights",
+      "source_url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNQXRxTFIzR2d3c0p6YWVsQW9RT0tlLTQ1Uy0zWGtLMFlWZWV1U01BeEtJcE9pNDF4SHoyVXJPZ2FlNVpnQ2tVT2hka3hIRVlNejFxTGE4Z1BMQmNoS3duS0dhWW5hVmc1dTdzdjZZaHF2NzQ2MFNsUkNTczZPYzhMMEhuZ0toUUhUUVBaTHMySHRqT0JiWktV?oc=5",
+      "source_name": "Google News: Yahoo Finance",
       "error": "publisher_url_unresolved"
     },
     {
       "target_no": 41,
       "company": "Heraeus",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPVTRSYmoxREpTd2JfeWZhaWd6NEkteXRVREFTRnQ0bXNjYUZ4LS1DSFN2VnJBamFLMXdLX2ZRVUpWbTVpamxrUHhfeVQ0b1pvcFk2N01IV3VjQldUSVJicXR2Z2RJQ2NPNHNfMGJkUVczNUVvbEdKdVktTEg2T3o1WmMtdTRxZ3pvdllvVm5ZaE0xbS0tWldrS1RGbms1VG1oWUNOdjdLSVFidnlqVG05cDNNdXpmRDgzbnFCWUZB?oc=5",
-      "source_name": "Google News: eeNews Europe",
-      "error": "publisher_url_unresolved"
-    },
-    {
-      "target_no": 44,
-      "company": "Umicore",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPbW5BYWppU0RxRFFTNmYwdS1vUE12NzA4T0N1d0ZVX2NYekFhOG1qYVZpZWg5cEVlbUxZbFI1M0hYSU1iSk1GNWxQYURsQXROenlvVXFjU21sY09GNGU4UThyNzBKdzVjaVNOUnFtQThKMHBBYUR5Mk9McnJzN2xZcnhIMy1VMWZxTUw5LTBPbzRoSGpOZUxtV1Y3OHZ4YUFE?oc=5",
-      "source_name": "Google News: Recycling Today",
+      "source_url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE14Sk1OU0hlcmxpN05sdFJBR0dDRjBqeDU4Tzc1NkhiOWpSejVQbU5JTEhzdlFzLXBCX3ZsTVA3T3F4ZllOdTk3RDByaWdBUHdoX0Q1VXNJanhsX2ZPc3RYcGRFaUhyYmdaUkV0NGd0ckpkdUY4ZEJqT2xn?oc=5",
+      "source_name": "Google News: Fortune Business Insights",
       "error": "publisher_url_unresolved"
     },
     {
@@ -4333,33 +4424,6 @@
       "error": "HTTP 406 Not Acceptable"
     },
     {
-      "target_no": 54,
-      "company": "HyproMag",
-      "source": "official_feeds",
-      "source_url": "https://mkango.ca/rss",
-      "source_name": "Mkango Resources (HyProMag parent) - News RSS",
-      "kind": "feed",
-      "error": "HTTP 504 Gateway Time-out"
-    },
-    {
-      "target_no": 54,
-      "company": "HyproMag",
-      "source": "official_pages",
-      "source_url": "https://mkango.ca/news/2026",
-      "source_name": "HyproMag - Mkango 2026 News / News Archive",
-      "kind": "newsroom",
-      "error": "domain_cooldown: mkango.ca"
-    },
-    {
-      "target_no": 54,
-      "company": "HyproMag",
-      "source": "official_pages",
-      "source_url": "https://mkango.ca/news/",
-      "source_name": "HyproMag - Mkango News / Newsroom / Regulatory News",
-      "kind": "newsroom",
-      "error": "domain_cooldown: mkango.ca"
-    },
-    {
       "target_no": 57,
       "company": "Texcell",
       "source": "official_pages",
@@ -4382,6 +4446,14 @@
       "company": "Texcell",
       "source": "official_detail",
       "source_url": "https://texcell.com/actualites/cphi-pmec-india-2025/",
+      "source_name": "Texcell - Actualités / News / Newsroom / News",
+      "error": "domain_cooldown: texcell.com"
+    },
+    {
+      "target_no": 57,
+      "company": "Texcell",
+      "source": "official_detail",
+      "source_url": "https://texcell.com/actualites/join-texcell-at-bioprocess-international-2025/",
       "source_name": "Texcell - Actualités / News / Newsroom / News",
       "error": "domain_cooldown: texcell.com"
     },
@@ -4478,14 +4550,6 @@
       "error": "HTTP 403 Forbidden"
     },
     {
-      "target_no": 61,
-      "company": "Air Liquide",
-      "source": "official_detail",
-      "source_url": "https://www.airliquide.com/sites/airliquide.com/files/2026-03/air-liquide-2025-universal-registration-document-interactive.pdf",
-      "source_name": "Air Liquide - Press Releases & News / Press Releases / News",
-      "error": "pdf_too_large"
-    },
-    {
       "target_no": 67,
       "company": "Asahi Glass",
       "source": "official_detail",
@@ -4512,9 +4576,9 @@
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260918T121202Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260918T121202Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260918T121202Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260920T002421Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260920T002421Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260920T002421Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -4534,32 +4598,15 @@
     {
       "company": "Cognex",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
-      "date_pending_articles": 3,
+      "needs_review_articles": 0,
+      "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "collection_incomplete",
-        "needs_review"
+        "collection_incomplete"
       ],
-      "follow_up": [
-        {
-          "title": "Cognex: The Data Center Supply Chain Play The Market Is Underpricing; Strong Buy (CGNX) - Seeking Alpha",
-          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPR2JLVmJnREFQR3c4OTZ6LVlMWGtaeEp1Ym1ua21meUFnc3Fra2Uwdk1tQmRjVU1aS0xhY2tRWTFSVjFGOW01UWp2QkRZSldFdDNlQ2s5YllLMEN2Vm12TFR4U215eHI1cElGRnZ1UFhXVGZhbndFVVQtR0RkaV9laGUyNGd5LVNDRDRJdTJJLWdwQ2ZYQ3RRNFcyMnBWNEQ0a2daUHJIWEtST0U2RzlVdERXSzFJLVFGUl9Z?oc=5",
-          "publishers": [
-            {
-              "publisher": "Seeking Alpha",
-              "home_url": "https://seekingalpha.com/"
-            }
-          ]
-        }
-      ],
+      "follow_up": [],
       "date_follow_up": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPTmQzckw0dEx0bS1LNXg5RkVJb0k4YU10b1BqR0FzUC1UbW9CRDRQNHlVcjRERGVnTV9QX3NCM2tmUjB5emRRdmQ5ZmtSQ05MWkppcXRJMWVoYnZyS2lrMElqaXU1YWFUdnhJc0ZaTks3Mlh3Znl3OXhFVHE1bE50c3NyUVdWWGxvYUlfT3NVVkZYNC1MVUpFbUdOR0J6YlRmVUN3?oc=5",
-          "title": "Cognex Q2 Earnings Beat on Margin Gains Despite Revenue Miss - Zacks Investment Research",
-          "reason": "게시일 근거가 서로 어긋남"
-        },
         {
           "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNRURKYndmeUZDSGwyQzhaaWpuUmo5VkJ6SFYtNkdvRklzeEVoMzAtRzdabGdmNTUxQms5Y0xLd1l4dzBXN21OaGFjcGZTTFlhSGx3NXVEMTJLd2dNaHZPMEV6QTdBZEVuV0hmeHJjTk90WWJ2NjhHTnRadVJtRmFPd0V5WDVFNTlEUmFrS1Z6SnBGSE51NDFSTWFmZjc?oc=5",
           "title": "Cognex Corporation (CGNX) Tops Q2 Earnings Estimates - Yahoo Finance",
@@ -4652,8 +4699,7 @@
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "needs_review",
-        "date_pending"
+        "needs_review"
       ],
       "follow_up": [
         {
@@ -4667,12 +4713,12 @@
           ]
         },
         {
-          "title": "Inside Moderna and Merck’s cancer vaccine triumph - STAT",
-          "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNbGpxNlJCcm1aM2pwbW1CVDBiN01HSmQtVjdyVnNUaXNVRHFEZTRTdmg2RmhjeEYtSnNOUmhLXzVENld6aFdSczhKOHR6VVNiZUZvYmlCSWdSNS04UTlMM0NxM082S21IQ2E3ZFAtb3lyeVlMTmpPaGJyWHQyUXA3d0pMc25PS2FmX05uag?oc=5",
+          "title": "Moderna and Merck say personalized melanoma cancer vaccine worked in late-stage trial - Drug Discovery News",
+          "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOemQxbEdnajViNG9fUWdFQ3FEdGJOelJyN2thRWxsMEJhT0ZOVVFaUFcwNlhOdkN5ZnRuRll4aE1XdmI0Z1l5a0p0UUZxRG1hNVo0LWxLTVItNVNBYWFpUWVMZm0tNUg3RHpGQ0ZFSjdZekhvaGxfUm9PbTEwbEV5TFUzZUFRLWhFd3RVM3RtRnlVdmZlaU5ySjlEaTI5YUlPczhuand1RkNjMmpaOE5ZdFlBSUJVREk5OHM4RE1OdTRKT0k?oc=5",
           "publishers": [
             {
-              "publisher": "STAT",
-              "home_url": "https://www.statnews.com/"
+              "publisher": "Drug Discovery News",
+              "home_url": "https://www.drugdiscoverynews.com/"
             }
           ]
         }
@@ -4719,7 +4765,7 @@
     {
       "company": "Dupont",
       "monthly_articles": 6,
-      "needs_review_articles": 2,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
@@ -4728,16 +4774,6 @@
         "needs_review"
       ],
       "follow_up": [
-        {
-          "title": "DuPont Reports Higher Profit as Sales Rise - WSJ",
-          "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOM2pJSUxQTWkwZFBZeHZkcjQ0SnZQQ1p3ck5rM0V0Vi1VZGRtMlZ6QzNJNHVNMVM3OTc1dGc1LXNyV3pza2RiOWQ0bTh6SklSWE5lUWhrTFppYTF3cnQ2U2Utc0RtbjBzeTd3cGxjcmtLMDE0T09xZlNJd1lWaHBlSjY4RkF4cUlBN1NyZTdVTmtQVE0?oc=5",
-          "publishers": [
-            {
-              "publisher": "WSJ",
-              "home_url": "https://www.wsj.com/"
-            }
-          ]
-        },
         {
           "title": "DuPont Earnings Were Strong. The Stock Is Down. - Barron's",
           "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1JLXUwX0cySjNpOVNlQm4zNExkZU5fWnpyWWV4bmRHQTBHZ2pvVmJiTmF0LVN0Z2o0cHdEeFBja1pySzNUVjVldmpPM2dOb1JfWFpYczhsYWgwZEk4UWg1Z003SXhCRGVSNEtQb3RJb1pJeWdEc3NNUg?oc=5",
@@ -4795,7 +4831,7 @@
       "company": "Air Products",
       "monthly_articles": 6,
       "needs_review_articles": 0,
-      "date_pending_articles": 1,
+      "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
@@ -4803,6 +4839,11 @@
       ],
       "follow_up": [],
       "date_follow_up": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNOVI5WFpUVkhRUC1fNGZLR2RLZ28yRGVqMjVBNUNzRmVBekVFczVQa2c2RGx0ZXdHSFZUZGJoZ2VtZkI0TV9BUjctUVp2am5UcXpia0hGc0xjellPTC0zNDNyemJUV3l0NElDT00xVTZkbUNKQVZpeXNlcWtmWUY3cWx2RGJrVFZXVmpxb0JRb1JXU2ZEOGxJM3hXTWpSNVJaWE1kang1ZEVnNmV6TnY3UlJMUVBGbkY2U3pfNjRBUzg1elJhZHI1a2tXbEJNdXY5bWRyanpWMEFLd1HSAeABQVVfeXFMTTkwRUg3RzhvTjJEVzZfLTg0WEViY0RNbE8xUGdjMGZBMEQ4UWhNNW1HUV9DRFdNdFBVNjB2cWJuUEVXZktMVC1vNVpXRnlEN0xkQ25XMnFPNGFrb3U4YVVRQTVhMnJiWGFFWXFIVnFXUG9QYTRNQVBmUVY5RWpmNWs5dVlZMUdYTEl1UUZ4VDFCd3dvVGJnWnRPbXdmbDVwSWQteE9GdnNyNEQ5NWVjY1M5eHpMM2lvQklKVVAxblkxWWxlVkQyQzRDajBuTnBPYnlHTWpZeE5HWURjcDh2amg?oc=5",
+          "title": "Air Products’ Earnings Momentum and Sector Outperformance Might Change The Case For Investing In APD - simplywall.st",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
         {
           "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ3lTYVN2dWdOY3dMN19wakZXSjVhRl9IVDd6dHNVZUd5UXZqZEl2dkxGRDVjQmtGWDBYU2R5dU5acklMOWMtU0NIUWJiU1hBbG5PUDU4SWdaT1FodzRiYnNJYmJvV1dLdVVOX3BmdUxOdG5QckdvUndjWjV5SlpCQnAyVTBpdE1kc0htZnYydmtDcXdCTHNha2Q4N1FsNDJwdGs0UlZn?oc=5",
           "title": "Is Air Products And Chemicals (APD) Undervalued After Its Earnings Beat And Raised Outlook? - Yahoo Finance",
@@ -4955,26 +4996,14 @@
     {
       "company": "Qualcomm",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
+      "needs_review_articles": 0,
       "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "collection_incomplete",
-        "review_failed"
+        "collection_incomplete"
       ],
-      "follow_up": [
-        {
-          "title": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 24/7 Wall St.",
-          "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPcHduMkZpWXVXYVBYUmdBN3BZWnQ3Tnl5M3ZlaWN2TWQzVnZKSVJWSC1GVjByVXJtUm1pSlJfcUhLSEotMkZHcDlBaF9IaFZNMkNSMnZMeWRvUFhSOFl0YmttQnVJcGMxM1JTaFVBMVhOZjlJVlNRRHBIa2k4RWVhR3VaaTUyR2Q5T0hMOWdRR2gxOWRvSDFZRl9WTzBvc3kyQ1laOWFB?oc=5",
-          "publishers": [
-            {
-              "publisher": "24/7 Wall St.",
-              "home_url": "https://247wallst.com/"
-            }
-          ]
-        }
-      ],
+      "follow_up": [],
       "date_follow_up": [
         {
           "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQTEhySGcyNVZBUDNrR2pCVlgxQURHLXJLSFhGbHhVU2lGME1mekQ1NFlpN2RkZjJNZzNKY1BiSTlIR1YwY1RKNW5BNUQ5aktOT0UxQXRFVHlPUWhIT1ZOdmpILWdLam05OUlIUENtOUtyQ21Tckh4Y1VrZDBnaGdZZlh5Qm83dERwdmZSOWo1eU9zQzE3dlQ5akZlLVZDVF9WdlVqYXE0RmEteHZvQ25USNIBuAFBVV95cUxNRTR2bzU3b0JETFdYWnFkVVVQX2VaZWVfRjNLUnh0RVlDQzJQUGhEb2pzV1lJcnpmRndjOFBlU3p6LUpQdnRKQ2lCdUhNOF9qQTlRS28zNWRIRmZRa3Z4bC1EZTRoZkJTOTlFNjFlX1JfUzdhMnZFSmtHZGJkeDBKb3RabDNiV3l3MmZ2M21tWXBpbUoyRHVMaVp0bDJDaHViTl9WT1hmc05FNVMzdnFCUGdocl9VcnpD?oc=5",
@@ -4987,7 +5016,7 @@
       "company": "Skyworks",
       "monthly_articles": 7,
       "needs_review_articles": 1,
-      "date_pending_articles": 2,
+      "date_pending_articles": 5,
       "deferred_articles": 1,
       "status": "incomplete_evidence",
       "reasons": [
@@ -5014,6 +5043,21 @@
           "reason": "게시일 근거가 전혀 없음"
         },
         {
+          "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPdFpZT0laejktREx2TzNocUYyMEZRd29yU2lSZHFPSDljSGMtSHlaUERMOHB0UHFfMzJIMURoOXgwbEJqVEZzRjMta21GRE8td3RuQjhVdmZ4SUNNMndra0JUdU5YSkN2bjJ1TWI2MWo1V0FRcW1YX1NFSVc0ckJ1ZW1CZEE1a2F5RGxlUGNHM3pNS0hUcVktSTRfdUxnQlZhWDVlekJR?oc=5",
+          "title": "Skyworks Solutions (SWKS) Rebounds On Broad Markets Hope, Is The Stock Fully Valued? - Yahoo Finance",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
+        {
+          "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOTVFoQTd2b3ZWZ1ZHVXNTVEFsZnRwQjZvMGpyclVtTy13bU5qVks5Z3hDRDNJWEJNalNVNnF1bWhGSkVCRzZwU3JmVG9iNmVVMjh0RUJPZ0paaVFYcXluTjYwYUZXcGdSd2V3b1o4RHJsSGZlalRNWXJwQnFHVHY5Y1pxOGhhcDVvajhVSFNMeTFMSjJUVlFhVWk2VzRYMERwY0wtOVVRTTZEWDJiU2I0bHNaWDdycmw2TlQ2d2xKZHhiUXhWeHN3cHI5MHNteEs5?oc=5",
+          "title": "Qorvo's Fate Is Tied to a Skyworks Buyout. Here's What Its Latest Insider Filings Show - The Motley Fool",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
+        {
+          "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNZk9tZ3dQS1BWMm41c3YtcWFJWU9aNjBPZlR1YjkzblV5bnpRR0FmU2FPZC1leU5vZFNadjJjY0pPNkswUlVTcDZ3QzZKUUxDNC10dlBoM3VYQjI1NkszQmZJQmRtc3gwSldlY3N3bHJWS2xlTm5tcDhzNlFEQW1VdUdLZmpGdzRuS0FnWnRYcUswWkJPTE5QWWliWHpiSTQwaTcyMDBjbV9obDlJV0FoOUtnQVZ3eVNBX24wcVZ1TlVRSjFYWGI5am5DV3BvaVI1X3h2cWVXMlFnblJRUUE?oc=5",
+          "title": "Should You Worry About This Qorvo Insider Activity During the Skyworks Deal? Here's What to Know - The Motley Fool",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
+        {
           "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxOSWZoQlhudko4NmZzSDdDQk1LbVZjTnpORkdOeFhINlBFeWJ0X1Z0M0p3akc2dnlvRU9qclpadEkwUUhDejRKc3VNRjI5NmZZckVSaTdJeGNjT0Mxd2piTW5SbnlYdWJ4bWZMcF9oeURtUjJCeUZiaEstNlFvZFF6Qm1BX2FWUDZhbDBtLU9wMmtFTEU2bmtkcFJfLU1KeG4tNjdzYVJZUms1QmVoYVBBSUUySXc3SEc0XzBjaXVEWGRIRVdnaXlKWTZMai1OeTFpUkNQVHFXdlE5UmfSAeABQVVfeXFMTzFvLXlEV3ZGaUV6TTRISHZFWjVJak1XZEpDWjRXWnJVWTd6R2tvNDlKcmlBV3ZwSmlwdV85Q2puNS15a0lHcTBQSEFqSlhBUkoyZklZS2g0RmZOeWI4a2Zwb2pzT3l0YUZseEVtV2JPMzdBYklYTjQxU2REVUhrelRpQnBxaEExVDlIdWFVYlh1X1cxcGVKWFJ4RHRDaUFMSm1qUjR1MWdkSlFUMEhEZ1o4eFZRaEpaeUpzb1gxQS1mZ0tnODJ0RndCTkNhMkVKVzF4OTdRMHJkZmxNbWNyV0I?oc=5",
           "title": "Some Investors May Be Willing To Look Past Skyworks Solutions' (NASDAQ:SWKS) Soft Earnings - simplywall.st",
           "reason": "게시일 근거가 서로 어긋남"
@@ -5025,7 +5069,7 @@
       "monthly_articles": 7,
       "needs_review_articles": 1,
       "date_pending_articles": 1,
-      "deferred_articles": 4,
+      "deferred_articles": 1,
       "status": "incomplete_evidence",
       "reasons": [
         "collection_incomplete",
@@ -5047,24 +5091,6 @@
           "company": "Eli Lilly and Company",
           "url": "https://www.lilly.com/news/media/social-media-guidelines",
           "title": "/news/media/social-media-guidelines",
-          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
-        },
-        {
-          "company": "Eli Lilly and Company",
-          "url": "https://www.lilly.com/news/media/ebglyss",
-          "title": "/news/media/ebglyss",
-          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
-        },
-        {
-          "company": "Eli Lilly and Company",
-          "url": "https://www.lilly.com/news/media/foundayo",
-          "title": "/news/media/foundayo",
-          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
-        },
-        {
-          "company": "Eli Lilly and Company",
-          "url": "https://www.lilly.com/news/media/inluriyo",
-          "title": "/news/media/inluriyo",
           "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
         }
       ],
@@ -5090,21 +5116,15 @@
     {
       "company": "Boeing",
       "monthly_articles": 9,
-      "needs_review_articles": 3,
-      "date_pending_articles": 5,
+      "needs_review_articles": 2,
+      "date_pending_articles": 3,
       "deferred_articles": 1,
       "status": "incomplete_evidence",
       "reasons": [
         "date_deferred",
-        "date_pending",
         "needs_review"
       ],
       "follow_up": [
-        {
-          "title": "Archer to Shape Physical AI Future of Aerospace and Defense with Acquisition of Boeing's Wisk Aero, Insitu and SkyGrid Subsidiaries; Boeing to Invest in Archer and Collaborate",
-          "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
-          "publishers": []
-        },
         {
           "title": "Boeing Company - 8-K - Current report filing",
           "url": "http://investors.boeing.com/investors/reports/sec-filings-details/default.aspx?FilingId=19748361",
@@ -5128,16 +5148,6 @@
         }
       ],
       "date_follow_up": [
-        {
-          "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
-          "title": "Archer to Shape Physical AI Future of Aerospace and Defense with Acquisition of Boeing's Wisk Aero, Insitu and SkyGrid Subsidiaries; Boeing to Invest in Archer and Collaborate",
-          "reason": "추정 근거(url)만 확인됨"
-        },
-        {
-          "url": "https://boeing.mediaroom.com/2026-08-05-Boeing-Donates-250,000-to-Support-Wildfire-Recovery-in-Greater-Spokane-Area",
-          "title": "Boeing Donates $250,000 to Support Wildfire Recovery in Greater Spokane Area",
-          "reason": "추정 근거(url)만 확인됨"
-        },
         {
           "url": "https://s2.q4cdn.com/661678649/files/doc_financials/2026/q2/787-Deferred-Production-Cost-Unamortized-Tooling-Other.pdf",
           "title": "787 Deferred Production, Unamortized Tooling & Other",
@@ -5175,18 +5185,54 @@
     {
       "company": "Ouster",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
+      "needs_review_articles": 3,
       "date_pending_articles": 0,
-      "deferred_articles": 0,
+      "deferred_articles": 4,
       "status": "incomplete_evidence",
       "reasons": [
+        "date_deferred",
+        "no_body",
         "needs_review"
       ],
       "follow_up": [
         {
-          "title": "Rosenblatt Securities' 6th Annual Age of AI Scaling Summit (Virtual)",
-          "url": "https://investors.ouster.com/events/event-details/rosenblatt-securities-6th-annual-age-ai-scaling-summit-virtual",
+          "title": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
           "publishers": []
+        },
+        {
+          "title": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+          "publishers": []
+        },
+        {
+          "title": "Ouster Announces Results for Second Quarter 2026",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+          "publishers": []
+        },
+        {
+          "company": "Ouster",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-acquires-stereolabs-creating-world-leading-physical-ai",
+          "title": "ouster acquires stereolabs creating world leading physical ai",
+          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
+        },
+        {
+          "company": "Ouster",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-raises-bar-high-altitude-drone-mapping-worlds-first",
+          "title": "ouster raises bar high altitude drone mapping worlds first",
+          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
+        },
+        {
+          "company": "Ouster",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/flyability-and-ouster-showcase-proven-lidar-partnership-intergeo",
+          "title": "flyability and ouster showcase proven lidar partnership intergeo",
+          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
+        },
+        {
+          "company": "Ouster",
+          "url": "https://investors.ouster.com/news-releases/news-release-details/geocue-elevates-survey-grade-drone-mapping-ousters-baba",
+          "title": "geocue elevates survey grade drone mapping ousters baba",
+          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
         }
       ],
       "date_follow_up": []
@@ -5247,7 +5293,7 @@
       "company": "ASML",
       "monthly_articles": 7,
       "needs_review_articles": 2,
-      "date_pending_articles": 2,
+      "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
@@ -5277,11 +5323,6 @@
       ],
       "date_follow_up": [
         {
-          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxON21BZ2FHMjQtdTVyeTV2RHR5aUJGMVh4c1ByM1NsXzNhM1puRW1COVhYaHZvTnEzWEU4SG1IcVlkcm9scTdrZnFDUEt5T3lnekpDQVBBTUhwN3hTdGltQ1NjQk1uemc4TTAxZW5xTUl2NGdwY2dBdEF4VlVLN1k4X0E2amwyNjZDbVFVVk5rSktZaUVRV09fY0UxYTg1cjM0U0VNN3B2d3M5ZFMwdkRiZGxZaFFFMHNqWk1SZzFNaUViQVYwR0syUmYySk1KY1RjbE130gHYAUFVX3lxTE5aQklMeWJlRXNiamRqeUhWdGtvTDVFMFFzSVdOSDFBT1doM24xWjZSR1hhdDBvOC1wZUpDMF8yTjBkMUpMQmhhVVVLVkRVcU9UaUhnUkg1OERJc1VDTFhqdG9jR0xTTWtRVU1nTFlVY0ZxYTZURTBnUjFGa2dGOWk5QTkySTBRaVJyenAyWTdBMW41TW1rNldxRmNvVXM3OGEtaGZEdDc0eDA2SGRmclV3TGFfOGdFVkNlbElDZEc3dG9OdWdqRXZyb0xqZUtURTVETUk3dndQYQ?oc=5",
-          "title": "ASML (NasdaqGS:ASML) Stock Looks Fully Priced After 161% Run Yet Earnings Stay Rich - simplywall.st",
-          "reason": "게시일 근거가 서로 어긋남"
-        },
-        {
           "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOSkxZV1ptcWtjYzFzdVY2WEZ1ZmNManlkTEdEM0pLYkxYWGlsY1lVTTc4Mm9MZ2hLaWJoX3I4WnplU0trZXZBUS1iSFlULVNIYXo0UmRnN24yNVNHd3dzRVBwZkFqX0RSendyRktrQ2xUaElFbW5CRWwzdmZjdThodXAtMHU?oc=5",
           "title": "Will ASML Split Its Stock This Year? - The Motley Fool",
           "reason": "게시일 근거가 서로 어긋남"
@@ -5290,9 +5331,9 @@
     },
     {
       "company": "Besi",
-      "monthly_articles": 7,
-      "needs_review_articles": 3,
-      "date_pending_articles": 2,
+      "monthly_articles": 6,
+      "needs_review_articles": 1,
+      "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
@@ -5308,34 +5349,9 @@
               "home_url": "https://seekingalpha.com/"
             }
           ]
-        },
-        {
-          "title": "Seven Yemeni men held over dangerous car stunt - The Star",
-          "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQNThXdFdXY0VuSENkeDhfUGc5cko4Z0N0dlJFQXJhSXdEQ1VjQjZrYlRXSGRaMnJGd0I3N2pzTFYyQ0tvdzByMTZRYW52ZFRvUTFxQVRmSTBZbkJlS0hpMXUyY0dXVVZPUjRaOVUteHExdHUxWC1Zb1M1WUxiTUs1M2d3Mkx4cEZ2ckUtN3gzYjNtOXE1ZUZGVUNTYlI?oc=5",
-          "publishers": [
-            {
-              "publisher": "The Star",
-              "home_url": "https://www.thestar.com.my/"
-            }
-          ]
-        },
-        {
-          "title": "Hot Chips 2026: SK hynix pushes hybrid bonding to HBM5 as AI memory hits 775-micron ceiling — firm extends MR-MUF through Nvidia Rubin - Tom's Hardware",
-          "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOWDVldzAyaHRhX0Q2UHlZajdaUVZrdmNtNVZJUEp2ZG1tM3pBWFhBMzhIaERIc1ZVei01c2oyY2gyRHp0RWY1U0lqNVBLLWh2YjhfNU5LNEdjSzdPTWxVQmtsSFRPY1dGYlNfTzcyUHZwVGFMX3ZzYl9vdEtmRmJQWkxyUXNBeC1kam5RVXdhUlUtRjZLcVhrU3dYSmJDSmdXdDUwa3ZfeEVxNm40OWhJSzg0blFPVVg0d0FGS1QwZGJ5ejNad1cwSU9ySzRPeWItVzNrQWtTRy01LUlxVmswdDVBRmszaEJUemc?oc=5",
-          "publishers": [
-            {
-              "publisher": "Tom's Hardware",
-              "home_url": "https://www.tomshardware.com/"
-            }
-          ]
         }
       ],
       "date_follow_up": [
-        {
-          "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQNThXdFdXY0VuSENkeDhfUGc5cko4Z0N0dlJFQXJhSXdEQ1VjQjZrYlRXSGRaMnJGd0I3N2pzTFYyQ0tvdzByMTZRYW52ZFRvUTFxQVRmSTBZbkJlS0hpMXUyY0dXVVZPUjRaOVUteHExdHUxWC1Zb1M1WUxiTUs1M2d3Mkx4cEZ2ckUtN3gzYjNtOXE1ZUZGVUNTYlI?oc=5",
-          "title": "Seven Yemeni men held over dangerous car stunt - The Star",
-          "reason": "게시일 근거가 서로 어긋남"
-        },
         {
           "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNTS11NFZWdHlxLW5iVGJXQlpoeHpHQ2FBV0dhaTJPOGJvZW9GNzBHeDYtb3JFeGhYSGc5RGxkTGJxdS1yZEtETVg0YXJqRkE4YVN2cERVMi12OTV3eC1lSDFqSngzcmxCRXlGN3UyUGIzS3hMbFZia2hqQUFNVXMyLVFvNEl1cmp0ZDNSRjBPTWJVY0ZvS2h2YQ?oc=5",
           "title": "Besi (ENXTAM:BESI) Stock Looks Above Fair Value On Cash Flow And Earnings - Yahoo Finance",
@@ -5345,14 +5361,19 @@
     },
     {
       "company": "NXP",
-      "monthly_articles": 6,
+      "monthly_articles": 8,
       "needs_review_articles": 0,
-      "date_pending_articles": 2,
+      "date_pending_articles": 3,
       "deferred_articles": 0,
       "status": "reviewed",
       "reasons": [],
       "follow_up": [],
       "date_follow_up": [
+        {
+          "url": "https://media.nxp.com/news-releases/news-release-details/nxp-semiconductors-reports-second-quarter-2026-results",
+          "title": "NXP Semiconductors Reports Second Quarter 2026 Results",
+          "reason": "게시일 근거가 서로 어긋남"
+        },
         {
           "url": "https://www.nxp.com/docs/en/supporting-information/Corporate-Sustainability-Report-2025.pdf",
           "title": "Read the 2025 Report",
@@ -5368,19 +5389,30 @@
     {
       "company": "Norsk Hydro",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
+      "needs_review_articles": 2,
       "date_pending_articles": 1,
       "deferred_articles": 2,
       "status": "incomplete_evidence",
       "reasons": [
         "date_deferred",
-        "needs_review"
+        "needs_review",
+        "no_body"
       ],
       "follow_up": [
         {
           "title": "Stories by Hydro",
           "url": "https://www.hydro.com/en/global/media/stories-by-hydro/",
           "publishers": []
+        },
+        {
+          "title": "Hydro to supply high recycled content aluminum to GM - American Recycler",
+          "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQcmxzeGMyQ0ZiZk1Kc0laWEcyc1Y4b1hucm5xeU5SbkFXMU0wQm1MeTAtMkNLSGk2bmg3R284SWVMRWVLYnlfcW0zNkdDTEM5WHBEM1J5SkVFMkcyNndLZmMzOGwwV1NHbEhhejJQYi1ORmppNTItQWQ1aFpqY3QwZWt0ZkdVRXZHbV90Y1VjVXrSAZYBQVVfeXFMTm1VOC1XNkV0NjRkN2l6WlNSQlFOa0ZFTGxqM0VTV2pMbnNNN08wU0dWcmR3Vm5JQ3l3QUt2ZXc5Yl91MmFXa3o1aWFmWHpqTlFMbnpiZkszNHZPcUVRM0pMM0N5eXZic1RqN1ZlLWZ5XzlHRGlibnA2S2pya0hVWmRuMjBoRXpYeEl5S2FIUXp1cVE0N1Bn?oc=5",
+          "publishers": [
+            {
+              "publisher": "American Recycler",
+              "home_url": "https://americanrecycler.com/"
+            }
+          ]
         },
         {
           "company": "Norsk Hydro",
@@ -5406,7 +5438,7 @@
     {
       "company": "Vestas",
       "monthly_articles": 11,
-      "needs_review_articles": 6,
+      "needs_review_articles": 5,
       "date_pending_articles": 4,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
@@ -5442,16 +5474,6 @@
             {
               "publisher": "Financial Times",
               "home_url": "https://www.ft.com/"
-            }
-          ]
-        },
-        {
-          "title": "European stocks ease from record highs as investors weigh earnings, Middle East risks - Reuters",
-          "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNcEJrelVuLWNvQVpMQ0FHVXF0aE9vZTZqcklqQUNLSHpCOGxiQkl3Tko1UVJZTHpnVUhUQ0R6RTNWc08yMXRrb2tMNUI1MWpFby1qM1RUWVllYU9NT0x6MzFzQk1tY0U2Q0lCcGhrNUVRYjJtdDVEbVFObndDeFBiVDdmTXdsQW5FV09uRl9aSzFzWVMtVTdkQkFWMFZPdjBzdk1pWA?oc=5",
-          "publishers": [
-            {
-              "publisher": "Reuters",
-              "home_url": "https://www.reuters.com/"
             }
           ]
         },
@@ -5525,7 +5547,7 @@
     },
     {
       "company": "Infineon",
-      "monthly_articles": 7,
+      "monthly_articles": 8,
       "needs_review_articles": 0,
       "date_pending_articles": 1,
       "deferred_articles": 0,
@@ -5608,20 +5630,14 @@
     {
       "company": "Merck",
       "monthly_articles": 5,
-      "needs_review_articles": 3,
+      "needs_review_articles": 2,
       "date_pending_articles": 3,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "review_failed",
         "needs_review"
       ],
       "follow_up": [
-        {
-          "title": "Earnings Presentation",
-          "url": "https://www.emdgroup.com/content/dam/web/corporate/non-images/investors/reports-and-financials/earnings-materials/2026-q2/us/2026-Q2-Earnings-Presentation-NA.pdf",
-          "publishers": []
-        },
         {
           "title": "Financial Statement (XLS)",
           "url": "https://www.emdgroup.com/content/dam/web/corporate/non-images/investors/reports-and-financials/earnings-materials/2026-q2/us/2026-Q2-Financial-Statement-NA.xlsm",
@@ -5693,12 +5709,12 @@
           ]
         },
         {
-          "title": "Schott Pharma Ag & Co. Kgaa Raises Earnings Guidance for the Full Financial Year 2026 - marketscreener.com",
-          "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOVjZtSVdpU3ZqTTRyZmdnR01IS2xzLUctMDk0Z3J1MWxCMkJ2blM5MUZaR0U4aFVoV1ViZ19tbDd1cmFtN09yV0FZbWdyOU1qS2YtV0JsOXRrTG1RaVVwQzVOQjJaRFplWHRQZlBXaUQ1U1JDR19qamhBNlJDLUJWa09HcHRhZzFPemlHLXZONlQ5LXhlcXdWVnUybHpveDJHUGtxQmUxb0FlT0JQT29YV3UxejUzdmtHbmpwU1lub1Q1S2pyRVM5NC0xOUJSM0Zy?oc=5",
+          "title": "Schott Pharma stock heads into the open after a 1.1 percent dip - ad-hoc-news.de",
+          "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNaE8tR1R3dGFFUV9KdDhWQ2NpdTF3VHJONTZwYUhrSUdESEVhM2Y0cXhlREsxNHI1U09aQ05kcFRCakl5ZXFGNHlUZWxtRmR5ZkRiNVVpRnl2UnhEM2RsYlZOLTZVN0ZMdDJLdDA5NHFsNmFtMkNHVFI2aE9QTTJNUnFMR3pFQkItQ0I2blRvLWg0dEQwaHZnSWJ6TXN5QnduMXE3ZGZWcWxjU1ZQemJ1cHZGT21CNHFveE5OdUIwa3RtSjVU?oc=5",
           "publishers": [
             {
-              "publisher": "marketscreener.com",
-              "home_url": "https://www.marketscreener.com/"
+              "publisher": "ad-hoc-news.de",
+              "home_url": "https://www.ad-hoc-news.de/"
             }
           ]
         }
@@ -5707,14 +5723,13 @@
     },
     {
       "company": "BASF",
-      "monthly_articles": 8,
-      "needs_review_articles": 5,
-      "date_pending_articles": 1,
+      "monthly_articles": 9,
+      "needs_review_articles": 2,
+      "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "needs_review",
-        "no_body"
+        "needs_review"
       ],
       "follow_up": [
         {
@@ -5728,26 +5743,6 @@
           ]
         },
         {
-          "title": "Is BASF (BASFY) a Great Value Stock Right Now? - qz.com",
-          "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE8ybnNOTlA5VVZ3RjNOUUpGMXV5eTgxVTRSNEk2MllPcDZWa0pZYmFxTXBNQ1Y5TXFXQ3ozdVJmc0ZLZUJXTTJHYmEtVElpUFJCeEFibUZ1Q0NYemlQUlRrRGFjZ0ltOU1udnc?oc=5",
-          "publishers": [
-            {
-              "publisher": "qz.com",
-              "home_url": "https://qz.com/"
-            }
-          ]
-        },
-        {
-          "title": "BASF and NEO Corporate Team Up to Advance Personal Care Innovation - Eastern Progress",
-          "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxQTjY5RHU1blhJbVlOc1l3QjFLLTgzNVktbWVYSHM1Z3VoanFPSzljc2Yzclk3aDdBQ3N0UlhpdXBhX1VKNXlKNXRTaUM1RGtVSHp1Nm91TjZOWHlpblg1cDhfMTRNQzB3S0RKaTlWQ3liSTlzeWE0d1BqdzR1T0R3SGVvaXdRSjVobXVHOFF6eTlXcG92ZERWc3dpR0RPR3duM0tidXRiT0tJZDJmazYwX19ZWld4LWh0V2VCajlHRHprLTlTRnFBdmN0bzkxanZXalRPUVVCZnluYjZXR3VrYTBn?oc=5",
-          "publishers": [
-            {
-              "publisher": "Eastern Progress",
-              "home_url": "https://www.easternprogress.com/"
-            }
-          ]
-        },
-        {
           "title": "Adiponitrile Market Size, Share, Trends, Report, 2034 - Fortune Business Insights",
           "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5DSWVmbjZjdnA5cFpCWnZhNkxNWlRkRWJxdWJhVEZOZ0Jub2M1RHVFaF9ZRU5kX0NickthSlJsS0Jzd2xMWjlOX2h2UDAtRjdsaTFCaWoxUzdPQzRVR2JnYk1aZzhtYU5vVVJ2Q1RVZ0FxOWRD?oc=5",
           "publishers": [
@@ -5756,19 +5751,14 @@
               "home_url": "https://www.fortunebusinessinsights.com/"
             }
           ]
-        },
-        {
-          "title": "BASF Agricultural Solutions to Build New Climate Center at Limburgerhof Headquarters - iGrow News",
-          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5NZy0zanhwMHJld0YzUWlQTjJGZGFaVE9BU0YyUVZSZDF5cDBPOGhfaUViRHVXcDNFVk9Sc0M3LUEyZlh3c3ZzVkpUQmZHQTduU1RTNmNwWEpoMEp6S2pBMXlFOWY?oc=5",
-          "publishers": [
-            {
-              "publisher": "iGrow News",
-              "home_url": "https://igrownews.com/"
-            }
-          ]
         }
       ],
       "date_follow_up": [
+        {
+          "url": "https://www.basf.com/global/en/media/events/2026/half-year-financial-report",
+          "title": "Half-Year Financial Report 2026",
+          "reason": "게시일 근거가 전혀 없음"
+        },
         {
           "url": "https://www.basf.com/global/en/media/events/2026/full-year-2025-results",
           "title": "Annual Press Conference",
@@ -5802,26 +5792,15 @@
     },
     {
       "company": "Heraeus",
-      "monthly_articles": 3,
-      "needs_review_articles": 3,
+      "monthly_articles": 1,
+      "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "needs_review",
         "no_body"
       ],
       "follow_up": [
-        {
-          "title": "Mkango Completes €8m Remloy Acquisition to Expand European Rare Earth Recycling - share-talk.com",
-          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPWG1pR3N2dmdzazhmdDRlMjBGanprcEFCeWtMVzJGSm1CT3BudFdhbDNuYjB4Yk9paWRFTFpaLWhpcHNpVEJKZ1YteDdIWDdVTzJ0bUpaVnhmTDZuc1l6a19KZ0pMbE82TVlRQTFzc1ZRaGVNMlI3bXZ4d0NJVExEekRxczVieGlZNXVZVkVxTTNmQzFfaDdoa2RzM0I0cFM3UTBRV1RzRDdoczg?oc=5",
-          "publishers": [
-            {
-              "publisher": "share-talk.com",
-              "home_url": "https://www.share-talk.com/"
-            }
-          ]
-        },
         {
           "title": "PEM Electrolyzer Materials Size, Share | Growth Report [2034] - Fortune Business Insights",
           "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE14Sk1OU0hlcmxpN05sdFJBR0dDRjBqeDU4Tzc1NkhiOWpSejVQbU5JTEhzdlFzLXBCX3ZsTVA3T3F4ZllOdTk3RDByaWdBUHdoX0Q1VXNJanhsX2ZPc3RYcGRFaUhyYmdaUkV0NGd0ckpkdUY4ZEJqT2xn?oc=5",
@@ -5829,16 +5808,6 @@
             {
               "publisher": "Fortune Business Insights",
               "home_url": "https://www.fortunebusinessinsights.com/"
-            }
-          ]
-        },
-        {
-          "title": "Brewer Science strengthens US semiconductor supply chain with Heraeus Epurio acquisition - eeNews Europe",
-          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPVTRSYmoxREpTd2JfeWZhaWd6NEkteXRVREFTRnQ0bXNjYUZ4LS1DSFN2VnJBamFLMXdLX2ZRVUpWbTVpamxrUHhfeVQ0b1pvcFk2N01IV3VjQldUSVJicXR2Z2RJQ2NPNHNfMGJkUVczNUVvbEdKdVktTEg2T3o1WmMtdTRxZ3pvdllvVm5ZaE0xbS0tWldrS1RGbms1VG1oWUNOdjdLSVFidnlqVG05cDNNdXpmRDgzbnFCWUZB?oc=5",
-          "publishers": [
-            {
-              "publisher": "eeNews Europe",
-              "home_url": "https://www.eenewseurope.com/"
             }
           ]
         }
@@ -5910,7 +5879,7 @@
     {
       "company": "Umicore",
       "monthly_articles": 7,
-      "needs_review_articles": 1,
+      "needs_review_articles": 2,
       "date_pending_articles": 2,
       "deferred_articles": 1,
       "status": "incomplete_evidence",
@@ -5923,6 +5892,16 @@
           "title": "Umicore Full Year results 2025",
           "url": "https://umicore.engagestream.companywebcast.com/fy-results-2025",
           "publishers": []
+        },
+        {
+          "title": "Global $15.5 Billion Black Mass Recycling Market Outlook 2026-2035, Featuring Profiles of Umicore, Glencore, Redwood Materials, Ascend Elements, Cirba Solutions - Yahoo Finance",
+          "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPQ1NVMDRsdmFsSTFNb19YaHozbERYSThoaDR5dDZoaGxXWmg5c29aU0xZeG5qdklFZGNrbmdHbDJrQkJyQ21KMDRCQk1lSGJRdVhKNmswRUZ2WDRBVkFoQXMxNlRxdTdCSGZ0dkI4aUExS29yZ0ZUUFhlSzh3eU5aMmVRMnlrRDRkbUE?oc=5",
+          "publishers": [
+            {
+              "publisher": "Yahoo Finance",
+              "home_url": "https://finance.yahoo.com/"
+            }
+          ]
         },
         {
           "company": "Umicore",
@@ -5993,13 +5972,26 @@
     },
     {
       "company": "Hexagon AB",
-      "monthly_articles": 3,
-      "needs_review_articles": 0,
+      "monthly_articles": 4,
+      "needs_review_articles": 1,
       "date_pending_articles": 1,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "needs_review"
+      ],
+      "follow_up": [
+        {
+          "title": "LiDAR Market Size, Share, Growth & Analysis, 2034 - Market Data Forecast",
+          "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE10SWRrQkljX19PUDFtV1R2d2tlbENUYjl5UXczM0d1dmNfSUxuWGUwLVRJYzlEaDJtQ3l2d092SlQwMnFHSzJSQXlNbENTNlQ0bGw1R3lDZWllekdHVkpOZVg3Y0M2WEVzUHUxVnBiZw?oc=5",
+          "publishers": [
+            {
+              "publisher": "Market Data Forecast",
+              "home_url": "https://www.marketdataforecast.com/"
+            }
+          ]
+        }
+      ],
       "date_follow_up": [
         {
           "url": "https://go.manufacturing.hexagon.com/advanced-manufacturing-report-2025/",
@@ -6045,68 +6037,37 @@
     },
     {
       "company": "Maxon",
-      "monthly_articles": 10,
-      "needs_review_articles": 4,
-      "date_pending_articles": 8,
+      "monthly_articles": 9,
+      "needs_review_articles": 2,
+      "date_pending_articles": 4,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_pending",
         "needs_review"
       ],
       "follow_up": [
         {
-          "title": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility",
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
-          "publishers": []
-        },
-        {
-          "title": "maxon acquires strategic minority stake in Synapticon",
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
-          "publishers": []
-        },
-        {
-          "title": "PCDC celebrates 25 years of economic development in Pflugerville - communityimpact.com",
-          "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPWHB3Vlo1MUFScXhiSE5WbktrNl9tcE9Mc1hpR3loOGFqWTNQYTQxTGV0TmFzMHplNEZnZjlwV3JRa2xiOUpMVHRHM1djeXNaczVCUlhON3pvQV9fRTBmbTJya09uZGR3amdONHlwTEhxdjNnajNaUDNFWGp0UmxjOHZTWGZGS1k5TDhDZGlJWGpOSFU0QUZDLXdmcVdXSHhjUmloeWE5TTZCbVRpekRXM19TSDNnMl8wVGlXbUVHTVA3Zw?oc=5",
+          "title": "ZBrush 2026: Free Download of the Full Version - All3DP",
+          "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFB6c01lRFJ6d3Q4VnozcEhDdU9ENVE5MEdtOE51NGFzZ1dkOW9KWTY1d2RudHJlcnUzY2d5Y192YkhmZkY2RVhZRUtqbl9Eb1Nkb2k2aHBjSk15RXY3cEpJ?oc=5",
           "publishers": [
             {
-              "publisher": "communityimpact.com",
-              "home_url": "https://communityimpact.com/"
+              "publisher": "All3DP",
+              "home_url": "https://all3dp.com/"
             }
           ]
         },
         {
-          "title": "\"Disney Lorcana: Cosmic Quest\" Expansion Announced at D23: The Ultimate Disney Fan Event - Laughing Place",
-          "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNQzhteHUwU0JtdnJ0VlNIYTM2UEVRNUVTcWVPZlozZmVSVEhXMXRvbDBzdDdsM2RsV285NXdrU2gwWjFuNE55eXRKMDctY3BsT3I1LXBUMEhpWkxRZnZlSlJMeWdKSzItQ0VTS1pDQ0lVQlNON2F3YTlQRG1EUENEcFd5UG1YbE5ZMjYtSTFfWWpPVmxlTHZYaUhRM2Vqbk00aGJGMkRTbw?oc=5",
+          "title": "Affiliates - Honeywell",
+          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBBckgwdzdrRTUxRlVPSGZteDVHTy1UMmxfNEV4LWVEcmdwV1NxZXZsTHRxUFhtMG8zWUwzMzJLbVBaTmc2U2VmYmNna3NmdXZlVmVBUV80dmRQb0xE?oc=5",
           "publishers": [
             {
-              "publisher": "Laughing Place",
-              "home_url": "https://www.laughingplace.com/"
+              "publisher": "Honeywell",
+              "home_url": "https://www.honeywell.com/"
             }
           ]
         }
       ],
       "date_follow_up": [
-        {
-          "url": "https://www.maxongroup.com/en/news-and-events/news/the-completely-revised-maxon-catalog-2026-2027-has-been-released-295714",
-          "title": "The completely revised maxon catalog 2026/2027 has been released",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-hannover-messe-2026-robotics-drives-latest-portfolio-additions-and-functional-safety-293536",
-          "title": "maxon at Hannover Messe 2026: Robotics drives, latest portfolio additions, and functional safety",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-at-the-sps-2025-new-drive-solutions-for-robotics-automation-and-mobility-287846",
-          "title": "maxon at the SPS 2025: New drive solutions for robotics, automation and mobility",
-          "reason": "게시일 근거가 전혀 없음"
-        },
-        {
-          "url": "https://www.maxongroup.com/en/news-and-events/news/maxon-acquires-strategic-minority-stake-in-synapticon-285238",
-          "title": "maxon acquires strategic minority stake in Synapticon",
-          "reason": "게시일 근거가 전혀 없음"
-        },
         {
           "url": "https://www.maxongroup.com/assets/public/caas/v1/media/103916/data/9361605b64f58a1f286e521202851951/company-mediacenter-business-unit-container-medizintechnik-download.pdf",
           "title": "company mediacenter business unit container medizintechnik download",
@@ -6131,21 +6092,15 @@
     },
     {
       "company": "Siemens-Gamesa",
-      "monthly_articles": 7,
-      "needs_review_articles": 2,
+      "monthly_articles": 8,
+      "needs_review_articles": 1,
       "date_pending_articles": 2,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "review_failed",
         "needs_review"
       ],
       "follow_up": [
-        {
-          "title": "Q3 FY26 Earnings Release and Financial Results",
-          "url": "https://assets.siemens-energy.com/dam/30018eed-275d-4e73-811e-b49d004cdc3d/2026-08-05-Earnings_Release_Q3_FY26_EN-pdf_Original%20file.pdf",
-          "publishers": []
-        },
         {
           "title": "Fire Puts Greater Changhua 4 Offshore Wind Turbine Out of Service - Offshore Engineer Magazine",
           "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPZFZBMlh0RWw1NmxPVWlKY3dueXNlZTZYTjVxTTFobmI0TEZPMDA1T05ETXR6MXNtc01rV0VkY25VbGNyTTF2dzF5dndheGF5YlBySEMtdHRCakpZeHl6V3l4QTB0ZUQ1SDZtWV9YVjQ5WFdzM05yWTkta2VjMTJ0TUdiMktld09wLUc4WFdzb25MNlFRTU5ORGpzekpVRWlmZGhsN0Fn?oc=5",
@@ -6260,54 +6215,19 @@
     },
     {
       "company": "HyproMag",
-      "monthly_articles": 3,
-      "needs_review_articles": 3,
+      "monthly_articles": 4,
+      "needs_review_articles": 0,
       "date_pending_articles": 0,
       "deferred_articles": 0,
-      "status": "incomplete_evidence",
-      "reasons": [
-        "collection_incomplete",
-        "no_body",
-        "needs_review"
-      ],
-      "follow_up": [
-        {
-          "title": "Mkango Completes €8m Remloy Acquisition to Expand European Rare Earth Recycling - share-talk.com",
-          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPWG1pR3N2dmdzazhmdDRlMjBGanprcEFCeWtMVzJGSm1CT3BudFdhbDNuYjB4Yk9paWRFTFpaLWhpcHNpVEJKZ1YteDdIWDdVTzJ0bUpaVnhmTDZuc1l6a19KZ0pMbE82TVlRQTFzc1ZRaGVNMlI3bXZ4d0NJVExEekRxczVieGlZNXVZVkVxTTNmQzFfaDdoa2RzM0I0cFM3UTBRV1RzRDdoczg?oc=5",
-          "publishers": [
-            {
-              "publisher": "share-talk.com",
-              "home_url": "https://www.share-talk.com/"
-            }
-          ]
-        },
-        {
-          "title": "CoTec Holdings Corp. Stock Faces Renewed Downside Pressure as Bearish Momentum and Investor Caution Intensify - kalkine.ca",
-          "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNNExxc1BoWGhGeThwa1NhcDBwMDcwYjRrRHFDTm9xZGh6MWxDN2x5Y1l6cjFPQ0pFc1JTdjd3eHU4eUx5SXptWUVaMnN5UXNIYWVrbEF5bC1MSVhuMnVhcjg3T205ZEtEQnNic25YaVVrUERYR2tRVmpKdEtMcDlfNWRYVDFOMHAzR0NGak9kVW5DVWNCNk9RanROWXdoZHI4M1V0UTJmbUtOQ3k3MWRhenpqSm1HQS1iSDl5NmZIZkpNZ3VtcFg5NFIyc2tBZ0hReVZNZDlERDkzdw?oc=5",
-          "publishers": [
-            {
-              "publisher": "kalkine.ca",
-              "home_url": "https://kalkine.ca/"
-            }
-          ]
-        },
-        {
-          "title": "Permanent Magnet Recycling Services Market to Reach US$ 4.18Bn - openPR.com",
-          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQaVpjZVNYbkxuNW9EVzBPVzNQQkIzNFZaUU1NZlptaWZidUFydGwtWmtBdndfd0FUNFZKM1d4cXVFdzRUOWoxYWZsbUpqSXF5RERvUmd1aEpiRGRVdmRUTkt2djNpZFFlT3Nxa1RNaW1xM3JYVHJLQ1RsUFNMVkE0aHUzVzVNVzBiRW9pSjVZYzBUUFJIaDhmYXJSMmNVUQ?oc=5",
-          "publishers": [
-            {
-              "publisher": "openPR.com",
-              "home_url": "https://www.openpr.com/"
-            }
-          ]
-        }
-      ],
+      "status": "reviewed",
+      "reasons": [],
+      "follow_up": [],
       "date_follow_up": []
     },
     {
       "company": "EVG",
-      "monthly_articles": 5,
-      "needs_review_articles": 5,
+      "monthly_articles": 4,
+      "needs_review_articles": 4,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
@@ -6318,21 +6238,11 @@
       "follow_up": [
         {
           "title": "EVG lands first graphite offtaker - The Australian",
-          "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQc0Y1NHNvZkdGR2MyX2ZJaVlXWDdBc3RNSmVYZllvWTIyTUtWQ3E1U0lkOXAwNXFMVGplc01rMWJQNzdJNmk3dzFxVV9RSmN3b0pvVEVOMTA2b3NuQy1memgxZTBEX1NnajZLaFhvOHNxbzVPOWJ5SzU3WGxFVG9WeG9GY0ZPNzEwdS1DTXVmUWs5Zm5kTzIwU2ZIMjJjRVRJbVRVcDg2QzNYRGVfcHJKVm43Mm1SelBwTF9QWWJ6a1VTa25TSWNzalF1RFRkMjV6MjR0d3NiQTh5N0JjWk1sSjA5TENqek1VUVp1ZUlR0gHzAUFVX3lxTE1jUXR1aE5IZW1hdko3OVBrYURkeEF3OGJVUDZKbmtXTWQ1RkQ5TUFwSmhpbmF3dm01UzRvREtZbTN1Mm8tN3k1ZTlfWEdQeVUxVVhTek1SYlRsSk1JaFdqWWtzYTFpMjFHNVVub2tuamd0R3pITzJxQTNFdnJ2UlkyN3d4QWVoQWgyTUw4Q1VCYVptVm9xN1ZLdDRnZFRVZ1U2ejBrYm01Zkc2WGVJQ2lsb2ltbGpua0UtOU9STzNTVC1ISEhhRDd5QWVVSHp4VnBjcjZUR3NqMXRwaDlWSnRkcF9GTGJFbk5iYkVTYlFfWTM5aw?oc=5",
+          "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQc0Y1NHNvZkdGR2MyX2ZJaVlXWDdBc3RNSmVYZllvWTIyTUtWQ3E1U0lkOXAwNXFMVGplc01rMWJQNzdJNmk3dzFxVV9RSmN3b0pvVEVOMTA2b3NuQy1memgxZTBEX1NnajZLaFhvOHNxbzVPOWJ5SzU3WGxFVG9WeG9GY0ZPNzEwdS1DTXVmUWs5Zm5kTzIwU2ZIMjJjRVRJbVRVcDg2QzNYRGVfcHJKVm43Mm1SelBwTF9QWWJ6a1VTa25TSWNzalF1RFRkMjV6MjR0d3NiQTh5N0JjWk1sSjA5TENqek1VUVp1ZUlR?oc=5",
           "publishers": [
             {
               "publisher": "The Australian",
               "home_url": "https://www.theaustralian.com.au/"
-            }
-          ]
-        },
-        {
-          "title": "Evion Group (ASX:EVG) Shares Jump 14% on First Binding Offtake Deal for Maniry Graphite - kalkine.com.au",
-          "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOT2g3SzlncmlBck1Ed1JqdzQ4ZkVsanRTN0t1T1BvWmpUdXJkaFhRVzhIMUdsbmxVNEdhbkQtY3Ftamk0dzhiSGwyYWJLcTFUT3NMaXJyY0FsOElWT1Rnd0IxTUM4UlBJOWlLRDZqd3BCRXJrTktSOC1NUTFkai1lUDQzSkMyeWNXWG9qNFV6ZGZvZ0kxSW1tTnZiMFZVM0lSNXd0MXQ5VzN1blR6QjU5cUJGLWJRS0w3eHc?oc=5",
-          "publishers": [
-            {
-              "publisher": "kalkine.com.au",
-              "home_url": "https://kalkine.com.au/"
             }
           ]
         },
@@ -6385,7 +6295,7 @@
       "monthly_articles": 3,
       "needs_review_articles": 3,
       "date_pending_articles": 0,
-      "deferred_articles": 2,
+      "deferred_articles": 3,
       "status": "incomplete_evidence",
       "reasons": [
         "collection_incomplete",
@@ -6427,6 +6337,12 @@
           "company": "Texcell",
           "url": "https://texcell.com/actualites/cphi-pmec-india-2025/",
           "title": "CPHI & PMEC India 2025 Lire l'article 27/10/2025",
+          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
+        },
+        {
+          "company": "Texcell",
+          "url": "https://texcell.com/actualites/join-texcell-at-bioprocess-international-2025/",
+          "title": "Join Texcell at BioProcess International 2025 Join Texcell at BioProcess International 2025 in Boston September 15th-18th. Lire l'article 25/08/2025",
           "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
         },
         {
@@ -6496,11 +6412,11 @@
           ]
         },
         {
-          "title": "United Airlines expects enough Airbus A321XLR deliveries for 2027 Europe expansion - Reuters",
+          "title": "United Airlines expects enough Airbus A321XLR deliveries for 2027 Europe expansion - reuters.com",
           "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNMHo3a1ptNENTUVZFTjF6bUZYVkRZOUd1dVI0eHhaMDZqenYzcm9zdmVIcVhkcG9rRlRkaTIwVEJKVE1SLUNvY2dTNFJEaWNvb3NHbjlZeHFtUU1kZGpScFhTRFU0TkF3UlNSd05SM3NlQmFEbjZUeVhhaEZZWFlJemtkTGxSVzJYYU1aSFJQYnFrTHBGTlNRaUVsOUxNWWg3ckZsZ2JFblVVdWh4cHZoZURZejFfMHp0c2hyZmRQNTNCVHg1NlBkWkhLZDBobDlFMjd0b2U5T08?oc=5",
           "publishers": [
             {
-              "publisher": "Reuters",
+              "publisher": "reuters.com",
               "home_url": "https://www.reuters.com/"
             }
           ]
@@ -6638,27 +6554,82 @@
     },
     {
       "company": "Air Liquide",
-      "monthly_articles": 1,
-      "needs_review_articles": 0,
+      "monthly_articles": 6,
+      "needs_review_articles": 6,
       "date_pending_articles": 0,
-      "deferred_articles": 1,
+      "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "date_deferred"
+        "no_body",
+        "needs_review"
       ],
       "follow_up": [
         {
-          "company": "Air Liquide",
-          "url": "https://www.airliquide.com/sites/airliquide.com/files/2026-03/air-liquide-2025-universal-registration-document-interactive.pdf",
-          "title": "2025 Universal Registration Document",
-          "reason": "게시일 근거와 본문이 모두 없어 수집 보완 대상"
+          "title": "Mizuho bullish on Air Liquide, sees 17% upside By Investing.com - Investing.com Nigeria",
+          "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQNU90Mm83V0hfRHFKQTgxd0lZbE0xVzZYS3JOeUJxWTZMcUtKWHRuZkNYSzFJUk1JSFFIZXBUMFMzaTdZUGJMZmNLcHdWTDU1MTFFSzRWM2FhR0wxVEJ6Zndwakw1NVVzYThFRnNuX2I5RUpFMjl0eXRNcmNKSHlqSXZPT0ppMllpM0FmajNhdUg3V2ZGWVd0bVZtM3FOQ2Z3eVE?oc=5",
+          "publishers": [
+            {
+              "publisher": "Investing.com Nigeria",
+              "home_url": "https://ng.investing.com/"
+            }
+          ]
+        },
+        {
+          "title": "Activist investor Elliott builds Air Liquide stake, pushes for changes, sources say - reuters.com",
+          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOT0QyUnpaUHlibkpvTDdXamlURVpJR2hCczhfWkhSRFMtNm1TZGNGN1VqVWRIakdPSVZYRlMwQ0U1SnU5NUpiR3Jxam5BM2kydlpvYXFaUGFHUG9IcEhXeVpBTkFJd2p1MXVIdmZoZHhZQXNtN0FXNExRQTNNSVFndlZZQ3RYZi00dDFPVmUxOEppSzN6eHN5TUFjZ01GY3d4YUI1aG1qWHVGX09FNHdpaUFsaXhOSzZfaWFj?oc=5",
+          "publishers": [
+            {
+              "publisher": "reuters.com",
+              "home_url": "https://www.reuters.com/"
+            }
+          ]
+        },
+        {
+          "title": "Activist Elliott builds stake in Air Liquide - FT (update) (AIQUF:OTCMKTS) - Seeking Alpha",
+          "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPV2ExNE8zSHJ2aXU0bFRQSzkyN2RxQVV1VUVJX3RNVnhsWjVQeTVDWDZndVF3M00xR21abUZXalg2MWNqQUwxY0V3S1pmbHZFQjhnUGYweFpGelkwRm9tX2EyUHFrdkhvcU5HZHcyeFlLTDNLU0h2dDJUTGdxblg3WFVtdC14YXdEaGg3QVAyR0o?oc=5",
+          "publishers": [
+            {
+              "publisher": "Seeking Alpha",
+              "home_url": "https://seekingalpha.com/"
+            }
+          ]
+        },
+        {
+          "title": "Elliott has a stake in French giant Air Liquide - Yahoo Finance",
+          "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOR0VCZ1ZQU0Z4WTdlejBwMWdva01aTmEzdWtaenRmcHhLdlF4djdnSkxtTkVmU3Y3NEhQVl94MDZoYXh1VnQ0Y2ctQ2c2eWdUQ2hiVEx1Wld4d2VYd21TZVFqZk5JcjloQmVhbFkweUUxX0dqXzdiQkNsbzRCSlhWeTJab191SG1pcWs0NWFMR0NDTkFjNkxxTGI5SQ?oc=5",
+          "publishers": [
+            {
+              "publisher": "Yahoo Finance",
+              "home_url": "https://finance.yahoo.com/"
+            }
+          ]
+        },
+        {
+          "title": "Dresden: Ultra-pure gas complex in Germany - Air Liquide",
+          "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBfbjhWUTlDTXgwYmJxRkFvMlhubWNueDJacWplQjBlU1BrTGhXYzh0YnMzb0tPZWhZbU1UNFJJR3ZZZjA4V0pDQ2wxV0g5LW9zQnZWZ3QwNGlucmtZal8tdEkxZ28tSXZBUWNyWTdkS2xyY2c?oc=5",
+          "publishers": [
+            {
+              "publisher": "Air Liquide",
+              "home_url": "https://www.airliquide.com/"
+            }
+          ]
+        },
+        {
+          "title": "L'Air Liquide (ENXTPA:AI) Expands In Idaho Following Half Year Results, Is It 12% Undervalued? - simplywall.st",
+          "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQYWZ5cWNONmFteWxYQzRQeU1hTnlvZWJIeDhkRnE5Z2VJWXUxOVRnNkgzdVRpRkVUWHdMTzRqcGk5bDZlaEl0VFF6VEZsN3RNRkpoSlg0X1o4RFYyczlpTHdycjhabUtLLW1VX1R5QUJ4QnZSbjF2dkxKRFhhbVdyNGtnb1F1QUtGUEkwdmVTbWRwR19UanEzaERxemVvMUROMWJvRHdTZ085WTBRUW9DdW5admttZnhQTkJaUHFOXy14d0UtSkE5MVdIbXdLT2PSAdQBQVVfeXFMTnlVSWRrc2gyTEh4ZFBxSy10aGZobm9lUHk2ckJnRXpFVWVaandyWi1CcUx4cHNCWWVNdGdXTVlTTnMxMGhhYzdmMWw3LVhQV2t4Vi1RVWMzSkRDRUp2dTBMb2JqXzBoYzRraHpVUEZRYlRPYlRFYUk0MkFEbm5pdHlJdjRsM2RpdVVMWnVwcERYaVdBeC12Sm9zYl90N054Rm10YW96LWo5d0pKQkU2eENFcU9Bc0VPTXg3aENzUUcyUHYwRDJYbVRBUTh3RmJtWWVQM2Q?oc=5",
+          "publishers": [
+            {
+              "publisher": "simplywall.st",
+              "home_url": "https://simplywall.st/"
+            }
+          ]
         }
       ],
       "date_follow_up": []
     },
     {
       "company": "Arkema",
-      "monthly_articles": 3,
+      "monthly_articles": 2,
       "needs_review_articles": 0,
       "date_pending_articles": 1,
       "deferred_articles": 1,
@@ -6706,13 +6677,26 @@
     },
     {
       "company": "Toppan Holdings",
-      "monthly_articles": 5,
-      "needs_review_articles": 0,
+      "monthly_articles": 3,
+      "needs_review_articles": 1,
       "date_pending_articles": 2,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "needs_review"
+      ],
+      "follow_up": [
+        {
+          "title": "Japanese shares end higher on chip gains, earnings outlook - アラブニュース",
+          "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5xd3lWMHFSRnRabmVrbjBTcjRkSEJ4bHhnaE5vZ2lZVE9DeWRNQ19fTWZFRDJHYlFPWGR2cXFRbFF3MlR0R04zWmlDWTV3WG1iV3ZCX05GMGRuYkRBY2JiSg?oc=5",
+          "publishers": [
+            {
+              "publisher": "アラブニュース",
+              "home_url": "https://www.arabnews.jp/"
+            }
+          ]
+        }
+      ],
       "date_follow_up": [
         {
           "url": "https://www.holdings.toppan.com/en/news/2026/08/newsrelease260804_1.html",
@@ -6762,8 +6746,8 @@
     },
     {
       "company": "Asahi Glass",
-      "monthly_articles": 4,
-      "needs_review_articles": 4,
+      "monthly_articles": 2,
+      "needs_review_articles": 2,
       "date_pending_articles": 0,
       "deferred_articles": 2,
       "status": "incomplete_evidence",
@@ -6784,32 +6768,12 @@
           ]
         },
         {
-          "title": "India Glass Market Size, Share & Growth Report 2035 | MRFR - Market Research Future",
-          "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBsdjhkem9mZ01oanVmcjhiMGczTHZPWHFXcXZ5b185aDVqNmpWUXk2bmZmMzRsMlc4N2Uwckg0TUtCVG44aEliaDM1dXpnMUNicEhIVWlyWGNTaFg3Umt0dExNOHFvUXZSUUZQVkFfRS1NbmxWeHVzUw?oc=5",
-          "publishers": [
-            {
-              "publisher": "Market Research Future",
-              "home_url": "https://www.marketresearchfuture.com/"
-            }
-          ]
-        },
-        {
-          "title": "Chula VP: Good Research Must Not End at Publication - nationthailand.com",
+          "title": "Chula VP: Good Research Must Not End at Publication - Nation Thailand",
           "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE5OQlcyZ0JNZkxRREg4T1VRUmtQZEV1a2FFNlktU0lVaXJGLWgzcUptX1phOE1FVUR6VXN6V01iSlNTeWJmVi1WTHNMWWhyUDRaY0JyT18tNjZfdWxjMjZkcjVZcmthUQ?oc=5",
           "publishers": [
             {
-              "publisher": "nationthailand.com",
+              "publisher": "Nation Thailand",
               "home_url": "https://www.nationthailand.com/"
-            }
-          ]
-        },
-        {
-          "title": "Earnings call transcript: AGC Inc. Q2 2026 profit rises, stock falls 7.9% - Investing.com",
-          "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQdzdWQjhteUZGM0EwOVJpLXMyTkpSZ3FZeE16Zkg2ekhVSENoQzJBV3pQNTdhTEF3LWhZWVEwbThlUlJsZG41Tk5VaHB3SkR5ejBYQU1XMU9LUlVNTWtGc3ppajdrRENXb1hGdTZtczFyTUxVdE80elloU0VNeUVvOThaR2tJMVZaeVlmUkpQQ2k2M3JiMDZEcjlTeEVyUXFDeGV3YWJFakMxQUVDcDV3UXlHMWcwWm9Gb1ZPU2FJNXZIUQ?oc=5",
-          "publishers": [
-            {
-              "publisher": "Investing.com",
-              "home_url": "https://www.investing.com/"
             }
           ]
         },
@@ -6830,8 +6794,8 @@
     },
     {
       "company": "JSR",
-      "monthly_articles": 3,
-      "needs_review_articles": 3,
+      "monthly_articles": 2,
+      "needs_review_articles": 2,
       "date_pending_articles": 0,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
@@ -6847,16 +6811,6 @@
             {
               "publisher": "Fortune Business Insights",
               "home_url": "https://www.fortunebusinessinsights.com/"
-            }
-          ]
-        },
-        {
-          "title": "This Jet Set Radio-Inspired Skateboarding Train Game Just Hit 300,000 Players - Operation Sports",
-          "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNUWFuNVVfLU5LOGFjTllJeHoxQzVuMG9UaXNGQ0toN2UwRHpEVWpvQUNiemt4LVpUTEdzbnJNQnF2Slp4cXZxNFRud09yUV9peTU0d2xCRDFUT0ZmbllUUzFBTHMxdDIwaVlCNDcwcW9GTFZ2UkM2Qk5iWE0xY3B1MUZLLV9qYUcwY3JoRkVaQm1jLWw2ZHZaUXlTY0RyVjVKaVdlcE1YLURVTGxqbnc?oc=5",
-          "publishers": [
-            {
-              "publisher": "Operation Sports",
-              "home_url": "https://www.operationsports.com/"
             }
           ]
         },
@@ -6984,7 +6938,7 @@
     {
       "company": "Asahi Kasei",
       "monthly_articles": 11,
-      "needs_review_articles": 4,
+      "needs_review_articles": 3,
       "date_pending_articles": 7,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
@@ -7005,16 +6959,6 @@
             {
               "publisher": "webull.com",
               "home_url": "https://www.webull.com/"
-            }
-          ]
-        },
-        {
-          "title": "Asahi Kasei Unveils New Wet-Process Separator Coating Line in North Carolina, Advancing the Company’s 40-Year North American Battery Separator Strategy - Morningstar",
-          "url": "https://news.google.com/rss/articles/CBMitgJBVV95cUxPRlpyZDd4NlZKS1VVZ1N2REtHbnU2WGdicXh2YjA1TDVGN0ZKSFUxQjA5QzFkNV9Qdnh3dHZWb0Z5NjBIa1Zqdk9FYV8wTUFhUXdBUEkyTVhIWkdqY3k5aWJyZ0JJZjU5UnZVRzhaNnYyTThJV2kweVpnVlRqN3oyQ0VTbWpzMVRVM2E4MEFOZ0ZvdEMzSXM0Nnlyc1ZVMDUtb1hVcDJXRGJUc2IzUF8yQ2REN3paQzFlSmpJeXlRZG1RNmZ5Zm5OczJ5YmttV2VJbnFPaFVTOHlaejRXTmlTd3AzV1htVmpqb2FQNlJzX2NVOHpXNFZwYlRZS2dZakY3ekNqQXc5S2pPalplWC1BMTFSYmJNLXZCWkt5UFVGYVg1Wk9HV2xEWF9JckhfRnR0QnlSSWRB?oc=5",
-          "publishers": [
-            {
-              "publisher": "Morningstar",
-              "home_url": "https://www.morningstar.com/"
             }
           ]
         },
@@ -7069,7 +7013,7 @@
     },
     {
       "company": "Toray",
-      "monthly_articles": 1,
+      "monthly_articles": 4,
       "needs_review_articles": 0,
       "date_pending_articles": 0,
       "deferred_articles": 0,
@@ -7118,41 +7062,23 @@
   ],
   "review_failed_articles": [
     {
-      "company": "Siemens-Gamesa",
-      "title": "Q3 FY26 Earnings Release and Financial Results",
-      "url": "https://assets.siemens-energy.com/dam/30018eed-275d-4e73-811e-b49d004cdc3d/2026-08-05-Earnings_Release_Q3_FY26_EN-pdf_Original%20file.pdf",
-      "article_id": "798e093c4c69ad7dce46faf2"
-    },
-    {
       "company": "Skyworks",
       "title": "2025 SWKS Annual Report",
       "url": "https://www.skyworksinc.com/-/media/SkyWorks/Documents/IR/2025-SWKS-Annual-Report.pdf",
       "article_id": "4606b89413097a298b31a7b6"
-    },
-    {
-      "company": "Merck",
-      "title": "Earnings Presentation",
-      "url": "https://www.emdgroup.com/content/dam/web/corporate/non-images/investors/reports-and-financials/earnings-materials/2026-q2/us/2026-Q2-Earnings-Presentation-NA.pdf",
-      "article_id": "7be624a7b61612e9e7790475"
-    },
-    {
-      "company": "Qualcomm",
-      "title": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 24/7 Wall St.",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPcHduMkZpWXVXYVBYUmdBN3BZWnQ3Tnl5M3ZlaWN2TWQzVnZKSVJWSC1GVjByVXJtUm1pSlJfcUhLSEotMkZHcDlBaF9IaFZNMkNSMnZMeWRvUFhSOFl0YmttQnVJcGMxM1JTaFVBMVhOZjlJVlNRRHBIa2k4RWVhR3VaaTUyR2Q5T0hMOWdRR2gxOWRvSDFZRl9WTzBvc3kyQ1laOWFB?oc=5",
-      "article_id": "88b244822a7f9d936aab71cd"
     }
   ],
   "review_scope": {
-    "articles": 393,
-    "reviewed_articles": 389,
-    "review_failed_articles": 4,
+    "articles": 397,
+    "reviewed_articles": 396,
+    "review_failed_articles": 1,
     "adjudicated_articles": 0,
     "wording_fixed_articles": 0,
     "recheck_pending_candidates": 0,
-    "date_pending_investment_rows": 6,
-    "date_pending_business_rows": 8,
-    "deferred_articles": 26,
-    "collection_completed_companies": 63,
-    "collection_incomplete_companies": 14
+    "date_pending_investment_rows": 4,
+    "date_pending_business_rows": 4,
+    "deferred_articles": 27,
+    "collection_completed_companies": 64,
+    "collection_incomplete_companies": 13
   }
 }
