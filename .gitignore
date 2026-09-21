@@ -19,3 +19,8 @@ outputs/link_audit/
 .cache/
 outputs/link_trial/
 outputs/**/pythonlibs/
+# 월간 보고서 경로(review_report.mjs)는 JSON 만 쓰고 Actions 도 JSON 만 커밋한다. CSV 는
+# 구형 키워드 스크립트(collect/filter:*/filter:investment)의 부산물이라 커밋해 두면 낡은
+# ai_* 승인 컬럼이 그대로 남는다. 실제로 2026-09-04 판정본이 9월 20일 JSON 옆에 있었다.
+outputs/latest_*.csv
+outputs/followup_tests.txt

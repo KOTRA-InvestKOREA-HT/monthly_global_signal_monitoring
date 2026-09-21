@@ -197,12 +197,16 @@ Each collected row is normalized to:
 - `source_priority`
 - `official_source_url`
 
-`latest_company_signals.json` and `latest_company_signals.csv` are overwritten on each run for easy dashboard/API consumption.
+`latest_company_signals.json` is overwritten on each run for dashboard/API consumption.
+
+The `latest_*.csv` files are a side product of these legacy keyword scripts and are no
+longer tracked in git. The monthly report path (`scripts/review_report.mjs`) writes only
+JSON, and the workflow commits only `outputs/latest_*.json`, so a committed CSV froze at
+whatever the last manual legacy run produced while carrying stale `ai_*` approval columns.
 
 The relevance filter also writes:
 
 - `latest_relevant_signals.json`
-- `latest_relevant_signals.csv`
 - `latest_signal_relevance_classification.json`
 - `latest_relevance_summary.json`
 
