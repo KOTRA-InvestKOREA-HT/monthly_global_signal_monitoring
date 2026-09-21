@@ -49,8 +49,29 @@ export function evidenceGrade(source) {
 // 이 판정은 기사를 버리지 않는다. 본문을 다시 받아오라고 표시할 뿐이다.
 export const ARTICLE_BODY_MIN_CHARS = 200;
 
+// 바이너리 문서를 글자로 읽어 그대로 저장한 본문. 2026-09 수집본 465건 중 8건이 그랬다
+// (Merck 재무제표 XLS, Nabtesco 결산 PDF 5건, Renishaw 중간실적 PDF 2건). 2만 자가 넘어
+// 길이 검사를 통과하지만 내용은 없고, 그대로 근거가 되어 모델에게 "PK..[Content_Types].xml"을
+// 읽고 판단하라고 넘기게 된다. 프롬프트로는 풀 수 없는 입력 문제다.
+// 정상 본문 457건의 제어문자 비율은 모두 0이고 깨진 8건은 9.9% 이상이라 1%로 가른다.
+const BINARY_MAGIC = /^(?:%PDF-|PK\x03\x04|\{\\rtf|\x7fELF|\x89PNG|GIF8[79]a|\xff\xd8\xff)/;
+const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f]/g;
+export const UNEXTRACTABLE_CONTROL_RATIO = 0.01;
+
+// 추출에 실패한 본문이면 그 까닭을, 읽을 수 있는 본문이면 빈 문자열을 돌려준다.
+export function unextractableBody(text) {
+  const value = String(text || "");
+  if (!value.trim()) return "";
+  if (BINARY_MAGIC.test(value.trimStart())) return "binary_document";
+  const controls = (value.match(CONTROL_CHARS) || []).length;
+  return controls / value.length > UNEXTRACTABLE_CONTROL_RATIO ? "undecoded_bytes" : "";
+}
+
 export function hasArticleBody(row) {
-  return String(row?.content_text || row?.content_excerpt || "").trim().length >= ARTICLE_BODY_MIN_CHARS;
+  const text = String(row?.content_text || row?.content_excerpt || "").trim();
+  // 추출에 실패한 본문은 아무리 길어도 근거가 아니다. 기사를 버리지 않고 다시 받아오게 표시한다.
+  if (unextractableBody(text)) return false;
+  return text.length >= ARTICLE_BODY_MIN_CHARS;
 }
 
 function rank(item) {

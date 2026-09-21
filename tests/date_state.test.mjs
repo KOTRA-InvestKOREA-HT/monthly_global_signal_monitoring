@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { chooseDateEvidence, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "../scripts/date_state.mjs";
+import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate, unextractableBody } from "../scripts/date_state.mjs";
 import { collectHtmlDateEvidence, dateEvidence, usableMonthlySource } from "../scripts/collect_company_signals.mjs";
 
 const period = { from_date: "2026-08-01", to_date: "2026-08-31" };
@@ -81,4 +81,32 @@ test('periodic documents dated by their title year cannot be this month without 
   assert.equal(place(confirmed, august).placement, 'in_period');
   // Ordinary headlines with a year are not periodic documents.
   assert.equal(periodicDocumentPublicationYear(undated('Energy Fuels completes acquisition of ASM in 2024 deal')), null);
+});
+
+// 2026-09 수집본 607행 중 8행의 본문이 PDF·XLSX 를 글자로 읽은 바이트였다(Merck 재무제표 XLS,
+// Nabtesco 결산 PDF 5건, Renishaw 중간실적 PDF 2건). 2만 자가 넘어 길이 검사를 통과하고 그대로
+// 근거가 되어, 모델이 "PK..[Content_Types].xml" 을 읽고 판단하게 된다. 프롬프트로는 풀 수 없다.
+test("a body that is really a binary document is not evidence", () => {
+  const pdf = "%PDF-1.6\r%��\r\n6587 0 obj\r >\rendobj\r ".padEnd(900, "x");
+  const xlsx = "PK\u0003\u0004\u0014\u0000\u0006\u0000[Content_Types].xml ".padEnd(900, "y");
+  assert.equal(unextractableBody(pdf), "binary_document");
+  assert.equal(unextractableBody(xlsx), "binary_document");
+  for (const text of [pdf, xlsx]) assert.equal(hasArticleBody({ content_text: text }), false);
+
+  // 매직 바이트가 없어도 제어문자가 섞인 본문은 추출 실패로 본다. 실제 8건은 9.9% 이상이었다.
+  const scrambled = "Nabtesco reported results. ".repeat(20).split("")
+    .map((character, index) => (index % 20 === 0 ? "\u0001" : character)).join("");
+  assert.equal(unextractableBody(scrambled), "undecoded_bytes");
+  assert.equal(hasArticleBody({ content_text: scrambled }), false);
+});
+
+test("ordinary article bodies keep counting as evidence", () => {
+  const body = "Nabtesco reported that orders for precision reduction gears rose 11% in the second quarter. ".repeat(4);
+  assert.equal(unextractableBody(body), "");
+  assert.equal(hasArticleBody({ content_text: body }), true);
+  // 줄바꿈과 탭은 제어문자로 세지 않는다. 정상 본문 457건의 제어문자 비율은 모두 0이었다.
+  assert.equal(unextractableBody(body.replace(/\. /g, ".\n\t")), "");
+  // 빈 본문은 추출 실패가 아니라 그냥 본문 없음이다. 그 판정은 길이 검사가 맡는다.
+  assert.equal(unextractableBody(""), "");
+  assert.equal(hasArticleBody({ content_text: "   " }), false);
 });

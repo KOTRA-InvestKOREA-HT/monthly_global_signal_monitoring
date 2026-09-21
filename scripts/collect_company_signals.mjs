@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { createDomainGuard, collectWithCheckpoint, retryableCollection, collectionInputDigest } from './collection_resilience.mjs';
-import { ARTICLE_BODY_MIN_CHARS, chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState } from "./date_state.mjs";
+import { ARTICLE_BODY_MIN_CHARS, chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState, unextractableBody } from "./date_state.mjs";
 import {
   augustRule,
   classifyOfficialLink,
@@ -1678,10 +1678,17 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
             source_url: modelUrl, source_name: row.source, error: error.message });
         }
       }
-      const limitedContent = content.slice(0, args.contentCharLimit);
+      let limitedContent = content.slice(0, args.contentCharLimit);
+      // PDF·XLSX 를 글자로 읽어 저장하면 2만 자짜리 "본문"이 생기지만 내용은 없다. 근거로 넘기기
+      // 전에 추출 실패로 구분한다. 행은 남겨 목록의 제목·날짜를 지키고, 본문만 비워 재수집 대상이 되게 한다.
+      const unextractable = unextractableBody(limitedContent);
+      if (unextractable) {
+        contentFetchStatus = `unextractable_${unextractable}`;
+        limitedContent = "";
+      }
       // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
       // 상세 페이지를 보고 나서야 알 수 있다.
-      const bodyHead = content.slice(0, 4000);
+      const bodyHead = limitedContent.slice(0, 4000);
       const dates = chooseDateEvidence([
         ...(row.date_candidates || []),
         ...collectHtmlDateEvidence(html, document.resolvedUrl),
@@ -1708,7 +1715,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         content_text: limitedContent,
         content_source_url: document.resolvedUrl,
         content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
-        content_word_count: content.split(/\s+/).filter(Boolean).length,
+        content_word_count: limitedContent.split(/\s+/).filter(Boolean).length,
         content_fetch_status: contentFetchStatus,
         content_fetched_at: collectedAt,
       });
