@@ -1,3 +1,17 @@
+"""DEPRECATED: not part of the monthly report pipeline.
+
+This is an older, much smaller collector kept only for environments where the
+Node HTTPS stack cannot reach the network. It is not equivalent to
+scripts/collect_company_signals.mjs: it reads official feeds and Google News
+and nothing else, with no official-page, SEC, sitemap or news-sitemap
+collection, no article-body fetch, no publication-date grading
+(``published_at_source``) and no trend discovery.
+
+Rows it produces therefore lack the body and date evidence the review step
+requires, and the monthly run will defer or reject them. Use
+``npm run collect`` (the Node collector) for anything that feeds a report.
+"""
+
 from __future__ import annotations
 
 import argparse

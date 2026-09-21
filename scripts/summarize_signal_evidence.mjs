@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+// DEPRECATED: not part of the monthly report pipeline.
+//
+// The monthly run judges and summarises whole articles in scripts/review_report.mjs.
+// This is the older row-by-row summariser, kept for diagnosis and for comparing a
+// row's summary against the article-level one. It has its own prompts, its own
+// provider settings (AI_SUMMARY_*, an OpenAI credential) and its own cache in
+// outputs/ai_summary_cache.json, none of which configure the report pipeline.
+// tests/report_entrypoints.test.mjs asserts the report entry point does not call it.
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";

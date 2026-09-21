@@ -22,11 +22,11 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/classify_investment_signals.mjs`: evaluates each candidate against the five investment-indicator categories with deterministic keyword rules.
 - `scripts/review_report.mjs`: shared automated collection, article review, validation, and bilingual PDF pipeline.
 - `scripts/report_period.mjs`: shared reporting-period resolver for the CLI and Actions.
-- `scripts/summarize_signal_evidence.mjs`: legacy row-based summary tool, outside the monthly report pipeline.
+- `scripts/summarize_signal_evidence.mjs`: **deprecated.** The older row-by-row summary tool, kept for diagnosis. The monthly pipeline summarises whole articles in `scripts/review_report.mjs`; this tool's prompts, provider settings and `outputs/ai_summary_cache.json` do not configure it.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
 - `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
-- `scripts/collect_company_signals.py`: Python equivalent; use it only when the local Python SSL stack supports outbound HTTPS.
+- `scripts/collect_company_signals.py`: **deprecated.** An older, much smaller Python collector kept for environments where the Node HTTPS stack is unusable. It is *not* equivalent to the Node collector: it reads only official feeds and Google News, and has none of the official-page, SEC, sitemap, article-body, publication-date grading or trend-discovery collection the report pipeline depends on. Rows it produces lack the body and date evidence the review step requires.
 - `outputs/`: generated JSON/CSV results.
 
 See `docs/github_vercel_button_workflow.md` for the GitHub upload, Vercel deployment, and button-trigger workflow.
@@ -161,14 +161,16 @@ Classify candidates against all five investment-indicator categories:
 node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true
 ```
 
-Generate bilingual AI summaries and semantic support decisions for report evidence:
+Generate bilingual AI summaries and semantic support decisions for report evidence
+(deprecated; the monthly report does not use this path):
 
 ```bash
 OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
 ```
 
 This legacy summarizer uses Luna first and Terra for selected retries, with its
-own `outputs/ai_summary_cache.json`. Its `AI_SUMMARY_*` settings and OpenAI API
+own `outputs/ai_summary_cache.json`, which is no longer tracked in git because
+only this tool reads it. Its `AI_SUMMARY_*` settings and OpenAI API
 credentials do not configure the monthly article-review pipeline. In particular,
 the repository's existing `OPENAI_API_KEY` secret contains an NVIDIA key and
 cannot be used as an OpenAI credential for this legacy tool.

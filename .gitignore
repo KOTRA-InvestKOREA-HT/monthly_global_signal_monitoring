@@ -24,3 +24,5 @@ outputs/**/pythonlibs/
 # ai_* 승인 컬럼이 그대로 남는다. 실제로 2026-09-04 판정본이 9월 20일 JSON 옆에 있었다.
 outputs/latest_*.csv
 outputs/followup_tests.txt
+# summarize_signal_evidence.mjs 전용 캐시(2.7MB). 월간 보고서 경로는 읽지 않는다.
+outputs/ai_summary_cache.json
