@@ -138,3 +138,27 @@ test('a baseline that no longer validates is reported, not silently treated as a
   assert.equal(none.candidates[0].transition, 'no_baseline');
   assert.equal(none.candidates[0].after.supported, true);
 });
+
+// 문안 기준만 고치는 실행은 승인 필드를 하나도 바꾸지 않는다. 문안을 비교하지 않으면
+// 그런 실행이 "변화 없음"으로 보고돼 무엇이 나아졌는지 읽을 수 없다.
+test('a prose-only change is reported as a summary rewrite, not as no change', () => {
+  const article = { id: 'now', company: 'Acme', url: 'https://example.com/a',
+    evidence: ['Acme raised new funding.'],
+    candidates: [{ id: 'investment:3', kind: 'investment',
+      row: { investment_signal_no: 3, content_text: 'Acme raised new funding. '.repeat(20) } }] };
+  const decision = supported => ({ candidate_id: 'investment:3', entity_supported: true,
+    target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true,
+    event_stage: 'planned', quality: 'pass', evidence_quotes: ['Acme raised new funding.'],
+    reason_ko: '근거 확인', summary_ko: supported, summary_en: 'Acme raised new funding.' });
+  const result = compareArticle({
+    article, baselineArticle: { ...article, id: 'was' },
+    baselineReview: { article_id: 'was', reviewer: 'test', decisions: [decision('자금 조달 - 생산 능력을 확대 있으며 신규 라인을 도입')] },
+    review: { article_id: 'now', reviewer: 'test', decisions: [decision('자금 조달 - 생산 능력을 확대하고 있으며 신규 라인을 도입함')] },
+    entry: { expect: 'positive' },
+  });
+  const [candidate] = result.candidates;
+  assert.deepEqual(candidate.changed, [], 'the approval fields did not move');
+  assert.deepEqual(candidate.summary_changed, ['summary_ko']);
+  assert.equal(candidate.transition, 'kept_positive');
+  assert.match(candidate.after.summary_ko, /확대하고 있으며/);
+});
