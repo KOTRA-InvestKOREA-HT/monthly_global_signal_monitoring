@@ -48,30 +48,36 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
   'Joining a programme or agreeing to take part is not signing an agreement, and an intention is not a decision. ' +
   'Promotional wording in the article (high-impact, leading, world-class) is the company\'s claim, not a confirmed fact: use the figure the ' +
   'article gives, or drop the adjective. ' +
-  'Copy every number, percentage and amount exactly as the article states it; never change, round or recompute it. ' +
-  'Convert units exactly (9.33 billion = 93억 3000만). Attach a currency only when the article states that currency for that amount. ' +
+  'Numbers: the quantity is fixed, the notation is not. Keep the value the article states, never rounding it, rescaling it or deriving ' +
+  'a new figure from it, and write that same value in each language\'s own numbering (9.33 billion in English is 93억 3000만 in Korean). ' +
+  'A different quantity is an error; the same quantity written the reader\'s way is not. ' +
+  'Attach a currency only when the article states that currency for that amount. ' +
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
   'When the evidence dates the event differently from the announcement, state that event date. ';
 
 // 2026-09 보고서의 영문판이 한국어 개조식 표제를 그대로 옮겨 적어 영어 문장이 되지 못했다
 // ("AI Computing Material and Process Innovation Research Collaboration - Applied Materials announced…").
-// 한쪽을 번역하는 대신 두 문안을 각자 근거에서 쓰게 한다. 사실 일치 요구는 그대로 둔다.
+// "따로 쓰라"와 "같은 사실을 담으라"가 서로 어긋나 보이지 않도록 순서를 정한다. 공통 사실 목록을
+// 먼저 정하고, 표현만 언어별로 쓴다. 사실 일치 규칙의 기준 문장은 이 절 하나에만 둔다.
 export const SUMMARY_INDEPENDENCE_INSTRUCTION =
-  'Write summary_ko and summary_en as two separate pieces of writing, each composed directly from this candidate\'s evidence_quotes. ' +
+  'First fix the facts this summary reports, taken from this candidate\'s evidence_quotes: the event, the parties, the amounts, the ' +
+  'dates and the schedule. Both summaries carry exactly that set of facts, so a month, date or percentage stated in one language must ' +
+  'appear in the other. Then write each language separately from the evidence, in that language\'s own idiom. ' +
+  'Independence governs the wording, never which facts appear. ' +
   'summary_en is not a translation of summary_ko and is not drafted from it: never carry Korean word order, Korean sentence structure ' +
   'or the Korean noun-phrase headline across into English, and never render Korean report phrasing word for word. ' +
   'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
   'and ordinary English articles, prepositions and collocations. ' +
   'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
-  'Independent wording is not different content. Both summaries report the same event and carry the same facts, and differ only in ' +
-  'how each language states them. ';
+  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
 
 export const SUMMARY_STYLE_INSTRUCTION =
   'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
   'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ' +
   'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
-  'Put the key facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries and keep the same facts in both languages: ' +
-  'a month, date or percentage stated in one language must appear in the other. ' +
+  'Put the agreed facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries. ' +
+  'The stated length is a target, not a cap: when everything does not fit, drop secondary explanation, never a fact, and never a ' +
+  'particle or a connective ending, because a shorter sentence must still be a sentence. ' +
   'When an English legal, financial or clinical term from the evidence has to appear in summary_ko, carry it by meaning, not word by ' +
   'word. Keep a legal procedure name such as scheme of arrangement ' +
   'in English with a short Korean gloss (인수 절차); never render it as 멤버십 or 배치. late-stage trial is 후기 단계 임상시험, never 말기 ' +
@@ -115,16 +121,15 @@ export const RETRY_INSTRUCTION =
 // (Infineon 전력반도체 재질문) 질문 방식을 바꾼다: 1차 답을 보여 주지 않아 거기에 끌려가지 않게 하고, 후보마다
 // 규칙이 고른 구체적 확인 질문에 근거로 먼저 답한 뒤 판정하게 한다. 애매하면 엄격한 쪽을 택한다.
 export const VERIFY_INSTRUCTION =
-  'Second-stage audit. Automated checks flagged the candidates in verify_candidate_ids as likely misjudged. No earlier answer is ' +
-  'shown; judge those candidates only from the supplied evidence and the report criteria. For each listed candidate, begin reason_ko ' +
+  'Second-stage audit. The article payload carries only the candidates under audit; automated checks flagged them as likely misjudged. ' +
+  'No earlier answer is shown; judge them only from the supplied evidence and the report criteria. The evidence is the whole article, ' +
+  'so a passage about some other candidate is context, not a candidate to judge. For each candidate, begin reason_ko ' +
   'by answering every question in checks[candidate_id] from the evidence, naming the concrete fact the answer rests on, and then set ' +
   'evidence_quotes, the booleans, event_stage and quality so that they agree with those answers. Be strict: set a field true, or ' +
   'event_stage exploratory, planned or precursor, only when a quoted sentence states it; when the evidence is ambiguous take the ' +
   'stricter reading or quality=needs_review. A question is not a verdict: when the evidence clearly meets the criteria, approve it. ' +
-  'Return every candidate exactly once. For every candidate NOT in verify_candidate_ids return empty evidence_quotes, ' +
-  'reason_ko "검증 대상 아님", all booleans false, event_stage not_applicable, quality needs_review and empty summaries; ' +
-  'those answers are discarded. ' +
-  'Write summaries under section 5 for listed candidates that remain eligible. ';
+  'Return every candidate in the payload exactly once and no others. ' +
+  'Write summaries under section 5 for candidates that remain eligible. ';
 
 const REPAIR_HINTS = {
   evidence_mismatch: 'Repair evidence_quotes using exact passages from a single evidence block; do not paraphrase.',

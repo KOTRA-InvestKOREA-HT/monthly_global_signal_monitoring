@@ -33,8 +33,14 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_GROUNDING_INSTRUCTION', /Joining a programme or agreeing to take part is not signing an agreement/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
     ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
-    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /Both summaries report the same event and carry the same facts/],
-    ['SUMMARY_STYLE_INSTRUCTION', /a month, date or percentage.*must appear in the other/],
+    // 사실 일치 규칙의 기준 문장은 독립 작성 절 하나에만 둔다. 문체 절에 같은 규칙을 다시 적으면
+    // "따로 쓰라"와 "같게 쓰라"가 서로 다른 말로 두 번 나와 해석할 여지를 준다.
+    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /First fix the facts this summary reports/],
+    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /a month, date or percentage stated in one language must appear\s+in the other/],
+    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /Independence governs the wording, never which facts appear/],
+    // 값은 지키고 표기만 바꾼다. "다시 계산하지 말라"와 "정확히 환산하라"를 한 규칙으로 합쳤다.
+    ['SUMMARY_GROUNDING_INSTRUCTION', /the quantity is fixed, the notation is not/],
+    ['SUMMARY_STYLE_INSTRUCTION', /length is a target, not a cap/],
     ['SUMMARY_STYLE_INSTRUCTION', /late-stage trial is 후기 단계 임상시험/],
     ['DATE_INSTRUCTION', /date_placement "date_pending"/],
   ];
@@ -152,4 +158,38 @@ test('repair instructions are targeted; semantic checks are not presented as val
   assert.match(verify, /answering every question in checks\[candidate_id\]/);
   assert.doesNotMatch(verify, /failed validation/);
   assert.match(prompt.retryInstruction({ reason: 'unknown_future_error' }), /previous response failed validation/);
+});
+
+// 검증 요청에는 확인할 후보만 싣는다. 예전에는 후보 전부를 보내고 대상 밖 후보에 정해진 가짜 답을
+// 쓰게 한 뒤 코드가 버렸다. 실행 35198796190 에서 그 가짜 답의 형식이 어긋나 검증 응답 33건이 거부됐다.
+for (const provider of [GEMINI, NVIDIA]) {
+  test(`${provider.id}: a verification request carries only the candidates under audit`, () => {
+    const many = { id: 'fixture', evidence: ['Untrusted article text'],
+      candidates: ['investment:1', 'investment:3', 'relevant'].map(id => ({ id, row: { private: true } })) };
+    const verify = { mode: 'verify', verify_candidate_ids: ['investment:3'], checks: { 'investment:3': ['funding'] } };
+    const sent = JSON.parse(userTexts(provider, provider.body({ article: many, policy: 'P', model: provider.model, retry: verify }))[0]);
+    assert.deepEqual(sent.candidates, [{ id: 'investment:3' }]);
+    // 근거는 좁히지 않는다. 기사 전체를 봐야 판정할 수 있다.
+    assert.deepEqual(sent.evidence, many.evidence);
+    // 1차 판정과 보정 요청은 후보 전부를 그대로 받는다.
+    for (const retry of [false, true, { reason: 'summary_ungrounded' }]) {
+      const body = provider.body({ article: many, policy: 'P', model: provider.model, retry });
+      assert.deepEqual(JSON.parse(userTexts(provider, body)[0]).candidates.map(c => c.id),
+        ['investment:1', 'investment:3', 'relevant'], String(retry));
+    }
+  });
+}
+
+test('the verifier is no longer asked to invent answers it will not use', () => {
+  assert.doesNotMatch(prompt.VERIFY_INSTRUCTION, /검증 대상 아님|those answers are discarded|NOT in verify_candidate_ids/);
+  assert.match(prompt.VERIFY_INSTRUCTION, /carries only the candidates under audit/);
+  assert.match(prompt.VERIFY_INSTRUCTION, /Return every candidate in the payload exactly once and no others/);
+});
+
+test('the criteria settle the number and fact-list rules in one place each', () => {
+  assert.match(policy, /먼저 공통 사실 목록을 정한다/);
+  assert.match(policy, /숫자는 값을 지키고 표기만 바꾼다/);
+  assert.match(policy, /같은 값의 다른 표기는 오류가 아니다/);
+  // 길이와 필수 사실이 부딪힐 때의 우선순위를 적어 둔다.
+  assert.match(policy, /길면 부차적인 설명을 빼고 필수 사실을 남기며/);
 });
