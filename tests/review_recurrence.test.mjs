@@ -487,6 +487,36 @@ test('verifier answers for candidates outside verify_candidate_ids are replaced 
   assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:5'), s5);
 });
 
+// 검증 요청에 대상 후보만 싣게 된 뒤의 정상 형태: 검증 모델은 그 후보만 답하고, 나머지는
+// 1차 판정에서 온다. 예전처럼 후보 전부를 답해 오는 모델도 그대로 받는다(위 테스트).
+test('a verifier that answers only the audited candidate still yields a complete review', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-narrow-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = nexeon();
+  const s5 = { ...rejectedS5, evidence_quotes: [] };
+  const primary = [approvedS2, approvedS3, s5, business];
+  let audited = null;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
+    fetchImpl: async (url, options) => {
+      if (!String(url).includes('generativelanguage')) return reply(primary);
+      const sent = JSON.parse(JSON.parse(options.body).contents[0].parts[0].text);
+      audited = sent.candidates.map(c => c.id);
+      // 받은 후보만 답한다.
+      return geminiReply(primary.filter(d => audited.includes(d.candidate_id)));
+    } });
+  assert.equal(state.status, 'completed');
+  assert.equal(state.verification.failed, 0);
+  assert.ok(audited && audited.length, 'the verifier was asked about something');
+  assert.ok(audited.length < a.candidates.length, 'only the audited candidates were sent');
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.decisions.length, a.candidates.length, 'every candidate is still judged');
+  // 검증 대상이 아니었던 후보는 1차 판정 그대로다.
+  for (const id of primary.map(d => d.candidate_id).filter(id => !audited.includes(id))) {
+    assert.deepEqual(stored.decisions.find(d => d.candidate_id === id),
+      primary.find(d => d.candidate_id === id), id);
+  }
+});
+
 test('a verifier whose every answer is rejected pauses the run instead of publishing without the suspicious candidates', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-rejected-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));

@@ -70,7 +70,15 @@ const decisionsEnvelope = {
   },
 };
 
-const articleText = article => JSON.stringify({ ...article, candidates: article.candidates.map(({ row, ...c }) => c) });
+// 검증 요청에는 확인할 후보만 싣는다. 예전에는 후보 전부를 보내고 대상 밖 후보에는 정해진
+// 가짜 답(false·needs_review·"검증 대상 아님")을 쓰게 한 뒤 코드가 그것을 버렸다. 실행
+// 35198796190 에서는 그 가짜 답의 형식이 어긋나 검증 응답 33건이 통째로 거부됐다.
+// 근거(evidence)와 판정 기준은 그대로 보낸다. 좁히는 것은 후보 목록뿐이다.
+const articleText = (article, retry) => {
+  const listed = retry?.mode === 'verify' ? new Set(retry.verify_candidate_ids || []) : null;
+  const candidates = article.candidates.filter(c => !listed || listed.has(c.id));
+  return JSON.stringify({ ...article, candidates: candidates.map(({ row, ...c }) => c) });
+};
 
 export const GEMINI = {
   id: 'gemini',
@@ -100,7 +108,7 @@ export const GEMINI = {
     return {
       systemInstruction: { parts: [{ text: buildSystemInstruction(policy) }] },
       contents: [{ role: 'user', parts: [
-        { text: articleText(article) },
+        { text: articleText(article, retry) },
         ...(retry ? [{ text: retryInstruction(retry) }] : []),
       ] }],
       generationConfig: {
@@ -161,7 +169,7 @@ export const NVIDIA = {
       model,
       messages: [
         { role: 'system', content: buildSystemInstruction(policy) },
-        { role: 'user', content: articleText(article) },
+        { role: 'user', content: articleText(article, retry) },
         ...(retry ? [{ role: 'user', content: retryInstruction(retry) }] : []),
       ],
       // 판정은 재현 가능해야 하므로 표집을 끈다.

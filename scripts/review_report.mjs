@@ -618,8 +618,9 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   if (Array.isArray(parsed.decisions)) parsed.decisions = parsed.decisions.map(decision =>
     article.candidates.some(c => c.id === decision.candidate_id && c.kind === 'relevant')
       ? { ...decision, leading_indicator_supported: true, event_stage: 'not_applicable' } : decision);
-  // 실행 35198796190: 검증 지시가 대상 밖 후보에 빈 reason_ko 를 요구해, 검증 응답 33건이 모두 형식 검사에서 거부됐다.
-  // 대상 밖 후보의 답은 어차피 쓰지 않으므로 1차 판정으로 바꿔 넣고 검사한다. 대상 후보는 모든 검사를 그대로 거친다.
+  // 검증 요청에는 대상 후보만 실어 보냈으므로(articleText) 응답도 대상 후보만 담고 있다.
+  // 기사 판정은 후보 전부를 덮어야 하므로, 나머지는 1차 판정에서 가져와 여기서 합친다.
+  // 대상 후보는 모든 검사를 그대로 거친다. 모델이 대상 밖 후보를 끼워 넣어도 받지 않는다.
   if (keepDecisions && retry?.mode === 'verify') {
     const listed = new Set(retry.verify_candidate_ids);
     parsed.decisions = [...keepDecisions.filter(d => !listed.has(d.candidate_id)), ...parsed.decisions.filter(d => listed.has(d.candidate_id))];
