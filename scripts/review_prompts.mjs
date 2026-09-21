@@ -45,6 +45,9 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
   '(Korean 예정·계획·가능성), never 완료 or 진행. Describe the event the evidence reports: an executive who assumed office this month ' +
   'was not appointed this month unless the evidence says so. Name the country or region instead of domestic, local, home or 국내. ' +
   'Do not upgrade a relationship: an investment or stake is not a collaboration, and potential synergies are not an ongoing collaboration. ' +
+  'Joining a programme or agreeing to take part is not signing an agreement, and an intention is not a decision. ' +
+  'Promotional wording in the article (high-impact, leading, world-class) is the company\'s claim, not a confirmed fact: use the figure the ' +
+  'article gives, or drop the adjective. ' +
   'Copy every number, percentage and amount exactly as the article states it; never change, round or recompute it. ' +
   'Convert units exactly (9.33 billion = 93억 3000만). Attach a currency only when the article states that currency for that amount. ' +
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +

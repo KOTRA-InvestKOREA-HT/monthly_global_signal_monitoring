@@ -30,6 +30,8 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ELIGIBILITY_INSTRUCTION', /whether investment candidates are approved or rejected/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /SAME event its evidence_quotes describe/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /Joining a programme or agreeing to take part is not signing an agreement/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
     ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
     ['SUMMARY_INDEPENDENCE_INSTRUCTION', /Both summaries report the same event and carry the same facts/],
     ['SUMMARY_STYLE_INSTRUCTION', /a month, date or percentage.*must appear in the other/],
@@ -49,6 +51,11 @@ test('judgement rules have one source and are included once in actual provider r
     /오래 진행 중인 기존 협력의 경과·임상 결과/, /SEC Form 3/, /완료된 사업 활동도 사업동향/,
     /요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다/, /relevance_exempt=true.*target_technology_supported=true/,
     /`summary_en`은 `summary_ko`를 번역한 것이 아니며/, /투자 시그널\(영문\).*` - ` 표제를 붙이지 않는다/,
+    // 한국어 표현 기준과 사실의 확정 정도. 문체 교정이 사건을 바꾸지 않게 한다.
+    /이름이 아닌 일반 산업 용어는 한국어로 옮긴다/, /원문의 홍보 문구를 그대로 옮기지 않는다/,
+    /연환산 수치는 `연간 환산 기준`임을 밝혀/,
+    /`연구 협력자로 참여할 예정`은 `연구 협력을 체결했음`이 아니다/,
+    /주체와 상대방을 생략하지 않는다/, /조사와 연결어미를 지워 줄이지 않는다/,
   ]) assert.match(policy, rule);
   // 영문에 한국어 표제를 대응시키라는 지시가 콩글리시의 출처였다(2026-09 보고서). 되돌아오면 잡는다.
   assert.doesNotMatch(policy, /영문도 대응하는 표제/);
