@@ -170,17 +170,19 @@ function escapeRegExp(value) {
   return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// 관형형 어미 앞의 "하/되"는 조사가 아니다. 이 구분이 없으면 "오션윈즈와 협력하는 해상풍력
+// 프로젝트"에서 "협력하"+"는"이 주어와 조사로 읽혀 상대방까지 지워진다.
+const SUBJECT_PARTICLE = "(?:(?<![하되])(?:은|는)|이|가)";
+
 function stripSummaryLead(value, item) {
   let text = normalizeSummaryText(value);
   const company = item?.company ? escapeRegExp(item.company) : "";
   if (company) {
-    text = text.replace(new RegExp(`^${company}(은|는|이|가)\\s+`), "");
+    text = text.replace(new RegExp(`^${company}${SUBJECT_PARTICLE}\\s+`), "");
   }
   return text
-    .replace(/^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+/, "")
-    .replace(/^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+/, "")
+    .replace(new RegExp(`^[A-Za-z0-9().&/-]+(?:\\s+[A-Za-z0-9().&/-]+){0,3}${SUBJECT_PARTICLE}\\s+`), "")
     .replace(/^(이는|다만|또한)\s+/g, "")
-    .replace(/([A-Za-z][A-Za-z0-9().·&/-]*)의\s+/g, "$1 ")
     .trim();
 }
 
@@ -254,92 +256,35 @@ function phraseEndingText(value) {
   return text.trim();
 }
 
+// 표제용 정리. 개조식 종결과 카드가 이미 보여 주는 앞머리 주어까지만 손댄다.
+// 예전에는 조사와 연결어미까지 지워 "생산 능력을 확대하고 있으며"가 "확대 있으며"가 되고,
+// 문장 사이 마침표가 쉼표로 바뀌어 세 문장이 한 줄로 붙었다. PDF 쪽 phraseify_summary_text 와 같은 규칙이다.
 function phraseifySummaryText(value, item) {
-  const connectorMap = {
-    "구축하고": "구축",
-    "확보하고": "확보",
-    "강화하고": "강화",
-    "확대하고": "확대",
-    "공급하고": "공급",
-    "체결하고": "체결",
-    "수행하고": "수행",
-    "협력하고": "협력",
-    "진행하고": "진행",
-    "도입하고": "도입",
-    "설치하고": "설치",
-    "시연하고": "시연",
-    "개발하고": "개발",
-    "운영하고": "운영",
-    "공개하고": "공개",
-    "투자하고": "투자",
-    "언급하고": "언급",
-    "기록하고": "기록",
-    "가동하고": "가동",
-    "완료하고": "완료",
-    "발표하고": "발표",
-    "제공하며": "제공",
-    "적용하며": "적용",
-    "추진하며": "추진",
-    "검토하며": "검토",
-    "밝혔으며": "공개",
-    "발표했으며": "발표",
-    "체결했으며": "체결",
-    "기록했으며": "기록",
-    "확인했으며": "확인",
-  };
-  const connectorPattern = new RegExp(`(${Object.keys(connectorMap).join("|")})(,\\s*|\\s+|$)`, "g");
-  const text = stripSummaryLead(value, item)
-    .replace(/([A-Za-z][A-Za-z0-9().·&/-]*)의\s+/g, "$1 ")
-    .replace(connectorPattern, (_, verb, separator) => `${connectorMap[verb]}${separator?.includes(",") ? ", " : " "}`)
-    .replace(/영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다/g, "영향 가능성 언급")
-    .replace(/수\s+있다고\s+밝혔다/g, "가능성 언급")
-    .replace(/됐다고\s+(공개|발표|언급)/g, " $1")
-    .replace(/했다고\s+(공개|발표|언급)/g, " $1")
-    .replace(/([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)/g, "$1 $3")
-    .replace(/(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)/g, "")
-    .replace(/\s+(다만|또한|그리고)\s+/g, ", ")
-    .replace(/[.!?。]+/g, ". ");
+  const text = stripSummaryLead(value, item).replace(/[.!?。]+$/g, "").trim();
+  return phraseEndingText(text).replace(/\s+/g, " ").trim();
+}
 
-  return text
-    .split(/\s*\.\s*|\s*;\s*/)
-    .map((clause) => phraseEndingText(clause.replace(/^(이는|다만|또한|그리고)\s+/g, "")))
-    .filter(Boolean)
-    .join(", ")
-    .replace(/\s*,\s*,\s*/g, ", ")
-    .replace(/(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)/g, " $2")
-    .replace(/(을|를)\s+단계적으로\s+추진/g, " 단계적 추진")
-    .replace(/확대할\s+계획/g, "확대 계획")
-    .replace(/(을|를)\s+위험요인으로\s+언급/g, " 위험요인 언급")
-    .replace(/영향을\s+위험요인으로\s+언급/g, "영향 위험요인 언급")
-    .replace(/(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)/g, " $2")
-    .replace(/(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)/g, " $2")
-    .replace(/(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+/g, "$1·")
-    .replace(/([가-힣A-Za-z0-9/·().-]+)하는\s+/g, "$1 ")
-    .replace(/([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석/g, "$1 움직임")
-    .replace(/계획은 확인되지 않음/g, "계획 확인되지 않음")
-    .replace(/사실은 확인되지 않음/g, "사실 확인되지 않음")
-    .replace(/근거는 확인되지 않음/g, "근거 확인되지 않음")
-    .replace(/내용은 확인되지 않음/g, "내용 확인되지 않음")
-    .replace(/관련성은 확인되지 않음/g, "관련성 확인되지 않음")
-    .replace(/직접 연계는 확인되지 않음/g, "직접 연계 확인되지 않음")
-    .replace(/직접적 연관성은 확인되지 않음/g, "직접 연관성 확인되지 않음")
-    .replace(/연계도 확인되지 않음/g, "연계 확인되지 않음")
-    .replace(/,\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+/g, ", ")
-    .replace(/가능성을\s+시사/g, "가능성")
-    .replace(/,\s*(다만|또한)\s+/g, ", ")
-    .replace(/\s*·\s*/g, "·")
-    .replace(/\s+/g, " ")
-    .trim();
+// 상세 본문은 표제용 정리를 걸지 않는다. PDF 의 summary_detail_text 와 같게, 공백만 고른다.
+function summaryDetailText(value) {
+  return normalizeSummaryText(value).replace(/\s+/g, " ").trim();
+}
+
+function shortSummaryText(value, limit) {
+  return value.length > limit ? `${value.slice(0, limit - 1)}…` : value;
 }
 
 function compactSummaryPhrase(value, limit = 90, item = null) {
-  const text = phraseifySummaryText(value, item);
-  return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
+  return shortSummaryText(phraseifySummaryText(value, item), limit);
+}
+
+// 상세는 승인된 문안을 그대로 싣고 폭에 맞춰 자르기만 한다.
+function compactSummaryDetail(value, limit = 120) {
+  return shortSummaryText(summaryDetailText(value), limit);
 }
 
 function summaryParts(item) {
   const headline = compactSummaryPhrase(item?.ai_summary_headline_ko, 58, item);
-  const detail = compactSummaryPhrase(item?.ai_summary_detail_ko, 120, item);
+  const detail = compactSummaryDetail(item?.ai_summary_detail_ko);
   if (headline || detail) {
     return { headline: headline || compactSummaryPhrase(item?.ai_summary_ko, 58, item), detail };
   }
@@ -349,21 +294,21 @@ function summaryParts(item) {
   if (dashed.length >= 2) {
     return {
       headline: compactSummaryPhrase(dashed[0], 58, item),
-      detail: compactSummaryPhrase(dashed.slice(1).join(" - "), 120, item),
+      detail: compactSummaryDetail(dashed.slice(1).join(" - ")),
     };
   }
   const sentences = text.split(/(?<=[.!?。])\s+/).filter(Boolean);
   if (sentences.length >= 2) {
     return {
       headline: compactSummaryPhrase(sentences[0], 58, item),
-      detail: compactSummaryPhrase(sentences.slice(1).join(" "), 120, item),
+      detail: compactSummaryDetail(sentences.slice(1).join(" ")),
     };
   }
   const clauses = text.split(/,\s*/).filter(Boolean);
   if (clauses.length >= 2) {
     return {
       headline: compactSummaryPhrase(clauses[0], 58, item),
-      detail: compactSummaryPhrase(clauses.slice(1).join(", "), 120, item),
+      detail: compactSummaryDetail(clauses.slice(1).join(", ")),
     };
   }
   return { headline: compactSummaryPhrase(text, 58, item), detail: "" };

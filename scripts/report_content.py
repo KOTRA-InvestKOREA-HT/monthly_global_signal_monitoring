@@ -569,15 +569,24 @@ def normalize_summary_text(value):
     return text.strip()
 
 
+# 관형형 어미 앞의 "하/되"는 조사가 아니다. 이 구분이 없으면 "오션윈즈와 협력하는 해상풍력
+# 프로젝트"에서 "협력하"+"는"이 주어와 조사로 읽혀 상대방까지 지워진 채 "해상풍력 프로젝트"만
+# 남는다. 행동의 주인이 달라지므로, 은·는 앞 글자가 하·되이면 주어로 보지 않는다.
+SUBJECT_PARTICLE = r"(?:(?<![하되])(?:은|는)|이|가)"
+
+
 def strip_summary_lead(value, row=None):
+    """카드가 이미 회사명을 보여 주므로 문안 맨 앞의 그 회사 주어만 뗀다.
+
+    예전에는 한글 낱말이면 무엇이든 주어로 보고 뗐다. 그래서 "투자 라운드가 완료되었음"이
+    "완료되었음"이 되어 무엇이 완료됐는지가 사라졌다. 회사명과 로마자 이름만 뗀다.
+    """
     text = normalize_summary_text(value)
     company = clean_text((row or {}).get("company"))
     if company:
-        text = re.sub(rf"^{re.escape(company)}(은|는|이|가)\s+", "", text)
-    text = re.sub(r"^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+", "", text)
-    text = re.sub(r"^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+", "", text)
+        text = re.sub(rf"^{re.escape(company)}{SUBJECT_PARTICLE}\s+", "", text)
+    text = re.sub(rf"^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){{0,3}}{SUBJECT_PARTICLE}\s+", "", text)
     text = re.sub(r"^(이는|다만|또한)\s+", "", text)
-    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
     return text.strip()
 
 
@@ -651,86 +660,19 @@ def phrase_ending_text(value):
 
 
 def phraseify_summary_text(value, row=None):
-    # 아래 규칙은 한국어 조사·종결어미 정리용이라 영문에는 적용하지 않는다.
+    """표제용 정리. 개조식 종결과 카드가 이미 보여 주는 앞머리 주어까지만 손댄다.
+
+    예전에는 조사와 연결어미까지 지웠다. "공급망을 강화하는 기술 협력"은 "공급망을 강화 기술 협력"이,
+    "생산 능력을 확대하고 있으며"는 "확대 있으며"가, "National Wealth Fund의 출자"는 "National Wealth
+    Fund 출자"가 됐고, 문장 사이 마침표를 쉼표로 바꿔 세 문장을 한 줄로 이어 붙이기까지 했다.
+    개조식은 어미를 ~했음으로 정리하는 것이지 조사와 연결어미를 없애는 것이 아니다. 승인된 문안은
+    모델이 쓴 대로 싣고, 출력 단계는 공백·줄바꿈·배치만 맡는다.
+    """
+    # 종결어미 정리는 한국어 규칙이라 영문에는 적용하지 않는다.
     if LANG != "ko":
         return clean_text(value)
-    connector_map = {
-        "구축하고": "구축",
-        "확보하고": "확보",
-        "강화하고": "강화",
-        "확대하고": "확대",
-        "공급하고": "공급",
-        "체결하고": "체결",
-        "수행하고": "수행",
-        "협력하고": "협력",
-        "진행하고": "진행",
-        "도입하고": "도입",
-        "설치하고": "설치",
-        "시연하고": "시연",
-        "개발하고": "개발",
-        "운영하고": "운영",
-        "공개하고": "공개",
-        "투자하고": "투자",
-        "언급하고": "언급",
-        "기록하고": "기록",
-        "가동하고": "가동",
-        "완료하고": "완료",
-        "발표하고": "발표",
-        "제공하며": "제공",
-        "적용하며": "적용",
-        "추진하며": "추진",
-        "검토하며": "검토",
-        "밝혔으며": "공개",
-        "발표했으며": "발표",
-        "체결했으며": "체결",
-        "기록했으며": "기록",
-        "확인했으며": "확인",
-    }
-    text = strip_summary_lead(value, row)
-    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
-    connector_pattern = "|".join(re.escape(key) for key in connector_map)
-    text = re.sub(
-        rf"({connector_pattern})(,\s*|\s+|$)",
-        lambda match: f"{connector_map[match.group(1)]}{', ' if ',' in match.group(2) else ' '}",
-        text,
-    )
-    text = re.sub(r"영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다", "영향 가능성 언급", text)
-    text = re.sub(r"수\s+있다고\s+밝혔다", "가능성 언급", text)
-    text = re.sub(r"됐다고\s+(공개|발표|언급)", r" \1", text)
-    text = re.sub(r"했다고\s+(공개|발표|언급)", r" \1", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)", r"\1 \3", text)
-    text = re.sub(r"(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)", "", text)
-    text = re.sub(r"\s+(다만|또한|그리고)\s+", ", ", text)
-    pieces = [part for sentence in sentence_spans(text) for part in re.split(r"\s*;\s*", sentence)]
-    clauses = [
-        phrase_ending_text(re.sub(r"^(이는|다만|또한|그리고)\s+", "", re.sub(r"[.!?。]+$", "", clause.strip())))
-        for clause in pieces
-    ]
-    text = ", ".join(clause for clause in clauses if clause)
-    text = re.sub(r"\s*,\s*,\s*", ", ", text)
-    text = re.sub(r"(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)", r" \2", text)
-    text = re.sub(r"(을|를)\s+단계적으로\s+추진", " 단계적 추진", text)
-    text = re.sub(r"확대할\s+계획", "확대 계획", text)
-    text = re.sub(r"(을|를)\s+위험요인으로\s+언급", " 위험요인 언급", text)
-    text = re.sub(r"영향을\s+위험요인으로\s+언급", "영향 위험요인 언급", text)
-    text = re.sub(r"(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)", r" \2", text)
-    text = re.sub(r"(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)", r" \2", text)
-    text = re.sub(r"(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+", r"\1·", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하는\s+", r"\1 ", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석", r"\1 움직임", text)
-    text = text.replace("계획은 확인되지 않음", "계획 확인되지 않음")
-    text = text.replace("사실은 확인되지 않음", "사실 확인되지 않음")
-    text = text.replace("근거는 확인되지 않음", "근거 확인되지 않음")
-    text = text.replace("내용은 확인되지 않음", "내용 확인되지 않음")
-    text = text.replace("관련성은 확인되지 않음", "관련성 확인되지 않음")
-    text = text.replace("직접 연계는 확인되지 않음", "직접 연계 확인되지 않음")
-    text = text.replace("직접적 연관성은 확인되지 않음", "직접 연관성 확인되지 않음")
-    text = text.replace("연계도 확인되지 않음", "연계 확인되지 않음")
-    text = re.sub(r",\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+", ", ", text)
-    text = text.replace("가능성을 시사", "가능성")
-    text = re.sub(r",\s*(다만|또한)\s+", ", ", text)
-    text = re.sub(r"\s*·\s*", "·", text)
-    return re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"[.!?。]+$", "", strip_summary_lead(value, row).strip())
+    return re.sub(r"\s+", " ", phrase_ending_text(text)).strip()
 
 
 def compact_summary_phrase(value, limit=90, row=None):

@@ -305,6 +305,49 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertNotIn("J,", text)
 
 
+class KoreanShapingTests(unittest.TestCase):
+    """출력 단계는 승인된 문안을 다시 쓰지 않는다. 조사·연결어미를 지우면 문장이 깨진다."""
+
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def test_particles_and_connective_endings_survive(self):
+        for text in (
+            "공급망을 강화하는 기술 협력",
+            "생산능력을 확대하고 신규 설비를 도입했음",
+            "Merck와 공동으로 개발하는 면역항암제 병용 연구",
+            "National Wealth Fund의 5,260만 파운드 출자",
+            "라이다 생산 능력을 확대하고 있으며, 런레이트를 늘릴 예정임",
+            "자회사를 매각하는 동시에 지분을 취득할 예정임",
+        ):
+            self.assertEqual(pdf.phraseify_summary_text(text), text)
+
+    # "협력하"+"는"을 주어와 조사로 읽으면 상대방이 사라져 행동의 주인이 달라진다.
+    def test_a_relative_clause_is_not_mistaken_for_a_subject(self):
+        self.assertEqual(pdf.phraseify_summary_text("오션윈즈와 협력하는 해상풍력 프로젝트"),
+                         "오션윈즈와 협력하는 해상풍력 프로젝트")
+        self.assertEqual(pdf.phraseify_summary_text("구축되는 신규 라인의 가동 개시"),
+                         "구축되는 신규 라인의 가동 개시")
+
+    def test_the_company_subject_the_card_already_shows_is_still_dropped(self):
+        row = {"company": "Applied Materials"}
+        self.assertEqual(pdf.phraseify_summary_text("Applied Materials가 EPIC Center에서 연구 협력을 체결했음", row),
+                         "EPIC Center에서 연구 협력을 체결했음")
+        # 회사 주어가 아닌 일반 명사 주어는 남긴다. "투자 라운드가 완료되었음"에서 주어를 떼면
+        # 무엇이 완료됐는지가 사라진다.
+        self.assertEqual(pdf.phraseify_summary_text("양사는 공동개발에 착수했음"), "양사는 공동개발에 착수했음")
+
+    # 개조식은 어미 정리까지다. 문장 사이 마침표를 쉼표로 바꿔 이어 붙이지 않는다.
+    def test_endings_are_tidied_but_sentences_are_not_run_together(self):
+        self.assertEqual(pdf.phraseify_summary_text("신규 설비를 도입했다"), "신규 설비를 도입")
+        self.assertEqual(pdf.phraseify_summary_text("라운드가 완료되었음. 자금은 상용화를 지원할 예정임."),
+                         "라운드가 완료되었음. 자금은 상용화를 지원할 예정임")
+
+    def test_the_detail_body_is_shown_as_written(self):
+        text = "Broadcom Inc.와 EPIC Center 파트너십을 체결하고 EssilorLuxottica와 장기 계약을 맺었음."
+        self.assertEqual(pdf.summary_detail_text(text), text)
+
+
 class BusinessProseTests(unittest.TestCase):
     """2026-08 Nabtesco card printed a model headline run into the body."""
 
