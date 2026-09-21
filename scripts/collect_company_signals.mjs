@@ -1421,10 +1421,12 @@ export function collectionBlockingErrors(errors = []) {
 // In-memory only: each collector execution starts with fresh probes.
 const probePublisher = createPublisherProbe();
 
-export async function readLimitedPdf(response, limit = 20 * 1024 * 1024) {
+// 응답 본문을 바이트로, 상한을 두고 읽는다. PDF 만 이렇게 읽다가 이제 모든 응답을 이렇게 받는다.
+// 종류를 바이트로 판별해야 하고, 덤으로 HTML 응답에도 상한이 생긴다.
+export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
   if (Number(response.headers.get('content-length')) > limit) {
     await response.body?.cancel();
-    throw new Error('pdf_too_large');
+    throw new Error('document_too_large');
   }
   const reader = response.body.getReader();
   const chunks = [];
@@ -1436,7 +1438,7 @@ export async function readLimitedPdf(response, limit = 20 * 1024 * 1024) {
       size += value.byteLength;
       if (size > limit) {
         await reader.cancel();
-        throw new Error('pdf_too_large');
+        throw new Error('document_too_large');
       }
       chunks.push(Buffer.from(value));
     }
@@ -1534,6 +1536,23 @@ export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetc
   return source.document || downloadArticleDocument(source.target, timeoutSeconds, fetchImpl);
 }
 
+// 문서 종류는 바이트가 말한다. content-type 머리글과 주소 확장자만 보면 놓친다.
+const DOCUMENT_MAGIC = [
+  ['pdf', '255044462d'],        // %PDF-
+  ['zip', '504b0304'],          // xlsx·docx·pptx 를 포함한 zip
+  ['ole', 'd0cf11e0a1b11ae1'],  // 옛 xls·doc·ppt
+  ['rtf', '7b5c727466'],        // {\rtf
+  ['elf', '7f454c46'],
+  ['png', '89504e470d0a1a0a'],
+  ['jpeg', 'ffd8ff'],
+  ['gzip', '1f8b'],
+];
+
+export function sniffDocumentType(bytes) {
+  const head = Buffer.from(bytes).subarray(0, 8).toString('hex');
+  return DOCUMENT_MAGIC.find(([, magic]) => head.startsWith(magic))?.[0] || 'text';
+}
+
 export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
   const response = await fetchImpl(target, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
     redirect: 'follow', headers: requestHeaders(target) });
@@ -1544,10 +1563,18 @@ export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl 
     await response.body?.cancel();
     throw new Error('publisher_url_unresolved');
   }
-  const isPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
-  if (!isPdf) return { html: await response.text(), resolvedUrl };
-  const bytes = await readLimitedPdf(response);
-  return { html: '', content: await extractPdfText(bytes), resolvedUrl };
+  const declaredPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
+  const bytes = await readLimitedResponse(response);
+  // 머리글도 주소도 PDF 라고 말하지 않는 PDF 가 있다. Nabtesco 보도자료 5건(주소가 .pdf 가 아니다)과
+  // Renishaw 실적 자료 2건이 그래서 추출기를 타지 못하고 response.text() 로 내려가, 본문 자리에
+  // "%PDF-1.6" 바이트가 그대로 실렸다. 바이트로 판별하면 그 7건이 제 추출기로 돌아온다.
+  const kind = declaredPdf ? 'pdf' : sniffDocumentType(bytes);
+  if (kind === 'pdf') return { html: '', content: await extractPdfText(bytes), resolvedUrl };
+  // PDF 가 아닌 바이너리는 읽을 방법이 없다. Merck 재무제표는 XLSX 였다. 빈 본문과 까닭을 돌려주어
+  // 행은 남기고 본문 추출 실패로 구분한다. 근거 없이 판정에 올리지 않고, 재수집 대상으로 남긴다.
+  if (kind !== 'text') return { html: '', content: '', documentType: kind, resolvedUrl };
+  // Response.text() 도 UTF-8 로 읽는다(Fetch 표준). 바이트를 먼저 받아도 해독 결과는 같다.
+  return { html: new TextDecoder().decode(bytes), resolvedUrl };
 }
 
 export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
@@ -1659,7 +1686,9 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
           !fetchedTitleMatchesPublisherArticle(row, pageTitle || content.split(/\r?\n/, 1)[0])) {
         throw new Error('publisher_article_title_mismatch');
       }
-      let contentFetchStatus = content ? 'fetched' : 'empty';
+      // 읽을 수 없는 문서였음을 "본문 없음"과 구분해 남긴다. 수집을 보완할 사람이 무엇을 고쳐야
+      // 하는지 알 수 있어야 한다(PDF 추출 실패인지, 애초에 표 파일이었는지).
+      let contentFetchStatus = content ? 'fetched' : document.documentType ? `unreadable_${document.documentType}` : 'empty';
       // Some official AEM pages return only a title shell in HTML. After an
       // independently discovered same-host exact-title URL, try that page's
       // same-path model once. The model helper accepts content only when its

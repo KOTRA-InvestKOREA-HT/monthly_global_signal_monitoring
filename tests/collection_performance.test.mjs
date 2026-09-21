@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, rankCompanyRows, readLimitedPdf } from '../scripts/collect_company_signals.mjs';
+import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, rankCompanyRows, readLimitedResponse } from '../scripts/collect_company_signals.mjs';
 
 test('Google rows are probed unless a publisher URL is already known', () => {
   const row = { url: 'https://news.google.com/rss/articles/opaque', title: 'Original RSS title' };
@@ -50,7 +50,7 @@ test('successful redirects and unrelated errors break the unresolved failure str
 test('oversized PDF headers cancel the body before downloading it', async () => {
   let read = false, cancelled = false;
   const body = { cancel: async () => { cancelled = true; }, getReader: () => { read = true; assert.fail(); } };
-  await assert.rejects(readLimitedPdf({ headers: new Headers({ 'content-length': '11' }), body }, 10), /pdf_too_large/);
+  await assert.rejects(readLimitedResponse({ headers: new Headers({ 'content-length': '11' }), body }, 10), /document_too_large/);
   assert.equal(cancelled, true);
   assert.equal(read, false);
 });
@@ -62,11 +62,11 @@ test('unknown or understated PDF size is limited while streaming', async () => {
       pull(controller) { controller.enqueue(new Uint8Array(6)); },
       cancel() { cancelled = true; },
     });
-    await assert.rejects(readLimitedPdf(new Response(body, { headers }), 10), /pdf_too_large/);
+    await assert.rejects(readLimitedResponse(new Response(body, { headers }), 10), /document_too_large/);
     assert.equal(cancelled, true);
   }
   const bytes = new Uint8Array([1, 2, 3, 4]);
-  assert.deepEqual(await readLimitedPdf(new Response(bytes), 4), Buffer.from(bytes));
+  assert.deepEqual(await readLimitedResponse(new Response(bytes), 4), Buffer.from(bytes));
 });
 
 // 2026-09-15 실행: Google 차례가 발행사 본문 다운로드까지 기다려서 다른 기업의 Google 링크가 그 뒤에 섰다.
