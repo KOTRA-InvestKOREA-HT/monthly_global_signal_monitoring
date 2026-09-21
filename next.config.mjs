@@ -24,15 +24,23 @@ const reportRenderFiles = [
 const reportMetricFonts = reportFontWeights.map(weight => `./assets/fonts/PretendardJP-${weight}.ttf`);
 // Inputs for scripts/report_view_model.py. On Vercel api/report-view-model.py
 // computes the view model, so the Node route never ships these.
+// 파일 추적기는 Python 의 import 를 따라가지 못한다. report_view_model.py 가 읽는 것을
+// 직접 세어야 하고, 그 아래가 무엇을 더 읽는지도 여기에 적어야 한다. 빠뜨리면 빌드는
+// 멀쩡히 끝나고 배포된 함수만 ModuleNotFoundError 로 죽는다.
+// tests/report_entrypoints.test.mjs 가 이 목록과 실제 import·open 을 대조한다.
 const viewModelFiles = [
   ...latestOutputFiles,
   ...reportMetricFonts,
   "./scripts/report_view_model.py",
   "./scripts/build_pdf_report.py",
+  // build_pdf_report 가 내용 계층을 가져온다.
+  "./scripts/report_content.py",
   "./data/target_companies.json",
   "./data/company_technology_map.json",
   "./config/investment_signal_indicators.json",
   "./config/date_evidence_sources.json",
+  // report_content 가 승인 규칙 상수를 여기서 읽는다.
+  "./config/approval_policy.json",
 ];
 // The route opens assets/ through a runtime path, so the tracer ships the whole
 // directory. Chromium reads only the WOFF2 cuts; the TTFs are for Python. Named

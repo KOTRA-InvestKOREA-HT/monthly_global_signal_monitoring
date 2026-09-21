@@ -98,3 +98,44 @@ test('no entry point computes the previous month on its own', async () => {
     assert.doesNotMatch(source, OWN_MONTH_MATH, `${file} still does its own month arithmetic`);
   }
 });
+
+// 파일 추적기는 JavaScript 의 import 만 따라간다. Python 쪽 의존은 next.config.mjs 가 손으로
+// 적는 목록이 전부다. 빠뜨려도 빌드는 멀쩡히 끝나고 배포된 함수만 죽는다. 실제로 승인 상수를
+// 공용 config 로 옮기고 내용 계층을 나눌 때 report_content.py 와 approval_policy.json 이
+// 목록에 들어가지 않아, 추적된 파일만으로 실행하면 ModuleNotFoundError 가 났다.
+test('the report route ships every file its Python entry point reaches', async () => {
+  const saved = process.env.VERCEL;
+  delete process.env.VERCEL;
+  // 설정 모듈은 불러올 때 VERCEL 을 읽는다. 자체호스팅 분기(전체 목록)를 본다.
+  const { default: config } = await import(`../next.config.mjs?packaging=${Date.now()}`);
+  if (saved === undefined) delete process.env.VERCEL; else process.env.VERCEL = saved;
+
+  const shipped = new Set((config.outputFileTracingIncludes['/api/report'] || [])
+    .map(entry => entry.replace(/^\.\//, '')));
+
+  // report_view_model.py 에서 시작해 scripts/ 안의 import 를 따라간다.
+  const seen = new Set();
+  const queue = ['scripts/report_view_model.py'];
+  const dataFiles = new Set();
+  // config/ 와 data/ 의 JSON 만 본다. 글꼴과 로고는 디렉터리 글로브로 실리고 있다.
+  const PROJECT_FILE = /PROJECT_ROOT\s*\/\s*"(config|data)"\s*\/\s*"([\w.-]+\.json)"/g;
+  const DEFAULT_PATH = /default="((?:data|config)\/[\w./-]+)"/g;
+  while (queue.length) {
+    const file = queue.shift();
+    if (seen.has(file)) continue;
+    seen.add(file);
+    const source = await fs.readFile(file, 'utf8');
+    for (const match of source.matchAll(/^\s*(?:import|from)\s+([a-z_][\w]*)/gm)) {
+      const candidate = `scripts/${match[1]}.py`;
+      if (await fs.access(candidate).then(() => true, () => false)) queue.push(candidate);
+    }
+    for (const match of source.matchAll(PROJECT_FILE)) dataFiles.add(`${match[1]}/${match[2]}`);
+    for (const match of source.matchAll(DEFAULT_PATH)) dataFiles.add(match[1]);
+  }
+
+  // 시작점만 훑고 끝나면 이 검사는 아무것도 지키지 못한다.
+  assert.ok(seen.size >= 3, `expected the walk to follow imports, saw ${[...seen]}`);
+  for (const file of [...seen, ...dataFiles]) {
+    assert.ok(shipped.has(file), `next.config.mjs does not ship ${file} for /api/report`);
+  }
+});
