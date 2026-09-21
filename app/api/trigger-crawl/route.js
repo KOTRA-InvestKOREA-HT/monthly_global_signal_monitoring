@@ -1,4 +1,5 @@
 import { dateParam, rangeProblem } from "../../lib/date_range.mjs";
+import { previousMonthRange } from "../../../scripts/report_month.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -50,16 +51,6 @@ function failureHint(status, config) {
   return `GitHub API가 ${status} 응답을 반환했습니다. (대상: ${target})`;
 }
 
-function previousMonthRange() {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = now.getUTCMonth();
-  const firstDay = new Date(Date.UTC(year, month - 1, 1));
-  const lastDay = new Date(Date.UTC(year, month, 0));
-  const format = (date) => date.toISOString().slice(0, 10);
-  return { fromDate: format(firstDay), toDate: format(lastDay) };
-}
-
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
@@ -72,8 +63,8 @@ export async function POST(request) {
     if (problem) {
       return Response.json({ error: problem }, { status: 400 });
     }
-    const fromDate = dateParam(body.fromDate) || fallbackRange.fromDate;
-    const toDate = dateParam(body.toDate) || fallbackRange.toDate;
+    const fromDate = dateParam(body.fromDate) || fallbackRange.from_date;
+    const toDate = dateParam(body.toDate) || fallbackRange.to_date;
     const issueNumber = String(body.issueNumber || "2").replace(/[^\d]/g, "") || "2";
 
     const { config, missing } = collectEnv();

@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { previousMonthRange } from './report_month.mjs';
 
 // CLI and Actions must choose the same month even at a UTC/Korea month boundary.
+// 전월이 언제인지는 report_month.mjs 가 정한다. 실행 버튼과 화면도 같은 함수를 쓴다.
 export function resolveReportPeriod(env = process.env, now = new Date()) {
   const from = String(env.REPORT_FROM_DATE || '').trim();
   const to = String(env.REPORT_TO_DATE || '').trim();
@@ -17,15 +19,8 @@ export function resolveReportPeriod(env = process.env, now = new Date()) {
     if (from > to) throw new Error('REPORT_FROM_DATE must not be after REPORT_TO_DATE');
     return { from_date: from, to_date: to };
   }
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Seoul', year: 'numeric', month: 'numeric',
-  }).formatToParts(now);
-  const year = Number(parts.find(part => part.type === 'year').value);
-  const month = Number(parts.find(part => part.type === 'month').value);
-  return {
-    from_date: new Date(Date.UTC(year, month - 2, 1)).toISOString().slice(0, 10),
-    to_date: new Date(Date.UTC(year, month - 1, 0)).toISOString().slice(0, 10),
-  };
+  const previous = previousMonthRange(now);
+  return { from_date: previous.from_date, to_date: previous.to_date };
 }
 
 async function main() {

@@ -5,6 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 
 // 게시일 근거의 등급은 수집(JS)·검토(JS)·PDF 생성(Python)과 같은 파일을 읽는다.
 import dateEvidenceSources from "../config/date_evidence_sources.json";
+// 전월이 언제인지도 실행 버튼·자동 실행과 같은 함수로 정한다. 화면만 브라우저 시간을
+// 쓰면 해외에서 연 사람과 자동 실행이 서로 다른 달을 본다.
+import { monthRange as seoulMonthRange, previousMonthRange } from "../scripts/report_month.mjs";
 
 const CONFIRMED_DATE_SOURCES = new Set(dateEvidenceSources.confirmed);
 
@@ -393,22 +396,19 @@ function pad2(value) {
 }
 
 function defaultMonthValue() {
-  const now = new Date();
-  const previousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  return `${previousMonth.getFullYear()}-${pad2(previousMonth.getMonth() + 1)}`;
+  return previousMonthRange().month_value;
 }
 
+// 화면이 쓰는 모양으로 옮기기만 한다. 달의 범위 자체는 공용 함수가 정한다.
 function monthRange(monthValue) {
   const [yearText, monthText] = String(monthValue || defaultMonthValue()).split("-");
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const lastDay = new Date(year, month, 0).getDate();
+  const range = seoulMonthRange(Number(yearText), Number(monthText));
   return {
-    year,
-    month,
-    fromDate: `${year}-${pad2(month)}-01`,
-    toDate: `${year}-${pad2(month)}-${pad2(lastDay)}`,
-    label: `${year}년 ${month}월`,
+    year: range.year,
+    month: range.month,
+    fromDate: range.from_date,
+    toDate: range.to_date,
+    label: `${range.year}년 ${range.month}월`,
   };
 }
 

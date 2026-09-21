@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { resolveReportPeriod } from '../scripts/report_period.mjs';
+import { previousMonthRange } from '../scripts/report_month.mjs';
 
 test('default report month follows Korea at UTC month boundaries and across years', () => {
   for (const [now, from_date, to_date] of [
@@ -65,5 +66,35 @@ test('every directly invoked Node/Python script in active workflows exists', asy
     for (const match of content.matchAll(/\b(?:node|python3?)\s+(?:--[\w-]+\s+)*(scripts\/[\w.-]+\.(?:mjs|py))/g)) {
       await assert.doesNotReject(fs.access(match[1]), `${name} references missing ${match[1]}`);
     }
+  }
+});
+
+// 전월이 언제인지를 세 곳이 각자 계산했다. 자동 실행은 한국 시간, 실행 버튼(API)은 UTC,
+// 화면은 브라우저 현지 시간이었다. 한국 시간 9월 1일 0시 30분(= UTC 8월 31일 15시 30분)에
+// 자동 실행은 8월을 고르는데 버튼은 7월 수집을 보냈다.
+test('the shared previous month follows Korea across UTC boundaries, years and leap days', () => {
+  for (const [now, month_value, from_date, to_date] of [
+    ['2026-08-31T14:59:59Z', '2026-07', '2026-07-01', '2026-07-31'],
+    ['2026-08-31T15:00:00Z', '2026-08', '2026-08-01', '2026-08-31'],
+    ['2026-01-15T00:00:00Z', '2025-12', '2025-12-01', '2025-12-31'],
+    ['2026-03-15T00:00:00Z', '2026-02', '2026-02-01', '2026-02-28'],
+    ['2024-03-01T00:00:00Z', '2024-02', '2024-02-01', '2024-02-29'],
+  ]) {
+    const range = previousMonthRange(new Date(now));
+    assert.deepEqual({ month_value: range.month_value, from_date: range.from_date, to_date: range.to_date },
+      { month_value, from_date, to_date }, now);
+    // 보고 기간 결정도 같은 함수를 거친다.
+    assert.deepEqual(resolveReportPeriod({}, new Date(now)), { from_date, to_date }, now);
+  }
+});
+
+// 함수를 공유하는 것만으로는 다음 사람이 옆에 또 하나를 만드는 것을 막지 못한다.
+// 전월을 고르는 자리에서 자기 달력 계산을 하는 파일이 없어야 한다.
+test('no entry point computes the previous month on its own', async () => {
+  const OWN_MONTH_MATH = /get(?:UTC)?Month\s*\(\)|new Date\([^)]*getMonth/;
+  for (const file of ['app/api/trigger-crawl/route.js', 'app/page.jsx', 'scripts/report_period.mjs']) {
+    const source = await fs.readFile(file, 'utf8');
+    assert.match(source, /report_month\.mjs/, `${file} must take the month from the shared module`);
+    assert.doesNotMatch(source, OWN_MONTH_MATH, `${file} still does its own month arithmetic`);
   }
 });
