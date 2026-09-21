@@ -1,0 +1,456 @@
+{
+  "ko": {
+    "matrix_cells": {
+      "Charles River": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Boeing": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Ouster": [
+        "",
+        "on",
+        "",
+        "",
+        ""
+      ],
+      "Applied Materials": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Nexeon": [
+        "",
+        "",
+        "on",
+        "",
+        ""
+      ],
+      "Veolia": [
+        "",
+        "",
+        "on",
+        "",
+        ""
+      ]
+    },
+    "company_status": {
+      "Australian Strategic Metals": "reviewed",
+      "Cognex": "reviewed",
+      "Corning": "reviewed",
+      "Charles River": "detected",
+      "Cytiva": "reviewed",
+      "Moderna": "reviewed",
+      "West Pharmaceutical": "reviewed",
+      "Dupont": "reviewed",
+      "Albemarle": "reviewed",
+      "TIMET": "reviewed",
+      "Air Products": "reviewed",
+      "Chemours": "reviewed",
+      "BorgWarner": "reviewed",
+      "DOW": "reviewed",
+      "Thermo Fisher": "reviewed",
+      "Amkor Technology": "reviewed",
+      "Onsemi": "reviewed",
+      "Qualcomm": "reviewed",
+      "Skyworks": "reviewed",
+      "Eli Lilly and Company": "reviewed",
+      "GE Healthcare": "reviewed",
+      "Boeing": "detected",
+      "3M": "reviewed",
+      "Ouster": "detected",
+      "Applied Materials": "detected",
+      "Magnix": "reviewed",
+      "Prodrive": "reviewed",
+      "ASML": "reviewed",
+      "Besi": "reviewed",
+      "NXP": "reviewed",
+      "Norsk Hydro": "reviewed",
+      "Vestas": "reviewed",
+      "Heidenhain": "reviewed",
+      "Infineon": "reviewed",
+      "Schmalz": "reviewed",
+      "Bayer": "reviewed",
+      "Merck": "reviewed",
+      "Schott Pharma": "reviewed",
+      "BASF": "reviewed",
+      "Evonik Industries": "reviewed",
+      "Heraeus": "reviewed",
+      "Jenoptik": "reviewed",
+      "EMM(Umicore)": "reviewed",
+      "Umicore": "reviewed",
+      "Solvay": "reviewed",
+      "Syensqo": "reviewed",
+      "Hexagon AB": "reviewed",
+      "ABB": "reviewed",
+      "Maxon": "reviewed",
+      "Siemens-Gamesa": "reviewed",
+      "Renishaw": "reviewed",
+      "Nexeon": "detected",
+      "Rio Tinto": "reviewed",
+      "HyproMag": "reviewed",
+      "EVG": "reviewed",
+      "Plansee": "reviewed",
+      "Texcell": "reviewed",
+      "Veolia": "detected",
+      "Airbus": "reviewed",
+      "Safran": "reviewed",
+      "Air Liquide": "reviewed",
+      "Arkema": "reviewed",
+      "DNP": "reviewed",
+      "Hitachi Metals": "reviewed",
+      "Toppan Holdings": "reviewed",
+      "Nabtesco": "reviewed",
+      "Asahi Glass": "reviewed",
+      "JSR": "reviewed",
+      "Shin-Etsu Chemicals": "reviewed",
+      "Tokyo Electron": "reviewed",
+      "Tosoh": "reviewed",
+      "Mitsubishi Chemical": "reviewed",
+      "Sumitomo Chemical": "reviewed",
+      "Asahi Kasei": "reviewed",
+      "Toray": "reviewed",
+      "Cheng Uei Precision": "reviewed",
+      "Shanghai Electric Wind Power": "reviewed"
+    },
+    "signal_cards": {
+      "Charles River/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  공식보도자료 · Charles River - News Releases / Press Releases 2026.08.20",
+        "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+        "date": "2026.08.20",
+        "technology_linked": true
+      },
+      "Boeing/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  공식보도자료 · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
+        "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+        "date": "2026.08.10",
+        "technology_linked": true
+      },
+      "Ouster/S2": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  Google News: Yahoo Finance 2026.08.17",
+        "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
+        "date": "2026.08.17",
+        "technology_linked": true
+      },
+      "Applied Materials/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  공식보도자료 · Applied Materials - Official RSS 2026.08.13",
+        "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+        "date": "2026.08.13",
+        "technology_linked": true
+      },
+      "Nexeon/S3": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  Nexeon - Media / Newsroom / Media 2026.08.31",
+        "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+        "date": "2026.08.31",
+        "technology_linked": true
+      },
+      "Veolia/S3": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "출처  공식보도자료 · Veolia - Official RSS 2026.08.26",
+        "url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market",
+        "date": "2026.08.26",
+        "technology_linked": false
+      }
+    },
+    "business_boxes": {
+      "Charles River": {
+        "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+        "text": "Charles River Laboratories는 2026년 8월 20일 Medigen Vaccine Biologics Corp.와 협력하여 차세대 다가 엔테로바이러스 백신의 바이러스 종주은행 특성분석 및 검증을 수행하고 있음. 양사는 차세대 염기서열 분석 등의 첨단 분석 플랫폼을 활용해 백신 개발 가속화와 글로벌 규제 표준 부합을 지원할 예정임."
+      },
+      "Albemarle": {
+        "url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+        "text": "2026년 2분기 에너지 스토리지 부문에서 13억 달러의 순매출과 65킬로톤 LCE의 판매량을 기록했음. Wodgina 광산의 생산량 증대를 통해 Talison CGP3 화재에 따른 지연 영향을 일부 상쇄하며, 연간 판매량이 225~235킬로톤 LCE 범위가 될 것으로 예상됨."
+      },
+      "Boeing": {
+        "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+        "text": "보잉은 위스크 에어로(Wisk Aero), 스카이기리드(SkyGrid), 인시투(Insitu) 자회사를 아처(Archer)에 매각하는 최종 계약을 체결했음. 이번 거래를 통해 보잉은 아처의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축할 예정임. 양사는 전기 수직이착륙(eVTOL) 항공기 및 자율주행 기술 분야에서 협력하여 차세대 항공 모빌리티 플랫폼을 발전시킬 계획임."
+      },
+      "Ouster": {
+        "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
+        "text": "Ouster는 2026년 2분기 세계 최초의 네이티브 컬러 라이다 센서인 Rev8을 출시함. 대형 중기 제조사, 자율주행 농기계 개발사, 자율주행차 공급업체 등으로부터 100만 달러를 초과하는 다수의 고객 주문을 확보함. 또한 유타주 교통국과 계약을 체결하여 주 전역 수백 개의 교차로에 라이다를 배치할 예정임."
+      },
+      "Applied Materials": {
+        "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+        "text": "Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함."
+      },
+      "Nexeon": {
+        "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+        "text": "Nexeon은 최근 National Wealth Fund, Korea Development Bank, Honda Xcelerator Ventures 등이 참여한 가운데 총 1억 파운드(약 1억 3,300만 달러) 규모의 투자 라운드를 완료했음. 이번 투자를 통해 영국 내 파일럿 제조 시설 개발을 추진하고 첨단 제조 기술 부서를 확장할 예정임. 또한 Nexeon은 한국 군산에서 실리콘-탄소 소재를 위한 세계 최초의 상업용 양산 시설을 가동했음."
+      }
+    },
+    "item_trend_cards": [
+      {
+        "company": "Albemarle",
+        "target": "양극재 소재(수산화리튬, 탄산리튬)",
+        "text": "2026년 2분기 에너지 스토리지 부문에서 13억 달러의 순매출과 65킬로톤 LCE의 판매량을 기록했음. Wodgina 광산의 생산량 증대를 통해 Talison CGP3 화재에 따른 지연 영향을 일부 상쇄하며, 연간 판매량이 225~235킬로톤 LCE 범위가 될 것으로 예상됨.",
+        "source": "출처  Albemarle - Newsroom / Newsroom / News 2026.08.05"
+      }
+    ],
+    "period": [
+      "2026-08-01T00:00:00+00:00",
+      "2026-08-31T00:00:00+00:00"
+    ],
+    "matrix_period_label": "8월(2026.8.1~8.31)",
+    "month_label": "8월"
+  },
+  "en": {
+    "matrix_cells": {
+      "Charles River": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Boeing": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Ouster": [
+        "",
+        "on",
+        "",
+        "",
+        ""
+      ],
+      "Applied Materials": [
+        "",
+        "",
+        "",
+        "on",
+        ""
+      ],
+      "Nexeon": [
+        "",
+        "",
+        "on",
+        "",
+        ""
+      ],
+      "Veolia": [
+        "",
+        "",
+        "on",
+        "",
+        ""
+      ]
+    },
+    "company_status": {
+      "Australian Strategic Metals": "reviewed",
+      "Cognex": "reviewed",
+      "Corning": "reviewed",
+      "Charles River": "detected",
+      "Cytiva": "reviewed",
+      "Moderna": "reviewed",
+      "West Pharmaceutical": "reviewed",
+      "Dupont": "reviewed",
+      "Albemarle": "reviewed",
+      "TIMET": "reviewed",
+      "Air Products": "reviewed",
+      "Chemours": "reviewed",
+      "BorgWarner": "reviewed",
+      "DOW": "reviewed",
+      "Thermo Fisher": "reviewed",
+      "Amkor Technology": "reviewed",
+      "Onsemi": "reviewed",
+      "Qualcomm": "reviewed",
+      "Skyworks": "reviewed",
+      "Eli Lilly and Company": "reviewed",
+      "GE Healthcare": "reviewed",
+      "Boeing": "detected",
+      "3M": "reviewed",
+      "Ouster": "detected",
+      "Applied Materials": "detected",
+      "Magnix": "reviewed",
+      "Prodrive": "reviewed",
+      "ASML": "reviewed",
+      "Besi": "reviewed",
+      "NXP": "reviewed",
+      "Norsk Hydro": "reviewed",
+      "Vestas": "reviewed",
+      "Heidenhain": "reviewed",
+      "Infineon": "reviewed",
+      "Schmalz": "reviewed",
+      "Bayer": "reviewed",
+      "Merck": "reviewed",
+      "Schott Pharma": "reviewed",
+      "BASF": "reviewed",
+      "Evonik Industries": "reviewed",
+      "Heraeus": "reviewed",
+      "Jenoptik": "reviewed",
+      "EMM(Umicore)": "reviewed",
+      "Umicore": "reviewed",
+      "Solvay": "reviewed",
+      "Syensqo": "reviewed",
+      "Hexagon AB": "reviewed",
+      "ABB": "reviewed",
+      "Maxon": "reviewed",
+      "Siemens-Gamesa": "reviewed",
+      "Renishaw": "reviewed",
+      "Nexeon": "detected",
+      "Rio Tinto": "reviewed",
+      "HyproMag": "reviewed",
+      "EVG": "reviewed",
+      "Plansee": "reviewed",
+      "Texcell": "reviewed",
+      "Veolia": "detected",
+      "Airbus": "reviewed",
+      "Safran": "reviewed",
+      "Air Liquide": "reviewed",
+      "Arkema": "reviewed",
+      "DNP": "reviewed",
+      "Hitachi Metals": "reviewed",
+      "Toppan Holdings": "reviewed",
+      "Nabtesco": "reviewed",
+      "Asahi Glass": "reviewed",
+      "JSR": "reviewed",
+      "Shin-Etsu Chemicals": "reviewed",
+      "Tokyo Electron": "reviewed",
+      "Tosoh": "reviewed",
+      "Mitsubishi Chemical": "reviewed",
+      "Sumitomo Chemical": "reviewed",
+      "Asahi Kasei": "reviewed",
+      "Toray": "reviewed",
+      "Cheng Uei Precision": "reviewed",
+      "Shanghai Electric Wind Power": "reviewed"
+    },
+    "signal_cards": {
+      "Charles River/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Official press release · Charles River - News Releases / Press Releases 2026.08.20",
+        "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+        "date": "2026.08.20",
+        "technology_linked": true
+      },
+      "Boeing/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Official press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
+        "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+        "date": "2026.08.10",
+        "technology_linked": true
+      },
+      "Ouster/S2": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Google News: Yahoo Finance 2026.08.17",
+        "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
+        "date": "2026.08.17",
+        "technology_linked": true
+      },
+      "Applied Materials/S4": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Official press release · Applied Materials - Official RSS 2026.08.13",
+        "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+        "date": "2026.08.13",
+        "technology_linked": true
+      },
+      "Nexeon/S3": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Nexeon - Media / Newsroom / Media 2026.08.31",
+        "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+        "date": "2026.08.31",
+        "technology_linked": true
+      },
+      "Veolia/S3": {
+        "parts": [
+          "headline",
+          "detail"
+        ],
+        "source": "Source  Official press release · Veolia - Official RSS 2026.08.26",
+        "url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market",
+        "date": "2026.08.26",
+        "technology_linked": false
+      }
+    },
+    "business_boxes": {
+      "Charles River": {
+        "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+        "text": "On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness."
+      },
+      "Albemarle": {
+        "url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+        "text": "Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE."
+      },
+      "Boeing": {
+        "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+        "text": "Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector."
+      },
+      "Ouster": {
+        "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
+        "text": "Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state."
+      },
+      "Applied Materials": {
+        "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+        "text": "Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency."
+      },
+      "Nexeon": {
+        "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+        "text": "Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for silicon-carbon materials in Gunsan, South Korea."
+      }
+    },
+    "item_trend_cards": [
+      {
+        "company": "Albemarle",
+        "target": "Cathode material lithium hydroxide/carbonate",
+        "text": "Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.",
+        "source": "Source  Albemarle - Newsroom / Newsroom / News 2026.08.05"
+      }
+    ],
+    "period": [
+      "2026-08-01T00:00:00+00:00",
+      "2026-08-31T00:00:00+00:00"
+    ],
+    "matrix_period_label": "August (2026.8.1~8.31)",
+    "month_label": "August"
+  }
+}

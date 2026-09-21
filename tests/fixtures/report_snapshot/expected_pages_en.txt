@@ -1,0 +1,215 @@
+===== PAGE 1 =====
+Issue 3
+September 2026
+G L O B A L I N V E S T M E N T S I G N A L M O N I T O R
+Target Companies
+Global Investment Signals
+Monitor
+30 Major Investment-Attraction Projects (MOTIE) · 77 Target Companies
+Five investment signals per company · Pre-confirmation indicators only
+FIVE LEADING SIGNAL INDICATORS
+1 Supply Chain & Geopolitical Risk Dependence reduction, diversification, regulatory risk, etc.
+2 Production Expansion & Diversification APAC expansion reviews, feasibility studies, etc.
+3 Capital Securing & Financing Large bond issues, equity raises, credit lines, etc.
+4 Tech Ecosystem Engagement (R&D) Joint research, licensing, PoC matching, equity, etc.
+5 Strategic Executive Move C-level moves, quiet visits, due-diligence signs, etc.
+
+===== PAGE 2 =====
+S I G N A L M A T R I X
+This Month's Signal Matrix
+Investment signals (pre-confirmation) across the 77 target companies for August (2026.8.1~8.31). A highlighted cell marks a signal
+detected during the month; lagging data such as completed deals are excluded.
+Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
+1 Australian Strategic Materials 40 Evonik Industries
+2 Cognex 41 Heraeus
+3 Corning 42 Jenoptik
+4 Charles River 43 EMM(Umicore)
+5 Cytiva 44 Umicore
+6 Moderna 45 Solvay
+7 West Pharmaceutical 46 Syensqo
+8 Dupont 47 Hexagon AB
+9 Albemarle 48 ABB
+10 TIMET 49 Maxon
+11 Air Products 50 Siemens-Gamesa
+12 Chemours 51 Renishaw
+13 BorgWarner 52 Nexeon
+14 DOW 53 Rio Tinto
+15 Thermo Fisher 54 HyproMag
+16 Amkor Technology 55 EVG
+17 Onsemi 56 Plansee
+18 Qualcomm 57 Texcell
+19 Skyworks 58 Veolia
+20 Eli Lilly and Company 59 Airbus
+21 GE Healthcare 60 Safran
+22 Boeing 61 Air Liquide
+23 3M 62 Arkema
+24 Ouster 63 DNP
+25 Applied Materials 64 Hitachi Metals
+26 Magnix 65 Toppan Holdings
+27 Prodrive 66 Nabtesco
+28 ASML 67 Asahi Glass
+29 Besi 68 JSR
+30 NXP 69 Shin-Etsu Chemicals
+31 Norsk Hydro 70 Tokyo Electron
+32 Vestas 71 Tosoh
+33 Heidenhain 72 Mitsubishi Chemical
+34 Infineon 73 Sumitomo Chemical
+35 Schmalz 74 Asahi Kasei
+36 Bayer 75 Toray
+37 Merck 76 Cheng Uei Precision
+38 Schott Pharma 77 Shanghai Electric Wind Power
+39 BASF
+AI-confirmed signal No signal
+① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move
+6 companies with AI-confirmed signals · 71 with no signal
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 02
+
+===== PAGE 3 =====
+C O M P A N Y S I G N A L S · 1/6
+Company Signal Details
+Charles River
+Bioanalysis & safety testing USA
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews No signal this month —
+3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine
+Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation
+multivalent enterovirus vaccine by leveraging advanced analytical platforms including
+Next-Generation Sequencing.
+Source Official press release · Charles River - News Releases / Press Releases 2026.08.20
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS Target item/tech Virus validation and MCB/WCB characterization
+On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to
+characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The
+companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate
+high-quality vaccine development and support global regulatory readiness.
+Source Official press release · Charles River - News Releases / Press Releases 2026.08.20
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 03
+
+===== PAGE 4 =====
+C O M P A N Y S I G N A L S · 2/6
+Company Signal Details
+Boeing
+Aircraft & clean propulsion USA
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews No signal this month —
+3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+Boeing Investment and Technology Collaboration
+— Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
+while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
+arrangement.
+Source Official press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS Target item/tech
+Aerospace electric motor and high-power battery propulsion module
+Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer
+Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and
+technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy
+technologies with Archer's platform to advance the aerospace and defense sector.
+Source Official press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 04
+
+===== PAGE 5 =====
+C O M P A N Y S I G N A L S · 3/6
+Company Signal Details
+Ouster
+Robotics LiDAR USA
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews
+Ouster is expanding its LiDAR production capacity to support rising demand, with its
+production run rate expected to increase from approximately 40,000 units annually toward
+100,000 units.
+Source Google News: Yahoo Finance 2026.08.17
+3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS Target item/tech Robot LiDAR
+Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer
+adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's
+largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah
+Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across
+the state.
+Source Google News: Yahoo Finance 2026.08.17
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 05
+
+===== PAGE 6 =====
+C O M P A N Y S I G N A L S · 4/6
+Company Signal Details
+Applied Materials
+Advanced packaging USA
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews No signal this month —
+3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+AI Computing Material and Process Innovation Research Collaboration
+— Applied Materials announced that University of California, Berkeley will join its EPIC Center in
+Silicon Valley as a research collaborator to pursue research programs accelerating material and
+process innovations.
+Source Official press release · Applied Materials - Official RSS 2026.08.11
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS
+Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company
+unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and
+Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
+Source Official press release · Applied Materials - Official RSS 2026.08.13
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 06
+
+===== PAGE 7 =====
+C O M P A N Y S I G N A L S · 5/6
+Company Signal Details
+Nexeon
+Battery anode materials UK
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews No signal this month —
+3 Capital Securing & Financing · bonds, equity, credit lines
+Completion of £100 Million Investment Round.
+— The completion of the £100 million ($133 million) investment round includes a £52.6 million
+($70 million) commitment from the National Wealth Fund along with new investors Korea
+Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
+commercialisation activities.
+Source Nexeon - Media / Newsroom / Media 2026.08.31
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS Target item/tech Silicon anode material technology
+Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National
+Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the
+development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing
+technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for
+silicon-carbon materials in Gunsan, South Korea.
+Source Nexeon - Media / Newsroom / Media 2026.08.31
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 07
+
+===== PAGE 8 =====
+C O M P A N Y S I G N A L S · 6/6
+Company Signal Details
+Veolia
+Advanced membranes France
+1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
+2 Production Expansion & Diversification · site reviews No signal this month —
+3 Capital Securing & Financing · bonds, equity, credit lines
+Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
+bond market.
+Source Official press release · Veolia - Official RSS 2026.08.26
+4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+5 Strategic Executive Move · C-level moves, due diligence No signal this month —
+GLOBAL BUSINESS STATUS Target item/tech Ion exchange membrane and bipolar membrane
+No global business activity could be summarised from official sources for this period.
+Source —
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 08
+
+===== PAGE 9 =====
+T A R G E T - I T E M S I G N A L S · 1/1
+Item-Linked Global Business Trends
+Companieswithoutafive-signalprofilethismonth,butwhereaglobalbusinesstrenddirectlylinkedtoatargetitem/techwasdetected
+in August. For companies exempt from the technology-link check, key business activity is shown and the card says so. Monitored for...
+Albemarle
+Battery cathode materials USA
+Target item/tech Cathode material lithium hydroxide/carbonate
+August global business trend
+Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second
+quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due
+to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.
+Source Albemarle - Newsroom / Newsroom / News 2026.08.05
+Invest KOREA · Target-Company Global Investment Signal Monitor · Issue 3 09
