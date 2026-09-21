@@ -156,7 +156,9 @@ export const GEMINI = {
 export const NVIDIA = {
   id: 'nvidia',
   label: 'NVIDIA',
-  model: 'deepseek-ai/deepseek-v4-flash-0731',
+  // deepseek-ai/deepseek-v4-flash-0731 은 NVIDIA build 에서 지원이 끝나 2026-09-21 에 교체했다.
+  // 모델 이름은 판정 캐시 식별자에 들어가므로, 이 줄이 바뀌면 저장된 판정은 재사용되지 않는다.
+  model: 'z-ai/glm-5.3-flash',
   // 이 저장소는 서드파티 키 시크릿을 하나만 쓴다. 이름은 OPENAI_API_KEY 지만
   // 내용은 NVIDIA build 키다. 그래서 같은 시크릿을 읽는 옛 OpenAI 경로
   // (summarize_signal_evidence.mjs, check_openai_access.mjs)는 더 이상 동작하지 않는다.
@@ -185,8 +187,11 @@ export const NVIDIA = {
       temperature: 0,
       max_tokens: 16384,
       stream: false,
-      // 추론 토큰이 출력 예산을 먹으면 JSON 이 잘려 응답 전체가 폐기된다.
-      chat_template_kwargs: { thinking: false },
+      // GLM-5.3 Flash 는 추론을 끄는 모드가 없고 low/high/max 만 지원한다. 기본값 max 를 쓰면
+      // 추론 토큰이 출력 예산을 많이 차지할 수 있으므로 분류 작업에는 low 를 명시한다.
+      reasoning_effort: 'low',
+      // NVIDIA 모델 카드가 대화 요청에서 명시하도록 요구하는 GLM 전용 템플릿 옵션이다.
+      chat_template_kwargs: { clear_thinking: true },
       response_format: {
         type: 'json_schema',
         json_schema: { name: 'review_decisions', strict: true, schema: toJsonSchema(decisionsEnvelopeFor(variant)) },

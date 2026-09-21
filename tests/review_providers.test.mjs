@@ -51,10 +51,11 @@ test('the request carries the article date placement the date rule refers to', (
   assert.equal(JSON.parse(NVIDIA.body({ article: article('Acme'), policy: '', retry: false, model: NVIDIA.model }).messages[1].content).date_placement, 'in_period');
 });
 
-test('the NVIDIA request disables reasoning and pins deterministic structured output', () => {
+test('the NVIDIA request limits GLM reasoning and pins deterministic structured output', () => {
   const body = NVIDIA.body({ article: article('Acme'), policy: 'POLICY', retry: false, model: NVIDIA.model });
   // 추론 토큰이 출력 예산을 먹으면 JSON 이 잘려 응답 전체가 폐기된다.
-  assert.deepEqual(body.chat_template_kwargs, { thinking: false });
+  assert.equal(body.reasoning_effort, 'low');
+  assert.deepEqual(body.chat_template_kwargs, { clear_thinking: true });
   assert.equal(body.temperature, 0);
   assert.equal(body.stream, false);
   assert.equal(body.response_format.type, 'json_schema');
@@ -111,8 +112,9 @@ test('NVIDIA needs no free-tier confirmation and reads the single shared key sec
 });
 
 test('the model stays overridable and reaches the cache identity', () => {
+  assert.equal(NVIDIA.model, 'z-ai/glm-5.3-flash');
   assert.equal(resolveProvider({}).model, NVIDIA.model);
-  assert.equal(resolveProvider({ NVIDIA_MODEL: ' deepseek-ai/other ' }).model, 'deepseek-ai/other');
+  assert.equal(resolveProvider({ NVIDIA_MODEL: ' z-ai/other ' }).model, 'z-ai/other');
 });
 
 test('an auth failure can be diagnosed without printing the key', () => {
