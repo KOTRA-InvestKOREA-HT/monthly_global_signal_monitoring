@@ -1,37 +1,12 @@
 import { dateParam, rangeProblem } from "../../lib/date_range.mjs";
 import { previousMonthRange } from "../../../scripts/report_month.mjs";
+import { envValue, githubConfig, githubHeaders, missingGithubEnv } from "../../lib/github_env.mjs";
 
 export const dynamic = "force-dynamic";
 
-// GITHUB_WORKFLOW_FILE, GITHUB_REF는 기본값이 있어 필수 항목에서 제외한다.
-const REQUIRED_ENV_KEYS = ["GITHUB_TOKEN", "GITHUB_OWNER", "GITHUB_REPO"];
-
-function envValue(name, fallback = "") {
-  const raw = process.env[name];
-  if (raw === undefined || raw === null) return fallback;
-  // Vercel 환경변수에 줄바꿈/공백/따옴표가 섞여 들어가는 실수가 잦아 여기서 정리한다.
-  return String(raw).trim().replace(/^["']|["']$/g, "");
-}
-
 function collectEnv() {
-  const config = {
-    token: envValue("GITHUB_TOKEN"),
-    owner: envValue("GITHUB_OWNER"),
-    repo: envValue("GITHUB_REPO"),
-    workflowFile: envValue("GITHUB_WORKFLOW_FILE", "collect-company-signals.yml"),
-    ref: envValue("GITHUB_REF", "main"),
-  };
-  const missing = REQUIRED_ENV_KEYS.filter((key) => !envValue(key));
-  return { config, missing };
-}
-
-function githubHeaders(token) {
-  const headers = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  return headers;
+  const config = githubConfig();
+  return { config, missing: missingGithubEnv(config) };
 }
 
 function failureHint(status, config) {

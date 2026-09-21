@@ -1,8 +1,6 @@
-export const dynamic = "force-dynamic";
+import { githubConfig, githubHeaders } from "../../lib/github_env.mjs";
 
-function env(name, fallback = "") {
-  return process.env[name] || fallback;
-}
+export const dynamic = "force-dynamic";
 
 function statusLabel(run) {
   if (!run) return "대기";
@@ -14,21 +12,13 @@ function statusLabel(run) {
 
 export async function GET() {
   try {
-    const owner = env("GITHUB_OWNER");
-    const repo = env("GITHUB_REPO");
-    const workflowFile = env("GITHUB_WORKFLOW_FILE", "collect-company-signals.yml");
-    const ref = env("GITHUB_REF", "main");
-    const token = env("GITHUB_TOKEN");
+    const { owner, repo, workflowFile, ref, token } = githubConfig();
 
     if (!owner || !repo) {
       return Response.json({ label: "대기", status: "unknown", message: "GitHub 저장소 환경변수가 없습니다." });
     }
 
-    const headers = {
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = githubHeaders(token);
 
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowFile}/runs?branch=${encodeURIComponent(

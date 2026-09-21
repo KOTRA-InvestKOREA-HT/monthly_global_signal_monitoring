@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import { dateParam, isCalendarDate, rangeProblem } from '../app/lib/date_range.mjs';
+import { githubConfig, githubHeaders, missingGithubEnv } from '../app/lib/github_env.mjs';
 
 // trigger-crawl 과 report 가 같은 정규식을 각자 들고 있었고, 둘 다 모양만 봤다.
 test('a date that looks right but does not exist is refused, not rolled over', () => {
@@ -75,4 +77,39 @@ test('a file that does not exist yet still yields an empty list', async () => {
     assert.equal(response.status, 200);
     assert.deepEqual((await response.json()).investmentSignals, []);
   });
+});
+
+// 세 라우트가 환경변수를 각자 읽었다. 실행 버튼만 공백·따옴표를 다듬었고 상태 조회와 신호
+// 조회는 원값을 썼다. Vercel 변수에 따옴표가 섞이면 버튼은 돌아가는데 상태는 "확인 실패"가
+// 되고 신호 조회는 말없이 로컬 파일로 떨어져, 화면에는 크롤링이 돈 흔적이 없어 보인다.
+test('every GitHub-backed route reads the same cleaned environment', async t => {
+  const saved = { ...process.env };
+  t.after(() => { process.env = saved; });
+  process.env.GITHUB_OWNER = ' "kotra" ';
+  process.env.GITHUB_REPO = "'signal-monitor'\n";
+  process.env.GITHUB_TOKEN = ' ghp_example ';
+  delete process.env.GITHUB_REF;
+  delete process.env.GITHUB_WORKFLOW_FILE;
+
+  const config = githubConfig();
+  assert.deepEqual(config, { token: 'ghp_example', owner: 'kotra', repo: 'signal-monitor',
+    workflowFile: 'collect-company-signals.yml', ref: 'main' });
+  assert.deepEqual(missingGithubEnv(config), []);
+
+  // 공백만 든 값은 없는 값이다. 예전에는 소유자가 " " 여도 설정된 것으로 세어 GitHub 를 불렀다.
+  process.env.GITHUB_OWNER = '   ';
+  assert.equal(githubConfig().owner, '');
+  assert.deepEqual(missingGithubEnv(), ['GITHUB_OWNER']);
+
+  // 토큰이 없으면 Authorization 을 붙이지 않는다(비공개 저장소가 아니면 공개 읽기가 된다).
+  assert.equal('Authorization' in githubHeaders(''), false);
+  assert.equal(githubHeaders('abc').Authorization, 'Bearer abc');
+});
+
+test('no route builds its own GitHub headers or reads process.env directly', async () => {
+  for (const file of ['app/api/crawl-status/route.js', 'app/api/signals/route.js', 'app/api/trigger-crawl/route.js']) {
+    const source = await fs.readFile(file, 'utf8');
+    assert.match(source, /github_env\.mjs/, `${file} must use the shared GitHub config`);
+    assert.doesNotMatch(source, /process\.env\.GITHUB_|X-GitHub-Api-Version/, `${file} still reads GitHub settings on its own`);
+  }
 });

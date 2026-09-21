@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { dashboardSignals } from "../../lib/dashboard_signals.mjs";
+import { githubConfig, githubHeaders } from "../../lib/github_env.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,7 @@ async function readLocalJson(filePath) {
 }
 
 async function readGitHubJson(filePath) {
-  const owner = process.env.GITHUB_OWNER;
-  const repo = process.env.GITHUB_REPO;
-  const ref = process.env.GITHUB_REF || "main";
-  const token = process.env.GITHUB_TOKEN;
+  const { owner, repo, ref, token } = githubConfig();
 
   if (!owner || !repo || !token) {
     return readLocalJson(filePath);
@@ -32,11 +30,7 @@ async function readGitHubJson(filePath) {
   const response = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${encodeURIComponent(ref)}`,
     {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
+      headers: githubHeaders(token),
       cache: "no-store",
     },
   );
