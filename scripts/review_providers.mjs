@@ -1,6 +1,6 @@
 // API adapters only: prompt composition lives in review_prompts.mjs.
 // Keep existing exports for callers that import the shared contract here.
-import { buildSystemInstruction, retryInstruction } from './review_prompts.mjs';
+import { buildSystemInstruction, promptVariant, retryInstruction } from './review_prompts.mjs';
 export {
   DATE_HINT_VERSION, DATE_INSTRUCTION, SUMMARY_INSTRUCTION,
   SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
@@ -62,13 +62,22 @@ export function toGeminiSchema(node) {
   return out;
 }
 
-const decisionsEnvelope = {
-  type: 'OBJECT',
-  properties: {
-    decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties: decisionProperties } },
+// 변형은 판정 스키마에 필드를 더할 수 있다(shared_facts 의 facts). 기본값은 예전 스키마 그대로다.
+export function decisionsEnvelopeFor(variant = 'baseline') {
+  const extras = promptVariant(variant).decisionExtras;
+  const properties = Object.keys(extras).length
+    // facts 를 문안보다 앞에 둔다. 키 순서가 곧 모델이 답을 쓰는 순서다.
+    ? { ...Object.fromEntries(Object.entries(decisionProperties).filter(([key]) => !key.startsWith('summary_'))),
+        ...extras,
+        ...Object.fromEntries(Object.entries(decisionProperties).filter(([key]) => key.startsWith('summary_'))) }
+    : decisionProperties;
+  return { type: 'OBJECT', properties: {
+    decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties } },
     ...articleDateProperties,
-  },
-};
+  } };
+}
+
+const decisionsEnvelope = decisionsEnvelopeFor();
 
 // 검증 요청에는 확인할 후보만 싣는다. 예전에는 후보 전부를 보내고 대상 밖 후보에는 정해진
 // 가짜 답(false·needs_review·"검증 대상 아님")을 쓰게 한 뒤 코드가 그것을 버렸다. 실행
@@ -104,9 +113,9 @@ export const GEMINI = {
   headers(apiKey) {
     return { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey };
   },
-  body({ article, policy, retry }) {
+  body({ article, policy, retry, variant }) {
     return {
-      systemInstruction: { parts: [{ text: buildSystemInstruction(policy) }] },
+      systemInstruction: { parts: [{ text: buildSystemInstruction(policy, variant) }] },
       contents: [{ role: 'user', parts: [
         { text: articleText(article, retry) },
         ...(retry ? [{ text: retryInstruction(retry) }] : []),
@@ -118,7 +127,7 @@ export const GEMINI = {
         thinkingConfig: { thinkingLevel: this.thinkingLevel || 'high' },
         // high 추론의 추론 토큰이 잘리지 않도록 gemini-3.5-flash-lite 출력 한도(65,536)까지 연다.
         maxOutputTokens: 65536, responseMimeType: 'application/json',
-        responseSchema: toGeminiSchema(decisionsEnvelope),
+        responseSchema: toGeminiSchema(decisionsEnvelopeFor(variant)),
       },
     };
   },
@@ -164,11 +173,11 @@ export const NVIDIA = {
   headers(apiKey) {
     return { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` };
   },
-  body({ article, policy, retry, model }) {
+  body({ article, policy, retry, model, variant }) {
     return {
       model,
       messages: [
-        { role: 'system', content: buildSystemInstruction(policy) },
+        { role: 'system', content: buildSystemInstruction(policy, variant) },
         { role: 'user', content: articleText(article, retry) },
         ...(retry ? [{ role: 'user', content: retryInstruction(retry) }] : []),
       ],
@@ -180,7 +189,7 @@ export const NVIDIA = {
       chat_template_kwargs: { thinking: false },
       response_format: {
         type: 'json_schema',
-        json_schema: { name: 'review_decisions', strict: true, schema: toJsonSchema(decisionsEnvelope) },
+        json_schema: { name: 'review_decisions', strict: true, schema: toJsonSchema(decisionsEnvelopeFor(variant)) },
       },
     };
   },

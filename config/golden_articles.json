@@ -5,20 +5,30 @@
     {
       "company": "Applied Materials",
       "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
+      "set": "dev",
       "expect": "unknown",
       "baseline_article_id": "219d8b0d592f616cb1b56a58",
-      "note": "Applied Q3 실적 — R 승인, S4 precursor; 완료된 싱가포르 시설 자체로 S2 승인 금지"
+      "note": "Applied Q3 실적 — R 승인, S4 precursor; 완료된 싱가포르 시설 자체로 S2 승인 금지",
+      "defects": [
+        "S4 요약이 EPIC Center 파트너 3곳과 EssilorLuxottica 장기 공동개발을 한 사건으로 묶어 썼다",
+        "사업동향 요약이 신제품 6종을 \"도입했음\"으로 써 공급사의 출시를 고객사의 도입으로 읽히게 했다"
+      ]
     },
     {
       "company": "Applied Materials",
       "url": "https://www.appliedmaterials.com/us/en/newsroom/blogs/bringing-next-generation-cd-sem-metrology-to-the-fab.html",
+      "set": "dev",
       "expect": "unknown",
       "baseline_article_id": "281cf43bd98c17134e49238e",
-      "note": "Applied CD-SEM — R 승인, T=false/면제 유지; 단독 제품 개발만으로 S4 금지"
+      "note": "Applied CD-SEM — R 승인, T=false/면제 유지; 단독 제품 개발만으로 S4 금지",
+      "defects": [
+        "\"delivering ... improvements\" 를 \"개선을 제공하는 것임\" 으로 직역했다"
+      ]
     },
     {
       "company": "Amkor Technology",
       "url": "https://amkor.com/blog/arizona-korea-semiconductor-delegation/",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "aa2f449804dba3ee4e9006fb",
       "note": "Amkor 한국 사절단 — R 승인, Q=pass; CEO의 직접 방한·실사를 인용 없이 만들지 않음"
@@ -26,13 +36,19 @@
     {
       "company": "Applied Materials",
       "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip",
+      "set": "dev",
       "expect": "unknown",
       "baseline_article_id": "d44c9c800f8fb06a55fc9701",
-      "note": "Applied–UC Berkeley — R 유지, S4 precursor"
+      "note": "Applied–UC Berkeley — R 유지, S4 precursor",
+      "defects": [
+        "연구 협력자로 합류한다는 원문을 \"연구 협력을 체결했음\"으로 써 계약 체결로 바꿨다",
+        "\"high-impact research programs\" 를 \"고영향력 연구 프로그램\" 으로 직역했다"
+      ]
     },
     {
       "company": "Nexeon",
       "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "14c94ba7b4cb44dd0aa5d068",
       "note": "Nexeon £100m — R 유지, S3/S4 precursor; S2 후속 pilot 계획 별도 판독"
@@ -40,6 +56,7 @@
     {
       "company": "NXP",
       "url": "https://media.nxp.com/news-releases/news-release-details/nxp-trimension-ultra-wideband-powers-bmw-groups-digital-key-plus",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "2c8b096122bf8350a19e4aa5",
       "note": "NXP UWB/BMW — 레이다 기능을 읽되 우주항공 범위 미확정 상태로 자동 승인 금지"
@@ -47,6 +64,7 @@
     {
       "company": "Charles River",
       "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-announces-second-quarter-2026-results",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "d04371d8505d4221ebe47169",
       "note": "Charles River Q2 — NGS 과제의 바이러스/세포은행 목적 없이는 R/S4 보류"
@@ -54,6 +72,7 @@
     {
       "company": "Evonik Industries",
       "url": "https://www.evonik.com/en/news/press-releases/2026/08/q2-2026.html",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "c980fa0dd5f86c302b0bb343",
       "note": "Evonik Q2 — 침강실리카와 타이어 용도 연결 확인; 경쟁사 병목 수혜를 S1로 승인 금지"
@@ -61,6 +80,7 @@
     {
       "company": "Ouster",
       "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-bluecity-rev8-lidar-wins-multimillion-dollar-utah-traffic",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "c9b69b447972f66c3812f46e",
       "note": "Ouster BlueCity — 교통 인프라와 로봇 용도를 동일시하지 않음; 영업 계약을 R&D로 변환 금지"
@@ -68,6 +88,7 @@
     {
       "company": "Ouster",
       "url": "https://investors.ouster.com/news-releases/news-release-details/ouster-announces-results-second-quarter-2026",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "a148981f689392d25a2ba1bf",
       "note": "Ouster Q2 / ATM — R 유지; 사업 확장 자금 용도 없이 S3 승인 금지"
@@ -75,13 +96,18 @@
     {
       "company": "Ouster",
       "url": "https://investors.ouster.com/news-releases/news-release-details/guss-automation-wholly-owned-john-deere-subsidiary-plans-advance",
+      "set": "dev",
       "expect": "unknown",
       "baseline_article_id": "ca32ab44533e46fb169d76ae",
-      "note": "Ouster–GUSS — R 유지; 제품 채택·통합만으로 S4 승인 금지, 별도 공동개발 근거 필요"
+      "note": "Ouster–GUSS — R 유지; 제품 채택·통합만으로 S4 승인 금지, 별도 공동개발 근거 필요",
+      "defects": [
+        "GUSS 가 John Deere 자회사라는 원문의 관계가 요약에서 빠졌다"
+      ]
     },
     {
       "company": "Charles River",
       "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "dcb954c492651c37999f9ebe",
       "note": "Charles River–Medigen — 기존 R/S4 양성 유지; 바이러스 시드 뱅크 특성분석 명시"
@@ -89,6 +115,7 @@
     {
       "company": "HyproMag",
       "url": "https://mkango.ca/news/mkango-completes-acquisition-of-remloy/",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "f0e21debb717a307f35cee05",
       "note": "HyProMag / Remloy — R/S4 유지; 완료 인수·확보시설을 S2 전조로 우회 금지"
@@ -96,6 +123,7 @@
     {
       "company": "Nexeon",
       "url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "75bf7e11137933e19bd45a98",
       "note": "Nexeon Gunsan ISO 9001 — R 유지; 확장 가능한 설계만으로 S2 계획 승인 금지"
@@ -103,6 +131,7 @@
     {
       "company": "Albemarle",
       "url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "ba535126a61bdbbe816c4ece",
       "note": "Albemarle Q2 — R 유지; 현금·부채 감축·capex 전망을 S3 조달로 승인 금지"
@@ -110,6 +139,7 @@
     {
       "company": "Ouster",
       "url": "https://investors.ouster.com/news-releases/news-release-details/trossen-robotics-and-stereolabs-ouster-subsidiary-partner-put",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "d337176310b62c74a7bc467b",
       "note": "Ouster/Stereolabs–Trossen — 기업 귀속은 인정, 스테레오 카메라를 라이다 기술로 승인 금지"
@@ -117,6 +147,7 @@
     {
       "company": "Evonik Industries",
       "url": "https://www.evonik.com/en/news/press-releases/2026/08/evonik-expands-lipid-based-drug-delivery-capabilities-with-new-gmp-manufacturing-facility-in-vancouver-canada.html?owner=evonik%3Aorganization%2FF%2FF-IR&type=evonik%3Anews-type%2Fpress-release---ir-news%2Finvestor-relations-news",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "39578b8ea9ece8ccd17d3442",
       "note": "Evonik Vancouver GMP — 실제 투자라도 지질 의약 사업을 타이어 실리카로 승인 금지"
@@ -124,6 +155,7 @@
     {
       "company": "Cytiva",
       "url": "https://investors.danaher.com/2026-08-03-Danaher-Appoints-Julie-Sawyer-Montgomery-as-President-and-Chief-Executive-Officer",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "c9337ee3091d380aac2eb0a5",
       "note": "Cytiva에 매핑된 Danaher CEO — Cytiva 명시적 연결 없는 모회사 인사: entity 게이트 유지"
@@ -131,6 +163,7 @@
     {
       "company": "Moderna",
       "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPY2pBcUVGVElRdDU3MjRnZDE0TEZsalhCeVFXT293ZERfaDBBTEhfYzZyQXU0U2dSNmk3RWxMaDJ2NFNNT3k4N29Ud1Rra3hsLUtuMnAxc1BJT2ZZYkxFU3JfaGVNQ0J0UlpmTTlWSm92RnZXaEpSTS1XbXl0N2twc05VVzZNeXdtalVzUndRemhtTlpfcmJnblBmc2t0S04yQ0VJa3FFdXpySms4U1VqN0liYXk5ME5mVjJicXU3dVo3ZTdwVm9R?oc=5",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "a8b2ba39d95bf6df054576d2",
       "note": "Moderna/BioSpace — 현재 R 승인도 재검토: 제목만 있고 전달체/GMP 근거 없음. R/S4 승인 보류, quality 과신 방지"
@@ -138,9 +171,163 @@
     {
       "company": "3M",
       "url": "https://investors.3m.com/news-events/press-releases/detail/1939/3m-board-declares-quarterly-dividend",
+      "set": "holdout",
       "expect": "unknown",
       "baseline_article_id": "4255205cb4d265a95ea97086",
       "note": "3M Quarterly Dividend — 기술 면제 기업이라도 배당은 R/S1~S5 탈락 유지; 면제 적용 교정의 오승인 방지"
+    },
+    {
+      "company": "Skyworks",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQXzRzSVQzWElIR2pySVBxc1ZFWU1YbjU2MTJIUkY3cTVyS3VldGp6cHdtdkxOa1I5cFZGdzJrZFdUdS1Wb0dxYV9VTDZPamY4dmFLLTcyRlZzQjNwMnRDSHFvODAwNzVIaHJZSDllT0dpaGpnQ0ROSHNIX1NYZ19JdU1uSUJ2eHJ4VnlJTFdCbkFRUXdWM0dLZzhSNkpMd1JGWVFyNDBkM3JQdWFQRzlKNmlEenRWd2lpYy1WcQ?oc=5",
+      "expect": "unknown",
+      "set": "dev",
+      "note": "Skyworks 선순위채권 — S3; 2026-09 회차 문안 오류 사례",
+      "defects": [
+        "\"pending acquisition of Qorvo\" 의 pending 을 \"피인수 기업\" 으로 옮겨 인수 주체와 대상을 뒤집었다"
+      ]
+    },
+    {
+      "company": "Applied Materials",
+      "url": "https://news.google.com/rss/articles/CBMiggJBVV95cUxQbEltLVFwRE1oN29ZdUpXbDU0QjFaVWFhOXM5RnVzSkpIMnR1ZUlYNDVuM3BsSEwyQl90N3hmeUpiaHByUERoVjhaZTZSVkNmSkVYZjMtR0M0NWFKNTFTZGhndnNCMEJzMFhOSUdEcUQ5LWItLTJvQnZkeFVadHhoMmFnN25FcVROMndPS0hCTkM5SDR1SE43R3dSMHhtZS1qSmk2QWp3NXlOZjllZkNyR0h2MENfV0xBUURNZVo5UTY4M2dVRmVRZnNWZ1hqMXFDaWhzWWhNVG8yYmlLVGtPdGtDcVlXZ3U5T0Z4d05FOElUYVlGT0kzVkVqbUNySkxRMEE?oc=5",
+      "expect": "unknown",
+      "set": "dev",
+      "note": "Applied 어드밴스드 패키징 실적 해설 — 사업동향; 2026-09 회차 문안 오류 사례",
+      "defects": [
+        "제품군의 용도(얇은 DRAM 다이·3D 적층 구리 도금)를 한국어 요약에서 모두 떨어뜨렸다"
+      ]
+    },
+    {
+      "company": "Air Products",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOVUlwbzVaTXc2VVpKMlpJN1ZqU1IyU0E2bHRHcjNXVzRibXZqX25GLUlWSVBUeHhNb0tMZ2NIR3hoeXhfcjF3Y1AxcXk1alE0MDFmTWFCQWo1eGMyYjNpZ1I0d1NaMW1VVzJwemJ4WWpLNXZicUtZNUl1aTdLUFdweHpoUzhveW1Wd0tIVFA4YThyVkMwM0RnaA?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Air Products' Shares Rally 25% YTD: What's Driving the Upside? - Yahoo — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Boeing",
+      "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Archer to Shape Physical AI Future of Aerospace and Defense with Acqui — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Cognex",
+      "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxPcm90MjdLckpPZ3hLVXFLVThWUjVRYTRseE1Nb1N5NEZqbThpZUJQRXNxSENEdTYtRTJnYm9hMFJGdWNUczIyakZwWFUwSTZ5QjJVeGpiZDZzdnUyZjBqUTB6SDZDRDRCUVdmT1E0d0d2WURqNExFdXRpSmJIM1hfTWxETUp4TGwwSlV1WjN0U3FlLUtHaFFJZVNXWGlwRXVjOVJsTDBybkJ1cmtyZ3puNTdSVTU5bXRmR1pHYzhVaVRRU1gxMG1MM2tXU0RNNkZYaXVDMzE2QXB1UQ?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Cognex Earnings Call Highlights Record Growth and Margins - theglobean — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Eli Lilly and Company",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNOHBGZHRVdExOZVZKUWE4ZVpTQWI3ZjlQTW9mZzBjUkNxSHM2YWFPQnZCdDNfSFJKMjFnajJYQ0lNR0RtV2QzcWdTYVZwV1NuLWUwQkRMa2JkQ2lrRkw1LVYwa1phQUVSQ2RSVy1raGQzWGpPeDBEQnVIbm15QzlPaGxkcVhQVGp4RWNzOWIxRUVWSkNnQmtwb3VFOU5fWDNqVWxBdDRTLVA?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Cell therapy weekly: FDA approves glycogen storage disease type 1a gen — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Moderna",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNMGI4Y2VMQTRkMjViTFpET1VBdGVFeWhPUnZMb1ZVZmhIWFRwVGJFNTRGbGR4T0pydmRTM0F0UWIwclZEOG9tdldPTVJlTTk4YU1uaVJUdFF0QkJ3MFNqUTNHUFVaOWxrOGowdWJYbDJVdzBGdXdOblZ4eDhkeWFzN2dDYw?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "What does Moderna's melanoma treatment mean for cancer research? We as — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Moderna",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPQmJkYzZmTkRWTGtQbl9PanQ0WnNfYjhmbVNSNWxDbW5qQ25CdXFiZW9LME4xRXF6Y2thVjB3TlZCLWtQOWFoYWRkaHBKMDBYVUpOYS1jZXItQ2ZpM2dHRENMX3EtcWg2YWc1NUZxWUU1Qk9TT2RqSWVXSDF5d29Ib0tsRFZVcG9yS3pFMjlKaWxGeDFpdFMwVVVaY1VvLTY1dzZJVnphYW5VdVZpbzJOc1NnenVJa2c1QTAzeDJ3?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Moderna shares surge after it says experimental mRNA cancer treatment  — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Nabtesco",
+      "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_Material_for_FY2026_Q2e_script.pdf",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "FY2026/12 Q2 Results Briefing Web-conference Material with script (PDF — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Nabtesco",
+      "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_Material_for_FY2026_Q2e.pdf",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "FY2026/12 Q2 Results Briefing Web-conference Material (PDF 5MB) Aug 04 — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Nabtesco",
+      "url": "https://www.nabtesco.com/cms/wp-content/uploads/Results_Briefing_QA_for_FY2026_Q2_e.pdf",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "FY2026/12 Q2 Result Briefing Q&A (PDF 302KB) Aug 05, 2026 Investor Rel — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Norsk Hydro",
+      "url": "https://www.hydro.com/en/global/media/news/2026/hydro-brings-high-recycled-aluminium-to-general-motors-ev-with-hydro-circal/",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Hydro brings high-recycled aluminium to General Motors EV with Hydro C — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Ouster",
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOV0phU1dmczRxbUhqaDN2UjU0bElsMDktUmFiY2c3X3JodXhwb2ZiUjF4Zlh6Q0tFczVoZ0VuZnh5V0E0NjhkU1BPZ3g5SlZYcTN2VGVNTm1KS0RwUE81Zm1pQUp6dk1HeHVIR1RtM2lZblRZaWwzVHpkMmJVdlc1UHI2a3gxWGNMU2MxTng3QWU2MEpZYVNN?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Ouster's LiDAR Shipments Jump 70% Y/Y in Q2: Will Demand Sustain? - Ya — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Qualcomm",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPcHduMkZpWXVXYVBYUmdBN3BZWnQ3Tnl5M3ZlaWN2TWQzVnZKSVJWSC1GVjByVXJtUm1pSlJfcUhLSEotMkZHcDlBaF9IaFZNMkNSMnZMeWRvUFhSOFl0YmttQnVJcGMxM1JTaFVBMVhOZjlJVlNRRHBIa2k4RWVhR3VaaTUyR2Q5T0hMOWdRR2gxOWRvSDFZRl9WTzBvc3kyQ1laOWFB?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 24/7 — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Qualcomm",
+      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQazBlRDFWX3dpMk1RWkVqcV9Sb2lIQWpHOVRCZjVxeFUyQ2pyX00wOE9oblVnV2RjUUNZQjU4RmR6UHZkVFJrSkZhQ2w1WFJhZnY0YnBweGx3eEdFT0tNbFhZY0JzZEgwdDdXZGgtdV9QUEp3RHdzZ3FXUkxpbmR3ZFNxVGthWFZ3TXZWbW81R04wTE4tUWhmbVBpYmJ3VE1VWk5KeVBnTkFsYlVVcGdYSWgxbXZOV2dhcWlXblBNWGdlTzZ6MnAtcA?oc=5",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Qualcomm (NASDAQ: QCOM) Stock Price Surges 8.7% Post-Earnings: Will Th — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Renishaw",
+      "url": "https://www.renishaw.com/en/renishaw-launches-next-generation-rle-interferometric-laser-encoders-for-advanced-motion-control-in-semiconductor-manufacturing--50149",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Renishaw launches next-generation RLE interferometric laser encoders f — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Vestas",
+      "url": "https://www.vestas.com/content/dam/vestas-com/global/en/investor/reports-and-presentations/financial/2026/q2-2026/2026%20Q2%20Investor%20Presentation.pdf.coredownload.inline.pdf",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "Investor Presentation — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
+    },
+    {
+      "company": "Vestas",
+      "url": "https://www.vestas.com/content/dam/vestas-com/global/en/investor/reports-and-presentations/financial/2026/q2-2026/260812_45_Company_Announcement.pdf.coredownload.inline.pdf",
+      "set": "holdout",
+      "expect": "unknown",
+      "baseline_article_id": null,
+      "note": "260812 45 Company Announcement.pdf.coredownload.inline — 2026-09-21 수집본, 이번 회차 수정에 쓰지 않음"
     }
-  ]
+  ],
+  "sets": {
+    "dev": "2026-09 회차에 문안 오류를 발견한 기사. 수정 방향을 정하는 데 썼으므로 개선 근거로 쓰지 않는다.",
+    "holdout": "그 수정에 쓰지 않은 기사. 여기서도 나아져야 일반화된 개선이다.",
+    "holdout_source": "앞 16건은 2026-08 리콜 조사에서, 뒤 16건은 2026-09-21 수집본에서 한·영 문안이 모두 있는 기사 중 목록에 없던 전부를 회사·url 순으로 넣었다. 결과가 좋아 보이는 기사를 고르지 않기 위해 선별하지 않았다."
+  }
 }

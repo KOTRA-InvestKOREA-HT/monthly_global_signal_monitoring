@@ -90,19 +90,27 @@ export const SUMMARY_INSTRUCTION = [
 
 const section = (title, text) => `## ${title}\n${text}`;
 
+// 제목도 지시문이다. 변형이 본문만 갈아 끼우면 "각 언어를 따로 쓴다"는 제목이 "공통 사실 목록에서
+// 쓴다"는 본문과 어긋난 채 함께 전달된다. 그래서 제목과 본문을 한 쌍으로 묶어 바꾼다.
+export const SUMMARY_HEADING = '5. Write summaries after judgement: eligibility, grounding, then each language on its own';
+
 export const SYSTEM_INSTRUCTION = [
   section('Task and trust boundary', TASK_INSTRUCTION),
   section('1. Extract candidate evidence', EVIDENCE_INSTRUCTION +
     'Copy each quote verbatim from a single supplied evidence block, preserving HTML entities and typography. Never paraphrase quotes.'),
   section('2–4. Judge candidates using the supplied report criteria',
     'The supplied report criteria are the sole source of entity, technology, indicator, event-stage, reporting-period and approval rules. Apply each field independently; do not invent additional exceptions.'),
-  section('5. Write summaries after judgement: eligibility, grounding, then each language on its own', SUMMARY_INSTRUCTION),
+  section(SUMMARY_HEADING, SUMMARY_INSTRUCTION),
   section('6. Article-level publication date', DATE_INSTRUCTION),
   section('Output contract', 'Return every candidate exactly once in the required schema, with no text outside the JSON response.'),
 ].join('\n\n');
 
-export function buildSystemInstruction(policy) {
-  return SYSTEM_INSTRUCTION + '\n\n' + section('Supplied report criteria', policy);
+export function buildSystemInstruction(policy, variant = 'baseline') {
+  const chosen = promptVariant(variant);
+  const baseline = section(SUMMARY_HEADING, SUMMARY_INSTRUCTION);
+  const replacement = section(chosen.heading, chosen.summary);
+  const system = replacement === baseline ? SYSTEM_INSTRUCTION : SYSTEM_INSTRUCTION.replace(baseline, replacement);
+  return system + '\n\n' + section('Supplied report criteria', policy);
 }
 
 // Retry/verification messages select a task; the shared contract is sent once in
@@ -153,13 +161,59 @@ export function retryInstruction(retry) {
 }
 
 
+// 비교 실험용 변형. 기본값은 baseline 이고, 변형을 고르지 않으면 이 파일의 다른 무엇도 달라지지 않는다.
+//
+// shared_facts: 기사 판정과 문장 작성을 나눈다. 모델이 먼저 그 후보의 사실 목록(주체·행동·상대방·
+// 날짜·확정 정도·금액)을 근거에서 뽑아 facts 에 적고, 두 문안을 그 목록에서만 쓴다. 한쪽 문안이
+// 다른 쪽에 없는 사실을 담거나 서로 다른 사건을 말하는 일을 구조로 막아 보려는 것이다.
+//
+// 이것이 나아진다는 보장은 없다. 사실 목록을 뽑는 단계부터 틀릴 수 있다. 기업이나 표현에 대한
+// 예외는 넣지 않는다. 개발용 기사에서만 좋아지면 과적합이므로, 쓰지 않은 기사로 함께 재야 한다.
+// scripts/golden_review.mjs --variant shared_facts 로 돌린다.
+export const SHARED_FACTS_INSTRUCTION =
+  'Before writing either summary, fill facts for this candidate from its evidence_quotes alone. ' +
+  'actor is who acts, action is what they do, counterparty is who they do it with (empty when the evidence names none), ' +
+  'date is when the evidence dates the event (empty when it gives none), ' +
+  'status is one of planned, underway or completed exactly as the evidence states it, ' +
+  'and amount is the figure the evidence gives with its unit and currency (empty when it gives none). ' +
+  'Each field is a short phrase copied from or directly supported by a quote, not a sentence you compose. ' +
+  'Leave a field empty rather than filling it from outside the quotes. ' +
+  'Then write summary_ko and summary_en from facts and nothing else: every fact in the list appears in both summaries, ' +
+  'and neither summary states anything the list does not hold. ' +
+  'The two summaries share the list, not the wording: write each in its own language\'s idiom. ';
+
+export const FACT_PROPERTIES = {
+  actor: { type: 'STRING' }, action: { type: 'STRING' }, counterparty: { type: 'STRING' },
+  date: { type: 'STRING' }, status: { type: 'STRING', enum: ['planned', 'underway', 'completed'] },
+  amount: { type: 'STRING' },
+};
+
+export const PROMPT_VARIANTS = {
+  baseline: { id: 'baseline', heading: SUMMARY_HEADING, summary: SUMMARY_INSTRUCTION, decisionExtras: {} },
+  shared_facts: {
+    id: 'shared_facts',
+    heading: '5. Write summaries after judgement: eligibility, grounding, then one shared fact list for both languages',
+    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
+      SHARED_FACTS_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
+    decisionExtras: { facts: { type: 'OBJECT', properties: FACT_PROPERTIES } },
+  },
+};
+
+export function promptVariant(name) {
+  const variant = PROMPT_VARIANTS[String(name || 'baseline')];
+  if (!variant) throw new Error(`Unknown prompt variant: ${name}. Known: ${Object.keys(PROMPT_VARIANTS).join(', ')}`);
+  return variant;
+}
+
 // Hash effective instructions, not file bytes: comments and checkout CRLF do not
 // invalidate caches. Include all static repair modes, not article data. The verifier
 // prompt is identified separately by verificationDigest() in review_report.mjs.
-export function promptContract() {
+export function promptContract(variant = 'baseline') {
   return {
     version: PROMPT_VERSION,
-    system: buildSystemInstruction(''),
+    // 변형을 쓰면 시스템 지시가 달라지므로 기사 id 도 달라진다. 실험 결과가 운영 판정으로 읽히지 않는다.
+    ...(variant === 'baseline' ? {} : { variant }),
+    system: buildSystemInstruction('', variant),
     repairs: [retryInstruction(true), ...[...Object.keys(REPAIR_HINTS), 'semantic_recheck']
       .map(reason => retryInstruction({ reason }))],
   };

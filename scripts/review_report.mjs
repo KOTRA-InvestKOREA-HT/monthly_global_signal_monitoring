@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems, sameEventAsBusiness } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
-import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
+import { PROMPT_VERSION, promptContract, promptVariant, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
@@ -18,6 +18,10 @@ import { resolveReportPeriod } from './report_period.mjs';
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 export const VERIFIER = resolveVerifier();
+// 비교 실험용 프롬프트 변형. 기본 baseline 은 지금까지의 프롬프트 그대로이고, 다이제스트도 변하지 않는다.
+// 변형을 켜면 프롬프트 다이제스트가 달라져 기사 id 가 바뀌므로, 변형 실행이 기본 판정 캐시를 덮어쓰거나
+// 재사용하지 않는다. 프로바이더·모델과 같은 자리에서 같은 이유로 환경변수로 고른다.
+export const PROMPT_VARIANT = promptVariant(process.env.REPORT_PROMPT_VARIANT || 'baseline').id;
 const VERIFICATION_VERSION = 'verifier-v3';
 const VERIFICATION_COUNTS = ['requested', 'verified', 'partial', 'pending', 'changed', 'failed', 'rejected_responses'];
 const VERSION = 'article-review-v1';
@@ -494,7 +498,7 @@ export function policySection(doc) {
 // 후보도 바뀌기 때문이다. 지표 3·5 의 품목 연결을 풀었을 때 저장된 판정에는 그 후보의 문안이
 // 없었다. 상수만 고치고 기준 문서를 그대로 두면 옛 판정이 문안 없이 승인으로 올라온다.
 export function reviewPolicy({ policyText, technology, indicators, approvalPolicy = APPROVAL_POLICY,
-  provider = PROVIDER, promptDigest = reviewPromptDigest(policyText) }) {
+  provider = PROVIDER, variant = PROMPT_VARIANT, promptDigest = reviewPromptDigest(policyText, promptContract(variant)) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
   // 평가가 운영과 다른 정책을 재고, 체크아웃 설정이 다른 사람이 캐시를 통째로 무효화한다.
@@ -615,14 +619,14 @@ const REVIEW_REQUEST_TIMEOUT_MS = 300000;
 // 한 번 준 뒤에만 쓴다. 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
 // 실행 35200022672 의 Applied Materials·Boeing S4 가 보정 요청 없이 곧바로 인용을 걷어내고 미완료가 됐다.
 export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER,
-  { keepDecisions = null, repairAttempt = Boolean(retry) && retry?.mode !== 'verify' } = {}) {
+  { keepDecisions = null, repairAttempt = Boolean(retry) && retry?.mode !== 'verify', variant = PROMPT_VARIANT } = {}) {
   const invalid = code => invalidResponse(code, provider.label);
   let response;
   try {
     response = await fetchImpl(provider.url(provider.model), {
       method: 'POST', headers: provider.headers(apiKey),
       signal: AbortSignal.timeout(REVIEW_REQUEST_TIMEOUT_MS),
-      body: JSON.stringify(provider.body({ article, policy, retry, model: provider.model })),
+      body: JSON.stringify(provider.body({ article, policy, retry, model: provider.model, variant })),
     });
   } catch (error) {
     if (error.name === 'TimeoutError' || error.name === 'AbortError' || error instanceof TypeError) {
@@ -685,7 +689,8 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
   const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
-    prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy),
+    prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy, promptContract(variant)),
+    ...(variant === 'baseline' ? {} : { prompt_variant: variant }),
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
     facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION, technology_review_version: TECHNOLOGY_REVIEW_VERSION,
