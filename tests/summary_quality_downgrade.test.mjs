@@ -119,7 +119,8 @@ test("a company still under the technology gate is not given that latitude", () 
   });
   const errors = validateRows([row], "investment");
   assert.ok(errors.some((error) => error.includes("lacks target-technology evidence")));
-  assert.ok(errors.some((error) => error.includes("reason denies direct relevance")));
+  // 사유 문구로 승인을 뒤집던 검사는 검토 단계로 옮겼다(relevanceConflictSuspects). 이 행은
+  // 판정 필드 자체가 false 라 그것과 무관하게 여기서 떨어진다.
 });
 
 test("an exempt row still needs entity, indicator and leading evidence", () => {

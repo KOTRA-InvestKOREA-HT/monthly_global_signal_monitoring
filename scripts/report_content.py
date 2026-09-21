@@ -19,7 +19,7 @@ from pathlib import Path
 
 __all__ = [
     "APPROVAL_POLICY", "BUSINESS_STAGE", "COMPANY_LEVEL_INDICATORS", "CONFIRMED_DATE_SOURCES",
-    "COUNTRY_BY_COMPANY", "COUNTRY_EN", "DEFAULT_ISSUE_NUMBER", "DENIAL_PATTERNS",
+    "COUNTRY_BY_COMPANY", "COUNTRY_EN", "DEFAULT_ISSUE_NUMBER",
     "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES",
     "INDICATOR_DESCRIPTION_EN", "LEADING_STAGES", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
     "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
@@ -391,7 +391,8 @@ LEADING_STAGES = set(APPROVAL_POLICY["leading_stages"])
 PRECURSOR_INDICATORS = {str(no) for no in APPROVAL_POLICY["precursor_indicators"]}
 COMPANY_LEVEL_INDICATORS = {str(no) for no in APPROVAL_POLICY["company_level_indicators"]}
 BUSINESS_STAGE = APPROVAL_POLICY["business_stage"]
-DENIAL_PATTERNS = tuple(APPROVAL_POLICY["relevance_denial_patterns"])
+# 사유 문장의 품목 무관 문구를 여기서 다시 읽지 않는다. 그 해석은 검토 단계의 몫이고,
+# 발행 단계는 그 결과로 정해진 필드만 읽는다(scripts/validate_report_inputs.mjs 참고).
 
 MONTH_ONLY = re.compile(r"^(20\d{2})-(0[1-9]|1[0-2])$")
 
@@ -919,12 +920,12 @@ def signal_supported(row):
         )
     else:
         allowed = stage == BUSINESS_STAGE
-    if not allowed:
-        return False
-    if not technology_required:
-        return True
-    reason = clean_text(row.get("ai_summary_reason")).lower()
-    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in DENIAL_PATTERNS)
+    # 예전에는 여기서 사유 문장에 품목 무관 문구가 있는지 정규식으로 다시 읽었다. 발행 단계가
+    # 의미를 새로 판정한 것이고, 그래서 "한국 투자 자체는 언급되지 않음"처럼 부정 대상이 다른
+    # 사유까지 걸려 근거가 확인된 후보가 조용히 사라졌다. 이제 그 모순은 검토 단계가 후보의 근거와
+    # 함께 다시 물어 풀고(review_report.mjs 의 relevanceConflictSuspects), 풀리지 않은 후보는
+    # 재검토 미완료로 남아 애초에 여기까지 오지 않는다. 발행은 판정된 필드만 읽는다.
+    return allowed
 
 
 # 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독

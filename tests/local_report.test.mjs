@@ -117,7 +117,9 @@ test('Albemarle table quotes accept currency and percent padding without changin
 test("only supported decisions need bilingual prose; rejection does not become a report row", () => {
   const a = article();
   assert.throws(() => importReview(a, review(a, [decision({ summary_en: "" })])), /missing ai_summary_en/);
-  assert.throws(() => importReview(a, review(a, [decision({ reason_ko: "no direct evidence" })])), /denies direct relevance/);
+  // 사유 문구 하나로 승인을 뒤집지 않는다. 그 모순은 검토 단계가 근거와 함께 다시 묻는다
+  // (tests/relevance_conflict.test.mjs). 여기서는 구조 검증이 통과하는 것만 확인한다.
+  assert.equal(importReview(a, review(a, [decision({ reason_ko: "no direct evidence" })]))[0].supported, true);
   for (const overrides of [{ entity_supported: false }, { indicator_supported: false }]) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
     assert.equal(result.supported, false);

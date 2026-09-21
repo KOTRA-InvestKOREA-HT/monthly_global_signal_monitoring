@@ -75,6 +75,21 @@ const DENIAL_PATTERNS = APPROVAL_POLICY.relevance_denial_patterns.map(
   (pattern) => new RegExp(pattern, "i"),
 );
 
+// 승인된 행의 사유가 스스로 품목 무관을 말하면 그 승인은 모순일 수 있다. 다만 사유 문자열이 일치했다는
+// 것만으로 승인을 뒤집지는 않는다. 부정문의 대상이 무엇인지 정규식은 가리지 못한다. 실제로
+// "한국 투자 자체는 언급되지 않음"이 품목 무관으로 읽혀, 막 소재 공동연구가 확인된 S4 가 탈락했다.
+// 여기서는 충돌하는 구절만 돌려주고, 판단은 검토 단계가 그 후보의 근거와 함께 다시 묻는다
+// (review_report.mjs 의 relevanceConflictSuspects). 발행 단계는 그 결과만 읽는다.
+export function relevanceDenialPhrase(row) {
+  if (!targetTechnologyRequired(row?.investment_signal_no, isRelevanceExempt(row))) return "";
+  const reason = cleanText(row?.ai_summary_reason);
+  for (const pattern of DENIAL_PATTERNS) {
+    const match = pattern.exec(reason);
+    if (match) return match[0];
+  }
+  return "";
+}
+
 // precursor = verified enabling activity, not a committed final investment project.
 export function investmentStageSupported(stage, indicatorNo) {
   return APPROVAL_POLICY.leading_stages.includes(stage) ||
@@ -110,9 +125,9 @@ export function validateRows(rows, kind) {
       }
       if (row.ai_indicator_supported !== true) errors.push(`${id}: supported row lacks indicator evidence`);
       if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
-      if (techRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
-        errors.push(`${id}: supported row reason denies direct relevance`);
-      }
+      // 사유 구절 하나로 승인을 뒤집던 검사는 여기에 없다. 모순이 의심되는 후보는 검토 단계가
+      // 근거와 함께 다시 묻고(relevanceConflictSuspects), 풀리지 않으면 재검토 미완료로 남아
+      // 발행되지 않는다. 발행 단계가 사유 문장을 다시 해석하지 않게 하려는 것이다.
       // 사업동향의 단계는 고정값이다. importReview 는 not_applicable 만 받아들이고 PDF 생성기도
       // 그것만 싣는데, 이 검증만 단계를 보지 않아 다른 단계가 적힌 사업동향 행이 통과했다.
       // 실제로 그런 행이 온 적은 없지만, 통과시키면 발행 단계가 말없이 떨어뜨리는 쪽이 된다.

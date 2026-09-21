@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { validateRows } from "../scripts/validate_report_inputs.mjs";
+import { relevanceDenialPhrase, validateRows } from "../scripts/validate_report_inputs.mjs";
 
 function validRow(overrides = {}) {
   return {
@@ -43,12 +43,27 @@ test("any single unmet condition rejects a supported row", () => {
   }
 });
 
-test("rejects a supported row whose reason denies target relevance", () => {
-  const errors = validateRows(
-    [validRow({ ai_summary_reason: "타겟 기술과의 직접적 연관성은 확인되지 않음" })],
-    "investment",
-  );
-  assert.ok(errors.some((error) => error.includes("reason denies direct relevance")));
+// 사유가 스스로 품목 무관을 말하는 승인 행은 모순일 수 있다. 예전에는 여기서 곧바로 떨어뜨렸는데,
+// 정규식은 부정문의 대상을 가리지 못한다. 이제 충돌 구절만 돌려주고 판단은 검토 단계가 한다.
+test("a supported row whose reason denies target relevance is reported, not rejected here", () => {
+  const row = validRow({ ai_summary_reason: "타겟 기술과의 직접적 연관성은 확인되지 않음" });
+  assert.deepEqual(validateRows([row], "investment"), []);
+  assert.match(relevanceDenialPhrase(row), /직접적 연관성은 확인되지/);
+});
+
+test("a reason that denies some other condition is not read as denying target relevance", () => {
+  // 실행 35549566837: 막 소재 공동연구가 확인된 S4 가 "한국 투자 자체는 언급되지 않음" 때문에 떨어졌다.
+  const row = validRow({ ai_summary_reason: "타겟 막 소재 공동연구는 명시되어 있으나 한국 투자 자체는 언급되지 않음." });
+  assert.deepEqual(validateRows([row], "investment"), []);
+  assert.equal(relevanceDenialPhrase(row), "");
+});
+
+test("the denial phrase is only asked of candidates that need a target-technology link", () => {
+  const reason = "타겟 기술과의 직접적 연관성은 확인되지 않음";
+  for (const no of [3, 5]) {
+    assert.equal(relevanceDenialPhrase(validRow({ investment_signal_no: no, ai_summary_reason: reason })), "");
+  }
+  assert.equal(relevanceDenialPhrase(validRow({ excluded_from_relevance: true, ai_summary_reason: reason })), "");
 });
 
 test("rejects completed investments from the leading-signal report", () => {

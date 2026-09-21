@@ -120,4 +120,32 @@ test('both implementations read the approval constants from the shared config', 
     assert.doesNotMatch(source, /\[1,\s*3,\s*4,\s*5\]|\{"1",\s*"3",\s*"4",\s*"5"\}/);
     assert.doesNotMatch(source, /no direct \(\?:evidence/);
   }
+  // 발행 단계는 사유 문장을 다시 해석하지 않는다. 그 판단은 검토 단계가 근거와 함께 하고,
+  // 발행은 정해진 필드만 읽는다. 패턴을 다시 읽어 들이면 두 계층이 또 갈라진다.
+  assert.doesNotMatch(py, /relevance_denial_patterns/);
+  assert.doesNotMatch(layout, /relevance_denial_patterns/);
+});
+
+// 사유 문구 하나로 승인을 뒤집던 검사를 양쪽에서 걷어냈다. 한쪽만 되살아나면 검증을 통과한 행을
+// 발행이 조용히 떨어뜨리는 옛 상태로 돌아간다. 같은 입력에 두 구현이 같은 답을 내는지 직접 본다.
+test('neither implementation turns a reason phrase into a rejection', async t => {
+  const reasons = ['타겟 막 소재 공동연구는 명시되어 있으나 한국 투자 자체는 언급되지 않음.',
+    '지표 사건은 확인되나 타겟 기술과의 직접적 연계성은 확인되지 않음'];
+  const rows = reasons.map(reason => row({ investment_signal_no: 4, ai_summary_reason: reason }));
+  for (const item of rows) assert.deepEqual(validateRows([item], 'investment'), [], item.ai_summary_reason);
+
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'denial-parity-'));
+  t.after(() => fs.rm(temp, { recursive: true, force: true }));
+  const inputFile = path.join(temp, 'rows.json');
+  await fs.writeFile(inputFile, JSON.stringify(rows));
+  const script = ['import json, sys', 'from pathlib import Path',
+    'sys.path.insert(0, str(Path("scripts").resolve()))', 'import build_pdf_report as pdf',
+    'rows = json.load(open(sys.argv[1], encoding="utf-8"))',
+    'print(json.dumps([bool(pdf.signal_supported(r)) for r in rows]))'].join('\n');
+  const result = spawnSync(PYTHON, ['-c', script, inputFile], { encoding: 'utf8' });
+  if (result.status !== 0) {
+    t.skip(`Python approval rule unavailable: ${(result.stderr || '').trim().split('\n').at(-1)}`);
+    return;
+  }
+  assert.deepEqual(JSON.parse(result.stdout.trim().split('\n').at(-1)), [true, true]);
 });

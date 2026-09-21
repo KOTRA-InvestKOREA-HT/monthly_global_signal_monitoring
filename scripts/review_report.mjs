@@ -4,13 +4,13 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems } from './local_report.mjs';
+import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems, sameEventAsBusiness } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
-import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired } from './validate_report_inputs.mjs';
+import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 
 // REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
@@ -40,6 +40,9 @@ const FACILITY_STAGE_REVIEW_VERSION = 'facility-stage-v1';
 // v2: 2차 검증기를 넣은 뒤, 1차 모델만 확인했던 저장된 기술 연결 승인을 한 번 검증기로 보낸다.
 const TECHNOLOGY_REVIEW_VERSION = 'technology-link-v2';
 const ACQUISITION_REVIEW_VERSION = 'acquisition-event-v1';
+// 사유의 품목 무관 문구와 같은 사건의 기술 판단 충돌. 예전에는 코드가 말없이 뒤집거나 떨어뜨렸다.
+// 이 버전이 오르면 그 두 경우에 걸린 후보만 한 번 다시 묻는다. 나머지 저장된 판정은 그대로 쓴다.
+const RELEVANCE_REVIEW_VERSION = 'relevance-conflict-v1';
 const SUMMARY_ACCURACY_VERSION = 'summary-accuracy-v1';
 const SUMMARY_STYLE_VERSION = 'summary-style-v2';
 // 전조(precursor)를 쓸 수 있는 지표는 1·3·4·5인데, 이 재검토는 오랫동안 4번만 훑었다.
@@ -107,6 +110,47 @@ export function needsAcquisitionReview(article, review) {
   return review.acquisition_review_version !== ACQUISITION_REVIEW_VERSION && acquisitionSuspects(article, review.decisions).length > 0;
 }
 
+// 승인 필드는 모두 true 인데 사유가 스스로 품목 무관을 말하는 후보, 그리고 같은 사건을 두고 투자 후보와
+// 사업동향이 기술 연결을 다르게 판정한 후보. 예전에는 둘 다 코드가 말없이 뒤집거나 떨어뜨렸다. 사유
+// 문자열 일치는 부정문의 대상을 가리지 못하고("한국 투자 자체는 언급되지 않음"), 같은 기사라는 것은
+// 같은 사건이라는 뜻이 아니다. 어느 필드와 어느 구절이 충돌하는지 적어 그 후보의 근거와 함께 다시 묻는다.
+export function relevanceConflictSuspects(article, decisions) {
+  const business = decisions.find(d => d.candidate_id === 'relevant');
+  return decisions.filter(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    if (!candidate || candidate.relevance_exempt) return false;
+    if (!targetTechnologyRequired(candidate.row?.investment_signal_no, candidate.relevance_exempt)) return false;
+    if (!decision.entity_supported || !decision.indicator_supported || decision.quality !== 'pass') return false;
+    if (relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decision.reason_ko })) return true;
+    return candidate.kind === 'investment' && decision.target_technology_supported === true &&
+      business?.target_technology_supported === false && sameEventAsBusiness(decision, business);
+  });
+}
+
+export function relevanceConflictNotes(article, decisions) {
+  const business = decisions.find(d => d.candidate_id === 'relevant');
+  return relevanceConflictSuspects(article, decisions).map(decision => {
+    const candidate = article.candidates.find(item => item.id === decision.candidate_id);
+    const phrase = relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decision.reason_ko });
+    if (phrase) {
+      return `${decision.candidate_id}: target_technology_supported=${decision.target_technology_supported} but reason_ko says ` +
+        `"${phrase}". Decide what that phrase denies. Saying the event is not a Korean investment, or that some other ` +
+        `condition is missing, is not the same as saying the event's product is outside the target technology. ` +
+        `Quote the sentence that ties this event's product, material or process to the target technology, or set ` +
+        `target_technology_supported=false.`;
+    }
+    return `${decision.candidate_id}: this candidate and the business candidate quote the same passage but judge ` +
+      `target_technology_supported differently (${decision.target_technology_supported} against ` +
+      `${business?.target_technology_supported}). One event has one answer. Quote the sentence that names the product, ` +
+      `material or process and set both from it.`;
+  });
+}
+
+export function needsRelevanceReview(article, review) {
+  return review.relevance_review_version !== RELEVANCE_REVIEW_VERSION &&
+    relevanceConflictSuspects(article, review.decisions).length > 0;
+}
+
 // 2차 검증에 보낼 의심 후보와 사유. 재검토 규칙에 걸린 후보, 면제가 아닌데 기술 연결로 발행될 후보, 지난번 확인을
 // 끝내지 못한 후보다. 기술 연결은 실행 35167466191·35175067142 에서 가장 자주 반복된 오판이라 발행 전에 늘 검증한다.
 // 검증 질문. 1차 답을 보여 주지 않는 대신, 규칙이 걸린 이유를 모델이 근거로 먼저 답해야 하는 질문으로 준다.
@@ -125,6 +169,12 @@ export const VERIFY_QUESTIONS = {
     'and within target_technology_scope includes rather than its excludes? Activity in a different business of the company does not link.',
   form3_personnel_event: 'Does the filing itself announce a new appointment, or does it only report an officer\'s ownership status? ' +
     'A Form 3 alone is not a personnel signal.',
+  // 사유가 스스로 품목 무관을 말하거나, 같은 사건을 두고 투자·사업동향 판정이 갈리는 후보. 예전에는 코드가
+  // 문자열만 보고 뒤집었다. 무엇을 부정한 문장인지부터 근거로 답하게 한다.
+  relevance_conflict: 'What exactly does reason_ko deny, and is that the same thing as this event\'s product being outside the ' +
+    'target technology? A missing Korean investment, a missing amount or an unconfirmed stage is a different condition. ' +
+    'Name the product, material or process this event is about, quote the sentence that names it, and set ' +
+    'target_technology_supported from that sentence alone. If the business candidate quotes the same passage, both must agree.',
   semantic_recheck_pending: 'The previous check did not complete. Judge this candidate from scratch against every criterion.',
   verification_changed: 'The verification rules changed since this candidate was last verified. Judge it from scratch against every criterion.',
 };
@@ -143,6 +193,7 @@ export function verificationSuspects(article, review) {
   for (const d of facilityStageSuspects(article, review.decisions)) add(d.candidate_id, 'facility_stage');
   for (const d of fundingSuspects(article, review.decisions)) add(d.candidate_id, 'funding_event');
   for (const d of acquisitionSuspects(article, review.decisions)) add(d.candidate_id, 'acquisition_event');
+  for (const d of relevanceConflictSuspects(article, review.decisions)) add(d.candidate_id, 'relevance_conflict');
   for (const d of review.decisions) {
     const candidate = article.candidates.find(c => c.id === d.candidate_id);
     if (d.target_technology_supported && candidate && !candidate.relevance_exempt && publishedDecision(article, review.decisions, d)) {
@@ -156,7 +207,8 @@ export function verificationSuspects(article, review) {
 
 const RECHECK_VERSIONS = () => ({ stage_review_version: STAGE_REVIEW_VERSION, form3_review_version: FORM3_REVIEW_VERSION,
   funding_review_version: FUNDING_REVIEW_VERSION, facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION,
-  technology_review_version: TECHNOLOGY_REVIEW_VERSION, acquisition_review_version: ACQUISITION_REVIEW_VERSION });
+  technology_review_version: TECHNOLOGY_REVIEW_VERSION, acquisition_review_version: ACQUISITION_REVIEW_VERSION,
+  relevance_review_version: RELEVANCE_REVIEW_VERSION });
 
 // 검증 결과를 1차 판정에 합친다. 의심 후보의 판정만 검증 모델의 것으로 바꾸고 나머지는 1차 판정 그대로 둔다.
 export function mergeVerification(article, primary, checked, suspects, model = VERIFIER?.model, digest = verificationDigest()) {
@@ -198,6 +250,7 @@ export function cachedRecheck(article, review, { verifierDigest = null } = {}) {
   if (needsFundingReview(article, review)) return { reason: 'funding_event', candidate_ids: ids(fundingSuspects(article, review.decisions)) };
   if (needsFacilityStageReview(article, review)) return { reason: 'facility_stage', candidate_ids: ids(facilityStageSuspects(article, review.decisions)) };
   if (needsAcquisitionReview(article, review)) return { reason: 'acquisition_event', candidate_ids: ids(acquisitionSuspects(article, review.decisions)) };
+  if (needsRelevanceReview(article, review)) return { reason: 'relevance_conflict', candidate_ids: ids(relevanceConflictSuspects(article, review.decisions)) };
   if (needsTechnologyReview(article, review)) return { reason: 'technology_link', candidate_ids: ids(review.decisions.filter(d =>
     d.target_technology_supported && !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
     publishedDecision(article, review.decisions, d))) };
@@ -266,7 +319,8 @@ export function needsFundingReview(article, review) {
 // 하면(Nexeon S3=completed) 다음 버전이 오를 때까지 그대로 남았다. 같은 실행 안에서 한 번만 되묻는다.
 export function freshRecheckFeedback(article, review) {
   const ids = [...new Set([...stageSuspects(article, review.decisions), ...facilityStageSuspects(article, review.decisions),
-    ...fundingSuspects(article, review.decisions), ...acquisitionSuspects(article, review.decisions)].map(d => d.candidate_id))];
+    ...fundingSuspects(article, review.decisions), ...acquisitionSuspects(article, review.decisions),
+    ...relevanceConflictSuspects(article, review.decisions)].map(d => d.candidate_id))];
   const items = [
     ...stageSuspects(article, review.decisions).map(d => `${d.candidate_id}: event_stage=${d.event_stage} for a completed ` +
       'funding, agreement or appointment. Such an intermediate activity is precursor; committed/completed is only for the final investment itself.'),
@@ -278,6 +332,7 @@ export function freshRecheckFeedback(article, review) {
     ...acquisitionSuspects(article, review.decisions).map(d => `${d.candidate_id}: the evidence reports a completed acquisition. ` +
       'The acquisition and the plants, stock or feedstock that came with it are not a supply-chain or technology precursor; approve only a ' +
       'separate action the evidence states, otherwise indicator_supported=false.'),
+    ...relevanceConflictNotes(article, review.decisions),
   ];
   return items.length ? { reason: 'semantic_recheck', candidate_ids: ids,
     validation_message: `Recheck only these judgements against the rules: ${items.join(' ')}` } : null;
@@ -634,7 +689,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
     facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION, technology_review_version: TECHNOLOGY_REVIEW_VERSION,
-    acquisition_review_version: ACQUISITION_REVIEW_VERSION,
+    acquisition_review_version: ACQUISITION_REVIEW_VERSION, relevance_review_version: RELEVANCE_REVIEW_VERSION,
     summary_accuracy_version: SUMMARY_ACCURACY_VERSION, summary_numbers_version: SUMMARY_NUMBERS_VERSION,
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
