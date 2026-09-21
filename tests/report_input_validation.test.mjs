@@ -76,6 +76,53 @@ test("an unapproved row stays for the dashboard without prose", () => {
     ai_event_stage: "not_applicable" }], "relevant"), []);
 });
 
+// S3 회사채 발행과 S5 경영진 이동은 기업 단위 사건이라 발표문이 품목을 적지 않는 것이 보통이다.
+// 2026-09 실행 35478668517 에서 근접 후보 22건 중 21건이 품목 미연결이었고, Veolia 11.5억 유로
+// 회사채와 Jenoptik CEO 취임처럼 기업 귀속·지표 사건이 모두 확인된 건까지 같은 이유로 빠졌다.
+test("company-level indicators are approved without a target-technology link", () => {
+  for (const no of [3, 5]) {
+    assert.deepEqual(validateRows([validRow({ investment_signal_no: no, ai_event_stage: "precursor",
+      ai_target_technology_supported: false })], "investment"), [], `S${no}`);
+  }
+});
+
+// 완화는 그 두 지표에서 멈춘다. 공급망·증설·공동연구는 어느 품목의 활동인지 발표문이 밝히므로
+// 품목 연결을 계속 요구한다. 사업동향은 정의 자체가 품목 연계라 지표 번호가 없어도 요구한다.
+test("the other indicators and the business trend still need that link", () => {
+  for (const no of [1, 2, 4]) {
+    const errors = validateRows([validRow({ investment_signal_no: no, ai_event_stage: "exploratory",
+      ai_target_technology_supported: false })], "investment");
+    assert.ok(errors.some((error) => error.includes("lacks target-technology evidence")), `S${no}`);
+  }
+  const business = validateRows([validRow({ investment_signal_no: undefined,
+    ai_event_stage: "not_applicable", ai_target_technology_supported: false })], "relevant");
+  assert.ok(business.some((error) => error.includes("lacks target-technology evidence")));
+});
+
+// 품목 연결을 요구하지 않는 후보의 사유에는 "타겟 기술과 무관" 문장이 그대로 남는다. 그 문장은
+// 사실 기록이지 탈락 사유가 아니므로, 요구하지 않는 후보에는 부인 문구 검사를 걸지 않는다.
+test("a denial of technology relevance does not reject a company-level row", () => {
+  assert.deepEqual(validateRows([validRow({ investment_signal_no: 3, ai_event_stage: "precursor",
+    ai_target_technology_supported: false,
+    ai_summary_reason: "회사채 발행은 확인되나 타겟 기술과의 직접적 연관성은 확인되지 않음" })], "investment"), []);
+});
+
+// 나머지 승인 조건은 그대로다. 품목 연결만 빠질 뿐 기업 귀속·지표·선행성·단계는 계속 요구한다.
+test("a company-level row still needs every other approval condition", () => {
+  const base = { investment_signal_no: 5, ai_target_technology_supported: false, ai_event_stage: "precursor" };
+  const cases = [
+    [{ ai_entity_supported: false }, "lacks entity evidence"],
+    [{ ai_indicator_supported: false }, "lacks indicator evidence"],
+    [{ ai_leading_indicator_supported: false }, "not a leading indicator"],
+    [{ ai_summary_quality: "needs_review" }, "not quality=pass"],
+    [{ ai_event_stage: "committed" }, "non-leading event stage committed"],
+  ];
+  for (const [overrides, message] of cases) {
+    const errors = validateRows([validRow({ ...base, ...overrides })], "investment");
+    assert.ok(errors.some((error) => error.includes(message)), `${JSON.stringify(overrides)} → ${message}`);
+  }
+});
+
 // 보고서에 실리는 승인 행은 예외 없이 한·영 문안을 갖춰야 한다.
 test("an approved row needs both summaries", () => {
   const errors = validateRows([validRow({ ai_summary_ko: "", ai_summary_en: "" })], "investment");

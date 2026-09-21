@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { validateRows, investmentStageSupported } from "./validate_report_inputs.mjs";
+import { validateRows, investmentStageSupported, targetTechnologyRequired } from "./validate_report_inputs.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
@@ -304,6 +304,13 @@ export function sourceCandidates(signals, technology, indicators, period, scopes
 
 const BOOLEANS = ["entity_supported", "target_technology_supported", "indicator_supported", "leading_indicator_supported"];
 
+// 이 후보가 승인되려면 품목 연결 근거가 필요한가. 면제 기업과 기업 단위 지표(3·5)는 필요하지 않다.
+// 판정 자체는 언제나 근거대로 기록된다. 여기서 가르는 것은 그 판정을 승인 조건으로 쓸지뿐이다.
+const technologyRequired = (candidate) =>
+  targetTechnologyRequired(candidate?.row?.investment_signal_no, candidate?.relevance_exempt);
+const technologyMet = (candidate, decision) =>
+  !technologyRequired(candidate) || decision.target_technology_supported;
+
 // 인용문이 실제로 말하고 있는 날짜. 일자까지 적혔으면 일자와 월을, 월만 적혔으면 월만 돌려준다.
 // 아무 날짜도 읽히지 않으면 null 이고, 그때 제안은 근거 없는 날짜다.
 function dateStatedInQuote(quote) {
@@ -313,10 +320,12 @@ function dateStatedInQuote(quote) {
   return month ? { day: "", month } : null;
 }
 
-// 승인 조건은 하나도 양보하지 않는다. 한때 "딱 하나만 모자란" 투자 후보를 승인한 적이 있는데,
-// 그렇게 실린 8건 가운데 6건이 타겟 기술 미확인이었고 2건은 이미 확정된 시설투자(committed)였다.
-// 타겟 기술 오인·전조 아닌 사건·근거 부족은 이 보고서가 지금까지 잡아온 바로 그 오류라, 그 방어벽을
-// 승인 단계에서 낮추지 않는다.
+// 승인 조건은 후보별로 정해진 것을 하나도 양보하지 않는다. 한때 조건과 무관하게 "딱 하나만
+// 모자란" 투자 후보를 승인한 적이 있는데, 그렇게 실린 8건 가운데 6건이 타겟 기술 미확인이었고
+// 2건은 이미 확정된 시설투자(committed)였다. 전조 아닌 사건·근거 부족은 이 보고서가 지금까지
+// 잡아온 바로 그 오류라, 그 방어벽을 승인 단계에서 낮추지 않는다.
+// 품목 연결을 어느 후보에 요구하는지는 targetTechnologyRequired 가 정한다. 기업 단위 지표(3·5)에서
+// 그 조건을 빼는 것은 "하나 모자라도 통과"가 아니라 그 후보의 승인 조건이 처음부터 다르다는 뜻이다.
 //
 // 대신 아깝게 떨어진 후보는 대시보드에서 볼 수 있게 남긴다. 기업 귀속과 지표 사건이 확인되고
 // 나머지 조건 가운데 모자란 것이 하나뿐인 투자 후보다. 둘 이상 모자라면 승인과 거리가 멀다.
@@ -330,7 +339,7 @@ export function nearMissCandidate(candidate, decision) {
   if (candidate?.kind !== "investment" || !decision.entity_supported || !decision.indicator_supported) return false;
   if (decision.event_stage === "completed") return false;
   const unmet = [
-    candidate.relevance_exempt || decision.target_technology_supported,
+    technologyMet(candidate, decision),
     decision.leading_indicator_supported,
     investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no),
     decision.quality === "pass",
@@ -368,13 +377,13 @@ export function decisionForApproval(article, decisions, decision) {
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
 // A quote match proves provenance only, not the truth of a model's interpretation.
 // 인용·문안 검증과 무관한 판정 결과. 승인 여부만 본다.
-// 사업동향은 엄격 조건만 쓴다. 투자 후보는 엄격 조건을 못 채워도 하나만 모자라면 승인한다.
+// 후보별 승인 조건을 모두 만족해야 승인한다. 조건 하나가 모자란 투자 후보는 근접 후보로만 남긴다.
 export function decisionOutcome(article, decisions, decision) {
   const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
   if (!candidate) return { supported: false };
   const gated = decisionForApproval(article, decisions, decision);
   if (!gated) return { supported: false, gated };
-  const supported = gated.entity_supported && (candidate.relevance_exempt || gated.target_technology_supported) &&
+  const supported = gated.entity_supported && technologyMet(candidate, gated) &&
     gated.indicator_supported && gated.leading_indicator_supported && gated.quality === "pass" &&
     (candidate.kind === "relevant" || investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no));
   // nearMiss 는 승인이 아니다. 대시보드에만 남는 근접 후보라 보고서에는 실리지 않는다.
@@ -423,7 +432,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       throw new Error(`${context}: business rows use true for the non-applicable leading indicator field`);
     }
     // Everything an approval needs except the investment event stage.
-    const approvableExceptStage = decision.entity_supported && (candidate.relevance_exempt || decision.target_technology_supported) &&
+    const approvableExceptStage = decision.entity_supported && technologyMet(candidate, decision) &&
       decision.indicator_supported && decision.leading_indicator_supported && decision.quality === "pass";
     const stages = candidate.kind === "relevant" ? ["not_applicable"] : ["exploratory", "planned", "precursor", "committed", "completed", "unclear"];
     // The provider schema offers not_applicable to both kinds, and a rejected

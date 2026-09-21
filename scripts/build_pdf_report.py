@@ -1248,26 +1248,41 @@ def is_relevance_exempt(row):
     return row.get("excluded_from_relevance") is True or row.get("technology_gate_decision") == "relevance_exempt"
 
 
+# 지표 3(투자 재원 확보)·5(핵심 전략 인력의 이동)은 회사채 발행·C-Level 이동처럼 기업 단위로
+# 일어나는 사건이라 발표문이 품목을 적는 일이 드물다. 승인 조건에서 품목 연결을 빼는 판단은
+# scripts/validate_report_inputs.mjs 의 targetTechnologyRequired 와 같은 규칙이어야 한다.
+# 한쪽만 고치면 검증을 통과한 행을 발행 단계가 다시 조용히 떨어뜨린다.
+COMPANY_LEVEL_INDICATORS = {"3", "5"}
+
+
+def target_technology_required(row):
+    """이 행이 승인되려면 타겟 기술 근거가 필요한지."""
+    if is_relevance_exempt(row):
+        return False
+    signal_no = row.get("investment_signal_no")
+    return signal_no is None or str(signal_no) not in COMPANY_LEVEL_INDICATORS
+
+
 def signal_supported(row):
     """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
 
     validate_report_inputs.mjs 의 승인 규칙을 그대로 옮긴 것이다. 두 곳이 어긋나면 판정 단계가
     승인한 행을 발행 단계가 조용히 떨어뜨린다. 정확성 우선 원칙에 따라 판정 누락과 needs_review 는
-    발행하지 않고, 기업 귀속·지표·선행성이 모두 참이어야 하며, 관련성 면제 대상이 아니면 타겟 기술
-    근거도 함께 요구한다. 승인되지 않은 근접 후보(ai_signal_supported=False)는 대시보드용이라
+    발행하지 않고, 기업 귀속·지표·선행성이 모두 참이어야 하며, target_technology_required 가 참인
+    후보에는 타겟 기술 근거도 함께 요구한다. 승인되지 않은 근접 후보(ai_signal_supported=False)는 대시보드용이라
     여기서 걸러진다. 요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
     """
     if not row or row.get("ai_signal_supported") is not True:
         return False
     if row.get("ai_summary_quality") != "pass":
         return False
-    target_technology_required = not is_relevance_exempt(row)
+    technology_required = target_technology_required(row)
     required_fields = [
         "ai_entity_supported",
         "ai_indicator_supported",
         "ai_leading_indicator_supported",
     ]
-    if target_technology_required:
+    if technology_required:
         required_fields.append("ai_target_technology_supported")
     for field in required_fields:
         if row.get(field) is not True:
@@ -1281,7 +1296,7 @@ def signal_supported(row):
         allowed = stage == "not_applicable"
     if not allowed:
         return False
-    if not target_technology_required:
+    if not technology_required:
         return True
     reason = clean_text(row.get("ai_summary_reason")).lower()
     denial_patterns = (

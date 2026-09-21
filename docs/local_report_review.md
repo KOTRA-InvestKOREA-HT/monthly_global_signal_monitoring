@@ -21,7 +21,7 @@
 각 필드는 독립적으로 판단한다. `entity_supported`, `target_technology_supported`, `indicator_supported`, `leading_indicator_supported`, `quality`는 서로 다른 질문이고, 한 필드가 false라는 사실을 다른 필드의 판정 근거로 옮기지 않는다. 타겟 기술 연결이 확인되지 않았다면 그 사실은 `target_technology_supported=false`로만 기록하고, 같은 이유로 `indicator_supported`를 false로 내리거나 `quality`를 needs_review로 낮추지 않는다. 승인 여부는 이 필드들을 모아 따로 계산하므로, 판정 단계에서 결론을 미리 맞추려 하지 않는다. 각 필드는 자기 질문에 대한 근거만으로 판단한다. 독립성은 근거 없이 true를 주라는 뜻이 아니다. 어느 필드든 그 필드의 근거가 확인되지 않으면 false이고, 사유에 그 근거가 없다고 적으면서 같은 필드를 true로 두지 않는다.
 
 1. `entity_supported`: 사건이 타겟 기업 자체에 귀속되는가? `target_identity`의 정식명·국가·공식 도메인을 참고해 동명 회사를 구분한다. 기술 면제는 기업 귀속 면제가 아니다. 제3자 언론도 근거가 될 수 있으며 발행사와 사건의 대상 기업은 다르다. 모회사 발표라면 타겟 기업·사업부·제품·임원과의 명시적 연결이 필요하다. 이름만 같다는 이유로 지분·협업 관계를 추정하지 않는다.
-2. `target_technology_supported`: 타겟 품목·기술과 직접 연결되는가? 다른 사업부·일반 경영 활동은 충분하지 않다. `relevance_exempt=true`인 후보도 이 필드는 근거대로 판단하되, 이 항목만 승인 필수 조건에서 제외된다. 면제된 후보에서 이 필드가 false인 것은 사실 그대로 기록할 뿐이며, 그 사실을 `indicator_supported`나 `quality`의 탈락 사유로 다시 쓰지 않는다.
+2. `target_technology_supported`: 타겟 품목·기술과 직접 연결되는가? 다른 사업부·일반 경영 활동은 충분하지 않다. `relevance_exempt=true`인 후보와 `investment:3`·`investment:5` 후보도 이 필드는 근거대로 판단하되, 이 항목만 승인 필수 조건에서 제외된다. 이 두 지표는 회사채 발행·경영진 이동처럼 기업 단위로 일어나는 사건이어서 발표문이 어느 품목에 쓰이는 자금인지, 어느 품목을 맡는 임원인지 밝히지 않는 것이 보통이고, 품목 연결을 요구하면 근거가 충분한 사건까지 구조적으로 탈락하기 때문이다. `investment:1`·`investment:2`·`investment:4`와 사업동향은 품목 연결을 그대로 요구한다. 제외 대상 후보에서 이 필드가 false인 것은 사실 그대로 기록할 뿐이며, 그 사실을 `indicator_supported`나 `quality`의 탈락 사유로 다시 쓰지 않는다.
 3. 투자 후보의 `indicator_supported`: 후보의 `indicator`와 `description`에 해당하는 구체적 사건이 있는가? 일반 재무 수치, 위험고지·미래전망 상용문구, 단순 키워드는 충분하지 않다. `description` 끝의 "등"은 같은 성격의 사건을 뜻할 뿐 범위를 넓히지 않는다. 후보별로 해당하는 사건과 해당하지 않는 사건은 다음과 같다.
    - `investment:1`(S1 공급망·지정학 리스크 대응): 타겟 기업이 직접 취한 공급망·조달·생산 거점 조치(공급선 다변화, 현지 조달·생산 전환, 원료 확보 계약, 관세·수출통제·규제 대응). 해당하지 않음: 인수합병 절차나 주주 투표, 다른 회사가 취한 조치, 막연한 위험 언급.
    - `investment:2`(S2 생산 확대 및 다변화 의지): 생산능력·설비·생산 거점을 새로 늘리거나 짓는 계획·검토(증설, 신규 공장, 입지·타당성 검토). 해당하지 않음: 매출·실적 전망과 가이던스, 수주 잔고, 주가·시장 평가.
@@ -54,9 +54,9 @@
 
 ### 승인 및 요약 대상
 
-승인은 `entity_supported=true`, (`relevance_exempt=true` 또는 `target_technology_supported=true`), `indicator_supported=true`, `leading_indicator_supported=true`, `quality=pass`를 모두 요구한다. 투자 후보는 추가로 승인 가능한 단계(exploratory/planned 또는 S1·S3·S4·S5의 precursor)여야 한다. 사업동향은 `leading_indicator_supported=true`, `event_stage=not_applicable`가 고정값이며 투자 단계 검사를 적용하지 않는다.
+승인은 `entity_supported=true`, (품목 연결 조건), `indicator_supported=true`, `leading_indicator_supported=true`, `quality=pass`를 모두 요구한다. 품목 연결 조건은 후보에 따라 다르다. `relevance_exempt=true`인 후보와 S3·S5 후보에는 이 조건이 없고, 그 밖의 후보(S1·S2·S4와 사업동향)는 `target_technology_supported=true`여야 한다. 투자 후보는 추가로 승인 가능한 단계(exploratory/planned 또는 S1·S3·S4·S5의 precursor)여야 한다. 사업동향은 `leading_indicator_supported=true`, `event_stage=not_applicable`가 고정값이며 투자 단계 검사를 적용하지 않는다.
 
-요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다. 보고서에 실리는 것이 그 후보들뿐이므로, 승인 조건을 못 채운 후보의 요약은 어느 지면에도 쓰이지 않는다. 승인 후보는 `summary_ko`와 `summary_en`을 모두 쓴다. 요약을 쓰지 않으려고 판정 필드나 `quality`를 내리지 않으며, 요약을 쓰려고 근거 없는 필드를 true로 올리지도 않는다. 기술 면제 후보는 기술 필드가 false여도 나머지 승인 조건을 만족하면 요약이 필요하다. S4 precursor와 사업동향의 요약도 각각 독립적으로 작성한다.
+요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다. 보고서에 실리는 것이 그 후보들뿐이므로, 승인 조건을 못 채운 후보의 요약은 어느 지면에도 쓰이지 않는다. 승인 후보는 `summary_ko`와 `summary_en`을 모두 쓴다. 요약을 쓰지 않으려고 판정 필드나 `quality`를 내리지 않으며, 요약을 쓰려고 근거 없는 필드를 true로 올리지도 않는다. 기술 면제 후보와 S3·S5 후보는 `target_technology_supported=false`여도 나머지 승인 조건을 만족하면 요약이 필요하다. S4 precursor와 사업동향의 요약도 각각 독립적으로 작성한다.
 
 ## 날짜 처리
 

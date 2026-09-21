@@ -28,6 +28,20 @@ test('a technology exemption is not allowed to travel into indicator or quality'
   assert.match(exemption, /탈락 사유로 다시 쓰지 않는다/);
 });
 
+// 모델이 요약을 쓸지 말지는 이 문서의 승인 조건만 보고 정한다. 코드에서 S3·S5 의 품목 연결
+// 요구를 빼고 문서를 그대로 두면, 모델은 그 후보를 탈락으로 보고 문안을 비운 채 돌려준다.
+test('the criteria state which candidates are exempt from the target-technology condition', () => {
+  const approval = CRITERIA.split('\n').find(line => /^승인은 `entity_supported=true`/.test(line));
+  assert.ok(approval, '승인 조건 문장이 판정 기준에 있어야 한다');
+  assert.match(approval, /S3·S5 후보에는 이 조건이 없고/);
+  // 완화가 거기서 멈춘다는 것도 같은 문장이 말해야 한다.
+  assert.match(approval, /S1·S2·S4와 사업동향\)는 `target_technology_supported=true`/);
+  // 요약 대상도 같이 넓어져야 그 후보가 문안 없이 승인되지 않는다.
+  assert.match(CRITERIA, /S3·S5 후보는 `target_technology_supported=false`여도 나머지 승인 조건을 만족하면 요약이 필요하다/);
+  // 필드 자체는 여전히 근거대로 판단한다. 조건에서 빼는 것이지 true 로 올리는 것이 아니다.
+  assert.match(CRITERIA, /`investment:3`·`investment:5` 후보도 이 필드는 근거대로 판단하되/);
+});
+
 test('event_stage is judged on the candidate event, not on how the sentence is worded', () => {
   assert.match(CRITERIA, /`event_stage`는 이 후보 사건이 최종 투자에 대해 어느 단계인지/);
   assert.match(CRITERIA, /"체결"·"완료"라고 적혀 있는지가 아니라/);

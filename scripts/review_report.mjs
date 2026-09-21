@@ -10,7 +10,7 @@ import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
-import { investmentStageSupported } from './validate_report_inputs.mjs';
+import { investmentStageSupported, targetTechnologyRequired } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 
 // REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
@@ -50,9 +50,12 @@ export function needsStageReview(article, review) {
   return review.stage_review_version !== STAGE_REVIEW_VERSION && stageSuspects(article, review.decisions).length > 0;
 }
 
-const technologyOrExempt = (article, d) => d.target_technology_supported ||
-  article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt;
 const signalNo = d => String(d.candidate_id || '').split(':')[1];
+// 품목 연결이 이 후보의 승인 조건인지는 validate_report_inputs 가 한 곳에서 정한다(면제 기업과
+// 기업 단위 지표 3·5 는 요구하지 않는다). 재검토 대상을 고를 때도 같은 기준을 써야, 조건이 아닌
+// 필드 하나 때문에 승인 가능한 후보가 재질문 목록에서 빠지지 않는다.
+const technologyOrExempt = (article, d) => d.target_technology_supported ||
+  !targetTechnologyRequired(signalNo(d), article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt);
 
 // 조달·협약·임명처럼 중간 활동이 끝난 것을 최종 투자 완료로 적은 후보. 2026-08 실행 35167466191 의
 // Nexeon 1억 파운드 라운드도 새 응답에서 S3=completed 였다. 다시 물을 뿐 단계를 바꾸지는 않는다.
@@ -217,7 +220,7 @@ export function needsForm3Review(article, review) {
     if (candidate?.kind !== 'investment' || Number(candidate.row?.investment_signal_no) !== 5 ||
         candidate.row?.source_kind !== 'filing' ||
         !/(?:\bform\s*3\b|initial statement of beneficial ownership)/i.test(candidate.row?.title || '')) return false;
-    const supported = decision.entity_supported && (candidate.relevance_exempt || decision.target_technology_supported) &&
+    const supported = decision.entity_supported && technologyOrExempt(article, decision) &&
       decision.indicator_supported && decision.leading_indicator_supported && decision.quality === 'pass' &&
       investmentStageSupported(decision.event_stage, 5);
     return supported;

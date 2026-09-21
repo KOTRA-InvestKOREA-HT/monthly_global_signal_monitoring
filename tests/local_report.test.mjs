@@ -186,6 +186,36 @@ test("relevance exemption never bypasses entity or leading-event requirements", 
   assert.equal(importReview(a, review(a, [decision({ event_stage: "completed" })]))[0].near_miss, false);
 });
 
+// S3 자금 조달과 S5 경영진 이동은 기업 단위 사건이라 발표문이 품목을 적지 않는 것이 보통이다.
+// 승인 조건에서 품목 연결을 빼는 것이지 다른 조건을 빼는 것이 아니므로, 그 행은 문안을 갖춘
+// 승인 행으로 나가고 기업 귀속·지표·선행성·단계는 그대로 요구된다.
+test("company-level indicators are approved without a target-technology link", () => {
+  const investment = no => groupArticles([{ ...source, investment_signal_no: no }], [], period)[0];
+  for (const no of [3, 5]) {
+    const a = investment(no);
+    const d = overrides => decision({ candidate_id: `investment:${no}`, event_stage: "precursor",
+      target_technology_supported: false, ...overrides });
+    const approved = importReview(a, review(a, [d()]))[0];
+    assert.equal(approved.supported, true, `S${no}`);
+    assert.equal(approved.row.ai_signal_supported, true);
+    // 판정 자체는 근거대로 남는다. 조건에서 뺄 뿐 없었던 일로 기록하지 않는다.
+    assert.equal(approved.row.ai_target_technology_supported, false);
+    for (const overrides of [{ entity_supported: false }, { indicator_supported: false },
+      { leading_indicator_supported: false }, { event_stage: "committed" }]) {
+      assert.equal(importReview(a, review(a, [d({ ...overrides, summary_ko: "", summary_en: "" })]))[0].supported,
+        false, `S${no} ${JSON.stringify(overrides)}`);
+    }
+  }
+  // S1·S2·S4 는 그대로 품목 연결을 요구한다. 조건이 하나 빠졌을 뿐이므로 근접 후보로는 남는다.
+  for (const no of [1, 2, 4]) {
+    const a = investment(no);
+    const result = importReview(a, review(a, [decision({ candidate_id: `investment:${no}`,
+      target_technology_supported: false, summary_ko: "", summary_en: "" })]))[0];
+    assert.equal(result.supported, false, `S${no}`);
+    assert.equal(result.near_miss, true);
+  }
+});
+
 test("CLI prepares isolated files and refuses incomplete builds without changing source data", async () => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), "local-report-"));
   const dataDir = path.join(temp, "data"), outDir = path.join(temp, "runs");

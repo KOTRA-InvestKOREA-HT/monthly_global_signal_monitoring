@@ -45,6 +45,23 @@ function isRelevanceExempt(row) {
   return row?.excluded_from_relevance === true || row?.technology_gate_decision === "relevance_exempt";
 }
 
+// 지표 3(투자 재원 확보)과 5(핵심 전략 인력의 이동)는 회사채 발행·C-Level 이동처럼 기업 단위로
+// 일어나는 사건이다. 발표문이 그 돈을 어느 품목에 쓰는지, 그 임원이 어느 품목을 맡는지 적는 일은
+// 드물어서, 이 둘에 품목 연결을 요구하면 근거가 충분한 사건도 구조적으로 거의 통과하지 못한다.
+// 2026-09 실행 35478668517 의 근접 후보 22건 가운데 21건이 품목 미연결로 떨어졌고, 그중 3·5번
+// 8건은 Veolia 11.5억 유로 회사채, Jenoptik CEO 취임처럼 기업 귀속과 지표 사건이 모두 확인된
+// 것이었다. 승인은 5개사에서 11개사가 된다(그중 1개사는 날짜 보류라 PDF 에는 10개사).
+//
+// 1·2·4 는 그대로 요구한다. 공급망 조치·증설·공동연구는 어느 품목의 활동인지 발표문이 밝히는
+// 것이 보통이라, 거기서 연결을 놓으면 이 보고서가 지금까지 잡아온 타겟 기술 오인이 되돌아온다.
+// 사업동향(investment_signal_no 없음)도 정의 자체가 품목 연계이므로 계속 요구한다.
+const COMPANY_LEVEL_INDICATORS = new Set(["3", "5"]);
+
+export function targetTechnologyRequired(indicatorNo, relevanceExempt = false) {
+  if (relevanceExempt) return false;
+  return !COMPANY_LEVEL_INDICATORS.has(String(indicatorNo ?? ""));
+}
+
 const DENIAL_PATTERNS = [
   /직접적? (?:연관성|연계).*(?:확인되지|없음)/i,
   /직접 관련.*(?:근거.*제시되지|확인되지)/i,
@@ -76,18 +93,19 @@ export function validateRows(rows, kind) {
     if (!cleanText(row.ai_summary_reason)) errors.push(`${id}: missing ai_summary_reason`);
     if (!cleanText(row.ai_event_stage)) errors.push(`${id}: missing ai_event_stage`);
 
-    // 승인 조건은 하나도 양보하지 않는다. 타겟 기술 오인·전조 아닌 사건·근거 부족은 이 보고서가
+    // 후보에 걸린 승인 조건은 하나도 양보하지 않는다. 전조 아닌 사건·근거 부족은 이 보고서가
     // 지금까지 잡아온 오류이고, 그 방어벽을 여기서 낮추면 같은 오류가 다시 발행된다.
+    // 품목 연결을 어느 후보에 요구하는지만 targetTechnologyRequired 가 따로 정한다.
     if (row.ai_signal_supported === true) {
-      const targetTechnologyRequired = !isRelevanceExempt(row);
+      const techRequired = targetTechnologyRequired(row.investment_signal_no, isRelevanceExempt(row));
       if (row.ai_summary_quality !== "pass") errors.push(`${id}: supported row is not quality=pass`);
       if (row.ai_entity_supported !== true) errors.push(`${id}: supported row lacks entity evidence`);
-      if (targetTechnologyRequired && row.ai_target_technology_supported !== true) {
+      if (techRequired && row.ai_target_technology_supported !== true) {
         errors.push(`${id}: supported row lacks target-technology evidence`);
       }
       if (row.ai_indicator_supported !== true) errors.push(`${id}: supported row lacks indicator evidence`);
       if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
-      if (targetTechnologyRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
+      if (techRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
         errors.push(`${id}: supported row reason denies direct relevance`);
       }
       if (kind === "investment" && !investmentStageSupported(row.ai_event_stage, row.investment_signal_no)) {
