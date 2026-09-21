@@ -1,0 +1,15 @@
+{
+  "description": "투자 시그널 승인 규칙의 상수. scripts/validate_report_inputs.mjs(판정·검증)와 scripts/build_pdf_report.py(발행)가 같은 값을 읽는다. 두 곳이 규칙을 각자 들고 있던 동안 지표 3·5의 품목 연결 해제처럼 한쪽만 고치면 검증을 통과한 행을 발행 단계가 조용히 떨어뜨렸다. 사람이 읽는 판정 기준은 docs/local_report_review.md 이고, 모델에는 그 문서가 전달된다. 이 파일은 그 문서를 집행하는 코드가 공유하는 값일 뿐 판정 기준 자체가 아니다.",
+  "leading_stages": ["exploratory", "planned"],
+  "precursor_indicators": [1, 3, 4, 5],
+  "company_level_indicators": [3, 5],
+  "business_stage": "not_applicable",
+  "relevance_denial_patterns_note": "승인된 행의 사유가 스스로 품목 무관을 말하면 그 승인은 모순이다. 품목 연결을 요구하지 않는 후보(면제 기업·기업 단위 지표)에는 걸지 않는다. JavaScript RegExp 와 Python re 양쪽에서 같은 뜻으로 읽히는 문법만 쓴다.",
+  "relevance_denial_patterns": [
+    "직접적? (?:연관성|연계).*(?:확인되지|없음)",
+    "직접 관련.*(?:근거.*제시되지|확인되지)",
+    "자체는 언급되지",
+    "not directly (?:related|linked)",
+    "no direct (?:evidence|link|connection|relevance)"
+  ]
+}

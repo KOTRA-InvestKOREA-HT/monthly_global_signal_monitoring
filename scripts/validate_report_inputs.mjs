@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+
+// 승인 규칙의 상수는 config/approval_policy.json 하나에서 온다. 같은 파일을
+// scripts/build_pdf_report.py 도 읽는다. 두 곳이 각자 값을 들고 있던 동안, 지표 3·5 의
+// 품목 연결 해제처럼 규칙이 바뀌면 양쪽을 함께 고쳐야 했고 한쪽을 놓치면 검증을 통과한
+// 행이 발행 단계에서 조용히 사라졌다. 경로는 실행 위치가 아니라 이 파일 기준으로 찾는다.
+export const APPROVAL_POLICY = JSON.parse(
+  readFileSync(new URL("../config/approval_policy.json", import.meta.url), "utf8"),
+);
 
 const DEFAULTS = {
   investmentSignals: "outputs/latest_investment_signals.json",
@@ -55,25 +64,21 @@ function isRelevanceExempt(row) {
 // 1·2·4 는 그대로 요구한다. 공급망 조치·증설·공동연구는 어느 품목의 활동인지 발표문이 밝히는
 // 것이 보통이라, 거기서 연결을 놓으면 이 보고서가 지금까지 잡아온 타겟 기술 오인이 되돌아온다.
 // 사업동향(investment_signal_no 없음)도 정의 자체가 품목 연계이므로 계속 요구한다.
-const COMPANY_LEVEL_INDICATORS = new Set(["3", "5"]);
+const COMPANY_LEVEL_INDICATORS = new Set(APPROVAL_POLICY.company_level_indicators.map(String));
 
 export function targetTechnologyRequired(indicatorNo, relevanceExempt = false) {
   if (relevanceExempt) return false;
   return !COMPANY_LEVEL_INDICATORS.has(String(indicatorNo ?? ""));
 }
 
-const DENIAL_PATTERNS = [
-  /직접적? (?:연관성|연계).*(?:확인되지|없음)/i,
-  /직접 관련.*(?:근거.*제시되지|확인되지)/i,
-  /자체는 언급되지/i,
-  /not directly (?:related|linked)/i,
-  /no direct (?:evidence|link|connection|relevance)/i,
-];
+const DENIAL_PATTERNS = APPROVAL_POLICY.relevance_denial_patterns.map(
+  (pattern) => new RegExp(pattern, "i"),
+);
 
 // precursor = verified enabling activity, not a committed final investment project.
 export function investmentStageSupported(stage, indicatorNo) {
-  return ["exploratory", "planned"].includes(stage) ||
-    (stage === "precursor" && [1, 3, 4, 5].includes(Number(indicatorNo)));
+  return APPROVAL_POLICY.leading_stages.includes(stage) ||
+    (stage === "precursor" && APPROVAL_POLICY.precursor_indicators.includes(Number(indicatorNo)));
 }
 
 export function validateRows(rows, kind) {
@@ -107,6 +112,12 @@ export function validateRows(rows, kind) {
       if (row.ai_leading_indicator_supported !== true) errors.push(`${id}: supported row is not a leading indicator`);
       if (techRequired && DENIAL_PATTERNS.some((pattern) => pattern.test(cleanText(row.ai_summary_reason)))) {
         errors.push(`${id}: supported row reason denies direct relevance`);
+      }
+      // 사업동향의 단계는 고정값이다. importReview 는 not_applicable 만 받아들이고 PDF 생성기도
+      // 그것만 싣는데, 이 검증만 단계를 보지 않아 다른 단계가 적힌 사업동향 행이 통과했다.
+      // 실제로 그런 행이 온 적은 없지만, 통과시키면 발행 단계가 말없이 떨어뜨리는 쪽이 된다.
+      if (kind === "relevant" && row.ai_event_stage !== APPROVAL_POLICY.business_stage) {
+        errors.push(`${id}: supported business row must use event stage ${APPROVAL_POLICY.business_stage}`);
       }
       if (kind === "investment" && !investmentStageSupported(row.ai_event_stage, row.investment_signal_no)) {
         errors.push(`${id}: supported investment row has non-leading event stage ${row.ai_event_stage}`);

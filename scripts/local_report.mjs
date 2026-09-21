@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { validateRows, investmentStageSupported, targetTechnologyRequired } from "./validate_report_inputs.mjs";
+import { APPROVAL_POLICY, validateRows, investmentStageSupported, targetTechnologyRequired } from "./validate_report_inputs.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
@@ -551,7 +551,8 @@ async function prepare(args) {
   if (summary.from_date !== period.from_date || summary.to_date !== period.to_date) {
     throw new Error(`Collection period does not cover exactly ${month}. Use prepare --month ${month} --collect for fresh data.`);
   }
-  const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology])}`;
+  // 승인 상수도 식별자에 넣는다. 어느 후보가 승인되는지가 바뀌면 문안이 필요한 후보도 바뀐다.
+  const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology, APPROVAL_POLICY])}`;
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
   const snapshot = { policy, period, summary, signals: signals.map(withoutAI), articles, targets, technology, indicators,

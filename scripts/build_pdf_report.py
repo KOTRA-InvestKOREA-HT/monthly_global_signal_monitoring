@@ -384,6 +384,22 @@ except OSError as error:
     # 빈 목록으로 넘어가면 모든 행이 추정으로 밀려 보고서가 조용히 비어버린다. 여기서 멈추는 편이 낫다.
     raise RuntimeError(f"config/date_evidence_sources.json is required to grade publication dates: {error}") from error
 
+# 승인 규칙의 상수는 config/approval_policy.json 에서 판정·검증 경로(JS)와 공유한다.
+# 예전에는 scripts/validate_report_inputs.mjs 와 이 파일이 같은 값을 각자 들고 있어서,
+# 지표 3·5 의 품목 연결 해제처럼 규칙이 바뀔 때마다 양쪽을 함께 고쳐야 했다. 한쪽을
+# 놓치면 검증을 통과한 행을 발행 단계가 말없이 떨어뜨린다.
+try:
+    with open(PROJECT_ROOT / "config" / "approval_policy.json", encoding="utf-8") as _handle:
+        APPROVAL_POLICY = json.load(_handle)
+except OSError as error:
+    raise RuntimeError(f"config/approval_policy.json is required to decide approvals: {error}") from error
+
+LEADING_STAGES = set(APPROVAL_POLICY["leading_stages"])
+PRECURSOR_INDICATORS = {str(no) for no in APPROVAL_POLICY["precursor_indicators"]}
+COMPANY_LEVEL_INDICATORS = {str(no) for no in APPROVAL_POLICY["company_level_indicators"]}
+BUSINESS_STAGE = APPROVAL_POLICY["business_stage"]
+DENIAL_PATTERNS = tuple(APPROVAL_POLICY["relevance_denial_patterns"])
+
 MONTH_ONLY = re.compile(r"^(20\d{2})-(0[1-9]|1[0-2])$")
 
 
@@ -1249,12 +1265,9 @@ def is_relevance_exempt(row):
 
 
 # 지표 3(투자 재원 확보)·5(핵심 전략 인력의 이동)은 회사채 발행·C-Level 이동처럼 기업 단위로
-# 일어나는 사건이라 발표문이 품목을 적는 일이 드물다. 승인 조건에서 품목 연결을 빼는 판단은
-# scripts/validate_report_inputs.mjs 의 targetTechnologyRequired 와 같은 규칙이어야 한다.
-# 한쪽만 고치면 검증을 통과한 행을 발행 단계가 다시 조용히 떨어뜨린다.
-COMPANY_LEVEL_INDICATORS = {"3", "5"}
-
-
+# 일어나는 사건이라 발표문이 품목을 적는 일이 드물다. 어느 지표가 여기 해당하는지는
+# config/approval_policy.json 이 정하고, scripts/validate_report_inputs.mjs 의
+# targetTechnologyRequired 가 같은 값을 읽는다.
 def target_technology_required(row):
     """이 행이 승인되려면 타겟 기술 근거가 필요한지."""
     if is_relevance_exempt(row):
@@ -1289,24 +1302,17 @@ def signal_supported(row):
             return False
     stage = row.get("ai_event_stage")
     if row.get("investment_signal_no") is not None:
-        allowed = stage in {"exploratory", "planned"} or (
-            stage == "precursor" and str(row.get("investment_signal_no")) in {"1", "3", "4", "5"}
+        allowed = stage in LEADING_STAGES or (
+            stage == "precursor" and str(row.get("investment_signal_no")) in PRECURSOR_INDICATORS
         )
     else:
-        allowed = stage == "not_applicable"
+        allowed = stage == BUSINESS_STAGE
     if not allowed:
         return False
     if not technology_required:
         return True
     reason = clean_text(row.get("ai_summary_reason")).lower()
-    denial_patterns = (
-        r"직접적? (?:연관성|연계).*(?:확인되지|없음)",
-        r"직접 관련.*(?:근거.*제시되지|확인되지)",
-        r"자체는 언급되지",
-        r"not directly (?:related|linked)",
-        r"no direct (?:evidence|link|connection|relevance)",
-    )
-    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in denial_patterns)
+    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in DENIAL_PATTERNS)
 
 
 # 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독

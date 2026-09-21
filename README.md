@@ -11,6 +11,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `config/company_sources.json`: official Newsroom/Press/IR pages, official RSS feeds, SEC 8-K filers (confirmed by ticker) and dated news sitemaps by company. SEC collection runs only when `SEC_USER_AGENT` (a User-Agent with a contact address, per SEC fair-access policy) is set; in Actions this comes from the `SEC_USER_AGENT` repository variable.
 - `config/technology_keywords.json`: broad Korean/English synonym keyword catalog for relevance filtering.
 - `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
+- `config/approval_policy.json`: the investment-signal approval constants shared by `scripts/validate_report_inputs.mjs` (judging/validation) and `scripts/build_pdf_report.py` (publishing). The human-readable criteria, and the text sent to the model, stay in `docs/local_report_review.md`.
 - `scripts/report_month.mjs`: the single definition of which month "the previous month" is (Asia/Seoul), shared by the Actions run, the crawl button and the dashboard.
 - `.github/workflows/collect-company-signals.yml`: manual GitHub Actions workflow for on-demand collection.
 - `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.

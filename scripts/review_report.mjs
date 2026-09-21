@@ -10,7 +10,7 @@ import { PROMPT_VERSION, reviewPromptDigest, VERIFY_INSTRUCTION } from './review
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
-import { investmentStageSupported, targetTechnologyRequired } from './validate_report_inputs.mjs';
+import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 
 // REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
@@ -435,14 +435,18 @@ export function policySection(doc) {
 // 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
 // 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
 // golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
-export function reviewPolicy({ policyText, technology, indicators, provider = PROVIDER, promptDigest = reviewPromptDigest(policyText) }) {
+// approvalPolicy 도 식별자에 들어간다. 어느 후보가 승인되는지가 바뀌면 모델이 문안을 써야 하는
+// 후보도 바뀌기 때문이다. 지표 3·5 의 품목 연결을 풀었을 때 저장된 판정에는 그 후보의 문안이
+// 없었다. 상수만 고치고 기준 문서를 그대로 두면 옛 판정이 문안 없이 승인으로 올라온다.
+export function reviewPolicy({ policyText, technology, indicators, approvalPolicy = APPROVAL_POLICY,
+  provider = PROVIDER, promptDigest = reviewPromptDigest(policyText) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
   // 평가가 운영과 다른 정책을 재고, 체크아웃 설정이 다른 사람이 캐시를 통째로 무효화한다.
   const normalized = String(policyText).split('\r\n').join('\n');
   // 추론 단계와 실제 프롬프트(재시도·2차 검증 포함)도 판정 결과를 바꾸므로 식별자에 넣는다.
   // 프롬프트 버전 수동 갱신을 잊어도 내용 digest가 달라져 이전 review 파일을 재사용하지 않는다.
-  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, technology, indicators])}`;
+  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, technology, indicators, approvalPolicy])}`;
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
