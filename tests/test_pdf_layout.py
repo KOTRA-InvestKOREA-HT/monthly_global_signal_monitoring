@@ -356,6 +356,17 @@ class SummarySplitTests(unittest.TestCase):
         self.assertNotIn("...", parts["headline"] + parts["detail"])
         self.assertIn("Tampines Campus", parts["headline"] + parts["detail"])
 
+    # 영문 문안은 이제 ` - ` 표제 없이 평서문으로 온다(docs/local_report_review.md "문안").
+    # 한국어 표제를 명사구로 옮기던 형식이 콩글리시의 출처였다. 카드의 첫 줄은 여기서 떼어 낸다.
+    def test_english_prose_without_a_headline_keeps_every_sentence(self):
+        pdf.set_language("en")
+        text = ("Boeing agreed to transfer Wisk Aero to Archer. The companies will share technology under the "
+                "agreement, which Boeing expects to close in 2027.")
+        parts = pdf.summary_parts({"ai_summary_en": text})
+        self.assertEqual(parts["headline"], "Boeing agreed to transfer Wisk Aero to Archer.")
+        self.assertIn("close in 2027", parts["detail"])
+        self.assertNotIn("...", parts["headline"] + parts["detail"])
+
     def test_a_short_first_clause_still_becomes_the_headline(self):
         pdf.set_language("en")
         parts = pdf.summary_parts({"ai_summary_en": "Executive leadership changes announced - Evonik appointed Claus Rettig interim CEO."})

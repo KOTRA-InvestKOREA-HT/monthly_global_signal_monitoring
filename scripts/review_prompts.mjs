@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 // Shared review contract, independent of API transport.
 // Keep criteria and runtime validation authoritative. These sections organise the
 // policy document is the single source of judgement criteria.
-export const PROMPT_VERSION = 'review-prompt-v3';
+export const PROMPT_VERSION = 'review-prompt-v4';
 export const DATE_HINT_VERSION = 'date-hint-v1';
 
 export const DATE_INSTRUCTION =
@@ -50,18 +50,33 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
   'When the evidence dates the event differently from the announcement, state that event date. ';
 
+// 2026-09 보고서의 영문판이 한국어 개조식 표제를 그대로 옮겨 적어 영어 문장이 되지 못했다
+// ("AI Computing Material and Process Innovation Research Collaboration - Applied Materials announced…").
+// 한쪽을 번역하는 대신 두 문안을 각자 근거에서 쓰게 한다. 사실 일치 요구는 그대로 둔다.
+export const SUMMARY_INDEPENDENCE_INSTRUCTION =
+  'Write summary_ko and summary_en as two separate pieces of writing, each composed directly from this candidate\'s evidence_quotes. ' +
+  'summary_en is not a translation of summary_ko and is not drafted from it: never carry Korean word order, Korean sentence structure ' +
+  'or the Korean noun-phrase headline across into English, and never render Korean report phrasing word for word. ' +
+  'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
+  'and ordinary English articles, prepositions and collocations. ' +
+  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
+  'Independent wording is not different content. Both summaries report the same event and carry the same facts, and differ only in ' +
+  'how each language states them. ';
+
 export const SUMMARY_STYLE_INSTRUCTION =
   'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
   'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ' +
   'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
   'Put the key facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries and keep the same facts in both languages: ' +
   'a month, date or percentage stated in one language must appear in the other. ' +
-  'Translate legal, financial and clinical terms by meaning, not word by word. Keep a legal procedure name such as scheme of arrangement ' +
+  'When an English legal, financial or clinical term from the evidence has to appear in summary_ko, carry it by meaning, not word by ' +
+  'word. Keep a legal procedure name such as scheme of arrangement ' +
   'in English with a short Korean gloss (인수 절차); never render it as 멤버십 or 배치. late-stage trial is 후기 단계 임상시험, never 말기 ' +
   '(말기 means terminal illness). A vehicle fleet is 차량군, never 함대. ';
 
 export const SUMMARY_INSTRUCTION = [
-  SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
+  SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
+  SUMMARY_INDEPENDENCE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
 ].join('\n\n');
 
 const section = (title, text) => `## ${title}\n${text}`;
@@ -72,7 +87,7 @@ export const SYSTEM_INSTRUCTION = [
     'Copy each quote verbatim from a single supplied evidence block, preserving HTML entities and typography. Never paraphrase quotes.'),
   section('2–4. Judge candidates using the supplied report criteria',
     'The supplied report criteria are the sole source of entity, technology, indicator, event-stage, reporting-period and approval rules. Apply each field independently; do not invent additional exceptions.'),
-  section('5. Write summaries after judgement: eligibility, grounding, then bilingual style', SUMMARY_INSTRUCTION),
+  section('5. Write summaries after judgement: eligibility, grounding, then each language on its own', SUMMARY_INSTRUCTION),
   section('6. Article-level publication date', DATE_INSTRUCTION),
   section('Output contract', 'Return every candidate exactly once in the required schema, with no text outside the JSON response.'),
 ].join('\n\n');
@@ -111,7 +126,7 @@ export const VERIFY_INSTRUCTION =
 const REPAIR_HINTS = {
   evidence_mismatch: 'Repair evidence_quotes using exact passages from a single evidence block; do not paraphrase.',
   missing_evidence: 'Supply the exact passage supporting the candidate event; do not invent support.',
-  summary_ungrounded: 'Align the affected summary with its own evidence_quotes: quote the passage supporting each named fact, or remove that fact from both summaries.',
+  summary_ungrounded: 'Align the affected summary with its own evidence_quotes: quote the passage supporting each named fact, or remove that fact from both summaries. Rewrite each language from the evidence under section 5; do not repair one by translating the other.',
   summary_number_ungrounded: 'Check each summary number, unit and currency against the evidence and preserve the same facts in both languages.',
   date_evidence_mismatch: 'Repair only the publication-date hint under section 6; do not downgrade content judgements because the date is uncertain.',
 };

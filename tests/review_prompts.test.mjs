@@ -30,6 +30,8 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ELIGIBILITY_INSTRUCTION', /whether investment candidates are approved or rejected/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /SAME event its evidence_quotes describe/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
+    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
+    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /Both summaries report the same event and carry the same facts/],
     ['SUMMARY_STYLE_INSTRUCTION', /a month, date or percentage.*must appear in the other/],
     ['SUMMARY_STYLE_INSTRUCTION', /late-stage trial is 후기 단계 임상시험/],
     ['DATE_INSTRUCTION', /date_placement "date_pending"/],
@@ -46,7 +48,10 @@ test('judgement rules have one source and are included once in actual provider r
     /가동·생산 개시 예정일이 미래/, /추가 신규 자금/, /일반 목적 회전신용/,
     /오래 진행 중인 기존 협력의 경과·임상 결과/, /SEC Form 3/, /완료된 사업 활동도 사업동향/,
     /요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다/, /relevance_exempt=true.*target_technology_supported=true/,
+    /`summary_en`은 `summary_ko`를 번역한 것이 아니며/, /투자 시그널\(영문\).*` - ` 표제를 붙이지 않는다/,
   ]) assert.match(policy, rule);
+  // 영문에 한국어 표제를 대응시키라는 지시가 콩글리시의 출처였다(2026-09 보고서). 되돌아오면 잡는다.
+  assert.doesNotMatch(policy, /영문도 대응하는 표제/);
   // 근접 후보는 nearMissCandidate 가 코드로 정하고 보고서에 싣지 않는다. 모델에게 그 계층을 설명하지 않는다.
   assert.doesNotMatch(policy, /사람 검토/);
   assert.doesNotMatch(prompt.SYSTEM_INSTRUCTION, /Replacing, renewing|A completed acquisition|S3 precursor/);
