@@ -67,6 +67,31 @@ export function normalizeQuote(value) {
 const NAME_STOPWORDS = new Set(["the", "and", "for", "with", "from", "group", "inc", "corp",
   "ltd", "llc", "gmbh", "plc", "company", "technologies", "holdings", "limited", "based"]);
 
+// 직함은 이름이 아니다. 영어는 직함을 대문자로 적으므로 대문자 규칙만으로는 기관명과 구분되지 않는다.
+// 실행 35549566837 의 Jenoptik 이 그랬다. 독일어 원문 "Vorstandsvorsitzender" 를 정상 번역한
+// "Chief Executive Officer" 가 인용문에 그 영어 낱말이 없다는 이유로 근거 없는 이름이 됐다.
+// 기관 종류를 뜻하는 낱말(ministry, university, institute)은 넣지 않는다. 그것이 빠지면
+// 인용에 없는 기관을 새로 불러오는 요약을 놓친다.
+const ROLE_WORDS = new Set(["chief", "executive", "officer", "president", "vice", "chairman", "chairwoman",
+  "chairperson", "chair", "director", "managing", "deputy", "senior", "head", "interim", "acting",
+  "general", "manager", "board", "member", "founder", "cofounder", "partner", "secretary", "treasurer",
+  "principal", "lead", "global", "regional", "operating", "financial", "technology", "technical",
+  "commercial", "scientific", "medical", "digital", "strategy", "marketing", "sales", "human", "resources"]);
+
+// 달력 낱말도 이름이 아니다. Veolia 요약의 "August" 가 이름 검사에 걸렸다. 월 이름이 이름이 아닌 것과
+// 그 날짜에 근거가 있는지는 서로 다른 질문이라, 날짜는 ungroundedSummaryDates 가 따로 본다.
+const CALENDAR_WORDS = new Set(["january", "february", "march", "april", "june", "july", "august",
+  "september", "october", "november", "december", "monday", "tuesday", "wednesday", "thursday",
+  "friday", "saturday", "sunday", "quarter", "half", "year", "month", "week"]);
+
+// May 와 March 는 달 이름이면서 보통 낱말이고 회사 이름일 수도 있다. 달로 읽히는 자리에서만 달로 본다.
+const AMBIGUOUS_MONTH = /\b(May|March)\b(?=\s+\d|\s+of\b|\s*,\s*\d)|(?<=\b(?:in|on|by|since|until|from|during)\s)\b(?:May|March)\b/;
+
+const nameWords = (phrase) => phrase.split(/[^A-Za-z0-9]+/).filter((word) => {
+  const lower = word.toLowerCase();
+  return word.length >= 4 && !NAME_STOPWORDS.has(lower) && !ROLE_WORDS.has(lower) && !CALENDAR_WORDS.has(lower);
+});
+
 // 모델이 붙이는 " - " 앞 머리글은 항목에 이름을 붙이는 말이지 제3자에 대한 주장이 아니다.
 const summaryBody = (text) => {
   const value = clean(text);
@@ -96,10 +121,34 @@ export function summaryNames(text) {
 export function ungroundedSummaryNames(summaryEn, quotes, title) {
   const grounded = clean([...(quotes || []), title].join(" ")).toLowerCase();
   return summaryNames(summaryEn).filter((name) => {
-    const words = name.split(/[^A-Za-z0-9]+/)
-      .filter((word) => word.length >= 4 && !NAME_STOPWORDS.has(word.toLowerCase()));
+    const words = nameWords(name);
+    // 직함과 달력 낱말만 남은 구절은 이름이 아니다. 검사할 낱말이 없으면 이름으로 세지 않는다.
     return words.length > 0 && words.some((word) => !grounded.includes(word.toLowerCase()));
   });
+}
+
+// 요약이 말하는 달이 이 기사에 있는지. 예전에는 월 이름이 고유명사 검사에 걸려 우연히 막혔고,
+// 그래서 정상 번역된 직함까지 같은 검사에 걸렸다. 두 질문을 갈라 놓는다.
+// 근거는 인용문이 아니라 기사 본문 전체로 본다. 사건의 달은 기사 단위 사실이라 고른 인용문 밖에
+// 있을 수 있다. 기사 어디에도 없는 달이면 요약이 지어낸 것이다.
+const SUMMARY_MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
+  "september", "october", "november", "december"];
+export function ungroundedSummaryDates(summaryEn, evidence, title) {
+  const text = summaryBody(clean(summaryEn));
+  const grounded = clean([...(evidence || []), title].join(" ")).toLowerCase();
+  const stated = new Set();
+  for (const month of SUMMARY_MONTHS) {
+    const pattern = new RegExp(`\\b${month}\\b`, "i");
+    if (!pattern.test(text)) continue;
+    // May·March 는 달 이름이면서 보통 낱말이다. 달로 읽히는 자리에서만 센다.
+    if ((month === "may" || month === "march") && !AMBIGUOUS_MONTH.test(text)) continue;
+    if (!pattern.test(grounded)) stated.add(month[0].toUpperCase() + month.slice(1));
+  }
+  // 연-월-일 표기도 같은 기준으로 본다.
+  for (const [iso] of text.matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)) {
+    if (!grounded.includes(iso.toLowerCase())) stated.add(iso);
+  }
+  return [...stated];
 }
 
 // 요약에 적힌 숫자·금액·통화가 기사에 있는지 본다. 인용 검증은 문장이 기사에 있었다는 것만 증명하고,
@@ -368,10 +417,29 @@ export function decisionForApproval(article, decisions, decision) {
   const candidate = article.candidates.find((item) => item.id === decision.candidate_id);
   const business = decisions.find((item) => item.candidate_id === "relevant");
   if (candidate?.kind === "investment" && !candidate.relevance_exempt &&
-      decision.target_technology_supported === true && business?.target_technology_supported === false) {
+      decision.target_technology_supported === true && business?.target_technology_supported === false &&
+      sameEventAsBusiness(decision, business)) {
     return { ...decision, target_technology_supported: false };
   }
   return decision;
+}
+
+// 같은 기사라는 것만으로 같은 사건이라고 볼 수 없다. 기사 하나가 증설 발표와 다른 부문 판매 실적을
+// 함께 싣는 일이 흔하다. 두 후보가 같은 문장을 근거로 들었을 때만 같은 사건의 모순으로 본다.
+// GE Healthcare 회귀는 이 기준으로도 잡힌다. 그 건은 CT 임상 협력이라는 한 사건을 두 후보가 같은
+// 인용으로 판정했고, 사업동향만 타겟 기술이 아니라고 봤다.
+export function sameEventAsBusiness(decision, business) {
+  const quotes = (list) => new Set((list || []).map(normalizeQuote).filter(Boolean));
+  const investmentQuotes = quotes(decision.evidence_quotes);
+  const businessQuotes = quotes(business?.evidence_quotes);
+  // 어느 쪽이든 인용이 없으면 같은 사건인지 가릴 수 없다. 예전처럼 사업동향 판정을 따른다.
+  if (!investmentQuotes.size || !businessQuotes.size) return true;
+  for (const quote of investmentQuotes) {
+    for (const other of businessQuotes) {
+      if (quote === other || quote.includes(other) || other.includes(quote)) return true;
+    }
+  }
+  return false;
 }
 
 // Checks the review import boundary, then delegates report-row consistency to the existing validator.
@@ -464,6 +532,12 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       if (ungrounded.length) {
         throw new Error(`${context}: summary names ${ungrounded.join(", ")} without an evidence quote. ` +
           `Quote the passage the summary describes, or summarize only the quoted event.`);
+      }
+      // 달 이름을 고유명사 검사에서 뺀 자리를 이 검사가 메운다. 근거는 기사 본문 전체로 본다.
+      const dates = ungroundedSummaryDates(decision.summary_en, article.evidence, article.title);
+      if (dates.length) {
+        throw new Error(`${context}: summary dates ${dates.join(", ")} are not stated in this article. ` +
+          `State only a date the article itself gives.`);
       }
     }
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
