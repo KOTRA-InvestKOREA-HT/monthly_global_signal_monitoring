@@ -25,7 +25,8 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/summarize_signal_evidence.mjs`: **deprecated.** The older row-by-row summary tool, kept for diagnosis. The monthly pipeline summarises whole articles in `scripts/review_report.mjs`; this tool's prompts, provider settings and `outputs/ai_summary_cache.json` do not configure it.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
-- `scripts/build_pdf_report.py`: builds the Korean or English PDF after validation.
+- `scripts/report_content.py`: decides what goes into the report — approval, date reading, selection and prose shaping. No reportlab, no page coordinates.
+- `scripts/build_pdf_report.py`: draws the Korean or English PDF from those decisions. Re-exports `report_content`, so `build_pdf_report.<name>` still resolves for `report_view_model.py` and the tests.
 - `scripts/collect_company_signals.py`: **deprecated.** An older, much smaller Python collector kept for environments where the Node HTTPS stack is unusable. It is *not* equivalent to the Node collector: it reads only official feeds and Google News, and has none of the official-page, SEC, sitemap, article-body, publication-date grading or trend-discovery collection the report pipeline depends on. Rows it produces lack the body and date evidence the review step requires.
 - `outputs/`: generated JSON/CSV results.
 

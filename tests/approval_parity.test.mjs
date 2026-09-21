@@ -110,11 +110,13 @@ test('the JavaScript and Python approval rules agree on every input', async t =>
 test('both implementations read the approval constants from the shared config', async () => {
   assert.deepEqual(APPROVAL_POLICY.company_level_indicators, [3, 5]);
   const js = await fs.readFile('scripts/validate_report_inputs.mjs', 'utf8');
-  const py = await fs.readFile('scripts/build_pdf_report.py', 'utf8');
+  // 발행 쪽 승인 규칙은 report_content.py 에 있다. build_pdf_report.py 는 그것을 다시 내보낼 뿐이다.
+  const py = await fs.readFile('scripts/report_content.py', 'utf8');
+  const layout = await fs.readFile('scripts/build_pdf_report.py', 'utf8');
   assert.match(js, /approval_policy\.json/);
   assert.match(py, /approval_policy\.json/);
   // 예전에 양쪽에 흩어져 있던 값들이 코드로 되돌아오지 않았는지 본다.
-  for (const source of [js, py]) {
+  for (const source of [js, py, layout]) {
     assert.doesNotMatch(source, /\[1,\s*3,\s*4,\s*5\]|\{"1",\s*"3",\s*"4",\s*"5"\}/);
     assert.doesNotMatch(source, /no direct \(\?:evidence/);
   }

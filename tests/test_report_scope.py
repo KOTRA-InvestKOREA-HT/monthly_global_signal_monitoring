@@ -76,5 +76,47 @@ class CutTextTests(unittest.TestCase):
         self.assertFalse(pdf.signal_publishable(dict(row, ai_summary_en="")))
 
 
+class LayeringTests(unittest.TestCase):
+    """무엇이 실리는가(report_content)와 어디에 그리는가(build_pdf_report)의 경계."""
+
+    def test_the_content_layer_does_not_reach_for_the_page(self):
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "report_content.py").read_text(encoding="utf-8")
+        # reportlab 을 불러오면 화면·진단 쪽에서 내용 계층만 쓰는 길이 막힌다.
+        self.assertNotIn("import reportlab", source)
+        self.assertNotIn("from reportlab", source)
+        # 좌표와 색은 배치 계층의 것이다. 상수가 이쪽으로 새면 쪽 나눔 계산이 따라 넘어온다.
+        for name in ("PAGE_W", "PAGE_H", "colors.HexColor", "ITEM_SECTION_TOP", "DETAIL_BOX_TOP"):
+            self.assertNotIn(name, source, f"{name} belongs to the layout layer")
+
+    def test_the_content_layer_imports_on_its_own(self):
+        import importlib
+        module = importlib.import_module("report_content")
+        self.assertTrue(hasattr(module, "signal_supported"))
+        self.assertFalse(hasattr(module, "draw_matrix"))
+
+    def test_the_builder_still_answers_to_every_name_its_callers_use(self):
+        """report_view_model.py 와 테스트는 build_pdf_report.<이름> 으로 들어온다."""
+        for name in ("build_profiles", "signal_supported", "summary_parts", "source_line", "t",
+                     "set_language", "item_breaks", "register_fonts", "DEFAULT_ISSUE_NUMBER",
+                     "SIGNAL_DESCRIPTIONS_EN", "PAGE_W", "SIGNAL_BODY_SIZE"):
+            self.assertTrue(hasattr(pdf, name), name)
+
+    def test_the_language_is_one_value_seen_from_both_modules(self):
+        """예전에는 pdf.LANG 이 모듈 전역이라 대입도 통했다. 나눈 뒤에도 그대로여야 한다."""
+        import report_content
+        previous = pdf.LANG
+        try:
+            pdf.set_language("en")
+            self.assertEqual(pdf.LANG, "en")
+            self.assertEqual(report_content.LANG, "en")
+            self.assertEqual(pdf.t("cover_title_1"), "Target Companies")
+            # 예전에는 모듈 전역이라 대입으로도 바뀌었다. 나눈 뒤에도 같은 값을 가리켜야 한다.
+            pdf.LANG = "ko"
+            self.assertEqual(report_content.LANG, "ko")
+            self.assertEqual(pdf.t("cover_title_1"), "타겟기업")
+        finally:
+            pdf.set_language(previous)
+
+
 if __name__ == "__main__":
     unittest.main()

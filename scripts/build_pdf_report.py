@@ -1,10 +1,18 @@
+"""월간 보고서 PDF 를 그린다.
+
+무엇이 실리는지는 scripts/report_content.py 가 정한다. 이 파일은 그 결과를 페이지 위에 놓는
+일만 한다: 색과 글꼴, 좌표와 여백, 줄바꿈과 잘림, 표와 카드, 쪽 나눔.
+
+내용 계층을 그대로 다시 내보내므로 build_pdf_report.<이름> 은 예전과 같이 쓸 수 있다.
+scripts/report_view_model.py 와 테스트가 그 이름들로 들어온다.
+"""
+
 import argparse
 import json
 import re
 import sys
 import tempfile
-from collections import defaultdict
-from datetime import date, datetime, timedelta, timezone
+import types
 from pathlib import Path
 
 from reportlab.lib import colors
@@ -12,6 +20,25 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont as ReportLabTTFont
 from reportlab.pdfgen import canvas
+
+import report_content
+from report_content import *  # noqa: F401,F403  내용 계층을 그대로 다시 내보낸다.
+
+
+# LANG 은 set_language 가 바꾸는 값이다. 여느 이름처럼 가져다 두면 사본이 생겨, 언어를 바꾼
+# 뒤에도 이쪽에는 옛 값이 남는다. 읽기도 쓰기도 내용 계층을 거치게 해서 두 모듈이 언제나 같은
+# 언어를 본다. report_view_model 은 build_pdf_report.LANG 을 읽고 테스트는 거기에 대입한다.
+class _LanguageAwareModule(types.ModuleType):
+    @property
+    def LANG(self):
+        return report_content.LANG
+
+    @LANG.setter
+    def LANG(self, value):
+        report_content.LANG = value
+
+
+sys.modules[__name__].__class__ = _LanguageAwareModule
 
 
 PAGE_W = 7.5 * 72
@@ -30,9 +57,6 @@ TEXT = colors.HexColor("#10243E")
 MUTED = colors.HexColor("#6B7688")
 GREY_TEXT = colors.HexColor("#8591A3")
 WHITE = colors.white
-
-DEFAULT_ISSUE_NUMBER = "2"
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
 KOTRA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "kotra_logo_white.png"
 INVEST_KOREA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "invest_korea_logo_white.png"
 # Role names are kept from the earlier Noto Sans KR cuts; "demilight" is the body text weight.
@@ -49,762 +73,6 @@ FONT_FILES = {
     "semibold": "PretendardJP-SemiBold.ttf",
     "extrabold": "PretendardJP-ExtraBold.ttf",
 }
-
-
-def normalize_company_key(value):
-    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
-
-
-EXEMPT_COMPANIES = {
-    "Prodrive",
-    "JSR",
-    "Applied Materials",
-    "Amkor Technology",
-    "Heraeus",
-    "Toray",
-    "3M",
-    "Air Liquide",
-    "Air Products",
-}
-
-COUNTRY_BY_COMPANY = {
-    "Australian Strategic Metals": "호주",
-    "Cognex": "미국",
-    "Corning": "미국",
-    "Charles River": "미국",
-    "Cytiva": "미국",
-    "Moderna": "미국",
-    "West Pharmaceutical": "미국",
-    "Dupont": "미국",
-    "Albemarle": "미국",
-    "TIMET": "미국",
-    "Air Products": "미국",
-    "Chemours": "미국",
-    "BorgWarner": "미국",
-    "DOW": "미국",
-    "Thermo Fisher": "미국",
-    "Amkor Technology": "미국",
-    "Onsemi": "미국",
-    "Qualcomm": "미국",
-    "Skyworks": "미국",
-    "Eli Lilly and Company": "미국",
-    "GE Healthcare": "미국",
-    "Boeing": "미국",
-    "3M": "미국",
-    "Ouster": "미국",
-    "Applied Materials": "미국",
-    "Magnix": "미국",
-    "Prodrive": "네덜란드",
-    "ASML": "네덜란드",
-    "Besi": "네덜란드",
-    "NXP": "네덜란드",
-    "Norsk Hydro": "노르웨이",
-    "Vestas": "덴마크",
-    "Heidenhain": "독일",
-    "Infineon": "독일",
-    "Schmalz": "독일",
-    "Bayer": "독일",
-    "Merck": "독일",
-    "Schott Pharma": "독일",
-    "BASF": "독일",
-    "Evonik Industries": "독일",
-    "Heraeus": "독일",
-    "Jenoptik": "독일",
-    "EMM(Umicore)": "벨기에",
-    "Umicore": "벨기에",
-    "Solvay": "벨기에",
-    "Syensqo": "벨기에",
-    "Hexagon AB": "스웨덴",
-    "ABB": "스위스",
-    "Maxon": "스위스",
-    "Siemens-Gamesa": "스페인",
-    "Renishaw": "영국",
-    "Nexeon": "영국",
-    "Rio Tinto": "영국",
-    "HyproMag": "영국",
-    "EVG": "오스트리아",
-    "Plansee": "오스트리아",
-    "Texcell": "프랑스",
-    "Veolia": "프랑스",
-    "Airbus": "프랑스",
-    "Safran": "프랑스",
-    "Air Liquide": "프랑스",
-    "Arkema": "프랑스",
-    "DNP": "일본",
-    "Hitachi Metals": "일본",
-    "Toppan Holdings": "일본",
-    "Nabtesco": "일본",
-    "Asahi Glass": "일본",
-    "JSR": "일본",
-    "Shin-Etsu Chemicals": "일본",
-    "Tokyo Electron": "일본",
-    "Tosoh": "일본",
-    "Mitsubishi Chemical": "일본",
-    "Sumitomo Chemical": "일본",
-    "Asahi Kasei": "일본",
-    "Toray": "일본",
-    "Cheng Uei Precision": "대만",
-    "Shanghai Electric Wind Power": "중국",
-}
-
-DETAILED_INDUSTRY_BY_GROUP = {
-    "rare_earth_magnet_recycling": "희토류 자석 재활용",
-    "3d_vision_sensor": "머신비전·센서",
-    "euv_blank_mask": "반도체 마스크 소재",
-    "virus_validation_mcb_wcb": "바이오 분석·안전성 시험",
-    "bioprocess_culture_purification": "바이오공정 장비·소재",
-    "gene_cell_therapy_delivery_gmp": "세포·유전자 치료제",
-    "autoinjector_pfs_fill_finish": "의약품 전달·충전",
-    "ag_al_paste": "태양전지 전극소재",
-    "lithium_cathode_materials": "이차전지 핵심소재",
-    "nonferrous_scrap_recycling": "비철금속 재활용",
-    "hexamethylenediamine_hmd": "화학 플랫폼 원료",
-    "ion_exchange_membrane": "첨단막 소재",
-    "autonomous_imu_rf_baseband": "자율주행 반도체",
-    "semiconductor_thermal_material": "반도체 패키징",
-    "autonomous_camera_isp": "자율주행 센싱",
-    "aerospace_electric_propulsion": "항공기·친환경 추진체계",
-    "robot_lidar": "로봇용 라이다",
-    "hybrid_bonding_w2w": "첨단 패키징 장비",
-    "euv_lithography": "반도체 노광장비",
-    "satellite_radar_rf_semiconductor": "우주항공 RF 반도체",
-    "offshore_wind_turbine": "해상풍력 터빈",
-    "linear_scale": "정밀 위치계측",
-    "robot_reducer": "로봇 정밀구동",
-    "pharma_excipient": "의약품 소재",
-    "precipitated_silica_tire": "친환경 실리카",
-    "silicon_anode_sic": "이차전지 음극재",
-    "pvdf": "이차전지 바인더 소재",
-    "metal_target_ti_ta": "반도체 금속타겟",
-    "fine_metal_mask": "디스플레이 소재",
-    "tgv_glass_substrate": "반도체 유리기판",
-}
-
-SIGNAL_DESCRIPTIONS = {
-    1: "공급망·지정학 리스크 대응 · 공급망 재편·지정학 리스크 발생 및 대응 등",
-    2: "생산 확대 및 다변화 의지 · 증설·거점 다변화 검토·타당성 조사 등",
-    3: "투자 재원 확보 · 회사채·증자·신용공여 등 대규모 자금 조달",
-    4: "기술 생태계 밀착 (R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등",
-    5: "핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등",
-}
-
-# 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
-SIGNAL_DESCRIPTIONS_EN = {
-    1: "Supply Chain & Geopolitical Risk · risk events, responses",
-    2: "Production Expansion & Diversification · site reviews",
-    3: "Capital Securing & Financing · bonds, equity, credit lines",
-    4: "Tech Ecosystem Engagement (R&D) · joint research, PoC",
-    5: "Strategic Executive Move · C-level moves, due diligence",
-}
-
-INDICATOR_DESCRIPTION_EN = {
-    1: "Dependence reduction, diversification, regulatory risk, etc.",
-    2: "APAC expansion reviews, feasibility studies, etc.",
-    3: "Large bond issues, equity raises, credit lines, etc.",
-    4: "Joint research, licensing, PoC matching, equity, etc.",
-    5: "C-level moves, quiet visits, due-diligence signs, etc.",
-}
-
-COUNTRY_EN = {
-    "호주": "Australia",
-    "미국": "USA",
-    "네덜란드": "Netherlands",
-    "노르웨이": "Norway",
-    "덴마크": "Denmark",
-    "독일": "Germany",
-    "벨기에": "Belgium",
-    "스웨덴": "Sweden",
-    "스위스": "Switzerland",
-    "스페인": "Spain",
-    "영국": "UK",
-    "오스트리아": "Austria",
-    "프랑스": "France",
-    "일본": "Japan",
-    "대만": "Taiwan",
-    "중국": "China",
-}
-
-DETAILED_INDUSTRY_EN = {
-    "rare_earth_magnet_recycling": "Rare-earth magnet recycling",
-    "3d_vision_sensor": "Machine vision & sensors",
-    "euv_blank_mask": "EUV mask materials",
-    "virus_validation_mcb_wcb": "Bioanalysis & safety testing",
-    "bioprocess_culture_purification": "Bioprocess equipment",
-    "gene_cell_therapy_delivery_gmp": "Cell & gene therapy",
-    "autoinjector_pfs_fill_finish": "Drug delivery & fill-finish",
-    "ag_al_paste": "Solar electrode materials",
-    "lithium_cathode_materials": "Battery cathode materials",
-    "nonferrous_scrap_recycling": "Non-ferrous metal recycling",
-    "hexamethylenediamine_hmd": "Chemical platform feedstock",
-    "ion_exchange_membrane": "Advanced membranes",
-    "autonomous_imu_rf_baseband": "Autonomous driving chips",
-    "semiconductor_thermal_material": "Semiconductor packaging",
-    "autonomous_camera_isp": "Autonomous driving sensing",
-    "aerospace_electric_propulsion": "Aircraft & clean propulsion",
-    "robot_lidar": "Robotics LiDAR",
-    "hybrid_bonding_w2w": "Advanced packaging",
-    "euv_lithography": "Semiconductor lithography",
-    "satellite_radar_rf_semiconductor": "Aerospace RF chips",
-    "offshore_wind_turbine": "Offshore wind turbines",
-    "linear_scale": "Precision position metrology",
-    "robot_reducer": "Robot precision drives",
-    "pharma_excipient": "Pharmaceutical materials",
-    "precipitated_silica_tire": "Eco-friendly silica",
-    "silicon_anode_sic": "Battery anode materials",
-    "pvdf": "Battery binder materials",
-    "metal_target_ti_ta": "Semiconductor targets",
-    "fine_metal_mask": "Display materials",
-    "tgv_glass_substrate": "Glass core substrates",
-}
-
-MONTH_NAMES_EN = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-]
-
-TEXTS = {
-    "ko": {
-        "footer": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
-        "cover_title_1": "타겟기업",
-        "cover_title_2": "글로벌 투자시그널",
-        "cover_title_3": "모니터링",
-        "cover_line_1": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
-        "cover_line_2": "기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반",
-        "cover_indicator_heading": "5대 투자동향 지표",
-        "matrix_title": "이번 달 시그널 매트릭스",
-        "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
-        "matrix_company": "기업",
-        "matrix_legend_on": "AI 확인 시그널",
-        "matrix_legend_off": "신호없음",
-        "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        "matrix_footnote": "AI 확인 시그널 {on}개사 · 신호없음 {off}개사",
-        "detail_title": "기업별 시그널 상세",
-        "no_signal": "이번 달 해당 신호 없음",
-        "business_heading": "글로벌 사업현황",
-        "business_empty": "해당 기간 공식 출처에서 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않음.",
-        "source_prefix": "출처",
-        "source_fallback": "수집 출처",
-        "source_empty": "출처  —",
-        "source_press_release": "공식보도자료",
-        "item_title": "품목별 글로벌 사업동향",
-        "item_target_label": "투자유치 필요 품목·기술",
-        "item_trend_label": "{month} 글로벌 사업동향",
-        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 기술 관련성 확인 면제 기업은 품목 연계와 별개로 주요 사업동향을 싣고 카드에 표시함. 향후 시그널 발전 가능성을 모니터링함.",
-        "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
-    },
-    "en": {
-        "footer": "Invest KOREA · Target-Company Global Investment Signal Monitor · {issue}",
-        "cover_title_1": "Target Companies",
-        "cover_title_2": "Global Investment Signals",
-        "cover_title_3": "Monitor",
-        "cover_line_1": "30 Major Investment-Attraction Projects (MOTIE) · 77 Target Companies",
-        "cover_line_2": "Five investment signals per company · Pre-confirmation indicators only",
-        "cover_indicator_heading": "FIVE LEADING SIGNAL INDICATORS",
-        "matrix_title": "This Month's Signal Matrix",
-        "matrix_desc": "Investment signals (pre-confirmation) across the 77 target companies for {period}. A highlighted cell marks a signal detected during the month; lagging data such as completed deals are excluded.",
-        "matrix_company": "Company",
-        "matrix_legend_on": "AI-confirmed signal",
-        "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move",
-        "matrix_footnote": "{on} companies with AI-confirmed signals · {off} with no signal",
-        "detail_title": "Company Signal Details",
-        "no_signal": "No signal this month",
-        "business_heading": "GLOBAL BUSINESS STATUS",
-        "business_empty": "No global business activity could be summarised from official sources for this period.",
-        "source_prefix": "Source",
-        "source_fallback": "Collected source",
-        "source_empty": "Source  —",
-        "source_press_release": "Official press release",
-        "item_title": "Item-Linked Global Business Trends",
-        "item_target_label": "Target item/tech",
-        "item_trend_label": "{month} global business trend",
-        "item_note": "Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was detected in {month}. For companies exempt from the technology-link check, key business activity is shown and the card says so. Monitored for potential signal development.",
-        "item_exempt_note": "Technology-link check exempt · key business activity",
-    },
-}
-
-LANG = "ko"
-
-
-def set_language(lang):
-    global LANG
-    LANG = "en" if str(lang or "").strip().lower() in ("en", "eng", "english") else "ko"
-    return LANG
-
-
-def t(key, **kwargs):
-    text = TEXTS.get(LANG, TEXTS["ko"]).get(key) or TEXTS["ko"].get(key, "")
-    return text.format(**kwargs) if kwargs else text
-
-
-def summary_field(row, name):
-    """언어별 AI 요약 필드를 고른다. 영문판에서 영문 요약이 없으면 국문으로 대체하지 않는다."""
-    suffix = "en" if LANG == "en" else "ko"
-    return row.get(f"{name}_{suffix}") or ""
-
-
-def load_json(path, fallback):
-    try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    except FileNotFoundError:
-        return fallback
-
-
-def parse_datetime(value):
-    if not value:
-        return None
-    try:
-        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-    except Exception:
-        return None
-
-
-def parse_date_only(value):
-    if not value:
-        return None
-    try:
-        return datetime.strptime(str(value)[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    except Exception:
-        return None
-
-
-def format_date(value):
-    dt = parse_datetime(value)
-    if dt:
-        return dt.strftime("%Y.%m.%d")
-    return str(value or "-")[:10]
-
-
-# 게시일 근거의 등급은 config/date_evidence_sources.json에서 수집·검토 경로(JS)와 공유한다.
-# 같은 기사가 화면과 보고서에서 다르게 취급되지 않으려면 기준이 한 곳에 있어야 한다.
-try:
-    with open(PROJECT_ROOT / "config" / "date_evidence_sources.json", encoding="utf-8") as _handle:
-        CONFIRMED_DATE_SOURCES = set(json.load(_handle)["confirmed"])
-except OSError as error:
-    # 빈 목록으로 넘어가면 모든 행이 추정으로 밀려 보고서가 조용히 비어버린다. 여기서 멈추는 편이 낫다.
-    raise RuntimeError(f"config/date_evidence_sources.json is required to grade publication dates: {error}") from error
-
-# 승인 규칙의 상수는 config/approval_policy.json 에서 판정·검증 경로(JS)와 공유한다.
-# 예전에는 scripts/validate_report_inputs.mjs 와 이 파일이 같은 값을 각자 들고 있어서,
-# 지표 3·5 의 품목 연결 해제처럼 규칙이 바뀔 때마다 양쪽을 함께 고쳐야 했다. 한쪽을
-# 놓치면 검증을 통과한 행을 발행 단계가 말없이 떨어뜨린다.
-try:
-    with open(PROJECT_ROOT / "config" / "approval_policy.json", encoding="utf-8") as _handle:
-        APPROVAL_POLICY = json.load(_handle)
-except OSError as error:
-    raise RuntimeError(f"config/approval_policy.json is required to decide approvals: {error}") from error
-
-LEADING_STAGES = set(APPROVAL_POLICY["leading_stages"])
-PRECURSOR_INDICATORS = {str(no) for no in APPROVAL_POLICY["precursor_indicators"]}
-COMPANY_LEVEL_INDICATORS = {str(no) for no in APPROVAL_POLICY["company_level_indicators"]}
-BUSINESS_STAGE = APPROVAL_POLICY["business_stage"]
-DENIAL_PATTERNS = tuple(APPROVAL_POLICY["relevance_denial_patterns"])
-
-MONTH_ONLY = re.compile(r"^(20\d{2})-(0[1-9]|1[0-2])$")
-
-
-def date_day(value):
-    text = str(value or "").strip()
-    if not text or MONTH_ONLY.match(text):
-        return None
-    dt = parse_datetime(text)
-    if not dt:
-        return None
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc).date()
-
-
-def date_month(row):
-    day = date_day(row.get("published_at"))
-    if day:
-        return f"{day.year:04d}-{day.month:02d}"
-    for value in (row.get("published_month"), row.get("published_at")):
-        text = str(value or "").strip()
-        if MONTH_ONLY.match(text):
-            return text
-    return ""
-
-
-# 확정: 기사 자신이 밝힌 게시일이나 기사 항목에 붙은 공식 목록 날짜.
-# 추정: URL·본문·수정일처럼 게시일을 미루어 짐작한 근거. 충돌: 확정 근거끼리 어긋남. 미상: 근거 없음.
-# 근거 추적 이전에 모은 자료는 published_at_source 필드가 없고 그때의 날짜는 피드 게시일뿐이었다.
-def date_state(row):
-    day = date_day(row.get("published_at"))
-    month = date_month(row)
-    if not day and not month:
-        return {"status": "unknown", "precision": "none", "day": None, "month": ""}
-    tracked = "published_at_source" in row
-    source = str(row.get("published_at_source") or "")
-    grade = "confirmed" if (not tracked or source in CONFIRMED_DATE_SOURCES) else "estimated"
-    status = "conflicting" if row.get("date_conflict") is True else grade
-    return {"status": status, "precision": "day" if day else "month", "day": day, "month": month}
-
-
-def month_bounds(month):
-    start = date(int(month[:4]), int(month[5:7]), 1)
-    end = date(start.year + (1 if start.month == 12 else 0), 1 if start.month == 12 else start.month + 1, 1)
-    return start, end - timedelta(days=1)
-
-
-# 월간 보고서 본문에 쓸 수 있는 행인지 본다. 게시월까지 확정된 행만 통과한다.
-# 추정·충돌·미상 행은 원본과 웹 화면에 남아 검토 후보가 되고, 날짜를 보강한 뒤에 본문에 들어온다.
-def row_in_report_period(row, start, end):
-    state = date_state(row)
-    if state["status"] != "confirmed":
-        return False
-    if state["precision"] == "day":
-        return start.date() <= state["day"] <= end.date()
-    month_start, month_end = month_bounds(state["month"])
-    return start.date() <= month_start and month_end <= end.date()
-
-
-def format_row_date(row):
-    state = date_state(row)
-    if state["precision"] != "month":
-        return format_date(row.get("published_at"))
-    year, month = state["month"].split("-")
-    if LANG == "en":
-        return f"{MONTH_NAMES_EN[int(month) - 1]} {year} (day unknown)"
-    return f"{year}.{int(month)}. 일자 미상"
-
-
-def issue_month(summary):
-    to_date = parse_date_only(summary.get("to_date"))
-    if to_date:
-        year = to_date.year + (1 if to_date.month == 12 else 0)
-        month = 1 if to_date.month == 12 else to_date.month + 1
-    else:
-        dt = parse_datetime(summary.get("run_started_at")) or datetime.now(timezone.utc)
-        dt = dt.astimezone(timezone(timedelta(hours=9)))
-        year, month = dt.year, dt.month
-    if LANG == "en":
-        return f"{MONTH_NAMES_EN[month - 1]} {year}"
-    return f"{year}.{month:02d}"
-
-
-def report_period(summary):
-    from_date = parse_date_only(summary.get("from_date"))
-    to_date = parse_date_only(summary.get("to_date"))
-    if from_date and to_date:
-        return from_date, to_date
-
-    dt = parse_datetime(summary.get("run_started_at")) or datetime.now(timezone.utc)
-    local = dt.astimezone(timezone(timedelta(hours=9)))
-    first_this_month = local.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    last_prev_month = first_this_month - timedelta(days=1)
-    first_prev_month = last_prev_month.replace(day=1)
-    return first_prev_month, last_prev_month
-
-
-def compact_date(dt, include_year=True):
-    if include_year:
-        return f"{dt.year}.{dt.month}.{dt.day}"
-    return f"{dt.month}.{dt.day}"
-
-
-def matrix_period_label(summary):
-    start, end = report_period(summary)
-    end_text = compact_date(end, include_year=start.year != end.year)
-    if LANG == "en":
-        return f"{MONTH_NAMES_EN[start.month - 1]} ({compact_date(start)}~{end_text})"
-    return f"{start.month}월({compact_date(start)}~{end_text})"
-
-
-def report_month_label(summary):
-    start, _ = report_period(summary)
-    if LANG == "en":
-        return MONTH_NAMES_EN[start.month - 1]
-    return f"{start.month}월"
-
-
-def filter_rows_by_report_period(rows, summary):
-    if not summary.get("from_date") or not summary.get("to_date"):
-        return rows
-    start, end = report_period(summary)
-    return [row for row in rows if row_in_report_period(row, start, end)]
-
-
-def short_text(value, limit):
-    text = " ".join(str(value or "").replace("&nbsp;", " ").split())
-    if len(text) <= limit:
-        return text
-    head = text[: max(0, limit - 3)].rstrip()
-    # 영문은 단어 중간에서 끊기면 뜻이 깨진다. short_text_to_width 가 이미 하는 일을
-    # 글자 수로 자를 때도 한다. 다만 되돌린 만큼이 너무 크면(한 낱말이 통째로 길면)
-    # 그대로 둔다. 공백이 없는 한국어 문장을 통째로 날리지 않기 위해서다.
-    spaced = head.rsplit(" ", 1)[0].rstrip() if " " in head else head
-    if len(spaced) >= len(head) * 0.6:
-        head = spaced
-    return head + "..."
-
-
-def clean_text(value):
-    text = str(value or "").replace("&nbsp;", " ")
-    text = re.sub(r"\s+", " ", text).strip()
-    boilerplate = [
-        "Skip to main navigation",
-        "Investor Relations",
-        "News Release",
-        "PDF Version",
-        "View printer-friendly version",
-    ]
-    for phrase in boilerplate:
-        text = text.replace(phrase, " ")
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def normalize_summary_text(value):
-    text = clean_text(value)
-    replacements = [
-        ("중순수%", "한 자릿수 중반대"),
-        ("저순수%", "한 자릿수 초반대"),
-        ("고순수%", "한 자릿수 후반대"),
-        ("중순수", "한 자릿수 중반대"),
-        ("저순수", "한 자릿수 초반대"),
-        ("고순수", "한 자릿수 후반대"),
-        ("중반 두 자릿수", "두 자릿수 중반대"),
-        ("초반 두 자릿수", "두 자릿수 초반대"),
-        ("후반 두 자릿수", "두 자릿수 후반대"),
-        ("중반대 두 자릿수", "두 자릿수 중반대"),
-        ("초반대 두 자릿수", "두 자릿수 초반대"),
-        ("후반대 두 자릿수", "두 자릿수 후반대"),
-        ("उपलब्ध성", "가용성"),
-    ]
-    for source, target in replacements:
-        text = text.replace(source, target)
-    return text.strip()
-
-
-def strip_summary_lead(value, row=None):
-    text = normalize_summary_text(value)
-    company = clean_text((row or {}).get("company"))
-    if company:
-        text = re.sub(rf"^{re.escape(company)}(은|는|이|가)\s+", "", text)
-    text = re.sub(r"^[A-Za-z0-9().&/-]+(?:\s+[A-Za-z0-9().&/-]+){0,3}(은|는|이|가)\s+", "", text)
-    text = re.sub(r"^[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는|이|가)\s+", "", text)
-    text = re.sub(r"^(이는|다만|또한)\s+", "", text)
-    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
-    return text.strip()
-
-
-def phrase_ending_text(value):
-    text = clean_text(value)
-    replacements = [
-        (r"확인되지\s+(않았다|않는다)$", "확인되지 않음"),
-        (r"제시되지\s+(않았다|않는다)$", "제시되지 않음"),
-        (r"나타나지\s+(않았다|않는다)$", "나타나지 않음"),
-        (r"부족하다$", "부족"),
-        (r"필요하다$", "필요"),
-        (r"계획이다$", "계획"),
-        (r"예정이다$", "예정"),
-        (r"목표로\s+하고\s+있다$", "목표"),
-        (r"추진\s+중이다$", "추진"),
-        (r"검토\s+중이다$", "검토"),
-        (r"진행\s+중이다$", "진행"),
-        (r"이어지고\s+있다$", "지속"),
-        (r"진행하고\s+있다$", "진행"),
-        (r"추진하고\s+있다$", "추진"),
-        (r"검토하고\s+있다$", "검토"),
-        (r"보여준다$", "시사"),
-        (r"시사한다$", "시사"),
-        (r"해석된다$", "해석"),
-        (r"판단된다$", "판단"),
-        (r"예상된다$", "예상"),
-        (r"확인된다$", "확인"),
-        (r"확인됐다$", "확인"),
-        (r"나타났다$", "확인"),
-        (r"언급됐다$", "언급"),
-        (r"언급했다$", "언급"),
-        (r"발표됐다$", "발표"),
-        (r"발표했다$", "발표"),
-        (r"공개했다$", "공개"),
-        (r"밝혔다$", "공개"),
-        (r"체결했다$", "체결"),
-        (r"서명했다$", "서명"),
-        (r"선임했다$", "선임"),
-        (r"인수했다$", "인수"),
-        (r"완료했다$", "완료"),
-        (r"가동했다$", "가동"),
-        (r"기록했다$", "기록"),
-        (r"제공한다$", "제공"),
-        (r"제공했다$", "제공"),
-        (r"지원한다$", "지원"),
-        (r"지원했다$", "지원"),
-        (r"적용한다$", "적용"),
-        (r"적용했다$", "적용"),
-        (r"수용했다$", "수용"),
-        (r"확대한다$", "확대"),
-        (r"확대했다$", "확대"),
-        (r"강화한다$", "강화"),
-        (r"강화했다$", "강화"),
-        (r"구축한다$", "구축"),
-        (r"구축했다$", "구축"),
-        (r"개발한다$", "개발"),
-        (r"개발했다$", "개발"),
-        (r"운영한다$", "운영"),
-        (r"운영했다$", "운영"),
-        (r"있다$", ""),
-        (r"없다$", "없음"),
-        (r"된다$", ""),
-        (r"됐다$", ""),
-        (r"한다$", ""),
-        (r"했다$", ""),
-        (r"이다$", ""),
-    ]
-    for source, target in replacements:
-        text = re.sub(source, target, text)
-    return text.strip()
-
-
-def phraseify_summary_text(value, row=None):
-    # 아래 규칙은 한국어 조사·종결어미 정리용이라 영문에는 적용하지 않는다.
-    if LANG != "ko":
-        return clean_text(value)
-    connector_map = {
-        "구축하고": "구축",
-        "확보하고": "확보",
-        "강화하고": "강화",
-        "확대하고": "확대",
-        "공급하고": "공급",
-        "체결하고": "체결",
-        "수행하고": "수행",
-        "협력하고": "협력",
-        "진행하고": "진행",
-        "도입하고": "도입",
-        "설치하고": "설치",
-        "시연하고": "시연",
-        "개발하고": "개발",
-        "운영하고": "운영",
-        "공개하고": "공개",
-        "투자하고": "투자",
-        "언급하고": "언급",
-        "기록하고": "기록",
-        "가동하고": "가동",
-        "완료하고": "완료",
-        "발표하고": "발표",
-        "제공하며": "제공",
-        "적용하며": "적용",
-        "추진하며": "추진",
-        "검토하며": "검토",
-        "밝혔으며": "공개",
-        "발표했으며": "발표",
-        "체결했으며": "체결",
-        "기록했으며": "기록",
-        "확인했으며": "확인",
-    }
-    text = strip_summary_lead(value, row)
-    text = re.sub(r"([A-Za-z][A-Za-z0-9().·&/-]*)의\s+", r"\1 ", text)
-    connector_pattern = "|".join(re.escape(key) for key in connector_map)
-    text = re.sub(
-        rf"({connector_pattern})(,\s*|\s+|$)",
-        lambda match: f"{connector_map[match.group(1)]}{', ' if ',' in match.group(2) else ' '}",
-        text,
-    )
-    text = re.sub(r"영향을\s+(줄|미칠)\s+수\s+있다고\s+밝혔다", "영향 가능성 언급", text)
-    text = re.sub(r"수\s+있다고\s+밝혔다", "가능성 언급", text)
-    text = re.sub(r"됐다고\s+(공개|발표|언급)", r" \1", text)
-    text = re.sub(r"했다고\s+(공개|발표|언급)", r" \1", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)(됐|되었|했다|였다|었다|았다)고\s+(공개|발표|언급)", r"\1 \3", text)
-    text = re.sub(r"(이라고 밝혔다|라고 밝혔다|다고 밝혔다|다고 발표했다|다고 설명했다|으로 확인됐다|로 확인됐다|이 확인됐다|가 확인됐다|를 확인했다|을 확인했다)", "", text)
-    text = re.sub(r"\s+(다만|또한|그리고)\s+", ", ", text)
-    pieces = [part for sentence in sentence_spans(text) for part in re.split(r"\s*;\s*", sentence)]
-    clauses = [
-        phrase_ending_text(re.sub(r"^(이는|다만|또한|그리고)\s+", "", re.sub(r"[.!?。]+$", "", clause.strip())))
-        for clause in pieces
-    ]
-    text = ", ".join(clause for clause in clauses if clause)
-    text = re.sub(r"\s*,\s*,\s*", ", ", text)
-    text = re.sub(r"(을|를)\s+(발표|공개|추진|검토|확보|제공|지원|적용|수용|확대|강화|구축|개발|운영|체결|서명|선임|인수|완료|가동|기록|시연|도입)(?=,|$)", r" \2", text)
-    text = re.sub(r"(을|를)\s+단계적으로\s+추진", " 단계적 추진", text)
-    text = re.sub(r"확대할\s+계획", "확대 계획", text)
-    text = re.sub(r"(을|를)\s+위험요인으로\s+언급", " 위험요인 언급", text)
-    text = re.sub(r"영향을\s+위험요인으로\s+언급", "영향 위험요인 언급", text)
-    text = re.sub(r"(에|에서|와|과|으로|로)\s+(서명|참여|협력|착수|진입|진출|투자|가동|운영|적용)(?=,|$)", r" \2", text)
-    text = re.sub(r"(이|가|은|는)\s+(확인|예상|증가|감소|지속|필요|부족|완료)(?=,|$)", r" \2", text)
-    text = re.sub(r"(재활용|가동|확보|활용|도입|설치|시연|개발|운영|제공|적용|수행|체결|추진|완료)해\s+", r"\1·", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하는\s+", r"\1 ", text)
-    text = re.sub(r"([가-힣A-Za-z0-9/·().-]+)하려는\s+움직임으로\s+해석", r"\1 움직임", text)
-    text = text.replace("계획은 확인되지 않음", "계획 확인되지 않음")
-    text = text.replace("사실은 확인되지 않음", "사실 확인되지 않음")
-    text = text.replace("근거는 확인되지 않음", "근거 확인되지 않음")
-    text = text.replace("내용은 확인되지 않음", "내용 확인되지 않음")
-    text = text.replace("관련성은 확인되지 않음", "관련성 확인되지 않음")
-    text = text.replace("직접 연계는 확인되지 않음", "직접 연계 확인되지 않음")
-    text = text.replace("직접적 연관성은 확인되지 않음", "직접 연관성 확인되지 않음")
-    text = text.replace("연계도 확인되지 않음", "연계 확인되지 않음")
-    text = re.sub(r",\s+[가-힣A-Za-z0-9().·&/-]+(?:와\s+[가-힣A-Za-z0-9().·&/-]+)?(은|는)\s+", ", ", text)
-    text = text.replace("가능성을 시사", "가능성")
-    text = re.sub(r",\s*(다만|또한)\s+", ", ", text)
-    text = re.sub(r"\s*·\s*", "·", text)
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def compact_summary_phrase(value, limit=90, row=None):
-    return short_text(phraseify_summary_text(value, row), limit)
-
-
-def summary_detail_text(value, limit=230):
-    """표제 아래 상세 문장. 표제용 명사형 압축을 걸지 않는다.
-
-    phraseify_summary_text 는 "개발하고"를 "개발"로, "활용해"를 "활용·"로 바꾸고 문장 앞 주어를 떼어
-    짧은 표제를 만든다. 같은 규칙을 상세 문장에 걸면 2026-08 보고서(9월 14일 실행)의 Moderna 칸처럼
-    "인티스메란을 개발 면역항암제 키트루다와 병용 연구를 공동으로 진행함"이 되고, 주어였던 머크도 사라진다.
-    """
-    return short_text(clean_text(value), limit)
-
-
-def summary_parts(row):
-    headline_limit = 110 if LANG == "en" else 58
-    # 본문이 최대 6줄까지 늘어날 수 있으므로 글자 수 상한이 먼저 걸리지 않게 잡는다.
-    # 실제로 몇 줄을 싣을지는 draw_summary_text가 폭으로 판단한다.
-    detail_limit = 440 if LANG == "en" else 230
-    headline = compact_summary_phrase(summary_field(row, "ai_summary_headline"), headline_limit, row)
-    detail = summary_detail_text(summary_field(row, "ai_summary_detail"), detail_limit)
-    if headline or detail:
-        return {
-            "headline": headline or compact_summary_phrase(summary_field(row, "ai_summary"), headline_limit, row),
-            "detail": detail,
-        }
-
-    text = normalize_summary_text(summary_field(row, "ai_summary"))
-    if not text:
-        return None
-
-    # 앞부분을 표제로 떼어 낼 때는 그 앞부분이 표제 상한 안에 들어갈 때만 나눈다. 넘치는 앞부분을 잘라
-    # 표제로 쓰면 문장 한가운데가 "..."로 끊긴다. 2026-08 영문판의 "…in Singapore with the..."가
-    # 그랬다. "표제 - 상세" 구분 없이 한 문장으로 온 영문 요약의 첫 쉼표 앞이 110자를 넘었다.
-    def fits_headline(part):
-        return len(phraseify_summary_text(part, row)) <= headline_limit
-
-    dashed = re.split(r"\s[-–—]\s", text)
-    if len(dashed) >= 2 and fits_headline(dashed[0]):
-        return {
-            "headline": compact_summary_phrase(dashed[0], headline_limit, row),
-            "detail": summary_detail_text(" - ".join(dashed[1:]), detail_limit),
-        }
-
-    sentences = sentence_spans(text)
-    if len(sentences) >= 2 and fits_headline(sentences[0]):
-        return {
-            "headline": compact_summary_phrase(sentences[0], headline_limit, row),
-            "detail": summary_detail_text(" ".join(sentences[1:]), detail_limit),
-        }
-
-    # 쉼표에서는 나누지 않는다. 쉼표 앞은 대개 주어나 고유명사일 뿐이다. 2026-08 영문판에서
-    # "GUSS Automation, a wholly owned subsidiary of John Deere, plans ..."는 "GUSS Automation"이,
-    # "University of California, Berkeley"는 "University of California"가 표제로 떨어졌다.
-    # 나눌 곳이 없으면 요약 전체를 한 문장으로 싣는다.
-    return {"headline": summary_detail_text(text, detail_limit), "detail": ""}
-
-
-def summary_plain_text(row):
-    parts = summary_parts(row)
-    if not parts:
-        return ""
-    if parts["detail"]:
-        return f"{parts['headline']} — {parts['detail']}"
-    return parts["headline"]
 
 
 def wrap_text(canvas_obj, text, max_width, font_name, font_size):
@@ -884,29 +152,6 @@ def short_text_to_width(canvas_obj, text, max_width, font_name, font_size, slot=
     return head + suffix if head else suffix
 
 
-# 문장 끝. 마침표는 뒤에 공백이나 글 끝이 올 때만 끝으로 본다. 그래야 23.6% 같은 소수점이
-# 갈라지지 않는다. 영문 이니셜과 흔한 약어 뒤 마침표도 끝이 아니다. 2026-08 보고서에서
-# "Michael J. Fox" 가 "마이클 J, 폭스"로 인쇄됐다. 일본어 마침표는 뒤에 공백이 없어도 끝이다.
-SENTENCE_END = re.compile(r"。+|[.!?]+(?=\s|$)")
-NOT_A_SENTENCE_END = re.compile(r"(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e))$")
-
-
-def sentence_spans(text):
-    text = str(text or "")
-    sentences, start = [], 0
-    for match in SENTENCE_END.finditer(text):
-        if match.group() == "." and NOT_A_SENTENCE_END.search(text[start:match.start()]):
-            continue
-        sentences.append(text[start:match.end()].strip())
-        start = match.end()
-    sentences.append(text[start:].strip())
-    return [sentence for sentence in sentences if sentence]
-
-
-def split_sentences(text):
-    return sentence_spans(text)
-
-
 def fit_sentences(canvas_obj, text, max_width, font_name, font_size, max_lines):
     """주어진 줄 수 안에 들어가는 만큼만 문장 단위로 담아 문장 중간에서 잘리지 않게 한다."""
     text = clean_text(text)
@@ -984,52 +229,6 @@ def register_fonts(font_path):
     finally:
         temp_work.cleanup()
     return fonts
-
-
-def signal_fingerprint(row):
-    values = [
-        row.get("target_no"),
-        row.get("company"),
-        row.get("investment_signal_no"),
-    ]
-    return "|".join(str(value) for value in values if value not in (None, ""))
-
-
-def fnv1a_utf8(value):
-    hash_value = 0x811C9DC5
-    for byte in str(value).encode("utf-8"):
-        hash_value ^= byte
-        hash_value = (hash_value * 0x01000193) & 0xFFFFFFFF
-    return f"{hash_value:08x}"
-
-
-def parse_ignored_signal_keys(value):
-    if not value:
-        return set()
-    return {item.strip() for item in str(value).split(",") if item.strip()}
-
-
-def filter_ignored_signals(rows, ignored_keys):
-    if not ignored_keys:
-        return rows
-    filtered = []
-    for row in rows:
-        fingerprint = signal_fingerprint(row)
-        if fingerprint in ignored_keys or fnv1a_utf8(fingerprint) in ignored_keys:
-            continue
-        filtered.append(row)
-    return filtered
-
-
-def override_summary_period(summary, from_date=None, to_date=None):
-    if not from_date and not to_date:
-        return summary
-    updated = dict(summary)
-    if from_date:
-        updated["from_date"] = str(from_date)[:10]
-    if to_date:
-        updated["to_date"] = str(to_date)[:10]
-    return updated
 
 
 class SlideReport:
@@ -1148,7 +347,7 @@ def draw_cover(report, summary, indicators):
     y = PAGE_H - 208
     report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD, weight="medium")
     # 제목은 잘라내면 뜻이 사라지므로, 여백을 넘지 않을 때까지 크기를 줄여서 통째로 싣는다.
-    title_size = 30 if LANG == "en" else 36
+    title_size = 30 if report_content.LANG == "en" else 36
     titles = [t("cover_title_1"), t("cover_title_2"), t("cover_title_3")]
     while title_size > 18 and any(
         c.stringWidth(title, report.fonts["semibold"], title_size) > text_width for title in titles
@@ -1171,7 +370,7 @@ def draw_cover(report, summary, indicators):
         c.setLineWidth(1.2)
         c.circle(46, y + 4, 10, stroke=1, fill=0)
         report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
-        if LANG == "en":
+        if report_content.LANG == "en":
             label = item.get("label_en") or item["label_ko"]
             description = INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
         else:
@@ -1197,226 +396,6 @@ def draw_cover(report, summary, indicators):
         report.text(43, 20, "Promotion Agency", 6.5, colors.HexColor("#C8D2DF"))
     if not draw_logo(c, INVEST_KOREA_LOGO_PATH, PAGE_W - 43, 21, 32, align="right"):
         report.text(PAGE_W - 43, 31, "Invest KOREA", 11, WHITE, align="right", weight="semibold")
-
-
-def company_sort_key(row):
-    return int(row.get("target_no") or 999)
-
-
-def build_profiles(targets, tech_map):
-    tech_rows = {row["company"]: row for row in tech_map.get("companies", [])}
-    profiles = []
-    for target in sorted(targets, key=company_sort_key):
-        company = target["company"]
-        tech = tech_rows.get(company, {})
-        group = tech.get("technology_group", "")
-        country = COUNTRY_BY_COMPANY.get(company, "")
-        industry = DETAILED_INDUSTRY_BY_GROUP.get(group, tech.get("industry", ""))
-        target_technology = tech.get("target_technology", "")
-        if LANG == "en":
-            country = COUNTRY_EN.get(country, country)
-            industry = DETAILED_INDUSTRY_EN.get(group, industry)
-            target_technology = tech.get("target_technology_en") or target_technology
-        profiles.append(
-            {
-                **target,
-                **tech,
-                "target_no": target.get("target_no", tech.get("target_no")),
-                "company": company,
-                # 식별자는 그대로 두고 화면에만 쓰는 이름. 목록 원본의 오기(Metals)를 바로잡는다.
-                "display_name": target.get("display_name") or company,
-                "country": country,
-                "detailed_industry": industry,
-                "target_technology": target_technology,
-                "exempt_from_relevance": bool(tech.get("excluded_from_relevance")) or company in EXEMPT_COMPANIES,
-            }
-        )
-    return profiles
-
-
-PRESS_RELEASE_PATTERN = re.compile(
-    r"press[\s_-]*releases?|news[\s_-]*releases?|media[\s_-]*releases?|pressreleases?|newsreleases?"
-    r"|보도\s*자료|press[\s_-]*room|pressemitteilung|communiqu[eé]s?[\s_-]*de[\s_-]*presse"
-    r"|comunicad[oa]s?[\s_-]*de[\s_-]*prensa",
-    re.IGNORECASE,
-)
-
-
-def is_press_release(row):
-    """수집 단계의 source_kind가 없는 과거 데이터도 출처명·URL로 공식 보도자료를 판별한다."""
-    if not row or row.get("source_type") != "official":
-        return False
-    if row.get("is_press_release") is True:
-        return True
-    if row.get("source_kind"):
-        return row.get("source_kind") == "press_release"
-    haystack = " ".join(
-        str(row.get(field) or "") for field in ("source", "official_source_url", "url")
-    )
-    return bool(PRESS_RELEASE_PATTERN.search(haystack))
-
-
-def is_relevance_exempt(row):
-    """분류 단계에서 유치필요 품목(기술) 관련성 검사를 생략한 행인지.
-
-    이런 행에 타겟 기술 근거를 요구하면 분류 단계의 면제가 발행 단계에서 되살아난다.
-    """
-    return row.get("excluded_from_relevance") is True or row.get("technology_gate_decision") == "relevance_exempt"
-
-
-# 지표 3(투자 재원 확보)·5(핵심 전략 인력의 이동)은 회사채 발행·C-Level 이동처럼 기업 단위로
-# 일어나는 사건이라 발표문이 품목을 적는 일이 드물다. 어느 지표가 여기 해당하는지는
-# config/approval_policy.json 이 정하고, scripts/validate_report_inputs.mjs 의
-# targetTechnologyRequired 가 같은 값을 읽는다.
-def target_technology_required(row):
-    """이 행이 승인되려면 타겟 기술 근거가 필요한지."""
-    if is_relevance_exempt(row):
-        return False
-    signal_no = row.get("investment_signal_no")
-    return signal_no is None or str(signal_no) not in COMPANY_LEVEL_INDICATORS
-
-
-def signal_supported(row):
-    """요약 단계에서 본문을 읽고 '이 시그널의 근거가 실제로 있다'고 판정했는지.
-
-    validate_report_inputs.mjs 의 승인 규칙을 그대로 옮긴 것이다. 두 곳이 어긋나면 판정 단계가
-    승인한 행을 발행 단계가 조용히 떨어뜨린다. 정확성 우선 원칙에 따라 판정 누락과 needs_review 는
-    발행하지 않고, 기업 귀속·지표·선행성이 모두 참이어야 하며, target_technology_required 가 참인
-    후보에는 타겟 기술 근거도 함께 요구한다. 승인되지 않은 근접 후보(ai_signal_supported=False)는 대시보드용이라
-    여기서 걸러진다. 요약문의 분량·문체 문제는 근거 판정이 아니므로 여기서 보지 않는다.
-    """
-    if not row or row.get("ai_signal_supported") is not True:
-        return False
-    if row.get("ai_summary_quality") != "pass":
-        return False
-    technology_required = target_technology_required(row)
-    required_fields = [
-        "ai_entity_supported",
-        "ai_indicator_supported",
-        "ai_leading_indicator_supported",
-    ]
-    if technology_required:
-        required_fields.append("ai_target_technology_supported")
-    for field in required_fields:
-        if row.get(field) is not True:
-            return False
-    stage = row.get("ai_event_stage")
-    if row.get("investment_signal_no") is not None:
-        allowed = stage in LEADING_STAGES or (
-            stage == "precursor" and str(row.get("investment_signal_no")) in PRECURSOR_INDICATORS
-        )
-    else:
-        allowed = stage == BUSINESS_STAGE
-    if not allowed:
-        return False
-    if not technology_required:
-        return True
-    reason = clean_text(row.get("ai_summary_reason")).lower()
-    return not any(re.search(pattern, reason, re.IGNORECASE) for pattern in DENIAL_PATTERNS)
-
-
-# 분기·연간 공시는 그 기간에 있었던 일을 모아 다시 적는다. 한 기업의 같은 지표에 단독
-# 발표 기사와 실적 공시가 함께 승인되면, 실적 공시 쪽 문안은 지난 분기 사건을 이번 달
-# 시그널로 보이게 만들 수 있다. 34546694524 실행의 Applied Materials S4 가 그랬다:
-# 8월 11일 UC 버클리 EPIC 센터 공동연구가 따로 승인돼 있는데도, 8월 13일 실적 발표문에
-# 하이라이트로 실린 6월 16일 에실로룩소티카 계약이 대표 문안으로 나갔다.
-PERIODIC_DISCLOSURE_PATTERN = re.compile(
-    r"(quarter(ly)?|half[- ]year|full[- ]year|interim|annual|fiscal|"
-    r"Q[1-4]\b|H[12]\b|FY\s?\d|earnings|results|annual report|"
-    r"semiannual|決算|四半期|반기|분기|실적)",
-    re.IGNORECASE,
-)
-
-
-def is_periodic_disclosure(row):
-    """실적·연차 공시처럼 한 기간의 사건을 모아 싣는 문서인지."""
-    if not row:
-        return False
-    return bool(PERIODIC_DISCLOSURE_PATTERN.search(str(row.get("title") or "")))
-
-
-def signal_publishable(row):
-    """시그널 칸에 올릴 수 있는 행.
-
-    한·영 문안이 모두 있어야 싣는다. 문안 없이 원문 발췌로 칸을 채우면 한국어판에 영어·일본어
-    본문이나 "PDF 3.29 MB" 같은 링크 문구가 그대로 나간다(2026-08 실행). 두 언어판의 매트릭스가
-    같도록 한쪽 문안만 있는 행도 뺀다. 판정 단계가 이미 같은 기준으로 거르므로 여기는 이중 확인이다.
-    """
-    return (
-        signal_supported(row)
-        and bool(clean_text(row.get("ai_summary_ko")))
-        and bool(clean_text(row.get("ai_summary_en")))
-    )
-
-
-def sort_signal_rows(rows, prefer_single_event=False):
-    def key(row):
-        supported = 0 if signal_publishable(row) else 1
-        # 시그널 칸을 고를 때만 쓴다. 사업현황 상자는 실적 공시가 본래의 근거이므로
-        # best_business_row 는 이 선호를 켜지 않는다.
-        single_event = (1 if prefer_single_event and is_periodic_disclosure(row) else 0)
-        press = 0 if is_press_release(row) else 1
-        official = 0 if row.get("source_type") == "official" else 1
-        technology_score = -(row.get("technology_relevance_score") or row.get("relevance_score") or 0)
-        signal_score = -(row.get("investment_signal_score") or 0)
-        # 일자 미상 기사는 그 달 1일로 놓고 정렬한다. 정렬 때문에 날짜가 채워지지는 않는다.
-        state = date_state(row)
-        day = state["day"] or (month_bounds(state["month"])[0] if state["month"] else None)
-        timestamp = -datetime(day.year, day.month, day.day, tzinfo=timezone.utc).timestamp() if day else 0
-        return (supported, single_event, press, official, technology_score, signal_score, timestamp)
-
-    return sorted(rows, key=key)
-
-
-def index_investment_signals(rows):
-    index = defaultdict(lambda: defaultdict(list))
-    for row in rows:
-        # 매트릭스의 켜진 칸은 '당월 포착된 시그널'을 뜻한다. 근거가 확인되지 않은 행이 칸을 켜면
-        # 문서가 스스로 정의한 뜻과 어긋난다.
-        if not signal_publishable(row):
-            continue
-        company = row.get("company")
-        try:
-            no = int(row.get("investment_signal_no"))
-        except Exception:
-            continue
-        index[company][no].append(row)
-    for company in index:
-        for no in index[company]:
-            index[company][no] = sort_signal_rows(index[company][no], prefer_single_event=True)
-    return index
-
-
-def covered_companies(summary, signal_rows):
-    """검토를 끝낸 기업. 커버리지가 있으면 그것을 쓰고, 없으면 공식 출처 유무로 본다."""
-    coverage = summary.get("review_coverage")
-    if isinstance(coverage, list):
-        # no_monthly_sources 는 수집이 끝났는데 이번 달 자료가 없었다는 뜻이다. 검토 후 미포착과 같다.
-        return {item.get("company") for item in coverage if item.get("status") in ("reviewed", "no_monthly_sources")}
-    return {row.get("company") for row in signal_rows
-            if row.get("company") and row.get("source_type") == "official"}
-
-
-def signal_cell_state(signal_index, company, no):
-    """매트릭스 한 칸. on=AI 확인 시그널, ""=신호없음.
-
-    승인 조건을 하나라도 못 채운 근접 후보는 index_investment_signals 가 이미 빼므로 칸을
-    켜지 않는다. 그 후보는 대시보드에만 남는다.
-    """
-    return "on" if signal_index.get(company, {}).get(no) else ""
-
-
-def company_status(company, signal_index, covered):
-    """매트릭스 한 행의 상태.
-
-    detected     이번 달 AI 확인 시그널이 있다
-    reviewed     시그널이 없다
-
-    covered 는 더 이상 행 상태를 가르지 않는다. 각주는 이 상태를 숫자로 말하고,
-    report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을 한 곳에 둬야 두 렌더러가 같은 표를 그린다.
-    """
-    states = [signal_cell_state(signal_index, company, no) for no in range(1, 6)]
-    return "detected" if "on" in states else "reviewed"
 
 
 def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=False):
@@ -1499,89 +478,6 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     report.footer()
 
 
-# 출처 줄은 "출처  <경로> <날짜>" 순서라, 통째로 120자에서 자르면 끝에 있는 날짜부터
-# 사라진다. 34564332764 영문판 9쪽 Renishaw 가 그랬다: 뉴스룸 경로가 길어서 "...laser
-# enco..." 로 단어 중간이 끊기고 발행일 2026.08.xx 가 통째로 없어졌다. 재검증하려면
-# 날짜가 제일 필요한데 날짜부터 버린 것이다. 경로를 줄이고 날짜는 남긴다.
-SOURCE_LINE_LIMIT = 120
-
-
-def source_line(row):
-    source = row.get("source") or row.get("collector") or t("source_fallback")
-    if is_press_release(row):
-        source = f"{t('source_press_release')} · {source}"
-    prefix = f"{t('source_prefix')}  "
-    date = format_row_date(row)
-    tail = f" {date}" if date else ""
-    room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
-    return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
-
-
-def source_url(row):
-    """출처 줄이 가리킬 원문 주소. Google 중계 주소보다 발행사 원문을 먼저 쓴다.
-
-    PDF 출처가 글자 라벨뿐이라 독자가 원문으로 갈 수 없었다(2026-08 검토, 링크 0개).
-    """
-    if not row:
-        return ""
-    candidates = [str(row.get(key) or "").strip() for key in ("source_direct_url", "content_source_url", "url")]
-    web = [value for value in candidates if value.startswith(("http://", "https://"))]
-    direct = [value for value in web if "news.google.com" not in value]
-    return (direct or web or [""])[0]
-
-
-def detail_text(row, limit=260):
-    ai_summary = summary_plain_text(row)
-    if ai_summary:
-        return short_text(ai_summary, limit)
-
-    evidence = ""
-    snippets = row.get("evidence_snippets") or row.get("technology_evidence_snippets") or []
-    if snippets:
-        evidence = snippets[0]
-    else:
-        evidence = row.get("content_excerpt") or row.get("content_text") or ""
-    title = clean_text(row.get("title"))
-    evidence = clean_text(evidence)
-    if evidence and title and title.lower() not in evidence.lower():
-        return short_text(f"{title} - {evidence}", limit)
-    return short_text(evidence or title, limit)
-
-
-def expand_business_summary(row, text):
-    return normalize_summary_text(text)
-
-
-def business_prose(text):
-    """사업동향은 문장으로 싣는다. 모델이 앞에 붙인 "표제 - 본문"의 표제를 뗀다.
-
-    2026-08 Nabtesco 카드는 "나브테스코 - 로봇용 감속기 … 매출 증가 기록 나브테스코는 …"처럼
-    표제와 본문이 붙어 인쇄됐다. 표제 뒤에서 같은 주어(표제 첫 구절 + 은/는/이/가)가 다시
-    나오면 거기서 본문이 시작한다. 숫자 범위("2025 - 2026")나 문장 안의 대시는 건드리지 않는다.
-    """
-    match = re.match(r"^(?P<lead>[^.!?。]{1,80}?)\s[-–—]\s(?P<rest>.+)$", text or "")
-    if not match:
-        return text
-    lead, rest = match.group("lead").strip(), match.group("rest").strip()
-    if re.search(r"\d$", lead) and re.match(r"\d", rest):
-        return text
-    subject = lead.split(",")[0].strip()
-    again = re.search(rf"{re.escape(subject)}(은|는|이|가)\s", rest) if subject else None
-    if again and again.start() <= 120 and not re.search(r"[.!?。]", rest[:again.start()]):
-        rest = rest[again.start():]
-    return rest
-
-
-def business_text(rows):
-    if not rows:
-        return t("business_empty")
-    row = sort_signal_rows(rows)[0]
-    ai_summary = business_prose(normalize_summary_text(summary_field(row, "ai_summary")))
-    if ai_summary:
-        return short_text(expand_business_summary(row, ai_summary), 950)
-    return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
-
-
 def summary_text_layout(report, row, width, size, max_lines):
     """Measure the same styled lines used for painting and source/box placement."""
     parts = summary_parts(row)
@@ -1620,29 +516,6 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
             cursor += report.canvas.stringWidth(text, report.fonts[weight], size)
         y -= size + line_gap
     return max(1, len(lines))
-
-
-def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, shown_rows=()):
-    """사업현황 상자에 쓸 행. 사업동향 행이 없을 때만 투자 시그널 행으로 대신한다.
-
-    실행 35167466191 보고서의 3M 은 사업동향이 없어 시그널 칸에 이미 실린 S3 문안을 사업현황에 한 번 더
-    실었다. 시그널 칸의 대표 문안으로 쓰인 행(shown_rows)은 대신 쓰지 않는다.
-    """
-    shown = {id(row) for row in shown_rows}
-    candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
-    if not candidates:
-        candidates = [row for row in investment_rows
-                      if row.get("company") == company and signal_supported(row) and id(row) not in shown]
-    if not candidates:
-        candidates = [
-            row
-            for row in all_signal_rows
-            if row.get("company") == company
-            and row.get("source_type") == "official"
-            and signal_supported(row)
-            and id(row) not in shown
-        ]
-    return sort_signal_rows(candidates)[0] if candidates else None
 
 
 def draw_badge(report, x, y, value, active):
@@ -1806,25 +679,12 @@ def business_target_layout(report, profile, x, width):
     }
 
 
-def target_section_for_profile(profile):
-    if profile.get("exempt_from_relevance"):
-        return "", ""
-    target_text = str(profile.get("target_technology") or "").strip()
-    if not target_text:
-        return "", ""
-    # 라벨은 품목별 사업동향 카드와 같은 "투자유치 필요 품목·기술" 하나로 쓴다. 기업 목록으로 "타겟기술"과
-    # "타겟품목"을 나누던 방식은 한 보고서 안에서 같은 정보를 세 이름으로 불렀다.
-    # 같은 품목명이 품목별 페이지에서는 대문자로, 상세 페이지에서는 소문자로 나오던 것을 맞춘다.
-    # item_target_text는 첫 글자만 올리므로 LiDAR·GMP 같은 약어는 그대로 남는다.
-    return t("item_target_label"), item_target_text(profile)
-
-
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
     active = bool(rows)
     c = report.canvas
     draw_badge(report, x, y, no, active)
     label_x = x + 31
-    label = SIGNAL_DESCRIPTIONS_EN[no] if LANG == "en" else SIGNAL_DESCRIPTIONS[no]
+    label = SIGNAL_DESCRIPTIONS_EN[no] if report_content.LANG == "en" else SIGNAL_DESCRIPTIONS[no]
     # 알약은 폭 상한이 있으므로 글자를 먼저 그 안에 맞춘다. 예전에는 알약만 잘리고 글자는 그대로 나가서 밖으로 튀어나왔다.
     label = short_text_to_width(report.canvas, label, width - 190 - 16, report.fonts["semibold"], 7.6, f"signal_label[{no}]")
     label_w = report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14
@@ -1991,29 +851,6 @@ ITEM_LABEL_SIZE = 7.6
 ITEM_LABEL_COLOR = colors.HexColor("#56687B")
 
 
-def build_item_trend_entries(profiles, signal_index, relevant_rows):
-    """5대 시그널 미포착 + 타겟 품목·기술 연관 사업동향 포착 기업을 기업 단위로 모은다."""
-    entries = []
-    for profile in profiles:
-        company = profile["company"]
-        if any(signal_index.get(company, {}).values()):
-            continue
-        # 이 카드의 존재 이유가 '타겟 품목·기술과 직접 연계된 사업동향'이므로,
-        # 그 연계가 확인되지 않은 행으로는 카드를 만들지 않는다.
-        candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
-        if not candidates:
-            continue
-        if not str(profile.get("target_technology") or "").strip():
-            continue
-        entries.append({"profile": profile, "row": sort_signal_rows(candidates)[0]})
-    return entries
-
-
-def item_trend_text(row):
-    """품목동향 카드에 실을 문안 전체. HTML 보고서는 자르지 않고, reportlab 판은 item_trend_body 가 줄 수에 맞춘다."""
-    return business_prose(normalize_summary_text(summary_field(row, "ai_summary"))) or normalize_summary_text(detail_text(row, 400))
-
-
 def item_trend_body(report, row, width, size, max_lines):
     """카드 본문은 명사구 캡션이 아니라 완결된 서술 문장으로 채운다.
 
@@ -2054,12 +891,6 @@ def draw_label_pill(report, x, y, label):
     c.roundRect(x, y - 5, pill_width, 15, 3, fill=1, stroke=0)
     report.text(x + 7, y, label, ITEM_LABEL_SIZE, ITEM_LABEL_COLOR, weight="semibold")
     return pill_width
-
-
-def item_target_text(profile):
-    text = str(profile.get("target_technology") or "").strip()
-    # Sentence initial only: preserve internal acronyms such as GMP, RF and LiDAR.
-    return text[:1].upper() + text[1:] if LANG == "en" else text
 
 
 def draw_item_card(report, entry, layout, x, top, width, month_label):
@@ -2266,7 +1097,7 @@ def build_report(args):
         json.dumps(
             {
                 "output": str(out_path),
-                "lang": LANG,
+                "lang": report_content.LANG,
                 "clipped_text_count": len(CLIPPED),
                 "pages": report.page_no,
                 "company_count": len(profiles),
