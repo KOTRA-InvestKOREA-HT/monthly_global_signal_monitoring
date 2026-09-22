@@ -382,15 +382,28 @@ function dateStatedInQuote(quote) {
 // 이미 끝난 사건(completed)도 뺀다. 이 보고서는 앞으로의 투자 전조를 찾으므로, 실적·연차 자료가
 // 다시 적은 완료된 증설·조달·가동 현황은 정의상 신호가 아니다.
 //
-// 이 행은 ai_signal_supported=false 로 나가고 보고서·매트릭스에는 실리지 않는다. 대시보드가
-// 사람에게 보여 주는 "확인해 볼 만한 근접 후보" 목록일 뿐이다.
+// 이 행은 ai_signal_supported=false 로 나간다. 매트릭스와 다섯 지표 칸에는 실리지 않는다.
+// 투자 후보의 근접 행은 대시보드가 사람에게 보여 주는 "확인해 볼 만한 후보" 목록이고,
+// 사업동향의 근접 행은 그 기업의 사업현황 상자가 비는 것을 막는 데 쓰인다(report_content.best_business_row).
+//
+// 사업동향 후보도 같은 기준으로 센다. 예전에는 kind 가 investment 가 아니면 바로 false 였고,
+// 그래서 사업동향은 근접 단계 자체가 없었다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은 승인된
+// 사업동향이 0건이라 사업현황 상자가 세 기업 모두 "확인되지 않음"으로 나갔고, 무엇이 왜 떨어졌는지
+// 출력에 남지 않아 볼 수도 없었다.
+//
+// 사업동향의 단계는 not_applicable 하나뿐이므로 투자 단계 조건은 세지 않는다. 그 대신 단계가
+// 사업동향의 고정값인지를 먼저 확인한다. 투자 단계 조건을 그대로 대면 모든 사업동향 후보가
+// 그 조건 하나를 늘 못 채운 것으로 세어져, 실제로 모자란 것이 하나일 때도 둘이 된다.
 export function nearMissCandidate(candidate, decision) {
-  if (candidate?.kind !== "investment" || !decision.entity_supported || !decision.indicator_supported) return false;
+  if (candidate?.kind !== "investment" && candidate?.kind !== "relevant") return false;
+  if (!decision.entity_supported || !decision.indicator_supported) return false;
   if (decision.event_stage === "completed") return false;
+  const business = candidate.kind === "relevant";
+  if (business && decision.event_stage !== APPROVAL_POLICY.business_stage) return false;
   const unmet = [
     technologyMet(candidate, decision),
     decision.leading_indicator_supported,
-    investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no),
+    business || investmentStageSupported(decision.event_stage, candidate.row?.investment_signal_no),
     decision.quality === "pass",
   ].filter((met) => !met).length;
   return unmet === 1;
@@ -548,7 +561,13 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     }
     // 승인 후보는 위에서 근거 없는 고유명사를 거부했다. 근접 후보의 문안은 그 검사를 받지 않았으므로
     // 같은 결함이 있으면 문안만 비우고 후보는 남긴다.
-    const groundedSummary = enforce || !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
+    //
+    // 사업동향 후보는 그 검사에서 빼 둔다. 위 enforce 검사가 investment 에만 걸리는 것과 같은 이유다:
+    // 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이 인용문 밖에서 나오는 것이 정상이다.
+    // 여기서 같은 기준을 대면 근접 사업동향 행의 문안이 거의 다 비워지고, 문안 없는 행은 사업현황
+    // 상자를 채울 수 없어(근거 발췌를 그대로 실으면 한국어판에 영문 본문이 나간다) 이 경로가 무용해진다.
+    const groundedSummary = enforce || candidate.kind === "relevant" ||
+      !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
     const approved = supported && !recheckPending;
     // 재검토를 끝내지 못해 승인에서 내려온 후보도 대시보드에는 남긴다. 판정 자체는 살아 있고
     // 다음 실행이 다시 물으므로, 조용히 사라지면 그 사이 무엇이 보류됐는지 볼 수 없다.
@@ -838,12 +857,14 @@ export async function build(args) {
     .map((article) => ({ company: article.company, title: article.title, url: article.url, article_id: article.id }));
   // 승인된 판정은 날짜 상태와 무관하게 모두 남긴다. 게시월이 확정된 행만 PDF 본문에 들어가고,
   // 날짜 보류 행은 같은 파일에 남아 대시보드의 검토 후보가 된다. PDF 생성기가 같은 기준으로 거른다.
-  const approved = (kind) => results.filter((item) => item.supported && item.kind === kind).map((item) => item.row);
-  // 투자 시그널 파일에는 근접 후보도 함께 넣는다. ai_signal_supported=false 라 보고서에는 실리지 않고,
-  // 대시보드에서 "아깝게 떨어진 건"으로 사람이 확인하는 용도다. 사업동향에는 근접 단계가 없다.
-  const investment = results.filter((item) => item.kind === "investment" && (item.supported || item.near_miss))
+  // 두 파일 모두 근접 후보를 함께 넣는다. ai_signal_supported=false 라 매트릭스와 다섯 지표 칸에는
+  // 실리지 않는다. 투자 쪽은 대시보드에서 "아깝게 떨어진 건"으로 사람이 확인하는 용도이고,
+  // 사업동향 쪽은 승인된 사업동향이 없는 기업의 사업현황 상자를 채우는 데 쓴다. 예전에는 사업동향
+  // 근접 행을 버려서, 상자가 빈 기업이 왜 비었는지 출력만 보고는 알 수 없었다.
+  const withNearMiss = (kind) => results.filter((item) => item.kind === kind && (item.supported || item.near_miss))
     .map((item) => item.row);
-  const relevant = approved("relevant");
+  const investment = withNearMiss("investment");
+  const relevant = withNearMiss("relevant");
   const datePending = (rows) => rows.filter((row) => !reportEligible(row, snapshot.period));
   const errors = [...validateRows(investment, "investment"), ...validateRows(relevant, "relevant")];
   if (errors.length) throw new Error(errors.join("\n"));
@@ -920,7 +941,8 @@ export async function build(args) {
       reviewed_candidates: results.length,
       approved_investment: investment.filter((row) => row.ai_signal_supported).length,
       near_miss_investment: investment.filter((row) => !row.ai_signal_supported).length,
-      approved_business: relevant.length,
+      approved_business: relevant.filter((row) => row.ai_signal_supported).length,
+      near_miss_business: relevant.filter((row) => !row.ai_signal_supported).length,
       date_pending_investment: datePending(investment).length, date_pending_business: datePending(relevant).length,
       incomplete_companies: coverage.filter((item) => item.status !== "reviewed").length,
       review_failed_articles: reviewFailedArticles.length,

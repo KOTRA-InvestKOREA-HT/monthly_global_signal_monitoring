@@ -26,6 +26,68 @@ class BusinessBoxTests(unittest.TestCase):
         self.assertIs(pdf.best_business_row("3M", [business], [signal], [], [signal]), business)
 
 
+class BusinessNearMissTests(unittest.TestCase):
+    """승인된 사업동향이 없는 기업의 상자를 근접 행으로 채운다.
+
+    2026-08 실행의 Skyworks·Evonik·Jenoptik 은 승인된 사업동향이 0건이라 세 기업의 사업현황이
+    모두 "확인되지 않음"으로 나갔다. 근접 행은 승인 조건에서 품목 연계 근거 하나만 빠진 행이다.
+    """
+
+    @staticmethod
+    def near(company="Evonik Industries", **extra):
+        row = approved(company, ai_event_stage="not_applicable")
+        row.update({"ai_signal_supported": False, "ai_target_technology_supported": False,
+                    "ai_summary_en": "prose", "investment_signal_no": None})
+        row.update(extra)
+        return row
+
+    def test_a_near_miss_business_row_fills_the_box(self):
+        signal = approved("Evonik Industries", investment_signal_no=3)
+        row = self.near()
+        self.assertTrue(pdf.business_near_miss(row))
+        self.assertFalse(pdf.signal_supported(row))
+        self.assertIs(pdf.best_business_row("Evonik Industries", [row], [signal], [], [signal]), row)
+
+    def test_an_approved_row_always_wins_over_a_near_miss_row(self):
+        row = self.near()
+        business = approved("Evonik Industries", ai_event_stage="not_applicable")
+        self.assertIs(pdf.best_business_row("Evonik Industries", [business, row], [], []), business)
+
+    def test_a_row_without_both_summaries_never_fills_the_box(self):
+        # 문안이 없으면 business_text 가 근거 발췌로 떨어져 한국어판에 영문 본문이 나간다.
+        for blank in ({"ai_summary_ko": ""}, {"ai_summary_en": ""}):
+            row = self.near(**blank)
+            self.assertFalse(pdf.business_near_miss(row), blank)
+            self.assertIsNone(pdf.best_business_row("Evonik Industries", [row], [], []))
+
+    def test_the_other_approval_conditions_are_still_required(self):
+        for field in ("ai_entity_supported", "ai_indicator_supported", "ai_leading_indicator_supported"):
+            self.assertFalse(pdf.business_near_miss(self.near(**{field: False})), field)
+        self.assertFalse(pdf.business_near_miss(self.near(ai_summary_quality="needs_review")))
+        self.assertFalse(pdf.business_near_miss(self.near(ai_event_stage="planned")))
+
+    def test_an_investment_row_is_not_a_business_near_miss(self):
+        self.assertFalse(pdf.business_near_miss(self.near(investment_signal_no=3)))
+
+    def test_an_approved_row_is_not_a_near_miss(self):
+        self.assertFalse(pdf.business_near_miss(approved("Evonik Industries", ai_event_stage="not_applicable")))
+        self.assertFalse(pdf.business_near_miss(None))
+
+    def test_a_near_miss_row_never_lights_a_matrix_cell(self):
+        row = self.near(investment_signal_no=3)
+        self.assertFalse(pdf.signal_supported(row))
+        self.assertFalse(pdf.signal_publishable(row))
+        self.assertEqual(pdf.index_investment_signals([row]), {})
+
+    def test_the_box_says_the_item_link_is_unconfirmed(self):
+        self.assertTrue(pdf.t("business_near_miss_note"))
+        pdf.set_language("en")
+        try:
+            self.assertTrue(pdf.t("business_near_miss_note"))
+        finally:
+            pdf.set_language("ko")
+
+
 class CutTextTests(unittest.TestCase):
     def test_a_summary_cut_by_a_character_limit_is_flagged(self):
         row = {"ai_summary_en": "Mkango completed the acquisition for EUR 8 million. " * 40}

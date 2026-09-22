@@ -156,12 +156,31 @@ test("an investment candidate one condition short is kept for the dashboard, not
     assert.equal(result.near_miss, false);
     assert.equal(result.row, null);
   }
-  // 사업동향은 예전 엄격 기준 그대로다. 기술 연결이 없으면 실리지 않는다.
+  // 사업동향도 근접 단계를 가진다. 품목 연결 하나만 모자란 후보는 승인이 아니지만 행으로 남아
+  // 사업현황 상자가 비는 것을 막는다(report_content.best_business_row). 예전에는 여기서 버려져
+  // 상자가 빈 기업이 왜 비었는지 출력만으로는 알 수 없었다.
   const business = groupArticles([], [{ ...source, investment_signal_no: undefined }], period)[0];
-  const rejected = importReview(business, review(business, [decision({ candidate_id: business.candidates[0].id,
-    event_stage: "not_applicable", target_technology_supported: false, summary_ko: "", summary_en: "" })]))[0];
-  assert.equal(rejected.supported, false);
-  assert.equal(rejected.row, null);
+  const businessDecision = (overrides = {}) => decision({ candidate_id: business.candidates[0].id,
+    event_stage: "not_applicable", ...overrides });
+  const nearMiss = importReview(business, review(business, [businessDecision({ target_technology_supported: false })]))[0];
+  assert.equal(nearMiss.supported, false);
+  assert.equal(nearMiss.near_miss, true);
+  assert.equal(nearMiss.row.ai_signal_supported, false);
+  assert.equal(nearMiss.row.ai_target_technology_supported, false);
+  // 상자를 채우려면 문안이 있어야 한다. 사업동향 문안은 투자 후보의 고유명사 검사를 받지 않는다.
+  // 그 검사를 대면 근접 사업동향의 문안이 거의 다 비워져 이 경로가 무용해진다.
+  assert.equal(nearMiss.row.ai_summary_ko, "타겟 소재 파일럿 시설 검토");
+  assert.equal(nearMiss.row.ai_summary_en, "Target-material pilot plant under consideration");
+  const named = importReview(business, review(business, [businessDecision({ target_technology_supported: false,
+    summary_en: "Acme Holdings and Example plan a pilot" })]))[0];
+  assert.equal(named.row.ai_summary_en, "Acme Holdings and Example plan a pilot");
+  // 사업동향의 단계는 not_applicable 하나뿐이다. 다른 단계가 적힌 판정은 실행을 세운다.
+  assert.throws(() => importReview(business, review(business, [businessDecision({ event_stage: "planned",
+    target_technology_supported: false })])), /invalid event_stage/);
+  // 두 가지가 모자라면 사업동향도 근접이 아니다.
+  const farMiss = importReview(business, review(business, [businessDecision({ target_technology_supported: false,
+    indicator_supported: false, summary_ko: "", summary_en: "" })]))[0];
+  assert.equal(farMiss.row, null);
 });
 
 test('quote matching accepts typography and entities but rejects paraphrases, changed numbers and cross-block joins', () => {

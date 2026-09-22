@@ -196,6 +196,7 @@ function detailPages(state, model, assets) {
             ${entry.business.target_text ? `
             <span class="pill target">${escapeHtml(entry.business.target_label)}</span>
             <span class="target-text">${escapeHtml(entry.business.target_text)}</span>` : ''}
+            ${entry.business.near_miss ? `<span class="pill near-miss">${escapeHtml(entry.business.near_miss_note)}</span>` : ''}
           </p>
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
           ${sourceLine(entry.business.source, entry.business.source_url)}
@@ -571,6 +572,15 @@ body {
 /* Same grey label as the item-linked trend cards. The emoji and teal-on-teal
    pill read as decoration in a formal report and had weak contrast. */
 .business-head .target { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; background: #fff; }
+/* 승인 조건에서 품목 연계만 빠진 행으로 채운 상자임을 밝히는 표시. 품목 라벨과 같은 크기로 두고
+   테두리와 색만 달리해, 확인된 품목 연계 라벨과 나란히 놓였을 때 둘이 구분된다. */
+.business-head .near-miss {
+  padding: 1.2pt 7pt 2.6pt;
+  font-size: 7.6pt;
+  background: #fff;
+  color: ${COLORS.muted};
+  border: 0.5pt solid ${COLORS.divider};
+}
 .target-text {
   flex: 0 1 auto;
   min-width: 0;

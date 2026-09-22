@@ -24,8 +24,8 @@ __all__ = [
     "INDICATOR_DESCRIPTION_EN", "LEADING_STAGES", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
     "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
-    "best_business_row", "build_item_trend_entries", "build_profiles", "business_prose",
-    "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
+    "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
+    "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
     "company_status", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
@@ -275,6 +275,9 @@ TEXTS = {
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
         "business_empty": "해당 기간 공식 출처에서 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않음.",
+        # 승인 조건에서 품목 연계 근거만 빠진 행을 실을 때 붙인다. 표시 없이 실으면 확인되지 않은
+        # 품목 연계를 확인된 것처럼 말하게 된다.
+        "business_near_miss_note": "품목 연계 미확인 · 주요 사업동향",
         "source_prefix": "출처",
         "source_fallback": "수집 출처",
         "source_empty": "출처  —",
@@ -304,6 +307,7 @@ TEXTS = {
         "no_signal": "No signal this month",
         "business_heading": "GLOBAL BUSINESS STATUS",
         "business_empty": "No global business activity could be summarised from official sources for this period.",
+        "business_near_miss_note": "Item link unconfirmed · key business activity",
         "source_prefix": "Source",
         "source_fallback": "Collected source",
         "source_empty": "Source  —",
@@ -1115,11 +1119,43 @@ def business_text(rows):
     return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
 
 
+def business_near_miss(row):
+    """승인은 아니지만 사업현황 상자를 채울 수 있는 사업동향 행인지.
+
+    승인 조건(signal_supported)에서 품목 연계 근거 하나만 빠진 행이다. 나머지는 그대로 요구한다.
+    기업 귀속·지표 사건·선행성이 확인되고 문안 품질이 pass 여야 하며, 단계는 사업동향의 고정값이어야
+    한다. 어떤 행을 근접으로 남길지는 local_report.mjs 의 nearMissCandidate 가 정하고, 여기서는
+    그렇게 남은 행 가운데 상자에 실을 수 있는 것만 다시 고른다.
+
+    한·영 문안이 모두 있어야 한다. 문안이 없으면 business_text 가 근거 발췌로 떨어지고, 그러면
+    한국어판에 영문·일문 본문이나 "PDF 3.29 MB" 같은 문구가 그대로 나간다(2026-08 실행).
+    상자를 채우는 것이 목적이지, 무엇이든 채우는 것이 목적이 아니다.
+    """
+    if not row or row.get("ai_signal_supported") is not False:
+        return False
+    # 투자 시그널 행은 여기로 오지 않는다. 사업동향 행만 상자의 후보다.
+    if row.get("investment_signal_no") is not None:
+        return False
+    if row.get("ai_event_stage") != BUSINESS_STAGE:
+        return False
+    if row.get("ai_summary_quality") != "pass":
+        return False
+    for field in ("ai_entity_supported", "ai_indicator_supported", "ai_leading_indicator_supported"):
+        if row.get(field) is not True:
+            return False
+    return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
+
+
 def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, shown_rows=()):
     """사업현황 상자에 쓸 행. 사업동향 행이 없을 때만 투자 시그널 행으로 대신한다.
 
     실행 35167466191 보고서의 3M 은 사업동향이 없어 시그널 칸에 이미 실린 S3 문안을 사업현황에 한 번 더
     실었다. 시그널 칸의 대표 문안으로 쓰인 행(shown_rows)은 대신 쓰지 않는다.
+
+    승인된 후보가 하나도 없으면 근접 사업동향 행을 쓴다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은
+    승인된 사업동향이 0건이라 세 기업의 상자가 모두 "확인되지 않음"으로 나갔다. 근접 행은 승인이
+    아니므로 상자에 그렇게 표시된다(report_view_model 의 business.near_miss). 표시 없이 실으면
+    확인되지 않은 품목 연계를 확인된 것처럼 말하는 보고서가 된다.
     """
     shown = {id(row) for row in shown_rows}
     candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
@@ -1135,6 +1171,9 @@ def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, 
             and signal_supported(row)
             and id(row) not in shown
         ]
+    if not candidates:
+        candidates = [row for row in relevant_rows
+                      if row.get("company") == company and business_near_miss(row) and id(row) not in shown]
     return sort_signal_rows(candidates)[0] if candidates else None
 
 

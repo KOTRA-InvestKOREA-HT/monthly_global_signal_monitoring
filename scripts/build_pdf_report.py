@@ -823,12 +823,18 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
         report.canvas.drawString(x + 16, body_y, line)
         body_y -= line_height
     source_y = max(bottom_y + BUSINESS_SOURCE_BOTTOM_PAD, body_y - BUSINESS_SOURCE_GAP)
-    source_width = width - 32
+    # 근접 행으로 채운 상자는 그 사실을 밝힌다. 표시를 출처 줄과 같은 기준선에 오른쪽으로 붙이는 것은
+    # 머리글의 품목 라벨 배치(target_layout)를 건드리지 않고 넣을 수 있는 자리가 여기뿐이기 때문이다.
+    # HTML 렌더러는 머리글에 알약으로 넣는다. 두 렌더러가 같은 사실을 싣는 것이 기준이고 위치는 각자의 배치를 따른다.
+    note = t("business_near_miss_note") if business_near_miss(business_row) else ""
+    source_width = width - 32 - (report.canvas.stringWidth(note, report.fonts["demilight"], 8) + 10 if note else 0)
     if business_row:
         source_text = short_text_to_width(report.canvas, source_line(business_row), source_width, report.fonts["demilight"], 8, "business_source")
         report.text(x + 16, source_y, source_text, 8, MUTED)
     else:
         report.text(x + 16, source_y, t("source_empty"), 8, MUTED)
+    if note:
+        report.text(x + width - 16, source_y, note, 8, MUTED, align="right")
     report.footer()
 
 

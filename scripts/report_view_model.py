@@ -130,6 +130,9 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
                 "target_text": target_text,
                 "body": (business_body := report.business_text([business_row] if business_row else [])),
                 "cut": summary_cut(business_row, business_body),
+                # 승인 조건에서 품목 연계만 빠진 행으로 채운 상자. 두 렌더러가 이 표시를 함께 싣는다.
+                "near_miss": report.business_near_miss(business_row),
+                "near_miss_note": report.t("business_near_miss_note"),
                 "source": report.source_line(business_row) if business_row else report.t("source_empty"),
                 "source_url": report.source_url(business_row),
             },
