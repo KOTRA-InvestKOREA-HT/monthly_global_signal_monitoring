@@ -166,7 +166,7 @@ const itemCard = company => ({
 function withItems(companies) {
   const base = model(77);
   base.items = {
-    kicker: 'T A R G E T - I T E M   S I G N A L S',
+    kicker: 'T A R G E T - P R O D U C T   S I G N A L S',
     title: '품목별 글로벌 사업동향',
     note: '5대 시그널에는 미포착되었으나...',
     target_label: '투자유치 필요 품목·기술',

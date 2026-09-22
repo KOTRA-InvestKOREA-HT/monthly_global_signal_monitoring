@@ -1054,7 +1054,7 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
     note = t("item_note", month=month_label)
     for index, page in enumerate(pages, start=1):
         report.new_page()
-        report.header("T A R G E T - I T E M   S I G N A L S", t("item_title"), f"{index}/{len(pages)}")
+        report.header("T A R G E T - P R O D U C T   S I G N A L S", t("item_title"), f"{index}/{len(pages)}")
         if index == 1:
             report.wrapped(note, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
         for placed in page:

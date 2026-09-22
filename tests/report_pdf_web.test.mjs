@@ -13,7 +13,7 @@ const model = {
     legend_on: '포착', legend_off: '미포착', indicators: '① 공급망', footnote: '각주',
     counts: { detected: 0, reviewed_off: 1, insufficient: 0, total: 1 },
     rows: [{ target_no: 1, company: 'Company 1', signals: [false, false, false, false, false] }] },
-  items: { kicker: 'T A R G E T - I T E M   S I G N A L S', title: '품목별 글로벌 사업동향', note: '안내',
+  items: { kicker: 'T A R G E T - P R O D U C T   S I G N A L S', title: '품목별 글로벌 사업동향', note: '안내',
     target_label: '투자유치 필요 품목·기술', trend_label: '8월 글로벌 사업동향',
     cards: ['A', 'B', 'C'].map(company => ({ company, industry: '소재', country: '미국', target_text: '양극재',
       body: '본문', source: '출처 Newsroom 2026.08.05' })) },

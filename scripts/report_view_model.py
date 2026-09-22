@@ -151,7 +151,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
         return None
     month = report.report_month_label(summary)
     return {
-        "kicker": "T A R G E T - I T E M   S I G N A L S",
+        "kicker": "T A R G E T - P R O D U C T   S I G N A L S",
         "title": report.t("item_title"),
         "note": report.t("item_note", month=month),
         "target_label": report.t("item_target_label"),
