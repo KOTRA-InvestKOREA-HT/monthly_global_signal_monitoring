@@ -14,16 +14,22 @@ def approved(company, **extra):
 
 
 class BusinessBoxTests(unittest.TestCase):
-    # 실행 35167466191: 3M 은 사업동향이 없어 시그널 칸의 S3 문안이 사업현황에 한 번 더 실렸다.
-    def test_a_row_shown_as_a_signal_is_not_repeated_in_the_business_box(self):
-        signal = approved("3M", investment_signal_no=3)
+    def test_a_shown_signal_fills_the_box_only_when_no_separate_summary_exists(self):
+        signal = approved("3M", investment_signal_no=3, ai_summary_en="Confirmed financing.")
         self.assertTrue(pdf.signal_supported(signal))
         self.assertIs(pdf.best_business_row("3M", [], [signal], []), signal)
-        self.assertIsNone(pdf.best_business_row("3M", [], [signal], [], [signal]))
+        self.assertIs(pdf.best_business_row("3M", [], [signal], [], [signal]), signal)
         other = approved("3M", investment_signal_no=5)
         self.assertIs(pdf.best_business_row("3M", [], [signal, other], [], [signal]), other)
         business = approved("3M", ai_event_stage="not_applicable")
         self.assertIs(pdf.best_business_row("3M", [business], [signal], [], [signal]), business)
+
+    def test_the_last_resort_requires_approved_bilingual_prose_for_this_company(self):
+        signal = approved("3M", investment_signal_no=3, ai_summary_en="Confirmed financing.")
+        for changes in ({"ai_summary_en": ""}, {"ai_summary_ko": ""},
+                        {"ai_signal_supported": False}, {"company": "Other"}):
+            row = dict(signal, **changes)
+            self.assertIsNone(pdf.best_business_row("3M", [], [], [], [row]))
 
 
 class BusinessNearMissTests(unittest.TestCase):

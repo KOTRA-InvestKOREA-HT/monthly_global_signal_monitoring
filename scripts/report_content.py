@@ -1165,8 +1165,8 @@ def business_near_miss(row):
 def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, shown_rows=()):
     """사업현황 상자에 쓸 행. 사업동향 행이 없을 때만 투자 시그널 행으로 대신한다.
 
-    실행 35167466191 보고서의 3M 은 사업동향이 없어 시그널 칸에 이미 실린 S3 문안을 사업현황에 한 번 더
-    실었다. 시그널 칸의 대표 문안으로 쓰인 행(shown_rows)은 대신 쓰지 않는다.
+    별도 사건을 우선하되, 다른 문안이 없으면 시그널 칸에 실린 승인 문안을 재사용한다.
+    중복 회피 때문에 확인된 사업 활동이 있는데도 사업현황이 없다고 표시해서는 안 된다.
 
     승인된 후보가 하나도 없으면 근접 사업동향 행을 쓴다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은
     승인된 사업동향이 0건이라 세 기업의 상자가 모두 "확인되지 않음"으로 나갔다. 근접 행은 승인이
@@ -1190,6 +1190,9 @@ def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, 
     if not candidates:
         candidates = [row for row in relevant_rows
                       if row.get("company") == company and business_near_miss(row) and id(row) not in shown]
+    if not candidates:
+        candidates = [row for row in shown_rows
+                      if row.get("company") == company and signal_publishable(row)]
     return sort_signal_rows(candidates)[0] if candidates else None
 
 
