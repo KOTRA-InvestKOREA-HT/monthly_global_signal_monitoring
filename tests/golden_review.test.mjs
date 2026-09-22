@@ -12,7 +12,7 @@ const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
 const TAIL = 'The company said the site would support qualification volumes first, that a final location has not been chosen, ' +
   'and that no construction contract has been signed.';
 const source = (company, url) => ({ target_no: 1, company, url, title: `${company} plans a pilot`,
-  published_at: '2026-08-10T00:00:00Z', target_technology: 'target material', investment_signal_no: 2,
+  published_at: '2026-08-10T00:00:00Z', target_technology: 'target material', target_technology_en: 'target material', investment_signal_no: 2,
   content_text: `${company} is considering a new pilot plant for its target material. ${TAIL}` });
 const build = (rows, policy) => groupArticles(rows, [], period, policy);
 const decision = (article, overrides = {}) => ({ candidate_id: 'investment:2',

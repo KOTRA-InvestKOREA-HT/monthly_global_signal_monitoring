@@ -10,7 +10,7 @@ const TAIL = "The company said the site would support qualification volumes firs
   + "that a final location has not been chosen, and that no construction contract has been signed. "
   + "It declined to give a timeline, and said the plan stays under review until the board meets.";
 
-const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', target_technology_en: 'material', content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
 const chat = (ds = decisions, finish_reason = 'stop') =>
   new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: { total_tokens: 12 } }));
@@ -44,7 +44,7 @@ test('the publication date is one article-level pair of required strings, not a 
 
 test('the request carries the article date placement the date rule refers to', () => {
   const pending = groupArticles([{ company: 'Undated', target_no: 1, url: 'https://example.com/u', title: 'Pilot plant',
-    published_at: null, published_at_source: '', investment_signal_no: 2, target_technology: 'material',
+    published_at: null, published_at_source: '', investment_signal_no: 2, target_technology: 'material', target_technology_en: 'material',
     content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
   const body = NVIDIA.body({ article: pending, policy: '', retry: false, model: NVIDIA.model });
   assert.equal(JSON.parse(body.messages[1].content).date_placement, 'date_pending');

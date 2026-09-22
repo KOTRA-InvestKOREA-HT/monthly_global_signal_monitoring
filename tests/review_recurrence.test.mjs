@@ -18,7 +18,7 @@ const BODY = `${ROUND} ${USE} The company thanked its shareholders and said the 
 
 const nexeon = () => {
   const row = { company: 'Nexeon', target_no: 52, url: 'https://example.com/nexeon-round', title: 'Nexeon £100m round',
-    published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
+    published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
   return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
 };
 const base = { entity_supported: true, target_technology_supported: true, quality: 'pass', reason: '근거 확인' };
@@ -164,7 +164,7 @@ test('a recheck that fails is saved as pending, is not published as approved, an
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'recheck-pending-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const row = { company: 'Air Liquide', target_no: 61, url: 'https://example.com/arizona', title: 'Arizona unit',
-    published_at: '2026-08-06T00:00:00Z', target_technology: 'membrane', excluded_from_relevance: true, content_text: facilityBody };
+    published_at: '2026-08-06T00:00:00Z', target_technology: 'membrane', target_technology_en: 'membrane', excluded_from_relevance: true, content_text: facilityBody };
   const a = groupArticles([{ ...row, investment_signal_no: 2 }], [], period)[0];
   const suspicious = { ...base, candidate_id: 'investment:2', target_technology_supported: false, indicator_supported: true,
     leading_indicator_supported: true, event_stage: 'planned', evidence_quotes: [facility],
@@ -299,14 +299,18 @@ test('a technology scope reaches only the candidates of its group, so other arti
   const signal = company => ({ company, target_no: 1, url: `https://example.com/${company}`, title: 'News', published_at: '2026-08-10T00:00:00Z',
     content_text: BODY });
   const technology = { companies: [
-    { company: 'NXP', target_no: 1, technology_group: 'satellite_radar_rf_semiconductor', target_technology: 'RF' },
-    { company: 'Nexeon', target_no: 1, technology_group: 'silicon_anode_sic', target_technology: 'anode' }] };
+    { company: 'NXP', target_no: 1, technology_group: 'satellite_radar_rf_semiconductor', target_technology: 'RF', target_technology_en: 'RF' },
+    { company: 'Nexeon', target_no: 1, technology_group: 'silicon_anode_sic', target_technology: 'anode', target_technology_en: 'anode' }] };
   const indicators = { indicators: [] };
   const scopes = { satellite_radar_rf_semiconductor: { excludes_en: 'automotive UWB chips' } };
   const withScope = sourceCandidates([signal('NXP'), signal('Nexeon')], technology, indicators, period, scopes);
   const without = sourceCandidates([signal('NXP'), signal('Nexeon')], technology, indicators, period, {});
   const ids = c => Object.fromEntries(groupArticles(c.investment, c.relevant, period).map(a => [a.company, a]));
-  assert.deepEqual(ids(withScope).NXP.candidates[0].target_technology_scope, scopes.satellite_radar_rf_semiconductor);
+  // 판정 기준은 `target_technology_scope.includes` 와 `.excludes` 를 보라고 말한다. 설정 파일의
+  // includes_ko·excludes_ko·includes_en·excludes_en 을 그대로 보내면 지시문이 부르는 키가 없다.
+  // 2026-09 실행에서 범위가 실린 기사 16건이 그 상태로 판정됐다. 영어 쪽만 그 이름으로 보낸다.
+  assert.deepEqual(ids(withScope).NXP.candidates[0].target_technology_scope,
+    { includes: '', excludes: 'automotive UWB chips' });
   assert.notEqual(ids(withScope).NXP.id, ids(without).NXP.id);
   assert.equal(ids(withScope).Nexeon.id, ids(without).Nexeon.id);
   assert.equal('target_technology_scope' in ids(withScope).Nexeon.candidates[0], false);
@@ -431,7 +435,7 @@ test('with parallel workers one unavailable verifier stops verification for ever
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const articles = ['Nexeon', 'NexeonB', 'NexeonC'].map((company, i) => {
     const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
-      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
+      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
     return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
   });
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
@@ -522,7 +526,7 @@ test('a verifier whose every answer is rejected pauses the run instead of publis
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const articles = ['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD'].map((company, i) => {
     const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
-      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
+      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
     return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
   });
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];

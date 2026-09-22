@@ -12,7 +12,7 @@ const TAIL = 'The work starts with qualification volumes, and both partners said
   'once the shared line has been installed.';
 const row = { company: 'Acme', target_no: 1, title: 'Research collaboration',
   url: 'https://example.com/research', published_at: '2026-08-11', content_text: `${quote} ${TAIL}`,
-  target_technology: 'hybrid bonding', excluded_from_relevance: true };
+  target_technology: 'hybrid bonding', target_technology_en: 'hybrid bonding', excluded_from_relevance: true };
 const article = groupArticles([{ ...row, investment_signal_no: 4 }], [row],
   { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
 const decisions = article.candidates.map(c => ({ candidate_id: c.id,

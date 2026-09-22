@@ -71,7 +71,7 @@ test('the existing safeguards are still stated in the criteria', () => {
 test('a criteria change gives every article a new id, so stored reviews are not reused', () => {
   const source = { target_no: 1, company: 'Example', title: 'Example plans a pilot',
     url: 'https://example.com/pilot', published_at: '2026-08-10T00:00:00Z',
-    target_technology: 'target material', investment_signal_no: 2,
+    target_technology: 'target material', target_technology_en: 'target material', investment_signal_no: 2,
     content_text: 'Example is considering a new pilot plant for its target material.' };
   const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
   const inputs = { technology: { companies: [] }, indicators: { indicators: [] } };

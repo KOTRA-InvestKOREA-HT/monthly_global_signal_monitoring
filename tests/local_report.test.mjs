@@ -17,7 +17,7 @@ const period = monthPeriod("2026-08");
 const source = {
   target_no: 1, company: "Example", title: "Example plans a pilot",
   url: "https://example.com/pilot", published_at: "2026-08-10T00:00:00Z",
-  target_technology: "target material", investment_signal_no: 2,
+  target_technology: "target material", target_technology_en: "target material", investment_signal_no: 2,
   // 본문은 실제 기사만큼 길어야 한다. 목록 페이지나 오류 화면과 구분되는 하한이 있다.
   content_text: "Example is considering a new pilot plant for its target material. " + TAIL,
 };
@@ -66,7 +66,7 @@ test("review identity ignores old AI prose and crawl timestamps but changes with
   assert.equal(groupArticles([{ ...source, ai_signal_supported: false, collected_at: "later" }], [], period)[0].id, original);
   assert.notEqual(groupArticles([{ ...source, content_text: "Different evidence" }], [], period)[0].id, original);
   assert.notEqual(groupArticles([source], [], period, "changed-policy")[0].id, original);
-  assert.notEqual(groupArticles([{ ...source, target_technology: "different" }], [], period)[0].id, original);
+  assert.notEqual(groupArticles([{ ...source, target_technology: "different", target_technology_en: "different" }], [], period)[0].id, original);
 });
 
 test("rejects missing, duplicated, stale and ungrounded reviews", () => {
@@ -302,7 +302,7 @@ test("CLI prepares isolated files and refuses incomplete builds without changing
 
 
 test("raw source review includes keyword misses and technology rejects for all five indicators", () => {
-  const technology = { companies: [{ company: source.company, target_no: 1, target_technology: "target", excluded_from_relevance: false }] };
+  const technology = { companies: [{ company: source.company, target_no: 1, target_technology: "target", target_technology_en: "target", excluded_from_relevance: false }] };
   const indicators = { indicators: [1,2,3,4,5].map((no) => ({no, label_ko: `S${no}`})) };
   const candidates = sourceCandidates([{ ...source, passed: false }], technology, indicators, period);
   assert.equal(candidates.investment.length, 5);

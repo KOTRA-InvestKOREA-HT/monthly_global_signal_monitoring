@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 
+import { MODEL_INPUT_VERSION } from './model_input.mjs';
+
 // Shared review contract, independent of API transport.
 // The policy owns judgement criteria, Korean terminology and layout targets.
 // Section 5 owns common summary rules and variant-specific writing steps.
@@ -358,6 +360,10 @@ export function decisionsEnvelopeFor(variant = 'baseline') {
 export function promptContract(variant = 'baseline') {
   return {
     version: PROMPT_VERSION,
+    // 모델이 보는 기사·후보의 표현 계약. 기술 번역이 바뀌면 그 기업의 기사 ID 만 달라지지만(번역이
+    // groupArticles 의 material 에 들어 있다), 전송에서만 빼는 표시용 필드처럼 기사 자료가 그대로인
+    // 채 보내는 내용이 달라지는 변경은 ID 에 나타나지 않는다. 그 몫을 이 값이 맡는다.
+    input: MODEL_INPUT_VERSION,
     // 변형을 쓰면 시스템 지시가 달라지므로 기사 id 도 달라진다. 실험 결과가 운영 판정으로 읽히지 않는다.
     ...(variant === 'baseline' ? {} : { variant }),
     system: buildSystemInstruction('', variant),

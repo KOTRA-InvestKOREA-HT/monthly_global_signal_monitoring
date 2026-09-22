@@ -12,6 +12,7 @@ import { APPROVAL_POLICY, validateRows, investmentStageSupported, targetTechnolo
 // 그 문서 밖에 있는 지시(근거 인용 방법, 문안 작성 규칙, 날짜 처리, 응답 형식)는 전달되지 않았다.
 // 같은 기준으로 판정하라면서 기준의 3분의 1을 빼고 주던 셈이다.
 import { DEFAULT_VARIANT, buildSystemInstruction, promptContract, reviewPromptDigest } from "./review_prompts.mjs";
+import { modelCandidate, technologyTranslationError } from "./model_input.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
@@ -299,16 +300,10 @@ export function groupArticles(investment, relevant, period, policy = POLICY_VERS
         // 둘 다 보내면 같은 내용이 두 번 간다(2026-08 HyproMag: 803자 발췌가 19,464자 본문에 그대로 있었다).
         if (clean(text) && !article.evidence.some((block) => block.includes(clean(text)))) article.evidence.push(clean(text));
       }
-      const candidate = {
-        id: kind === "investment" ? `investment:${row.investment_signal_no}` : "relevant",
-        kind,
-        target_technology: row.target_technology || "",
-        // 범위가 없는 기사는 필드 자체를 넣지 않는다. 빈 필드를 넣으면 모든 기사 ID 가 바뀐다.
-        ...(row.target_technology_scope ? { target_technology_scope: row.target_technology_scope } : {}),
-        relevance_exempt: row.excluded_from_relevance === true || row.technology_gate_decision === "relevance_exempt",
-        indicator: row.investment_signal_label || "품목 연계 사업동향",
-        description: row.investment_signal_description || "타겟 품목·기술과 직접 연계된 사업 활동",
-      };
+      // 모델이 보는 표현은 model_input.mjs 가 정한다. 지표 이름·설명은 후보에 싣지 않는다.
+      // 후보 id 가 판정 기준의 S1~S5 를 가리키고, 그 정의는 기준 문서 한 곳에만 있다.
+      // 한국어 원본은 아래 row 에 그대로 붙어 보고서·화면·수집 설정이 쓰던 그대로 남는다.
+      const candidate = modelCandidate({ kind, row });
       if (article.candidates.some((item) => item.id === candidate.id)) {
         throw new Error(`Duplicate candidate: ${row.company} ${row.url} ${candidate.id}`);
       }
@@ -342,6 +337,10 @@ export function sourceCandidates(signals, technology, indicators, period, scopes
     seen.add(key);
     const tech = technology.companies.find((item) => item.company === signal.company && item.target_no === signal.target_no);
     if (!tech) throw new Error(`Missing target technology: ${signal.company}`);
+    // 모델 입력은 영어 기술 표현을 쓴다. 번역이 없는 기업을 빈 문자열이나 한국어로 조용히 보내지
+    // 않고 여기서 멈춘다. 기술 그룹 ID 를 함께 적어 어느 번역을 채워야 하는지 드러낸다.
+    const translationError = technologyTranslationError(tech);
+    if (translationError) throw new Error(translationError);
     const scope = scopes[tech.technology_group];
     const row = { ...withoutAI(signal), ...tech, company: signal.company,
       ...(scope ? { target_technology_scope: scope } : {}),

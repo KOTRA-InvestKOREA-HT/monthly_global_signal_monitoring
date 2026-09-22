@@ -1,6 +1,7 @@
 // API adapters only: prompt composition lives in review_prompts.mjs.
 // Keep existing exports for callers that import the shared contract here.
 import { buildSystemInstruction, decisionsEnvelopeFor, retryInstruction } from './review_prompts.mjs';
+import { modelArticle } from './model_input.mjs';
 export {
   DATE_HINT_VERSION, DATE_INSTRUCTION, SUMMARY_INSTRUCTION,
   SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
@@ -49,7 +50,8 @@ const decisionsEnvelope = decisionsEnvelopeFor();
 const articleText = (article, retry) => {
   const listed = retry?.mode === 'verify' ? new Set(retry.verify_candidate_ids || []) : null;
   const candidates = article.candidates.filter(c => !listed || listed.has(c.id));
-  return JSON.stringify({ ...article, candidates: candidates.map(({ row, ...c }) => c) });
+  // 1차·수리·2차 검증과 모든 변형이 이 한 줄을 지난다. 모델이 보는 표현은 여기서만 정해진다.
+  return JSON.stringify({ ...modelArticle(article), candidates: candidates.map(({ row, ...c }) => c) });
 };
 
 export const GEMINI = {
