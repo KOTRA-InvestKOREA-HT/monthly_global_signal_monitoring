@@ -29,7 +29,7 @@
       "id": "investment_financing",
       "no": 3,
       "label_ko": "투자 재원 확보",
-      "label_en": "Capital Securing & Financing",
+      "label_en": "Capital Raising & Financing",
       "description_ko": "대규모 회사채 발행·유상증자·신용공여 조달 등",
       "keywords": [
         "투자 재원", "회사채", "채권 발행", "유상증자", "신용공여", "신용 한도", "대출 약정", "차입", "자금 조달", "자본 조달", "전환사채", "사모", "공모", "시설투자 자금",
@@ -40,7 +40,7 @@
       "id": "technology_ecosystem_rd",
       "no": 4,
       "label_ko": "기술 생태계 밀착(R&D)",
-      "label_en": "Tech Ecosystem Engagement (R&D)",
+      "label_en": "Technology & R&D Partnerships",
       "description_ko": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
       "keywords": [
         "공동연구", "공동 개발", "기술협력", "연구개발", "기술 라이선싱", "라이선스 계약", "PoC", "개념검증", "파일럿", "실증", "전략적 제휴", "전략적 파트너십", "기술 투자", "지분투자", "오픈이노베이션", "산학협력", "연구센터", "R&D",

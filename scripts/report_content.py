@@ -185,8 +185,8 @@ SIGNAL_DESCRIPTIONS = {
 SIGNAL_DESCRIPTIONS_EN = {
     1: "Supply Chain & Geopolitical Risk · risk events, responses",
     2: "Production Expansion & Diversification · site reviews",
-    3: "Capital Securing & Financing · bonds, equity, credit lines",
-    4: "Tech Ecosystem Engagement (R&D) · joint research, PoC",
+    3: "Capital Raising & Financing · bonds, equity, credit lines",
+    4: "Technology & R&D Partnerships · joint research, PoC",
     5: "Strategic Executive Move · C-level moves, due diligence",
 }
 
@@ -307,7 +307,7 @@ TEXTS = {
         "matrix_company": "Company",
         "matrix_legend_on": "AI-confirmed signal",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move",
+        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Raising · ④ Technology & R&D · ⑤ Strategic Executive Move",
         "matrix_footnote": "{on} companies with AI-confirmed signals · {off} with no signal",
         "detail_title": "Company Signal Details",
         "no_signal": "No signal this month",

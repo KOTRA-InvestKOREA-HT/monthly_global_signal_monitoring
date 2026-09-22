@@ -8,8 +8,8 @@ Five investment signals per company · Pre-confirmation indicators only
 FIVE LEADING SIGNAL INDICATORS
 1 Supply Chain & Geopolitical Risk Dependence reduction, diversification, regulatory risk, etc.
 2 Production Expansion & Diversification APAC expansion reviews, feasibility studies, etc.
-3 Capital Securing & Financing Large bond issues, equity raises, credit lines, etc.
-4 Tech Ecosystem Engagement (R&D) Joint research, licensing, PoC matching, equity, etc.
+3 Capital Raising & Financing Large bond issues, equity raises, credit lines, etc.
+4 Technology & R&D Partnerships Joint research, licensing, PoC matching, equity, etc.
 5 Strategic Executive Move C-level moves, quiet visits, due-diligence signs, etc.
 
 ===== PAGE 2 =====
@@ -58,7 +58,7 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
 AI-confirmed signal No signal
-① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Securing · ④ Tech Ecosystem (R&D) · ⑤ Strategic Executive Move
+① Supply Chain & Geopolitical Risk · ② Production Expansion · ③ Capital Raising · ④ Technology & R&D · ⑤ Strategic Executive Move
 6 companies with AI-confirmed signals · 71 with no signal
 Invest KOREA · Company Signals · Issue 3 02
 
@@ -69,8 +69,8 @@ Charles River
 Bioanalysis & safety testing USA
 1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
 2 Production Expansion & Diversification · site reviews No signal this month —
-3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+3 Capital Raising & Financing · bonds, equity, credit lines No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine
 Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation
 multivalent enterovirus vaccine by leveraging advanced analytical platforms including
@@ -92,8 +92,8 @@ Boeing
 Aircraft & clean propulsion USA
 1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
 2 Production Expansion & Diversification · site reviews No signal this month —
-3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+3 Capital Raising & Financing · bonds, equity, credit lines No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC
 Boeing Investment and Technology Collaboration
 — Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
 while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
@@ -120,8 +120,8 @@ Ouster is expanding its LiDAR production capacity to support rising demand, with
 production run rate expected to increase from approximately 40,000 units annually toward
 100,000 units.
 Source Google News: Yahoo Finance 2026.08.17
-3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+3 Capital Raising & Financing · bonds, equity, credit lines No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC No signal this month —
 5 Strategic Executive Move · C-level moves, due diligence No signal this month —
 GLOBAL BUSINESS STATUS Target item/tech Robot LiDAR
 Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer
@@ -139,8 +139,8 @@ Applied Materials
 Advanced packaging USA
 1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
 2 Production Expansion & Diversification · site reviews No signal this month —
-3 Capital Securing & Financing · bonds, equity, credit lines No signal this month —
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC
+3 Capital Raising & Financing · bonds, equity, credit lines No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC
 AI Computing Material and Process Innovation Research Collaboration
 — Applied Materials announced that University of California, Berkeley will join its EPIC Center in
 Silicon Valley as a research collaborator to pursue research programs accelerating material and
@@ -161,14 +161,14 @@ Nexeon
 Battery anode materials UK
 1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
 2 Production Expansion & Diversification · site reviews No signal this month —
-3 Capital Securing & Financing · bonds, equity, credit lines
+3 Capital Raising & Financing · bonds, equity, credit lines
 Completion of £100 Million Investment Round.
 — The completion of the £100 million ($133 million) investment round includes a £52.6 million
 ($70 million) commitment from the National Wealth Fund along with new investors Korea
 Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
 commercialisation activities.
 Source Nexeon - Media / Newsroom / Media 2026.08.31
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC No signal this month —
 5 Strategic Executive Move · C-level moves, due diligence No signal this month —
 GLOBAL BUSINESS STATUS Target item/tech Silicon anode material technology
 Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National
@@ -186,11 +186,11 @@ Veolia
 Advanced membranes France
 1 Supply Chain & Geopolitical Risk · risk events, responses No signal this month —
 2 Production Expansion & Diversification · site reviews No signal this month —
-3 Capital Securing & Financing · bonds, equity, credit lines
+3 Capital Raising & Financing · bonds, equity, credit lines
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
 bond market.
 Source Official press release · Veolia - Official RSS 2026.08.26
-4 Tech Ecosystem Engagement (R&D) · joint research, PoC No signal this month —
+4 Technology & R&D Partnerships · joint research, PoC No signal this month —
 5 Strategic Executive Move · C-level moves, due diligence No signal this month —
 GLOBAL BUSINESS STATUS Target item/tech Ion exchange membrane and bipolar membrane
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
