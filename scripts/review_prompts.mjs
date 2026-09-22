@@ -55,21 +55,40 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
   'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
   'When the evidence dates the event differently from the announcement, state that event date. ';
 
-// 2026-09 보고서의 영문판이 한국어 개조식 표제를 그대로 옮겨 적어 영어 문장이 되지 못했다
-// ("AI Computing Material and Process Innovation Research Collaboration - Applied Materials announced…").
-// "따로 쓰라"와 "같은 사실을 담으라"가 서로 어긋나 보이지 않도록 순서를 정한다. 공통 사실 목록을
-// 먼저 정하고, 표현만 언어별로 쓴다. 사실 일치 규칙의 기준 문장은 이 절 하나에만 둔다.
-export const SUMMARY_INDEPENDENCE_INSTRUCTION =
+// 문안 절은 세 가지 역할로 나뉜다. 변형이 바꾸는 것은 앞의 둘뿐이다.
+//
+//   사실 목록 단계 : 암묵적(SUMMARY_FACT_BASIS_INSTRUCTION) 또는 명시적(SHARED_FACTS_INSTRUCTION)
+//   출력 순서      : 한국어 먼저(SUMMARY_INDEPENDENCE_INSTRUCTION) 또는 영어 먼저(SUMMARY_ENGLISH_FIRST_INSTRUCTION)
+//   공통 규칙      : SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION (모든 변형에 그대로)
+//
+// 이렇게 나누기 전에는 영어 문체 규칙이 한국어 우선 절 안에만 있었다. shared_facts 변형은 그 절을
+// 쓰지 않으므로 영어 표제 금지 규칙을 한 줄도 받지 못했고, 바로 그 변형이 고치려던 Skyworks
+// "Senior Notes Financing for Acquisition - …" 를 금지하는 규칙이 빠진 채 돌 뻔했다.
+
+// 사실 일치 규칙의 기준 문장. 사실 목록을 따로 출력하지 않는 변형이 쓰는 암묵적 사실 목록 단계다.
+// shared_facts 계열은 이 절 대신 SHARED_FACTS_INSTRUCTION 을 써서 같은 일을 facts 필드로 한다.
+// 둘을 같이 넣으면 사실 선정 지시가 두 번 나와 해석할 여지를 준다.
+export const SUMMARY_FACT_BASIS_INSTRUCTION =
   'First fix the facts this summary reports, taken from this candidate\'s evidence_quotes: the event, the parties, the amounts, the ' +
   'dates and the schedule. Both summaries carry exactly that set of facts, so a month, date or percentage stated in one language must ' +
   'appear in the other. Then write each language separately from the evidence, in that language\'s own idiom. ' +
-  'Independence governs the wording, never which facts appear. ' +
+  'Independence governs the wording, never which facts appear. ';
+
+// 2026-09 보고서의 영문판이 한국어 개조식 표제를 그대로 옮겨 적어 영어 문장이 되지 못했다
+// ("AI Computing Material and Process Innovation Research Collaboration - Applied Materials announced…").
+// 한국어를 먼저 쓰는 변형의 순서·방향 규칙이다. 영어 문체 자체는 아래 공통 절이 정한다.
+export const SUMMARY_INDEPENDENCE_INSTRUCTION =
+  'Write summary_ko first, then summary_en. ' +
   'summary_en is not a translation of summary_ko and is not drafted from it: never carry Korean word order, Korean sentence structure ' +
   'or the Korean noun-phrase headline across into English, and never render Korean report phrasing word for word. ' +
+  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
+
+// 영어 문안의 문체. 순서와 사실 목록 방식과 무관하게 모든 변형이 같은 규칙을 받는다.
+// 이 절이 한 변형에만 있으면, 그 변형을 쓰지 않는 실행은 영어 표제 금지 규칙 없이 돈다.
+export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
   'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
   'and ordinary English articles, prepositions and collocations. ' +
-  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
-  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
+  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ';
 
 export const SUMMARY_STYLE_INSTRUCTION =
   'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
@@ -85,7 +104,8 @@ export const SUMMARY_STYLE_INSTRUCTION =
 
 export const SUMMARY_INSTRUCTION = [
   SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
-  SUMMARY_INDEPENDENCE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
+  SUMMARY_FACT_BASIS_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION,
+  SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
 ].join('\n\n');
 
 const section = (title, text) => `## ${title}\n${text}`;
@@ -180,11 +200,9 @@ export const SHARED_FACTS_INSTRUCTION =
   'Leave a field empty rather than filling it from outside the quotes. ' +
   'Then write both summaries from facts and nothing else: every fact in the list appears in both summaries, ' +
   'and neither summary states anything the list does not hold. ' +
-  'The two summaries share the list, not the wording: write each in its own language\'s idiom. ' +
-  // 어느 언어를 먼저 쓰는지는 이 절이 정하지 않는다. 스키마의 키 순서와, 순서를 정하는 절이 정한다.
-  // 여기서 "summary_ko 와 summary_en 을 쓴다"고 적으면 영어 우선 변형과 조합할 때 두 절이 서로
-  // 다른 순서를 말하게 된다.
-  'Write them in the order this response schema lists them. ';
+  // 어느 언어를 먼저 쓰는지는 이 절이 정하지 않는다. 순서 절이 정한다. 여기서 순서를 함께 말하면
+  // 영어 우선 변형과 조합할 때 두 절이 서로 다른 말을 한다.
+  'The two summaries share the list, not the wording: write each in its own language\'s idiom. ';
 
 // 영어를 한국어보다 먼저 쓰게 하는 변형. 같은 응답 안에서 앞서 쓴 한국어 개조식 요약이 영어 생성
 // 문맥에 놓이지 않게 해 그 형식을 따라가는 영향을 줄여 보려는 가설이다. 나아진다는 보장은 없고,
@@ -194,13 +212,7 @@ export const SHARED_FACTS_INSTRUCTION =
 // 보고 쓰지 않는다"는 문장이, 애초에 한국어가 뒤에 오는 응답에서 앞의 것을 가리키게 된다.
 // 어제 지시문 제목만 남겨 본문과 어긋났던 것과 같은 실수다.
 export const SUMMARY_ENGLISH_FIRST_INSTRUCTION =
-  'First fix the facts this summary reports, taken from this candidate\'s evidence_quotes: the event, the parties, the amounts, the ' +
-  'dates and the schedule. Both summaries carry exactly that set of facts, so a month, date or percentage stated in one language must ' +
-  'appear in the other. Independence governs the wording, never which facts appear. ' +
-  'Write summary_en first, from the article itself, as an English business-news editor would: complete sentences with finite verbs, ' +
-  'and ordinary English articles, prepositions and collocations. ' +
-  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
-  'Then write summary_ko from those same facts in Korean, in the report\'s own bullet style. ' +
+  'Write summary_en first, then summary_ko from those same facts in Korean. ' +
   'summary_ko is not a translation of summary_en and is not drafted from it: never carry English word order or English sentence ' +
   'structure across into Korean, and never render English phrasing word for word. ' +
   'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
@@ -221,34 +233,46 @@ const FACTS_EXTRA = { facts: { type: 'OBJECT', properties: FACT_PROPERTIES } };
 export const SUMMARY_ORDER = ['summary_ko', 'summary_en'];
 const ENGLISH_FIRST_ORDER = ['summary_en', 'summary_ko'];
 
-export const PROMPT_VARIANTS = {
-  baseline: { id: 'baseline', heading: SUMMARY_HEADING, summary: SUMMARY_INSTRUCTION, decisionExtras: {} },
-  shared_facts: {
-    id: 'shared_facts',
-    heading: '5. Write summaries after judgement: eligibility, grounding, then one shared fact list for both languages',
-    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
-      SHARED_FACTS_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
-    decisionExtras: FACTS_EXTRA,
-  },
-  // 순서 하나만 바꾼 변형. 사실 목록 단계는 넣지 않는다. 두 가지를 한꺼번에 바꾸면 무엇이 효과를
-  // 냈는지 갈라 볼 수 없다.
-  english_first: {
-    id: 'english_first',
-    heading: '5. Write summaries after judgement: eligibility, grounding, then English before Korean',
-    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
-      SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
-    decisionExtras: {}, summaryOrder: ENGLISH_FIRST_ORDER,
-  },
+// 변형은 두 가지만 고른다: 사실 목록을 따로 출력할지(facts), 어느 언어를 먼저 쓸지(englishFirst).
+// 나머지 절은 조립이 채우므로 어떤 변형도 공통 규칙을 빠뜨릴 수 없다. 예전에는 변형마다 절 목록을
+// 손으로 적었고, 그래서 shared_facts 가 영어 문체 절을 통째로 빠뜨린 채 정의돼 있었다.
+function variantSummary({ facts, englishFirst }) {
+  return [
+    SUMMARY_ELIGIBILITY_INSTRUCTION,
+    SUMMARY_GROUNDING_INSTRUCTION,
+    // 사실 목록 단계. 명시적 facts 필드를 쓰는 변형은 암묵적 절을 쓰지 않는다. 둘을 같이 넣으면
+    // 사실 선정 지시가 두 번 나온다.
+    facts ? SHARED_FACTS_INSTRUCTION : SUMMARY_FACT_BASIS_INSTRUCTION,
+    // 출력 순서와 번역 방향. 스키마의 키 순서와 같은 말을 해야 한다.
+    englishFirst ? SUMMARY_ENGLISH_FIRST_INSTRUCTION : SUMMARY_INDEPENDENCE_INSTRUCTION,
+    SUMMARY_ENGLISH_STYLE_INSTRUCTION,
+    SUMMARY_STYLE_INSTRUCTION,
+  ].join('\n\n');
+}
+
+const variantHeading = ({ facts, englishFirst }) =>
+  `5. Write summaries after judgement: eligibility, grounding, then ${facts ? 'one shared fact list, ' : ''}` +
+  `${englishFirst ? 'English before Korean' : 'each language on its own'}`;
+
+function defineVariant(id, choices) {
+  return [id, {
+    id,
+    heading: variantHeading(choices),
+    summary: variantSummary(choices),
+    decisionExtras: choices.facts ? FACTS_EXTRA : {},
+    ...(choices.englishFirst ? { summaryOrder: ENGLISH_FIRST_ORDER } : {}),
+  }];
+}
+
+export const PROMPT_VARIANTS = Object.fromEntries([
+  defineVariant('baseline', { facts: false, englishFirst: false }),
+  // 사실 목록만 바꾼다.
+  defineVariant('shared_facts', { facts: true, englishFirst: false }),
+  // 순서만 바꾼다. 두 가지를 한꺼번에 바꾸면 무엇이 효과를 냈는지 갈라 볼 수 없다.
+  defineVariant('english_first', { facts: false, englishFirst: true }),
   // 인계 문서가 실제로 권한 흐름: 근거 → 판정 → 사실 목록 → 영어 → 한국어.
-  // 위 두 변형이 각 변수를 따로 재고, 이것이 둘을 합친 결과를 잰다.
-  shared_facts_english_first: {
-    id: 'shared_facts_english_first',
-    heading: '5. Write summaries after judgement: eligibility, grounding, then one shared fact list, English before Korean',
-    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
-      SHARED_FACTS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
-    decisionExtras: FACTS_EXTRA, summaryOrder: ENGLISH_FIRST_ORDER,
-  },
-};
+  defineVariant('shared_facts_english_first', { facts: true, englishFirst: true }),
+]);
 
 export function promptVariant(name) {
   const variant = PROMPT_VARIANTS[String(name || 'baseline')];

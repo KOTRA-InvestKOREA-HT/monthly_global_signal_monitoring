@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import { FACT_PROPERTIES, PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION,
-  SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_INSTRUCTION, buildSystemInstruction, promptContract,
-  promptVariant, reviewPromptDigest } from '../scripts/review_prompts.mjs';
+import { FACT_PROPERTIES, PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_ELIGIBILITY_INSTRUCTION,
+  SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION,
+  SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION, SUMMARY_INSTRUCTION,
+  SUMMARY_STYLE_INSTRUCTION, buildSystemInstruction, promptContract, promptVariant,
+  reviewPromptDigest } from '../scripts/review_prompts.mjs';
 import { GEMINI, NVIDIA, decisionsEnvelopeFor } from '../scripts/review_providers.mjs';
 import { GOLDEN_SETS, goldenEntries, selectGoldenArticles } from '../scripts/golden_review.mjs';
 import { buildSheet, cell, factLine, indexRun } from '../scripts/summary_sheet.mjs';
@@ -25,8 +27,11 @@ test('a variant replaces only the summary section and only in that variant', () 
   const shared = buildSystemInstruction('', 'shared_facts');
   assert.notEqual(baseline, shared);
   // 바뀌는 것은 문안 작성 지시뿐이다. 근거·판정·날짜 지시는 그대로여야 같은 판정을 비교할 수 있다.
+  // shared_facts 가 바꾸는 것은 사실 목록 단계 하나뿐이다. 명시적 facts 절이 암묵적 절을 대신하고,
+  // 출력 순서 절은 기본 경로와 같은 것을 쓴다.
   assert.ok(shared.includes(SHARED_FACTS_INSTRUCTION));
-  assert.equal(shared.includes(SUMMARY_INDEPENDENCE_INSTRUCTION), false);
+  assert.equal(shared.includes(SUMMARY_FACT_BASIS_INSTRUCTION), false);
+  assert.ok(shared.includes(SUMMARY_INDEPENDENCE_INSTRUCTION));
   const sections = text => new Map(text.split('\n## ').slice(1)
     .map(part => [part.split('\n')[0], part.split('\n').slice(1).join('\n')]));
   const [before, after] = [sections(baseline), sections(shared)];
@@ -39,7 +44,7 @@ test('a variant replaces only the summary section and only in that variant', () 
   // 제목도 지시문이라 함께 바뀐다. 본문만 갈아 끼우면 제목이 옛 지시를 계속 말한다.
   const heading = text => [...sections(text).keys()].find(title => title.startsWith('5.'));
   assert.match(heading(baseline), /each language on its own$/);
-  assert.match(heading(shared), /one shared fact list for both languages$/);
+  assert.match(heading(shared), /one shared fact list, each language on its own$/);
 });
 
 test('an unknown variant is refused by name rather than silently ignored', () => {
@@ -188,6 +193,55 @@ test('a change to the response schema alone invalidates the judgement cache', ()
   // 변형마다 다른 기사 id 를 얻는다. 한 변형의 판정이 다른 변형의 결과로 읽히지 않는다.
   const digests = Object.keys(PROMPT_VARIANTS).map(name => reviewPromptDigest('policy', promptContract(name)));
   assert.equal(new Set(digests).size, digests.length);
+});
+
+// 변형이 고르는 것은 사실 목록 단계와 출력 순서 둘뿐이다. 영어 문체 규칙은 어느 변형에서도 같다.
+// 예전에는 영어 문체가 한국어 우선 절 안에만 있어서, 그 절을 쓰지 않는 shared_facts 가 영어 표제
+// 금지 규칙을 한 줄도 받지 못했다. 바로 그 변형이 고치려던 Skyworks "… - …" 표제를 막는 규칙이다.
+test('every variant carries the same English style rules', () => {
+  for (const variant of Object.keys(PROMPT_VARIANTS)) {
+    const system = buildSystemInstruction('policy text', variant);
+    assert.ok(system.includes(SUMMARY_ENGLISH_STYLE_INSTRUCTION), variant);
+    assert.ok(system.includes('no " - " headline form and no leading label'), variant);
+    assert.ok(system.includes('complete sentences with finite verbs'), variant);
+    assert.ok(system.includes('ordinary English articles, prepositions and collocations'), variant);
+    // 한국어 문체와 판정 기준도 공통이다. 변형이 이것들을 건드리면 문안 실험이 판정 실험이 된다.
+    assert.ok(system.includes(SUMMARY_STYLE_INSTRUCTION), variant);
+    assert.ok(system.includes(SUMMARY_ELIGIBILITY_INSTRUCTION), variant);
+    assert.ok(system.includes(SUMMARY_GROUNDING_INSTRUCTION), variant);
+    // 공통 규칙은 한 번만 나온다. 두 번 나오면 같은 규칙을 다른 말로 읽을 여지를 준다.
+    assert.equal(system.split('no " - " headline form').length - 1, 1, variant);
+    assert.equal(system.split('First fix the facts this summary reports').length - 1,
+      variant.startsWith('shared_facts') ? 0 : 1, variant);
+  }
+});
+
+// 변형 간 차이는 이 두 축뿐이어야 한다. 축이 늘면 무엇이 효과를 냈는지 갈라 볼 수 없다.
+test('a variant differs from the default only in its fact step and its language order', () => {
+  const axes = {
+    baseline: { facts: false, englishFirst: false },
+    shared_facts: { facts: true, englishFirst: false },
+    english_first: { facts: false, englishFirst: true },
+    shared_facts_english_first: { facts: true, englishFirst: true },
+  };
+  assert.deepEqual(Object.keys(axes), Object.keys(PROMPT_VARIANTS));
+  for (const [variant, { facts, englishFirst }] of Object.entries(axes)) {
+    const system = buildSystemInstruction('policy text', variant);
+    // 사실 목록 단계: 명시적 facts 절과 암묵적 절은 서로를 배제한다.
+    assert.equal(system.includes(SHARED_FACTS_INSTRUCTION), facts, variant);
+    assert.equal(system.includes(SUMMARY_FACT_BASIS_INSTRUCTION), !facts, variant);
+    assert.equal('facts' in PROMPT_VARIANTS[variant].decisionExtras, facts, variant);
+    // 출력 순서: 지시문과 스키마가 같은 말을 해야 한다.
+    assert.equal(system.includes(SUMMARY_ENGLISH_FIRST_INSTRUCTION), englishFirst, variant);
+    assert.equal(system.includes(SUMMARY_INDEPENDENCE_INSTRUCTION), !englishFirst, variant);
+    const order = Object.keys(decisionsEnvelopeFor(variant).properties.decisions.items.properties)
+      .filter(key => key.startsWith('summary_'));
+    assert.deepEqual(order, englishFirst ? ['summary_en', 'summary_ko'] : ['summary_ko', 'summary_en'], variant);
+    // 제목도 두 축을 그대로 말한다. 본문만 갈아 끼우면 제목이 옛 지시를 계속 말한다.
+    const heading = PROMPT_VARIANTS[variant].heading;
+    assert.equal(/one shared fact list/.test(heading), facts, variant);
+    assert.equal(/English before Korean/.test(heading), englishFirst, variant);
+  }
 });
 
 test('the english-first variants write English before Korean, and say so', () => {

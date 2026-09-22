@@ -32,12 +32,19 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Joining a programme or agreeing to take part is not signing an agreement/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
+    // 순서 절은 어느 언어를 먼저 쓰는지와 번역 방향만 말한다.
     ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
-    // 사실 일치 규칙의 기준 문장은 독립 작성 절 하나에만 둔다. 문체 절에 같은 규칙을 다시 적으면
+    ['SUMMARY_ENGLISH_FIRST_INSTRUCTION', /not a translation of summary_en and is not drafted from it/],
+    // 사실 일치 규칙의 기준 문장은 사실 목록 절 하나에만 둔다. 문체 절에 같은 규칙을 다시 적으면
     // "따로 쓰라"와 "같게 쓰라"가 서로 다른 말로 두 번 나와 해석할 여지를 준다.
-    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /First fix the facts this summary reports/],
-    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /a month, date or percentage stated in one language must appear\s+in the other/],
-    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /Independence governs the wording, never which facts appear/],
+    ['SUMMARY_FACT_BASIS_INSTRUCTION', /First fix the facts this summary reports/],
+    ['SUMMARY_FACT_BASIS_INSTRUCTION', /a month, date or percentage stated in one language must appear\s+in the other/],
+    ['SUMMARY_FACT_BASIS_INSTRUCTION', /Independence governs the wording, never which facts appear/],
+    // 영어 문체는 순서·사실 목록 방식과 무관한 공통 규칙이라 제 절에 둔다. 순서 절에 두면 그 절을
+    // 쓰지 않는 변형이 영어 표제 금지 규칙 없이 돈다.
+    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /complete sentences with finite verbs/],
+    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /ordinary English articles, prepositions and collocations/],
+    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /no " - " headline form and no leading label/],
     // 값은 지키고 표기만 바꾼다. "다시 계산하지 말라"와 "정확히 환산하라"를 한 규칙으로 합쳤다.
     ['SUMMARY_GROUNDING_INSTRUCTION', /the quantity is fixed, the notation is not/],
     ['SUMMARY_STYLE_INSTRUCTION', /length is a target, not a cap/],
