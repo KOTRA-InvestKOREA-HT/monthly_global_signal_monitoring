@@ -24,7 +24,7 @@ const investment = (overrides = {}, no = 4) => ({ candidate_id: `investment:${no
   entity_supported: true, target_technology_supported: true, indicator_supported: true,
   leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass',
   evidence_quotes: ['Acme signed a membrane materials joint research agreement.'],
-  reason_ko: '타겟 막 소재의 공동연구가 본문에서 확인됨',
+  reason: '타겟 막 소재의 공동연구가 본문에서 확인됨',
   summary_ko: '막 소재 공동연구 체결 - 타겟 막 소재 공동연구를 체결했음',
   summary_en: 'Acme signed a membrane materials joint research agreement.', ...overrides });
 
@@ -32,7 +32,7 @@ const business = (overrides = {}) => ({ candidate_id: 'relevant',
   entity_supported: true, target_technology_supported: true, indicator_supported: true,
   leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass',
   evidence_quotes: ['Acme also sells office furniture across Europe.'],
-  reason_ko: '사업 활동이 확인됨', summary_ko: '유럽 사업을 이어가고 있음',
+  reason: '사업 활동이 확인됨', summary_ko: '유럽 사업을 이어가고 있음',
   summary_en: 'Acme continues to sell across Europe.', ...overrides });
 
 const reviewOf = decisions => ({ article_id: 'acme', reviewer: 'test', decisions });
@@ -75,22 +75,31 @@ test('a summary that brings in an organisation the quotes never mention is still
 // 5. 실제 기술 관련성 모순은 재검증 없이 조용히 승인되지 않는다.
 test('a reason that really denies the target technology becomes a recheck suspect', () => {
   const a = article();
-  const decisions = [investment({ reason_ko: '지표 사건은 확인되나 타겟 기술과의 직접적 연계성은 확인되지 않음' }), business()];
+  const decisions = [investment({ reason: '지표 사건은 확인되나 타겟 기술과의 직접적 연계성은 확인되지 않음' }), business()];
   assert.deepEqual(relevanceConflictSuspects(a, decisions).map(d => d.candidate_id), ['investment:4']);
-  assert.match(relevanceConflictNotes(a, decisions)[0], /reason_ko says/);
+  assert.match(relevanceConflictNotes(a, decisions)[0], /reason says/);
   assert.equal(needsRelevanceReview(a, reviewOf(decisions)), true);
   assert.equal(cachedRecheck(a, reviewOf(decisions)).reason, 'relevance_conflict');
   // 검증기 질문에도 오르고, 같은 실행 안의 되묻기에도 들어간다.
-  assert.ok(verificationSuspects(a, reviewOf(decisions)).flagged_because['investment:4'].some(q => /What exactly does reason_ko deny/.test(q)));
+  assert.ok(verificationSuspects(a, reviewOf(decisions)).flagged_because['investment:4'].some(q => /What exactly does reason deny/.test(q)));
   // 같은 실행 안의 되묻기는 어느 필드와 어느 구절이 충돌하는지 그대로 적어 보낸다.
   assert.match(freshRecheckFeedback(a, reviewOf(decisions)).validation_message,
-    /investment:4: target_technology_supported=true but reason_ko says "직접적 연계성은 확인되지"/);
+    /investment:4: target_technology_supported=true but reason says "직접적 연계성은 확인되지"/);
 });
 
 // 4. 한국 투자 미언급이 타겟 기술 미연결로 오인되지 않는다.
+test('English reasons still flag technology denials without treating Korea investment as technology', () => {
+  const a = article();
+  const denied = [investment({ reason: 'There is no direct link to the target membrane technology.' }), business()];
+  assert.ok(relevanceConflictSuspects(a, denied).length > 0);
+  assert.match(relevanceConflictNotes(a, denied)[0], /reason says "no direct link"/);
+  const supported = [investment({ reason: 'Joint research on the target membrane is explicit, but investment in Korea is not mentioned.' }), business()];
+  assert.deepEqual(relevanceConflictSuspects(a, supported), []);
+});
+
 test('a reason denying a different condition is not a relevance conflict', () => {
   const a = article();
-  const decisions = [investment({ reason_ko: '타겟 막 소재 공동연구는 명시되어 있으나 한국 투자 자체는 언급되지 않음.' }), business()];
+  const decisions = [investment({ reason: '타겟 막 소재 공동연구는 명시되어 있으나 한국 투자 자체는 언급되지 않음.' }), business()];
   assert.deepEqual(relevanceConflictSuspects(a, decisions), []);
   assert.equal(needsRelevanceReview(a, reviewOf(decisions)), false);
   // 그리고 승인이 그대로 선다.
@@ -100,7 +109,7 @@ test('a reason denying a different condition is not a relevance conflict', () =>
 // 6. 한 기사 안 서로 다른 사건의 투자·사업동향 판정이 독립적으로 유지된다.
 test('a business judgement about a different event does not reach the investment candidate', () => {
   const a = article();
-  const decisions = [investment(), business({ target_technology_supported: false, reason_ko: '사무가구는 타겟 품목이 아님' })];
+  const decisions = [investment(), business({ target_technology_supported: false, reason: '사무가구는 타겟 품목이 아님' })];
   assert.equal(sameEventAsBusiness(decisions[0], decisions[1]), false);
   assert.equal(decisionForApproval(a, decisions, decisions[0]).target_technology_supported, true);
   assert.equal(decisionOutcome(a, decisions, decisions[0]).supported, true);
@@ -112,7 +121,7 @@ test('two candidates quoting one passage may not disagree about the technology l
   const quote = 'Acme signed a membrane materials joint research agreement.';
   const a = article({ bizQuote: quote });
   const decisions = [investment(), business({ evidence_quotes: [quote], target_technology_supported: false,
-    reason_ko: '이 제품은 타겟 품목이 아님' })];
+    reason: '이 제품은 타겟 품목이 아님' })];
   assert.equal(sameEventAsBusiness(decisions[0], decisions[1]), true);
   // 예전처럼 사업동향 판정을 따른다. 승인이 조용히 나가지 않는다.
   assert.equal(decisionForApproval(a, decisions, decisions[0]).target_technology_supported, false);
@@ -142,7 +151,7 @@ test('an unresolved conflict is held back while the other candidates keep their 
 test('candidates that need no target-technology link are never relevance suspects', () => {
   for (const no of [3, 5]) {
     const a = article({ no });
-    const decisions = [investment({ reason_ko: '타겟 기술과의 직접적 연계성은 확인되지 않음' }, no), business()];
+    const decisions = [investment({ reason: '타겟 기술과의 직접적 연계성은 확인되지 않음' }, no), business()];
     assert.deepEqual(relevanceConflictSuspects(a, decisions), [], `S${no}`);
   }
 });

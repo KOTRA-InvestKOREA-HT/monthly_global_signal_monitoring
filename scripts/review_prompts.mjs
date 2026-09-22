@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
 
 // Shared review contract, independent of API transport.
-// Keep criteria and runtime validation authoritative. These sections organise the
-// policy document is the single source of judgement criteria.
-export const PROMPT_VERSION = 'review-prompt-v4';
+// The policy owns judgement criteria, Korean terminology and layout targets.
+// Section 5 owns common summary rules and variant-specific writing steps.
+export const PROMPT_VERSION = 'review-prompt-v5';
 export const DATE_HINT_VERSION = 'date-hint-v1';
 
 export const DATE_INSTRUCTION =
@@ -21,7 +21,7 @@ export const TASK_INSTRUCTION =
 
 export const EVIDENCE_INSTRUCTION =
   'For each candidate, work in the order of the response fields: first copy into evidence_quotes the sentences that show THIS ' +
-  'candidate\'s indicator event, then write reason_ko from those sentences, and only then set the booleans, event_stage and quality ' +
+  'candidate\'s indicator event, then write reason in English from those sentences, and only then set the booleans, event_stage and quality ' +
   'from what those sentences actually show. If no sentence shows the indicator event, indicator_supported=false. ' +
   'Missing article body or uncertain evidence must remain needs_review. Write or omit summaries only as the summary rules below say. ';
 
@@ -45,6 +45,7 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
   '(Korean 예정·계획·가능성), never 완료 or 진행. Describe the event the evidence reports: an executive who assumed office this month ' +
   'was not appointed this month unless the evidence says so. Name the country or region instead of domestic, local, home or 국내. ' +
   'Do not upgrade a relationship: an investment or stake is not a collaboration, and potential synergies are not an ongoing collaboration. ' +
+  'Preserve the actor and counterparty; do not omit them or interchange supply, equity investment, joint research and licensing. ' +
   'Joining a programme or agreeing to take part is not signing an agreement, and an intention is not a decision. ' +
   'Promotional wording in the article (high-impact, leading, world-class) is the company\'s claim, not a confirmed fact: use the figure the ' +
   'article gives, or drop the adjective. ' +
@@ -61,9 +62,8 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
 //   출력 순서      : 한국어 먼저(SUMMARY_INDEPENDENCE_INSTRUCTION) 또는 영어 먼저(SUMMARY_ENGLISH_FIRST_INSTRUCTION)
 //   공통 규칙      : SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION (모든 변형에 그대로)
 //
-// 이렇게 나누기 전에는 영어 문체 규칙이 한국어 우선 절 안에만 있었다. shared_facts 변형은 그 절을
-// 쓰지 않으므로 영어 표제 금지 규칙을 한 줄도 받지 못했고, 바로 그 변형이 고치려던 Skyworks
-// "Senior Notes Financing for Acquisition - …" 를 금지하는 규칙이 빠진 채 돌 뻔했다.
+// 이전 shared_facts 변형에는 공통 영어 문체 절이 빠져 정책 문서의 중복 지시에 의존했다.
+// 이제 정책에는 이 규칙을 반복하지 않으므로 모든 변형에 공통 절이 반드시 포함되어야 한다.
 
 // 사실 일치 규칙의 기준 문장. 사실 목록을 따로 출력하지 않는 변형이 쓰는 암묵적 사실 목록 단계다.
 // shared_facts 계열은 이 절 대신 SHARED_FACTS_INSTRUCTION 을 써서 같은 일을 facts 필드로 한다.
@@ -85,14 +85,9 @@ export const SUMMARY_INDEPENDENCE_INSTRUCTION =
 
 // 영어 문안의 문체. 순서와 사실 목록 방식과 무관하게 모든 변형이 같은 규칙을 받는다.
 // 이 절이 한 변형에만 있으면, 그 변형을 쓰지 않는 실행은 영어 표제 금지 규칙 없이 돈다.
-// 실행 35681082022(v4, 영문 40건)에서 표제형은 0건으로 사라졌지만, 어색한 문안의 공통점은
-// 둘째 문장이 첫 문장을 바꿔 쓴 것이었다. Norsk Hydro 는 "GM 차량에 Hydro 재생 알루미늄 범퍼가
-// 들어간다" 다음에 "그 차량의 범퍼에 Hydro 재생 알루미늄이 들어간다"를 붙였고, Asahi Kasei 는
-// 보조금 수주를 적은 뒤 "그 보조금은 증설에 대한 자금 지원 역할을 한다"를 붙였다.
-//
-// 원인은 분량 지시가 한국어 쪽에만 있었다는 것이다. 한국어 문체 절에는 "분량은 목표지 상한이
-// 아니다, 안 들어가면 부차 설명을 버려라"가 있는데 영어에는 대응 규칙이 없어, 두 문장을 채울
-// 내용이 없을 때 모델이 같은 사실을 바꿔 써서 채웠다.
+// 실행 35681082022에서 같은 사실을 둘째 문장으로 반복한 사례가 관찰됐다.
+// 문장 수를 채우려는 영향일 수 있으나 원인은 미검증이다. 정책의 최소 문장 수 요구를 제거하고
+// 한 문장도 허용한다. 이 변경의 품질 효과는 실제 문안 비교로 확인해야 한다.
 export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
   'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
   'and ordinary English articles, prepositions and collocations. ' +
@@ -102,7 +97,7 @@ export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
   'reporting or disclosing itself instead of the event. ';
 
 export const SUMMARY_STYLE_INSTRUCTION =
-  'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
+  'In summary_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
   'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ' +
   'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
   'Put the agreed facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries. ' +
@@ -162,7 +157,7 @@ export const RETRY_INSTRUCTION =
 export const VERIFY_INSTRUCTION =
   'Second-stage audit. The article payload carries only the candidates under audit; automated checks flagged them as likely misjudged. ' +
   'No earlier answer is shown; judge them only from the supplied evidence and the report criteria. The evidence is the whole article, ' +
-  'so a passage about some other candidate is context, not a candidate to judge. For each candidate, begin reason_ko ' +
+  'so a passage about some other candidate is context, not a candidate to judge. For each candidate, begin reason in English ' +
   'by answering every question in checks[candidate_id] from the evidence, naming the concrete fact the answer rests on, and then set ' +
   'evidence_quotes, the booleans, event_stage and quality so that they agree with those answers. Be strict: set a field true, or ' +
   'event_stage exploratory, planned or precursor, only when a quoted sentence states it; when the evidence is ambiguous take the ' +
@@ -303,7 +298,7 @@ const EVENT_STAGES = ['exploratory', 'planned', 'precursor', 'committed', 'compl
 export const decisionProperties = {
   candidate_id: { type: 'STRING' },
   evidence_quotes: { type: 'ARRAY', items: { type: 'STRING' } },
-  reason_ko: { type: 'STRING' },
+  reason: { type: 'STRING' },
   ...Object.fromEntries(
     ['entity_supported', 'target_technology_supported', 'indicator_supported', 'leading_indicator_supported']
       .map(k => [k, { type: 'BOOLEAN' }]),

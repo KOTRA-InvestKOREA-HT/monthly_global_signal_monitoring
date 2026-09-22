@@ -18,7 +18,7 @@ const build = (rows, policy) => groupArticles(rows, [], period, policy);
 const decision = (article, overrides = {}) => ({ candidate_id: 'investment:2',
   entity_supported: true, target_technology_supported: true, indicator_supported: true,
   leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
-  reason_ko: '타겟 소재의 생산시설 검토가 본문에 명시됨', evidence_quotes: [article.candidates[0].row.content_text],
+  reason: '타겟 소재의 생산시설 검토가 본문에 명시됨', evidence_quotes: [article.candidates[0].row.content_text],
   summary_ko: '타겟 소재 파일럿 시설 검토', summary_en: 'Target-material pilot plant under consideration', ...overrides });
 const review = (article, overrides = {}) => ({ article_id: article.id, reviewer: `${MODEL}/article-review-v1`,
   provider: 'nvidia', decisions: [decision(article, overrides)] });
@@ -149,7 +149,7 @@ test('a prose-only change is reported as a summary rewrite, not as no change', (
   const decision = supported => ({ candidate_id: 'investment:3', entity_supported: true,
     target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true,
     event_stage: 'planned', quality: 'pass', evidence_quotes: ['Acme raised new funding.'],
-    reason_ko: '근거 확인', summary_ko: supported, summary_en: 'Acme raised new funding.' });
+    reason: '근거 확인', summary_ko: supported, summary_en: 'Acme raised new funding.' });
   const result = compareArticle({
     article, baselineArticle: { ...article, id: 'was' },
     baselineReview: { article_id: 'was', reviewer: 'test', decisions: [decision('자금 조달 - 생산 능력을 확대 있으며 신규 라인을 도입')] },

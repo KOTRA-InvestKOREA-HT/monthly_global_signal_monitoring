@@ -18,7 +18,7 @@ const article = groupArticles([{ ...row, investment_signal_no: 4 }], [row],
 const decisions = article.candidates.map(c => ({ candidate_id: c.id,
   entity_supported: true, target_technology_supported: false, indicator_supported: true,
   leading_indicator_supported: true, event_stage: c.kind === 'relevant' ? 'not_applicable' : 'precursor',
-  quality: 'pass', reason_ko: '구체적 반도체 공정 공동연구가 확인됨', evidence_quotes: [quote],
+  quality: 'pass', reason: '구체적 반도체 공정 공동연구가 확인됨', evidence_quotes: [quote],
   summary_ko: '대학과 첨단 칩 패키징 공정을 공동 개발할 예정임.',
   summary_en: 'Acme and University will jointly develop advanced chip packaging processes.' }));
 

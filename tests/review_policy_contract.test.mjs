@@ -11,61 +11,61 @@ const CRITERIA = policySection(DOC);
 
 test('the criteria sent to the model judge each field independently', () => {
   // 한 필드의 실패를 다른 필드로 옮기지 말라는 지시가 프롬프트에 있어야 한다.
-  assert.match(CRITERIA, /각 필드는 독립적으로 판단한다/);
+  assert.match(CRITERIA, /Judge each field independently/);
   for (const field of ['entity_supported', 'target_technology_supported', 'indicator_supported',
     'leading_indicator_supported', 'quality']) {
     assert.match(CRITERIA, new RegExp(field), `${field} 가 독립 판단 대상으로 명시되어야 한다`);
   }
-  assert.match(CRITERIA, /다른 필드의 판정 근거로 옮기지 않는다/);
+  assert.match(CRITERIA, /Do not transfer a false result from one field into the judgement of another/);
 });
 
 test('a technology exemption is not allowed to travel into indicator or quality', () => {
   const exemption = CRITERIA.split('\n').find(line => /relevance_exempt=true/.test(line));
   assert.ok(exemption, 'relevance_exempt 규칙이 판정 기준에 있어야 한다');
   // 면제 후보의 target_technology_supported=false 는 사실대로 기록하되 다른 필드로 번지지 않는다.
-  assert.match(exemption, /사실 그대로 기록/);
-  assert.match(exemption, /`indicator_supported`(이|나) *`?quality`?/);
-  assert.match(exemption, /탈락 사유로 다시 쓰지 않는다/);
+  assert.match(exemption, /record false as the evidence warrants/);
+  assert.match(exemption, /`indicator_supported` or `quality`/);
+  assert.match(exemption, /do not reuse it as a rejection reason/);
 });
 
 // 모델이 요약을 쓸지 말지는 이 문서의 승인 조건만 보고 정한다. 코드에서 S3·S5 의 품목 연결
 // 요구를 빼고 문서를 그대로 두면, 모델은 그 후보를 탈락으로 보고 문안을 비운 채 돌려준다.
 test('the criteria state which candidates are exempt from the target-technology condition', () => {
-  const approval = CRITERIA.split('\n').find(line => /^승인은 `entity_supported=true`/.test(line));
+  const approval = CRITERIA.split('\n').find(line => /^Approval requires `entity_supported=true`/.test(line));
   assert.ok(approval, '승인 조건 문장이 판정 기준에 있어야 한다');
-  assert.match(approval, /S3·S5 후보에는 이 조건이 없고/);
+  assert.match(approval, /S3\/S5 candidates are exempt from the technology-link condition/);
   // 완화가 거기서 멈춘다는 것도 같은 문장이 말해야 한다.
-  assert.match(approval, /S1·S2·S4와 사업동향\)는 `target_technology_supported=true`/);
+  assert.match(approval, /S1\/S2\/S4 and business activity\) require `target_technology_supported=true`/);
   // 요약 대상도 같이 넓어져야 그 후보가 문안 없이 승인되지 않는다.
-  assert.match(CRITERIA, /S3·S5 후보는 `target_technology_supported=false`여도 나머지 승인 조건을 만족하면 요약이 필요하다/);
+  assert.match(CRITERIA, /S3\/S5 candidates still require summaries with `target_technology_supported=false` when the other approval conditions are met/);
   // 필드 자체는 여전히 근거대로 판단한다. 조건에서 빼는 것이지 true 로 올리는 것이 아니다.
-  assert.match(CRITERIA, /`investment:3`·`investment:5` 후보도 이 필드는 근거대로 판단하되/);
+  assert.match(CRITERIA, /Judge this field from evidence even for `relevance_exempt=true`, `investment:3` and `investment:5`/);
 });
 
 test('event_stage is judged on the candidate event, not on how the sentence is worded', () => {
-  assert.match(CRITERIA, /`event_stage`는 이 후보 사건이 최종 투자에 대해 어느 단계인지/);
-  assert.match(CRITERIA, /"체결"·"완료"라고 적혀 있는지가 아니라/);
+  assert.match(CRITERIA, /candidate event's stage relative to the final investment/);
+  assert.match(CRITERIA, /not whether the sentence uses "signed" or "completed"/);
   // 지표별 전조 예시가 남아 있어야 한다.
-  assert.match(CRITERIA, /자금 확보\(S3\)/);
-  assert.match(CRITERIA, /연구협업\(S4\)/);
+  assert.match(CRITERIA, /funding \(S3\)/);
+  assert.match(CRITERIA, /research collaboration \(S4\)/);
 });
 
 test('quality=pass states evidence sufficiency, never approval', () => {
-  assert.match(CRITERIA, /`quality`는 근거의 충분성만 말한다/);
-  assert.match(CRITERIA, /`pass`는 승인이나 긍정 판정이 아니며/);
-  assert.match(CRITERIA, /명확한 부적합도 `?pass`?/);
+  assert.match(CRITERIA, /`quality` describes evidence sufficiency only/);
+  assert.match(CRITERIA, /`pass` is not approval or a positive verdict/);
+  assert.match(CRITERIA, /a clearly ineligible event also receives `pass`/);
 });
 
 test('the existing safeguards are still stated in the criteria', () => {
   // 이번 변경은 완화가 아니다. 기존 게이트 문구가 그대로 남아 있어야 한다.
-  assert.match(CRITERIA, /`entity_supported`: 사건이 타겟 기업 자체에 귀속되는가/);
-  assert.match(CRITERIA, /생산 증설 지표 2에는 이 단계를 쓸 수 없다/);
-  assert.match(CRITERIA, /committed\/completed: 최종 생산시설 투자·인수 등의 확정·완료 사실 자체/);
-  assert.match(CRITERIA, /이를 precursor로 우회 승인하지 않는다/);
-  assert.match(CRITERIA, /`evidence_quotes`는 원문에서 그대로 가져온 문장 배열/);
-  assert.match(CRITERIA, /단순 문자열 일치 검사는 의미 검증을 대신하지 않는다/);
-  assert.match(CRITERIA, /승인에 쓰는 인용은 준비본의 `evidence`에 실제로 있어야 한다/);
-  assert.match(CRITERIA, /게시일이 불확실하다는 이유로 내용 판정을 낮추거나 후보를 탈락시키지 않는다/);
+  assert.match(CRITERIA, /`entity_supported`: Does the event belong to the target company itself/);
+  assert.match(CRITERIA, /S2 production expansion cannot use precursor/);
+  assert.match(CRITERIA, /committed\/completed: The commitment to or completion of the final production-facility investment or acquisition itself/);
+  assert.match(CRITERIA, /Do not relabel it precursor to approve it/);
+  assert.match(CRITERIA, /`evidence_quotes` is an array of verbatim source sentences/);
+  assert.match(CRITERIA, /String matching is not semantic validation/);
+  assert.match(CRITERIA, /Quotes used for approval must exist in the prepared article's `evidence`/);
+  assert.match(CRITERIA, /Do not downgrade content judgements or reject candidates because the publication date is uncertain/);
 });
 
 test('a criteria change gives every article a new id, so stored reviews are not reused', () => {
@@ -86,19 +86,19 @@ test('a criteria change gives every article a new id, so stored reviews are not 
 
 test('committed and completed are reserved for the final investment itself', () => {
   // 완화가 아니라 구별이다. 최종 투자 자체는 그대로 탈락하고, 그것을 향한 중간 활동만 전조로 내려온다.
-  assert.match(CRITERIA, /이 단계는 후보 지표의 사건이 최종 투자 그 자체일 때만 쓴다/);
-  assert.match(CRITERIA, /조달·임명·협약·인증처럼 최종 투자를 향한 중간 활동이 끝난 것은/);
-  assert.match(CRITERIA, /그 활동이 완료된 것이지 최종 투자가 완료된 것이 아니며/);
-  assert.match(CRITERIA, /그런 후보의 단계는 해당 지표의 precursor다\(지표 2 제외\)/);
+  assert.match(CRITERIA, /Use these stages only when the candidate indicator event is the final investment itself/);
+  assert.match(CRITERIA, /Completed intermediate activities such as financing, appointments, agreements or certification/);
+  assert.match(CRITERIA, /complete that activity, not the final investment/);
+  assert.match(CRITERIA, /classify them as the corresponding indicator's precursor \(except S2\)/);
   // 지표 2 의 precursor 금지는 두 곳 모두에서 살아 있어야 한다.
-  assert.match(CRITERIA, /생산 증설 지표 2에는 이 단계를 쓸 수 없다/);
+  assert.match(CRITERIA, /S2 production expansion cannot use precursor/);
 });
 
 test('independence never means asserting a field without evidence', () => {
-  assert.match(CRITERIA, /독립성은 근거 없이 true를 주라는 뜻이 아니다/);
-  assert.match(CRITERIA, /그 필드의 근거가 확인되지 않으면 false/);
+  assert.match(CRITERIA, /Independence does not permit unsupported true values/);
+  assert.match(CRITERIA, /set a field false when its evidence is not established/);
   // 사유가 근거 부재를 말하면서 같은 필드를 true 로 두는 모순을 금지한다.
-  assert.match(CRITERIA, /사유에 그 근거가 없다고 적으면서 같은 필드를 true로 두지 않는다/);
+  assert.match(CRITERIA, /never set it true while the reason says that evidence is absent/);
 });
 
 test('the policy digest does not depend on how the checkout stores line endings', () => {
@@ -118,13 +118,13 @@ test('each indicator states what counts and what does not', () => {
   for (const no of [1, 2, 3, 4, 5]) {
     const line = CRITERIA.split('\n').find(item => item.includes(`\`investment:${no}\`(S${no}`));
     assert.ok(line, `investment:${no} 정의가 있어야 한다`);
-    assert.match(line, /해당하지 않음:/);
+    assert.match(line, /Exclude:/);
   }
-  assert.match(CRITERIA, /인수 대금·잔금 지급처럼 돈을 내는 일/);
-  assert.match(CRITERIA, /사외이사 등 이사회 구성원 선임만 있는 경우/);
-  assert.match(CRITERIA, /매출·실적 전망과 가이던스/);
-  assert.match(CRITERIA, /결과만 보고하는 기사에는 새 전조 활동이 없으므로/);
-  assert.match(CRITERIA, /결론을 먼저 정하고 사유를 맞추지 않는다/);
+  assert.match(CRITERIA, /outgoing payments such as acquisition consideration or remaining balances/);
+  assert.match(CRITERIA, /appointments solely to board positions such as outside directors/);
+  assert.match(CRITERIA, /sales or earnings forecasts and guidance/);
+  assert.match(CRITERIA, /merely reporting results.*has no new precursor activity/);
+  assert.match(CRITERIA, /Do not choose a verdict first and retrofit the explanation/);
 });
 
 test('the criteria sent to the model contain no step only a local agent can take', () => {

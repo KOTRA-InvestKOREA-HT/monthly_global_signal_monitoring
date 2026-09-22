@@ -31,6 +31,8 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_GROUNDING_INSTRUCTION', /SAME event its evidence_quotes describe/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Joining a programme or agreeing to take part is not signing an agreement/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /Preserve the actor and counterparty/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /supply, equity investment, joint research and licensing/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
     // 순서 절은 어느 언어를 먼저 쓰는지와 번역 방향만 말한다.
     ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
@@ -45,8 +47,7 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /complete sentences with finite verbs/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /ordinary English articles, prepositions and collocations/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /no " - " headline form and no leading label/],
-    // 실행 35681082022 의 어색한 문안은 대부분 첫 문장을 바꿔 쓴 둘째 문장이었다. 분량 규칙이
-    // 한국어 절에만 있어 영어는 채울 내용이 없을 때 같은 사실을 되풀이했다.
+    // 관찰된 반복을 막는 지시다. 반복 원인이나 품질 개선 효과를 이 테스트가 입증하지는 않는다.
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /when they fit in one sentence, write one sentence/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /never pad with a sentence about the announcing/],
     // 값은 지키고 표기만 바꾼다. "다시 계산하지 말라"와 "정확히 환산하라"를 한 규칙으로 합쳤다.
@@ -60,19 +61,36 @@ test('regression boundaries remain in their responsible rule modules', () => {
 
 const policy = policySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
 
+test('every provider and variant requests an English reason before summaries', async () => {
+  assert.doesNotMatch(policy.split('## Summary wording')[0], /[가-힣]/);
+  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
+    const fields = prompt.decisionsEnvelopeFor(variant).properties.decisions.items.properties;
+    assert.ok(fields.reason);
+    assert.equal('reason_ko' in fields, false);
+    assert.ok(Object.keys(fields).indexOf('reason') < Object.keys(fields).indexOf('summary_en'));
+    for (const provider of [GEMINI, NVIDIA]) {
+      for (const retry of [false, true, { mode: 'verify', verify_candidate_ids: ['investment:3'] }]) {
+        const body = provider.body({ article, policy, model: provider.model, variant, retry });
+        assert.match(systemText(provider, body), /write reason in English/);
+        assert.doesNotMatch(JSON.stringify(body), /reason_ko/);
+        if (retry?.mode === 'verify') assert.match(userTexts(provider, body).join(' '), /begin reason in English/);
+      }
+    }
+  }
+  await assert.rejects(requestReview(article, policy, 'test-key', async () => new Response(JSON.stringify({
+    candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify({
+      decisions: [{ candidate_id: 'investment:3', reason_ko: '옛 필드' }],
+    }) }] } }],
+  })), false, GEMINI), error => error.response_code === 'missing_reason');
+});
+
 test('judgement rules have one source and are included once in actual provider requests', () => {
   for (const rule of [
-    /기술 면제는 기업 귀속 면제가 아니다/, /target_technology_scope.includes/, /excludes.*target_technology_supported=false/,
-    /완료된 사업 인수와 함께 넘어온 공장·재고·원료/, /소수 지분투자.*S4 사건으로 인정/,
-    /가동·생산 개시 예정일이 미래/, /추가 신규 자금/, /일반 목적 회전신용/,
-    /오래 진행 중인 기존 협력의 경과·임상 결과/, /SEC Form 3/, /완료된 사업 활동도 사업동향/,
-    /요약은 위 승인 조건을 모두 만족하는 후보에만 작성한다/, /relevance_exempt=true.*target_technology_supported=true/,
-    /`summary_en`은 `summary_ko`를 번역한 것이 아니며/, /투자 시그널\(영문\).*` - ` 표제를 붙이지 않는다/,
-    // 한국어 표현 기준과 사실의 확정 정도. 문체 교정이 사건을 바꾸지 않게 한다.
-    /이름이 아닌 일반 산업 용어는 한국어로 옮긴다/, /원문의 홍보 문구를 그대로 옮기지 않는다/,
-    /연환산 수치는 `연간 환산 기준`임을 밝혀/,
-    /`연구 협력자로 참여할 예정`은 `연구 협력을 체결했음`이 아니다/,
-    /주체와 상대방을 생략하지 않는다/, /조사와 연결어미를 지워 줄이지 않는다/,
+    /A technology exemption is not an entity exemption/, /target_technology_scope.includes/, /excludes.*target_technology_supported=false/,
+    /Factories, inventory or raw materials transferred with a completed business acquisition/, /minority investments qualify as S4 events/,
+    /A future operating or production start date/, /additional new funds/, /general-purpose revolving credit facility/,
+    /progress or clinical results from existing long-running collaborations/, /SEC Form 3/, /Completed business activities can qualify/,
+    /Write summaries only for candidates meeting all approval conditions/, /relevance_exempt=true.*target_technology_supported=true/,
   ]) assert.match(policy, rule);
   // 영문에 한국어 표제를 대응시키라는 지시가 콩글리시의 출처였다(2026-09 보고서). 되돌아오면 잡는다.
   assert.doesNotMatch(policy, /영문도 대응하는 표제/);
@@ -122,7 +140,7 @@ test('effective prompt changes invalidate policy and article cache identity, inc
 });
 
 test('new API reviews record the effective prompt digest and version for audit', async () => {
-  const decision = { candidate_id: 'investment:3', evidence_quotes: [], reason_ko: '근거 부족',
+  const decision = { candidate_id: 'investment:3', evidence_quotes: [], reason: '근거 부족',
     entity_supported: false, target_technology_supported: false, indicator_supported: false,
     leading_indicator_supported: false, event_stage: 'unclear', quality: 'needs_review', summary_ko: '', summary_en: '' };
   const result = await requestReview(article, policy, 'test-key', async () => new Response(JSON.stringify({
@@ -197,10 +215,47 @@ test('the verifier is no longer asked to invent answers it will not use', () => 
   assert.match(prompt.VERIFY_INSTRUCTION, /Return every candidate in the payload exactly once and no others/);
 });
 
-test('the criteria settle the number and fact-list rules in one place each', () => {
-  assert.match(policy, /먼저 공통 사실 목록을 정한다/);
-  assert.match(policy, /숫자는 값을 지키고 표기만 바꾼다/);
-  assert.match(policy, /같은 값의 다른 표기는 오류가 아니다/);
-  // 길이와 필수 사실이 부딪힐 때의 우선순위를 적어 둔다.
-  assert.match(policy, /길면 부차적인 설명을 빼고 필수 사실을 남기며/);
+test('real provider prompts keep common summary rules once across every variant', () => {
+  // 정책의 한국어 번역본까지 함께 보내 두 번 지시하던 회귀를 잡는다.
+  const prosePolicy = policy.split('## Summary wording')[1];
+  for (const duplicate of [
+    /먼저 공통 사실 목록을 정한다/, /그다음 표현만 언어별로 쓴다/,
+    /숫자는 값을 지키고 표기만 바꾼다/, /표제를 붙이지 않는다/,
+    /영문은 완결된 평서문/, /종결은 .*통일/,
+    /회사·기관·제품·프로그램 이름은/, /원문의 홍보 문구를 그대로 옮기지 않는다/,
+    /### 사실의 확정 정도/, /조사와 연결어미를 지워 줄이지 않는다/,
+  ]) assert.doesNotMatch(prosePolicy, duplicate);
+
+  const rules = [
+    'no " - " headline form and no leading label',
+    'complete sentences with finite verbs',
+    'the quantity is fixed, the notation is not',
+    'keep the tense and certainty of the evidence',
+    'Joining a programme or agreeing to take part is not signing an agreement',
+    'Preserve the actor and counterparty',
+    "is the company's claim, not a confirmed fact",
+    'never translate or transliterate them into Hangul',
+    "Every summary_ko sentence ends in the report's bullet style",
+    'length is a target, not a cap',
+    'never a particle or a connective ending',
+    'when they fit in one sentence, write one sentence',
+  ];
+  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
+    for (const provider of [GEMINI, NVIDIA]) {
+      const system = systemText(provider, provider.body({ article, policy, model: provider.model, variant }));
+      for (const rule of rules) assert.equal(system.split(rule).length - 1, 1, `${provider.id}/${variant}: ${rule}`);
+      const explicitFacts = variant.startsWith('shared_facts');
+      const factsInstruction = explicitFacts ? prompt.SHARED_FACTS_INSTRUCTION : prompt.SUMMARY_FACT_BASIS_INSTRUCTION;
+      assert.equal(system.split(factsInstruction).length - 1, 1, variant);
+      // 변경 전에는 한 문장을 허용하면서 정책에서는 최소 2~3문장을 요구했다.
+      assert.doesNotMatch(system, /투자 시그널\(영문\).*2~3문장/);
+      for (const rule of [
+        /Translate general industry terms that are not names into Korean/,
+        /Mark annualized figures as `연간 환산 기준`/,
+        /Use one ` - ` separator between headline and detail/,
+        /Detail: Target 60–110 characters and 1–2 sentences/,
+        /Investment summary \(English\): Target at most 400 characters/,
+      ]) assert.match(system, rule);
+    }
+  }
 });

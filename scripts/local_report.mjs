@@ -26,6 +26,9 @@ export const TECHNOLOGY_SCOPES = (() => {
 })();
 const POLICY_VERSION = "local-report-v3";
 const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
+// Read old saved reviews without rewriting them. A present but empty new field
+// must fail validation, not silently fall back to an old explanation.
+export const decisionReason = decision => clean(Object.hasOwn(decision, 'reason') ? decision.reason : decision.reason_ko);
 // Compare typographic equivalents only; preserve words, numbers and block boundaries.
 // 수집 본문에는 &ouml; 같은 이름 있는 HTML 엔티티가 풀리지 않은 채 남기도 한다. 모델은 이를 "Göschwitz"로
 // 옮겨 적으므로, 엔티티를 풀지 않으면 올바른 인용도 원문에 없다고 판정된다. 2026-08 전체 재검토에서 Jenoptik
@@ -512,7 +515,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       if (typeof decision[field] !== "boolean") throw new Error(`${context}: missing boolean ${field}`);
     }
     if (!["pass", "needs_review"].includes(decision.quality)) throw new Error(`${context}: invalid quality`);
-    if (!clean(decision.reason_ko)) throw new Error(`${context}: reason_ko is required`);
+    if (!decisionReason(decision)) throw new Error(`${context}: reason is required`);
     if (candidate.kind === "relevant" && !decision.leading_indicator_supported) {
       throw new Error(`${context}: business rows use true for the non-applicable leading indicator field`);
     }
@@ -585,7 +588,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
         ...Object.fromEntries(BOOLEANS.map((field) => [`ai_${field}`, gated[field]])),
         ...(gated.target_technology_supported !== decision.target_technology_supported ? { ai_technology_conflict: true } : {}),
         ai_event_stage: decision.event_stage, ai_summary_quality: decision.quality,
-        ai_summary_reason: clean(decision.reason_ko),
+        ai_summary_reason: decisionReason(decision),
         ai_summary_ko: groundedSummary ? clean(decision.summary_ko) : "",
         ai_summary_en: groundedSummary ? clean(decision.summary_en) : "",
         ai_summary_source: review.provider ? `${review.provider}_article_review` : "local_agent_review", ai_summary_reviewer: review.reviewer,
@@ -596,7 +599,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
       if (errors.length) throw new Error(errors.join("\n"));
     }
     return { candidate_id: candidate.id, kind: candidate.kind, supported: approved,
-      near_miss: Boolean(row) && !approved, row, reason_ko: decision.reason_ko };
+      near_miss: Boolean(row) && !approved, row, reason: decisionReason(decision) };
   });
 }
 

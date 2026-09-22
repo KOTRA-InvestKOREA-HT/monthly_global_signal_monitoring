@@ -13,7 +13,7 @@ const TAIL = "The company said the site would support qualification volumes firs
   + "It declined to give a timeline, and said the plan stays under review until the board meets.";
 
 const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
-const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason_ko: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
+const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
 const response = (ds = decisions, finish_reason = 'stop') => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: {} }));
 const config = { apiKey: 'test-key', maxRequests: 40, delayMs: 15000 };
 
@@ -207,7 +207,7 @@ test('DeepSeek no-investment responses validate on first request and are reused 
     { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
   const ds = a.candidates.map(c => ({ ...decisions[0], candidate_id: c.id, event_stage: 'not_applicable',
     target_technology_supported: false, indicator_supported: false, leading_indicator_supported: false,
-    evidence_quotes: [], summary_ko: '', summary_en: '', reason_ko: '기사에 해당 투자 활동이 없음' }));
+    evidence_quotes: [], summary_ko: '', summary_en: '', reason: '기사에 해당 투자 활동이 없음' }));
   const args = { articles: [a], reviewDir, policy: '', config };
   const first = await reviewArticles({ ...args, fetchImpl: async () => response(ds) });
   assert.equal(first.status, 'completed');

@@ -21,7 +21,7 @@ const nexeon = () => {
     published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', content_text: BODY };
   return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
 };
-const base = { entity_supported: true, target_technology_supported: true, quality: 'pass', reason_ko: '근거 확인' };
+const base = { entity_supported: true, target_technology_supported: true, quality: 'pass', reason: '근거 확인' };
 const approvedS2 = { ...base, candidate_id: 'investment:2', indicator_supported: true, leading_indicator_supported: true,
   event_stage: 'planned', evidence_quotes: [USE], summary_ko: '영국 파일럿 제조시설 개발 계획 - 자금으로 영국 파일럿 제조시설을 개발할 계획임.',
   summary_en: 'UK pilot manufacturing facility planned - The financing will support a UK-based pilot manufacturing facility.' };
@@ -331,7 +331,7 @@ test('suspicious candidates of a fresh answer go to the verifier model, and only
       calls.push({ url, body: init.body });
       if (!String(url).includes('generativelanguage')) return reply(primary);
       // 검증 모델은 S3 를 precursor 로 고치고, 1차가 승인한 사업동향은 구체적 사업 활동이 아니라고 본다.
-      return geminiReply([{ ...approvedS2, reason_ko: '검증: 파일럿 제조시설 계획 확인' }, approvedS3, s5,
+      return geminiReply([{ ...approvedS2, reason: '검증: 파일럿 제조시설 계획 확인' }, approvedS3, s5,
         { ...business, indicator_supported: false, summary_ko: '', summary_en: '' }]);
     } });
   assert.equal(calls.length, 2);
@@ -469,7 +469,7 @@ test('an exhausted verifier quota is not retried and the error is recorded', asy
   assert.deepEqual(state.verification.errors, { '429:credits_exhausted': 1 });
 });
 
-// 실행 35198796190: 검증 지시대로 대상 밖 후보에 빈 reason_ko 를 돌려주자 검증 응답 33건이 모두 형식 검사에서 거부됐다.
+// 실행 35198796190: 검증 지시대로 대상 밖 후보에 빈 reason 를 돌려주자 검증 응답 33건이 모두 형식 검사에서 거부됐다.
 test('verifier answers for candidates outside verify_candidate_ids are replaced by the primary decisions before validation', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-unlisted-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
@@ -478,7 +478,7 @@ test('verifier answers for candidates outside verify_candidate_ids are replaced 
   const primary = [approvedS2, approvedS3, s5, business];
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
     fetchImpl: async url => (String(url).includes('generativelanguage')
-      ? geminiReply([approvedS2, approvedS3, { ...s5, reason_ko: '', entity_supported: false, event_stage: 'not_applicable' }, business])
+      ? geminiReply([approvedS2, approvedS3, { ...s5, reason: '', entity_supported: false, event_stage: 'not_applicable' }, business])
       : reply(primary)) });
   assert.equal(state.status, 'completed');
   assert.equal(state.verification.failed, 0);
@@ -531,7 +531,7 @@ test('a verifier whose every answer is rejected pauses the run instead of publis
     fetchImpl: async url => {
       if (!String(url).includes('generativelanguage')) return reply(primary);
       verifierCalls++;
-      return geminiReply(primary.map(d => ({ ...d, reason_ko: '' })));
+      return geminiReply(primary.map(d => ({ ...d, reason: '' })));
     } });
   // 기사마다 한 번 더 물은 뒤 거부로 센다. 세 기사 연속 거부되면 멈춘다.
   assert.equal(verifierCalls, 6);

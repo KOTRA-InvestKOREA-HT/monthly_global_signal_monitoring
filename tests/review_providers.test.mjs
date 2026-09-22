@@ -11,7 +11,7 @@ const TAIL = "The company said the site would support qualification volumes firs
   + "It declined to give a timeline, and said the plan stays under review until the board meets.";
 
 const article = company => groupArticles([{ company, target_no: 1, url: `https://example.com/${company}`, title: 'Pilot plant', published_at: '2026-08-02', investment_signal_no: 2, target_technology: 'material', content_text: `The company plans a pilot plant. ${TAIL}` }], [], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
-const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason_ko: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
+const decisions = [{ candidate_id: 'investment:2', entity_supported: true, target_technology_supported: true, indicator_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', reason: '파일럿 생산시설 계획을 확인함', evidence_quotes: ['The company plans a pilot plant.'], summary_ko: '파일럿 생산시설 계획', summary_en: 'Pilot production plant planned' }];
 const chat = (ds = decisions, finish_reason = 'stop') =>
   new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: JSON.stringify({ decisions: ds }) } }], usage: { total_tokens: 12 } }));
 
@@ -140,7 +140,7 @@ test('a non-quote validation failure records what actually broke', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'validation-diagnostics-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   // 투자 후보에 not_applicable 은 스키마상 허용되지만 판정 계약에서는 거부된다.
-  const broken = [{ ...decisions[0], event_stage: 'not_applicable', reason_ko: '사유', summary_ko: '요약문', summary_en: 'summary' }];
+  const broken = [{ ...decisions[0], event_stage: 'not_applicable', reason: '사유', summary_ko: '요약문', summary_en: 'summary' }];
   const state = await reviewArticles({
     articles: [article('Broken')], reviewDir, policy: '', config: { apiKey: 'k', maxRequests: 1, delayMs: 0 },
     sleep: async () => {}, fetchImpl: async () => chat(broken),
@@ -150,7 +150,7 @@ test('a non-quote validation failure records what actually broke', async t => {
   assert.match(detail.validation_message, /invalid event_stage/);
   assert.equal(detail.decisions[0].event_stage, 'not_applicable');
   assert.equal(detail.expected_kinds['investment:2'], 'investment');
-  assert.equal(detail.decisions[0].reason_ko_length, 2);
+  assert.equal(detail.decisions[0].reason_length, 2);
   // 자유 텍스트 본문은 길이만 남고 내용은 남지 않는다.
   assert.equal(JSON.stringify(detail).includes('요약문'), false);
 });
@@ -191,9 +191,9 @@ test('Gemini responses drop reasoning parts and reject truncation', () => {
 
 test('the model writes quotes and its reason before any verdict field', () => {
   const keys = Object.keys(decisionProperties);
-  assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason_ko']);
+  assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason']);
   for (const verdict of ['entity_supported', 'indicator_supported', 'event_stage', 'quality']) {
-    assert.ok(keys.indexOf(verdict) > keys.indexOf('reason_ko'), verdict);
+    assert.ok(keys.indexOf(verdict) > keys.indexOf('reason'), verdict);
   }
 });
 

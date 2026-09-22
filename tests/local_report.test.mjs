@@ -25,10 +25,22 @@ const article = () => groupArticles([source], [], period)[0];
 const decision = (overrides = {}) => ({
   candidate_id: "investment:2", entity_supported: true, target_technology_supported: true,
   indicator_supported: true, leading_indicator_supported: true, event_stage: "planned", quality: "pass",
-  reason_ko: "타겟 소재의 생산시설 검토가 본문에 명시됨", evidence_quotes: [source.content_text],
+  reason: "타겟 소재의 생산시설 검토가 본문에 명시됨", evidence_quotes: [source.content_text],
   summary_ko: "타겟 소재 파일럿 시설 검토", summary_en: "Target-material pilot plant under consideration", ...overrides,
 });
 const review = (a, decisions = [decision()]) => ({ article_id: a.id, reviewer: "test", decisions });
+
+test('English reasons reach report rows and legacy files remain readable', () => {
+  const a = article();
+  const english = decision({ reason: 'The article states a pilot plant plan for the target material.' });
+  const imported = importReview(a, review(a, [english]))[0];
+  assert.equal(imported.reason, english.reason);
+  assert.equal(imported.row.ai_summary_reason, english.reason);
+  const { reason, ...oldFields } = english;
+  const legacy = { ...oldFields, reason_ko: '타겟 소재의 파일럿 시설 계획이 명시됨' };
+  assert.equal(importReview(a, review(a, [legacy]))[0].row.ai_summary_reason, legacy.reason_ko);
+  assert.throws(() => importReview(a, review(a, [{ ...legacy, reason: '' }])), /reason is required/);
+});
 
 test("month filtering matches UTC boundaries, leap years, and unknown dates", () => {
   assert.equal(monthPeriod("2024-02").to_date, "2024-02-29");
@@ -101,7 +113,7 @@ test('not_applicable investment stages record a rejection and still validate evi
   assert.throws(() => importReview(a, review(a, [decision({ event_stage: 'not_applicable' })])), /invalid event_stage/);
   assert.throws(() => importReview(a, review(a, [{ ...rejected, indicator_supported: 'false' }])), /missing boolean/);
   assert.throws(() => importReview(a, review(a, [{ ...rejected, evidence_quotes: ['Fabricated quote'] }])), /exact passages/);
-  assert.throws(() => importReview(a, review(a, [{ ...rejected, reason_ko: '' }])), /reason_ko/);
+  assert.throws(() => importReview(a, review(a, [{ ...rejected, reason: '' }])), /reason/);
 });
 
 test('Albemarle table quotes accept currency and percent padding without changing numbers', () => {
@@ -120,7 +132,7 @@ test("only supported decisions need bilingual prose; rejection does not become a
   assert.throws(() => importReview(a, review(a, [decision({ summary_en: "" })])), /missing ai_summary_en/);
   // 사유 문구 하나로 승인을 뒤집지 않는다. 그 모순은 검토 단계가 근거와 함께 다시 묻는다
   // (tests/relevance_conflict.test.mjs). 여기서는 구조 검증이 통과하는 것만 확인한다.
-  assert.equal(importReview(a, review(a, [decision({ reason_ko: "no direct evidence" })]))[0].supported, true);
+  assert.equal(importReview(a, review(a, [decision({ reason: "no direct evidence" })]))[0].supported, true);
   for (const overrides of [{ entity_supported: false }, { indicator_supported: false }]) {
     const result = importReview(a, review(a, [decision({ ...overrides, summary_ko: "", summary_en: "" })]))[0];
     assert.equal(result.supported, false);
@@ -133,7 +145,7 @@ test("only supported decisions need bilingual prose; rejection does not become a
 test("an investment candidate one condition short is kept for the dashboard, not approved", () => {
   const a = article();
   const cases = [
-    { target_technology_supported: false, reason_ko: "no direct evidence of the target material" },
+    { target_technology_supported: false, reason: "no direct evidence of the target material" },
     { quality: "needs_review" },
     { event_stage: "committed" },
     { event_stage: "unclear" },
@@ -683,9 +695,10 @@ test('prepare hands the local reviewer the same instruction the API sends', asyn
   for (const heading of ['1. Extract candidate evidence', '6. Article-level publication date', 'Output contract']) {
     assert.ok(instruction.includes(heading), heading);
   }
-  // 오늘 고친 문안 규칙도 그 안에 있다. 정책 문서에는 없는 것들이다.
+  // 공통 문안 규칙은 전체 지시문에 한 번만 있다. 로컬 작업 안내도 전체본으로 연결한다.
+  assert.match(policyText, /`run_dir\/PROMPT.md`와 `run_dir\/articles\/\*\.json`을 읽는다/);
   for (const rule of ['no " - " headline form and no leading label', 'complete sentences with finite verbs']) {
-    assert.ok(instruction.includes(rule), rule);
+    assert.equal(instruction.split(rule).length - 1, 1, rule);
     assert.equal(policyText.includes(rule), false, `정책 문서에 있으면 두 곳에 같은 규칙이 있는 것: ${rule}`);
   }
 });

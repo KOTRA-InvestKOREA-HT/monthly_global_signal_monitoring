@@ -17,7 +17,7 @@ const article = company => groupArticles([{ company, target_no: 1, title: compan
 const ok = () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ decisions: [{
   candidate_id: 'investment:2', entity_supported: true, target_technology_supported: false,
   indicator_supported: false, leading_indicator_supported: false, event_stage: 'not_applicable',
-  quality: 'pass', reason_ko: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '',
+  quality: 'pass', reason: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '',
 }] }) } }] }));
 async function setup(t, count = 5) {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'parallel-review-'));
@@ -129,7 +129,7 @@ test('authentication failure waits for in-flight cache writes before rejecting',
 // 게시일 미상 기사. 본문은 있으나 날짜 근거가 없어 date_pending 으로 들어온다.
 const rejection = { candidate_id: 'investment:2', entity_supported: true, target_technology_supported: false,
   indicator_supported: false, leading_indicator_supported: false, event_stage: 'not_applicable',
-  quality: 'pass', reason_ko: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '' };
+  quality: 'pass', reason: '투자 해당 없음', evidence_quotes: [], summary_ko: '', summary_en: '' };
 const pendingArticle = company => groupArticles([{ company, target_no: 1, title: company, published_at: null,
   published_at_source: '', investment_signal_no: 2, content_text: `Body without a date. ${TAIL}` }], [],
   { from_date: '2026-08-01', to_date: '2026-08-31' })[0];

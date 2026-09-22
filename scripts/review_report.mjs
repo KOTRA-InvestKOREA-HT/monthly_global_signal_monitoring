@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, importReview, normalizeQuote, build, decisionNumberProblems, sameEventAsBusiness } from './local_report.mjs';
+import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, build, decisionNumberProblems, sameEventAsBusiness } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, promptContract, promptVariant, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
@@ -125,7 +125,7 @@ export function relevanceConflictSuspects(article, decisions) {
     if (!candidate || candidate.relevance_exempt) return false;
     if (!targetTechnologyRequired(candidate.row?.investment_signal_no, candidate.relevance_exempt)) return false;
     if (!decision.entity_supported || !decision.indicator_supported || decision.quality !== 'pass') return false;
-    if (relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decision.reason_ko })) return true;
+    if (relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decisionReason(decision) })) return true;
     return candidate.kind === 'investment' && decision.target_technology_supported === true &&
       business?.target_technology_supported === false && sameEventAsBusiness(decision, business);
   });
@@ -135,9 +135,9 @@ export function relevanceConflictNotes(article, decisions) {
   const business = decisions.find(d => d.candidate_id === 'relevant');
   return relevanceConflictSuspects(article, decisions).map(decision => {
     const candidate = article.candidates.find(item => item.id === decision.candidate_id);
-    const phrase = relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decision.reason_ko });
+    const phrase = relevanceDenialPhrase({ ...candidate.row, ai_summary_reason: decisionReason(decision) });
     if (phrase) {
-      return `${decision.candidate_id}: target_technology_supported=${decision.target_technology_supported} but reason_ko says ` +
+      return `${decision.candidate_id}: target_technology_supported=${decision.target_technology_supported} but reason says ` +
         `"${phrase}". Decide what that phrase denies. Saying the event is not a Korean investment, or that some other ` +
         `condition is missing, is not the same as saying the event's product is outside the target technology. ` +
         `Quote the sentence that ties this event's product, material or process to the target technology, or set ` +
@@ -175,7 +175,7 @@ export const VERIFY_QUESTIONS = {
     'A Form 3 alone is not a personnel signal.',
   // 사유가 스스로 품목 무관을 말하거나, 같은 사건을 두고 투자·사업동향 판정이 갈리는 후보. 예전에는 코드가
   // 문자열만 보고 뒤집었다. 무엇을 부정한 문장인지부터 근거로 답하게 한다.
-  relevance_conflict: 'What exactly does reason_ko deny, and is that the same thing as this event\'s product being outside the ' +
+  relevance_conflict: 'What exactly does reason deny, and is that the same thing as this event\'s product being outside the ' +
     'target technology? A missing Korean investment, a missing amount or an unconfirmed stage is a different condition. ' +
     'Name the product, material or process this event is about, quote the sentence that names it, and set ' +
     'target_technology_supported from that sentence alone. If the business candidate quotes the same passage, both must agree.',
@@ -237,9 +237,9 @@ export function mergeVerification(article, primary, checked, suspects, model = V
       }),
       // 다시 검증할 때도 처음 1차 판정을 남긴다. 검증 결과만 남아 처음 판단으로 되돌아볼 근거를 잃지 않게 한다.
       primary: [...(primary.verification?.primary || []), ...primary.decisions.filter(d => ids.has(d.candidate_id) &&
-        !(primary.verification?.primary || []).some(p => p.candidate_id === d.candidate_id)).map(({ candidate_id, entity_supported, target_technology_supported,
-        indicator_supported, leading_indicator_supported, event_stage, quality, reason_ko }) => ({ candidate_id, entity_supported,
-        target_technology_supported, indicator_supported, leading_indicator_supported, event_stage, quality, reason_ko }))] },
+        !(primary.verification?.primary || []).some(p => p.candidate_id === d.candidate_id)).map(d => ({ ...d, reason: decisionReason(d) })).map(({ candidate_id, entity_supported, target_technology_supported,
+        indicator_supported, leading_indicator_supported, event_stage, quality, reason }) => ({ candidate_id, entity_supported,
+        target_technology_supported, indicator_supported, leading_indicator_supported, event_stage, quality, reason }))] },
   };
 }
 
@@ -625,7 +625,7 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
       quality: typeof d.quality === 'string' ? d.quality : null,
       booleans: Object.fromEntries(['entity_supported', 'target_technology_supported', 'indicator_supported', 'leading_indicator_supported']
         .map(k => [k, typeof d[k] === 'boolean' ? d[k] : `(${typeof d[k]})`])),
-      reason_ko_length: textLength(d.reason_ko),
+      reason_length: textLength(decisionReason(d)),
       summary_ko_length: textLength(d.summary_ko),
       summary_en_length: textLength(d.summary_en),
       quotes_is_array: Array.isArray(d.evidence_quotes),
@@ -705,6 +705,10 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   let parsed;
   try { parsed = JSON.parse(text); } catch { throw invalid('invalid_json'); }
   if (!parsed || !Array.isArray(parsed.decisions) || parsed.decisions.some(d => !d || typeof d !== 'object')) throw invalid('invalid_decisions');
+  // Legacy reason_ko is a saved-file compatibility path, never the new API contract.
+  // A verifier's out-of-scope entries are discarded below and are not validated here.
+  if (parsed.decisions.some(d => (retry?.mode !== 'verify' || retry.verify_candidate_ids.includes(d.candidate_id)) &&
+    typeof d.reason !== 'string')) throw invalid('missing_reason');
   // Business activity has no investment-stage test. These are contract constants,
   // not model judgements; entity, technology, concrete activity and quotes still gate approval.
   if (Array.isArray(parsed.decisions)) parsed.decisions = parsed.decisions.map(decision =>
