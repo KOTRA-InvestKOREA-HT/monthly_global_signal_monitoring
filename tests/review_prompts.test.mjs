@@ -45,6 +45,10 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /complete sentences with finite verbs/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /ordinary English articles, prepositions and collocations/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /no " - " headline form and no leading label/],
+    // 실행 35681082022 의 어색한 문안은 대부분 첫 문장을 바꿔 쓴 둘째 문장이었다. 분량 규칙이
+    // 한국어 절에만 있어 영어는 채울 내용이 없을 때 같은 사실을 되풀이했다.
+    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /when they fit in one sentence, write one sentence/],
+    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /never pad with a sentence about the announcing/],
     // 값은 지키고 표기만 바꾼다. "다시 계산하지 말라"와 "정확히 환산하라"를 한 규칙으로 합쳤다.
     ['SUMMARY_GROUNDING_INSTRUCTION', /the quantity is fixed, the notation is not/],
     ['SUMMARY_STYLE_INSTRUCTION', /length is a target, not a cap/],

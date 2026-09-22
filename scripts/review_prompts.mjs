@@ -85,10 +85,21 @@ export const SUMMARY_INDEPENDENCE_INSTRUCTION =
 
 // 영어 문안의 문체. 순서와 사실 목록 방식과 무관하게 모든 변형이 같은 규칙을 받는다.
 // 이 절이 한 변형에만 있으면, 그 변형을 쓰지 않는 실행은 영어 표제 금지 규칙 없이 돈다.
+// 실행 35681082022(v4, 영문 40건)에서 표제형은 0건으로 사라졌지만, 어색한 문안의 공통점은
+// 둘째 문장이 첫 문장을 바꿔 쓴 것이었다. Norsk Hydro 는 "GM 차량에 Hydro 재생 알루미늄 범퍼가
+// 들어간다" 다음에 "그 차량의 범퍼에 Hydro 재생 알루미늄이 들어간다"를 붙였고, Asahi Kasei 는
+// 보조금 수주를 적은 뒤 "그 보조금은 증설에 대한 자금 지원 역할을 한다"를 붙였다.
+//
+// 원인은 분량 지시가 한국어 쪽에만 있었다는 것이다. 한국어 문체 절에는 "분량은 목표지 상한이
+// 아니다, 안 들어가면 부차 설명을 버려라"가 있는데 영어에는 대응 규칙이 없어, 두 문장을 채울
+// 내용이 없을 때 모델이 같은 사실을 바꿔 써서 채웠다.
 export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
   'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
   'and ordinary English articles, prepositions and collocations. ' +
-  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ';
+  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
+  'Let the facts set the length: when they fit in one sentence, write one sentence. ' +
+  'Never add a sentence that restates a fact already given in other words, and never pad with a sentence about the announcing, ' +
+  'reporting or disclosing itself instead of the event. ';
 
 export const SUMMARY_STYLE_INSTRUCTION =
   'In summary_ko and reason_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
