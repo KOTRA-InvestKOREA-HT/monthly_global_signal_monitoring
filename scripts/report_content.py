@@ -320,7 +320,7 @@ TEXTS = {
         "source_fallback": "Collected source",
         "source_empty": "Source  —",
         "source_press_release": "Official press release",
-        "item_title": "Item-Linked Global Business Trends",
+        "item_title": "Global Business Trends by Product",
         "item_target_label": "Target item/tech",
         "item_trend_label": "{month} global business trend",
         "item_note": "Companies without a five-signal profile this month, but where a global business trend directly linked to a target item/tech was detected in {month}. For companies exempt from the technology-link check, key business activity is shown and the card says so. Monitored for potential signal development.",
