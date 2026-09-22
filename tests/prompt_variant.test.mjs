@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import { PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION,
-  SUMMARY_INSTRUCTION, buildSystemInstruction, promptContract, promptVariant,
-  reviewPromptDigest } from '../scripts/review_prompts.mjs';
+import { FACT_PROPERTIES, PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION,
+  SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_INSTRUCTION, buildSystemInstruction, promptContract,
+  promptVariant, reviewPromptDigest } from '../scripts/review_prompts.mjs';
 import { GEMINI, NVIDIA, decisionsEnvelopeFor } from '../scripts/review_providers.mjs';
 import { GOLDEN_SETS, goldenEntries, selectGoldenArticles } from '../scripts/golden_review.mjs';
 import { buildSheet, cell, factLine, indexRun } from '../scripts/summary_sheet.mjs';
@@ -147,7 +147,88 @@ test('the sheet pairs the two runs candidate by candidate', () => {
   assert.equal(indexRun(report('baseline', '가나', 'alpha')).size, 1);
 });
 
+// 스키마만 바뀌는 변경은 예전에 판정 캐시를 무효화하지 못했다. 키 순서가 곧 모델이 답을 쓰는
+// 순서이므로 답은 달라지는데, system 문자열이 그대로라 digest 가 같았고 저장된 판정이 재사용됐다.
+// 순서를 바꿔 돌린 실험이 아무것도 재지 못한다는 뜻이다.
+// 두 실행이 서로 다른 문장을 인용하면 각자의 근거를 싣는다. 예전에는 A 의 인용만 싣고 두 문안을
+// 그 아래 놓아, 채점자가 A 의 근거로 B 의 문안을 읽고 근거 있는 요약을 근거 없음으로 적게 됐다.
+test('the sheet shows each run its own evidence when the two runs quoted differently', () => {
+  const report = (variant, ko) => ({ provider: 'gemini', model: 'm1', variant, set: 'dev',
+    comparisons: [{ article_id: `art-${variant}`, company: 'Acme', url: 'https://example.com/a',
+      set: 'dev', defects: [], expect: 'unknown',
+      candidates: [{ candidate_id: 'investment:4', kind: 'investment',
+        after: { supported: true, summary_ko: ko, summary_en: 'en' } }] }] });
+  const detail = (aQuote, bQuote) => ({
+    a: new Map([['art-baseline', new Map([['investment:4', { quotes: [aQuote] }]])]]),
+    b: new Map([['art-english_first', new Map([['investment:4', { quotes: [bQuote] }]])]]) });
+  const build = (aQuote, bQuote) => buildSheet({ reportA: report('baseline', '가나'),
+    reportB: report('english_first', '다라'), detail: detail(aQuote, bQuote) });
+
+  const differing = build('Acme signed a deal.', 'Acme opened a plant.');
+  assert.match(differing, /근거 \(gemini \/ m1 \/ baseline\)/);
+  assert.match(differing, /근거 \(gemini \/ m1 \/ english_first\)/);
+  assert.match(differing, /> Acme signed a deal\./);
+  assert.match(differing, /> Acme opened a plant\./);
+  // 두 근거 모두 문안 표보다 위에 있어야 채점할 때 눈이 위로 올라간다.
+  assert.ok(differing.indexOf('Acme opened a plant.') < differing.indexOf('| ko | 가나'));
+
+  // 같은 문장을 인용했으면 한 번만 싣는다. 채점지가 길어지는 것은 그 자체로 비용이다.
+  const same = build('Acme signed a deal.', 'Acme signed a deal.');
+  assert.equal(same.match(/> Acme signed a deal\./g).length, 1);
+  assert.equal(/근거 \(gemini/.test(same), false);
+});
+
+test('a change to the response schema alone invalidates the judgement cache', () => {
+  const baseline = promptContract('baseline');
+  assert.ok(baseline.schema, '스키마가 계약에 들어 있어야 digest 가 그것을 읽는다');
+  // system 은 그대로 두고 스키마만 바꾼다. 예전 계약에는 schema 키가 없어 이 차이를 표현조차 못 했다.
+  const schemaOnly = { ...baseline, schema: promptContract('english_first').schema };
+  assert.equal(schemaOnly.system, baseline.system);
+  assert.notEqual(reviewPromptDigest('policy', schemaOnly), reviewPromptDigest('policy', baseline));
+  // 변형마다 다른 기사 id 를 얻는다. 한 변형의 판정이 다른 변형의 결과로 읽히지 않는다.
+  const digests = Object.keys(PROMPT_VARIANTS).map(name => reviewPromptDigest('policy', promptContract(name)));
+  assert.equal(new Set(digests).size, digests.length);
+});
+
+test('the english-first variants write English before Korean, and say so', () => {
+  const order = variant => Object.keys(decisionsEnvelopeFor(variant).properties.decisions.items.properties)
+    .filter(key => key.startsWith('summary_'));
+  assert.deepEqual(order('baseline'), ['summary_ko', 'summary_en']);
+  assert.deepEqual(order('shared_facts'), ['summary_ko', 'summary_en']);
+  assert.deepEqual(order('english_first'), ['summary_en', 'summary_ko']);
+  assert.deepEqual(order('shared_facts_english_first'), ['summary_en', 'summary_ko']);
+  // 사실 목록은 어느 조합에서도 문안보다 앞이다. 뒤로 가면 문안을 쓰고 사실을 맞춰 적게 된다.
+  for (const variant of ['shared_facts', 'shared_facts_english_first']) {
+    const keys = Object.keys(decisionsEnvelopeFor(variant).properties.decisions.items.properties);
+    assert.ok(keys.indexOf('facts') < keys.indexOf('summary_ko'), variant);
+    assert.ok(keys.indexOf('facts') < keys.indexOf('summary_en'), variant);
+  }
+  // 지시문이 스키마와 같은 순서를 말해야 한다. 본문만 두고 순서를 뒤집으면 제목과 본문이 어긋난다.
+  for (const variant of ['english_first', 'shared_facts_english_first']) {
+    const system = buildSystemInstruction('', variant);
+    assert.ok(system.includes(SUMMARY_ENGLISH_FIRST_INSTRUCTION), variant);
+    assert.ok(system.includes('English before Korean'), variant);
+    assert.equal(system.includes(SUMMARY_INDEPENDENCE_INSTRUCTION), false, variant);
+  }
+  // 기본 경로는 영어 우선 지시를 한 글자도 받지 않는다.
+  assert.equal(buildSystemInstruction('', 'baseline').includes(SUMMARY_ENGLISH_FIRST_INSTRUCTION), false);
+});
+
+// 두 provider 모두 스키마의 모든 필드를 required 로 만든다. status 가 세 값만 받으면 탈락 후보와
+// 근거가 애매한 사건까지 확정 단계를 하나 골라야 하고, 그것은 이 프롬프트가 금지한 격상이다.
+test('a fact field can say the evidence gave nothing instead of picking a stage', () => {
+  assert.deepEqual(FACT_PROPERTIES.status, { type: 'STRING' });
+  assert.equal('enum' in FACT_PROPERTIES.status, false);
+  for (const [name, shape] of Object.entries(FACT_PROPERTIES)) {
+    assert.deepEqual(shape, { type: 'STRING' }, name);
+  }
+  assert.ok(SHARED_FACTS_INSTRUCTION.includes('empty when it says nothing'));
+  // 판정용 단계는 여전히 enum 이다. 문안용 사실 상태와 의미가 섞이지 않는다.
+  assert.ok(decisionsEnvelopeFor('shared_facts').properties.decisions.items.properties.event_stage.enum.length > 0);
+});
+
 test('the variant list is the only place a variant is defined', () => {
-  assert.deepEqual(Object.keys(PROMPT_VARIANTS), ['baseline', 'shared_facts']);
+  assert.deepEqual(Object.keys(PROMPT_VARIANTS),
+    ['baseline', 'shared_facts', 'english_first', 'shared_facts_english_first']);
   for (const [name, variant] of Object.entries(PROMPT_VARIANTS)) assert.equal(variant.id, name);
 });

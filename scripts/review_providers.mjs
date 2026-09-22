@@ -1,28 +1,13 @@
 // API adapters only: prompt composition lives in review_prompts.mjs.
 // Keep existing exports for callers that import the shared contract here.
-import { buildSystemInstruction, promptVariant, retryInstruction } from './review_prompts.mjs';
+import { buildSystemInstruction, decisionsEnvelopeFor, retryInstruction } from './review_prompts.mjs';
 export {
   DATE_HINT_VERSION, DATE_INSTRUCTION, SUMMARY_INSTRUCTION,
   SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
+  // 판정 스키마는 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
+  // 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
+  decisionProperties, articleDateProperties, decisionsEnvelopeFor,
 } from './review_prompts.mjs';
-
-const EVENT_STAGES = ['exploratory', 'planned', 'precursor', 'committed', 'completed', 'unclear', 'not_applicable'];
-
-// 스키마는 여기 한 곳에만 정의하고, 아래에서 표준 JSON Schema 로 변환해 보낸다.
-// 키 순서가 곧 모델이 답을 쓰는 순서다(Gemini 3.x 구조화 출력은 스키마 키 순서를 따른다). 인용과 사유를
-// 판정 필드보다 앞에 둔다. 앞선 342건은 모두 판정을 먼저 쓰고 사유를 뒤에 붙였다.
-export const decisionProperties = {
-  candidate_id: { type: 'STRING' },
-  evidence_quotes: { type: 'ARRAY', items: { type: 'STRING' } },
-  reason_ko: { type: 'STRING' },
-  ...Object.fromEntries(
-    ['entity_supported', 'target_technology_supported', 'indicator_supported', 'leading_indicator_supported']
-      .map(k => [k, { type: 'BOOLEAN' }]),
-  ),
-  event_stage: { type: 'STRING', enum: EVENT_STAGES },
-  quality: { type: 'STRING', enum: ['pass', 'needs_review'] },
-  summary_ko: { type: 'STRING' }, summary_en: { type: 'STRING' },
-};
 
 const JSON_TYPES = { STRING: 'string', BOOLEAN: 'boolean', ARRAY: 'array', OBJECT: 'object', NUMBER: 'number', INTEGER: 'integer' };
 
@@ -42,13 +27,6 @@ export function toJsonSchema(node) {
   return out;
 }
 
-// 기사 단위 필드. 후보별 판정과 나란히 두면 같은 기사의 후보 다섯 개가 서로 다른 게시일을 말할 수 있다.
-// strict 모드는 모든 필드를 required 로 만들므로 제안이 없으면 빈 문자열로 돌아온다.
-export const articleDateProperties = {
-  published_date: { type: 'STRING' },
-  published_date_quote: { type: 'STRING' },
-};
-
 // Gemini 는 자체 스키마 방언을 쓴다. 대문자 타입은 그대로 두고 required 만 채운다.
 // additionalProperties 는 받지 않으므로 넣지 않는다.
 export function toGeminiSchema(node) {
@@ -60,21 +38,6 @@ export function toGeminiSchema(node) {
     out.required = Object.keys(node.properties);
   }
   return out;
-}
-
-// 변형은 판정 스키마에 필드를 더할 수 있다(shared_facts 의 facts). 기본값은 예전 스키마 그대로다.
-export function decisionsEnvelopeFor(variant = 'baseline') {
-  const extras = promptVariant(variant).decisionExtras;
-  const properties = Object.keys(extras).length
-    // facts 를 문안보다 앞에 둔다. 키 순서가 곧 모델이 답을 쓰는 순서다.
-    ? { ...Object.fromEntries(Object.entries(decisionProperties).filter(([key]) => !key.startsWith('summary_'))),
-        ...extras,
-        ...Object.fromEntries(Object.entries(decisionProperties).filter(([key]) => key.startsWith('summary_'))) }
-    : decisionProperties;
-  return { type: 'OBJECT', properties: {
-    decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties } },
-    ...articleDateProperties,
-  } };
 }
 
 const decisionsEnvelope = decisionsEnvelopeFor();

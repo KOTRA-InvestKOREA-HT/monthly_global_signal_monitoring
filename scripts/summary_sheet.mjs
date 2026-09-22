@@ -69,12 +69,20 @@ export function sheetSection({ key, a, b, labels, detail }) {
   lines.push(`#### ${candidateId} (${(a || b).candidate.kind})`);
   const verdict = (run, label) => run ? `${label}: ${run.candidate.after?.supported ? '승인' : '탈락'}` : `${label}: 판정 없음`;
   lines.push('', `${verdict(a, labels.a)}${b || labels.b ? ` · ${verdict(b, labels.b)}` : ''}`, '');
-  const found = detail.a?.get(candidateId) || detail.b?.get(candidateId) || {};
-  const list = found.quotes || [];
-  lines.push(list.length ? '근거' : '근거 (판정 파일에 인용 없음)');
-  for (const quote of list) lines.push(`> ${cell(quote)}`);
-  lines.push('');
-  for (const [side, label] of [['a', labels.a], ['b', labels.b]]) {
+  // 두 실행의 인용을 따로 싣는다. 예전에는 A 의 인용이 있으면 그것만 싣고 두 문안을 그 아래 놓았다.
+  // 실행이 서로 다른 문장을 인용하면 채점자가 A 의 근거로 B 의 문안을 읽어, 근거 있는 요약을
+  // 근거 없음으로 적게 된다. 같으면 한 번만 싣는다. 채점지가 길어지는 것보다 오판이 비싸다.
+  const quotesFor = side => detail[side]?.get(candidateId)?.quotes || [];
+  const sides = [['a', labels.a], ['b', labels.b]].filter(([, label]) => label);
+  const same = sides.length === 2 && JSON.stringify(quotesFor('a')) === JSON.stringify(quotesFor('b'));
+  for (const [side, label] of same ? [[sides[0][0], '']] : sides) {
+    const list = quotesFor(side);
+    const heading = label ? `근거 (${label})` : '근거';
+    lines.push(list.length ? heading : `${heading} (판정 파일에 인용 없음)`);
+    for (const quote of list) lines.push(`> ${cell(quote)}`);
+    lines.push('');
+  }
+  for (const [side, label] of sides) {
     const facts = factLine(detail[side]?.get(candidateId)?.facts);
     if (facts) lines.push(`사실 목록 (${label}): ${facts}`, '');
   }

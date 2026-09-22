@@ -174,19 +174,52 @@ export const SHARED_FACTS_INSTRUCTION =
   'Before writing either summary, fill facts for this candidate from its evidence_quotes alone. ' +
   'actor is who acts, action is what they do, counterparty is who they do it with (empty when the evidence names none), ' +
   'date is when the evidence dates the event (empty when it gives none), ' +
-  'status is one of planned, underway or completed exactly as the evidence states it, ' +
+  'status is how far along the evidence says the event is, in the evidence\'s own words (empty when it says nothing), ' +
   'and amount is the figure the evidence gives with its unit and currency (empty when it gives none). ' +
   'Each field is a short phrase copied from or directly supported by a quote, not a sentence you compose. ' +
   'Leave a field empty rather than filling it from outside the quotes. ' +
-  'Then write summary_ko and summary_en from facts and nothing else: every fact in the list appears in both summaries, ' +
+  'Then write both summaries from facts and nothing else: every fact in the list appears in both summaries, ' +
   'and neither summary states anything the list does not hold. ' +
-  'The two summaries share the list, not the wording: write each in its own language\'s idiom. ';
+  'The two summaries share the list, not the wording: write each in its own language\'s idiom. ' +
+  // 어느 언어를 먼저 쓰는지는 이 절이 정하지 않는다. 스키마의 키 순서와, 순서를 정하는 절이 정한다.
+  // 여기서 "summary_ko 와 summary_en 을 쓴다"고 적으면 영어 우선 변형과 조합할 때 두 절이 서로
+  // 다른 순서를 말하게 된다.
+  'Write them in the order this response schema lists them. ';
 
+// 영어를 한국어보다 먼저 쓰게 하는 변형. 같은 응답 안에서 앞서 쓴 한국어 개조식 요약이 영어 생성
+// 문맥에 놓이지 않게 해 그 형식을 따라가는 영향을 줄여 보려는 가설이다. 나아진다는 보장은 없고,
+// 반대로 한국어가 영어 번역투가 되는지도 같이 재야 한다.
+//
+// 지시문을 함께 바꾸는 이유: 스키마 순서만 뒤집고 본문을 그대로 두면 "summary_en 은 summary_ko 를
+// 보고 쓰지 않는다"는 문장이, 애초에 한국어가 뒤에 오는 응답에서 앞의 것을 가리키게 된다.
+// 어제 지시문 제목만 남겨 본문과 어긋났던 것과 같은 실수다.
+export const SUMMARY_ENGLISH_FIRST_INSTRUCTION =
+  'First fix the facts this summary reports, taken from this candidate\'s evidence_quotes: the event, the parties, the amounts, the ' +
+  'dates and the schedule. Both summaries carry exactly that set of facts, so a month, date or percentage stated in one language must ' +
+  'appear in the other. Independence governs the wording, never which facts appear. ' +
+  'Write summary_en first, from the article itself, as an English business-news editor would: complete sentences with finite verbs, ' +
+  'and ordinary English articles, prepositions and collocations. ' +
+  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
+  'Then write summary_ko from those same facts in Korean, in the report\'s own bullet style. ' +
+  'summary_ko is not a translation of summary_en and is not drafted from it: never carry English word order or English sentence ' +
+  'structure across into Korean, and never render English phrasing word for word. ' +
+  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
+
+// status 는 enum 이 아니다. 두 provider 모두 스키마의 모든 필드를 required 로 만들므로, 세 값만
+// 허용하면 탈락 후보와 근거가 애매한 사건까지 planned·underway·completed 중 하나를 골라야 한다.
+// 그것은 이 파일이 SUMMARY_GROUNDING_INSTRUCTION 에서 금지한 격상("an intention is not a decision")을
+// 스키마가 강요하는 것이다. 나머지 다섯 필드와 같이 인용에서 옮겨 적는 짧은 구절로 두면 빈 문자열로
+// "근거가 말하지 않음"을 표현할 수 있고, 판정용 enum 은 event_stage 하나로 남는다.
 export const FACT_PROPERTIES = {
   actor: { type: 'STRING' }, action: { type: 'STRING' }, counterparty: { type: 'STRING' },
-  date: { type: 'STRING' }, status: { type: 'STRING', enum: ['planned', 'underway', 'completed'] },
+  date: { type: 'STRING' }, status: { type: 'STRING' },
   amount: { type: 'STRING' },
 };
+
+const FACTS_EXTRA = { facts: { type: 'OBJECT', properties: FACT_PROPERTIES } };
+// 기본 출력 순서. 변형이 이 순서를 뒤집는다. 키 순서가 곧 모델이 답을 쓰는 순서다.
+export const SUMMARY_ORDER = ['summary_ko', 'summary_en'];
+const ENGLISH_FIRST_ORDER = ['summary_en', 'summary_ko'];
 
 export const PROMPT_VARIANTS = {
   baseline: { id: 'baseline', heading: SUMMARY_HEADING, summary: SUMMARY_INSTRUCTION, decisionExtras: {} },
@@ -195,7 +228,25 @@ export const PROMPT_VARIANTS = {
     heading: '5. Write summaries after judgement: eligibility, grounding, then one shared fact list for both languages',
     summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
       SHARED_FACTS_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
-    decisionExtras: { facts: { type: 'OBJECT', properties: FACT_PROPERTIES } },
+    decisionExtras: FACTS_EXTRA,
+  },
+  // 순서 하나만 바꾼 변형. 사실 목록 단계는 넣지 않는다. 두 가지를 한꺼번에 바꾸면 무엇이 효과를
+  // 냈는지 갈라 볼 수 없다.
+  english_first: {
+    id: 'english_first',
+    heading: '5. Write summaries after judgement: eligibility, grounding, then English before Korean',
+    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
+      SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
+    decisionExtras: {}, summaryOrder: ENGLISH_FIRST_ORDER,
+  },
+  // 인계 문서가 실제로 권한 흐름: 근거 → 판정 → 사실 목록 → 영어 → 한국어.
+  // 위 두 변형이 각 변수를 따로 재고, 이것이 둘을 합친 결과를 잰다.
+  shared_facts_english_first: {
+    id: 'shared_facts_english_first',
+    heading: '5. Write summaries after judgement: eligibility, grounding, then one shared fact list, English before Korean',
+    summary: [SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
+      SHARED_FACTS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION].join('\n\n'),
+    decisionExtras: FACTS_EXTRA, summaryOrder: ENGLISH_FIRST_ORDER,
   },
 };
 
@@ -205,15 +256,71 @@ export function promptVariant(name) {
   return variant;
 }
 
+const EVENT_STAGES = ['exploratory', 'planned', 'precursor', 'committed', 'completed', 'unclear', 'not_applicable'];
+
+// 응답 스키마는 지시문과 함께 판정 계약의 일부다. 여기 두는 것은 transport 변환(toJsonSchema,
+// toGeminiSchema)과 달리 무엇을 묻는지가 바뀌면 판정도 바뀌기 때문이고, promptContract 가 이
+// 모양을 해싱해야 스키마만 고친 변경도 옛 판정을 무효화하기 때문이다. review_providers.mjs 가
+// 그대로 다시 내보내므로 기존 import 는 모두 살아 있다.
+//
+// 키 순서가 곧 모델이 답을 쓰는 순서다(Gemini 3.x 구조화 출력은 스키마 키 순서를 따른다). 인용과 사유를
+// 판정 필드보다 앞에 둔다. 앞선 342건은 모두 판정을 먼저 쓰고 사유를 뒤에 붙였다.
+export const decisionProperties = {
+  candidate_id: { type: 'STRING' },
+  evidence_quotes: { type: 'ARRAY', items: { type: 'STRING' } },
+  reason_ko: { type: 'STRING' },
+  ...Object.fromEntries(
+    ['entity_supported', 'target_technology_supported', 'indicator_supported', 'leading_indicator_supported']
+      .map(k => [k, { type: 'BOOLEAN' }]),
+  ),
+  event_stage: { type: 'STRING', enum: EVENT_STAGES },
+  quality: { type: 'STRING', enum: ['pass', 'needs_review'] },
+  summary_ko: { type: 'STRING' }, summary_en: { type: 'STRING' },
+};
+
+// 기사 단위 필드. 후보별 판정과 나란히 두면 같은 기사의 후보 다섯 개가 서로 다른 게시일을 말할 수 있다.
+// strict 모드는 모든 필드를 required 로 만들므로 제안이 없으면 빈 문자열로 돌아온다.
+export const articleDateProperties = {
+  published_date: { type: 'STRING' },
+  published_date_quote: { type: 'STRING' },
+};
+
+// 변형은 판정 스키마에 필드를 더하거나(shared_facts 의 facts) 문안의 순서를 바꿀 수 있다.
+// 기본값은 예전 스키마 그대로다: 판정 필드 → summary_ko → summary_en.
+export function decisionsEnvelopeFor(variant = 'baseline') {
+  const { decisionExtras: extras, summaryOrder = SUMMARY_ORDER } = promptVariant(variant);
+  const unknown = summaryOrder.filter(key => !(key in decisionProperties));
+  if (unknown.length) throw new Error(`Unknown summary field in variant ${variant}: ${unknown.join(', ')}`);
+  const properties = {
+    // 판정 필드를 먼저, 그다음 변형이 더한 필드, 마지막이 문안이다. facts 가 문안 앞에 와야
+    // 모델이 사실 목록을 먼저 적고 그것을 보고 문안을 쓴다.
+    ...Object.fromEntries(Object.entries(decisionProperties).filter(([key]) => !SUMMARY_ORDER.includes(key))),
+    ...extras,
+    ...Object.fromEntries(summaryOrder.map(key => [key, decisionProperties[key]])),
+  };
+  return { type: 'OBJECT', properties: {
+    decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties } },
+    ...articleDateProperties,
+  } };
+}
+
 // Hash effective instructions, not file bytes: comments and checkout CRLF do not
 // invalidate caches. Include all static repair modes, not article data. The verifier
 // prompt is identified separately by verificationDigest() in review_report.mjs.
+//
+// 응답 스키마도 함께 해싱한다. 모델에게 무엇을 어떤 순서로 쓰게 하는지는 지시문만으로 정해지지
+// 않는다. 키 순서가 곧 답을 쓰는 순서이므로, summary_en 을 summary_ko 앞으로 옮기면 답이 달라진다.
+// 그런데 그 변경은 system 문자열을 건드리지 않아 예전에는 digest 가 그대로였고, 기사 id 도 그대로라
+// 저장된 판정이 재사용됐다. 순서를 바꿔 돌린 실험이 아무것도 재지 못한다는 뜻이다.
+// reviewPolicy 주석이 약속한 "프롬프트 버전 갱신을 잊어도 내용 digest 가 달라진다"가 스키마만
+// 바뀌는 변경에서 깨져 있었다.
 export function promptContract(variant = 'baseline') {
   return {
     version: PROMPT_VERSION,
     // 변형을 쓰면 시스템 지시가 달라지므로 기사 id 도 달라진다. 실험 결과가 운영 판정으로 읽히지 않는다.
     ...(variant === 'baseline' ? {} : { variant }),
     system: buildSystemInstruction('', variant),
+    schema: decisionsEnvelopeFor(variant),
     repairs: [retryInstruction(true), ...[...Object.keys(REPAIR_HINTS), 'semantic_recheck']
       .map(reason => retryInstruction({ reason }))],
   };
