@@ -208,14 +208,14 @@ def build(args):
     counts = matrix_counts(profiles, signal_index, summary, signals)
     covered = covered_companies(summary, signals)
     issue = str(args.issue_number or report.DEFAULT_ISSUE_NUMBER)
-    titles = [report.t("cover_title_1"), report.t("cover_title_2"), report.t("cover_title_3")]
+    titles = report.cover_titles()
 
     return {
         "lang": report.LANG,
         "issue": {"label": f"Issue {issue}", "month": report.issue_month(summary)},
         "footer": report.t("footer", issue=f"Issue {issue}"),
         "cover": {
-            "kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
+            "kicker": report.t("cover_kicker"),
             "titles": titles,
             "title_size": title_size(titles, measure),
             "lines": [report.t("cover_line_1"), report.t("cover_line_2")],

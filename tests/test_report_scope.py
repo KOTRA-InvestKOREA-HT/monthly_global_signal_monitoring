@@ -138,6 +138,59 @@ class CutTextTests(unittest.TestCase):
         self.assertFalse(pdf.signal_publishable(dict(row, ai_summary_en="")))
 
 
+class CoverTitleTests(unittest.TestCase):
+    """영문 보고서 제목은 Company Signals 다.
+
+    예전 제목 "Target-Company Global Investment Signal Monitor" 는 국문 제목을 낱말마다 옮겨
+    붙인 것이라 영어로 읽히지 않았다. 바닥글은 쪽마다 나오므로 여기서 고정해 둔다.
+    """
+
+    def title_texts(self, lang):
+        previous = pdf.LANG
+        pdf.set_language(lang)
+        try:
+            return pdf.cover_titles(), pdf.t("footer", issue="Issue 3"), pdf.t("cover_kicker")
+        finally:
+            pdf.set_language(previous)
+
+    def test_the_english_report_is_called_company_signals(self):
+        titles, footer, _ = self.title_texts("en")
+        self.assertEqual(titles, ["Company Signals"])
+        self.assertEqual(footer, "Invest KOREA · Company Signals · Issue 3")
+        for gone in ("Target-Company", "Global Investment Signal Monitor", "Target Companies"):
+            self.assertNotIn(gone, footer)
+            self.assertNotIn(gone, " ".join(titles))
+
+    def test_the_korean_title_is_unchanged(self):
+        titles, footer, _ = self.title_texts("ko")
+        self.assertEqual(titles, ["타겟기업", "글로벌 투자시그널", "모니터링"])
+        self.assertEqual(footer, "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3")
+
+    def test_an_empty_title_line_is_not_drawn_and_never_falls_back_to_korean(self):
+        # t() 는 빈 값을 국문으로 폴백한다. 제목 줄을 번호 키로 두면 영문 표지에 한글 줄이 섞인다.
+        titles, _, _ = self.title_texts("en")
+        self.assertTrue(all(title.strip() for title in titles))
+        self.assertFalse(any(any("가" <= ch <= "힣" for ch in title) for title in titles))
+
+    def test_both_editions_share_one_kicker_string(self):
+        _, _, ko = self.title_texts("ko")
+        _, _, en = self.title_texts("en")
+        self.assertEqual(ko, en)
+        self.assertEqual(en, "C O M P A N Y   S I G N A L S")
+
+    def test_the_cover_kicker_is_not_copied_into_a_renderer(self):
+        """표지 kicker 는 TEXTS 한 곳에서 온다. 렌더러가 사본을 들면 PDF 와 화면이 갈라진다.
+
+        상세 페이지 kicker 는 같은 문자열이지만 표지와 다른 자리라 여기서 보지 않는다.
+        무엇이 어느 자리에 찍히는지는 report_snapshot 이 그려진 쪽으로 고정한다.
+        """
+        for name in ("build_pdf_report.py", "report_view_model.py"):
+            source = (Path(__file__).resolve().parents[1] / "scripts" / name).read_text(encoding="utf-8")
+            self.assertNotIn("G L O B A L   I N V E S T M E N T", source, name)
+        view = (Path(__file__).resolve().parents[1] / "scripts" / "report_view_model.py").read_text(encoding="utf-8")
+        self.assertIn('"kicker": report.t("cover_kicker")', view)
+
+
 class LayeringTests(unittest.TestCase):
     """무엇이 실리는가(report_content)와 어디에 그리는가(build_pdf_report)의 경계."""
 
@@ -171,11 +224,11 @@ class LayeringTests(unittest.TestCase):
             pdf.set_language("en")
             self.assertEqual(pdf.LANG, "en")
             self.assertEqual(report_content.LANG, "en")
-            self.assertEqual(pdf.t("cover_title_1"), "Target Companies")
+            self.assertEqual(pdf.cover_titles(), ["Company Signals"])
             # 예전에는 모듈 전역이라 대입으로도 바뀌었다. 나눈 뒤에도 같은 값을 가리켜야 한다.
             pdf.LANG = "ko"
             self.assertEqual(report_content.LANG, "ko")
-            self.assertEqual(pdf.t("cover_title_1"), "타겟기업")
+            self.assertEqual(pdf.cover_titles()[0], "타겟기업")
         finally:
             pdf.set_language(previous)
 

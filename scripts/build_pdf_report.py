@@ -345,10 +345,10 @@ def draw_cover(report, summary, indicators):
 
     text_width = PAGE_W - 86
     y = PAGE_H - 208
-    report.text(43, y, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R", 12, GOLD, weight="medium")
+    report.text(43, y, t("cover_kicker"), 12, GOLD, weight="medium")
     # 제목은 잘라내면 뜻이 사라지므로, 여백을 넘지 않을 때까지 크기를 줄여서 통째로 싣는다.
     title_size = 30 if report_content.LANG == "en" else 36
-    titles = [t("cover_title_1"), t("cover_title_2"), t("cover_title_3")]
+    titles = cover_titles()
     while title_size > 18 and any(
         c.stringWidth(title, report.fonts["semibold"], title_size) > text_width for title in titles
     ):

@@ -26,7 +26,7 @@ __all__ = [
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
     "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
-    "company_status", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
+    "company_status", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
     "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
@@ -258,9 +258,13 @@ MONTH_NAMES_EN = [
 TEXTS = {
     "ko": {
         "footer": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
-        "cover_title_1": "타겟기업",
-        "cover_title_2": "글로벌 투자시그널",
-        "cover_title_3": "모니터링",
+        # 표지 맨 위 한 줄. 예전에는 두 렌더러가 각자 같은 문자열을 박아 두어, 한쪽만 고치면
+        # PDF 와 화면의 표지가 달라졌다. 자간은 글자 사이 공백으로 낸다.
+        "cover_kicker": "C O M P A N Y   S I G N A L S",
+        # 제목 줄 수는 언어마다 다르므로 목록으로 둔다. 번호 키(cover_title_1..3)로 두면 줄이
+        # 남는 언어가 그 자리를 빈 문자열로 채워야 하는데, t() 는 빈 문자열을 "없음"으로 보고
+        # 국문으로 폴백하므로 영문판 표지에 한글 줄이 섞여 나온다.
+        "cover_titles": ["타겟기업", "글로벌 투자시그널", "모니터링"],
         "cover_line_1": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
         "cover_line_2": "기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반",
         "cover_indicator_heading": "5대 투자동향 지표",
@@ -289,10 +293,12 @@ TEXTS = {
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
     },
     "en": {
-        "footer": "Invest KOREA · Target-Company Global Investment Signal Monitor · {issue}",
-        "cover_title_1": "Target Companies",
-        "cover_title_2": "Global Investment Signals",
-        "cover_title_3": "Monitor",
+        "footer": "Invest KOREA · Company Signals · {issue}",
+        "cover_kicker": "C O M P A N Y   S I G N A L S",
+        # 영문 제목은 한 줄이다. 예전 제목 "Target-Company Global Investment Signal Monitor" 는
+        # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았고, 표지에서는 바로 위 kicker 와
+        # 같은 말을 두 번 했다.
+        "cover_titles": ["Company Signals"],
         "cover_line_1": "30 Major Investment-Attraction Projects (MOTIE) · 77 Target Companies",
         "cover_line_2": "Five investment signals per company · Pre-confirmation indicators only",
         "cover_indicator_heading": "FIVE LEADING SIGNAL INDICATORS",
@@ -1052,6 +1058,16 @@ def source_line(row):
     tail = f" {date}" if date else ""
     room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
     return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
+
+
+def cover_titles():
+    """표지 제목 줄. 줄 수는 언어마다 다르다(국문 3줄, 영문 1줄).
+
+    t() 를 거치지 않는다. 값이 문자열이 아니라 목록이고, t() 의 빈 값 폴백이 여기서는 오답이다.
+    두 렌더러가 같은 표지를 그려야 하므로 이 목록을 만드는 자리는 여기 한 곳이다.
+    """
+    titles = TEXTS.get(LANG, TEXTS["ko"]).get("cover_titles") or TEXTS["ko"]["cover_titles"]
+    return [title for title in titles if clean_text(title)]
 
 
 def source_url(row):
