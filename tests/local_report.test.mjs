@@ -6,6 +6,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { articleCoverageGap, dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
+import { buildSystemInstruction, promptContract, reviewPromptDigest } from "../scripts/review_prompts.mjs";
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
 const TAIL = "The company said the site would support qualification volumes first, "
@@ -668,4 +669,37 @@ test('coverage reasons tell collection, review failure, date and evidence gaps a
   // 제목뿐인 기사만 있는 기업은 기사별 사유가 없어도 본문 미수집으로 적는다.
   assert.deepEqual(coverageReasons([titleOnly], reviews, new Set(), "completed", 0), ["no_body"]);
   assert.deepEqual(coverageReasons([], reviews, new Set(), "completed", 0), []);
+});
+
+// 로컬 판정자는 API 가 받는 지시문을 그대로 받아야 한다. 예전에는 정책 문서(REVIEW.md)만 주었고,
+// 그 밖의 지시 6,902자(근거 인용 방법, 문안 작성 규칙, 날짜 처리, 응답 형식)는 전달되지 않았다.
+// 같은 기준으로 판정하라면서 기준의 3분의 1을 빼고 주던 셈이다.
+test('prepare hands the local reviewer the same instruction the API sends', async () => {
+  const policyText = await fs.readFile(new URL('../docs/local_report_review.md', import.meta.url), 'utf8');
+  const instruction = buildSystemInstruction(policyText);
+  // 정책 문서는 지시문 안에 들어 있다. 판정자는 PROMPT.md 하나만 읽어도 된다.
+  assert.ok(instruction.includes(policyText.trim().slice(0, 200)));
+  assert.ok(instruction.length > policyText.length);
+  for (const heading of ['1. Extract candidate evidence', '6. Article-level publication date', 'Output contract']) {
+    assert.ok(instruction.includes(heading), heading);
+  }
+  // 오늘 고친 문안 규칙도 그 안에 있다. 정책 문서에는 없는 것들이다.
+  for (const rule of ['no " - " headline form and no leading label', 'complete sentences with finite verbs']) {
+    assert.ok(instruction.includes(rule), rule);
+    assert.equal(policyText.includes(rule), false, `정책 문서에 있으면 두 곳에 같은 규칙이 있는 것: ${rule}`);
+  }
+});
+
+// 지시문이 바뀌면 그 전 판정은 새 기준의 결과가 아니다. API 경로가 promptDigest 를 식별자에
+// 넣는 것과 같은 이유로 로컬도 넣는다. 두 경로의 식별자는 여전히 서로 다르다.
+test('a changed instruction retires the local reviews too', () => {
+  const policyText = 'POLICY';
+  const base = reviewPromptDigest(policyText, promptContract());
+  const other = reviewPromptDigest(policyText, promptContract('english_first'));
+  assert.notEqual(base, other);
+  const localPolicy = digest => `local-report-v3:${digest}`;
+  assert.notEqual(localPolicy(base), localPolicy(other));
+  // 같은 기사라도 지시문이 다르면 기사 id 가 다르다. 옛 판정 파일을 찾지 못한다.
+  const of = policy => groupArticles([source], [], period, policy)[0].id;
+  assert.notEqual(of(localPolicy(base)), of(localPolicy(other)));
 });

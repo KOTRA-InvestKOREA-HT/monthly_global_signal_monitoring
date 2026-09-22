@@ -110,6 +110,13 @@ npm run report:local -- status --run-dir RUN_DIR
 npm run report:local -- build --run-dir RUN_DIR --python python3
 ```
 
+`prepare` writes two documents next to the article files. `PROMPT.md` is the full
+system instruction the API path sends, policy document included, so the local
+reviewer judges under the same rules as the model. `REVIEW.md` is the policy
+document on its own, for reading the criteria without the surrounding
+instruction. Changing the instruction changes the article ids, so reviews written
+under an older instruction are not reused.
+
 Preparation filters the report month before review and groups candidates by target
 company and article. Reviews are reused only for matching evidence and policy.
 All candidates need decisions; only approved rows need bilingual report prose.

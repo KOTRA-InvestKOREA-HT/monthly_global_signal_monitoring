@@ -8,6 +8,10 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { APPROVAL_POLICY, validateRows, investmentStageSupported, targetTechnologyRequired } from "./validate_report_inputs.mjs";
+// 로컬 판정자도 API 가 받는 지시문을 그대로 받는다. 예전에는 정책 문서(REVIEW.md)만 주었고,
+// 그 문서 밖에 있는 지시(근거 인용 방법, 문안 작성 규칙, 날짜 처리, 응답 형식)는 전달되지 않았다.
+// 같은 기준으로 판정하라면서 기준의 3분의 1을 빼고 주던 셈이다.
+import { buildSystemInstruction, promptContract, reviewPromptDigest } from "./review_prompts.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
@@ -645,7 +649,12 @@ async function prepare(args) {
     throw new Error(`Collection period does not cover exactly ${month}. Use prepare --month ${month} --collect for fresh data.`);
   }
   // 승인 상수도 식별자에 넣는다. 어느 후보가 승인되는지가 바뀌면 문안이 필요한 후보도 바뀐다.
-  const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology, APPROVAL_POLICY])}`;
+  // 지시문 다이제스트도 넣는다. 판정자가 그 지시문을 받고 판정하므로, 지시문이 바뀌면 옛 판정은
+  // 새 기준의 결과가 아니다. API 경로의 reviewPolicy 가 같은 이유로 promptDigest 를 넣는다.
+  // 두 경로의 식별자는 여전히 다르다. API 쪽은 provider·model·추론 단계까지 넣기 때문이고,
+  // 로컬 산출물이 배포 판정을 덮지 않게 하는 이 스크립트의 분리와 같은 방향이다.
+  const promptDigest = reviewPromptDigest(policyText, promptContract());
+  const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology, APPROVAL_POLICY, promptDigest])}`;
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
   const snapshot = { policy, period, summary, signals: signals.map(withoutAI), articles, targets, technology, indicators,
@@ -667,7 +676,11 @@ async function prepare(args) {
     });
   }
   await fs.writeFile(path.join(runDir, "REVIEW.md"), policyText);
+  // API 가 보내는 시스템 지시문 전문. 정책 문서를 그 안에 품고 있으므로 판정자는 이것만 읽어도
+  // 된다. REVIEW.md 는 정책 문서만 따로 보려는 사람을 위해 그대로 둔다.
+  await fs.writeFile(path.join(runDir, "PROMPT.md"), `${buildSystemInstruction(policyText)}\n`);
   console.log(JSON.stringify({ run_dir: runDir, review_dir: path.join(outDir, "reviews"),
+    prompt: path.join(runDir, "PROMPT.md"),
     collection_rows: signals.length, excluded_from_month: signals.length - articles.length,
     candidate_rows: articles.reduce((n, article) => n + article.candidates.length, 0), articles: articles.length,
     // 날짜 확정분과 날짜 보류분을 나눠 보여준다. 보류분도 검토는 하되 본문에는 날짜 보강 뒤에 들어간다.
