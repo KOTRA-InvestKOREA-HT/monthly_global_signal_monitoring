@@ -26,7 +26,7 @@ __all__ = [
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
     "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
-    "company_status", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
+    "company_status", "cover_kicker", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
     "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
@@ -294,16 +294,18 @@ TEXTS = {
     },
     "en": {
         "footer": "Invest KOREA · Company Signals · {issue}",
-        "cover_kicker": "C O M P A N Y   S I G N A L S",
+        # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("COMPANY SIGNALS")이라 바로 위에
+        # 같은 말을 작게 한 번 더 적는 꼴이 된다. 한국어 표지는 제목이 달라 그대로 둔다.
+        # 본문 면의 머리글은 이 값을 쓰지 않으므로(draw_detail_page 의 자체 문자열) 영향이 없다.
+        "cover_kicker": "",
         # 영문 제목은 한 줄이다. 예전 제목 "Target-Company Global Investment Signal Monitor" 는
-        # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았고, 표지에서는 바로 위 kicker 와
-        # 같은 말을 두 번 했다.
-        "cover_titles": ["Company Signals"],
-        "cover_line_1": "30 Major Investment-Attraction Projects (MOTIE) · 77 Target Companies",
-        "cover_line_2": "Five investment signals per company · Pre-confirmation indicators only",
+        # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
+        "cover_titles": ["COMPANY SIGNALS"],
+        "cover_line_1": "30 Major Investment Attraction Projects (MOTIE) · 77 Target Companies",
+        "cover_line_2": "Up to five signals per company · Pre-investment signals only",
         "cover_indicator_heading": "FIVE LEADING SIGNAL INDICATORS",
-        "matrix_title": "This Month's Signal Matrix",
-        "matrix_desc": "Investment signals (pre-confirmation) across the 77 target companies for {period}. A highlighted cell marks a signal detected during the month; lagging data such as completed deals are excluded.",
+        "matrix_title": "Monthly Signal Matrix",
+        "matrix_desc": "Pre-investment signals identified across the 77 target companies from {period}. Highlighted cells indicate signals detected during the month; already confirmed or completed investments are excluded.",
         "matrix_company": "Company",
         "matrix_legend_on": "AI-confirmed signal",
         "matrix_legend_off": "No signal",
@@ -508,10 +510,21 @@ def compact_date(dt, include_year=True):
 
 
 def matrix_period_label(summary):
+    """매트릭스 설명문에 들어가는 보고 기간. 수집 기간에서 만들며 하드코딩하지 않는다.
+
+    영문판은 숫자 날짜(2026.8.1~8.31)를 쓰지 않는다. 그 표기는 국문 서식을 그대로 옮긴 것이라
+    영어 문장 안에서 읽히지 않는다. 한 달 안이면 "August 1-31, 2026", 달을 넘으면 달 이름을
+    양쪽에, 해를 넘으면 연도를 양쪽에 적는다. 국문 표기는 그대로 둔다.
+    """
     start, end = report_period(summary)
-    end_text = compact_date(end, include_year=start.year != end.year)
     if LANG == "en":
-        return f"{MONTH_NAMES_EN[start.month - 1]} ({compact_date(start)}~{end_text})"
+        first, last = MONTH_NAMES_EN[start.month - 1], MONTH_NAMES_EN[end.month - 1]
+        if start.year != end.year:
+            return f"{first} {start.day}, {start.year} – {last} {end.day}, {end.year}"
+        if start.month != end.month:
+            return f"{first} {start.day} – {last} {end.day}, {end.year}"
+        return f"{first} {start.day}–{end.day}, {end.year}"
+    end_text = compact_date(end, include_year=start.year != end.year)
     return f"{start.month}월({compact_date(start)}~{end_text})"
 
 
@@ -1058,6 +1071,20 @@ def source_line(row):
     tail = f" {date}" if date else ""
     room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
     return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
+
+
+def cover_kicker():
+    """표지 머리말. 영문 표지에는 없다.
+
+    t() 를 거치지 않는다. t() 는 빈 값을 국문으로 대체하므로, "이 언어에는 두지 않는다"를
+    "아직 번역하지 않았다"로 읽어 국문 머리말을 영문 표지에 싣는다. cover_titles() 와 같은 이유다.
+    본문 면의 머리글은 이 값이 아니라 draw_detail_page 의 자체 문자열이므로 영향받지 않는다.
+
+    clean_text 로 다듬지 않는다. 이 머리말은 자간을 진짜 공백으로 내므로 공백을 접으면
+    "C O M P A N Y   S I G N A L S" 가 낱말 사이 간격을 잃는다.
+    """
+    value = TEXTS.get(LANG, TEXTS["ko"]).get("cover_kicker", "")
+    return value if value.strip() else ""
 
 
 def cover_titles():

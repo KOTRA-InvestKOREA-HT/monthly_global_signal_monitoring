@@ -155,13 +155,13 @@ class CoverTitleTests(unittest.TestCase):
         previous = pdf.LANG
         pdf.set_language(lang)
         try:
-            return pdf.cover_titles(), pdf.t("footer", issue="Issue 3"), pdf.t("cover_kicker")
+            return pdf.cover_titles(), pdf.t("footer", issue="Issue 3"), pdf.cover_kicker()
         finally:
             pdf.set_language(previous)
 
     def test_the_english_report_is_called_company_signals(self):
         titles, footer, _ = self.title_texts("en")
-        self.assertEqual(titles, ["Company Signals"])
+        self.assertEqual(titles, ["COMPANY SIGNALS"])
         self.assertEqual(footer, "Invest KOREA · Company Signals · Issue 3")
         for gone in ("Target-Company", "Global Investment Signal Monitor", "Target Companies"):
             self.assertNotIn(gone, footer)
@@ -178,11 +178,21 @@ class CoverTitleTests(unittest.TestCase):
         self.assertTrue(all(title.strip() for title in titles))
         self.assertFalse(any(any("가" <= ch <= "힣" for ch in title) for title in titles))
 
-    def test_both_editions_share_one_kicker_string(self):
+    def test_the_english_cover_drops_the_kicker_that_repeated_its_title(self):
+        """영문 표지의 kicker 는 제목과 같은 말이었다. 국문은 제목이 달라 그대로 둔다.
+
+        t() 로 읽으면 빈 영문 값이 국문으로 폴백해 영문 표지에 국문 머리말이 실린다.
+        cover_kicker() 가 그 폴백을 거치지 않는다는 것까지 같이 고정한다.
+        """
         _, _, ko = self.title_texts("ko")
         _, _, en = self.title_texts("en")
-        self.assertEqual(ko, en)
-        self.assertEqual(en, "C O M P A N Y   S I G N A L S")
+        self.assertEqual(ko, "C O M P A N Y   S I G N A L S")
+        self.assertEqual(en, "")
+        # 폴백이 되살아나면 여기서 국문 머리말이 잡힌다.
+        self.assertFalse(any("가" <= ch <= "힣" for ch in en))
+        # 본문 면의 머리글은 표지와 다른 자리라 그대로 남는다.
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "build_pdf_report.py").read_text(encoding="utf-8")
+        self.assertIn('report.header("C O M P A N Y   S I G N A L S"', source)
 
     def test_the_cover_kicker_is_not_copied_into_a_renderer(self):
         """표지 kicker 는 TEXTS 한 곳에서 온다. 렌더러가 사본을 들면 PDF 와 화면이 갈라진다.
@@ -194,7 +204,7 @@ class CoverTitleTests(unittest.TestCase):
             source = (Path(__file__).resolve().parents[1] / "scripts" / name).read_text(encoding="utf-8")
             self.assertNotIn("G L O B A L   I N V E S T M E N T", source, name)
         view = (Path(__file__).resolve().parents[1] / "scripts" / "report_view_model.py").read_text(encoding="utf-8")
-        self.assertIn('"kicker": report.t("cover_kicker")', view)
+        self.assertIn('"kicker": report.cover_kicker()', view)
 
 
 class LayeringTests(unittest.TestCase):
@@ -230,7 +240,7 @@ class LayeringTests(unittest.TestCase):
             pdf.set_language("en")
             self.assertEqual(pdf.LANG, "en")
             self.assertEqual(report_content.LANG, "en")
-            self.assertEqual(pdf.cover_titles(), ["Company Signals"])
+            self.assertEqual(pdf.cover_titles(), ["COMPANY SIGNALS"])
             # 예전에는 모듈 전역이라 대입으로도 바뀌었다. 나눈 뒤에도 같은 값을 가리켜야 한다.
             pdf.LANG = "ko"
             self.assertEqual(report_content.LANG, "ko")

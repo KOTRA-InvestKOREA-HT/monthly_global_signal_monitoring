@@ -345,7 +345,9 @@ def draw_cover(report, summary, indicators):
 
     text_width = PAGE_W - 86
     y = PAGE_H - 208
-    report.text(43, y, t("cover_kicker"), 12, GOLD, weight="medium")
+    kicker = cover_kicker()
+    if kicker:
+        report.text(43, y, kicker, 12, GOLD, weight="medium")
     # 제목은 잘라내면 뜻이 사라지므로, 여백을 넘지 않을 때까지 크기를 줄여서 통째로 싣는다.
     title_size = 30 if report_content.LANG == "en" else 36
     titles = cover_titles()
@@ -354,7 +356,9 @@ def draw_cover(report, summary, indicators):
     ):
         title_size -= 1
     for index, title in enumerate(titles):
-        y -= 56 if index == 0 else 45
+        # kicker 가 없는 표지는 그 자리를 빈 띠로 남기지 않는다. 제목이 첫 줄이 되므로 kicker
+        # 베이스라인만큼만 내려 제목 윗변이 kicker 윗변 자리에 오게 한다.
+        y -= (56 if kicker else 26) if index == 0 else 45
         report.text(43, y, title, title_size, GOLD if index == 1 else WHITE, weight="semibold")
 
     y -= 42

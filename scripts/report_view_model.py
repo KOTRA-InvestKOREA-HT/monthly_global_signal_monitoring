@@ -215,7 +215,7 @@ def build(args):
         "issue": {"label": f"Issue {issue}", "month": report.issue_month(summary)},
         "footer": report.t("footer", issue=f"Issue {issue}"),
         "cover": {
-            "kicker": report.t("cover_kicker"),
+            "kicker": report.cover_kicker(),
             "titles": titles,
             "title_size": title_size(titles, measure),
             "lines": [report.t("cover_line_1"), report.t("cover_line_2")],
