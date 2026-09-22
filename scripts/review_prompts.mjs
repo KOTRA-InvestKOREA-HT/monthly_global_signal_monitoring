@@ -91,8 +91,10 @@ export const SUMMARY_INDEPENDENCE_INSTRUCTION =
 // 문장 수를 채우려는 영향일 수 있으나 원인은 미검증이다. 정책의 최소 문장 수 요구를 제거하고
 // 한 문장도 허용한다. 이 변경의 품질 효과는 실제 문안 비교로 확인해야 한다.
 export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
-  'Write summary_en as an English business-news editor would write it from the article itself: complete sentences with finite verbs, ' +
-  'and ordinary English articles, prepositions and collocations. ' +
+  'Write summary_en in natural, idiomatic English suitable for a concise business-news brief, directly from the source evidence. ' +
+  'Use complete sentences with finite verbs, concrete subjects, direct verbs, and ordinary English articles, prepositions and collocations. ' +
+  'Do not translate or mirror summary_ko. Avoid literal translations of Korean expressions, awkward noun strings and generic corporate jargon. ' +
+  'Do not add facts merely to make the prose sound more natural. ' +
   'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
   'Let the facts set the length: when they fit in one sentence, write one sentence. ' +
   'Never add a sentence that restates a fact already given in other words, and never pad with a sentence about the announcing, ' +
