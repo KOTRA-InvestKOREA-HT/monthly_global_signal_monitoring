@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, build, decisionNumberProblems, sameEventAsBusiness } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
-import { PROMPT_VERSION, promptContract, promptVariant, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
+import { DEFAULT_VARIANT, PROMPT_VERSION, promptContract, promptVariant, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
@@ -18,10 +18,10 @@ import { resolveReportPeriod } from './report_period.mjs';
 export const PROVIDER = resolveProvider();
 export const MODEL = PROVIDER.model;
 export const VERIFIER = resolveVerifier();
-// 비교 실험용 프롬프트 변형. 기본 baseline 은 지금까지의 프롬프트 그대로이고, 다이제스트도 변하지 않는다.
-// 변형을 켜면 프롬프트 다이제스트가 달라져 기사 id 가 바뀌므로, 변형 실행이 기본 판정 캐시를 덮어쓰거나
-// 재사용하지 않는다. 프로바이더·모델과 같은 자리에서 같은 이유로 환경변수로 고른다.
-export const PROMPT_VARIANT = promptVariant(process.env.REPORT_PROMPT_VARIANT || 'baseline').id;
+// 프롬프트 변형. 기본값은 review_prompts.mjs 의 DEFAULT_VARIANT 가 정한다. 환경변수는 비교 실험용
+// 덮어쓰기다. 변형이 다르면 프롬프트 다이제스트가 달라져 기사 id 도 달라지므로, 실험 실행이 기본
+// 판정 캐시를 덮어쓰거나 재사용하지 않는다. 프로바이더·모델과 같은 자리에서 같은 이유로 고른다.
+export const PROMPT_VARIANT = promptVariant(process.env.REPORT_PROMPT_VARIANT || DEFAULT_VARIANT).id;
 const VERIFICATION_VERSION = 'verifier-v3';
 const VERIFICATION_COUNTS = ['requested', 'verified', 'partial', 'pending', 'changed', 'failed', 'rejected_responses'];
 const VERSION = 'article-review-v1';

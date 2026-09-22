@@ -280,6 +280,17 @@ export const PROMPT_VARIANTS = Object.fromEntries([
   defineVariant('shared_facts_english_first', { facts: true, englishFirst: true }),
 ]);
 
+// 실제로 내보내는 변형. baseline 과 따로 둔다. baseline 은 "손대지 않은 프롬프트"라는 비교 기준이라
+// 실험이 그것을 옮기면 기준이 사라진다.
+//
+// english_first 는 정의만 해 두고 한 번도 돌지 않았다. REPORT_PROMPT_VARIANT 를 워크플로가 설정하지
+// 않아 운영은 계속 baseline 이었고, 저장된 판정 2,256건이 모두 summary_ko 를 먼저 쓴 것이 그 증거다.
+// 켜야 켜지는 변형은 켜지지 않는다. 그래서 환경변수는 실험용 덮어쓰기로 남기고 기본값을 옮긴다.
+//
+// 판정 기준과 reason 을 영어로 옮긴 것과 같은 목적이다: summary_en 을 쓰기 직전 문맥에서 한국어를
+// 없앤다. 인접 문맥인 summary_ko 가 남아 있으면 앞의 둘만으로는 그 목적이 끝나지 않는다.
+export const DEFAULT_VARIANT = 'english_first';
+
 export function promptVariant(name) {
   const variant = PROMPT_VARIANTS[String(name || 'baseline')];
   if (!variant) throw new Error(`Unknown prompt variant: ${name}. Known: ${Object.keys(PROMPT_VARIANTS).join(', ')}`);

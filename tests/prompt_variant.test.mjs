@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import { FACT_PROPERTIES, PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_ELIGIBILITY_INSTRUCTION,
+import { DEFAULT_VARIANT, FACT_PROPERTIES, PROMPT_VARIANTS, SHARED_FACTS_INSTRUCTION, SUMMARY_ELIGIBILITY_INSTRUCTION,
   SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION,
   SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_INDEPENDENCE_INSTRUCTION, SUMMARY_INSTRUCTION,
   SUMMARY_STYLE_INSTRUCTION, buildSystemInstruction, promptContract, promptVariant,
@@ -266,6 +266,35 @@ test('the english-first variants write English before Korean, and say so', () =>
   }
   // 기본 경로는 영어 우선 지시를 한 글자도 받지 않는다.
   assert.equal(buildSystemInstruction('', 'baseline').includes(SUMMARY_ENGLISH_FIRST_INSTRUCTION), false);
+});
+
+// english_first 는 일주일 동안 정의만 되어 있었다. 워크플로가 REPORT_PROMPT_VARIANT 를 설정하지
+// 않아 운영은 계속 baseline 으로 돌았고, 저장된 판정 2,256건이 전부 summary_ko 를 먼저 썼다.
+// 무엇을 내보내는지는 환경변수가 아니라 코드가 말해야 하고, 여기서 고정한다.
+test('the shipped default is a variant, not whatever the environment forgot to set', () => {
+  assert.ok(DEFAULT_VARIANT in PROMPT_VARIANTS, DEFAULT_VARIANT);
+  assert.equal(DEFAULT_VARIANT, 'english_first');
+  // 기본값이 baseline 이면 비교 기준이 곧 출하본이 되어 무엇과 비교하는지가 사라진다.
+  assert.notEqual(DEFAULT_VARIANT, 'baseline');
+  // 출하본은 summary_en 을 먼저 쓴다. 판정 기준과 reason 을 영어로 옮긴 것과 같은 목적이다.
+  const order = Object.keys(decisionsEnvelopeFor(DEFAULT_VARIANT).properties.decisions.items.properties)
+    .filter(key => key.startsWith('summary_'));
+  assert.deepEqual(order, ['summary_en', 'summary_ko']);
+  assert.ok(buildSystemInstruction('', DEFAULT_VARIANT).includes(SUMMARY_ENGLISH_FIRST_INSTRUCTION));
+});
+
+// 로컬 판정자와 API 가 같은 지시문을 읽고 같은 순서로 써야 한다. 로컬이 기본 인자에 기대고 있으면
+// 기본값을 옮긴 날 두 경로가 조용히 갈라지고, 식별자만 같은 모양으로 남는다.
+test('the local reviewer and the API run the same variant', () => {
+  const source = fs.readFileSync('scripts/local_report.mjs', 'utf8');
+  for (const call of ['promptContract()', 'buildSystemInstruction(policyText)']) {
+    assert.equal(source.includes(call), false, `local_report.mjs must not fall back to baseline via ${call}`);
+  }
+  assert.ok(source.includes('promptContract(DEFAULT_VARIANT)'));
+  assert.ok(source.includes('buildSystemInstruction(policyText, DEFAULT_VARIANT)'));
+  // 환경변수는 실험용 덮어쓰기로만 남는다. 기본값 자체를 환경에 맡기면 다시 같은 일이 생긴다.
+  const report = fs.readFileSync('scripts/review_report.mjs', 'utf8');
+  assert.ok(report.includes("process.env.REPORT_PROMPT_VARIANT || DEFAULT_VARIANT"));
 });
 
 // 두 provider 모두 스키마의 모든 필드를 required 로 만든다. status 가 세 값만 받으면 탈락 후보와

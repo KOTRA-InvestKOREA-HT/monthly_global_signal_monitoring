@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
+import { PROMPT_VARIANT, policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { GEMINI, NVIDIA, decisionProperties } from '../scripts/review_providers.mjs';
 import * as prompt from '../scripts/review_prompts.mjs';
@@ -110,8 +110,9 @@ test('changing only the verifier prompt keeps the primary review cache identity'
   assert.equal(contract.repairs.some(text => /Second-stage/.test(text)), false);
 });
 
+// 실제로 내보내는 변형의 계약으로 잰다. baseline 으로 재면 출하 경로가 아닌 것을 재게 된다.
 test('effective prompt changes invalidate policy and article cache identity, including repairs', () => {
-  const contract = prompt.promptContract();
+  const contract = prompt.promptContract(PROMPT_VARIANT);
   const base = prompt.reviewPromptDigest(policy, contract);
   assert.match(base, /^[a-f0-9]{64}$/);
   const inputs = { policyText: policy, technology: {}, indicators: {} };
@@ -148,7 +149,10 @@ test('new API reviews record the effective prompt digest and version for audit',
       published_date: '', published_date_quote: '' }) }] } }],
   })), false, GEMINI);
   assert.equal(result.prompt_version, prompt.PROMPT_VERSION);
-  assert.equal(result.prompt_digest, prompt.reviewPromptDigest(policy));
+  // 기록되는 것은 실제로 보낸 프롬프트의 다이제스트다. baseline 과 같아지면 변형 실행이 기본
+  // 판정과 같은 자리에 저장되고 있다는 뜻이므로, 그렇지 않다는 것도 같이 고정한다.
+  assert.equal(result.prompt_digest, prompt.reviewPromptDigest(policy, prompt.promptContract(PROMPT_VARIANT)));
+  assert.notEqual(result.prompt_digest, prompt.reviewPromptDigest(policy, prompt.promptContract('baseline')));
 });
 
 for (const provider of [GEMINI, NVIDIA]) {
