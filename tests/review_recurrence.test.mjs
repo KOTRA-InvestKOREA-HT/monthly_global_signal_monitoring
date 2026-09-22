@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { reviewArticles, requestReview, facilityStageSuspects, fundingSuspects, needsFundingReview, needsFacilityStageReview,
   needsTechnologyReview, needsSummaryRefresh, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
-  bilingualFactProblems, nearestEvidence } from '../scripts/review_report.mjs';
+  bilingualFactProblems, nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
 import { groupArticles, importReview, sourceCandidates, ungroundedSummaryNames } from '../scripts/local_report.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
@@ -679,4 +679,33 @@ test('a failed build keeps this run\'s review state and names the failed stage a
   assert.deepEqual(status.build_failure, buildFailure);
   assert.equal('review_state' in failureStatus({ previous: { ...previous, run: { id: 'older' } }, error: new Error('x'), stage: 'build', identity }), false);
   assert.equal('review_state' in failureStatus({ previous: { status: 'running', ...identity }, error: new Error('x'), stage: 'collection', identity }), false);
+});
+
+// outputs/review_work 는 캐시로 복원되고 아티팩트로 30일 보관된다. 안 지우면 프롬프트를 고칠
+// 때마다 판정 파일 한 벌(2026-08 기준 403건)과 수집본 전체를 담은 snapshot.json 이 더 쌓인다.
+test('the review workspace drops stale snapshots and orphaned judgements', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'review-work-'));
+  const runDir = path.join(root, '2026-08-cccc3333');
+  for (const dir of ['2026-08-aaaa1111', '2026-08-bbbb2222', '2026-08-cccc3333']) {
+    await fs.mkdir(path.join(root, dir), { recursive: true });
+    await fs.writeFile(path.join(root, dir, 'snapshot.json'), '{}');
+  }
+  await fs.mkdir(path.join(root, 'reviews'), { recursive: true });
+  for (const name of ['keep1.json', 'orphan1.json', 'orphan2.json', 'notes.txt']) {
+    await fs.writeFile(path.join(root, 'reviews', name), '{}');
+  }
+  await fs.writeFile(path.join(root, 'status.json'), '{}');
+
+  const removed = await pruneReviewWork(root, runDir, [{ id: 'keep1' }]);
+  assert.deepEqual(removed, { snapshots: 2, reviews: 1 + 1 });
+  // 이번 실행의 스냅샷과 판정은 남는다. 지우면 재개가 안 된다.
+  assert.deepEqual((await fs.readdir(root)).sort(), ['2026-08-cccc3333', 'reviews', 'status.json']);
+  // reviews 밖의 파일과 판정이 아닌 파일은 건드리지 않는다.
+  assert.deepEqual((await fs.readdir(path.join(root, 'reviews'))).sort(), ['keep1.json', 'notes.txt']);
+
+  // 두 번 돌려도 같은 상태다. 지울 것이 없으면 아무것도 지우지 않는다.
+  assert.deepEqual(await pruneReviewWork(root, runDir, [{ id: 'keep1' }]), { snapshots: 0, reviews: 0 });
+  // 디렉터리가 아직 없어도 세우지 않는다. 첫 실행은 빈 작업 공간에서 시작한다.
+  assert.deepEqual(await pruneReviewWork(path.join(root, 'missing'), runDir, []), { snapshots: 0, reviews: 0 });
+  await fs.rm(root, { recursive: true, force: true });
 });

@@ -497,6 +497,39 @@ export function policySection(doc) {
 // approvalPolicy 도 식별자에 들어간다. 어느 후보가 승인되는지가 바뀌면 모델이 문안을 써야 하는
 // 후보도 바뀌기 때문이다. 지표 3·5 의 품목 연결을 풀었을 때 저장된 판정에는 그 후보의 문안이
 // 없었다. 상수만 고치고 기준 문서를 그대로 두면 옛 판정이 문안 없이 승인으로 올라온다.
+// outputs/review_work 는 실행마다 커지기만 했다. 이 디렉터리는 캐시로 복원되고 아티팩트로
+// 30일 보관되므로, 안 지우면 아티팩트와 캐시가 함께 불어난다.
+//
+// 두 가지가 쌓인다. 하나는 스냅샷 디렉터리다. 이름이 스냅샷 다이제스트라 수집본이나 정책이
+// 바뀔 때마다 새로 생기고, snapshot.json 은 그 달 수집본 전체를 담아 몇 MB 다. 다른 하나는
+// 판정 파일이다. 파일명이 기사 id 인데 기사 id 에 프롬프트 다이제스트가 들어가므로, 프롬프트를
+// 고칠 때마다 이전 판정 파일 전체가 고아가 된다. 2026-08 기준 기사 403 건이다.
+//
+// 고아 판정 파일은 이번 실행이 쓸 수 없는 파일이다. 지워도 이번 실행의 재개는 막지 않는다.
+// 옛 프롬프트로 되돌릴 때 그 판정을 다시 쓰지 못하는 것이 대가이고, 그때는 다시 판정한다.
+export async function pruneReviewWork(root, runDir, articles) {
+  const keep = new Set(articles.map(article => `${article.id}.json`));
+  const removed = { snapshots: 0, reviews: 0 };
+  const entries = await fs.readdir(root, { withFileTypes: true }).catch(() => []);
+  for (const entry of entries) {
+    const full = path.join(root, entry.name);
+    // 스냅샷 디렉터리만 지운다. reviews 와 status.json 은 이 규칙에 걸리지 않는다.
+    if (!entry.isDirectory() || full === runDir || !/^\d{4}-\d{2}-[0-9a-f]+$/.test(entry.name)) continue;
+    await fs.rm(full, { recursive: true, force: true });
+    removed.snapshots += 1;
+  }
+  const reviewDir = path.join(root, 'reviews');
+  for (const name of await fs.readdir(reviewDir).catch(() => [])) {
+    if (!name.endsWith('.json') || keep.has(name)) continue;
+    await fs.rm(path.join(reviewDir, name), { force: true });
+    removed.reviews += 1;
+  }
+  if (removed.snapshots || removed.reviews) {
+    console.log(`Pruned review_work: ${removed.snapshots} stale snapshot dir(s), ${removed.reviews} orphaned review file(s)`);
+  }
+  return removed;
+}
+
 export function reviewPolicy({ policyText, technology, indicators, approvalPolicy = APPROVAL_POLICY,
   provider = PROVIDER, variant = PROMPT_VARIANT, promptDigest = reviewPromptDigest(policyText, promptContract(variant)) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
@@ -1364,6 +1397,7 @@ async function main() {
   const snapshot = { policy, period, summary, signals, articles, targets, technology, indicators, date_deferred: candidates.deferred };
   const runDir = path.join(root, `${from.slice(0, 7)}-${digest(snapshot)}`);
   await write(path.join(runDir, 'snapshot.json'), snapshot);
+  await pruneReviewWork(root, runDir, articles);
   failedStage = 'review';
   const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
   await write(path.join(root, 'status.json'), { ...state, period, provider: PROVIDER.id, model: MODEL, ...runIdentity() });

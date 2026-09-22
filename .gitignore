@@ -26,3 +26,10 @@ outputs/latest_*.csv
 outputs/followup_tests.txt
 # summarize_signal_evidence.mjs 전용 캐시(2.7MB). 월간 보고서 경로는 읽지 않는다.
 outputs/ai_summary_cache.json
+
+# 중간 산출물. 대시보드(app/api/signals)도 보고서 생성기도 읽지 않고, 워크플로의
+# review_report.mjs 가 다시 만들지도 않는다. 로컬 npm run filter:relevant 가 만드는
+# 파일이라 커밋할 이유가 없는데, file_pattern 의 outputs/latest_*.json 에 걸려 실행마다
+# 5.9MB 가 통째로 다시 커밋됐다. 히스토리에서 둘이 105MB 를 차지한다.
+outputs/latest_investment_signal_classification.json
+outputs/latest_signal_relevance_classification.json
