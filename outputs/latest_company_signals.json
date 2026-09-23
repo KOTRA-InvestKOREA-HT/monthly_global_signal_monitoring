@@ -15893,7 +15893,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-22T07:51:18Z",
+    "collected_at": "2026-09-23T02:20:44Z",
     "collector": "official_page",
     "query": "https://texcell.com/actualites/",
     "source_type": "official",
@@ -15907,7 +15907,7 @@
     "link_reason": "article_link",
     "link_rank": 1,
     "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-22T07:51:18Z"
+    "content_fetched_at": "2026-09-23T02:20:44Z"
   },
   {
     "target_no": 57,
@@ -15923,7 +15923,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-22T07:51:18Z",
+    "collected_at": "2026-09-23T02:20:44Z",
     "collector": "official_page",
     "query": "https://texcell.com/actualites/",
     "source_type": "official",
@@ -15937,7 +15937,7 @@
     "link_reason": "article_link",
     "link_rank": 1,
     "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-22T07:51:18Z"
+    "content_fetched_at": "2026-09-23T02:20:44Z"
   },
   {
     "target_no": 57,
@@ -15953,7 +15953,7 @@
     "modified_at": "",
     "date_conflict": false,
     "date_candidates": [],
-    "collected_at": "2026-09-22T07:51:18Z",
+    "collected_at": "2026-09-23T02:20:44Z",
     "collector": "official_page",
     "query": "https://texcell.com/actualites/",
     "source_type": "official",
@@ -15967,7 +15967,7 @@
     "link_reason": "article_link",
     "link_rank": 1,
     "content_fetch_status": "error",
-    "content_fetched_at": "2026-09-22T07:51:18Z"
+    "content_fetched_at": "2026-09-23T02:20:44Z"
   },
   {
     "target_no": 62,
@@ -21455,9 +21455,9 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T07:51:18Z",
+    "collected_at": "2026-09-23T02:20:44Z",
     "collector": "google_news_rss",
-    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
+    "query": "\"Texcell\" (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -21470,7 +21470,7 @@
     "content_excerpt": "ABL Diagnostics discloses 16.1 million shares and voting rights structure 1 min read | Published on 27 Aug 2026, 09:58 PM | Updated on 27 Aug 2026, 09:58 PM Reviewed by Anirudha B ScanX News Team Add as a preferred source on Google Key Highlights Total share capital comprises 16,114,656 shares as of August 12, 2026 Theoretical voting rights stand at 30,501,420 due to double voting provisions Exercisable voting rights total 30,471,564 for active shareholder decisions Double voting rights apply to shares held by same shareholder for two years powered by *this image is generated using AI for illustrative purposes only. ABL Diagnostics (Euronext: ABLD) disclosed its share capital and voting rights structure as of August 12, 2026, in a regulatory filing. The Paris-listed molecular biology diagn...",
     "content_word_count": 487,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T07:51:18Z"
+    "content_fetched_at": "2026-09-23T02:20:44Z"
   },
   {
     "target_no": 19,

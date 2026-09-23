@@ -1,295 +1,290 @@
 {
   "status": "completed_with_review_failures",
   "reason": "invalid_responses",
-  "requests": 443,
+  "requests": 452,
   "cached": 0,
-  "completed": 385,
+  "completed": 387,
   "total": 390,
   "date_hints": 0,
   "failed_articles": [
     {
-      "article_id": "e802b86264b5f1126a3f1909",
+      "article_id": "5c1e35102589d705f3b118f4",
       "reason": "summary_ungrounded"
     },
     {
-      "article_id": "5e041cdd0ee87ec2629aff33",
-      "reason": "review_validation"
-    },
-    {
-      "article_id": "def7264049ad88541df40e19",
-      "reason": "review_validation"
-    },
-    {
-      "article_id": "8e7e0bee06097b682f074c41",
+      "article_id": "4160ad97b2fda57fee281c1a",
       "reason": "evidence_mismatch"
     },
     {
-      "article_id": "fc97e8d547aa03c921f63c68",
+      "article_id": "f53fb9b26a9f30352678f077",
       "reason": "summary_ungrounded"
     }
   ],
   "diagnostics": [
     {
-      "article_id": "e802b86264b5f1126a3f1909",
+      "article_id": "91c58050f8860e51254feabd",
       "attempt": 1,
       "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/e802b86264b5f1126a3f1909/f3479021-9e0c-4f3f-afb9-68bda239a128-attempt-1.json"
+      "file": "reviews/diagnostics/91c58050f8860e51254feabd/17a769a7-35f8-4bbd-8c3c-ae181903b2cf-attempt-1.json"
     },
     {
-      "article_id": "e802b86264b5f1126a3f1909",
-      "attempt": 2,
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/e802b86264b5f1126a3f1909/3530a122-f387-40e1-bf62-6101ea8a24c5-attempt-2.json"
-    },
-    {
-      "article_id": "2b1f2e611383e8afe10bde7a",
+      "article_id": "4052d9c995d995ce1f752926",
       "attempt": 1,
       "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/2b1f2e611383e8afe10bde7a/f00e31d8-aa56-42f3-989a-1cdde8d419e9-attempt-1.json"
+      "file": "reviews/diagnostics/4052d9c995d995ce1f752926/183ca62c-a289-41cc-8b4d-a6c58919aea4-attempt-1.json"
     },
     {
-      "article_id": "6eda3f77734bf8e9987e670d",
+      "article_id": "4ee179c82ce3720ffd509407",
+      "attempt": 1,
+      "reason": "summary_number_ungrounded",
+      "file": "reviews/diagnostics/4ee179c82ce3720ffd509407/ef2ea7ea-023c-47e4-acb3-1d4c2adcca27-attempt-1.json"
+    },
+    {
+      "article_id": "4ee179c82ce3720ffd509407",
+      "attempt": 0,
+      "reason": "summary_refresh_summary_number_ungrounded",
+      "file": "reviews/diagnostics/4ee179c82ce3720ffd509407/7ebb06b5-5f8b-494c-bc6f-ec9bad6edd8b-summary_refresh_summary_number_ungrounded.json"
+    },
+    {
+      "article_id": "8eef4d6d2256d3ff825bb72f",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/8eef4d6d2256d3ff825bb72f/63c2d2e3-afa5-4afc-b14a-7ac5addb43bd-attempt-1.json"
+    },
+    {
+      "article_id": "8235543478fe843c54a5b54a",
+      "attempt": 1,
+      "reason": "summary_number_ungrounded",
+      "file": "reviews/diagnostics/8235543478fe843c54a5b54a/5fa96985-6177-4400-a985-71bcce024421-attempt-1.json"
+    },
+    {
+      "article_id": "c7e879783bd399db42b66c0b",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/c7e879783bd399db42b66c0b/fec49714-3b23-457f-aa5e-c88ec60af58f-attempt-1.json"
+    },
+    {
+      "article_id": "d02fe9d26dca1f8807bf4dcf",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/d02fe9d26dca1f8807bf4dcf/afe395b0-1bdc-4c9c-a2db-a18eb9e91f21-attempt-1.json"
+    },
+    {
+      "article_id": "dfc19882c109cf8cbb30de93",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/dfc19882c109cf8cbb30de93/3f6ac4a9-1388-4b50-af49-df39615eaded-attempt-1.json"
+    },
+    {
+      "article_id": "dfc19882c109cf8cbb30de93",
+      "attempt": 0,
+      "reason": "summary_refresh_date_evidence_mismatch",
+      "file": "reviews/diagnostics/dfc19882c109cf8cbb30de93/c0debe17-32b2-4d8e-8aaf-5c64eed1a220-summary_refresh_date_evidence_mismatch.json"
+    },
+    {
+      "article_id": "2c987349cdcfe5395804011f",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/2c987349cdcfe5395804011f/42335197-0cde-4f00-907b-27c5ed4827d5-attempt-1.json"
+    },
+    {
+      "article_id": "5c1e35102589d705f3b118f4",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/6eda3f77734bf8e9987e670d/66debecd-2ab4-4020-9695-43e7b00f8c8b-attempt-1.json"
+      "file": "reviews/diagnostics/5c1e35102589d705f3b118f4/77e4af1a-3223-4b9d-ae62-fc47b4d4c739-attempt-1.json"
     },
     {
-      "article_id": "920727c62805f2a960fe050c",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/920727c62805f2a960fe050c/13f407d2-cbd9-48b1-a9ce-324ca9f10b06-attempt-1.json"
-    },
-    {
-      "article_id": "ba9138736010c75adbcd9eaa",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/ba9138736010c75adbcd9eaa/8c9fa4d0-53e9-4377-af3e-5419f2a09394-attempt-1.json"
-    },
-    {
-      "article_id": "3a7952999c2c24c3d726f15c",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/3a7952999c2c24c3d726f15c/6fe804e8-a8b2-4f6f-ba33-44cac8164763-attempt-1.json"
-    },
-    {
-      "article_id": "79efdf1e8b39a7683eb3c2f2",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/79efdf1e8b39a7683eb3c2f2/1afe31de-2813-4605-b7f4-a6978225333c-attempt-1.json"
-    },
-    {
-      "article_id": "5e041cdd0ee87ec2629aff33",
-      "attempt": 1,
-      "reason": "review_validation",
-      "file": "reviews/diagnostics/5e041cdd0ee87ec2629aff33/04d39a43-4605-46cc-85a9-793fec112f3c-attempt-1.json"
-    },
-    {
-      "article_id": "5e041cdd0ee87ec2629aff33",
+      "article_id": "5c1e35102589d705f3b118f4",
       "attempt": 2,
-      "reason": "review_validation",
-      "file": "reviews/diagnostics/5e041cdd0ee87ec2629aff33/271bfd2b-1af3-4eda-8304-593b5b910c76-attempt-2.json"
+      "reason": "summary_ungrounded",
+      "file": "reviews/diagnostics/5c1e35102589d705f3b118f4/dba82fa9-388e-45af-a750-b90f92b34bc1-attempt-2.json"
     },
     {
-      "article_id": "dfa31ad7bb4bf5b59dc1ee72",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/dfa31ad7bb4bf5b59dc1ee72/14954ce6-7bbe-4a5a-b156-6b3d27d10726-attempt-1.json"
-    },
-    {
-      "article_id": "172b6d609991e63db23733eb",
-      "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/172b6d609991e63db23733eb/f43491e2-df4b-4bdb-bf73-55de716c3e1b-attempt-1.json"
-    },
-    {
-      "article_id": "22722bf4b4c96125758f9d9f",
+      "article_id": "d0f49ff8d7bb0f23d717abfc",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/22722bf4b4c96125758f9d9f/8f95bd69-7fc4-499e-9055-bbf13e4a128a-attempt-1.json"
+      "file": "reviews/diagnostics/d0f49ff8d7bb0f23d717abfc/24e587dd-a60a-4312-bba5-5f2692e0621a-attempt-1.json"
     },
     {
-      "article_id": "e8f91aa06e69eeb2bcbc97fa",
+      "article_id": "ddfa958a061e576efd8cdae6",
       "attempt": 1,
       "reason": "review_validation",
-      "file": "reviews/diagnostics/e8f91aa06e69eeb2bcbc97fa/cde45255-863a-4bd2-89d5-4015a648826a-attempt-1.json"
+      "file": "reviews/diagnostics/ddfa958a061e576efd8cdae6/41101824-69c9-48a8-832f-79cf2efb4e3d-attempt-1.json"
     },
     {
-      "article_id": "29b0b9daea9a4745ee052bdd",
+      "article_id": "4d536aee101e218701f86153",
       "attempt": 1,
       "reason": "review_validation",
-      "file": "reviews/diagnostics/29b0b9daea9a4745ee052bdd/1e6cdea8-7ee1-4cf2-b31e-201a44f69be2-attempt-1.json"
+      "file": "reviews/diagnostics/4d536aee101e218701f86153/52621f7c-5395-42c3-b007-1b8fc86c16b9-attempt-1.json"
     },
     {
-      "article_id": "def7264049ad88541df40e19",
+      "article_id": "4d536aee101e218701f86153",
+      "attempt": 0,
+      "reason": "summary_refresh_review_validation",
+      "file": "reviews/diagnostics/4d536aee101e218701f86153/1de55b2b-7b5a-4f81-96fe-e1fce5f9ce48-summary_refresh_review_validation.json"
+    },
+    {
+      "article_id": "059b9908fbcd110f54e9fd5f",
       "attempt": 1,
-      "reason": "review_validation",
-      "file": "reviews/diagnostics/def7264049ad88541df40e19/dd680c41-5fdb-44a9-99ce-285dfe6930f3-attempt-1.json"
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/059b9908fbcd110f54e9fd5f/85954929-f461-46a6-8ac2-b2ff13853ec0-attempt-1.json"
     },
     {
-      "article_id": "def7264049ad88541df40e19",
-      "attempt": 2,
-      "reason": "review_validation",
-      "file": "reviews/diagnostics/def7264049ad88541df40e19/78209a2d-ba57-4274-9da5-1b0755712789-attempt-2.json"
-    },
-    {
-      "article_id": "253a2432b6656067e7be079b",
+      "article_id": "e09111516721e5194c75fd12",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/253a2432b6656067e7be079b/d51b3410-79a8-43a4-b0b8-14aca38d0bcd-attempt-1.json"
+      "file": "reviews/diagnostics/e09111516721e5194c75fd12/502fda66-a54f-4a53-a2ef-cd69b76f8b80-attempt-1.json"
     },
     {
-      "article_id": "07ff842f8168d17dceb02319",
+      "article_id": "b1f924f1748f83c3fc4ae081",
       "attempt": 1,
       "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/07ff842f8168d17dceb02319/89bd90c1-846b-48f8-ae36-2eeb9d6323ec-attempt-1.json"
+      "file": "reviews/diagnostics/b1f924f1748f83c3fc4ae081/e38ddb68-f93f-4d0e-ac40-9dffc2a0dbbf-attempt-1.json"
     },
     {
-      "article_id": "0eb69ff94e5469d6353660c4",
+      "article_id": "77f0d08a0a596822f4bf715a",
       "attempt": 1,
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/0eb69ff94e5469d6353660c4/20489595-d135-4942-8f86-56ccbdb5906c-attempt-1.json"
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/77f0d08a0a596822f4bf715a/ee5ba216-517d-4859-9493-0120bba906fa-attempt-1.json"
     },
     {
-      "article_id": "70f5f7f79b48d69ce7093473",
+      "article_id": "67a36d9cd57aabf0d3871ced",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/67a36d9cd57aabf0d3871ced/07c3c2e9-f141-4de6-b54d-6e45a0773d0e-attempt-1.json"
+    },
+    {
+      "article_id": "67a36d9cd57aabf0d3871ced",
+      "attempt": 1,
+      "stage": "verify",
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/67a36d9cd57aabf0d3871ced/813f7e6e-9774-49e1-98af-827a3f84f6fe-verify-attempt-1.json"
+    },
+    {
+      "article_id": "a1b0157b7165c5c02cf9b6b7",
+      "attempt": 1,
+      "stage": "verify",
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/a1b0157b7165c5c02cf9b6b7/49df9d18-e570-4ec2-b15a-bc3dc34d3f48-verify-attempt-1.json"
+    },
+    {
+      "article_id": "a1b0157b7165c5c02cf9b6b7",
       "attempt": 0,
       "reason": "summary_refresh_evidence_mismatch",
-      "file": "reviews/diagnostics/70f5f7f79b48d69ce7093473/036be9b0-4b2b-4da9-b2db-4c716d6a3046-summary_refresh_evidence_mismatch.json"
+      "file": "reviews/diagnostics/a1b0157b7165c5c02cf9b6b7/9964c8b8-134b-442f-842e-84f7eb20cb5f-summary_refresh_evidence_mismatch.json"
     },
     {
-      "article_id": "b1a64707910de5f1bb434807",
+      "article_id": "e15c2bbad80307d994d3ff5b",
       "attempt": 1,
       "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/b1a64707910de5f1bb434807/20d6cdf6-7313-4987-8850-8b63ae19c767-attempt-1.json"
+      "file": "reviews/diagnostics/e15c2bbad80307d994d3ff5b/06db269d-541a-4da7-b63a-96e1cd9de905-attempt-1.json"
     },
     {
-      "article_id": "1227493845188a471065e604",
+      "article_id": "f3063a1b90da42fc75ba362f",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/1227493845188a471065e604/2f45024b-ef7b-4b2c-b377-d33bee7f5db0-attempt-1.json"
+      "file": "reviews/diagnostics/f3063a1b90da42fc75ba362f/d578d96c-d17d-48e5-943b-1f2b11447f1f-attempt-1.json"
     },
     {
-      "article_id": "493464aa0133b3136ed403f0",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/493464aa0133b3136ed403f0/d5569deb-ed68-4f83-b7d9-d94140e6073d-attempt-1.json"
-    },
-    {
-      "article_id": "060b5dd1e89e107c8781dcdd",
-      "attempt": 1,
-      "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/060b5dd1e89e107c8781dcdd/dd3d09cf-3a00-4427-903f-6b93f990dc10-attempt-1.json"
-    },
-    {
-      "article_id": "8e7e0bee06097b682f074c41",
+      "article_id": "4160ad97b2fda57fee281c1a",
       "attempt": 1,
       "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/8e7e0bee06097b682f074c41/0977b2f7-24fa-4168-bfd0-1bbcc2916ee5-attempt-1.json"
+      "file": "reviews/diagnostics/4160ad97b2fda57fee281c1a/0c82c6e7-0f66-4dac-b3a0-6939df54c983-attempt-1.json"
     },
     {
-      "article_id": "8e7e0bee06097b682f074c41",
+      "article_id": "4160ad97b2fda57fee281c1a",
       "attempt": 2,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/8e7e0bee06097b682f074c41/01baa110-d128-4b52-b7bf-8cf47da17541-attempt-2.json"
+      "file": "reviews/diagnostics/4160ad97b2fda57fee281c1a/f4a66783-ebdd-467e-bca1-fdd6dafae21e-attempt-2.json"
     },
     {
-      "article_id": "fc97e8d547aa03c921f63c68",
+      "article_id": "a007c011f5bd5c204f9d71ca",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/fc97e8d547aa03c921f63c68/bc073c35-e59e-4dd7-9d87-f4bfe5e2753f-attempt-1.json"
+      "file": "reviews/diagnostics/a007c011f5bd5c204f9d71ca/6baa9e63-7f59-4b00-92d8-d97d432ae4f5-attempt-1.json"
     },
     {
-      "article_id": "fc97e8d547aa03c921f63c68",
-      "attempt": 2,
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/fc97e8d547aa03c921f63c68/f29da317-6acd-49f4-9646-f045172da252-attempt-2.json"
-    },
-    {
-      "article_id": "0b70d6e5d7a0eb6e3b05b89b",
+      "article_id": "abb639d17f7071f76afc4ba8",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/0b70d6e5d7a0eb6e3b05b89b/f63dee64-a5b0-49eb-bb3a-c9d914d7fa51-attempt-1.json"
+      "file": "reviews/diagnostics/abb639d17f7071f76afc4ba8/c6ed97fc-12f4-4566-98c2-db0aa830f045-attempt-1.json"
     },
     {
-      "article_id": "0b70d6e5d7a0eb6e3b05b89b",
-      "attempt": 1,
-      "stage": "verify",
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/0b70d6e5d7a0eb6e3b05b89b/0836d5e8-d596-490d-b1a6-14801ca93a4a-verify-attempt-1.json"
-    },
-    {
-      "article_id": "a84343f34e109ac3c1a323e5",
+      "article_id": "ee8307427e3af435f68abde8",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/a84343f34e109ac3c1a323e5/8df4f2e6-d119-4f2a-8fa4-4129fa2e77af-attempt-1.json"
+      "file": "reviews/diagnostics/ee8307427e3af435f68abde8/986f898d-7a29-446c-b4e7-557b3a29d7a8-attempt-1.json"
     },
     {
-      "article_id": "a967622b6f9539df00b6342c",
-      "attempt": 1,
-      "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/a967622b6f9539df00b6342c/05ef7707-6857-4e97-8f51-663e9d385075-attempt-1.json"
-    },
-    {
-      "article_id": "e6fae4270ef1f48cdb772078",
-      "attempt": 1,
-      "reason": "summary_ungrounded",
-      "file": "reviews/diagnostics/e6fae4270ef1f48cdb772078/d2ed1cad-4427-44da-836f-15038a69dc86-attempt-1.json"
-    },
-    {
-      "article_id": "2b33c3516ba0f5be931981d3",
-      "attempt": 1,
-      "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/2b33c3516ba0f5be931981d3/866dfd97-e435-4b8c-966c-2f180bb3d846-attempt-1.json"
-    },
-    {
-      "article_id": "2b33c3516ba0f5be931981d3",
-      "attempt": 1,
-      "stage": "verify",
-      "reason": "summary_number_ungrounded",
-      "file": "reviews/diagnostics/2b33c3516ba0f5be931981d3/18e1fd95-aca1-4619-ae2e-fa2bd9728c09-verify-attempt-1.json"
-    },
-    {
-      "article_id": "471cfed4c8be88806b50dc95",
+      "article_id": "3b212d07db4d878819aba5a4",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/471cfed4c8be88806b50dc95/71415658-b029-4814-932e-e7cddbda0b48-attempt-1.json"
+      "file": "reviews/diagnostics/3b212d07db4d878819aba5a4/64d5417b-7c30-434f-98c5-a038b79d0ba9-attempt-1.json"
     },
     {
-      "article_id": "011c989a4880a2ae02e3ef9d",
+      "article_id": "6a4d3e0959103d41e733e9ad",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/6a4d3e0959103d41e733e9ad/92899a26-cb65-404a-8698-d3162f0c5df4-attempt-1.json"
+    },
+    {
+      "article_id": "17dd2111e33dbba93142925f",
       "attempt": 1,
       "reason": "review_validation",
-      "file": "reviews/diagnostics/011c989a4880a2ae02e3ef9d/d5d03926-51ee-441c-ad86-0645de0b0c7f-attempt-1.json"
+      "file": "reviews/diagnostics/17dd2111e33dbba93142925f/3ca61495-2ecf-4958-853d-ae85bbf7ed7c-attempt-1.json"
+    },
+    {
+      "article_id": "17dd2111e33dbba93142925f",
+      "attempt": 2,
+      "reason": "review_validation",
+      "file": "reviews/diagnostics/17dd2111e33dbba93142925f/7b7d7300-d638-4e09-a6cf-6701e46e2506-attempt-2.json"
+    },
+    {
+      "article_id": "85ca47d9fd9fa01ac185d382",
+      "attempt": 1,
+      "reason": "summary_ungrounded",
+      "file": "reviews/diagnostics/85ca47d9fd9fa01ac185d382/28e76d06-4468-40e6-9874-c02fbc62304c-attempt-1.json"
+    },
+    {
+      "article_id": "f53fb9b26a9f30352678f077",
+      "attempt": 1,
+      "reason": "review_validation",
+      "file": "reviews/diagnostics/f53fb9b26a9f30352678f077/7ad4eb12-2f3c-4c9b-b2b7-6ae74b89f83d-attempt-1.json"
+    },
+    {
+      "article_id": "f53fb9b26a9f30352678f077",
+      "attempt": 2,
+      "reason": "summary_ungrounded",
+      "file": "reviews/diagnostics/f53fb9b26a9f30352678f077/90210713-08e5-4f4a-8153-e2e1ae0ff000-attempt-2.json"
+    },
+    {
+      "article_id": "16dc6dc7ddbca44b340fb693",
+      "attempt": 1,
+      "reason": "review_validation",
+      "file": "reviews/diagnostics/16dc6dc7ddbca44b340fb693/b729852c-c1c8-42c4-9e63-e4578e22b300-attempt-1.json"
     }
   ],
   "concurrency": 4,
   "quote_removals": [
     {
-      "article_id": "0b70d6e5d7a0eb6e3b05b89b",
+      "article_id": "a007c011f5bd5c204f9d71ca",
       "candidate_ids": [
-        "investment:3"
+        "investment:1"
       ]
     }
   ],
-  "recheck_pending": [
-    {
-      "article_id": "0b70d6e5d7a0eb6e3b05b89b",
-      "candidate_ids": [
-        "investment:3"
-      ],
-      "reason": "verifier_evidence_unverified"
-    }
-  ],
+  "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 20,
-    "verified": 17,
+    "requested": 25,
+    "verified": 23,
     "partial": 0,
-    "pending": 1,
-    "changed": 1,
+    "pending": 0,
+    "changed": 8,
     "failed": 0,
     "rejected_responses": 2,
     "errors": {
-      "summary_ungrounded": 1,
-      "summary_number_ungrounded": 1
+      "evidence_mismatch": 2
     }
   },
   "period": {
