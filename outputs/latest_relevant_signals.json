@@ -37,7 +37,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://investor.lilly.com/rss.xml",
     "source_type": "official",
@@ -52,7 +52,7 @@
     "content_excerpt": "Lilly to acquire Merida Biosciences to advance treatments for serious autoimmune and allergic diseases August 31, 2026 PDF Version Merida's antibody-engineering platform is designed to enable precise, durable removal of disease-causing antibodies, while preserving normal immune function Initial Phase 1 data show MER511 achieved robust reductions in pathogenic thyroid-stimulating antibodies with a favorable initial safety profile Acquisition strengthens Lilly 's immunology capabilities and its opportunity to elevate the standard of care for immune-mediated conditions with high unmet need INDIANAPOLIS and CAMBRIDGE, Mass. , Aug. 31, 2026 /PRNewswire/ -- Eli Lilly and Company (NYSE: LLY) and Merida Biosciences, Inc. ( Merida ), a biotechnology company advancing a new class of precision therap...",
     "content_word_count": 1078,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Eli Lilly"
     ],
@@ -133,7 +133,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://asm-au.com/feed/",
     "source_type": "official",
@@ -148,7 +148,7 @@
     "content_excerpt": "Energy Fuels completes acquisition of ASM 31/08/2026 Ross Bhappu, President & CEO of Energy Fuels with Rowena Smith, CEO of ASM. Australian Strategic Materials (ASM) is pleased to confirm that Energy Fuels Inc. has completed its 100% acquisition of ASM , by way of a members’ scheme of arrangement ( Share Scheme ). Implementation of the Share Scheme took place on 28 August 2026, and ASM was removed from&nbsp;the official list of ASX on&nbsp;31 August 2026.&nbsp;&nbsp; In accordance with the Share Scheme, Energy Fuels has confirmed that eligible ASM Shareholders have been issued with the Share Scheme Consideration of 0.053 New Energy Fuels CHESS&nbsp;Depositary&nbsp;Interests (CDIs) –&nbsp;or New Energy Fuels Shares, if validly elected&nbsp;–&nbsp;and all ASM Shareholders have been paid the...",
     "content_word_count": 302,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "ASM",
       "Australian Strategic Materials"
@@ -221,7 +221,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.sumitomo-chem.co.jp/english/news/category/newsreleases/",
     "source_type": "official",
@@ -239,7 +239,7 @@
     "content_excerpt": "Sumitomo Chemical to Begin Mass Production and Sales of InP Epitaxial Wafers that Support the Evolution of AI Data Centers Aug. 31, 2026 The Company will Establish a Supply System for Core Materials to Contribute to the Societal Implementation of Photonic-Electronic Convergence Technologies Sumitomo Chemical has established a mass production system for 4-inch indium phosphide (InP) epitaxial wafers, a type of compound semiconductor, at its Ibaraki Works in Hitachi, Ibaraki Prefecture, and has begun selling these products. As one of the few epi houses in Japan capable of stably mass-producing InP epitaxial wafers, the Company will contribute to the societal implementation of photonic-electronic convergence * technologies that support next-generation digital infrastructure. The Company also...",
     "content_word_count": 650,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [],
     "industry": "이차전지",
     "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
@@ -304,7 +304,7 @@
         "precision": "month"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://www.renishaw.com/en/6635.rss",
     "source_type": "official",
@@ -319,7 +319,7 @@
     "content_excerpt": "Renishaw introduces PH20 PLUS 5-axis touch-trigger system with 300 mm inspection reach September 2026 The PH20 PLUS 5-axis touch-trigger system for co-ordinate measuring machines (CMMs) is being introduced by Renishaw to replace its established PH20 head. It offers over 50% increase in inspection reach over the original head, which will improve access to features deep inside parts and in hard-to-access areas. The new PH20 PLUS system builds on the proven measurement capabilities of the PH20, enabling high-speed touch-trigger measurement across a wider range of applications. Launched in 2010, the PH20 touch-trigger system utilises the head motion technology developed for the multi-award winning REVO® 5-axis measurement system, which minimises the dynamic errors of a CMM at higher measuremen...",
     "content_word_count": 809,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Renishaw plc"
     ],
@@ -386,7 +386,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://www.dnp.co.jp/news/rss_news_jp.xml",
     "source_type": "official",
@@ -401,7 +401,7 @@
     "content_excerpt": "大日本印刷 JCCLに出資しCO₂分離回収の事業化を加速 燃焼系ガスを対象とした膜分離法によるCO₂分離回収技術の社会実装を目指す ニュースリリース 研究開発 企業情報 環境 コラボレーション 大日本印刷株式会社（本社：東京都 代表取締役社長：北島義斉 以下：DNP）は、株式会社ＪＣＣＬ（本社：福岡県 代表取締役：梅原俊志）が実施した資金調達において、2026年7月31日付で同社に出資しました。両社は、工場などから排出される燃焼系ガスを対象にした、膜分離法 ＊1 によるCO₂分離回収技術の開発・事業化に向け、戦略的パートナーとして連携を強化します。 DNPが保有する精密塗工技術、評価・解析技術、生産設備の設計・製造技術と、JCCLが保有するCO₂を選択的に透過する材料を組み合わせることで、低コストかつ高効率なCO₂分離回収装置を開発し、その社会実装を目指します。また、本装置をDNPグループのGHG（Greenhouse Gas：温室効果ガス）排出量削減にも活用し、実証を通じて得た知見を今後の開発・装置提供につなげていきます。さらに、回収したCO₂の利活用に向けて企業や研究機関との連携を進め、CO₂を資源として多様な製品・燃料に活用するカーボンリサイクル事業の創出にも取り組みます。 出資の背景 近年、製造業を中心に脱炭素化への対応が重要な経営課題となっています。省エネルギー化や再生可能エネルギーの導入が進む一方で、製造プロセスなどの事業活動に伴って排出されるCO₂は一定量の排出が避けられない場合があります。こうしたCO₂を回収して大気中への排出を抑制する技術の実用化が、脱炭素社会の実現に向けて期待されています。 DNPは、JCCLと2025年10月から、工場などから排出される燃焼系ガスを対象としたCO₂分離回収事業での協業 ＊2 を進めてきました。今回、両社の技術や知見を組み...",
     "content_word_count": 122,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -468,7 +468,7 @@
         "precision": "month"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://www.renishaw.com/en/6635.rss",
     "source_type": "official",
@@ -483,7 +483,7 @@
     "content_excerpt": "Renishaw launches next-generation RLE interferometric laser encoders for advanced motion control in semiconductor manufacturing August 2026 Renishaw, a global leader in engineering technologies, will present its new family of RLE laser interferometer encoder systems at SEMICON Taiwan 2026, Taipei City and SEMICON West 2026, San Francisco. The new product range comprises three systems RLE100, RLE200 and RLE300 providing precision position feedback for a wide range of semiconductor manufacturing motion control applications. Building on the proven technology platforms of Renishaw's established RLE10 and RLE20 laser encoders, the new family is designed to meet the increasing demands of advanced semiconductor manufacturing equipment. As device feature sizes continue to shrink, manufacturers req...",
     "content_word_count": 712,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Renishaw plc"
     ],
@@ -565,7 +565,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://investors.ouster.com/rss.xml",
     "source_type": "official",
@@ -580,7 +580,7 @@
     "content_excerpt": "GUSS Automation, a wholly owned John Deere Subsidiary, Plans to Advance Precision Autonomy in High-Value Crops with Ouster's Next-Generation REV8 Digital Lidar August 26, 2026 PDF Version Unlocking Precision and Safety in Autonomous Agriculture: GUSS Plans Deployment of Rev8 to Revolutionize Orchard Operations SAN FRANCISCO --(BUSINESS WIRE)--Aug. 26, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a leader in sensing and perception for Physical AI, today announced that GUSS Automation, a wholly owned John Deere Subsidiary and a pioneer in autonomous high-value crop operations, plans to incorporate Ouster’s Rev8 OS0 native color digital lidar sensors, powered by the breakthrough L4 Ouster Silicon, into the next generation of its Autonomous Orchard Machine Fleet. The integra...",
     "content_word_count": 1269,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -617,95 +617,6 @@
     ]
   },
   {
-    "target_no": 34,
-    "company": "Infineon",
-    "title": "Infineon supplies silicon carbide technology to Fox ESS, enhancing efficiency of residential energy storage systems Technology news Aug 26, 2026",
-    "url": "https://www.infineon.com/technology-news/2026/inftn202608-131",
-    "source": "Infineon - Press / Press Releases / Media",
-    "published_at": "2026-08-26T00:00:00Z",
-    "published_month": "2026-08",
-    "published_at_source": "listing",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-26T00:00:00Z",
-        "month": "2026-08",
-        "source": "listing",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-26T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-22T02:53:04Z",
-    "collector": "official_page",
-    "query": "https://www.infineon.com/about/press",
-    "source_type": "official",
-    "source_kind": "press_release",
-    "is_press_release": true,
-    "source_label_ko": "공식보도자료",
-    "source_priority": 5,
-    "official_source_url": "https://www.infineon.com/about/press",
-    "source_direct_url": "https://www.infineon.com/technology-news/2026/inftn202608-131",
-    "link_verdict": "accept",
-    "link_reason": "article_link",
-    "link_rank": 0,
-    "content_text": "Infineon supplies silicon carbide technology to Fox ESS, enhancing efficiency of residential energy storage systems\nTechnology news\nAug 26, 2026 \nMunich, Germany – 26 August 2026 – Infineon Technologies AG (FSE: IFX / OTCQX: IFNNY) supplies silicon carbide (SiC) power semiconductors to Fox ESS, a leading provider of renewable energy solutions, to enhance the efficiency of its residential energy storage systems (ESS). Leveraging Infineon's CoolSiC™ MOSFETs 1200 V G2 in the Q-DPAK package, Fox ESS has reduced switching losses by 70 percent. As a result, the company’s PQ3-Ultra energy storage system achieves a peak photovoltaic (PV) inverter efficiency of up to 98.78 percent in grid-tied operation and a peak battery charge/discharge efficiency of up to 98.47 percent.\n\"With our SiC MOSFETs in the Q-DPAK package, we are enabling a new level of efficiency, thermal performance and design flexibility for residential energy storage systems,\" said Amit Raut, Application Manager Photovoltaic and Residential ESS at Infineon. \"Fox ESS is demonstrating how advanced SiC technology can translate into measurable system-level gains and support the broader adoption of clean energy solutions in homes worldwide.\"\n\"The collaboration with Infineon is a major pillar of our strategy to deliver high-performance energy storage solutions,\" said Daniel Deng, R&D Director at Fox ESS. \"Infineon's CoolSiC technology offers superior efficiency and outstanding reliability, values that perfectly match our philosophy. By working together, we will further advance the performance of residential energy storage systems and accelerate the adoption of renewable energy.\" \nWithin Fox ESS's energy storage system, Infineon's CoolSiC MOSFETs 1200 V G2 in the top-side-cooled Q-DPAK package deliver optimized thermal performance, system efficiency and power density. The devices are specifically designed for demanding applications requiring high performance and reliability. Featuring Infineon's advanced .XT interconnection technology, they reduce thermal resistance and operating junction temperature, while the trench gate architecture helps lower switching losses. Compared with conventional bottom-side-cooled designs, the Q-DPAK package supports improved PCB layout, helping to reduce parasitic effects and stray inductance while enabling superior thermal management. Its compact footprint supports space-saving system designs, while compatibility with automated assembly simplifies cost-efficient, scalable manufacturing.\nFor its hybrid ESS solution combining the PQ-H3-Ultra-10.0 inverter with the EQ3300-5 battery, Fox ESS has achieved a System Performance Index (SPI) of 97.0 percent in a recent test by HTW Berlin University of Applied Sciences and AQUU Research. This ranks Fox ESS first in the 10 kW class among all hybrid inverter and storage systems tested in 2026 and marks the highest SPI score recorded since the evaluation was launched in 2018. Over the past three years, Fox ESS has installed more than 890,000 PV inverters and over 1 million batteries in more than 70 countries. \nThe collaboration highlights both companies' shared commitment to advancing highly efficient and reliable residential energy solutions worldwide.\nAbout Infineon\nInfineon Technologies AG is a global semiconductor leader in power systems and IoT. Infineon drives decarbonization and digitalization with its products and solutions. The Company had around 57,000 employees worldwide (end of September 2025) and generated revenue of about €14.7 billion in the 2025 fiscal year (ending 30 September). Infineon is listed on the Frankfurt Stock Exchange (ticker symbol: IFX) and in the USA on the OTCQX International over-the-counter market (ticker symbol: IFNNY).\nFollow us: Facebook - LinkedIn \nPress Photos \nDownload All\n(2) \nInfineon's CoolSiC MOSFETs 1200 V G2 in the top-side-cooled Q-DPAK package deliver optimized thermal performance, system efficiency and power density\nJPEG \n2126x1241 px\nDownload\n&times; \nFor its PQ3-Ultra energy storage system, Fox ESS has achieved an SPI of 97.0 percent in a recent test by HTW Berlin and AQUU Research.\nJPEG \n2126x2835 px\nDownload\n&times; \nShare in WeChat\nScan the QR code with your WeChat App to share this page.\nInformation Number : inftn202608-131 \nVeronika Seifried\nSpokesperson Industrial and Infrastructure, GIP Division \n+49 89 234 61662\nSend email",
-    "content_source_url": "https://www.infineon.com/technology-news/2026/inftn202608-131",
-    "content_excerpt": "Infineon supplies silicon carbide technology to Fox ESS, enhancing efficiency of residential energy storage systems Technology news Aug 26, 2026 Munich, Germany – 26 August 2026 – Infineon Technologies AG (FSE: IFX / OTCQX: IFNNY) supplies silicon carbide (SiC) power semiconductors to Fox ESS, a leading provider of renewable energy solutions, to enhance the efficiency of its residential energy storage systems (ESS). Leveraging Infineon's CoolSiC™ MOSFETs 1200 V G2 in the Q-DPAK package, Fox ESS has reduced switching losses by 70 percent. As a result, the company’s PQ3-Ultra energy storage system achieves a peak photovoltaic (PV) inverter efficiency of up to 98.78 percent in grid-tied operation and a peak battery charge/discharge efficiency of up to 98.47 percent. \"With our SiC MOSFETs in t...",
-    "content_word_count": 631,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
-    "query_aliases": [
-      "Infineon Technologies"
-    ],
-    "industry": "우주항공",
-    "target_technology": "위성통신 및 레이다용 RF 반도체",
-    "target_technology_en": "RF semiconductor for satellite communication and radar",
-    "technology_group": "satellite_radar_rf_semiconductor",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "위성통신도 및체 레 기이술다용 RF반",
-    "pdf_company": "Infineon",
-    "pdf_row_no": 48,
-    "pdf_sequence": "36",
-    "target_technology_scope": {
-      "includes_ko": "위성통신·우주항공·방산 레이다 시스템의 RF 신호를 송수신·증폭·변환하는 반도체(RF 프런트엔드, 전력증폭기, LNA, 빔포밍·밀리미터파 칩 등)",
-      "excludes_ko": "전력 변환·전원용 전력 반도체(우주용·방사선 내성 제품 포함), 차량용 UWB·디지털 키·실내 재실 감지 칩, 우주항공 외 용도의 일반 반도체",
-      "includes_en": "Semiconductors that transmit, receive, amplify or convert RF signals in satellite communication, aerospace or defence radar systems (RF front ends, power amplifiers, LNAs, beamforming and mmWave chips)",
-      "excludes_en": "Power semiconductors for power conversion or supply, including space-grade or radiation-hardened ones; automotive UWB, digital key and in-cabin presence chips; general semiconductors for non-aerospace uses"
-    },
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": false,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "Evidence describes Infineon supplying silicon carbide technology to Fox ESS for residential energy storage systems. However, power semiconductors for power conversion or supply are explicitly excluded from the target technology scope.",
-    "ai_summary_ko": "",
-    "ai_summary_en": "",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "99b4efc5cd69969d597d7443",
-    "ai_evidence_quotes": [
-      "Infineon supplies silicon carbide technology to Fox ESS, enhancing efficiency of residential energy storage systems Technology news Aug 26, 2026 Munich, Germany – 26 August 2026 – Infineon Technologies AG (FSE: IFX / OTCQX: IFNNY) supplies silicon carbide (SiC) power semiconductors to Fox ESS, a leading provider of renewable energy solutions, to enhance the efficiency of its residential energy storage systems (ESS)."
-    ]
-  },
-  {
     "target_no": 74,
     "company": "Asahi Kasei",
     "title": "Contract Signed with JOGMEC for Design Work Related to Ship-Based Advanced CCS Project",
@@ -727,7 +638,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_sitemap",
     "query": "https://www.asahi-kasei.com/sitemap-en.xml",
     "source_type": "official",
@@ -742,7 +653,7 @@
     "content_excerpt": "Contract Signed with JOGMEC for Design Work Related to Ship-Based Advanced CCS Project Aiming to establish one of Japan’s largest CCS hubs at the Mizushima Industrial Complex 2026-08-24T10:30:00 Sumitomo Corporation Asahi Kasei Corporation ENEOS Corporation JFE Steel Corporation Mitsubishi Gas Chemical Company, Inc. Mitsubishi Chemical Corporation secondary border false backgroundColor white width full imagePosition left imageCaption false bottomSpacing false buttonPosition left Sumitomo Corporation, Asahi Kasei Corporation, ENEOS Corporation, JFE Steel Corporation, Mitsubishi Gas Chemical Company, Inc. and Mitsubishi Chemical Corporation (collectively, the \"six companies\") have been selected by the Japan Organization for Metals and Energy Security (JOGMEC) to conduct a commissioned design...",
     "content_word_count": 557,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [],
     "industry": "화학소재",
     "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
@@ -798,7 +709,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_sitemap",
     "query": "https://www.asahi-kasei.com/sitemap-en.xml",
     "source_type": "official",
@@ -813,7 +724,7 @@
     "content_excerpt": "This press release is issued in order to provide information to the media, shareholders, and investors; the information contained herein does not constitute product promotion or medical advice. This press release concerns a regulatory approval in Japan. The information contained herein is specific to Japan and may differ from information approved in other countries or regions. border false backgroundColor light-blue width full imagePosition center imageCaption true bottomSpacing false buttonPosition center Empaveli™ Approved in Japan for Additional Rare Kidney Disease Indications of C3 Glomerulopathy and Primary Immune Complex Membranoproliferative Glomerulonephritis 2026-08-24T13:00:00 Asahi Kasei Corp. secondary border false backgroundColor white width full imagePosition left imageCaptio...",
     "content_word_count": 891,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [],
     "industry": "화학소재",
     "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
@@ -876,7 +787,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://ir.criver.com/news-releases/",
     "source_type": "official",
@@ -894,7 +805,7 @@
     "content_excerpt": "&nbsp;View printer-friendly version Charles River Laboratories and Medigen Vaccine Biologics Corp Collaborate to Advance New Vaccine Development Programs Through Next Generation Sequencing PDF Version Collaboration leverages NGS technologies to accelerate high-quality vaccine development, support global regulatory readiness, and help reduce animal testing WILMINGTON, Mass. --(BUSINESS WIRE)--Aug. 20, 2026-- Charles River Laboratories International, Inc. (NYSE: CRL) and Medigen Vaccine Biologics Corp. (MVC) collaborate &nbsp; on the characterization and validation of the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing (NGS), to support critical steps of Chemistry, M...",
     "content_word_count": 966,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Charles River Laboratories"
     ],
@@ -966,7 +877,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.evonik.com/en/media.html",
     "source_type": "official",
@@ -984,7 +895,7 @@
     "content_excerpt": "Evonik provides customers with Life Cycle Assessment data for selected EUDRAGIT® polymers TÜV-certified Life Cycle Assessment (LCA) methodology supports customers’ Scope 3 emissions reporting EUDRAGIT® L 100-55 shows around 6 percent reduction in product carbon footprint (PCF) due to improvement measures Supports the 2030 sustainability targets and commitments for Evonik’s Health Care business Evonik now offers its customers cradle-to-gate LCA data for selected EUDRAGIT® functional polymers. These results are derived from Evonik’s TÜV-certified LCA method. This data supports customers’ Scope 3 emissions (indirect emissions) reporting and underscores Evonik’s commitment to greater transparency across the value chain. LCA data is currently available for EUDRAGIT® L 100-55 and EUDRAGIT® L 30...",
     "content_word_count": 728,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Evonik"
     ],
@@ -1051,7 +962,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://media.nxp.com/rss.xml",
     "source_type": "official",
@@ -1066,7 +977,7 @@
     "content_excerpt": "NXP Semiconductors Breaks Ground on Assembly and Test Site Expansion in Malaysia August 12, 2026 8:00 AM CDT (UTC-5) by NXP Semiconductors Press Release Share Twitter LinkedIn Facebook New Petaling Jaya facility will increase internal A&T capacity, further diversify NXP’s back-end manufacturing capabilities and strengthen its global supply chain Leveraging advanced automation technologies, the smart factory is expected to ramp production in the first quarter of 2028 and more than double the site’s output at full capacity The expanded operations reinforce NXP’s hybrid manufacturing strategy, which provides supply control and geographic resilience NXP executives and distinguished guests celebrate the groundbreaking of NXP’s assembly and test site expansion in Malaysia. Please refer below for...",
     "content_word_count": 786,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "NXP Semiconductors"
     ],
@@ -1146,7 +1057,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://ir.appliedmaterials.com/rss.xml",
     "source_type": "official",
@@ -1161,7 +1072,7 @@
     "content_excerpt": "UC Berkeley to Join Applied Materials’ EPIC Center to Speed Chip Innovation Aug 11, 2026 at 9:00 AM EDT PDF Version Collaboration pairs UC Berkeley’s semiconductor research strength with Applied’s state-of-the-art equipment and process integration expertise Located in Silicon Valley , Applied’s EPIC Center provides industry-scale R&D environment with access to cutting-edge chipmaking equipment to enable rapid co-innovation and faster commercialization SANTA CLARA, Calif. , Aug. 11, 2026 (GLOBE NEWSWIRE) -- Applied Materials, Inc. today announced that the University of California, Berkeley will join the company’s EPIC Center in Silicon Valley as a research collaborator. Working side by side with Applied’s scientists and engineers, UC Berkeley faculty and students will pursue high-impact res...",
     "content_word_count": 844,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [],
     "industry": "반도체",
     "target_technology": "nm급 W2W 하이브리드 본딩 장비",
@@ -1241,7 +1152,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://investors.ouster.com/rss.xml",
     "source_type": "official",
@@ -1256,7 +1167,7 @@
     "content_excerpt": "Ouster BlueCity with REV8 Lidar Wins Multimillion-Dollar Utah Traffic Modernization Expansion August 11, 2026 PDF Version Econolite partnership leverages world's first native color digital lidar to expand Ouster BlueCity across 160 intersections with up to 500-foot advance detection for optimized mobility and enhanced safety. SAN FRANCISCO --(BUSINESS WIRE)--Aug. 11, 2026-- Ouster, Inc. (Nasdaq: OUST) (“Ouster” or the “Company”), a global leader in high-performance lidar sensors and intelligent software solutions, powering Physical AI across the automotive, industrial, robotics and smart infrastructure sectors, announced today that Econolite , a leader in mobility operating systems, was awarded an expansion contract from Utah Department of Transportation (UDOT) to deploy Ouster BlueCity, a...",
     "content_word_count": 1575,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -1331,7 +1242,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://investors.chemours.com/rss.xml",
     "source_type": "official",
@@ -1346,7 +1257,7 @@
     "content_excerpt": "Chemours Launches Opteon™ ZE and Opteon™ 515B Refrigerants for Chiller Applications Powering Data Centers, Commercial Buildings, and Other Mission Critical Environments August 10, 2026 PDF Version New additions to the Opteon™ portfolio support high-performance, sustainable cooling solutions in stationary chillers for AI-driven data centers, and commercial HVAC applications WILMINGTON, Del. , Aug. 10, 2026 /PRNewswire/ -- The Chemours Company (Chemours) (NYSE: CC), a global chemistry company, today announced the launch of Opteon™ ZE (R-1234ze(E)) and Opteon™ 515B (R-515B) for stationary chiller applications. The products further expand the industry-leading Opteon™ portfolio and provide customers with additional low-global warming potential (GWP) refrigerant options for large-scale cooling a...",
     "content_word_count": 1076,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "The Chemours Company"
     ],
@@ -1418,7 +1329,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.sumitomo-chem.co.jp/english/news/category/newsreleases/",
     "source_type": "official",
@@ -1436,7 +1347,7 @@
     "content_excerpt": "Sumitomo Chemical Group Acquires Subsidiary of COPYR Engaged in Natural Pyrethrin-Based Plant Protection Business Aug. 5, 2026 MILANO, August 4, 2026 / TOKYO, August 5, 2026－ Sumitomo Chemical Company, Limited (\"Sumitomo Chemical\") and COPYR S.p.A. Compagnia del Piretro (\"COPYR\") are pleased to announce Sumitomo Chemical group's acquisition of COPYR's plant protection business. COPYR—an Italian company belonging to Zelnova Zeltia, with long-standing expertise in natural pyrethrum-based insecticide products—owned and operated Pyragro S.r.l. (“Pyragro”), the subsidiary responsible for COPYR's plant protection business. On August 3, 2026, Sumitomo Chemical Italia S.r.l., (\"Sumitomo Chemical Italia\") the Italian subsidiary of Sumitomo Chemical, acquired 100% of the ownership interests in Pyrag...",
     "content_word_count": 798,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [],
     "industry": "이차전지",
     "target_technology": "폴리비닐리덴 플루오라이드(PVDF)",
@@ -1506,7 +1417,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.evonik.com/en/media.html",
     "source_type": "official",
@@ -1524,7 +1435,7 @@
     "content_excerpt": "Evonik reports strong second quarter Adjusted EBITDA rises to €630 million in the second quarter Higher volumes and selling prices due to supply chain bottlenecks outside of Europe Outlook 2026: €2.0 billion to €2.2 billion adjusted EBITDA Essen, Germany . As announced on June 26, Evonik delivered strong earnings in the second quarter. The ongoing conflict in the Middle East caused supply chain bottlenecks, mainly outside Europe, resulting in an economic windfall. In the second quarter, adjusted EBITDA rose by 24 percent to €630 million. In June, the company had forecast adjusted EBITDA in the range between €600 million and €650 million and significantly raised its guidance for fiscal 2026. Evonik now expects adjusted EBITDA between €2.0 billion and €2.2 billion (previously: €1.7 billion t...",
     "content_word_count": 913,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Evonik"
     ],
@@ -1591,7 +1502,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://www.dnp.co.jp/news/rss_news_jp.xml",
     "source_type": "official",
@@ -1606,7 +1517,7 @@
     "content_excerpt": "DNPコアライズ 金融機関のフロント業務からバックオフィスまでを支援する金融BPOを開始 製造業を中核とする企業グループとして国内で初めて金融サービス仲介業者に登録 ニュースリリース 製品・サービス BPO マーケティング・販促 DX 認証・セキュリティ 大日本印刷株式会社（DNP）グループの株式会社DNPコアライズは、銀行の預金や証券会社の投資信託・株式などの金融商品について、案内や申込の仲介ができる「金融サービス仲介業者」として2026年7月14日に内閣総理大臣の登録（関東財務局長（金サ）第30号）を受けました。製造業を中核とする企業グループの登録は国内初 ＊1 です。 本登録により、これまで提供してきたバックオフィスを中心とした金融BPO（Business Process Outsourcing：業務委託）に加え、銀行・証券分野の金融商品の案内や申込手続きまで支援範囲を広げます。2026年8月3日より、フロント業務からバックオフィスまでを一貫して支援する金融BPOを開始します。DNPグループが培った工程設計・品質管理のノウハウと高セキュリティな情報処理基盤を活かし、金融機関の顧客接点の強化と業務品質の向上に貢献します。 DNPコアライズが提供する金融BPOサービスの全体像 金融サービス仲介業者の登録背景 新NISAの開始や高齢化の進展により、資産形成、相続、住宅・教育ローン、事業資金など、金融相談内容は幅広くなっています。金融庁によると、新NISA開始後の2年間で、NISA口座数は2,125万口座から2,821万口座へ約33％増加しました ＊2 。こうしたなか、金融機関には、多様化する相談ニーズへの対応と、増加する顧客対応の両立が求められています。しかし、金融機関ではデジタル化や店舗統廃合が進み、対面や有人チャネルで相談できる機会が減少しています。さらに、ネット証券や...",
     "content_word_count": 128,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -1671,7 +1582,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1689,7 +1600,7 @@
     "content_excerpt": "National Wealth Fund backs Nexeon in £100m investment round August 31, 2026 Nexeon has secured backing from the National Wealth Fund to support the expansion of its domestic operations, strengthening the UK’s battery supply chain, creating jobs and boosting growth. The National Wealth Fund’s commitment of £52.6 million ($70 million) marks the completion of Nexeon’s latest investment round totalling £100 million ($133 million). Other new investors include the Korea Development Bank and Honda Xcelerator Ventures. Nexeon’s cutting-edge silicon anode materials enable production of higher energy density lithium-ion batteries, helping to reduce charging times and extend the range of electric vehicles. The investment round supports the company’s continued scale-up and commercialisation activities...",
     "content_word_count": 685,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -1754,7 +1665,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.nexeonglobal.com/media",
     "source_type": "official",
@@ -1772,7 +1683,7 @@
     "content_excerpt": "Nexeon Achieves ISO 9001 Certification for Gunsan Plant August 28, 2026 Nexeon's production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification, internationally recognised as the benchmark standard for quality management systems. The certification marks an important milestone in the development of Nexeon’s Gunsan operation, and reinforces the company’s commitment to delivering consistently high quality silicon-carbon materials to leading battery cell manufacturers and automotive customers. Nexeon’s Gunsan facility is the company’s first commercial-scale production plant, and was announced as production ready in December 2025. It is designed for the volume manufacture of Nexeon’s advanced silicon-carbon anode materials, supporting the company’s growing pipeline of glob...",
     "content_word_count": 366,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Nexeon Limited"
     ],
@@ -1840,7 +1751,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed_discovered",
     "query": "https://www.dnp.co.jp/news/rss_topics_jp.xml",
     "source_type": "official",
@@ -1855,7 +1766,7 @@
     "content_excerpt": "環境省「令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業」に6社共同の実証事業が採択 建設現場から排出される廃プラスチックの循環モデル構築に向けた実証 製品・サービス コーポレートコミュニケーション 環境 ESG コラボレーション 資源循環システムズ株式会社 大栄環境株式会社 大日本印刷株式会社 BIPROGY株式会社 三重中央開発株式会社 株式会社八木熊 資源循環システムズ株式会社（以下 資源循環システムズ）、大栄環境株式会社（以下 大栄環境）、大日本印刷株式会社（以下 DNP）、BIPROGY株式会社（以下 BIPROGY）、三重中央開発株式会社（以下 三重中央開発）、株式会社八木熊（以下 八木熊）の6社は、環境省の「令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業」に採択されました。本事業では、建設現場で発生する廃プラスチックを対象に、AIを活用した分別支援、再資源化工程による品質確保・向上、再生材の利用先創出をつなぐ資源循環の構築・実証に取り組みます。 【背景】 近年、国内外でサーキュラーエコノミー（循環経済）への移行が加速しており、日本政府も2030年までにサーキュラーエコノミー関連市場を80兆円規模へ拡大することを目指しています。 一方、建設現場から排出される廃プラスチックは、材質や形状が多様で汚れや異物が付着しやすいことから、現場での分別精度、再資源化後の品質確保、再生材の利用先確保という3つの課題が相互に影響し合い、建設現場由来の廃プラスチックの資源循環の妨げとなっています。 こうした課題を解決するため、本事業では建設現場での排出から分別、回収、再資源化、製品化、利用先確保までを一体でつなぐ、デジタルやAIを活用した資源循環の構築・実証に取り組みます。 【事業概要】 本事業では、大和ハウス工業株式会社（以下 大...",
     "content_word_count": 189,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -1920,7 +1831,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -1938,7 +1849,7 @@
     "content_excerpt": "Securities Code︓6268 August 5, 2026 The forecast data presented herein reflects assumed results based on conditions that are subject to change. Nabtesco Corporation does not make representations as to, or warrant, in whole or in part, the attainment or realization of any of the forecasted results presented in this document. All figures and ratios are rounded to nearest whole number.. Unauthorized copying and replication of this material including text and image are prohibited. Thank you for joining FY2026/12 H1 Financial Results Briefing 1 Preconditions for the Today’s Briefing Based on the share transfer agreement relating to the hydraulic equipment business of Nabtesco Corporation, hereinafter “the Company” and its consolidated subsidiaries entered into with Comer Industries S.p.A. on Ju...",
     "content_word_count": 3861,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -2017,7 +1928,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.hydro.com/en/global/media/news/",
     "source_type": "official",
@@ -2035,7 +1946,7 @@
     "content_excerpt": "Hydro brings high-recycled aluminium to General Motors EV with Hydro CIRCAL General Motors’ Cadillac OPTIQ will feature a front bumper system made with Hydro CIRCAL, an advanced aluminium alloy composed of at least 75 percent post‑consumer scrap produced at Hydro’s newest U.S. recycling facility in Cassopolis, Michigan. The 2026 Cadillac OPTIQ with Hydro CIRCAL recycled aluminium. (Photo: General Motors) Hydro, automotive supplier Shape Corp. and General Motors are demonstrating how aluminium from end-of-life products can be recycled and returned to new automotive applications, supporting increased circularity in the mobility sector. The collaboration marks one of the first U.S. implementations of Hydro CIRCAL in a structural, safety‑critical automotive application. “By bringing recycled a...",
     "content_word_count": 490,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Hydro"
     ],
@@ -2100,7 +2011,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -2118,7 +2029,7 @@
     "content_excerpt": "(Translation) This document has been translated from the Japanese original for the convenience of overseas stakeholders Q2 FY2026 Financial Results Briefing Q&A Date and time: Wednesday, August 5, 2026, 10:00–11:00 No. 1 2 3 4 Topic Overall Overall Overall Overall Q Looking at progress under the Medium-Term Management Plan, CMP is currently slightly less than 5% short of the OPM referential target excluding the hydraulic equipment business. Are there any measures to achieve the target? Also, TRS has already achieved its OPM target; are there any new OPM targets? The upward revision to the full-year plan appears to reflect the strong H1 performance, while the second-half plan does not seem to have changed significantly. Are there any concerns for H2? CMP’s OPM is 10.6% in H1 and 9.8% in H2,...",
     "content_word_count": 1102,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -2184,7 +2095,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.nabtesco.com/en/news/?category%5B%5D=cat_ir_all",
     "source_type": "official",
@@ -2202,7 +2113,7 @@
     "content_excerpt": "Securities Code：6268 Au gu s t 5, 2026 The forecast data presented herein reflects assumed results based on conditions that are subject to change. Nabtesco Corporation does not make representations as to, or warrant, in whole or in part, the attainment or realization of any of the forecasted results presented in this document. All figures and ratios are rounded to nearest whole number.. Unauthorized copying and replication of this material including text and image are prohibited. Preconditions for the Today’s Briefing Based on the share transfer agreement relating to the hydraulic equipment business of Nabtesco Corporation, hereinafter “the Company” and its consolidated subsidiaries entered into with Comer Industries S.p.A. on July 31, 2025, the Company consolidated this business into a ne...",
     "content_word_count": 3885,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Nabtesco Corporation"
     ],
@@ -2275,7 +2186,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.tosoh.co.jp/news/",
     "source_type": "official",
@@ -2293,7 +2204,7 @@
     "content_excerpt": "TOP 研究開発 研究開発コラム プリンテッドエレクトロニクス材料の開発 電子材料 有機半導体 プリンテッドエレクトロニクス 2026.08.03 プリンテッドエレクトロニクス材料の開発 目次 近年、普及が進んでいる有機ELディスプレイや電子ペーパーの製造には高温（300℃以上）や真空などの特殊な製造環境を要することから、エネルギー消費増大による環境負荷の大きさが問題となっていました。東ソーはこうした課題の解決に向け、比較的低温(200℃以下)かつ常圧の印刷技術を用いて電子デバイスを製造するプリンテッドエレクトロニクスの材料開発に取り組んでいます。本コラムではキーマテリアルとなる有機半導体を中心にご紹介します。 プリンテッドエレクトロニクス 有機半導体は軽量・柔軟性に富み、分子設計の自由度が高いため、目的や用途に応じて材料特性をカスタマイズ可能です。また、所定の溶媒に溶解させて「半導体のインク」として扱える点が大きな特徴です。インクジェット印刷などの簡便な印刷プロセスに適用できるため、シリコンや酸化物などの無機半導体にはない利点を備えた半導体材料として期待されています。 有機半導体の重要な応用先の一つであるトランジスタ(以下、有機トランジスタ)は、電子回路において電流のON／OFFや増幅を行います。有機半導体は概ね100℃前後の低温で成膜できることから、無機半導体では難しかったPETなどの安価なポリエステルフィルムを基板基材に用いることができます。性能は、電流の担い手である電子や正孔（ホール）の流れやすさであるキャリア移動度（以下、移動度）で示されることが多く、実用素子レベルでは1 cm 2 /Vs前後と既存のアモルファスシリコン半導体と同等以上の性能です。近年では10 cm 2 /Vsを超える酸化物半導体に匹敵する性能も報告されています。 有機トランジスタを構成する材料群...",
     "content_word_count": 56,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Tosoh Corporation"
     ],
@@ -2360,7 +2271,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_feed",
     "query": "https://www.dnp.co.jp/news/rss_ir_news.xml",
     "source_type": "official",
@@ -2375,7 +2286,7 @@
     "content_excerpt": "オーストリア上場企業「AUSTRIACARD HOLDINGS AG」株式の公開買付け結果に関するお知らせ IR 経営・人事 製品・サービス 決済・カード 大日本印刷株式会社（以下、「当社」）は、本年6月12日に開示しました「オーストリア上場企業「AUSTRIACARD HOLDINGS AG」株式の公開買付けに関するお知らせ」に関して、欧州・アフリカ・北米における決済ICカード・国民IDソリューション・バリアブルセキュリティ印刷事業を展開するAUSTRIACARD HOLDINGS AG（本社所在地：オーストリア、ウィーン。ウィーン証券取引所及びユーロネクスト・アテネ証券取引所上場。以下、「AUSTRIACARD」又は「対象者」）の全ての普通株式を対象とする公開買付け（以下、「本公開買付け」）を実施していましたが、以下のとおり、当該公開買付けが2026年8月21日（ウィーン時間）を以って終了し、本公開買付け成立の前提条件である75％以上の応募がございましたので、お知らせいたします。 これにより、本外資規制クリアランスの前提条件が満たされ次第、本公開買付けは成立し、AUSTRIACARDは当社の連結子会社となる予定です。また、当該クリアランスを取得できることを前提として、当社が今後オーストリア法に従って実施するスクイーズアウト手続きにより、AUSTRIACARDは当社の100％連結子会社になる予定です。 本公開買付けの結果 ① 応募の状況 応募株式数 35,099,096株（約96.55％） ② 本公開買付けの前提条件の充足状況 有効に応募されたAUSTRIACARD社の普通株式の数が下限条件を充足しました。 なお、2026年8月25日時点で、当社は、ギリシャ及びルーマニアの本外資規制クリアランス、並びに、オーストリア、ドイツ及びトルコの本競争法クリアランスを得ておりますが...",
     "content_word_count": 129,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Dai Nippon Printing"
     ],
@@ -2433,7 +2344,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "official_page",
     "query": "https://www.vestas.com/en/investor",
     "source_type": "official",
@@ -2451,7 +2362,7 @@
     "content_excerpt": "Company Announcement No. 45/ 2026 Interim Report Second Quarter 2026 Vestas Wind Systems A/S Hedeager 42, 8200 Aarhus N, Denmark Company Reg. No.: 10403782 Wind. It means the world to us.TM Contents Summary ............................................................................................................................................................................ 3 Key figures ......................................................................................................................................................................... 4 Financial and operational performance .......................................................................................................................... 6 Sustainability performance ...............................................",
     "content_word_count": 3879,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Vestas Wind Systems"
     ],
@@ -2489,30 +2400,30 @@
     ]
   },
   {
-    "target_no": 18,
-    "company": "Qualcomm",
-    "title": "QUALCOMM Incorporated : Adobe Becomes First Global Software Company to Migrate AI Workloads onto HUMAIN Platform, Accelerated by Qualcomm - marketscreener.com",
-    "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPQ1VWQWpodzBnSTBKdFNiVWdWNGlYWkwxb3MxaGs3MGwtSjJycTRKblVSOFZBZXdwNk00MVNoUV9OcGpWMnJCbmc3SU5qOE16SnlzN2pkMW5NVmZhQklpcWhUNGZnME9wZUdlZG1TNlhneW5OZ1BkcFhVUG9NTmljY2VwRF9XekxFS3RFWmNHbzdkVXFnbl9zU3M3dGNtb0dxWDdYcVQzQ095NnpzLThjTE9KeEVPSTBRSWQwYzZRb3pyYzk3bS0tR0tqT19sSU9xQURSZ3ZtYmtLZFh5OVJkNGl0MnR3QQ?oc=5",
-    "source": "Google News: marketscreener.com",
-    "publisher": "marketscreener.com",
-    "publisher_home_url": "https://www.marketscreener.com/",
-    "published_at": "2026-08-31T15:53:36Z",
+    "target_no": 54,
+    "company": "HyproMag",
+    "title": "Mkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually - Pulse 2.0",
+    "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPbWViRDNJdWE3RXRpdGtQdFNuRUZoOTdpS2xtZTR0alRYRk4zaWFJcFY4SUJKb3JGakREdUlYRFlrQ054em1iZHhEQy1vQTNnV1I3WUg0UnI1Q2QwdW9ZWU43bjFwcDVGYzRQT2FlUjNCcVZfUGUzVy1pT25ndzA5NTZPN1MyZjROSlhSX1VLOVM2S3ZxOG1PdGdiMHdVRzVGTE01aUYyZkhMQUFsYWZkODE2XzQxMkJpM1RaNjlaX251UkHSAcgBQVVfeXFMTUFpRzM3YlVZTXZIZzZoeWZyaWZNYnhUZ2tYSHhXaFlKU3Z5UU5xQWRlanF3SktOYlVXeTh1UXZVLTFKZFgxN0tpV2FJQUc4MXJJZ2gwM3dMLVBLcGk3RU5IWGUtVjBtbmR2Ujhsa0RURlNlYTNXNkJuNmVCRUxhdkFjY09LczVuMC1rNk10V2M3NElicnVnMXpESndMSkNOV0xaOGUzYlJaVEJZVzZYR21yV1ZjMWV3Sk43eGtDRTFQdUo4WDlsaWY?oc=5",
+    "source": "Google News: Pulse 2.0",
+    "publisher": "Pulse 2.0",
+    "publisher_home_url": "https://pulse2.com/",
+    "published_at": "2026-08-31T20:28:52Z",
     "published_month": "2026-08",
     "published_at_source": "meta",
     "published_at_precision": "day",
     "published_at_status": "confirmed",
-    "modified_at": "2026-08-31T15:53:36Z",
+    "modified_at": "2026-08-31T20:28:52Z",
     "date_conflict": false,
     "date_candidates": [
       {
-        "date": "2026-08-31T15:53:36Z",
+        "date": "2026-08-31T20:28:52Z",
         "month": "2026-08",
         "source": "meta",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-31T15:53:36Z",
+        "date": "2026-08-31T20:28:52Z",
         "month": "2026-08",
         "source": "jsonld",
         "kind": "published",
@@ -2533,16 +2444,16 @@
         "precision": "day"
       },
       {
-        "date": "2026-08-31T15:53:36Z",
+        "date": "2026-08-31T20:28:52Z",
         "month": "2026-08",
-        "source": "modified_jsonld",
+        "source": "modified_time_tag",
         "kind": "modified",
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
-    "collector": "google_news_rss",
-    "query": "(\"Qualcomm\" OR \"Qualcomm Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
+    "collected_at": "2026-09-23T07:15:09Z",
+    "collector": "google_news_trend",
+    "query": "\"HyProMag\" (\"rare earth\" OR \"permanent magnet\" OR \"magnet recycling\" OR \"end-of-life magnet\" OR \"rare earth extraction\" OR \"rare earth separation\") after:2026-08-01 before:2026-09-01",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -2550,12 +2461,124 @@
     "source_priority": 90,
     "official_source_url": "",
     "source_direct_url": "",
-    "content_text": "QUALCOMM Incorporated : Adobe Becomes First Global Software Company to Migrate AI Workloads onto HUMAIN Platform, Accelerated by Qualcomm \nPublished on 08/31/2026\nat 11:53 am EDT\nPublicnow\nAdd MarketScreener to your sources\nShare\nQUALCOMM INCORPORATED +9.29% \nBack to All \nPress Note \nAdobe Becomes First Global Software Company to Migrate AI Workloads onto HUMAIN Platform, Accelerated by Qualcomm\nThe deployment sees Adobe move its regional AI data captioning workloads onto locally hosted infrastructure, keeping compute and data in the Kingdom as enterprise AI demand grows\nAug 31, 2026\nRIYADH\nHUMAIN today announced that Adobe will become the first global software company to move its artificial intelligence (AI) workloads onto HUMAIN's AI Compute infrastructure, accelerated by Qualcomm Technologies, Inc., marking an early signal of ecosystem demand and validating the platform's readiness for large-scale AI deployment.\nThe collaboration pairs Adobe's regional AI data captioning workloads with HUMAIN's AI Compute infrastructure and Qualcomm Dragonfly ™ AI accelerators. By enabling the onboarding and integration of enterprise-ready AI workloads, the collaboration will help deliver scalable, locally relevant AI experiences for individuals and businesses across the region.\nAs the first deployment of its kind on the platform, Adobe's onboarding is expected to be followed by additional migrations from the wider industry. It reflects Saudi Arabia's broader ambition to position itself as a hub for next-generation AI innovation, where infrastructure, platforms and applications are being developed in parallel to support long-term growth.\n\"Adobe's s decision to move its regional AI workloads onto HUMAIN's platform is a strong signal of confidence in the infrastructure we're helping to build in Saudi Arabia, said Wassim Chourbaji, Senior Vice President and President, Qualcomm Europe, Middle East and Africa, Qualcomm France S.A.R.L. \"Our AI data center inferencing capabilities are built for enterprise-scale deployment, and seeing that translate into real-world adoption this early reinforces Qualcomm's AI infrastructure strategy and the central role the region is playing.\"\n\"Building AI infrastructure is only the starting point. What matters is what enterprises can do with it,\" said Tareq Amin, CEO, HUMAIN. \"Adobe bringing AI workloads onto HUMAIN's platform demonstrates the model we are building: advanced infrastructure connected directly to the applications and intelligence enterprises use every day. Together with Adobe and Qualcomm, we are turning compute into capability, and capability into real-world deployment. That is how AI moves from infrastructure to impact.\"\n\"Moving Adobe's regional AI data captioning workloads onto HUMAIN's sovereign AI Compute Infrastructure, accelerated by Qualcomm, underscores the momentum behind the AI infrastructure being built in the Kingdom,\" said Luc Dammann, Senior Vice President and President, Adobe EMEA. \"This collaboration supports Saudi Arabia's ambition to become a hub for next-generation AI innovation, and we're proud to help build that foundation alongside HUMAIN and Qualcomm.\"\nThis deployment builds on the strategic collaboration announced by HUMAIN, Qualcomm and Adobe at the US-Saudi Investment Forum in November 2025 and aims to make enterprise-grade AI more accessible to people and businesses in Saudi Arabia, with infrastructure designed to scale as demand grows across the region.\nAbout Qualcomm\nQualcomm is a global computing leader at the center of the AI era, enabling intelligence to scale from the most personal devices to large-scale infrastructure. Building on more than four decades of innovation, we develop platforms and solutions that bring together advanced AI, high-performance, low-power computing and industry-leading connectivity-powering products and services used around the world. At Qualcomm, we are engineering human progress. \nQualcomm Incorporated includes our licensing business, QTL, and the vast majority of our patent portfolio. Qualcomm Technologies, Inc., a subsidiary of Qualcomm Incorporated, operates, along with its subsidiaries, substantially all of our engineering and research and development functions and substantially all of our products and services businesses, including our QCT semiconductor business. Snapdragon and Qualcomm branded products are products of Qualcomm Technologies, Inc. and/or its subsidiaries. Qualcomm patents are licensed by Qualcomm Incorporated. Qualcomm, Snapdragon, Qualcomm Dragonwing and Qualcomm Dragonfly are trademarks or registered trademarks of Qualcomm Incorporated.\nAbout HUMAIN\nHUMAIN, a PIF company, is a global artificial intelligence company delivering full-stack AI capabilities across four core areas: next-generation data centers; hyper-performance infrastructure and cloud platforms; advanced AI models, including some of the world's most advanced Arabic large language models developed in the Arab world; and transformative AI solutions that combine deep sector insight with real-world execution. \nHUMAIN's end-to-end model serves both public and private sector organizations, unlocking value across industries, driving digital transformation, and strengthening capabilities through human-AI collaboration. With a growing portfolio of sector-specific AI products and a core mission focused on intellectual property development and global talent leadership, HUMAIN is engineered for international competitiveness and technological excellence.\nData Center Dragonfly AI \nSnapdragon and Qualcomm branded products are products of Qualcomm Technologies, Inc. and/or its subsidiaries.\nQualcomm, Qualcomm Dragonwing and Snapdragon are trademarks or registered trademarks of Qualcomm Incorporated.\nForward-Looking Statement\nThis press release may contain forward-looking statements based on current expectations and assumptions. Actual results may differ materially due to various risks and uncertainties. HUMAIN undertakes no obligation to update these statements. \nContact Information\nBrett Simpson\nInvestor Relations\n1-858-658-4813 \nir@qualcomm.com \nClare Conley\nMedia Relations\n1-858-845-5959 \ncorpcomm@qualcomm.com \nRelated Press Releases \nPress Note \nQualcomm and HUMAIN Unveil Horizon Ultra AI PC at LEAP 2026, Bringing AI Directly to the Device \nAug 31, 2026 \nAI PC Snapdragon \nPress Note \nQualcomm Launches Comprehensive Robotics Investment Initiative in Japan, Anchored by New Qualcomm Japan Robotics Center \nAug 25, 2026 \nRobotics AI \nPress Note \nArduino VENTUNO Q is Here: Bringing Agentic AI to the Physical World with Qualcomm Dragonwing IQ8 Series \nAug 25, 2026 \nIoT \nPress Note \nQualcomm Appoints Sergio Buniac as Executive Vice President and Group General Manager, Mobile, Compute, and Personal AI \nAug 20, 2026 \nCompany \nPress Note \nQualcomm Appoints Wassim Chourbaji as SVP and President, Qualcomm EMEA \nAug 4, 2026 \nAttachments \nOriginal document \nPermalink \nDisclaimer \nQualcomm Inc. published this content on August 31, 2026 , and is solely responsible for the information contained herein. Distributed via Public Technologies (PUBT) , unedited and unaltered, on August 31, 2026 at 15:52 UTC .\n&copy; Publicnow -\n2026\nAdd MarketScreener to your sources\nShare",
-    "content_source_url": "https://www.marketscreener.com/news/qualcomm-incorporated-adobe-becomes-first-global-software-company-to-migrate-ai-workloads-onto-hum-ce7858ddd98df521",
-    "content_excerpt": "QUALCOMM Incorporated : Adobe Becomes First Global Software Company to Migrate AI Workloads onto HUMAIN Platform, Accelerated by Qualcomm Published on 08/31/2026 at 11:53 am EDT Publicnow Add MarketScreener to your sources Share QUALCOMM INCORPORATED +9.29% Back to All Press Note Adobe Becomes First Global Software Company to Migrate AI Workloads onto HUMAIN Platform, Accelerated by Qualcomm The deployment sees Adobe move its regional AI data captioning workloads onto locally hosted infrastructure, keeping compute and data in the Kingdom as enterprise AI demand grows Aug 31, 2026 RIYADH HUMAIN today announced that Adobe will become the first global software company to move its artificial intelligence (AI) workloads onto HUMAIN's AI Compute infrastructure, accelerated by Qualcomm Technologi...",
-    "content_word_count": 1002,
+    "discovery_snippet": "Mkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually &nbsp;&nbsp; Pulse 2.0",
+    "trend_discovery": true,
+    "trend_matched_terms": [
+      "rare earth",
+      "magnet recycling"
+    ],
+    "content_text": "Mkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually\nBy Amit Chowdhry \nAug 31, 2026 \nMkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually \nMkango Resources has completed its acquisition of German rare earth magnet recycling company Remloy from Heraeus Amloy Technologies for €8 million, or approximately $9.3 million. Mkango paid €5 million, or about $5.8 million, at closing.\nThe remaining €3 million is payable in cash on August 28, 2028, the second anniversary of completion.\nRemloy has developed a fully commissioned recycling facility in Bitterfeld, Germany that processes end-of-life rare earth magnets through a melting-based “medium loop” recycling process.\nThe plant produces neodymium-iron-boron alloy powders intended for bonded and hot-deformed magnet applications.\nTarget production capacity is at least 500 tonnes of NdFeB alloy powder per year.\nThe acquired business also holds approximately 345 tonnes of end-of-life rare earth magnets, alloys and other raw materials.\nMkango expects that inventory to provide feedstock for both Remloy and its HyProMag business while potentially creating additional trading opportunities.\nRemloy’s technology complements HyProMag’s short-loop recycling process for sintered magnets and Mkango Rare Earths UK’s long-loop chemical process for producing mixed rare earth carbonates and oxides.\nFormer Remloy co-head David Bender has become Managing Director and will work with Mkango and HyProMag to expand production and capture operating synergies.\nThe acquisition adds another European operating site to a platform spanning rare earth recycling and magnet production in the U.K., Germany and U.S., planned separation capacity in Poland and the Songwe Hill mining project in Malawi.\nKEY QUOTES: \n“Mkango is now uniquely positioned across the whole rare earth supply chain in Europe and North America.” \nWilliam Dawes, Chief Executive Officer Of Mkango Resources \n“We are now entering a crucial phase in which we will make our products available to customers on a larger scale.” \nDavid Bender, Managing Director Of Remloy",
+    "content_source_url": "https://pulse2.com/mkango-acquires-remloy-for-e8-million-as-rare-earth-magnet-recycling-capacity-targets-500-tonnes-annually/",
+    "content_excerpt": "Mkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually By Amit Chowdhry Aug 31, 2026 Mkango Acquires Remloy For €8 Million As Rare Earth Magnet Recycling Capacity Targets 500 Tonnes Annually Mkango Resources has completed its acquisition of German rare earth magnet recycling company Remloy from Heraeus Amloy Technologies for €8 million, or approximately $9.3 million. Mkango paid €5 million, or about $5.8 million, at closing. The remaining €3 million is payable in cash on August 28, 2028, the second anniversary of completion. Remloy has developed a fully commissioned recycling facility in Bitterfeld, Germany that processes end-of-life rare earth magnets through a melting-based “medium loop” recycling process. The plant produces neodymium-ir...",
+    "content_word_count": 318,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T07:15:09Z",
+    "query_aliases": [
+      "HyProMag"
+    ],
+    "industry": "철강금속",
+    "target_technology": "사용후 영구자석 고순도 희토류 추출",
+    "target_technology_en": "rare earth extraction from end-of-life permanent magnets",
+    "technology_group": "rare_earth_magnet_recycling",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "사용후 영구류자 추석출 고순도 희토",
+    "pdf_company": "HyproMag",
+    "pdf_row_no": 67,
+    "pdf_sequence": "48",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "The event concerns the acquisition of rare earth magnet recycling company Remloy by parent company Mkango Resources, which directly links to rare earth extraction from end-of-life permanent magnets within target technology scope. Parent company involvement is explicitly connected to the target company HyProMag as the acquisition provides feedstock and operational synergies for HyProMag's business.",
+    "ai_summary_ko": "Mkango Resources가 Heraeus Amloy Technologies로부터 독일 희토류 자석 재활용 기업 Remloy를 800만 유로에 인수 완료함에 따라, 독일 Bitterfeld 소재의 재활용 시설을 통해 연간 최소 500톤의 NdFeB 합금 분말 생산 능력을 확보하고 HyProMag 사업에 원료를 공급함.",
+    "ai_summary_en": "Mkango Resources completed its acquisition of German rare earth magnet recycling company Remloy from Heraeus Amloy Technologies for €8 million, adding a fully commissioned recycling facility in Bitterfeld, Germany, that targets an annual production capacity of at least 500 tonnes of NdFeB alloy powder and provides feedstock for the HyProMag business.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "d07dce44a51210483a3b27db",
+    "ai_evidence_quotes": [
+      "Mkango Resources has completed its acquisition of German rare earth magnet recycling company Remloy from Heraeus Amloy Technologies for €8 million, or approximately $9.3 million.",
+      "Remloy has developed a fully commissioned recycling facility in Bitterfeld, Germany that processes end-of-life rare earth magnets through a melting-based “medium loop” recycling process.",
+      "Target production capacity is at least 500 tonnes of NdFeB alloy powder per year.",
+      "Mkango expects that inventory to provide feedstock for both Remloy and its HyProMag business while potentially creating additional trading opportunities."
+    ]
+  },
+  {
+    "target_no": 18,
+    "company": "Qualcomm",
+    "title": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? - 24/7 Wall St.",
+    "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPcHduMkZpWXVXYVBYUmdBN3BZWnQ3Tnl5M3ZlaWN2TWQzVnZKSVJWSC1GVjByVXJtUm1pSlJfcUhLSEotMkZHcDlBaF9IaFZNMkNSMnZMeWRvUFhSOFl0YmttQnVJcGMxM1JTaFVBMVhOZjlJVlNRRHBIa2k4RWVhR3VaaTUyR2Q5T0hMOWdRR2gxOWRvSDFZRl9WTzBvc3kyQ1laOWFB?oc=5",
+    "source": "Google News: 24/7 Wall St.",
+    "publisher": "24/7 Wall St.",
+    "publisher_home_url": "https://247wallst.com/",
+    "published_at": "2026-08-31T19:25:55Z",
+    "published_month": "2026-08",
+    "published_at_source": "meta",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-31T19:25:55Z",
+        "month": "2026-08",
+        "source": "meta",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-31T19:25:55Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-31T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-31T00:00:00Z",
+        "month": "2026-08",
+        "source": "url",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-31T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-23T03:19:32Z",
+    "collector": "google_news_rss",
+    "query": "(\"Qualcomm\" OR \"Qualcomm Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More?\nQualcomm stock has clawed back from a post-earnings collapse and then some, but the recovery hides a complicated mix of shrinking handsets, unproven data center bets, and margin pressure that makes the next move anything but obvious.\nBy David Moadel \nPublished August 31, 2026, 3:25pm ET · 4 min read \nMarket Movers desk. Editor: David Moadel .\n𝕏 \nf \n⧉ \n&copy; Qualcomm \nQualcomm ( NASDAQ:QCOM | QCOM Price Prediction ) has staged the standout comeback in chips this past month, and the rally deserves a closer look before anyone acts on it. Qualcomm stock is up 15% over the past month, and shares are climbing another 4% to $170.26 in Monday midday trading.\nFraming contrast matters here. The iShares Semiconductor ETF ( NASDAQ:SOXX ) is up 0.8% over the past month, essentially flat, which points to a Qualcomm-specific catalyst rather than a broad chip sector tide lifting every boat.\nHere is the round trip that the headline number hides. Qualcomm reported fiscal third-quarter 2026 results on July 29, when the stock traded at $164.60, and it closed the following day at $147.61. The past month begins at that post-earnings low, so the 15% gain is Qualcomm climbing back through its pre-earnings level and past it.\nWhat Sparked the Rebound\nThe July 29 report was mixed. Qualcomm’s non-GAAP earnings of $2.21 per share missed the $2.22 consensus, snapping a six-quarter beat streak, while revenue of $9.95 billion beat the $9.67 billion consensus but fell 4% from a year earlier.\nMoreover, Qualcomm’s segment mix told a diversification story. Handset revenue dropped 20% to $5.09 billion, automotive surged 61% year over year to a record $1.59 billion, its 23rd consecutive quarter of double-digit growth, and IoT rose 9% to $1.83 billion. Qualcomm guided for fiscal fourth-quarter revenue of $9.7 billion to $10.5 billion and non-GAAP earnings of $2.05 to $2.25 per share.\nThe recovery took hold on a closer reading of the earnings call. Qualcomm CEO Cristiano Amon laid out a data center and diversification pitch that reframed the company’s story around future non-handset scale, and the stock has been climbing since.\nBull Case\nAmon told analysts, “We are well positioned to execute on the vision we outlined at our recent Investor Day, with total non-handset revenues growing to $40 billion by fiscal 2029.” That target is nearly double the one Qualcomm shared in November 2024.\nThe specifics carry weight. Data center revenue is guided to $5 billion in fiscal 2027 rising to $15 billion in fiscal 2029, and year-over-year growth in non-handset revenue including data center should accelerate from 24% in fiscal 2026 to greater than 60% in fiscal 2027. Two custom silicon engagements with global-scale hyperscalers begin generating revenue in the December quarter, and wafer production has started.\nIn addition, the company’s automotive segment keeps compounding. Qualcomm won an expanded agreement with BMW to become lead compute silicon provider for next-generation ADAS and digital cockpit, and raised its automotive annualized run rate target to roughly $7 billion exiting fiscal 2026, up from $6 billion.\nPeer strength has reinforced the AI infrastructure bid around Qualcomm. Marvell Technology ( NASDAQ:MRVL ) stock is up 12% over the past month, and NVIDIA ( NASDAQ:NVDA ) stock is up 9% over the past month, keeping data center demand front and center (we rounded up seven non-chipmaker suppliers riding the same buildout in a free AI infrastructure report ).\nBear Case\nThe handset business is still shrinking. Qualcomm expects its share of the upcoming iPhone launch to be materially lower than its prior 20% estimate, with Apple ( NASDAQ:AAPL ) product revenue falling 50% from the September to the December quarter.\nQualcomm’s margins have a hole to climb out of, too. Industry-wide input cost inflation across wafer fabrication, packaging and memory has pushed QCT gross margins slightly below their historical 48% to 50% range, and management said early data center revenue will be a further 1.5 to 2 percentage point drag on QCT’s weighted average gross margin.\nQualcomm is raising its prices by double digits to offset input costs, but those increases arrive gradually as contracts and product cycles roll over. The data center story is mostly a fiscal 2027 and beyond narrative, so a buyer at $170 is paying for execution that hasn’t happened yet, on top of an existing handset drag.\nWhat to Watch\nThe next fiscal fourth-quarter report is the pivotal data point, given the guidance range Qualcomm set. Investors can watch for signs that non-handset growth is tracking toward the 60%-plus acceleration Amon flagged for fiscal 2027, and whether the December-quarter data center ramp arrives on schedule with the two named hyperscaler customers.\nPosition sizing should reflect the round trip. The 15% gain has already retraced the earnings-day gap, so anyone adding to Qualcomm stock here is no longer buying a discount off the pre-earnings quote.\nInvestors trimming a large position may want to keep an eye on whether pricing actions restore gross margins into the historical 48% to 50% band before committing fresh capital. Both bulls and bears have a real case, and the December-quarter report is where the tie gets broken.\nContact [email protected] for any questions or corrections. \nDavid Moadel\nDavid Moadel is financial writer specializing in stocks, ETFs, options, precious metals, and Bitcoin. David has written well over 1,000 articles for leading online publications, helping investors understand markets, income strategies, and risk.His work has appeared in The Motley Fool, InvestorPlace, U.S. News & World Report, TipRanks, ValueWalk, Benzinga, Market Realist, TalkMarkets, Finmasters, 24/7 Wall St., and others.With a master’s degree in education, David has taught at the elementary, high school, and college levels. That teaching background shapes his writing style: clear, educational, and practical. David has also built a loyal social-media audience by providing trustworthy financial content on YouTube, X/Twitter, and StockTwits.\nAll articles →",
+    "content_source_url": "https://247wallst.com/investing/2026/08/31/qualcomm-just-gained-15-in-a-month-take-profits-or-buy-more/",
+    "content_excerpt": "Qualcomm Just Gained 15% in a Month: Take Profits, or Buy More? Qualcomm stock has clawed back from a post-earnings collapse and then some, but the recovery hides a complicated mix of shrinking handsets, unproven data center bets, and margin pressure that makes the next move anything but obvious. By David Moadel Published August 31, 2026, 3:25pm ET · 4 min read Market Movers desk. Editor: David Moadel . 𝕏 f ⧉ &copy; Qualcomm Qualcomm ( NASDAQ:QCOM | QCOM Price Prediction ) has staged the standout comeback in chips this past month, and the rally deserves a closer look before anyone acts on it. Qualcomm stock is up 15% over the past month, and shares are climbing another 4% to $170.26 in Monday midday trading. Framing contrast matters here. The iShares Semiconductor ETF ( NASDAQ:SOXX ) is u...",
+    "content_word_count": 979,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Qualcomm Incorporated"
     ],
@@ -2574,78 +2597,78 @@
     "date_status": "confirmed",
     "date_placement": "in_period",
     "date_note": "",
-    "ai_signal_supported": false,
+    "ai_signal_supported": true,
     "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
+    "ai_target_technology_supported": true,
     "ai_indicator_supported": true,
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "The article reports concrete business activity regarding AI workload deployment using Qualcomm Dragonfly AI accelerators, but it is not linked to the target autonomous vehicle IMU/RF/baseband chip technology.",
-    "ai_summary_ko": "",
-    "ai_summary_en": "",
+    "ai_summary_reason": "The article reports that Qualcomm secured an expanded agreement with BMW to serve as the lead compute silicon provider for next-generation ADAS and digital cockpit systems, establishing concrete business activity directly linked to the target technology.",
+    "ai_summary_ko": "Qualcomm은 BMW와 차세대 첨단 운전자 보조 시스템(ADAS) 및 디지털 콕핏을 위한 주요 연산 반도체 공급업체로 선정되는 확대 계약을 체결하고 2026 회계연도 말 기준 자동차 부문 연간 환산 매출 목표를 약 70억 달러로 상향 조정했음.",
+    "ai_summary_en": "Qualcomm won an expanded agreement with BMW to serve as the lead compute silicon provider for next-generation ADAS and digital cockpit systems, while raising its automotive annualized run rate target to approximately $7 billion exiting fiscal 2026.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "6a4d3e0959103d41e733e9ad",
+    "ai_summary_cache_key": "bab75c004cc15f340cd4a297",
     "ai_evidence_quotes": [
-      "The collaboration pairs Adobe's regional AI data captioning workloads with HUMAIN's AI Compute infrastructure and Qualcomm Dragonfly ™ AI accelerators."
+      "Qualcomm won an expanded agreement with BMW to become lead compute silicon provider for next-generation ADAS and digital cockpit, and raised its automotive annualized run rate target to roughly $7 billion exiting fiscal 2026, up from $6 billion."
     ]
   },
   {
-    "target_no": 19,
-    "company": "Skyworks",
-    "title": "Skyworks (SWKS) Up 8.9% Since Last Earnings Report: Can It Continue? - Yahoo Finance",
-    "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNVlZkOW1zeUpOTWplMi1TOVdXQmZ4YW1JczVOSnZJV1RjMkVEM3RGMVowbTZvbTlLdmUzank2MWFWallvTVVXSUtoeV9tclNTMlU2NTRzdFZyNUlhR0FIZ0NIQ2FEbTFTRU1PcjY5bGd2Y2puaG53UEVNQTAyWVpYcHpzR2VFZlZHZHhGdjV1bEpaQQ?oc=5",
+    "target_no": 11,
+    "company": "Air Products",
+    "title": "Air Products' Shares Rally 25% YTD: What's Driving the Upside? - Yahoo Finance",
+    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOVUlwbzVaTXc2VVpKMlpJN1ZqU1IyU0E2bHRHcjNXVzRibXZqX25GLUlWSVBUeHhNb0tMZ2NIR3hoeXhfcjF3Y1AxcXk1alE0MDFmTWFCQWo1eGMyYjNpZ1I0d1NaMW1VVzJwemJ4WWpLNXZicUtZNUl1aTdLUFdweHpoUzhveW1Wd0tIVFA4YThyVkMwM0RnaA?oc=5",
     "source": "Google News: Yahoo Finance",
     "publisher": "Yahoo Finance",
     "publisher_home_url": "https://finance.yahoo.com/",
-    "published_at": "2026-08-27T15:30:22Z",
+    "published_at": "2026-08-31T12:53:00Z",
     "published_month": "2026-08",
     "published_at_source": "jsonld",
     "published_at_precision": "day",
     "published_at_status": "confirmed",
-    "modified_at": "2026-08-27T15:30:22Z",
+    "modified_at": "2026-08-31T12:53:00Z",
     "date_conflict": false,
     "date_candidates": [
       {
-        "date": "2026-08-27T15:30:22Z",
+        "date": "2026-08-31T12:53:00Z",
         "month": "2026-08",
         "source": "jsonld",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-27T15:30:22Z",
+        "date": "2026-08-31T12:53:00Z",
         "month": "2026-08",
         "source": "time_tag",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-27T07:00:00Z",
+        "date": "2026-08-31T07:00:00Z",
         "month": "2026-08",
         "source": "feed",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-27T00:00:00Z",
+        "date": "2026-08-31T00:00:00Z",
         "month": "2026-08",
         "source": "body_text",
         "kind": "context",
         "precision": "day"
       },
       {
-        "date": "2026-08-27T15:30:22Z",
+        "date": "2026-08-31T12:53:00Z",
         "month": "2026-08",
         "source": "modified_jsonld",
         "kind": "modified",
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "google_news_rss",
-    "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
+    "query": "(\"Air Products\" OR \"Air Products and Chemicals\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -2653,149 +2676,45 @@
     "source_priority": 90,
     "official_source_url": "",
     "source_direct_url": "",
-    "content_text": "Skyworks (SWKS) Up 8.9% Since Last Earnings Report: Can It Continue?\nZacks Equity Research \nAugust 27, 2026 6 min read \nSWKS \n-0.02% \nA month has gone by since the last earnings report for Skyworks Solutions (SWKS). Shares have added about 8.9% in that time frame, outperforming the S&P 500. \nWill the recent positive trend continue leading up to its next earnings release, or is Skyworks due for a pullback? Well, first let's take a quick look at the latest earnings report in order to get a better handle on the recent catalysts for Skyworks Solutions, Inc. before we dive into how investors and analysts have reacted as of late. \nSWKS Q3 Earnings Beat on Broad Markets, AI Data Center Growth \nSkyworks Solutions reported third-quarter fiscal 2026 non-GAAP earnings of $1.08 per share, beating the Zacks Consensus Estimate by 4.85%. Earnings declined 18.8% year over year from $1.33.\nRevenues of $934.8 million fell 3.1% year over year but topped the consensus mark by 1.38%. Results benefited from healthy mobile demand and continued Broad Markets growth, with automotive and data center delivering double-digit gains. \nSWKS Broad Markets Maintains Growth Momentum \nBroad Markets generated approximately $403 million in revenues, rising 8% year over year and accounting for 43% of total sales. Management highlighted that demand for several fast-growing products remained ahead of available supply during the quarter.\nWi-Fi, data center and automotive represented nearly two-thirds of the business and collectively grew 15% year over year. Artificial Intelligence (AI) data center was the fastest-growing operation, expanding at a rate above the 50% annual growth outlook provided in the prior quarter despite supply constraints.\nWi-Fi 7 adoption and early customer work on Wi-Fi 8 supported the connectivity pipeline. In automotive, connected-car and infotainment applications drove current growth, while management highlighted multiyear engagements with global automakers and suppliers. Demand for several faster-growing products exceeded available supply, partly offset by softness in consumer-oriented Internet of Things products. \nSkyworks Mobile Mix Remains Concentrated \nMobile contributed 57% of total revenues. Performance was supported by healthy sell-through at the largest customer and successful new-product ramps at the company's largest Android customer.\nThe largest customer generated approximately 57% of total revenues. Management maintained its expectation for roughly flat blended mobile content this year, with stronger unit demand helping offset previously disclosed content pressure.\nSkyworks also reiterated that its major Android design win extends through 2030. The customer performed particularly well during the reported quarter, although management expects the normal seasonal pattern to moderate that contribution in the September quarter. \nStory Continues \nSWKS Expands Automotive & Data Center Pipeline \nSkyworks added automotive engagements spanning telematics and in-vehicle infotainment with leading global original equipment manufacturers. The company expects connectivity and power products to broaden its presence across multiyear vehicle platforms. \nIn the data center, SWKS expanded its design-win pipeline with precision timing products for a hyperscaler switch platform and isolation solutions for 800-volt high-voltage direct-current power architectures. Rising data rates and rack density are supporting demand for advanced timing, connectivity and power-delivery solutions. \nSkyworks Margins Contract on Input Cost Pressure \nNon-GAAP gross profit was $420 million, resulting in a gross margin of 44.9%. The margin contracted 220 basis points from 47.1% in the year-ago quarter as higher input costs continued to weigh on profitability.\nOperating expenses on a GAAP basis were $326.5 million, up 12.4% year over year. Research and development expenses increased 4.2% year over year, while selling, general and administrative expenses rose 10.5%.\nNon-GAAP operating income totaled $181.6 million, down from $224.4 million a year earlier. The operating margin declined 390 basis points to 19.4%. Management is pursuing cost controls and selective price increases, primarily across its longer-life Broad Markets products, to offset cost inflation. \nSkyworks Maintains Balance Sheet Strength \nSkyworks ended the quarter with approximately $814 million in cash and investments and $497 million in debt after repaying $500 million of notes that matured during the period.\nOperating cash flow totaled $70.4 million in the third quarter compared with $314.1 million a year earlier. The company reported negative free cash flow of $16.7 million against positive free cash flow of $252.7 million in the prior-year quarter.\nThe company paid $106.9 million in dividends during the quarter. However, Skyworks said it will not declare quarterly dividends going forward, redirecting capital toward share repurchases, debt reduction and strategic acquisitions.\nThe board replaced the prior repurchase authorization with a new $2 billion stock buyback program for the combined company, set to expire in January 2029. \nSkyworks Guides for a Seasonal Mobile Ramp \nFor the fourth quarter of fiscal 2026, Skyworks expects revenues to be between $1.01 billion and $1.06 billion. At the midpoint of $1.035 billion, management projects non-GAAP earnings of $1.27 per share.\nMobile revenues are expected to grow sequentially in the high teens, driven by seasonal product launches at the largest customer. Broad Markets is projected to increase approximately 5% year over year and represent about 39% of sales. Gross margin is forecast between 44% and 45%, with operating expenses of $235 million to $245 million. \nSWKS Advances Its Pending Qorvo Combination \nSkyworks said regulatory reviews for the Qorvo transaction are progressing and expressed optimism that the combination could close within calendar 2026. The company expects to raise approximately $2 billion of acquisition-related debt financing, with fourth-quarter guidance including about $5 million of incremental net interest expense.\nThe board authorized a new $2 billion share-repurchase program for the combined company and decided not to declare quarterly dividends going forward. Capital will instead be directed toward share repurchases, debt reduction and opportunistic acquisitions following the transaction. \nHow Have Estimates Been Moving Since Then? \nIn the past month, investors have witnessed a downward trend in estimates review. \nVGM Scores \nCurrently, Skyworks has a poor Growth Score of F, however its Momentum Score is doing a lot better with a C. Charting a somewhat similar path, the stock was allocated a score of B on the value side, putting it in the second quintile for value investors. \nOverall, the stock has an aggregate VGM Score of D. If you aren't focused on one strategy, this score is the one you should be interested in. \nOutlook \nEstimates have been broadly trending downward for the stock, and the magnitude of these revisions indicates a downward shift. Notably, Skyworks has a Zacks Rank #3 (Hold). We expect an in-line return from the stock in the next few months. \nWant the latest recommendations from Zacks Investment Research? Today, you can download 7 Best Stocks for the Next 30 Days. Click to get this free report \nSkyworks Solutions, Inc. (SWKS) : Free Stock Analysis Report \nThis article originally published on Zacks Investment Research (zacks.com). \nZacks Investment Research \nView Comments \nTerms and Privacy Policy \nPrivacy Dashboard \nMore Info",
-    "content_source_url": "https://finance.yahoo.com/markets/stocks/articles/skyworks-swks-8-9-since-153022789.html",
-    "content_excerpt": "Skyworks (SWKS) Up 8.9% Since Last Earnings Report: Can It Continue? Zacks Equity Research August 27, 2026 6 min read SWKS -0.02% A month has gone by since the last earnings report for Skyworks Solutions (SWKS). Shares have added about 8.9% in that time frame, outperforming the S&P 500. Will the recent positive trend continue leading up to its next earnings release, or is Skyworks due for a pullback? Well, first let's take a quick look at the latest earnings report in order to get a better handle on the recent catalysts for Skyworks Solutions, Inc. before we dive into how investors and analysts have reacted as of late. SWKS Q3 Earnings Beat on Broad Markets, AI Data Center Growth Skyworks Solutions reported third-quarter fiscal 2026 non-GAAP earnings of $1.08 per share, beating the Zacks C...",
-    "content_word_count": 1118,
+    "content_text": "Air Products' Shares Rally 25% YTD: What's Driving the Upside?\nZacks Equity Research \nAugust 31, 2026 3 min read \nAPD \n+3.01% \nCRS \n-0.71% \nWS \n+4.68% \nAVNT \n+1.98% \nAir Products and Chemicals, Inc. 's APD shares have gained 24.7% so far this year. The company has also outperformed the Zacks Chemicals Diversified industry's 21.1% rise over the same time frame. APD is benefiting from investments in high-return projects, new business deals, acquisitions and productivity initiatives. \nLet's take a look into the factors that are driving APD stock. \nZacks Investment Research Image Source: Zacks Investment Research \nHigh-Return Projects & Productivity Actions Aid Air Products \nAir Products is gaining from investments in high-return industrial gas projects and productivity initiatives. The company remains committed to its gasification strategy while advancing key growth projects, which are expected to contribute positively to earnings and cash flow.\nAPD has an industrial gas project backlog of around $3 billion, with most projects focused on serving electronics customers. It also plans to invest around $1.5 billion annually in traditional industrial gas projects.\nAir Products is currently pursuing the NEOM green hydrogen project in Saudi Arabia. The project is expected to supply up to 1.2 million tons per year of renewable ammonia. Air Products and Yara International have finalized a marketing and distribution agreement for renewable ammonia from the project. Under the deal, Yara will transport and market green ammonia not sold by Air Products as renewable hydrogen.\n&nbsp;\nAir Products is also driving productivity to improve its cost structure. It is seeing the positive impacts of its productivity actions. Benefits from additional productivity and cost improvement programs are likely to support its margins moving ahead. The company also remains focused on improving pricing amid an inflationary environment. Air Products is also taking action to right-size the organization through headcount reductions and expects these reductions to result in $250 million in annual cost savings once completed. It has already realized roughly $75 million in savings from headcount reductions, as divulged in its fiscal third-quarter earnings call.\nAPD delivered forecast-topping earnings performance in the fiscal third quarter. Adjusted earnings of $3.47 per share rose from $3.09 a year ago and topped the Zacks Consensus Estimate of $3.36. Higher on-site volumes, favorable currency, new assets, pricing and productivity supported results.&nbsp;\nAir Products raised its fiscal 2026 adjusted earnings guidance to $13.39-$13.49 per share from the prior range of $13.00-$13.25. For the fourth quarter of fiscal 2026, Air Products expects adjusted earnings of $3.55-$3.65 per share, implying 5-8% growth from the prior-year period. The growth is expected to be supported by new asset contributions, pricing actions and productivity initiatives. \nStory Continues \nAir Products and Chemicals, Inc. Price and Consensus \nAir Products and Chemicals, Inc. Price and Consensus Air Products and Chemicals, Inc. price-consensus-chart | Air Products and Chemicals, Inc. Quote \nAPD's Zacks Rank & Key Picks \nAPD currently carries a Zacks Rank #3 (Hold).\nBetter-ranked stocks in the Basic Materials space are Worthington Steel, Inc. WS, Carpenter Technology Corporation CRS and Avient Corporation AVNT. WS currently carries a Zacks Rank #1 (Strong Buy), while CRS and AVNT carry a Zacks Rank #2 (Buy) each. You can see the complete list of today's Zacks #1 Rank stocks here .&nbsp;\nThe Zacks Consensus Estimate for WS's current-year earnings stands at $3.4 per share, implying a 52.5% year-over-year increase. Its earnings beat the Zacks Consensus Estimate in two of the trailing four quarters and missed twice, with the negative average surprise being 13.8%.&nbsp;\nThe Zacks Consensus Estimate for CRS's current fiscal-year earnings is pegged at $13.08 per share, implying a 21.6% year-over-year increase. Its earnings beat the Zacks Consensus Estimate in all of the trailing four quarters, with the average surprise being 8.4%.\n&nbsp;\nThe Zacks Consensus Estimate for AVNT's current-year earnings is pegged at $3.2 per share, indicating a 13.5% year-over-year increase. Its earnings beat the Zacks Consensus Estimate in all of the trailing four quarters, with the average surprise being 3.4%. \nWant the latest recommendations from Zacks Investment Research? Today, you can download 7 Best Stocks for the Next 30 Days. Click to get this free report \nAir Products and Chemicals, Inc. (APD) : Free Stock Analysis Report \nCarpenter Technology Corporation (CRS) : Free Stock Analysis Report \nAvient Corporation (AVNT) : Free Stock Analysis Report \nWorthington Steel, Inc. (WS) : Free Stock Analysis Report \nThis article originally published on Zacks Investment Research (zacks.com). \nZacks Investment Research \nView Comments \nTerms and Privacy Policy \nYour privacy controls \nWA Consumer Health Privacy Policy \nMore Info",
+    "content_source_url": "https://finance.yahoo.com/markets/stocks/articles/air-products-shares-rally-25-125300629.html",
+    "content_excerpt": "Air Products' Shares Rally 25% YTD: What's Driving the Upside? Zacks Equity Research August 31, 2026 3 min read APD +3.01% CRS -0.71% WS +4.68% AVNT +1.98% Air Products and Chemicals, Inc. 's APD shares have gained 24.7% so far this year. The company has also outperformed the Zacks Chemicals Diversified industry's 21.1% rise over the same time frame. APD is benefiting from investments in high-return projects, new business deals, acquisitions and productivity initiatives. Let's take a look into the factors that are driving APD stock. Zacks Investment Research Image Source: Zacks Investment Research High-Return Projects & Productivity Actions Aid Air Products Air Products is gaining from investments in high-return industrial gas projects and productivity initiatives. The company remains comm...",
+    "content_word_count": 748,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
-      "Skyworks Solutions"
+      "Air Products and Chemicals"
     ],
-    "industry": "모빌리티",
-    "target_technology": "자율주행차 IMU/RF/베이스밴드 칩",
-    "target_technology_en": "autonomous vehicle IMU/RF/baseband chip",
-    "technology_group": "autonomous_imu_rf_baseband",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "자율주행이차스 IM밴U드(고칩주)파부, 베",
-    "pdf_company": "Skyworks",
-    "pdf_row_no": 17,
-    "pdf_sequence": "13",
-    "technology_gate_decision": "agent_review",
+    "industry": "화학소재",
+    "target_technology": "핵사메틸렌디아민 플랫폼 생산기술",
+    "target_technology_en": "hexamethylenediamine platform production technology",
+    "technology_group": "hexamethylenediamine_hmd",
+    "excluded_from_relevance": true,
+    "exclude_reason": "user_requested_exclusion",
+    "raw_target_technology": "핵사메틸렌산디 아기민술 플랫폼 생",
+    "pdf_company": "Air Products",
+    "pdf_row_no": 75,
+    "pdf_sequence": "KO추T가RA",
+    "technology_gate_decision": "relevance_exempt",
     "candidate_origin": "all_month_sources",
     "date_status": "confirmed",
     "date_placement": "in_period",
     "date_note": "",
-    "ai_signal_supported": false,
+    "ai_signal_supported": true,
     "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
+    "ai_target_technology_supported": true,
     "ai_indicator_supported": true,
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "The event involves Skyworks Solutions, satisfying entity support. However, the target technology (autonomous vehicle IMU/RF/baseband chip) is not directly linked, as the article discusses telematics, in-vehicle infotainment, and connectivity/power products rather than IMU/RF/baseband chips. Concrete business activity is present, making indicator supported true, but target technology supported is false, rendering the candidate ineligible for approval.",
-    "ai_summary_ko": "",
-    "ai_summary_en": "",
+    "ai_summary_reason": "The article reports concrete business activities including industrial gas project backlogs, annual investment plans, the NEOM green hydrogen project, and productivity initiatives.",
+    "ai_summary_ko": "에어프로덕츠는 30억 달러 규모의 산업용 가스 프로젝트 잔고와 연간 15억 달러의 투자 계획을 추진하고 있으며, 사우디아라비아의 NEOM 그린 수소 프로젝트와 생산성 향상 이니셔티브를 진행하고 있음.",
+    "ai_summary_en": "Air Products is advancing industrial gas projects with a $3 billion backlog and planned annual investments of $1.5 billion, while also pursuing the NEOM green hydrogen project in Saudi Arabia and implementing productivity initiatives.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "85ca47d9fd9fa01ac185d382",
+    "ai_summary_cache_key": "64ed1aa972886607c610ede9",
     "ai_evidence_quotes": [
-      "Skyworks added automotive engagements spanning telematics and in-vehicle infotainment with leading global original equipment manufacturers.",
-      "The company expects connectivity and power products to broaden its presence across multiyear vehicle platforms."
-    ]
-  },
-  {
-    "target_no": 3,
-    "company": "Corning",
-    "title": "Corning (GLW) Up 23.2% Since Last Earnings Report: Can It Continue? - Yahoo Finance",
-    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPOVI4ZzA1d3puczFnTHplMEZFTXNydEN3NjJKdWpIc091eDdzSDY5NlBIWTJaU0s1eVZ0QUFiWTRTQmRTMk1lMUVqbmRacEItUGtFOGVFV2p0aVdSMUxwWFFDcHJfNGhIYTNIaHVDdHdtN0tPZUxubGs5YTNkdmtxdTd3Y2tpb2dKbkloTk5qTC0?oc=5",
-    "source": "Google News: Yahoo Finance",
-    "publisher": "Yahoo Finance",
-    "publisher_home_url": "https://finance.yahoo.com/",
-    "published_at": "2026-08-27T15:30:13Z",
-    "published_month": "2026-08",
-    "published_at_source": "jsonld",
-    "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "2026-08-27T15:30:13Z",
-    "date_conflict": false,
-    "date_candidates": [
-      {
-        "date": "2026-08-27T15:30:13Z",
-        "month": "2026-08",
-        "source": "jsonld",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-27T15:30:13Z",
-        "month": "2026-08",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-27T07:00:00Z",
-        "month": "2026-08",
-        "source": "feed",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-27T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-27T15:30:13Z",
-        "month": "2026-08",
-        "source": "modified_jsonld",
-        "kind": "modified",
-        "precision": "day"
-      }
-    ],
-    "collected_at": "2026-09-22T02:53:04Z",
-    "collector": "google_news_rss",
-    "query": "(\"Corning\" OR \"Corning Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
-    "source_type": "fallback",
-    "source_kind": "news",
-    "is_press_release": false,
-    "source_label_ko": "대체출처",
-    "source_priority": 90,
-    "official_source_url": "",
-    "source_direct_url": "",
-    "content_text": "Corning (GLW) Up 23.2% Since Last Earnings Report: Can It Continue?\nZacks Equity Research \nAugust 27, 2026 5 min read \nGLW \n+5.89% \n^GSPC \n+1.49% \nIt has been about a month since the last earnings report for Corning (GLW). Shares have added about 23.2% in that time frame, outperforming the S&P 500. \nWill the recent positive trend continue leading up to its next earnings release, or is Corning due for a pullback? Well, first let's take a quick look at its most recent earnings report in order to get a better handle on the recent drivers for Corning Incorporated before we dive into how investors and analysts have reacted as of late. \nCorning Beats Q2 Earnings Estimates on Optical and Solar Growth \nCorning reported&nbsp;second-quarter 2026 results with non-GAAP earnings of 78 cents per share, up 30% year over year and 2.6% above the Zacks Consensus Estimate. Core revenues of $4.74 billion increased 17% and surpassed the consensus mark by 2.9%.\nRevenue growth was primarily led by Optical Communications and Solar segments. Enterprise Networks sales jumped 65%, supported by accelerating demand for generative artificial intelligence (AI) infrastructure. Core operating margin also expanded as higher volumes and improved execution strengthened profitability.\nOptical Sales Accelerate on AI Demand \nOptical Communications remained the company's largest growth engine, with sales rising 32% year over year to $2.07 billion. Segment net income surged 77% to $438 million, reflecting strong demand and favorable operating leverage.\nEnterprise Networks drove the improvement as hyperscale customers expanded AI-related data center capacity. Corning also announced multiyear agreements with Amazon and NVIDIA, supporting further demand for optical fiber, cable and connectivity products. The NVIDIA partnership includes plans to increase U.S. optical connectivity manufacturing capacity tenfold and expand domestic fiber production capacity by more than 50%.\nSolar Business Posts Sharp Growth \nSolar revenues climbed 90% year over year to $438 million, making the segment the company's fastest-growing operation. Sales also increased 18% sequentially as Corning continued to scale its polysilicon, wafer and module businesses.\nThe segment recorded a net loss of $7 million against a net income of $2 million a year earlier. Results were affected by an extended maintenance shutdown and equipment upgrade at the solar wafer facility. Management expects profitability to improve in the third quarter as production resumes and operating efficiencies strengthen.\nGLW Expands Core Margins and Profitability \nCore gross margin improved 120 basis points year over year to 39.6%. Core operating margin expanded 190 basis points to 20.9%, while core operating income rose to $989 million from $770 million.\nCore net income increased 30% to $680 million. The stronger margin profile reflected higher sales volumes, a favorable business mix and improved scale. Core return on invested capital advanced 180 basis points to 14.9%, indicating better returns from the company's asset base and growth investments.\nOn a GAAP basis, operating income rose to $698 million from $573 million. Selling, general and administrative expenses increased to $608 million from $515 million, while research, development and engineering expenses rose to $299 million from $276 million.\nCorning's Other Segments Deliver Mixed Results \nGlass Innovations generated sales of $1.46 billion, up 1% year over year. Segment net income increased 9% to $354 million, showing improved profitability despite modest revenue growth. Automotive sales advanced 2% to $471 million, while net income increased 4% to $82 million. The business also improved sequentially, with revenues rising 8% and profit increasing 17% from the first quarter. Life Sciences and Emerging Growth Businesses remained a weak spot. Revenues declined 15% year over year to $294 million, while the segment posted a net loss of $21 million compared with net income of $6 million in the prior-year quarter.\nCash Flow Strength Lends Support \nCorning generated $1.72 billion in operating cash flow during the quarter, up from $708 million a year earlier. Adjusted free cash flow reached $1.42 billion compared with $451 million in the prior-year period.\nCapital expenditures totaled $422 million. Cash and cash equivalents were $2.50 billion at June 30, 2026, while long-term debt stood at $7.76 billion.&nbsp;\nOutlook \nFor the third quarter, management expects core sales between $4.9 billion and $5 billion, representing approximately 16% year-over-year growth. Core earnings are projected between 85 cents and 89 cents per share, implying growth of roughly 28%.\nCorning continues to target an annualized sales run rate of $20 billion by the end of 2026 under its upgraded Springboard Plan. The company also aims to reach $30 billion by the end of 2028 and $40 billion by the end of 2030, supported by AI infrastructure, solar expansion and deeper customer partnerships. \nStory Continues \nHow Have Estimates Been Moving Since Then? \nSince the earnings release, investors have witnessed a upward trend in estimates review. \nThe consensus estimate has shifted 5.72% due to these changes. \nVGM Scores \nCurrently, Corning has a great Growth Score of A, though it is lagging a lot on the Momentum Score front with a D. Following the exact same course, the stock has a score of D on the value side, putting it in the bottom 40% for value investors. \nOverall, the stock has an aggregate VGM Score of B. If you aren't focused on one strategy, this score is the one you should be interested in. \nOutlook \nEstimates have been trending upward for the stock, and the magnitude of these revisions looks promising. Notably, Corning has a Zacks Rank #3 (Hold). We expect an in-line return from the stock in the next few months. \nWant the latest recommendations from Zacks Investment Research? Today, you can download 7 Best Stocks for the Next 30 Days. Click to get this free report \nCorning Incorporated (GLW) : Free Stock Analysis Report \nThis article originally published on Zacks Investment Research (zacks.com). \nZacks Investment Research \nView Comments \nTerms and Privacy Policy \nPrivacy Dashboard \nMore Info",
-    "content_source_url": "https://finance.yahoo.com/markets/stocks/articles/corning-glw-23-2-since-153013922.html",
-    "content_excerpt": "Corning (GLW) Up 23.2% Since Last Earnings Report: Can It Continue? Zacks Equity Research August 27, 2026 5 min read GLW +5.89% ^GSPC +1.49% It has been about a month since the last earnings report for Corning (GLW). Shares have added about 23.2% in that time frame, outperforming the S&P 500. Will the recent positive trend continue leading up to its next earnings release, or is Corning due for a pullback? Well, first let's take a quick look at its most recent earnings report in order to get a better handle on the recent drivers for Corning Incorporated before we dive into how investors and analysts have reacted as of late. Corning Beats Q2 Earnings Estimates on Optical and Solar Growth Corning reported&nbsp;second-quarter 2026 results with non-GAAP earnings of 78 cents per share, up 30% ye...",
-    "content_word_count": 961,
-    "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
-    "query_aliases": [
-      "Corning Incorporated"
-    ],
-    "industry": "디스플레이",
-    "target_technology": "EUV 블랭크 마스크",
-    "target_technology_en": "EUV blank mask",
-    "technology_group": "euv_blank_mask",
-    "excluded_from_relevance": false,
-    "exclude_reason": "",
-    "raw_target_technology": "EUV 블랭크 마스크",
-    "pdf_company": "Corning",
-    "pdf_row_no": 5,
-    "pdf_sequence": "5",
-    "technology_gate_decision": "agent_review",
-    "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": false,
-    "ai_entity_supported": true,
-    "ai_target_technology_supported": false,
-    "ai_indicator_supported": true,
-    "ai_leading_indicator_supported": true,
-    "ai_event_stage": "not_applicable",
-    "ai_summary_quality": "pass",
-    "ai_summary_reason": "The article describes concrete business activity and financial results for Corning, but the target technology (EUV blank mask) is not linked to the reported optical communications, solar, and glass operations.",
-    "ai_summary_ko": "",
-    "ai_summary_en": "",
-    "ai_summary_source": "gemini_article_review",
-    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "e18f2e9f6a9533193b2bd9ef",
-    "ai_evidence_quotes": [
-      "Corning reported second-quarter 2026 results with non-GAAP earnings of 78 cents per share, up 30% year over year and 2.6% above the Zacks Consensus Estimate."
+      "Air Products is gaining from investments in high-return industrial gas projects and productivity initiatives. The company remains committed to its gasification strategy while advancing key growth projects, which are expected to contribute positively to earnings and cash flow. APD has an industrial gas project backlog of around $3 billion, with most projects focused on serving electronics customers. It also plans to invest around $1.5 billion annually in traditional industrial gas projects. Air Products is currently pursuing the NEOM green hydrogen project in Saudi Arabia."
     ]
   },
   {
@@ -2836,43 +2755,43 @@
         "precision": "day"
       },
       {
-        "date": "2022-06-30T00:00:00Z",
-        "month": "2022-06",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2025-01-16T00:00:00Z",
-        "month": "2025-01",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2025-05-08T00:00:00Z",
-        "month": "2025-05",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2022-06-08T00:00:00Z",
-        "month": "2022-06",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2024-10-03T00:00:00Z",
-        "month": "2024-10",
-        "source": "time_tag",
-        "kind": "published",
-        "precision": "day"
-      },
-      {
-        "date": "2024-03-08T00:00:00Z",
+        "date": "2024-03-14T00:00:00Z",
         "month": "2024-03",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2024-11-29T00:00:00Z",
+        "month": "2024-11",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2024-02-08T00:00:00Z",
+        "month": "2024-02",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2023-10-19T00:00:00Z",
+        "month": "2023-10",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2025-04-10T00:00:00Z",
+        "month": "2025-04",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2024-07-18T00:00:00Z",
+        "month": "2024-07",
         "source": "time_tag",
         "kind": "published",
         "precision": "day"
@@ -2892,7 +2811,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "google_news_trend",
     "query": "(\"Eli Lilly and Company\" OR \"Eli Lilly\") (\"gene therapy\" OR \"cell therapy\" OR \"delivery vector\" OR \"viral vector\" OR \"lipid nanoparticle\" OR \"GMP material\") after:2026-08-01 before:2026-09-01",
     "source_type": "fallback",
@@ -2908,12 +2827,12 @@
       "gene therapy",
       "cell therapy"
     ],
-    "content_text": "Cell therapy weekly: FDA approves glycogen storage disease type 1a gene therapy\n20 Aug 2026 \r\nWritten by Kadeja Johnson \r\nDisease area \r\nFDA \r\nGene therapy \r\nNews \r\nRegulation & policy \r\nThe week in cell therapy \r\nThis week: Sangamo Therapeutics (CA, USA) auctions off its main assets, Andelyn Biosciences (OH, USA) and Queen’s University (Ontario, Canada) partner to advance a lysosomal storage disorder gene therapy program and the US Food and Drug Administration (FDA; MD, USA) approves a gene therapy for glycogen storage disease type 1a (GSD1a).\nThe news highlights:\nSangamo completes auctions of main assets \nPartnership to advance gene therapy program for lysosomal storage disorder \nFDA approves glycogen storage disease type 1a gene therapy \nSangamo completes auctions of main assets\nIn June 2026, Sangamo Therapeutics announced plans to sell its assets through voluntary Chapter 11 bankruptcy proceedings to maximize stakeholder value. Nearly two months later, the company has successfully concluded the auction process, selecting winning bids totaling approximately US$163.55 million in cash at closing, plus up to US$100 million in potential future milestone payments.\nDuring a court-supervised auction process:\nPTC Therapeutics (NJ, USA) acquired Sangamo’s Fabry disease program, ST-920, for US$111 million cash, plus up to US$100 million in milestone payments upon receiving traditional or full approval from the FDA.\nEli Lilly and Company (IN, USA) purchased Sangamo’s capsid delivery, zinc finger and modular integrase platforms, plus the prion disease program, ST-506, for US$50 million cash.\nVarious bidders secured Sangamo tools and equipment for US$2.55 million cash considerations at closing\n“Reaching the conclusion of this first competitive auction represents an important milestone in Sangamo’s reorganization,” said Sandy Macrae, CEO of Sangamo. “Our priority has been to seek value-maximizing transactions for all stakeholders, and we are pleased that our platform technologies, Fabry disease and prion programs attracted strong interest from parties who have the scale to continue their development for patients in need. We remain focused on monetizing our remaining assets and seeking Court approvals to finalize all sales.”\nRead more \nPartnership to advance gene therapy program for lysosomal storage disorder\nAndelyn Biosciences and Queen’s University have partnered to develop and manufacture AAV9-GM2, a gene therapy indicated for GM2 gangliosidosis. GM2 gangliosidosis is a rare, inherited lysosomal storage disorder, progressively destroying nerve cells in the brain and spinal cord. GM2 is caused by genetic mutations that disrupt normal lysosomal function, leading to the buildup of harmful substances in cells and severe decline in neurological abilities.\nThis partnership aims to advance AAV9-GM2 by leveraging Andelyn’s AAV Curator® Platform. Commenting on the partnership, Matt Niloff, Andelyn’s Chief Commercial Officer, spoke on how the company is “proud to partner with Queen’s University to advance this gene therapy candidate for the benefit of patients and families facing the challenges of GM2 gangliosidoses.”\nContinuing, Niloff reflected on the company’s commitment to support innovative gene therapy programs targeting rare and ultra-rare diseases, stating:\n“Our deep expertise in AAV development and production allows us to support Queen’s University with the scale and quality rigor necessary to bring this life-changing therapy one step closer to reality.”\nRead more \nFDA approves glycogen storage disease type 1a gene therapy\nThe FDA has granted accelerated approval for GENGLYCOS™ – a gene therapy developed by Ultragenyx Pharmaceuticals (CA, USA) – in adult and pediatric patients eight years and older with GSD1a. GSD1a, an ultra-rare genetic metabolic disorder, is caused by a deficiency of the enzyme glucose-6-phosphatase-alpha, reducing the liver’s ability to release glucose into the bloodstream. Patients with this disorder require nutritional management consisting of raw cornstarch intake as an oral glucose replacement therapy.\n“The approval of GENGLYCOS fulfills our commitment to provide the first therapy that directly targets the root cause of GSD1a. The reduced reliance on cornstarch, experienced by patients in our clinical studies, demonstrates this gene therapy’s ability to establish the normal breakdown of glycogen to produce glucose during fasting or episodes of metabolic stress. This ability to regulate glucose has alleviated the disease burden and has the potential to mitigate the risk of severe or life-threatening hypoglycemia for these patients,” commented Ultragenyx’ chief medical offer, Eric Crombez. “As our first gene therapy approval, GENGLYCOS represents an important achievement for our company and the realization of the promise of a powerful new tool to deliver transformative medicines for people living with rare diseases.”\nRead more \nPrevious article \r\nNext article \r\nRelated articles\n30 JUN 2022 \r\nCELL THERAPY \r\nCell therapy weekly: European Commission approves Yescarta CAR-T therapy for the treatment of relapsed follicular lymphoma \r\n16 JAN 2025 \r\nCELL THERAPY \r\nCell therapy weekly: US$115 million secured for bioprinted tissue therapies \r\n8 MAY 2025 \r\nCELL THERAPY \r\nCell therapy weekly: the launch of a new cell development organization \r\n8 JUN 2022 \r\nCELL THERAPY \r\nCell therapy weekly: Prescient unveils platform for better CAR-Ts \r\n3 OCT 2024 \r\nGENE THERAPY \r\nCell therapy weekly: Promising Phase I results for Parkinson’s disease cell therapy \r\n8 MAR 2024 \r\nCAR-T \r\nCell therapy weekly: turning the attention of CAR-T to autoimmune disease",
+    "content_text": "Cell therapy weekly: FDA approves glycogen storage disease type 1a gene therapy\n20 Aug 2026 \r\nWritten by Kadeja Johnson \r\nDisease area \r\nFDA \r\nGene therapy \r\nNews \r\nRegulation & policy \r\nThe week in cell therapy \r\nThis week: Sangamo Therapeutics (CA, USA) auctions off its main assets, Andelyn Biosciences (OH, USA) and Queen’s University (Ontario, Canada) partner to advance a lysosomal storage disorder gene therapy program and the US Food and Drug Administration (FDA; MD, USA) approves a gene therapy for glycogen storage disease type 1a (GSD1a).\nThe news highlights:\nSangamo completes auctions of main assets \nPartnership to advance gene therapy program for lysosomal storage disorder \nFDA approves glycogen storage disease type 1a gene therapy \nSangamo completes auctions of main assets\nIn June 2026, Sangamo Therapeutics announced plans to sell its assets through voluntary Chapter 11 bankruptcy proceedings to maximize stakeholder value. Nearly two months later, the company has successfully concluded the auction process, selecting winning bids totaling approximately US$163.55 million in cash at closing, plus up to US$100 million in potential future milestone payments.\nDuring a court-supervised auction process:\nPTC Therapeutics (NJ, USA) acquired Sangamo’s Fabry disease program, ST-920, for US$111 million cash, plus up to US$100 million in milestone payments upon receiving traditional or full approval from the FDA.\nEli Lilly and Company (IN, USA) purchased Sangamo’s capsid delivery, zinc finger and modular integrase platforms, plus the prion disease program, ST-506, for US$50 million cash.\nVarious bidders secured Sangamo tools and equipment for US$2.55 million cash considerations at closing\n“Reaching the conclusion of this first competitive auction represents an important milestone in Sangamo’s reorganization,” said Sandy Macrae, CEO of Sangamo. “Our priority has been to seek value-maximizing transactions for all stakeholders, and we are pleased that our platform technologies, Fabry disease and prion programs attracted strong interest from parties who have the scale to continue their development for patients in need. We remain focused on monetizing our remaining assets and seeking Court approvals to finalize all sales.”\nRead more \nPartnership to advance gene therapy program for lysosomal storage disorder\nAndelyn Biosciences and Queen’s University have partnered to develop and manufacture AAV9-GM2, a gene therapy indicated for GM2 gangliosidosis. GM2 gangliosidosis is a rare, inherited lysosomal storage disorder, progressively destroying nerve cells in the brain and spinal cord. GM2 is caused by genetic mutations that disrupt normal lysosomal function, leading to the buildup of harmful substances in cells and severe decline in neurological abilities.\nThis partnership aims to advance AAV9-GM2 by leveraging Andelyn’s AAV Curator® Platform. Commenting on the partnership, Matt Niloff, Andelyn’s Chief Commercial Officer, spoke on how the company is “proud to partner with Queen’s University to advance this gene therapy candidate for the benefit of patients and families facing the challenges of GM2 gangliosidoses.”\nContinuing, Niloff reflected on the company’s commitment to support innovative gene therapy programs targeting rare and ultra-rare diseases, stating:\n“Our deep expertise in AAV development and production allows us to support Queen’s University with the scale and quality rigor necessary to bring this life-changing therapy one step closer to reality.”\nRead more \nFDA approves glycogen storage disease type 1a gene therapy\nThe FDA has granted accelerated approval for GENGLYCOS™ – a gene therapy developed by Ultragenyx Pharmaceuticals (CA, USA) – in adult and pediatric patients eight years and older with GSD1a. GSD1a, an ultra-rare genetic metabolic disorder, is caused by a deficiency of the enzyme glucose-6-phosphatase-alpha, reducing the liver’s ability to release glucose into the bloodstream. Patients with this disorder require nutritional management consisting of raw cornstarch intake as an oral glucose replacement therapy.\n“The approval of GENGLYCOS fulfills our commitment to provide the first therapy that directly targets the root cause of GSD1a. The reduced reliance on cornstarch, experienced by patients in our clinical studies, demonstrates this gene therapy’s ability to establish the normal breakdown of glycogen to produce glucose during fasting or episodes of metabolic stress. This ability to regulate glucose has alleviated the disease burden and has the potential to mitigate the risk of severe or life-threatening hypoglycemia for these patients,” commented Ultragenyx’ chief medical offer, Eric Crombez. “As our first gene therapy approval, GENGLYCOS represents an important achievement for our company and the realization of the promise of a powerful new tool to deliver transformative medicines for people living with rare diseases.”\nRead more \nPrevious article \r\nNext article \r\nRelated articles\n14 MAR 2024 \r\nCELL THERAPY \r\nCell therapy weekly: Transforming organ transport at cryogenic temperatures \r\n29 NOV 2024 \r\nGENE THERAPY \r\nCell therapy weekly: first patient dosed in cardiac gene therapy trial \r\n8 FEB 2024 \r\nCELL THERAPY \r\nCell therapy weekly: US and Australian approvals for Dravet syndrome gene therapy candidate \r\n19 OCT 2023 \r\nTHE WEEK IN CELL THERAPY \r\nCell therapy weekly: Promising preliminary data from natural killer cell therapy trial \r\n10 APR 2025 \r\nVIRAL VECTORS \r\nCell therapy weekly: license granted for the manufacture and supply of synthetic DNA \r\n18 JUL 2024 \r\nCELL THERAPY \r\nCell therapy weekly: T-cell therapy for post-transplant lymphoproliferative disease receives Priority Review",
     "content_source_url": "https://www.regmednet.com/cell-therapy-weekly-fda-approves-glycogen-storage-disease-type-1a-gene-therapy/",
     "content_excerpt": "Cell therapy weekly: FDA approves glycogen storage disease type 1a gene therapy 20 Aug 2026 Written by Kadeja Johnson Disease area FDA Gene therapy News Regulation & policy The week in cell therapy This week: Sangamo Therapeutics (CA, USA) auctions off its main assets, Andelyn Biosciences (OH, USA) and Queen’s University (Ontario, Canada) partner to advance a lysosomal storage disorder gene therapy program and the US Food and Drug Administration (FDA; MD, USA) approves a gene therapy for glycogen storage disease type 1a (GSD1a). The news highlights: Sangamo completes auctions of main assets Partnership to advance gene therapy program for lysosomal storage disorder FDA approves glycogen storage disease type 1a gene therapy Sangamo completes auctions of main assets In June 2026, Sangamo Ther...",
-    "content_word_count": 817,
+    "content_word_count": 822,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Eli Lilly"
     ],
@@ -2939,14 +2858,124 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Eli Lilly and Company acquired Sangamo's capsid delivery, zinc finger and modular integrase platforms, as well as the ST-506 prion disease program, for US$50 million in cash, directly engaging in business activity related to gene and cell therapy delivery vectors.",
-    "ai_summary_ko": "Eli Lilly and Company는 US$50백만의 현금으로 Sangamo의 capsid delivery, zinc finger, modular integrase 플랫폼 및 ST-506 프로그램을 인수했음.",
-    "ai_summary_en": "Eli Lilly and Company acquired Sangamo's capsid delivery, zinc finger, and modular integrase platforms, alongside the ST-506 prion disease program, for US$50 million in cash.",
+    "ai_summary_reason": "Eli Lilly and Company purchased Sangamo Therapeutics' capsid delivery, zinc finger and modular integrase platforms, along with the ST-506 prion disease program, for US$50 million in cash. This activity directly involves gene/cell therapy delivery vectors and platforms within the target technology scope.",
+    "ai_summary_ko": "Eli Lilly and Company는 Sangamo Therapeutics의 capsid delivery, zinc finger 및 modular integrase 플랫폼과 ST-506 prion disease 프로그램을 US$50 million의 현금으로 인수했음.",
+    "ai_summary_en": "Eli Lilly and Company acquired Sangamo Therapeutics' capsid delivery, zinc finger and modular integrase platforms, as well as the ST-506 prion disease program, for US$50 million in cash.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "62165a40f19e57a2c9d08d26",
+    "ai_summary_cache_key": "3631f2dbdd77c0efe60a4997",
     "ai_evidence_quotes": [
       "Eli Lilly and Company (IN, USA) purchased Sangamo’s capsid delivery, zinc finger and modular integrase platforms, plus the prion disease program, ST-506, for US$50 million cash."
+    ]
+  },
+  {
+    "target_no": 6,
+    "company": "Moderna",
+    "title": "Moderna stock nearly doubles as Merck-partnered mRNA cancer vaccine meets Phase 3 goal - BioSpace",
+    "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPY2pBcUVGVElRdDU3MjRnZDE0TEZsalhCeVFXT293ZERfaDBBTEhfYzZyQXU0U2dSNmk3RWxMaDJ2NFNNT3k4N29Ud1Rra3hsLUtuMnAxc1BJT2ZZYkxFU3JfaGVNQ0J0UlpmTTlWSm92RnZXaEpSTS1XbXl0N2twc05VVzZNeXdtalVzUndRemhtTlpfcmJnblBmc2t0S04yQ0VJa3FFdXpySms4U1VqN0liYXk5ME5mVjJicXU3dVo3ZTdwVm9R?oc=5",
+    "source": "Google News: BioSpace",
+    "publisher": "BioSpace",
+    "publisher_home_url": "https://www.biospace.com/",
+    "published_at": "2026-08-19T13:25:41Z",
+    "published_month": "2026-08",
+    "published_at_source": "meta",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-08-19T13:32:59Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-19T13:25:41Z",
+        "month": "2026-08",
+        "source": "meta",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T13:25:41Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T13:32:59Z",
+        "month": "2026-08",
+        "source": "modified_meta",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T13:32:59Z",
+        "month": "2026-08",
+        "source": "modified_jsonld",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-23T03:19:32Z",
+    "collector": "google_news_rss",
+    "query": "(\"Moderna\" OR \"Moderna Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "content_text": "Moderna stock nearly doubles as Merck-partnered mRNA cancer vaccine meets Phase 3 goal\nAugust 19, 2026&nbsp; | &nbsp;\n3 min read&nbsp; | &nbsp;\nNick Paul Taylor \nTwitter \nLinkedIn \nFacebook \nEmail\nPrint\niStock, bpawesome \nMelanoma was slower to recur in patients receiving Merck and Moderna’s mRNA vaccine with Keytruda, supporting use of the combination in adjuvant treatment. The partners plan to take the data to the FDA.\nMerck and Moderna have linked the combination of Keytruda and an investigational personalized mRNA cancer vaccine to improved outcomes in patients with melanoma, positioning the partners to file for regulatory approvals. Moderna’s share price jumped 91% to $120 in premarket trading Wednesday morning following the announcement.\nThe highly anticipated readout came earlier than expected for RBC Capital Markets. “This is a surprisingly positive development as we were expecting a year-end readout,” the analysts wrote in a note to investors on Wednesday. “The strength of the underlying data must have been compelling to trigger significance at the interim analysis, meaningfully exceeding investor expectations.”\nThe Phase 3 INTerpath-001 trial tested intismeran autogene, an mRNA-based cancer vaccine also called V940 or mRNA-4157, in combination with Merck’s blockbuster checkpoint inhibitor. Investigators randomized 1,137 patients 2:1 to receive the combination or single-agent Keytruda for approximately one year after having cutaneous melanoma removed surgically.\nPeople taking the combination lived longer without melanoma returning, achieving the trial’s primary endpoint of recurrence-free survival (RFS). The study also hit a secondary endpoint that looked at how long patients lived without metastatic lesions appearing in other parts of the body.\n“We see today’s update as a clear positive for shares and Moderna’s fundamental business,” William Blair analysts said in a note to investors. “We are upgrading shares to Outperform from Market Perform given that we believe Moderna has a clear line of sight to revenue diversification from the COVID business (SPIKEVAX and mNEXPSIKE) now.”\nThe improvements in RFS and distant metastasis–free survival seen at the prespecified interim analysis are clinically meaningful, Merck and Moderna said in Wednesday’s release. The partners have yet to share specific data, choosing instead to hold these back for a future medical meeting. On safety, Merck and Moderna only said that the drugs’ profiles were consistent with earlier studies and that no new signals were seen.\nIn June, the partners reported no grade 4 or 5 adverse events in their five-year analysis of Phase 2 data. The analysis raised expectations for the Phase 3 readout, with the study linking the combination to a 49% reduction in the risk of recurrence or death and a 59% reduction in the risk of distant metastasis or death.\nThe Phase 2 data also showed an encouraging trend toward improved overall survival (OS), the partners said at the time. The companies will continue to evaluate OS in the Phase 3 trial, although as Moderna President Stephen Hoge noted on an earnings call in May, it will take time to accrue the level of data collected in the Phase 2. Hoge expressed confidence in the effect on OS, arguing that “RFS really is survival in this case.”\nMerck and Moderna plan to use the Phase 3 data to inform talks with regulators about approval filings. The companies held preliminary discussions with regulators in 2024 about seeking approval based on Phase 2 data, only to receive discouraging feedback from the FDA. Now, Merck and Moderna will enter talks with a larger dataset, plus longer-term follow up from the Phase 2 study.\nAnalysts have tipped intismeran to generate “multi-billion dollar peak sales.” The forecast makes the asset an important drug candidate for Merck and Moderna, which are respectively contending with the anticipated loss of exclusivity on Keytruda and the collapse of COVID-19 vaccine sales.\nExactly how high intismeran sales go will depend on data in other indications. The efficacy of checkpoint inhibitors in bladder cancer provides confidence that intismeran can work in that setting, David Berman, chief development officer at Moderna, said on an earnings call last month. The “big question” is whether intismeran works in indications where checkpoint inhibitors have failed, Berman added.\n“Positive results from the INTerpath-001 study in adjuvant melanoma add positive read-through for ongoing studies of intismeran in other cancer types,” William Blair analysts said. “A readout from the Phase 2 study in adjuvant [renal cell carcinoma] is likely the next to come, with data potentially by year-end. We note that this Phase 2 study may be registrational.”\nRBC appeared to agree, writing in their Wednesday note that “INTerpath-001 success validates mRNA cancer approach, unlocking potential upside across oncology.”\nTwitter \nLinkedIn \nFacebook \nEmail\nPrint\nVaccines \nCancer \nPhase 3 \nModerna, Inc. \nMerck & Co. \nNick Paul Taylor \nNick is a freelance writer who has been reporting on the global life sciences industry since 2008.",
+    "content_source_url": "https://www.biospace.com/drug-development/moderna-stock-nearly-doubles-as-merck-partnered-mrna-cancer-vaccine-meets-phase-3-goal",
+    "content_excerpt": "Moderna stock nearly doubles as Merck-partnered mRNA cancer vaccine meets Phase 3 goal August 19, 2026&nbsp; | &nbsp; 3 min read&nbsp; | &nbsp; Nick Paul Taylor Twitter LinkedIn Facebook Email Print iStock, bpawesome Melanoma was slower to recur in patients receiving Merck and Moderna’s mRNA vaccine with Keytruda, supporting use of the combination in adjuvant treatment. The partners plan to take the data to the FDA. Merck and Moderna have linked the combination of Keytruda and an investigational personalized mRNA cancer vaccine to improved outcomes in patients with melanoma, positioning the partners to file for regulatory approvals. Moderna’s share price jumped 91% to $120 in premarket trading Wednesday morning following the announcement. The highly anticipated readout came earlier than ex...",
+    "content_word_count": 789,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
+    "query_aliases": [
+      "Moderna Inc"
+    ],
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "전차달세체대 및유 전GM자 술P.세 합포성치 료원제천용기",
+    "pdf_company": "Moderna",
+    "pdf_row_no": 31,
+    "pdf_sequence": "24",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "ai_signal_supported": false,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": false,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "The event concerns Moderna's Phase 3 clinical trial results for its mRNA-based cancer vaccine (intismeran autogene / V940 / mRNA-4157). Entity attribution to Moderna is supported. However, target_technology_supported is false because the product is an mRNA cancer vaccine, whereas the target technology scope is gene/cell therapy delivery vector and GMP raw material. Indicator is supported for concrete business/clinical activity, leading_indicator_supported is true, and event_stage is not_applicable with pass quality.",
+    "ai_summary_ko": "",
+    "ai_summary_en": "",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "f0523c6dcb43d7c582f4fa8b",
+    "ai_evidence_quotes": [
+      "The Phase 3 INTerpath-001 trial tested intismeran autogene, an mRNA-based cancer vaccine also called V940 or mRNA-4157, in combination with Merck’s blockbuster checkpoint inhibitor."
     ]
   },
   {
@@ -2980,9 +3009,9 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "google_news_rss",
-    "query": "(\"Qualcomm\" OR \"Qualcomm Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
+    "query": "(\"Qualcomm\" OR \"Qualcomm Incorporated\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -2995,7 +3024,7 @@
     "content_excerpt": "Modular's Mojo Language Now Open-Source Following Qualcomm Acquisition Written by Michael Larabel in Programming on 18 August 2026 at 08:33 PM EDT. 14 Comments Modular, the AI startup founded by Chris Lattner of LLVM and Swift fame, has open-sourced their Mojo systems programming language! This comes following the recent acquisition of Modular by Qualcomm. Modular had previously open-sourced the Mojo standard library. With the recent Qualcomm acquisition I didn't expect to see much on the open-sourcing side given Qualcomm's mixed history, but following last week's Mojo 1.0 release, Mojo is now available under an Apache 2.0 license. Mojo 1.0 aims to be a production-ready foundation for this language in an AI-driven world. The entire Mojo language as of today is now open-source under the Apa...",
     "content_word_count": 245,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Qualcomm Incorporated"
     ],
@@ -3084,7 +3113,7 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "google_news_trend",
     "query": "(\"Ouster\" OR \"Ouster Inc\") (\"laser scanner\" OR \"3D sensing\" OR \"robot perception\" OR \"robot navigation\" OR \"autonomous mobile robot\" OR \"lidar\") after:2026-08-01 before:2026-09-01",
     "source_type": "fallback",
@@ -3099,12 +3128,12 @@
     "trend_matched_terms": [
       "lidar"
     ],
-    "content_text": "Ouster's LiDAR Shipments Jump 70% Y/Y in Q2: Will Demand Sustain?\nZacks Equity Research \nAugust 17, 2026 3 min read \nOUST \n+8.76% \nOuster, Inc. OUST continued to focus on strategic execution and expansion, launching Rev8 in the second quarter of 2026, the world's first native color LiDAR sensor. Rev8 establishes a new benchmark in 3D spatial perception. Designed for functional safety and large-scale deployment, Rev8 is gaining traction across Ouster's key markets, including mining, construction, robotaxis and transportation infrastructure.&nbsp;\nCustomer adoption was reflected in several orders exceeding $1 million, including from the world's largest heavy machinery manufacturer, a leading autonomous agriculture equipment developer and a major autonomous vehicle provider. Ouster also secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to date, covering several hundred intersections across the state.\nThe company also introduced advanced BlueCity detection powered by the Rev8 OS1Max, offering twice the range and resolution of previous generations and multimodal detection and classification capabilities of up to 500 feet. Advanced BlueCity detection could expand the types of roads and traffic environments where Ouster's LiDAR can be deployed, increasing the company's addressable market and potentially driving larger deployments.\nOuster is also expanding its LiDAR production capacity to support rising demand. The company expects unit volume growth to continue as adoption of physical AI accelerates. Its production run rate is expected to increase from about 40,000 units annually toward 100,000 units, with further capacity expansion likely to ensure sufficient headroom for customer demand and last-minute product SKU changes. OUST currently carries a Zacks Rank #4 (Sell).\nYou can see the complete list of today's Zacks #1 Rank (Strong Buy) stocks here . \nGrowth Trajectory of OUST's Competitors \nAeva Technologies, Inc. AEVA is positioned to benefit as LiDAR expands into higher-level ADAS and autonomy applications. In the second quarter of 2026, the company continued Atlas Ultra deliveries and integration for a top-10 European passenger OEM and advanced engagements with additional passenger and commercial OEMs. Bendix also selected Aeva's 4D LiDAR and perception software for its next-generation Level 2+ commercial-vehicle ADAS system.&nbsp;\nInnoviz Technologies Ltd. INVZ is expanding into defense and homeland security, where it sees significant long-term growth potential. Its automotive-grade LiDAR sensors are being adopted for applications including counter-UAS and perimeter protection. Through its new Perciz defense and security brand, Innoviz has secured six collaborations in three months. On July 30, the company received its first multimillion-dollar defense orders, totaling approximately $3.5 million. \nStory Continues \nOuster's Price Performance, Valuation and Estimates \nShares of Ouster have surged nearly 162% in the last six months. \nZacks Investment Research Image Source: Zacks Investment Research \nFrom a valuation standpoint, OUST trades at a forward price-to-sales ratio above 12.91x. \nZacks Investment Research Image Source: Zacks Investment Research \nThe Zacks Consensus Estimate for OUST's 2026 and 2027 loss per share has widened 4 cents and narrowed 28 cents, respectively, in the past 30 days. \nZacks Investment Research Image Source: Zacks Investment Research \nWant the latest recommendations from Zacks Investment Research? Today, you can download 7 Best Stocks for the Next 30 Days. Click to get this free report \nOuster, Inc. (OUST) : Free Stock Analysis Report \nAeva Technologies, Inc. (AEVA) : Free Stock Analysis Report \nInnoviz Technologies Ltd. (INVZ) : Free Stock Analysis Report \nThis article originally published on Zacks Investment Research (zacks.com). \nZacks Investment Research \nView Comments \nTerms and Privacy Policy \nPrivacy Dashboard \nMore Info",
+    "content_text": "Ouster's LiDAR Shipments Jump 70% Y/Y in Q2: Will Demand Sustain?\nZacks Equity Research \nAugust 17, 2026 3 min read \nOUST \n+5.59% \nOuster, Inc. OUST continued to focus on strategic execution and expansion, launching Rev8 in the second quarter of 2026, the world's first native color LiDAR sensor. Rev8 establishes a new benchmark in 3D spatial perception. Designed for functional safety and large-scale deployment, Rev8 is gaining traction across Ouster's key markets, including mining, construction, robotaxis and transportation infrastructure.&nbsp;\nCustomer adoption was reflected in several orders exceeding $1 million, including from the world's largest heavy machinery manufacturer, a leading autonomous agriculture equipment developer and a major autonomous vehicle provider. Ouster also secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to date, covering several hundred intersections across the state.\nThe company also introduced advanced BlueCity detection powered by the Rev8 OS1Max, offering twice the range and resolution of previous generations and multimodal detection and classification capabilities of up to 500 feet. Advanced BlueCity detection could expand the types of roads and traffic environments where Ouster's LiDAR can be deployed, increasing the company's addressable market and potentially driving larger deployments.\nOuster is also expanding its LiDAR production capacity to support rising demand. The company expects unit volume growth to continue as adoption of physical AI accelerates. Its production run rate is expected to increase from about 40,000 units annually toward 100,000 units, with further capacity expansion likely to ensure sufficient headroom for customer demand and last-minute product SKU changes. OUST currently carries a Zacks Rank #4 (Sell).\nYou can see the complete list of today's Zacks #1 Rank (Strong Buy) stocks here . \nGrowth Trajectory of OUST's Competitors \nAeva Technologies, Inc. AEVA is positioned to benefit as LiDAR expands into higher-level ADAS and autonomy applications. In the second quarter of 2026, the company continued Atlas Ultra deliveries and integration for a top-10 European passenger OEM and advanced engagements with additional passenger and commercial OEMs. Bendix also selected Aeva's 4D LiDAR and perception software for its next-generation Level 2+ commercial-vehicle ADAS system.&nbsp;\nInnoviz Technologies Ltd. INVZ is expanding into defense and homeland security, where it sees significant long-term growth potential. Its automotive-grade LiDAR sensors are being adopted for applications including counter-UAS and perimeter protection. Through its new Perciz defense and security brand, Innoviz has secured six collaborations in three months. On July 30, the company received its first multimillion-dollar defense orders, totaling approximately $3.5 million. \nStory Continues \nOuster's Price Performance, Valuation and Estimates \nShares of Ouster have surged nearly 162% in the last six months. \nZacks Investment Research Image Source: Zacks Investment Research \nFrom a valuation standpoint, OUST trades at a forward price-to-sales ratio above 12.91x. \nZacks Investment Research Image Source: Zacks Investment Research \nThe Zacks Consensus Estimate for OUST's 2026 and 2027 loss per share has widened 4 cents and narrowed 28 cents, respectively, in the past 30 days. \nZacks Investment Research Image Source: Zacks Investment Research \nWant the latest recommendations from Zacks Investment Research? Today, you can download 7 Best Stocks for the Next 30 Days. Click to get this free report \nOuster, Inc. (OUST) : Free Stock Analysis Report \nAeva Technologies, Inc. (AEVA) : Free Stock Analysis Report \nInnoviz Technologies Ltd. (INVZ) : Free Stock Analysis Report \nThis article originally published on Zacks Investment Research (zacks.com). \nZacks Investment Research \nView Comments \nTerms and Privacy Policy \nYour privacy controls \nWA Consumer Health Privacy Policy \nMore Info",
     "content_source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
-    "content_excerpt": "Ouster's LiDAR Shipments Jump 70% Y/Y in Q2: Will Demand Sustain? Zacks Equity Research August 17, 2026 3 min read OUST +8.76% Ouster, Inc. OUST continued to focus on strategic execution and expansion, launching Rev8 in the second quarter of 2026, the world's first native color LiDAR sensor. Rev8 establishes a new benchmark in 3D spatial perception. Designed for functional safety and large-scale deployment, Rev8 is gaining traction across Ouster's key markets, including mining, construction, robotaxis and transportation infrastructure.&nbsp; Customer adoption was reflected in several orders exceeding $1 million, including from the world's largest heavy machinery manufacturer, a leading autonomous agriculture equipment developer and a major autonomous vehicle provider. Ouster also secured a...",
-    "content_word_count": 566,
+    "content_excerpt": "Ouster's LiDAR Shipments Jump 70% Y/Y in Q2: Will Demand Sustain? Zacks Equity Research August 17, 2026 3 min read OUST +5.59% Ouster, Inc. OUST continued to focus on strategic execution and expansion, launching Rev8 in the second quarter of 2026, the world's first native color LiDAR sensor. Rev8 establishes a new benchmark in 3D spatial perception. Designed for functional safety and large-scale deployment, Rev8 is gaining traction across Ouster's key markets, including mining, construction, robotaxis and transportation infrastructure.&nbsp; Customer adoption was reflected in several orders exceeding $1 million, including from the world's largest heavy machinery manufacturer, a leading autonomous agriculture equipment developer and a major autonomous vehicle provider. Ouster also secured a...",
+    "content_word_count": 572,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Ouster Inc"
     ],
@@ -3130,73 +3159,191 @@
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Ouster launched Rev8, its native color LiDAR sensor, in the second quarter of 2026, secured a major contract with the Utah Department of Transportation, and is expanding its LiDAR production capacity to support rising demand.",
-    "ai_summary_ko": "Ouster는 2026년 2분기에 네이티브 컬러 라이다 센서인 Rev8을 출시하고, 유타주 교통국과 수백 개의 교차로를 커버하는 자사 최대 규모의 라이다 구축 계약을 체결했음. 또한, 회사는 증가하는 수요에 대응하기 위해 연간 생산 능력을 약 4만 대에서 10만 대 수준으로 확대하고 있음.",
-    "ai_summary_en": "Ouster launched Rev8, its native color LiDAR sensor, in the second quarter of 2026 and secured a contract with the Utah Department of Transportation for a large LiDAR deployment covering several hundred intersections across the state. Additionally, the company is expanding its LiDAR production capacity to increase its production run rate from approximately 40,000 units annually toward 100,000 units.",
+    "ai_summary_reason": "Ouster launched its Rev8 native color LiDAR sensor in the second quarter of 2026 and is expanding its LiDAR production capacity from about 40,000 units annually toward 100,000 units, directly linking to the target LiDAR technology.",
+    "ai_summary_ko": "Ouster는 2026년 2분기에 세계 최초의 네이티브 컬러 라이다 센서인 Rev8을 출시했으며, 수요 증가에 대응하기 위해 연간 라이다 생산 능력을 약 4만 대에서 10만 대 규모로 확대하고 있음.",
+    "ai_summary_en": "Ouster launched its Rev8 native color LiDAR sensor in the second quarter of 2026 and is expanding its annual production run rate from approximately 40,000 units toward 100,000 units to support rising demand.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "4535db4021d0cefcd23ea938",
+    "ai_summary_cache_key": "ec65fb69b179006147f3366c",
     "ai_evidence_quotes": [
       "Ouster, Inc. OUST continued to focus on strategic execution and expansion, launching Rev8 in the second quarter of 2026, the world's first native color LiDAR sensor.",
-      "Ouster also secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to date, covering several hundred intersections across the state.",
       "Ouster is also expanding its LiDAR production capacity to support rising demand."
     ]
   },
   {
-    "target_no": 25,
-    "company": "Applied Materials",
-    "title": "AMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously - Yahoo Finance",
-    "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQc1ZQTW5UTUIxN3ByamM1aDRxN2tWRXFSeFNhaGtZWkFGWFIzQWVtVXdfNUdtZWdDM3QyMld3c05mU08yVloxN01Gb1dTRzRhbnB1M18xdkh2SzBFWEhCQml1MGVBUmdJNlhKMXpsYlh5czRyazVnTTBKR2NQS0l3VjdvM0dVOFpHdm92bm9n?oc=5",
-    "source": "Google News: Yahoo Finance",
-    "publisher": "Yahoo Finance",
-    "publisher_home_url": "https://finance.yahoo.com/",
-    "published_at": "2026-08-16T09:33:00Z",
+    "target_no": 6,
+    "company": "Moderna",
+    "title": "First mRNA flu shot gets FDA approval, raising hopes for a more effective vaccine - CIDRAP",
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNR1dicEVTYl8wSXgxR3pjbzRXSThfZHFEcFJwR29FLUhOODRhTnJRQi1RRk01dUtJemIyQWVwYklXbGlnbVJBN0J6ZEtWZnhjeXZvaGkyMmR4MEg1SUpZeXFTV1BjNTlqVUdKSXlMdjZfbkwyd203OWRrYkVmZ0ZSU0ltMnBfWFc3b2RxTjh0SzRrNUtCUmpZc2VTcVZEdWpuc0pWd2ZYT3pXVzA5NVFiektJOW0yOGtYaGdHYg?oc=5",
+    "source": "Google News: CIDRAP",
+    "publisher": "CIDRAP",
+    "publisher_home_url": "https://www.cidrap.umn.edu/",
+    "published_at": "2026-08-06T16:55:30Z",
     "published_month": "2026-08",
     "published_at_source": "jsonld",
     "published_at_precision": "day",
-    "published_at_status": "confirmed",
-    "modified_at": "2026-08-16T09:33:00Z",
-    "date_conflict": false,
+    "published_at_status": "conflicting",
+    "modified_at": "2026-08-06T16:55:30Z",
+    "date_conflict": true,
     "date_candidates": [
       {
-        "date": "2026-08-16T09:33:00Z",
+        "date": "2026-08-06T16:55:30Z",
         "month": "2026-08",
         "source": "jsonld",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-16T09:33:00Z",
+        "date": "2026-08-06T16:46:00Z",
         "month": "2026-08",
         "source": "time_tag",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-16T07:00:00Z",
+        "date": "2026-09-09T14:36:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-08T18:21:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-03T21:09:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-02T14:42:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-02T13:57:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-19T20:52:00Z",
+        "month": "2026-08",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-13T19:57:00Z",
+        "month": "2026-08",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-10T19:41:00Z",
+        "month": "2026-08",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-14T18:34:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-16T14:18:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-17T19:20:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-16T20:37:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-14T16:34:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-15T20:27:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-22T19:44:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-21T13:01:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-15T19:56:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-16T20:11:00Z",
+        "month": "2026-09",
+        "source": "time_tag",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-06T07:00:00Z",
         "month": "2026-08",
         "source": "feed",
         "kind": "published",
         "precision": "day"
       },
       {
-        "date": "2026-08-16T00:00:00Z",
-        "month": "2026-08",
-        "source": "body_text",
-        "kind": "context",
-        "precision": "day"
-      },
-      {
-        "date": "2026-08-16T09:33:00Z",
+        "date": "2026-08-06T16:55:30Z",
         "month": "2026-08",
         "source": "modified_jsonld",
         "kind": "modified",
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
-    "collector": "google_news_trend",
-    "query": "\"Applied Materials\" (\"hybrid bonding\" OR \"wafer bonding\" OR \"advanced packaging\" OR \"bonding equipment\" OR \"die bonding\" OR \"semiconductor packaging\") after:2026-08-01 before:2026-09-01",
+    "collected_at": "2026-09-23T03:19:32Z",
+    "collector": "google_news_rss",
+    "query": "(\"Moderna\" OR \"Moderna Inc\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -3204,49 +3351,46 @@
     "source_priority": 90,
     "official_source_url": "",
     "source_direct_url": "",
-    "discovery_snippet": "AMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously &nbsp;&nbsp; Yahoo Finance",
-    "trend_discovery": true,
-    "trend_matched_terms": [
-      "advanced packaging"
-    ],
-    "content_text": "AMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously\nPetr Huřťák \nAugust 16, 2026 5 min read \nAMAT \n+4.42% \nAMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously Semiconductor machinery manufacturer Applied Materials (NASDAQ:AMAT) announced better-than-expected revenue in Q2 CY2026, with sales up 24.8% year on year to $9.12 billion. On top of that, next quarter's revenue guidance ($10.25 billion at the midpoint) was surprisingly good and 6.1% above what analysts were expecting. Its non-GAAP profit of $3.50 per share was 3.1% above analysts' consensus estimates. \nIs now the time to buy AMAT? Find out in our full research report (it's free). \nApplied Materials (AMAT) Q2 CY2026 Highlights: \nRevenue: $9.12 billion vs analyst estimates of $9.04 billion (24.8% year-on-year growth, 0.9% beat) \nAdjusted EPS: $3.50 vs analyst estimates of $3.39 (3.1% beat) \nAdjusted Operating Income: $3.10 billion vs analyst estimates of $3.03 billion (34% margin, 2.3% beat) \nRevenue Guidance for Q3 CY2026 is $10.25 billion at the midpoint, above analyst estimates of $9.66 billion \nAdjusted EPS guidance for Q3 CY2026 is $4.02 at the midpoint, above analyst estimates of $3.69 \nOperating Margin: 33.7%, up from 30.6% in the same quarter last year \nInventory Days Outstanding: 132, down from 146 in the previous quarter \nMarket Capitalization: $424.4 billion \nStockStory's Take \nApplied Materials' second quarter saw revenue and non-GAAP profitability exceed Wall Street expectations, but the market responded negatively despite the company's strong headline growth. Management attributed the outperformance to robust demand for semiconductor manufacturing equipment, especially in leading-edge logic and DRAM for artificial intelligence (AI) infrastructure. CEO Gary Dickerson highlighted, \"Customers have found new ways to address clean room space constraints and significantly increase their demand for tool deliveries.\" The quarter also benefited from expanded services and strong execution in advanced packaging technologies. \nLooking ahead, Applied Materials' forward guidance is shaped by continued momentum in AI-driven semiconductor demand and long-term customer commitments. Management emphasized unprecedented visibility into future orders, with major customers providing rolling eight-quarter forecasts and signaling multi-year growth. CFO Brice Hill stated, \"We are accelerating the pace of new product development, increasing revenue, and generating new efficiencies in our support functions.\" The company expects strong contributions from advanced packaging, DRAM, and services, while also scaling manufacturing capacity to meet demand through 2027 and beyond. \nKey Insights from Management's Remarks \nStory Continues \nManagement identified several drivers for the quarter's outperformance and strong forward outlook, focusing on AI infrastructure buildout, advanced packaging, and expanded service offerings. \nAI infrastructure buildout: A surge in global investment for AI-related semiconductor capacity was cited as the primary growth driver, with customers seeking to rapidly expand both new and existing fabs. Management noted that this demand is leading to longer-term visibility and larger tool orders. \nAdvanced packaging momentum: Applied Materials emphasized its leadership in advanced packaging technologies, including high bandwidth memory (HBM) and 3D chiplet stacking, which are critical for AI compute. The company expects packaging revenues to grow over 70% this year. \nService business expansion: The Applied Global Services segment delivered strong results, driven by higher utilization rates and expanded AI-powered monitoring and predictive analytics. Management now expects this segment to grow over 20% in the current year and maintain mid-teens growth longer term. \nNew product introductions: Six new products targeting high-performance DRAM, advanced packaging, and e-beam inspection were launched in the quarter, supporting both yield improvement and output efficiency for customers. \nManufacturing capacity scaling: Applied Materials nearly doubled its manufacturing space over the past several years and is hiring aggressively to support anticipated demand, aiming to double quarterly system output by 2028. \nDrivers of Future Performance \nApplied Materials' guidance is built on the accelerating adoption of AI technologies, increased service penetration, and ongoing investment in manufacturing and R&D capacity. \nAI-driven end market growth: Management expects continued strength in AI-related segments, particularly leading-edge foundry logic, DRAM, and advanced packaging, which together account for the majority of wafer fab equipment growth. These segments are seen as the main contributors to revenue expansion over the next several years. \nVisibility and long-term commitments: The company now benefits from multi-year customer roadmaps and detailed eight-quarter forecasts, allowing for better planning and supply chain management. Management believes this unprecedented visibility will support both top-line growth and operational efficiency. \nMargin expansion and operational leverage: Value-based pricing, portfolio mix shift toward high-margin products, and operational efficiency initiatives are expected to support further margin improvement. Management flagged short-term headwinds from ramping new hires but anticipates these costs will moderate as revenues rise. \nCatalysts in Upcoming Quarters \nGoing forward, the StockStory team will track (1) the pace of adoption for new advanced packaging and DRAM solutions, (2) execution on manufacturing and supply chain expansion to meet demand, and (3) sustained growth in the services segment as AI-driven monitoring and analytics scale. Progress in panel-level packaging and further customer commitments will also be key indicators for Applied's ability to capitalize on AI-driven semiconductor demand. \nApplied Materials currently trades at $507.81, down from $540.01 just before the earnings. In the wake of this quarter, is it a buy or sell? Find out in our full research report (it's free for active Edge members) . \nHigh Quality Stocks for All Market Conditions \nONE MORE THING: Top 5 Growth Stocks. The biggest stock winners almost always had one thing in common before they ran. Revenue growing like crazy. Meta. CrowdStrike. Broadcom. Our AI flagged all three. They returned 315%, 314%, and 455%, respectively. \nFind out which 5 stocks it's flagging this month — FREE. Get Our Top 5 Growth Stocks for Free HERE . \nStocks that have made our list include now familiar names such as Nvidia (+1,460% between June 2020 and June 2025) as well as under-the-radar businesses like the once-micro-cap company Kadant (+214% between June 2020 and June 2025). Find your next big winner with StockStory today . \nView Comments \nTerms and Privacy Policy \nPrivacy Dashboard \nMore Info",
-    "content_source_url": "https://finance.yahoo.com/markets/stocks/articles/amat-q2-deep-dive-ai-093300961.html",
-    "content_excerpt": "AMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously Petr Huřťák August 16, 2026 5 min read AMAT +4.42% AMAT Q2 Deep Dive: AI Demand and Advanced Packaging Drive Guidance Upside, Market Reacts Cautiously Semiconductor machinery manufacturer Applied Materials (NASDAQ:AMAT) announced better-than-expected revenue in Q2 CY2026, with sales up 24.8% year on year to $9.12 billion. On top of that, next quarter's revenue guidance ($10.25 billion at the midpoint) was surprisingly good and 6.1% above what analysts were expecting. Its non-GAAP profit of $3.50 per share was 3.1% above analysts' consensus estimates. Is now the time to buy AMAT? Find out in our full research report (it's free). Applied Materials (AMAT) Q2 CY2026 Highlights: Revenue: $9.12 bi...",
-    "content_word_count": 984,
+    "content_text": "First mRNA flu shot gets FDA approval, raising hopes for a more effective vaccine\nSarah Boden \n&nbsp; \nInfluenza Vaccines \nOlivier Le Moal / iStock\nShare \nCopied to clipboard\nA first-of-its-kind flu shot using mRNA technology has been approved for adults 50 years of age and older by the Food and Drug Administration (FDA).&nbsp; \nModerna's mFlusiva is the company's fourth mRNA-based product approved in the United States, according to a Moderna press release . The vaccine has full approval for people 50 to 64 years of age. For those over 65, the FDA granted \"accelerated approval,\" which is temporary: Full approval depends on the long-term safety and real-world effectiveness of the vaccine in this age group. \nEarlier this year, it seemed that the vaccine would never make it to market. The FDA refused to review Moderna's application, saying that instead of comparing mFlusiva to the standard-dose seasonal influenza vaccine, the company should instead have used the high-dose vaccine, which is recommended for adults who are 65 and older. Also, Health Secretary Robert F. Kennedy Jr. has questioned the safety of mRNA, which is the same technology used to produce the COVID-19 vaccines. \nHowever, a week later, the FDA reversed its decision and agreed to review Moderna's application after outcry from infectious disease experts and warnings that outright refusal to review the application could cause a chilling effect that would deter investments in new pharmaceuticals and dampen innovation.&nbsp; \n\"This approval also reflects the ongoing potential of our mRNA platform to help address important public health challenges through continued scientific innovation,\" said Moderna CEO Stéphane Bancel, MBA. \nModerna said it expects to have doses of mFlusiva available for this respiratory virus season. Moderna's other mRNA vaccines are for respiratory syncytial virus and COVID-19, including a COVID shot approved for infants as young as 6 months.&nbsp; \nmRNA may be key to a more efficacious flu vaccine&nbsp; \nThe FDA's approval of mFlusiva is welcome news, as it provides another vaccine option to help protect people from a virus that sends hundreds of thousands of Americans to the hospital each year, said Ronald G. Nahass, MD, president of the Infectious Diseases Society of America. \n“Demonstrating the success of mRNA for influenza opens the door to broader applications, accelerating our ability to create safe and targeted vaccines for a wider range of preventable diseases,\" Nahass said in a statement . \nFlu vaccines made with traditional methods require months of lead time. But the flu mutates quickly, making it difficult to create a vaccine that's a good match for the virus. Though the flu vaccine reduces the severity of illness, it's typically less than 50% effective at preventing infection in a given year. \nManufacturing mRNA vaccines is faster, so theoretically the flu vaccine can be updated as the virus changes, giving hope that mFlusiva will prevent more severe illness and death. The Centers for Disease Control and Prevention estimates that 45,000 people died of influenza during the 2024-25 flu season.&nbsp; \nRelated news\nPeople who say they’ll get vaccinated against COVID and flu often don’t. Why not?\n&nbsp; \nLaine Bergeson\nSome adult vaccines are linked to lower dementia risk. Can they promote brain health?\n&nbsp; \nMeghan Holohan\nVaccine recommendations and access, plus measles deaths: 3 questions, zero consensus: The State of US Vaccine Policy\n&nbsp; \nIzzy Brandstetter Figueroa, PhD, MPH, Riley Mulholland, MPH, Jess Steier, DrPH\nVaccine Integrity Project, American Medical Association review COVID, flu, and RSV vaccines\n&nbsp; \nMeghan Holohan\nCOMMENTARY: When the federal vaccine process falters, good science cannot stop\n&nbsp; \nMichael Osterholm\nWill flu, COVID-19 vaccines be available this fall?\n&nbsp; \nMeghan Holohan\nAn executive order, a confirmed director, and 20 straight months of measles: The State of US Vaccine Policy\n&nbsp; \nIzzy Brandstetter Figueroa, MPH, Riley Mulholland, MPH, Jess Steier, DrPH\nPediatrics group recommends flu vaccine for all children 6 months and older \n&nbsp; \nMeghan Holohan\nThis week's top reads\nStudy: Autism shaves an average of 14 years from life expectancy, with flu the leading contributor\nPneumonia also contributes to excess death, along with malnutrition, pneumonitis, non-vehicle accidents, and drowning. \nMary Van Beusekom\n&nbsp; \nCIDRAP Op-Ed: HHS is asking what to call vaccine recommendations. You have 4 days to weigh in.\nThe people with the most to say, the pediatricians, pharmacists, and obstetric nurses, are the ones least likely to know they can say it.\nJake Scott, MD\n&nbsp; \nAirport air sampling captures COVID, influenza viruses\nResearchers say air monitoring complements wastewater testing in detecting respiratory pathogens from diverse populations, including asymptomatic or pre-symptomatic people. \nMary Van Beusekom\n&nbsp; \nAt Senate hearing, US surgeon general nominee says she believes vaccines are safe \nNicole Saphier, MD, the third nominee for US surgeon general, touted the importance of the MMR and hepatitis B vaccines. \nMeghan Holohan\n&nbsp; \nPennsylvania woman dies of measles complications, the state's third such fatality this year\nThe Jefferson County coroner reported the death, though the state health department said it's conducting its own review and will provide updated information as it becomes available.\nSarah Boden\n&nbsp; \nFourth measles-associated death reported in Pennsylvania\nThe Mifflin County Coroner says an 18-year-old has died of acute disseminated encephalomyelitis, a rare and severe neurologic complication of measles. \nSarah Boden\n&nbsp; \nCDC confirms 37-case multistate hepatitis A outbreak linked to frozen clams\nCases have been identified in 4 states, Massachusetts, Minnesota, New York, and Pennsylvania. &nbsp; \nStephanie Soucheray\n&nbsp; \nCIDRAP Op-Ed: Measles is a grown-up problem, too. Are you at risk?\nAbout 40% of US cases this year have involved adults. In hard-hit Pennsylvania, the number is closer to 70%.\nJess Steier, DrPh\n&nbsp; \nCDC’s new tracking method for measles deaths puzzles experts\nFour measles-related deaths have been reported in Pennsylvania, but not by the CDC.\nStephanie Soucheray\n&nbsp; \nFew people with the flu isolate for the recommended period\nSome people might shed the most influenza virus RNA just as their symptoms start to improve and they return to ordinary life. \nLaine Bergeson\n&nbsp; \nOur underwriters\nUnrestricted financial support provided by\nPrincipal Underwriter\nLeading Underwriter\nSupporting Underwriter\nBecome an Underwriter",
+    "content_source_url": "https://www.cidrap.umn.edu/influenza-vaccines/first-mrna-flu-shot-gets-fda-approval-raising-hopes-more-effective-vaccine",
+    "content_excerpt": "First mRNA flu shot gets FDA approval, raising hopes for a more effective vaccine Sarah Boden &nbsp; Influenza Vaccines Olivier Le Moal / iStock Share Copied to clipboard A first-of-its-kind flu shot using mRNA technology has been approved for adults 50 years of age and older by the Food and Drug Administration (FDA).&nbsp; Moderna's mFlusiva is the company's fourth mRNA-based product approved in the United States, according to a Moderna press release . The vaccine has full approval for people 50 to 64 years of age. For those over 65, the FDA granted \"accelerated approval,\" which is temporary: Full approval depends on the long-term safety and real-world effectiveness of the vaccine in this age group. Earlier this year, it seemed that the vaccine would never make it to market. The FDA refus...",
+    "content_word_count": 1002,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
-    "query_aliases": [],
-    "industry": "반도체",
-    "target_technology": "nm급 W2W 하이브리드 본딩 장비",
-    "target_technology_en": "nm-scale W2W hybrid bonding equipment",
-    "technology_group": "hybrid_bonding_w2w",
-    "excluded_from_relevance": true,
-    "exclude_reason": "user_requested_exclusion",
-    "raw_target_technology": "nm급W2W 장하비이브리드 본딩",
-    "pdf_company": "Applied Materials",
-    "pdf_row_no": 34,
-    "pdf_sequence": "KO추T가RA",
-    "technology_gate_decision": "relevance_exempt",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
+    "query_aliases": [
+      "Moderna Inc"
+    ],
+    "industry": "바이오",
+    "target_technology": "유전자/세포치료제 전달체 및 GMP 원료기술",
+    "target_technology_en": "gene/cell therapy delivery vector and GMP raw material",
+    "technology_group": "gene_cell_therapy_delivery_gmp",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "전차달세체대 및유 전GM자 술P.세 합포성치 료원제천용기",
+    "pdf_company": "Moderna",
+    "pdf_row_no": 31,
+    "pdf_sequence": "24",
+    "technology_gate_decision": "agent_review",
     "candidate_origin": "all_month_sources",
-    "date_status": "confirmed",
-    "date_placement": "in_period",
-    "date_note": "",
-    "ai_signal_supported": true,
+    "date_status": "conflicting",
+    "date_placement": "date_pending",
+    "date_note": "게시일 근거가 서로 어긋남",
+    "ai_signal_supported": false,
     "ai_entity_supported": true,
-    "ai_target_technology_supported": true,
+    "ai_target_technology_supported": false,
     "ai_indicator_supported": true,
     "ai_leading_indicator_supported": true,
     "ai_event_stage": "not_applicable",
     "ai_summary_quality": "pass",
-    "ai_summary_reason": "Applied Materials reported concrete second-quarter financial performance with revenue reaching $9.12 billion and launched six new products targeting high-performance DRAM and advanced packaging.",
-    "ai_summary_ko": "Applied Materials는 인공지능 관련 반도체 제조 장비의 강력한 수요와 6개 신제품 출시에 힘입어 2분기 매출이 전년 동기 대비 24.8% 증가한 91억 2000만 달러를 기록했다고 발표했음.",
-    "ai_summary_en": "Applied Materials reported second-quarter revenue of $9.12 billion, representing a 24.8% year-on-year increase, driven by strong demand for AI-related semiconductor manufacturing equipment and the launch of six new products.",
+    "ai_summary_reason": "The specific product this event is about is Moderna's mRNA flu shot (mFlusiva). This product is an mRNA vaccine, which is outside the target technology of gene/cell therapy delivery vectors and GMP raw materials; therefore, target_technology_supported is false. Entity is supported as the event directly involves Moderna. Indicator is supported by the concrete FDA approval activity.",
+    "ai_summary_ko": "",
+    "ai_summary_en": "",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
-    "ai_summary_cache_key": "16dc6dc7ddbca44b340fb693",
+    "ai_summary_cache_key": "ecaaca88c7e0148a8fcde090",
     "ai_evidence_quotes": [
-      "Semiconductor machinery manufacturer Applied Materials (NASDAQ:AMAT) announced better-than-expected revenue in Q2 CY2026, with sales up 24.8% year on year to $9.12 billion.",
-      "Six new products targeting high-performance DRAM, advanced packaging, and e-beam inspection were launched in the quarter, supporting both yield improvement and output efficiency for customers."
+      "A first-of-its-kind flu shot using mRNA technology has been approved for adults 50 years of age and older by the Food and Drug Administration (FDA).",
+      "Moderna's mFlusiva is the company's fourth mRNA-based product approved in the United States, according to a Moderna press release ."
     ]
   },
   {
@@ -3322,9 +3466,9 @@
         "precision": "day"
       }
     ],
-    "collected_at": "2026-09-22T02:53:04Z",
+    "collected_at": "2026-09-23T03:19:32Z",
     "collector": "google_news_rss",
-    "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:55d",
+    "query": "(\"Skyworks\" OR \"Skyworks Solutions\") (\"press release\" OR \"investor relations\" OR earnings OR announcement OR investment OR expansion OR acquisition OR partnership OR Korea) when:56d",
     "source_type": "fallback",
     "source_kind": "news",
     "is_press_release": false,
@@ -3337,7 +3481,7 @@
     "content_excerpt": "Skyworks updates regulatory status of Qorvo merger Filing Impact (High) Filing Sentiment (Neutral) Form Type 425 Rhea-AI Filing Summary English Italian Spanish German Korean French Arabic Skyworks Solutions provides an update on its proposed two-step merger with Qorvo , under which Qorvo will become an indirect wholly owned subsidiary of Skyworks through successive mergers of two Skyworks subsidiaries into Qorvo and then into another Skyworks subsidiary. The transaction’s completion remains subject to customary closing conditions, including antitrust and foreign investment approvals. The waiting period under the Hart-Scott-Rodino Antitrust Improvements Act of 1976 has expired, and a related timing agreement with the U.S. Federal Trade Commission expired on August 1, 2026 without further FT...",
     "content_word_count": 2973,
     "content_fetch_status": "fetched",
-    "content_fetched_at": "2026-09-22T02:53:04Z",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
     "query_aliases": [
       "Skyworks Solutions"
     ],
@@ -3371,6 +3515,186 @@
     "ai_summary_cache_key": "283c4e4e1ee7f70223928340",
     "ai_evidence_quotes": [
       "Skyworks Solutions provides an update on its proposed two-step merger with Qorvo , under which Qorvo will become an indirect wholly owned subsidiary of Skyworks through successive mergers of two Skyworks subsidiaries into Qorvo and then into another Skyworks subsidiary."
+    ]
+  },
+  {
+    "target_no": 31,
+    "company": "Norsk Hydro",
+    "title": "Hydro and Mercedes-Benz advance recycled aluminium - AL Circle",
+    "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPNzA1Y0VEeTk2b1MtRmZOWHk4X0hGRXNwd21TM0NJN045UDQ1S0RDeWI4ZV9fYmlqV1Z1dl9Ub2UydkhPQ3BRZTB6dTJNalhqdDM2YUY5ajhzNnhobkNfX2gtUFZXb3BNc3V5VXFSeFY5a1plSzNhVnRDN3cyZm9vTG5aZUlfWE10TTJNc3FmNWVGLTVCM2FJSTFqS1JpU04yRDFaNXlFYUNTd3RwNU13Z2ppSzhwbWZQdnZzbGM0M0NwbjlURnc?oc=5",
+    "source": "Google News: AL Circle",
+    "publisher": "AL Circle",
+    "publisher_home_url": "https://www.alcircle.com/",
+    "published_at": "2026-08-03T06:09:26Z",
+    "published_month": "2026-08",
+    "published_at_source": "meta",
+    "published_at_precision": "day",
+    "published_at_status": "confirmed",
+    "modified_at": "2026-08-03T06:09:30Z",
+    "date_conflict": false,
+    "date_candidates": [
+      {
+        "date": "2026-08-03T06:09:26Z",
+        "month": "2026-08",
+        "source": "meta",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T06:09:26Z",
+        "month": "2026-08",
+        "source": "jsonld",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T06:09:26Z",
+        "month": "2026-08",
+        "source": "itemprop",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T07:00:00Z",
+        "month": "2026-08",
+        "source": "feed",
+        "kind": "published",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T00:00:00Z",
+        "month": "2026-08",
+        "source": "body_text",
+        "kind": "context",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T06:09:30Z",
+        "month": "2026-08",
+        "source": "modified_meta",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T06:09:30Z",
+        "month": "2026-08",
+        "source": "modified_jsonld",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-03T06:09:26Z",
+        "month": "2026-08",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-02T12:48:43Z",
+        "month": "2026-09",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-20T05:26:55Z",
+        "month": "2026-08",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-08-17T10:26:01Z",
+        "month": "2026-08",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-21T05:27:13Z",
+        "month": "2026-09",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-16T08:41:21Z",
+        "month": "2026-09",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-14T12:05:25Z",
+        "month": "2026-09",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      },
+      {
+        "date": "2026-09-11T08:58:47Z",
+        "month": "2026-09",
+        "source": "modified_time_tag",
+        "kind": "modified",
+        "precision": "day"
+      }
+    ],
+    "collected_at": "2026-09-23T03:19:32Z",
+    "collector": "google_news_trend",
+    "query": "(\"Norsk Hydro\" OR \"Hydro\") (\"Hydro CIRCAL\" OR \"recycled aluminium\" OR \"recycled aluminum\" OR \"recycled alu\" OR \"recycled alloy\" OR \"recycled content aluminum\") after:2026-08-01 before:2026-09-01",
+    "source_type": "fallback",
+    "source_kind": "news",
+    "is_press_release": false,
+    "source_label_ko": "대체출처",
+    "source_priority": 90,
+    "official_source_url": "",
+    "source_direct_url": "",
+    "discovery_snippet": "Hydro and Mercedes-Benz advance recycled aluminium &nbsp;&nbsp; AL Circle",
+    "trend_discovery": true,
+    "trend_matched_terms": [
+      "recycled aluminium",
+      "recycled alu"
+    ],
+    "content_text": "Home End User AL in ALL #31: Mercedes-Benz isn’t just buying aluminium; it’s redesigning the... \nEnd User \nAL in ALL #31: Mercedes-Benz isn’t just buying aluminium; it’s redesigning the automotive supply chain\nTrisha Hazra \n03 Aug 2026 \n0 \n685 \nShare\nFacebook\nX\nPinterest\nWhatsApp\nLinkedin\nFor decades, automotive aluminium innovation centred on one question: How can vehicles become lighter?\nToday, the question has changed. How can vehicles become lighter, lower in carbon and truly circular, without compromising quality, safety or supply security? The latest collaboration between Hydro and Mercedes-Benz suggests the industry may finally have an answer.\nMercedes-Benz will become the first automotive manufacturer in Europe to integrate Hydro CIRCAL, made with at least 75% post-consumer recycled aluminium, into the series production of its next generation of large electric vehicles. Combined with Hydro REDUXA low-carbon primary aluminium, the partnership signals a shift from simply reducing vehicle weight to fundamentally transforming how aluminium moves through the automotive value chain.\nThe new race isn’t lightweighting; it’s circularity at scale. \nAutomakers have embraced aluminium for decades because of its lightweight properties, but electrification has introduced a new challenge.\nElectric vehicles need lightweight materials to maximise driving range, yet manufacturers are also under growing pressure to reduce emissions embedded within the materials themselves. Producing cleaner vehicles now means rethinking not only the powertrain but also every kilogram of metal that goes into it. This is where recycled aluminium changes the equation.\nUnlike many structural materials, aluminium can be recycled repeatedly without losing its performance characteristics. The challenge has never been recyclability—it has been producing high-quality recycled aluminium in sufficient volumes for demanding automotive applications.\nHydro’s latest announcement demonstrates that this barrier is beginning to disappear. By supplying aluminium containing a minimum of 75% post-consumer scrap for serial vehicle production, the company is proving that high recycled content can meet the stringent quality, safety and performance standards expected by premium automotive manufacturers.\nScrap is becoming a strategic automotive resource \nThe significance of this partnership extends beyond one vehicle programme. End-of-life cars, buildings and infrastructure are increasingly becoming valuable raw material sources rather than waste streams. Every tonne of aluminium recovered reduces dependence on virgin resources while strengthening regional supply resilience.\nInstead of relying solely on globally distributed primary metal supply chains, manufacturers are beginning to build local circular systems where aluminium remains in continuous use.\nFor European automakers facing supply chain uncertainty, volatile raw material markets and increasingly ambitious sustainability targets, recycled aluminium is no longer just an environmental solution; it is becoming a competitive advantage.\nDecarbonisation now starts with material selection \nThe Hydro-Mercedes collaboration also highlights another important transition. Low-carbon manufacturing is no longer focused only on renewable energy inside factories. Material procurement itself has become a major decarbonisation lever.\nAlongside Hydro CIRCAL, Mercedes-Benz continues expanding its use of Hydro REDUXA, Hydro’s low-carbon primary aluminium produced using renewable energy. The two companies are also committed to further reducing the carbon footprint of primary aluminium over time, building upon a technology roadmap first established in 2022 and expanded across the full aluminium value chain in 2024.\nThe future of automotive aluminium is unlikely to depend on a single breakthrough material. Instead, it will rely on combining cleaner primary aluminium with increasingly sophisticated recycled aluminium streams to achieve both performance and emissions targets.\nWhy this matters for the aluminium industry \nThis partnership sends an important message across the aluminium ecosystem. Vehicle manufacturers are no longer evaluating suppliers only on cost, quality and delivery performance. They are also looking for partners capable of delivering verified recycled content, lower embodied carbon, transparent sourcing and resilient regional supply chains.\nFor aluminium producers, recyclers, processors and technology providers, this creates new commercial opportunities alongside new competitive expectations. Companies able to supply certified recycled aluminium, advanced scrap recovery technologies and traceable low-carbon products will be increasingly aligned with the purchasing priorities of global automotive OEMs.\nThe future is circular \nThe automotive industry’s next competitive advantage may not come from designing lighter vehicles; it may come from designing smarter material loops.\nHydro and Mercedes-Benz have demonstrated that recycled aluminium is no longer confined to niche sustainability projects or pilot programmes. It is entering mainstream vehicle production at industrial scale.\nAs OEMs pursue circular manufacturing, aluminium is evolving from a lightweight engineering material into a strategic enabler of resilient, low-carbon mobility. And for the global aluminium industry, that could prove to be the most valuable transformation of all.\nSource: Hydro and Mercedes-Benz shift gears to scale recycled and low-carbon aluminium in Europe \nTags \nalinall \naluminium scrap \nEurope recycling industry \nrecycled aluminium \nShare\nFacebook\nX\nPinterest\nWhatsApp\nLinkedin\nPrevious article Red mud: An opportunity or obstacle for alumina refinery \nNext article Technology companies from Europe redefining the extrusion process through innovation and persistence \nTrisha Hazra Executive - Digital Marketing and Content\nRELATED ARTICLES \nEnd User \nAL in ALL #35: Aluminium foil isn’t just wrapping food; it’s becoming a medium for innovation \n02 Sep 2026 \r\nEnd User \nAL in ALL #34: Aluminium wiring isn’t just replacing copper; it’s reshaping the EV design equation \n20 Aug 2026 \r\nEnd User \nAL in ALL #33: Aluminium in elevators aren’t just moving people; they’re reshaping vertical mobility \n17 Aug 2026 \r\n- Advertisment - \nMost Popular \nAluminium extrusions for solar mounting systems: Profiles, alloys and buyer specifications \n21 Sep 2026 \r\nAluminium extrusion demand: Four modern end-use sectors driving growth \n16 Sep 2026 \r\nLeading German companies shaping aluminium extrusion quality control and surface treatment technologies \n14 Sep 2026 \r\nHow to write an aluminium extrusion RFQ that suppliers can quote accurately \n11 Sep 2026 \r\nLoad more \nRecent Comments \nrishika yadav on Cold-Rolled vs. Hot-Rolled Aluminium Coils: Which One Fits Your Production Line? \nkrcaluprofiles.com/product-category/aluminum-profiles/ on Case study: From standard profiles to advanced structures: Types & structure of aluminium extrusions and their applications \nSangita Sadafule on Red mud: An opportunity or obstacle for alumina refinery \nPrerana Pradhan on Beyond just price protection: Why hedging is becoming a strategic advantage for aluminium recyclers \nNeelam on Beyond just price protection: Why hedging is becoming a strategic advantage for aluminium recyclers",
+    "content_source_url": "https://www.alcircle.com/blog/al-in-all-31-mercedes-benz-isnt-just-buying-aluminium-its-redesigning-the-automotive-supply-chain",
+    "content_excerpt": "Home End User AL in ALL #31: Mercedes-Benz isn’t just buying aluminium; it’s redesigning the... End User AL in ALL #31: Mercedes-Benz isn’t just buying aluminium; it’s redesigning the automotive supply chain Trisha Hazra 03 Aug 2026 0 685 Share Facebook X Pinterest WhatsApp Linkedin For decades, automotive aluminium innovation centred on one question: How can vehicles become lighter? Today, the question has changed. How can vehicles become lighter, lower in carbon and truly circular, without compromising quality, safety or supply security? The latest collaboration between Hydro and Mercedes-Benz suggests the industry may finally have an answer. Mercedes-Benz will become the first automotive manufacturer in Europe to integrate Hydro CIRCAL, made with at least 75% post-consumer recycled alum...",
+    "content_word_count": 1004,
+    "content_fetch_status": "fetched",
+    "content_fetched_at": "2026-09-23T03:19:32Z",
+    "query_aliases": [
+      "Hydro"
+    ],
+    "industry": "철강금속",
+    "target_technology": "비철금속 소재 스크랩 활용률 극대화",
+    "target_technology_en": "non-ferrous metal scrap recycling and utilization",
+    "technology_group": "nonferrous_scrap_recycling",
+    "excluded_from_relevance": false,
+    "exclude_reason": "",
+    "raw_target_technology": "비철금속극 소대재화 스 기크술랩 활용률",
+    "pdf_company": "Norsk Hydro",
+    "pdf_row_no": 64,
+    "pdf_sequence": "46",
+    "technology_gate_decision": "agent_review",
+    "candidate_origin": "all_month_sources",
+    "date_status": "confirmed",
+    "date_placement": "in_period",
+    "date_note": "",
+    "ai_signal_supported": true,
+    "ai_entity_supported": true,
+    "ai_target_technology_supported": true,
+    "ai_indicator_supported": true,
+    "ai_leading_indicator_supported": true,
+    "ai_event_stage": "not_applicable",
+    "ai_summary_quality": "pass",
+    "ai_summary_reason": "The event is directly linked to Norsk Hydro and its target technology of non-ferrous metal scrap recycling and utilization, as Mercedes-Benz integrates Hydro CIRCAL containing at least 75% post-consumer recycled aluminium into series production, supplied by Hydro.",
+    "ai_summary_ko": "Norsk Hydro사가 최소 75%의 소비자 사용 후 재활용 알루미늄으로 제작된 Hydro CIRCAL을 Mercedes-Benz의 차세대 대형 전기차 양산에 공급하기로 했음.",
+    "ai_summary_en": "Norsk Hydro is supplying Hydro CIRCAL, which contains at least 75% post-consumer recycled aluminium, for series production in Mercedes-Benz's next generation of large electric vehicles.",
+    "ai_summary_source": "gemini_article_review",
+    "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
+    "ai_summary_cache_key": "37350968654171e2854e6c86",
+    "ai_evidence_quotes": [
+      "Mercedes-Benz will become the first automotive manufacturer in Europe to integrate Hydro CIRCAL, made with at least 75% post-consumer recycled alum...",
+      "By supplying aluminium containing a minimum of 75% post-consumer scrap for serial vehicle production, the company is proving that high recycled content can meet the stringent quality, safety and performance standards expected by premium automotive manufacturers."
     ]
   }
 ]
