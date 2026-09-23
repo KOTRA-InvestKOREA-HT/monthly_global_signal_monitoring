@@ -1,29 +1,22 @@
 {
   "status": "completed",
-  "requests": 66,
-  "cached": 328,
-  "completed": 385,
-  "total": 385,
+  "requests": 11,
+  "cached": 373,
+  "completed": 384,
+  "total": 384,
   "date_hints": 0,
   "failed_articles": [],
-  "diagnostics": [
-    {
-      "article_id": "05415a29bbe99e8fba4cc65b",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/05415a29bbe99e8fba4cc65b/e5363a41-6f88-42c3-864d-e44bf319c517-attempt-1.json"
-    }
-  ],
+  "diagnostics": [],
   "concurrency": 4,
   "quote_removals": [],
   "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 8,
-    "verified": 8,
+    "requested": 0,
+    "verified": 0,
     "partial": 0,
     "pending": 0,
-    "changed": 2,
+    "changed": 0,
     "failed": 0,
     "rejected_responses": 0,
     "errors": {}

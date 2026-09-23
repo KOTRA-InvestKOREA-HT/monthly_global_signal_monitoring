@@ -1,13 +1,13 @@
 {
-  "run_started_at": "2026-09-23T07:15:09Z",
+  "run_started_at": "2026-09-23T07:56:51Z",
   "collection_resume_version": 1,
-  "collection_input_digest": "a93ee2f7d6221294f8cb91b3459cf3cecb0350120363ad199c1481f933d0ab67",
+  "collection_input_digest": "356dfc84be5cc5b3089ecf0db6bf7c949a7ce27ddbfb3a22018dc2d974976f30",
   "html_network": {
-    "attempts": 148,
-    "skipped": 4,
-    "elapsed_ms": 79309
+    "attempts": 74,
+    "skipped": 7,
+    "elapsed_ms": 24490
   },
-  "cached_company_count": 64,
+  "cached_company_count": 70,
   "retryable_company_count": 2,
   "collection_coverage": [
     {
@@ -56,13 +56,13 @@
       "company": "Dupont",
       "status": "incomplete",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Albemarle",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "TIMET",
@@ -92,7 +92,7 @@
       "company": "DOW",
       "status": "incomplete",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Thermo Fisher",
@@ -104,13 +104,13 @@
       "company": "Amkor Technology",
       "status": "completed",
       "retryable": false,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Onsemi",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Qualcomm",
@@ -134,7 +134,7 @@
       "company": "GE Healthcare",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Boeing",
@@ -164,7 +164,7 @@
       "company": "Magnix",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Prodrive",
@@ -182,7 +182,7 @@
       "company": "Besi",
       "status": "completed",
       "retryable": false,
-      "cached": true
+      "cached": false
     },
     {
       "company": "NXP",
@@ -206,7 +206,7 @@
       "company": "Heidenhain",
       "status": "incomplete",
       "retryable": false,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Infineon",
@@ -302,13 +302,13 @@
       "company": "Maxon",
       "status": "completed",
       "retryable": false,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Siemens-Gamesa",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Renishaw",
@@ -332,13 +332,13 @@
       "company": "HyproMag",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "EVG",
       "status": "completed",
       "retryable": false,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Plansee",
@@ -392,7 +392,7 @@
       "company": "Hitachi Metals",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Toppan Holdings",
@@ -410,7 +410,7 @@
       "company": "Asahi Glass",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "JSR",
@@ -422,7 +422,7 @@
       "company": "Shin-Etsu Chemicals",
       "status": "completed",
       "retryable": false,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Tokyo Electron",
@@ -473,18 +473,18 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-23T07:16:20Z",
+  "run_finished_at": "2026-09-23T07:57:16Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Cognex",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 7,
       "cached": true
@@ -505,38 +505,38 @@
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 53,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 54,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 54,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Dupont",
-      "elapsed_ms": 19933,
-      "request_count": 8,
+      "elapsed_ms": 5,
+      "request_count": 0,
       "result_count": 6,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 12818,
-      "request_count": 11,
+      "elapsed_ms": 5,
+      "request_count": 0,
       "result_count": 6,
-      "cached": false
+      "cached": true
     },
     {
       "company": "TIMET",
@@ -554,24 +554,24 @@
     },
     {
       "company": "Chemours",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 5,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "DOW",
-      "elapsed_ms": 16255,
-      "request_count": 12,
+      "elapsed_ms": 5,
+      "request_count": 0,
       "result_count": 9,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Thermo Fisher",
@@ -582,45 +582,45 @@
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 2,
-      "request_count": 0,
+      "elapsed_ms": 9225,
+      "request_count": 15,
       "result_count": 8,
-      "cached": true
-    },
-    {
-      "company": "Onsemi",
-      "elapsed_ms": 18621,
-      "request_count": 21,
-      "result_count": 10,
       "cached": false
     },
     {
+      "company": "Onsemi",
+      "elapsed_ms": 50,
+      "request_count": 0,
+      "result_count": 10,
+      "cached": true
+    },
+    {
       "company": "Qualcomm",
-      "elapsed_ms": 2,
+      "elapsed_ms": 56,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Skyworks",
-      "elapsed_ms": 1,
+      "elapsed_ms": 53,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Eli Lilly and Company",
-      "elapsed_ms": 1,
+      "elapsed_ms": 8,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "GE Healthcare",
-      "elapsed_ms": 11099,
-      "request_count": 14,
+      "elapsed_ms": 4,
+      "request_count": 0,
       "result_count": 8,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Boeing",
@@ -631,80 +631,80 @@
     },
     {
       "company": "3M",
-      "elapsed_ms": 1,
+      "elapsed_ms": 15,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Ouster",
-      "elapsed_ms": 1,
+      "elapsed_ms": 17,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Applied Materials",
-      "elapsed_ms": 1,
+      "elapsed_ms": 17,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Magnix",
-      "elapsed_ms": 2200,
-      "request_count": 3,
+      "elapsed_ms": 6,
+      "request_count": 0,
       "result_count": 0,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Prodrive",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 0,
       "cached": true
     },
     {
       "company": "ASML",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Besi",
-      "elapsed_ms": 1,
-      "request_count": 0,
+      "elapsed_ms": 17562,
+      "request_count": 17,
       "result_count": 10,
-      "cached": true
+      "cached": false
     },
     {
       "company": "NXP",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Norsk Hydro",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Vestas",
-      "elapsed_ms": 1,
+      "elapsed_ms": 5,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Heidenhain",
-      "elapsed_ms": 1,
-      "request_count": 0,
+      "elapsed_ms": 13684,
+      "request_count": 17,
       "result_count": 9,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Infineon",
@@ -722,14 +722,14 @@
     },
     {
       "company": "Bayer",
-      "elapsed_ms": 1,
+      "elapsed_ms": 16,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Merck",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -750,21 +750,21 @@
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 0,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -778,7 +778,7 @@
     },
     {
       "company": "Umicore",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -813,17 +813,17 @@
     },
     {
       "company": "Maxon",
-      "elapsed_ms": 0,
-      "request_count": 0,
+      "elapsed_ms": 20570,
+      "request_count": 20,
       "result_count": 10,
-      "cached": true
+      "cached": false
     },
     {
       "company": "Siemens-Gamesa",
-      "elapsed_ms": 28573,
-      "request_count": 17,
+      "elapsed_ms": 6,
+      "request_count": 0,
       "result_count": 10,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Renishaw",
@@ -834,42 +834,42 @@
     },
     {
       "company": "Nexeon",
-      "elapsed_ms": 1,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 1,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "HyproMag",
-      "elapsed_ms": 34538,
-      "request_count": 28,
-      "result_count": 4,
-      "cached": false
-    },
-    {
-      "company": "EVG",
       "elapsed_ms": 1,
       "request_count": 0,
-      "result_count": 7,
+      "result_count": 4,
       "cached": true
     },
     {
+      "company": "EVG",
+      "elapsed_ms": 8830,
+      "request_count": 9,
+      "result_count": 6,
+      "cached": false
+    },
+    {
       "company": "Plansee",
-      "elapsed_ms": 1,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 14130,
+      "elapsed_ms": 11984,
       "request_count": 7,
       "result_count": 4,
       "cached": false
@@ -883,21 +883,21 @@
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 2,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Safran",
-      "elapsed_ms": 1,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 0,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -918,31 +918,31 @@
     },
     {
       "company": "Hitachi Metals",
-      "elapsed_ms": 8110,
-      "request_count": 12,
+      "elapsed_ms": 1,
+      "request_count": 0,
       "result_count": 6,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Toppan Holdings",
-      "elapsed_ms": 2,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 2,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Glass",
-      "elapsed_ms": 15313,
-      "request_count": 10,
+      "elapsed_ms": 1,
+      "request_count": 0,
       "result_count": 3,
-      "cached": false
+      "cached": true
     },
     {
       "company": "JSR",
@@ -953,21 +953,21 @@
     },
     {
       "company": "Shin-Etsu Chemicals",
-      "elapsed_ms": 40253,
-      "request_count": 22,
+      "elapsed_ms": 1,
+      "request_count": 0,
       "result_count": 10,
-      "cached": false
+      "cached": true
     },
     {
       "company": "Tokyo Electron",
-      "elapsed_ms": 2,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Tosoh",
-      "elapsed_ms": 0,
+      "elapsed_ms": 1,
       "request_count": 0,
       "result_count": 4,
       "cached": true
@@ -988,7 +988,7 @@
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 1,
+      "elapsed_ms": 0,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -1009,8 +1009,8 @@
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 9880,
-      "request_count": 6,
+      "elapsed_ms": 11046,
+      "request_count": 2,
       "result_count": 0,
       "cached": false
     }
@@ -1203,7 +1203,7 @@
       "usable_monthly": 1,
       "fallback": "skipped_has_monthly_source",
       "trend_discovery": "run",
-      "trend_discovery_found": 4,
+      "trend_discovery_found": 6,
       "trend_discovery_kept": 1
     },
     {
@@ -1663,8 +1663,8 @@
       "out_of_period_after_fetch": 3,
       "usable_monthly": 0,
       "fallback": "run",
-      "fallback_found": 3,
-      "fallback_kept": 3,
+      "fallback_found": 2,
+      "fallback_kept": 2,
       "trend_discovery": "run",
       "trend_discovery_found": 1,
       "trend_discovery_kept": 1
@@ -1930,17 +1930,17 @@
       "fallback_found": 0,
       "fallback_kept": 0,
       "trend_discovery": "run",
-      "trend_discovery_found": 2,
+      "trend_discovery_found": 1,
       "trend_discovery_kept": 0
     }
   ],
   "companies_cut_by_company_cap": 20,
   "fallback_skipped_company_count": 42,
   "trend_discovery_company_count": 77,
-  "trend_discovery_found": 276,
+  "trend_discovery_found": 277,
   "trend_discovery_kept": 28,
   "trend_discovery_per_company": 1,
-  "skipped_unresolved_publisher_count": 57,
+  "skipped_unresolved_publisher_count": 51,
   "publisher_resolution_count": 0,
   "company_count": 77,
   "canonical_company_count": 77,
@@ -1967,277 +1967,100 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 171,
+  "request_count": 87,
   "fetch_retries": 2,
-  "retry_count": 4,
-  "result_count": 552,
+  "retry_count": 6,
+  "result_count": 551,
   "official_result_count": 398,
   "press_release_result_count": 207,
   "undated_result_count": 73,
   "date_status_counts": {
     "estimated": 83,
-    "confirmed": 351,
-    "conflicting": 45,
+    "confirmed": 348,
+    "conflicting": 47,
     "unknown": 73
   },
   "month_only_result_count": 14,
-  "date_conflict_result_count": 45,
+  "date_conflict_result_count": 47,
   "undated_with_body_count": 45,
   "link_policy": "proposed",
   "link_verdict_counts": {
-    "hard_reject": 5311,
-    "accept": 629,
-    "fetch_to_verify": 155
+    "hard_reject": 1681,
+    "accept": 218,
+    "fetch_to_verify": 117
   },
   "max_verify_per_company": 0,
-  "excluded_non_article_count": 5319,
+  "excluded_non_article_count": 1682,
   "excluded_non_article_reasons": {
-    "no_article_affordance": 3931,
-    "site_root": 208,
-    "navigation_label": 103,
-    "index_page": 433,
-    "boilerplate_or_social": 481,
-    "offsite_link": 63,
-    "category_or_pagination": 89,
-    "asset_file": 1,
-    "verified_index_page": 1,
-    "feed_url": 2,
-    "no_article_title": 7
+    "site_root": 57,
+    "no_article_affordance": 1230,
+    "boilerplate_or_social": 193,
+    "index_page": 120,
+    "offsite_link": 19,
+    "navigation_label": 20,
+    "category_or_pagination": 42,
+    "verified_index_page": 1
   },
-  "excluded_non_article_sample_count": 138,
+  "excluded_non_article_sample_count": 70,
   "excluded_non_article_samples": [
     {
-      "company": "Albemarle",
+      "company": "Maxon",
       "title": "",
-      "url": "https://www.albemarle.com/cdn-cgi/content?id=N2T.FMvfvXBkwS3XigrnNaDRB5XXN1wLUvgNuA89Cmg-1790147709.4150796-1.2.1.1-tgfwL_3KtyGN.5qAWpe11LTfjKqW0KUAIP3.On2RWHppd9LqsXwzuua8mlvDB9dr",
-      "reason": "no_article_affordance"
+      "url": "https://www.maxongroup.com/en",
+      "reason": "site_root"
     },
     {
-      "company": "Albemarle",
-      "title": "Contact Us",
-      "url": "https://www.albemarle.com/us/en/contact-us-0",
-      "reason": "no_article_affordance"
+      "company": "Besi",
+      "title": "&nbsp;",
+      "url": "https://www.besi.com/",
+      "reason": "site_root"
     },
     {
-      "company": "DOW",
-      "title": "Locations",
-      "url": "https://corporate.dow.com/en-us/locations.html",
-      "reason": "no_article_affordance"
+      "company": "Besi",
+      "title": "Homepage",
+      "url": "https://www.besi.com/",
+      "reason": "site_root"
     },
     {
-      "company": "DOW",
-      "title": "Search",
-      "url": "https://corporate.dow.com/en-us/search.html",
-      "reason": "no_article_affordance"
+      "company": "Amkor Technology",
+      "title": "Amkor.com",
+      "url": "https://amkor.com/",
+      "reason": "site_root"
     },
     {
-      "company": "GE Healthcare",
-      "title": "Leadership",
-      "url": "https://www.gehealthcare.com/about/leadership",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Email Alerts",
-      "url": "https://investor.gehealthcare.com/resources/email-alerts",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Disclaimer",
-      "url": "https://www.onsemi.com/disclaimer",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Onsemi",
-      "title": "JS",
-      "url": "https://www.onsemi.com/myon/my-account",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Magnix",
-      "title": "Pre-order here",
-      "url": "https://www.magnix.aero/magniair",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Magnix",
-      "title": "Batteries",
-      "url": "https://www.magnix.aero/batteries",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Products and Services",
-      "url": "https://www.siemensgamesa.com/global/en/home/products-and-services.html",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Onshore",
-      "url": "https://www.siemensgamesa.com/global/en/home/products-and-services/onshore.html",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "HyproMag",
-      "title": "Rare Earth Magnet Recycling",
-      "url": "https://hypromag.com/rare-earth-magnet-recycling/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "HyproMag",
-      "title": "PULSE Project",
-      "url": "https://hypromag.com/pulse-project/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Hitachi Metals",
+      "company": "Amkor Technology",
       "title": "",
-      "url": "https://www.proterial.com/e/",
-      "reason": "no_article_affordance"
+      "url": "https://ir.amkor.com/",
+      "reason": "site_root"
     },
     {
-      "company": "Hitachi Metals",
-      "title": "Products TOP",
-      "url": "https://www.proterial.com/e/products/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Texcell",
-      "title": "Custom Cell Culture",
-      "url": "https://texcell.com/custom-cell-culture/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Texcell",
-      "title": "Cell Banking",
-      "url": "https://texcell.com/cell-banking/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Message from Top Management",
-      "url": "https://www.agc.com/en/company/topmessage/index.html",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Our Founding Spirit",
-      "url": "https://www.agc.com/en/company/found/index.html",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "CN",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "首页",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Company Profile",
-      "url": "https://www.shinetsu.co.jp/en/company/profile/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Company History",
-      "url": "https://www.shinetsu.co.jp/en/company/history/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Albemarle",
+      "company": "Maxon",
       "title": "",
-      "url": "https://www.albemarle.com/us/en",
+      "url": "https://www.maxongroup.com/en-us",
       "reason": "site_root"
     },
     {
-      "company": "Albemarle",
-      "title": "Home",
-      "url": "https://www.albemarle.com/us/en",
-      "reason": "site_root"
-    },
-    {
-      "company": "DOW",
-      "title": "Corporate",
-      "url": "https://corporate.dow.com/en-us.html",
-      "reason": "site_root"
-    },
-    {
-      "company": "DOW",
-      "title": "Investors",
-      "url": "https://investors.dow.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "GEHealthcare.com",
-      "url": "https://www.gehealthcare.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "GE Healthcare",
+      "company": "Heidenhain",
       "title": "",
-      "url": "https://investor.gehealthcare.com/",
+      "url": "https://www.heidenhain.com/",
       "reason": "site_root"
     },
     {
-      "company": "Onsemi",
+      "company": "Heidenhain",
+      "title": "HEIDENHAIN SHOP",
+      "url": "https://www.heidenhain.shop/en",
+      "reason": "site_root"
+    },
+    {
+      "company": "EVG",
       "title": "",
-      "url": "https://www.onsemi.com/",
+      "url": "https://www.evgroup.com/",
       "reason": "site_root"
     },
     {
-      "company": "Onsemi",
-      "title": "IPS Design Tool",
-      "url": "https://ips-design-tool.onsemi.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Magnix",
-      "title": "",
-      "url": "https://www.magnix.aero/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Magnix",
-      "title": "Home",
-      "url": "https://www.magnix.aero/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Media Library",
-      "url": "https://press.library.siemens-energy.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "HyproMag",
-      "title": "",
-      "url": "https://hypromag.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "HyproMag",
-      "title": "Home",
-      "url": "https://hypromag.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Hitachi Metals",
-      "title": "日本語",
-      "url": "https://www.proterial.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Hitachi Metals",
-      "title": "China(简体中文)",
-      "url": "https://www.china.proterial.com/",
+      "company": "EVG",
+      "title": "EV Group",
+      "url": "https://www.evgroup.com/",
       "reason": "site_root"
     },
     {
@@ -2253,369 +2076,135 @@
       "reason": "site_root"
     },
     {
-      "company": "Asahi Glass",
-      "title": "",
-      "url": "https://www.agc.com/en/",
-      "reason": "site_root"
+      "company": "Maxon",
+      "title": "Knowledge & support",
+      "url": "https://www.maxongroup.com/en/knowledge-and-support",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Asahi Glass",
-      "title": "",
-      "url": "https://www.agc.com/en/",
-      "reason": "site_root"
+      "company": "Maxon",
+      "title": "Cooperations",
+      "url": "https://www.maxongroup.com/en/cooperations",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Shanghai Electric Wind Power",
-      "title": "",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
+      "company": "Besi",
+      "title": "Company Profile",
+      "url": "https://www.besi.com/company/company-profile/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Shanghai Electric Wind Power",
-      "title": "EN",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
+      "company": "Besi",
+      "title": "Strategy",
+      "url": "https://www.besi.com/company/company-profile/strategy/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Shin-Etsu Chemicals",
-      "title": "",
-      "url": "https://www.shinetsu.co.jp/en/",
-      "reason": "site_root"
+      "company": "Amkor Technology",
+      "title": "Board of Directors",
+      "url": "https://ir.amkor.com/corporate-governance/board-of-directors",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Home",
-      "url": "https://www.shinetsu.co.jp/en/",
-      "reason": "site_root"
+      "company": "Amkor Technology",
+      "title": "Corporate Management",
+      "url": "https://ir.amkor.com/corporate-governance/management",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Albemarle",
-      "title": "Solutions",
-      "url": "https://www.albemarle.com/us/en/what-we-offer/solutions",
-      "reason": "navigation_label"
+      "company": "Heidenhain",
+      "title": "Land oder Region wählen",
+      "url": "https://www.heidenhain.com/select-region",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Albemarle",
-      "title": "Corporate Governance",
-      "url": "https://investors.albemarle.com/governance/corporate-governance/governance-documents/default.aspx",
-      "reason": "navigation_label"
+      "company": "Heidenhain",
+      "title": "HEIDENHAIN Websites",
+      "url": "https://www.heidenhain.com/website-overview",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "DOW",
-      "title": "Products",
-      "url": "https://www.dow.com/",
-      "reason": "navigation_label"
+      "company": "EVG",
+      "title": "Deutsch (DE)",
+      "url": "https://www.evgroup.com/de/unternehmen/news-und-presse",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "DOW",
-      "title": "Corporate Governance",
-      "url": "https://corporate.dow.com/en-us/about-dow/corporate-governance.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "About Us",
-      "url": "https://www.gehealthcare.com/about/about-ge-healthcare-systems",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "About Us",
-      "url": "https://www.gehealthcare.com/about/about-ge-healthcare-systems",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Products",
-      "url": "https://www.onsemi.com/products",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Solutions",
-      "url": "https://www.onsemi.com/solutions",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Magnix",
-      "title": "About Us",
-      "url": "https://www.magnix.aero/about-us",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Magnix",
-      "title": "About Us",
-      "url": "https://www.magnix.aero/about-us",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "About us",
-      "url": "https://www.siemensgamesa.com/global/en/home/about-us.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Management",
-      "url": "https://www.siemensgamesa.com/global/en/home/about-us/management.html",
-      "reason": "navigation_label"
+      "company": "EVG",
+      "title": "Services",
+      "url": "https://www.evgroup.com/services",
+      "reason": "no_article_affordance"
     },
     {
       "company": "Texcell",
-      "title": "About us",
-      "url": "https://texcell.com/about-us/",
-      "reason": "navigation_label"
+      "title": "Custom Cell Culture",
+      "url": "https://texcell.com/custom-cell-culture/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Asahi Glass",
-      "title": "Corporate Governance",
-      "url": "https://www.agc.com/en/company/governance/index.html",
-      "reason": "navigation_label"
+      "company": "Texcell",
+      "title": "Cell Banking",
+      "url": "https://texcell.com/cell-banking/",
+      "reason": "no_article_affordance"
     },
     {
-      "company": "Asahi Glass",
-      "title": "Products",
-      "url": "https://www.agc.com/en/products/index.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Corporate Governance",
-      "url": "https://www.shinetsu.co.jp/en/sustainability/esg_foundation/governance/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Corporate Governance",
-      "url": "https://www.shinetsu.co.jp/en/sustainability/esg_foundation/governance/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "About Us",
-      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "About Us",
-      "url": "https://www.shanghai-electric.com/listed_en/jtjj/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Sustainability",
-      "url": "https://www.albemarle.com/us/en/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Overview",
-      "url": "https://www.albemarle.com/us/en/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "DOW",
-      "title": "News",
-      "url": "https://corporate.dow.com/en-us/news.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "DOW",
-      "title": "Press Releases",
-      "url": "https://corporate.dow.com/en-us/news/press-releases.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Sustainability",
-      "url": "https://www.gehealthcare.com/about/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "News",
-      "url": "https://www.gehealthcare.com/about/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Newsroom",
-      "url": "https://www.onsemi.com/company/newsroom",
-      "reason": "index_page"
-    },
-    {
-      "company": "Onsemi",
-      "title": "News & Insights",
-      "url": "https://www.onsemi.com/company/newsroom/news-and-insights",
-      "reason": "index_page"
-    },
-    {
-      "company": "Magnix",
-      "title": "News",
-      "url": "https://www.magnix.aero/news",
-      "reason": "index_page"
-    },
-    {
-      "company": "Magnix",
-      "title": "News",
-      "url": "https://www.magnix.aero/news",
-      "reason": "index_page"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Sustainability",
-      "url": "https://www.siemensgamesa.com/global/en/home/sustainability.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Newsroom",
-      "url": "https://www.siemensgamesa.com/global/en/home/press-releases.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "HyproMag",
-      "title": "About",
-      "url": "https://hypromag.com/about/",
-      "reason": "index_page"
-    },
-    {
-      "company": "HyproMag",
-      "title": "News",
-      "url": "https://hypromag.com/news/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Hitachi Metals",
-      "title": "2026",
-      "url": "https://www.proterial.com/e/press/2026/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Hitachi Metals",
-      "title": "2025",
-      "url": "https://www.proterial.com/e/press/2025/",
-      "reason": "index_page"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Company",
-      "url": "https://www.agc.com/en/company/index.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Sustainability",
-      "url": "https://www.agc.com/en/sustainability/index.html",
-      "reason": "index_page"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Company",
-      "url": "https://www.shinetsu.co.jp/en/company",
-      "reason": "index_page"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Sustainability",
-      "url": "https://www.shinetsu.co.jp/en/sustainability",
-      "reason": "index_page"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Careers",
-      "url": "https://www.albemarle.com/us/en/careers",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Overview",
-      "url": "https://www.albemarle.com/us/en/careers",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "DOW",
-      "title": "Contact us",
-      "url": "https://corporate.dow.com/en-us/contact.html",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "DOW",
-      "title": "Careers",
-      "url": "https://corporate.dow.com/en-us/careers.html",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "",
-      "url": "https://www.facebook.com/GEHealthcare/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "",
-      "url": "https://www.instagram.com/gehealthcare",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Write Feedback",
-      "url": "https://www.onsemi.com/website-feedback",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Privacy Policy",
-      "url": "https://www.onsemi.com/privacy",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Magnix",
-      "title": "Careers",
-      "url": "https://www.magnix.aero/careers",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Magnix",
-      "title": "",
-      "url": "https://www.facebook.com/magniX.Aero/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "",
-      "url": "https://www.facebook.com/SiemensGamesa/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "",
-      "url": "https://www.linkedin.com/company/siemensgamesa/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "HyproMag",
+      "company": "Maxon",
       "title": "Contact",
-      "url": "https://hypromag.com/contact/",
+      "url": "https://www.maxongroup.com/en/contact",
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "HyproMag",
+      "company": "Maxon",
       "title": "Contact",
-      "url": "https://hypromag.com/contact/",
+      "url": "https://www.maxongroup.com/en/contact",
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "Hitachi Metals",
+      "company": "Besi",
       "title": "Careers",
-      "url": "https://www.proterial.com/e/rcrt/indx_rcrt.html",
+      "url": "https://www.besi.com/careers/a-career-at-besi/",
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "Hitachi Metals",
+      "company": "Besi",
+      "title": "A Career at Besi",
+      "url": "https://www.besi.com/careers/a-career-at-besi/",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "&nbsp;",
+      "url": "https://www.linkedin.com/company/7135/",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "&nbsp;",
+      "url": "https://twitter.com/AmkorTechnology",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Heidenhain",
       "title": "Contact",
-      "url": "https://www.proterial.com/e/contact/",
+      "url": "https://www.heidenhain.com/about-us/contact",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "Contact",
+      "url": "https://www.heidenhain.com/about-us/contact",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "EVG",
+      "title": "Contact",
+      "url": "https://www.evgroup.com/contact",
+      "reason": "boilerplate_or_social"
+    },
+    {
+      "company": "EVG",
+      "title": "Careers",
+      "url": "https://www.evgroup.com/careers",
       "reason": "boilerplate_or_social"
     },
     {
@@ -2631,235 +2220,232 @@
       "reason": "boilerplate_or_social"
     },
     {
-      "company": "Asahi Glass",
-      "title": "Contact Us",
-      "url": "https://www.agc.com/en/ir/contact/index.html",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "FAQ",
-      "url": "https://www.agc.com/en/ir/contact/faq/index.html",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Personal Information Protection Policy",
-      "url": "https://www.shinetsu.co.jp/en/privacy/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
-      "title": "Personal Information Protection Policy",
-      "url": "https://www.shinetsu.co.jp/en/privacy/",
-      "reason": "boilerplate_or_social"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Download the Media Fact Sheet",
-      "url": "https://cdn.mediavalet.com/usva/albemarle/Wo1HWYHR9kWLF_R-xxFylg/xIwy2ydm5ECwS9OK98ZfHg/Original/Albemarle%20Corporate%20Fact%20Sheet.pdf",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Albemarle",
-      "title": "Powered By Q4 Inc. 5.187.1.9 (opens in new window)",
-      "url": "https://www.q4inc.com/Powered-by-Q4/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Search & Apply",
-      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Onsemi",
-      "title": "Engineering Jobs",
-      "url": "https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/requisitions?selectedCategoriesFacet=300000006382317",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Listen to webcast",
-      "url": "https://event.summitcast.com/view/aMepMFxWv3z5SRZ9meKJzp/guest_book?session_id=hpAZR87JrNiWpQRGHNcAL2",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "GE Healthcare",
-      "title": "Listen to webcast",
-      "url": "https://edge.media-server.com/mmc/p/y8poov6f/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Magnix",
-      "title": "Terms of Service",
-      "url": "https://drive.google.com/drive/folders/1jBZlSumSCGERDA_xyzGNcAg7eef0w2eA",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Magnix",
-      "title": "Terms of Service",
-      "url": "https://drive.google.com/drive/folders/1jBZlSumSCGERDA_xyzGNcAg7eef0w2eA",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Code of conduct",
-      "url": "https://assets.siemens-energy.com/dam/fbe7f985-fae7-4fa5-9b68-b15400fbfd57/Code_of_Conduct_for_Suppliers_and_Third_Party_Intemediaries_EN-pdf_Original%20file.pdf",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Siemens-Gamesa",
-      "title": "Code of conduct",
-      "url": "https://assets.siemens-energy.com/dam/fbe7f985-fae7-4fa5-9b68-b15400fbfd57/Code_of_Conduct_for_Suppliers_and_Third_Party_Intemediaries_EN-pdf_Original%20file.pdf",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Stock Price",
-      "url": "https://finance.yahoo.com/quote/5201.T/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Asahi Glass",
-      "title": "Stock Price",
-      "url": "https://finance.yahoo.com/quote/5201.T/",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "上证E互动",
-      "url": "http://sns.sseinfo.com/company.do?uid=1727",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "校园招聘",
-      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Shin-Etsu Chemicals",
+      "company": "Maxon",
       "title": "",
-      "url": "https://www.jira.or.jp/activity/bluechip.html",
+      "url": "https://www.maxongroup.com/en/news-and-events/media-center",
+      "reason": "index_page"
+    },
+    {
+      "company": "Maxon",
+      "title": "Learn more",
+      "url": "https://www.maxongroup.com/en/news-and-events/media-center",
+      "reason": "index_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Company",
+      "url": "https://www.besi.com/company/",
+      "reason": "index_page"
+    },
+    {
+      "company": "Besi",
+      "title": "Investor Relations",
+      "url": "https://www.besi.com/investor-relations/",
+      "reason": "index_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Press Releases",
+      "url": "https://ir.amkor.com/press-releases",
+      "reason": "index_page"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "News",
+      "url": "https://amkor.com/news/",
+      "reason": "index_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "News",
+      "url": "https://www.heidenhain.com/news",
+      "reason": "index_page"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "News",
+      "url": "https://www.heidenhain.com/news",
+      "reason": "index_page"
+    },
+    {
+      "company": "EVG",
+      "title": "日本語 (JA)",
+      "url": "https://www.evgroup.com/ja/company/news",
+      "reason": "index_page"
+    },
+    {
+      "company": "EVG",
+      "title": "中文 (ZH)",
+      "url": "https://www.evgroup.com/zh/company/news",
+      "reason": "index_page"
+    },
+    {
+      "company": "Maxon",
+      "title": "E-Catalog",
+      "url": "https://online.flippingbook.com/view/1042987/",
       "reason": "offsite_link"
     },
     {
-      "company": "Shin-Etsu Chemicals",
+      "company": "Maxon",
       "title": "",
-      "url": "https://www.jira.or.jp/activity/bluechip.html",
+      "url": "https://lin.ee/4nvWjlZ",
       "reason": "offsite_link"
     },
     {
-      "company": "GE Healthcare",
-      "title": "Current page 1",
-      "url": "https://investor.gehealthcare.com/news-events/news-releases?page=0",
-      "reason": "category_or_pagination"
+      "company": "Besi",
+      "title": "StockTicker",
+      "url": "https://www.euronext.com/en/products/equities/NL0012866412-XAMS/quotes",
+      "reason": "offsite_link"
     },
     {
-      "company": "GE Healthcare",
-      "title": "Page 2",
-      "url": "https://investor.gehealthcare.com/news-events/news-releases?page=1",
-      "reason": "category_or_pagination"
+      "company": "Besi",
+      "title": "StockTicker",
+      "url": "https://www.euronext.com/en/products/equities/NL0012866412-XAMS/quotes",
+      "reason": "offsite_link"
     },
     {
-      "company": "Onsemi",
-      "title": "Current page 1",
-      "url": "https://investor.onsemi.com/news?page=0",
-      "reason": "category_or_pagination"
+      "company": "Amkor Technology",
+      "title": "Connect with us Sign up for email updates from Amkor",
+      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
+      "reason": "offsite_link"
     },
     {
-      "company": "Onsemi",
-      "title": "Page 2",
-      "url": "https://investor.onsemi.com/news?page=1",
-      "reason": "category_or_pagination"
+      "company": "Amkor Technology",
+      "title": "Connect with us Sign up for email updates from Amkor",
+      "url": "https://visitor.r20.constantcontact.com/manage/optin?v=001fZs43j3E8SVFbyBsCWPGq1XvKIOhyGm2rDxZDWdmUW40duxo8nHIkw98Pky2aqq9amoOlfg6EMNmSXGzzzumNI_mJt15bvs6ls7XfanXMOCMk5_TL9dU7g%3D%3D",
+      "reason": "offsite_link"
     },
     {
-      "company": "Asahi Glass",
-      "title": "Search by Application",
-      "url": "https://www.agc.com/en/products/search/index.html",
-      "reason": "category_or_pagination"
+      "company": "Heidenhain",
+      "title": "Technical Training",
+      "url": "https://www.klartext-portal.com/technical-training/training-program",
+      "reason": "offsite_link"
     },
     {
-      "company": "Asahi Glass",
-      "title": "Mobility",
-      "url": "https://www.agc.com/en/products/search/use.html?cat=mobility",
-      "reason": "category_or_pagination"
+      "company": "Heidenhain",
+      "title": "",
+      "url": "https://en.industryarena.com/heidenhain",
+      "reason": "offsite_link"
     },
     {
-      "company": "Shin-Etsu Chemicals",
-      "title": "日本語",
-      "url": "https://www.shinetsu.co.jp/jp/category/news/news-release/",
-      "reason": "category_or_pagination"
+      "company": "Besi",
+      "title": "Corporate Governance",
+      "url": "https://www.besi.com/investor-relations/corporate-governance/",
+      "reason": "navigation_label"
     },
     {
-      "company": "Shin-Etsu Chemicals",
-      "title": "English",
-      "url": "https://www.shinetsu.co.jp/en/category/news/news-release/",
-      "reason": "category_or_pagination"
+      "company": "Besi",
+      "title": "Corporate Governance",
+      "url": "https://www.besi.com/investor-relations/corporate-governance/",
+      "reason": "navigation_label"
     },
     {
-      "company": "Siemens-Gamesa",
-      "title": "Q3 FY2026 Pre-Close Call Recording",
-      "url": "https://assets.siemens-energy.com/dam/89b799d0-e133-4db4-891c-b479007b65eb/2026-06-30---Q3-FY26-Pre-Close-Call_Recording-mp3_Original%20file.mp3",
-      "reason": "asset_file"
+      "company": "Amkor Technology",
+      "title": "Corporate Governance",
+      "url": "https://ir.amkor.com/corporate-governance/highlights",
+      "reason": "navigation_label"
     },
     {
-      "company": "Onsemi",
-      "title": "Media Contacts",
-      "url": "https://www.onsemi.com/company/newsroom/media-contacts",
-      "reason": "verified_index_page"
+      "company": "Amkor Technology",
+      "title": "Corporate Governance",
+      "url": "https://ir.amkor.com/corporate-governance/highlights",
+      "reason": "navigation_label"
     },
     {
-      "company": "HyproMag",
-      "title": "RSS Feed",
-      "url": "https://mkango.ca/rss/",
-      "reason": "feed_url"
+      "company": "Heidenhain",
+      "title": "Products",
+      "url": "https://www.heidenhain.com/products",
+      "reason": "navigation_label"
     },
     {
-      "company": "HyproMag",
-      "title": "RSS Feed",
-      "url": "https://mkango.ca/rss/",
-      "reason": "feed_url"
+      "company": "Heidenhain",
+      "title": "Products",
+      "url": "https://www.heidenhain.com/products",
+      "reason": "navigation_label"
     },
     {
-      "company": "HyproMag",
+      "company": "EVG",
+      "title": "Products",
+      "url": "https://www.evgroup.com/products",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "EVG",
+      "title": "Products",
+      "url": "https://www.evgroup.com/products",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Texcell",
+      "title": "About us",
+      "url": "https://texcell.com/about-us/",
+      "reason": "navigation_label"
+    },
+    {
+      "company": "Besi",
       "title": "2",
-      "url": "https://mkango.ca/news/2026/page2",
-      "reason": "no_article_title"
+      "url": "https://www.besi.com/investor-relations/press-releases/page/2/",
+      "reason": "category_or_pagination"
     },
     {
-      "company": "HyproMag",
+      "company": "Besi",
       "title": "3",
-      "url": "https://mkango.ca/news/2026/page3",
-      "reason": "no_article_title"
+      "url": "https://www.besi.com/investor-relations/press-releases/page/3/",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Company News",
+      "url": "https://amkor.com/category/company-news/",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Amkor Technology",
+      "title": "Company News",
+      "url": "https://amkor.com/category/company-news/",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "PC software for CNC controls",
+      "url": "https://www.heidenhain.com/products/software?filter=652",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "Connected Machining",
+      "url": "https://www.heidenhain.com/products/software?filter=650",
+      "reason": "category_or_pagination"
+    },
+    {
+      "company": "Heidenhain",
+      "title": "Events & trade shows",
+      "url": "https://www.heidenhain.com/news/events-trade-shows",
+      "reason": "verified_index_page"
     }
   ],
   "excluded_non_article_sample_reasons": {
-    "no_article_affordance": 24,
-    "site_root": 23,
-    "navigation_label": 19,
-    "index_page": 20,
-    "boilerplate_or_social": 22,
-    "offsite_link": 16,
-    "category_or_pagination": 8,
-    "asset_file": 1,
-    "verified_index_page": 1,
-    "feed_url": 2,
-    "no_article_title": 2
+    "site_root": 12,
+    "no_article_affordance": 12,
+    "boilerplate_or_social": 12,
+    "index_page": 10,
+    "offsite_link": 8,
+    "navigation_label": 9,
+    "category_or_pagination": 6,
+    "verified_index_page": 1
   },
   "published_at_source_counts": {
     "text": 6,
-    "jsonld": 139,
+    "jsonld": 142,
     "time_tag": 35,
     "body_text": 67,
-    "feed": 128,
+    "feed": 121,
     "listing": 65,
     "url": 10,
-    "meta": 29,
+    "meta": 32,
     "none": 73
   },
-  "fallback_result_count": 154,
+  "fallback_result_count": 153,
   "companies_with_results": 74,
   "companies_with_official_results": 66,
   "companies_without_results": [
@@ -2922,7 +2508,7 @@
     "Nexeon": 2,
     "Rio Tinto": 9,
     "HyproMag": 4,
-    "EVG": 7,
+    "EVG": 6,
     "Plansee": 1,
     "Texcell": 4,
     "Veolia": 9,
@@ -3025,7 +2611,7 @@
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 91,
+  "error_count": 93,
   "errors": [
     {
       "target_no": 2,
@@ -3453,22 +3039,6 @@
       "error": "HTTP 403"
     },
     {
-      "target_no": 29,
-      "company": "Besi",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPczk5d2Z1MXRORzd2Wno1aWM2cGdOemFvTGhGU1dyVzFqWlh1aWZJLXRqRFd4Qm9wQl9DcDNlZHZGdE13ZFZQSDYzSkpPWlpvb0RKeGlyNnZQQXJ2UDZEMmF3MXF2NHItSGZYSDR6djdLWEJVdDVZRmpKNHBDa3lXdTFmU0VxVFJVdmpaMzRCVEw4VWdOaG5v?oc=5",
-      "source_name": "Google News: Yahoo Finance",
-      "error": "publisher_url_unresolved"
-    },
-    {
-      "target_no": 29,
-      "company": "Besi",
-      "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMi4gNBVV95cUxOQnRJQnVLU0xJZTZCek95ajZ1QmpYaEZsUEwyRS1SQzFwWDZWd1UxbFkzWWFkNW5YZTBxa21zRjhPSVoyOTkwQnBJQWJFazlqN0kta2tvLUhSN1JYOVJPdEtNZmJJYWwwemk5ZUo0TWZPZEhXV1doR0hUVXNfWloyanI1R0ItVnJlb3B3Qmh5d3U1aUUxSXVqYWN1SG1DTWNyRE9KOUt5ZjdlVTQ2N1RhWjZWQ0FCMHlRd2x5dG5HbVNVRDd0b3ZsbW5GQ09fbTVPNXNSS0xJTlpueklsdUtPd2JUeHAxNXZJOVFvbXNRdEJUMVR6VVdieVFvMWxJNGtmWFU4Q1B1d3FxLXNoS3k5VkFhTGpWRThIYUJJUlNpaUViR3BjV1RtRllIZ2F3QUxpMGlWMmxIZnRaYktuV0M3SXNhRWRreUFXbkhzcEdiTDF4ekliWXRybTJLTmstbXNnVklpR1FYM2s4VFl1clJ2bTM0Q2hTb3Rsbm85YmN3ZElnY2VfUkNQWVhkcmZtRldvdTRTTDFXc3dNYk4tdk5raXZMa19kamk2T0s2MnBHQkVhUWhJQU10S3lqQ0JMQ2JFR2dhdllPZk11cEoza1ZOYU14SXM5N1Z2aFlMSzhKM0ZCQQ?oc=5",
-      "source_name": "Google News: Unicef",
-      "error": "publisher_url_unresolved"
-    },
-    {
       "target_no": 32,
       "company": "Vestas",
       "source": "official_detail",
@@ -3664,11 +3234,11 @@
       "error": "HTTP 406 Not Acceptable"
     },
     {
-      "target_no": 55,
-      "company": "EVG",
+      "target_no": 49,
+      "company": "Maxon",
       "source": "official_detail",
-      "source_url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOaWlBdXI4N2Ixdmc4ZDdEM3ZuT1E1TGFrOXRaM3hSOS1XVjdBcVVaU290b0Zma0RpWVlTRG14RXZINHJhOFZYZEZ2WEM4eC00elU5Y1p3c2lHR3RBcGt4eFFBYmE5VDVseHdNQlFrbzVpZmtwWlV1VXNwZmJkR2s0ZHpPczBwaTJZQnV5UXBsRThKSmtKSnVuU19qUWFxN1kxdEE5NHJB?oc=5",
-      "source_name": "Google News: Newsbytes.PH",
+      "source_url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFB6c01lRFJ6d3Q4VnozcEhDdU9ENVE5MEdtOE51NGFzZ1dkOW9KWTY1d2RudHJlcnUzY2d5Y192YkhmZkY2RVhZRUtqbl9Eb1Nkb2k2aHBjSk15RXY3cEpJ?oc=5",
+      "source_name": "Google News: All3DP",
       "error": "HTTP 403"
     },
     {
@@ -3789,16 +3359,52 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+      "kind": "ir",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
+      "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
+      "kind": "ir",
+      "error": "domain_cooldown: www.shanghai-electric.com"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
+      "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
+      "kind": "filing",
+      "error": "domain_cooldown: www.shanghai-electric.com"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
       "kind": "official_page",
       "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
+      "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
+      "kind": "official_page",
+      "error": "domain_cooldown: www.shanghai-electric.com"
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260923T071509Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260923T071509Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260923T071509Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260923T075651Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260923T075651Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260923T075651Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -4474,7 +4080,7 @@
       "company": "Besi",
       "monthly_articles": 6,
       "needs_review_articles": 1,
-      "date_pending_articles": 0,
+      "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
@@ -4492,7 +4098,13 @@
           ]
         }
       ],
-      "date_follow_up": []
+      "date_follow_up": [
+        {
+          "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNVnluNExnWUJjLW9OeGNENVdNaU5xOWJ0TlM5b1lEdk1LYkZlQ2M0UDVZMXJUNDZRVWQxVFM3bnVWS1VhQ0hjT18weG5HYTFNZ1ZQQUpWUE1IMEFvSWxZTGR5dHNSajJfRW5ZWFQ5SmpwWGpnRjJHb290OWFwenFCdk5IbWF4clNiY3RkNkY2TFBXMzhjUGloWWhvTW9Jcm0yVTktdk9RUGQ2QVpTRVp4TFFpVm4?oc=5",
+          "title": "Nepal-Tibet flood rescue efforts resume after being halted by overflowing lake - The Guardian",
+          "reason": "게시일 근거가 서로 어긋남"
+        }
+      ]
     },
     {
       "company": "NXP",
@@ -5152,8 +4764,8 @@
     {
       "company": "Maxon",
       "monthly_articles": 10,
-      "needs_review_articles": 3,
-      "date_pending_articles": 4,
+      "needs_review_articles": 1,
+      "date_pending_articles": 5,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
@@ -5161,32 +4773,12 @@
       ],
       "follow_up": [
         {
-          "title": "What Is Tencent Holdings (SEHK:700) Looking For In Humanoid Robotics? - Yahoo Finance",
-          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNdkZBZGN4alpoZ0RlN3Jxamx4aldTa3ZqS0xTcmFDaHUwX016eGJ0a3hpNHVVd3NIUVZSLUN2OXNLTXhlb2llMUMtWTFXLVdKeFJ1dXRiUmdyYTF6dERzbERpRGNHX1Nnb09laS1KWGY4eHFfYjVpNkluRUFSZ3JLM1NEajRJQ1d2TjdTYUZRTC1WZVVYbXY5MWVncHMwQQ?oc=5",
-          "publishers": [
-            {
-              "publisher": "Yahoo Finance",
-              "home_url": "https://finance.yahoo.com/"
-            }
-          ]
-        },
-        {
           "title": "ZBrush 2026: Free Download of the Full Version - All3DP",
           "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFB6c01lRFJ6d3Q4VnozcEhDdU9ENVE5MEdtOE51NGFzZ1dkOW9KWTY1d2RudHJlcnUzY2d5Y192YkhmZkY2RVhZRUtqbl9Eb1Nkb2k2aHBjSk15RXY3cEpJ?oc=5",
           "publishers": [
             {
               "publisher": "All3DP",
               "home_url": "https://all3dp.com/"
-            }
-          ]
-        },
-        {
-          "title": "Affiliates - Honeywell",
-          "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBBckgwdzdrRTUxRlVPSGZteDVHTy1UMmxfNEV4LWVEcmdwV1NxZXZsTHRxUFhtMG8zWUwzMzJLbVBaTmc2U2VmYmNna3NmdXZlVmVBUV80dmRQb0xE?oc=5",
-          "publishers": [
-            {
-              "publisher": "Honeywell",
-              "home_url": "https://www.honeywell.com/"
             }
           ]
         }
@@ -5211,6 +4803,11 @@
           "url": "https://www.maxongroup.com/assets/public/caas/v1/media/105364/data/b1681209e5076eaf450fb55a49560ac0/company-mediacenter-business-unit-container-lab-automation-download.pdf",
           "title": "company mediacenter business unit container lab automation download",
           "reason": "게시일 근거가 전혀 없음"
+        },
+        {
+          "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPWHB3Vlo1MUFScXhiSE5WbktrNl9tcE9Mc1hpR3loOGFqWTNQYTQxTGV0TmFzMHplNEZnZjlwV3JRa2xiOUpMVHRHM1djeXNaczVCUlhON3pvQV9fRTBmbTJya09uZGR3amdONHlwTEhxdjNnajNaUDNFWGp0UmxjOHZTWGZGS1k5TDhDZGlJWGpOSFU0QUZDLXdmcVdXSHhjUmloeWE5TTZCbVRpekRXM19TSDNnMl8wVGlXbUVHTVA3Zw?oc=5",
+          "title": "PCDC celebrates 25 years of economic development in Pflugerville - Community Impact",
+          "reason": "게시일 근거가 서로 어긋남"
         }
       ]
     },
@@ -5326,7 +4923,7 @@
     },
     {
       "company": "EVG",
-      "monthly_articles": 4,
+      "monthly_articles": 3,
       "needs_review_articles": 1,
       "date_pending_articles": 0,
       "deferred_articles": 0,
@@ -6079,8 +5676,8 @@
   ],
   "review_failed_articles": [],
   "review_scope": {
-    "articles": 385,
-    "reviewed_articles": 385,
+    "articles": 384,
+    "reviewed_articles": 384,
     "review_failed_articles": 0,
     "adjudicated_articles": 0,
     "wording_fixed_articles": 0,
