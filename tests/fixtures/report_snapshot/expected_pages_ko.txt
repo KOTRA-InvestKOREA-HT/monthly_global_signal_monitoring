@@ -27,29 +27,29 @@ S I G N A L M A T R I X
 5 Cytiva 44 Umicore
 6 Moderna 45 Solvay
 7 West Pharmaceutical 46 Syensqo
-8 Dupont 47 Hexagon AB
+8 DuPont 47 Hexagon AB
 9 Albemarle 48 ABB
 10 TIMET 49 Maxon
-11 Air Products 50 Siemens-Gamesa
+11 Air Products 50 Siemens Gamesa
 12 Chemours 51 Renishaw
 13 BorgWarner 52 Nexeon
-14 DOW 53 Rio Tinto
-15 Thermo Fisher 54 HyproMag
+14 Dow 53 Rio Tinto
+15 Thermo Fisher 54 HyProMag
 16 Amkor Technology 55 EVG
-17 Onsemi 56 Plansee
+17 onsemi 56 Plansee
 18 Qualcomm 57 Texcell
 19 Skyworks 58 Veolia
 20 Eli Lilly and Company 59 Airbus
-21 GE Healthcare 60 Safran
+21 GE HealthCare 60 Safran
 22 Boeing 61 Air Liquide
 23 3M 62 Arkema
 24 Ouster 63 DNP
-25 Applied Materials 64 Hitachi Metals
-26 Magnix 65 Toppan Holdings
+25 Applied Materials 64 Proterial
+26 magniX 65 Toppan Holdings
 27 Prodrive 66 Nabtesco
-28 ASML 67 Asahi Glass
+28 ASML 67 AGC
 29 Besi 68 JSR
-30 NXP 69 Shin-Etsu Chemicals
+30 NXP 69 Shin-Etsu Chemical
 31 Norsk Hydro 70 Tokyo Electron
 32 Vestas 71 Tosoh
 33 Heidenhain 72 Mitsubishi Chemical

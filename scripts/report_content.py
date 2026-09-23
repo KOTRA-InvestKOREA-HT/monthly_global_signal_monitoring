@@ -21,7 +21,7 @@ __all__ = [
     "APPROVAL_POLICY", "BUSINESS_STAGE", "COMPANY_LEVEL_INDICATORS", "CONFIRMED_DATE_SOURCES",
     "COUNTRY_BY_COMPANY", "COUNTRY_EN", "DEFAULT_ISSUE_NUMBER",
     "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES",
-    "INDICATOR_DESCRIPTION_EN", "LEADING_STAGES", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
+    "INDICATOR_DESCRIPTION_EN", "LEADING_STAGES", "TARGET_TECHNOLOGY_DISPLAY_EN", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
     "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
@@ -182,21 +182,23 @@ SIGNAL_DESCRIPTIONS = {
 }
 
 # 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
+# 지표 이름은 국문을 옮기지 않고 영어 독자가 무엇이 일어났는지 바로 알 이름으로 짓는다.
+# "Supply Chain Risk Management"는 회사 내부 부서 업무처럼 읽혀 사건 이름이 되지 못했다.
 SIGNAL_DESCRIPTIONS_EN = {
-    1: "Supply Chain Risk Management · sourcing, geopolitical risks",
-    2: "Production Expansion Plans · capacity, site selection",
+    1: "Supply Chain Shifts · sourcing, geopolitical risk",
+    2: "Production Expansion · new capacity, site selection",
     3: "Capital Raising · bonds, equity, credit facilities",
     4: "Technology Partnerships · joint R&D, licensing",
-    5: "Executive Changes & Visits · appointments, site inspections",
+    5: "Leadership Moves & Visits · appointments, site visits",
 }
 
 INDICATOR_DESCRIPTION_EN = {
-    1: "Diversifying supply and responding to geopolitical risks",
-    2: "Asia-Pacific expansion plans and feasibility studies",
-    3: "Bonds, equity financing and credit facilities",
-    4: "Joint R&D, licensing, proof-of-concept projects and equity stakes",
+    1: "New suppliers, local sourcing and responses to geopolitical risk",
+    2: "New capacity, Asia-Pacific sites and feasibility studies",
+    3: "Bond and share issues, loans and credit facilities",
+    4: "Joint R&D, licensing, pilot projects and equity stakes",
     # "실사"를 due diligence 로 옮기면 인수 전 재무·법률 검토로 읽힌다. 현장 방문의 뜻으로 적는다.
-    5: "Leadership appointments, Korea visits and site inspections",
+    5: "Senior appointments, visits to Korea and site inspections",
 }
 
 COUNTRY_EN = {
@@ -229,26 +231,62 @@ DETAILED_INDUSTRY_EN = {
     "ag_al_paste": "Solar electrode materials",
     "lithium_cathode_materials": "Battery cathode materials",
     "nonferrous_scrap_recycling": "Non-ferrous metal recycling",
-    "hexamethylenediamine_hmd": "Chemical feedstocks",
-    "ion_exchange_membrane": "Advanced membranes",
-    "autonomous_imu_rf_baseband": "Autonomous driving chips",
-    "semiconductor_thermal_material": "Semiconductor packaging",
-    "autonomous_camera_isp": "Sensors for autonomous driving",
-    "aerospace_electric_propulsion": "Aircraft & clean propulsion",
+    "hexamethylenediamine_hmd": "Nylon intermediates",
+    "ion_exchange_membrane": "Ion-exchange membranes",
+    "autonomous_imu_rf_baseband": "Automotive RF & sensor chips",
+    "semiconductor_thermal_material": "Chip thermal materials",
+    "autonomous_camera_isp": "Automotive vision chips",
+    "aerospace_electric_propulsion": "Electric aircraft propulsion",
     "robot_lidar": "Robotics LiDAR",
     "hybrid_bonding_w2w": "Advanced packaging",
     "euv_lithography": "Semiconductor lithography",
     "satellite_radar_rf_semiconductor": "Aerospace RF chips",
     "offshore_wind_turbine": "Offshore wind turbines",
-    "linear_scale": "Precision position metrology",
-    "robot_reducer": "Precision robotic drives",
+    "linear_scale": "Precision position encoders",
+    "robot_reducer": "Robot gearboxes",
     "pharma_excipient": "Pharmaceutical materials",
-    "precipitated_silica_tire": "Eco-friendly silica",
+    "precipitated_silica_tire": "Silica for green tires",
     "silicon_anode_sic": "Battery anode materials",
     "pvdf": "Battery binder materials",
-    "metal_target_ti_ta": "Semiconductor targets",
+    "metal_target_ti_ta": "Sputtering targets",
     "fine_metal_mask": "Display materials",
     "tgv_glass_substrate": "Glass core substrates",
+}
+
+# 보고서에 싣는 영문 타겟 품목명. data/company_technology_map.json 의 target_technology_en 은 판정 모델
+# 입력에도 들어가 바꾸면 그 기업 기사의 판정 캐시가 모두 무효가 된다. 그 값은 국문 품목명을 낱말 순서대로
+# 옮긴 것이 많아("robot reducer", "cathode material lithium hydroxide/carbonate") 독자용 이름은 여기 따로 둔다.
+TARGET_TECHNOLOGY_DISPLAY_EN = {
+    "rare_earth_magnet_recycling": "High-purity rare earths recovered from end-of-life magnets",
+    "3d_vision_sensor": "3D vision sensors",
+    "euv_blank_mask": "EUV mask blanks",
+    "virus_validation_mcb_wcb": "Viral safety testing and cell bank (MCB/WCB) characterization",
+    "bioprocess_culture_purification": "Cell culture and purification systems for biologics",
+    "gene_cell_therapy_delivery_gmp": "Gene and cell therapy delivery vectors and GMP raw materials",
+    "autoinjector_pfs_fill_finish": "Autoinjectors, prefilled syringes and fill-finish",
+    "ag_al_paste": "Silver and aluminum conductive pastes",
+    "lithium_cathode_materials": "Lithium hydroxide and lithium carbonate for cathodes",
+    "nonferrous_scrap_recycling": "Non-ferrous metal scrap recycling",
+    "hexamethylenediamine_hmd": "Hexamethylenediamine (HMD) production",
+    "ion_exchange_membrane": "Ion-exchange and bipolar membranes",
+    "autonomous_imu_rf_baseband": "IMU, RF and baseband chips for autonomous vehicles",
+    "semiconductor_thermal_material": "Thermal materials for chip packaging",
+    "autonomous_camera_isp": "Cameras and image signal processors for autonomous vehicles",
+    "aerospace_electric_propulsion": "Electric motors and high-power battery modules for aircraft",
+    "robot_lidar": "LiDAR for robots",
+    "hybrid_bonding_w2w": "Wafer-to-wafer hybrid bonding equipment",
+    "euv_lithography": "EUV lithography equipment",
+    "satellite_radar_rf_semiconductor": "RF chips for satellite communications and radar",
+    "offshore_wind_turbine": "Offshore wind turbines",
+    "linear_scale": "Linear encoders",
+    "robot_reducer": "Robot gearboxes (reducers)",
+    "pharma_excipient": "Pharmaceutical excipients",
+    "precipitated_silica_tire": "Precipitated silica for fuel-efficient tires",
+    "silicon_anode_sic": "Silicon-carbon (Si-C) anode materials",
+    "pvdf": "PVDF (polyvinylidene fluoride)",
+    "metal_target_ti_ta": "Titanium and tantalum sputtering targets",
+    "fine_metal_mask": "Fine metal masks (FMM) for OLED displays",
+    "tgv_glass_substrate": "Glass substrates with through-glass vias (TGV)",
 }
 
 MONTH_NAMES_EN = [
@@ -306,30 +344,31 @@ TEXTS = {
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
         "cover_titles": ["INVESTMENT SIGNALS"],
         "cover_title_accent": 0,
-        "cover_line_1": "30 Korean government-selected investment projects · 77 target companies",
+        "cover_line_1": "77 companies Korea aims to attract for 30 priority investment projects",
         "cover_line_2": "Tracking early signs of corporate investment",
         "cover_indicator_heading": "FIVE EARLY INVESTMENT SIGNALS",
         "matrix_title": "Investment Signals at a Glance",
-        "matrix_desc": "Investment signals identified among 77 target companies during {period}. Highlighted cells mark early-stage plans or preparatory activities, not final investment commitments or completed investments.",
+        "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal identified",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain Risk Management · ② Production Expansion Plans · ③ Capital Raising · ④ Technology Partnerships · ⑤ Executive Changes & Visits",
-        "matrix_footnote": "{on} companies with signals · {off} with no signal",
+        "matrix_indicators": "① Supply Chain Shifts · ② Production Expansion · ③ Capital Raising · ④ Technology Partnerships · ⑤ Leadership Moves & Visits",
+        "matrix_footnote": "{on} companies showed signals · {off} showed none",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
         "business_heading": "BUSINESS DEVELOPMENTS",
-        "business_empty": "No relevant business developments were identified in official sources during this period.",
-        "business_near_miss_note": "Business update · link to target product unverified",
+        "business_empty": "No related business news from official sources this month.",
+        "business_near_miss_note": "Business news · product link not confirmed",
         "source_prefix": "Source",
         "source_fallback": "Source publication",
         "source_empty": "Source  —",
-        "source_press_release": "Official press release",
+        "source_press_release": "Press release",
         "item_title": "Business Developments by Product",
-        "item_target_label": "Target product / technology",
-        "item_trend_label": "Business developments in {month}",
-        "item_note": "This section covers business developments in {month} at companies with no qualifying investment signals. Updates focus on the target products and technologies unless a card is marked otherwise. We monitor these developments for early signs of investment.",
-        "item_exempt_note": "Business update · technology link not required",
+        # "타겟 품목"은 누구의 타겟인지 영어로 안 보인다. 한국이 이 품목의 투자를 유치하려 한다는 뜻을 적는다.
+        "item_target_label": "Korea seeks investment in",
+        "item_trend_label": "Developments in {month}",
+        "item_note": "Companies with no investment signal this month but with {month} news on the product Korea seeks from them. Cards marked \"General company news\" cover the company's main business instead. Any of these could turn into an investment signal.",
+        "item_exempt_note": "General company news",
     },
 }
 
@@ -857,7 +896,7 @@ def build_profiles(targets, tech_map):
         if LANG == "en":
             country = COUNTRY_EN.get(country, country)
             industry = DETAILED_INDUSTRY_EN.get(group, industry)
-            target_technology = tech.get("target_technology_en") or target_technology
+            target_technology = TARGET_TECHNOLOGY_DISPLAY_EN.get(group) or tech.get("target_technology_en") or target_technology
         profiles.append(
             {
                 **target,

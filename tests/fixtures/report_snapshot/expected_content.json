@@ -360,7 +360,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Charles River - News Releases / Press Releases 2026.08.20",
+        "source": "Source  Press release · Charles River - News Releases / Press Releases 2026.08.20",
         "url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp",
         "date": "2026.08.20",
         "technology_linked": true
@@ -370,7 +370,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
+        "source": "Source  Press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
         "url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate",
         "date": "2026.08.10",
         "technology_linked": true
@@ -390,7 +390,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Applied Materials 2026.08.13",
+        "source": "Source  Press release · Applied Materials 2026.08.13",
         "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
         "date": "2026.08.13",
         "technology_linked": true
@@ -410,7 +410,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Veolia 2026.08.26",
+        "source": "Source  Press release · Veolia 2026.08.26",
         "url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market",
         "date": "2026.08.26",
         "technology_linked": false
@@ -449,7 +449,7 @@
     "item_trend_cards": [
       {
         "company": "Albemarle",
-        "target": "Cathode material lithium hydroxide/carbonate",
+        "target": "Lithium hydroxide and lithium carbonate for cathodes",
         "text": "Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.",
         "source": "Source  Albemarle - Newsroom / News 2026.08.05"
       }
