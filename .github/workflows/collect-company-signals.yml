@@ -92,6 +92,10 @@ jobs:
           # 2차 검증: 규칙이 고른 의심 후보만 이 모델로 다시 판정한다. 비워 두면 gemini-3.5-flash-lite(1차와 같은 모델, 검증 질문 방식만 다름). off 로 끈다.
           GEMINI_VERIFIER_MODEL: ${{ vars.GEMINI_VERIFIER_MODEL }}
           REVIEW_VERIFIER: ${{ vars.REVIEW_VERIFIER }}
+          # 문안 작성: 판정이 끝난 뒤 승인 후보의 한·영 문안만 이 모델로 다시 쓴다. 비워 두면 gemini-3.7-flash. off 로 끈다.
+          # 실패(429·503·시간 초과)하거나 검사에 걸리면 판정 모델의 문안을 그대로 쓴다.
+          GEMINI_WRITER_MODEL: ${{ vars.GEMINI_WRITER_MODEL }}
+          REVIEW_WRITER: ${{ vars.REVIEW_WRITER }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '600' }}

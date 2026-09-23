@@ -12,6 +12,7 @@ import { collectionInputDigest, collectionNeedsRefresh } from './collection_resi
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
+import { resolveWriter, writeSummaries, writerPolicySection } from './summary_writer.mjs';
 
 // REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
@@ -1343,6 +1344,30 @@ export function failureStatus({ previous = null, error, stage, identity = runIde
   };
 }
 
+// 판정이 끝난 뒤 보고서에 실릴 후보의 문안만 별도 모델로 다시 쓴다(summary_writer.mjs). 보고서를 막지 않는다:
+// 키가 없거나 요청·검사가 실패하면 판정 문안을 그대로 쓴다.
+async function writeReportSummaries({ articles, root, policyDoc }) {
+  const writer = resolveWriter();
+  if (!writer) return null;
+  const apiKey = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? String(process.env.GEMINI_API_KEY || '').trim() : '';
+  if (!apiKey) {
+    console.log('Summary writer skipped: GEMINI_API_KEY with GEMINI_FREE_TIER_CONFIRMED=true is required');
+    return null;
+  }
+  const stats = await writeSummaries({ articles, reviewDir: path.join(root, 'reviews'), cacheDir: path.join(root, 'written'),
+    writer, apiKey, policyWording: writerPolicySection(policyDoc), styleProblems: summaryStyleProblems });
+  console.log(JSON.stringify({ summary_writer: stats }));
+  if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
+    `### Summary writer (${stats.model})
+${stats.articles} articles; ${stats.requests} requests; ${stats.cached} cached; ` +
+    `${stats.written} summaries written, ${stats.fallback} kept from the judge` +
+    `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
+    `${Object.keys(stats.rejected).length ? `; rejected ${JSON.stringify(stats.rejected)}` : ''}` +
+    `${stats.stopped ? `; stopped (${stats.stopped})` : ''}.
+`);
+  return stats;
+}
+
 async function main() {
   const period = resolveReportPeriod();
   const { from_date: from, to_date: to } = period;
@@ -1437,6 +1462,8 @@ async function main() {
       `${item.candidate_ids.join(', ')} held back from the report, kept for the dashboard and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join(''));
   if (state.status !== 'completed' && !reviewFailed.length) { process.exitCode = 75; return; }
+  failedStage = 'write';
+  await writeReportSummaries({ articles, root, policyDoc });
   failedStage = 'build';
   process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
   const reportDir = await build({ runDir, issueNumber: process.env.REPORT_ISSUE_NUMBER || '2', reviewFailed });
