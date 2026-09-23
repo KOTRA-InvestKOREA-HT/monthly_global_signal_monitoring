@@ -5,7 +5,7 @@ import { MODEL_INPUT_VERSION } from './model_input.mjs';
 // Shared review contract, independent of API transport.
 // The policy owns judgement criteria, Korean terminology and layout targets.
 // Section 5 owns common summary rules and variant-specific writing steps.
-export const PROMPT_VERSION = 'review-prompt-v5';
+export const PROMPT_VERSION = 'review-prompt-v6';
 export const DATE_HINT_VERSION = 'date-hint-v1';
 
 export const DATE_INSTRUCTION =
@@ -30,33 +30,10 @@ export const EVIDENCE_INSTRUCTION =
 // Eligibility is defined once in the supplied policy: only a candidate that meets every
 // approval condition is published, and only a published candidate is worth a summary.
 export const SUMMARY_ELIGIBILITY_INSTRUCTION =
-  'Apply the approval summary conditions in the supplied report criteria after judging all fields. ' +
-  'For every candidate that requires a summary, write BOTH summary_ko and summary_en. ' +
-  'An eligible relevant candidate needs its OWN Korean and English business summaries whether investment candidates are approved or rejected. ' +
-  'An investment summary does not replace the relevant summaries, even when both cite the same passage. ' +
-  'A relevant (business) summary is plain prose sentences only: no headline, no "title - detail" form and no leading company label. ' +
-  'Do not change evidence-based fields or quality just to avoid writing summaries. ' +
-  'All other candidates use empty summaries. ';
+  "Apply the policy's approval and summary eligibility rules. An eligible relevant candidate needs its own business summaries whether investment candidates are approved or rejected. A relevant (business) summary is plain prose sentences only: no headline, no \"title - detail\" form and no leading company label. All ineligible candidates use empty summaries.";
 
 export const SUMMARY_GROUNDING_INSTRUCTION =
-  'An investment summary must describe the SAME event its evidence_quotes describe. ' +
-  'Do not summarize a different item from the same article, such as an earlier-quarter deal recapped ' +
-  'in a results release highlights list. If you summarize an event, quote that event. ' +
-  'An investment summary_en may not name an organisation, programme or fund that none of its evidence_quotes mention. ' +
-  'Summary accuracy: keep the tense and certainty of the evidence; will, plans, expects, potential and may are future or possible ' +
-  '(Korean 예정·계획·가능성), never 완료 or 진행. Describe the event the evidence reports: an executive who assumed office this month ' +
-  'was not appointed this month unless the evidence says so. Name the country or region instead of domestic, local, home or 국내. ' +
-  'Do not upgrade a relationship: an investment or stake is not a collaboration, and potential synergies are not an ongoing collaboration. ' +
-  'Preserve the actor and counterparty; do not omit them or interchange supply, equity investment, joint research and licensing. ' +
-  'Joining a programme or agreeing to take part is not signing an agreement, and an intention is not a decision. ' +
-  'Promotional wording in the article (high-impact, leading, world-class) is the company\'s claim, not a confirmed fact: use the figure the ' +
-  'article gives, or drop the adjective. ' +
-  'Numbers: the quantity is fixed, the notation is not. Keep the value the article states, never rounding it, rescaling it or deriving ' +
-  'a new figure from it, and write that same value in each language\'s own numbering (9.33 billion in English is 93억 3000만 in Korean). ' +
-  'A different quantity is an error; the same quantity written the reader\'s way is not. ' +
-  'Attach a currency only when the article states that currency for that amount. ' +
-  'Use the evidence\'s own verb for the effect, for example strengthen rather than diversify. ' +
-  'When the evidence dates the event differently from the announcement, state that event date. ';
+  "Describe the SAME event its evidence_quotes describe; every reported fact must be supported by those quotes. An investment summary_en may not name an organisation, programme or fund absent from its quotes. Preserve the actor and counterparty, the type of action or relationship (including supply, equity investment, joint research and licensing), and keep the tense and certainty of the evidence. Do not turn an intention into a decision, participation into a signed agreement, or a possible or future event into an ongoing or completed one. Preserve the meaning of the event and its effects, not the source's choice of words. Distinguish the event date from its announcement date and state the event date when they differ. Name the country or region instead of using reader-relative location terms. Promotional wording in the article is the company's claim, not a confirmed fact: omit it or report the supporting measurement. Numbers: the quantity is fixed, the notation is not. Preserve value and precision; equivalent language-specific number notation is allowed, but rounding, currency conversion and deriving new quantities are not. Attach a currency only when the article states it for that amount.";
 
 // 문안 절은 세 가지 역할로 나뉜다. 변형이 바꾸는 것은 앞의 둘뿐이다.
 //
@@ -71,19 +48,13 @@ export const SUMMARY_GROUNDING_INSTRUCTION =
 // shared_facts 계열은 이 절 대신 SHARED_FACTS_INSTRUCTION 을 써서 같은 일을 facts 필드로 한다.
 // 둘을 같이 넣으면 사실 선정 지시가 두 번 나와 해석할 여지를 준다.
 export const SUMMARY_FACT_BASIS_INSTRUCTION =
-  'First fix the facts this summary reports, taken from this candidate\'s evidence_quotes: the event, the parties, the amounts, the ' +
-  'dates and the schedule. Both summaries carry exactly that set of facts, so a month, date or percentage stated in one language must ' +
-  'appear in the other. Then write each language separately from the evidence, in that language\'s own idiom. ' +
-  'Independence governs the wording, never which facts appear. ';
+  "First fix the facts this summary reports from its evidence_quotes: select the event and the essential parties, quantities, timing and certainty needed to understand it. Both summaries carry that same selection; a month, date or percentage stated in one language must appear in the other. Write each in its own language's idiom. Independence governs the wording, never which facts appear.";
 
 // 2026-09 보고서의 영문판이 한국어 개조식 표제를 그대로 옮겨 적어 영어 문장이 되지 못했다
 // ("AI Computing Material and Process Innovation Research Collaboration - Applied Materials announced…").
 // 한국어를 먼저 쓰는 변형의 순서·방향 규칙이다. 영어 문체 자체는 아래 공통 절이 정한다.
 export const SUMMARY_INDEPENDENCE_INSTRUCTION =
-  'Write summary_ko first, then summary_en. ' +
-  'summary_en is not a translation of summary_ko and is not drafted from it: never carry Korean word order, Korean sentence structure ' +
-  'or the Korean noun-phrase headline across into English, and never render Korean report phrasing word for word. ' +
-  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
+  "Write summary_ko first, then summary_en. summary_en is not a translation of summary_ko and is not drafted from it; write from the selected facts without carrying over Korean word order or headline structure.";
 
 // 영어 문안의 문체. 순서와 사실 목록 방식과 무관하게 모든 변형이 같은 규칙을 받는다.
 // 이 절이 한 변형에만 있으면, 그 변형을 쓰지 않는 실행은 영어 표제 금지 규칙 없이 돈다.
@@ -91,26 +62,10 @@ export const SUMMARY_INDEPENDENCE_INSTRUCTION =
 // 문장 수를 채우려는 영향일 수 있으나 원인은 미검증이다. 정책의 최소 문장 수 요구를 제거하고
 // 한 문장도 허용한다. 이 변경의 품질 효과는 실제 문안 비교로 확인해야 한다.
 export const SUMMARY_ENGLISH_STYLE_INSTRUCTION =
-  'Write summary_en in natural, idiomatic English suitable for a concise business-news brief, directly from the source evidence. ' +
-  'Use complete sentences with finite verbs, concrete subjects, direct verbs, and ordinary English articles, prepositions and collocations. ' +
-  'Do not translate or mirror summary_ko. Avoid literal translations of Korean expressions, awkward noun strings and generic corporate jargon. ' +
-  'Do not add facts merely to make the prose sound more natural. ' +
-  'summary_en has no " - " headline form and no leading label; open with the sentence that states what happened. ' +
-  'Let the facts set the length: when they fit in one sentence, write one sentence. ' +
-  'Never add a sentence that restates a fact already given in other words, and never pad with a sentence about the announcing, ' +
-  'reporting or disclosing itself instead of the event. ';
+  "Write summary_en as a concise business-news brief using complete sentences with finite verbs, concrete subjects, direct verbs, and ordinary English articles, prepositions and collocations. Use no \" - \" headline form and no leading label. Avoid awkward noun strings and corporate jargon.";
 
 export const SUMMARY_STYLE_INSTRUCTION =
-  'In summary_ko, write company, organisation, product and programme names in their original Latin-script form as the ' +
-  'evidence spells them (for example Charles River, Air Liquide, Hydro CIRCAL); never translate or transliterate them into Hangul. ' +
-  'Every summary_ko sentence ends in the report\'s bullet style (…했음, …임, …됨, …예정임); never end a Korean sentence with …다, …한다, …했다, …이다 or …습니다. ' +
-  'Put the agreed facts (amounts, counterparties, dates, schedules) in the first two sentences of both summaries. ' +
-  'The stated length is a target, not a cap: when everything does not fit, drop secondary explanation, never a fact, and never a ' +
-  'particle or a connective ending, because a shorter sentence must still be a sentence. ' +
-  'When an English legal, financial or clinical term from the evidence has to appear in summary_ko, carry it by meaning, not word by ' +
-  'word. Keep a legal procedure name such as scheme of arrangement ' +
-  'in English with a short Korean gloss (인수 절차); never render it as 멤버십 or 배치. late-stage trial is 후기 단계 임상시험, never 말기 ' +
-  '(말기 means terminal illness). A vehicle fleet is 차량군, never 함대. ';
+  "In summary_ko, preserve company, organisation, product and programme names in their original Latin-script form as spelled in the evidence; never translate or transliterate them into Hangul. Every summary_ko sentence ends in the report's bullet style (…했음, …임, …됨, …예정임). Let the selected facts determine sentence count: when they fit in one sentence, write one sentence. Omit repetition and filler. Accuracy and grammatical completeness take priority over layout: length is a target, not a cap. Shorten secondary explanation, never a selected fact and never a particle or a connective ending. Use the policy's Korean terminology and language-specific layout guidance.";
 
 export const SUMMARY_INSTRUCTION = [
   SUMMARY_ELIGIBILITY_INSTRUCTION, SUMMARY_GROUNDING_INSTRUCTION,
@@ -152,7 +107,7 @@ export const RETRY_INSTRUCTION =
   'Check missing summary_ko or summary_en, especially relevant, under section 5. ' +
   'Do not change evidence-based fields or quality merely to satisfy output formatting. ' +
   'If a candidate cannot be supported by reliable quoted evidence, use quality=needs_review with empty quotes and summaries for that candidate, not unrelated candidates. ' +
-  'If the publication date was rejected, return "" for both published_date and published_date_quote unless a verbatim quote spells out exactly that publication date.';
+  'For a rejected date hint, follow section 6: return "" for both published_date and published_date_quote unless a verbatim quote spells out exactly that publication date.';
 
 // 2차 검증은 1차와 같은 모델(gemini-3.5-flash-lite)이 한다. gemini-3.8-flash 는 실행 35181768089·35197626547 에서
 // 503(과부하)과 무료 할당량 429 로 한 건도 끝내지 못했다. 같은 모델이 같은 질문을 받으면 같은 답을 되풀이하므로
@@ -161,9 +116,9 @@ export const RETRY_INSTRUCTION =
 export const VERIFY_INSTRUCTION =
   'Second-stage audit. The article payload carries only the candidates under audit; automated checks flagged them as likely misjudged. ' +
   'No earlier answer is shown; judge them only from the supplied evidence and the report criteria. The evidence is the whole article, ' +
-  'so a passage about some other candidate is context, not a candidate to judge. For each candidate, begin reason in English ' +
+  'so a passage about some other candidate is context, not a candidate to judge. For each candidate, first copy evidence_quotes, then begin reason in English ' +
   'by answering every question in checks[candidate_id] from the evidence, naming the concrete fact the answer rests on, and then set ' +
-  'evidence_quotes, the booleans, event_stage and quality so that they agree with those answers. Be strict: set a field true, or ' +
+  'the booleans, event_stage and quality so that they agree with those quotes and answers. Be strict: set a field true, or ' +
   'event_stage exploratory, planned or precursor, only when a quoted sentence states it; when the evidence is ambiguous take the ' +
   'stricter reading or quality=needs_review. A question is not a verdict: when the evidence clearly meets the criteria, approve it. ' +
   'Return every candidate in the payload exactly once and no others. ' +
@@ -222,10 +177,7 @@ export const SHARED_FACTS_INSTRUCTION =
 // 보고 쓰지 않는다"는 문장이, 애초에 한국어가 뒤에 오는 응답에서 앞의 것을 가리키게 된다.
 // 어제 지시문 제목만 남겨 본문과 어긋났던 것과 같은 실수다.
 export const SUMMARY_ENGLISH_FIRST_INSTRUCTION =
-  'Write summary_en first, then summary_ko from those same facts in Korean. ' +
-  'summary_ko is not a translation of summary_en and is not drafted from it: never carry English word order or English sentence ' +
-  'structure across into Korean, and never render English phrasing word for word. ' +
-  'Independent wording is not different content: the two summaries differ only in how each language states the agreed facts. ';
+  "Write summary_en first, then summary_ko. summary_ko is not a translation of summary_en and is not drafted from it; write from the selected facts without carrying over English word order or sentence structure.";
 
 // status 는 enum 이 아니다. 두 provider 모두 스키마의 모든 필드를 required 로 만들므로, 세 값만
 // 허용하면 탈락 후보와 근거가 애매한 사건까지 planned·underway·completed 중 하나를 골라야 한다.

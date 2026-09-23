@@ -377,7 +377,7 @@ class BusinessBoxLabelTests(unittest.TestCase):
             self.assertTrue(text)
         pdf.set_language("en")
         self.assertEqual(pdf.target_section_for_profile({"company": "Ouster", "target_technology": "LiDAR"})[0],
-                         "Target item/tech")
+                         "Target product / technology")
 
     def test_empty_business_text_follows_the_report_style(self):
         pdf.set_language("ko")

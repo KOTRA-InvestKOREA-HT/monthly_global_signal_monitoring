@@ -375,7 +375,7 @@ def draw_cover(report, summary, indicators):
         c.circle(46, y + 4, 10, stroke=1, fill=0)
         report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
         if report_content.LANG == "en":
-            label = item.get("label_en") or item["label_ko"]
+            label = SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
             description = INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
         else:
             label = item["label_ko"]

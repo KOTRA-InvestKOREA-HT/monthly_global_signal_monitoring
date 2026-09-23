@@ -30,7 +30,7 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ELIGIBILITY_INSTRUCTION', /whether investment candidates are approved or rejected/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /SAME event its evidence_quotes describe/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Attach a currency only when the article states/],
-    ['SUMMARY_GROUNDING_INSTRUCTION', /Joining a programme or agreeing to take part is not signing an agreement/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /participation into a signed agreement/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Preserve the actor and counterparty/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /supply, equity investment, joint research and licensing/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
@@ -48,18 +48,40 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /ordinary English articles, prepositions and collocations/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /no " - " headline form and no leading label/],
     // 관찰된 반복을 막는 지시다. 반복 원인이나 품질 개선 효과를 이 테스트가 입증하지는 않는다.
-    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /when they fit in one sentence, write one sentence/],
-    ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /never pad with a sentence about the announcing/],
+    ['SUMMARY_STYLE_INSTRUCTION', /when they fit in one sentence, write one sentence/],
+    ['SUMMARY_STYLE_INSTRUCTION', /Omit repetition and filler/],
     // 값은 지키고 표기만 바꾼다. "다시 계산하지 말라"와 "정확히 환산하라"를 한 규칙으로 합쳤다.
     ['SUMMARY_GROUNDING_INSTRUCTION', /the quantity is fixed, the notation is not/],
     ['SUMMARY_STYLE_INSTRUCTION', /length is a target, not a cap/],
-    ['SUMMARY_STYLE_INSTRUCTION', /late-stage trial is 후기 단계 임상시험/],
+    ['SUMMARY_GROUNDING_INSTRUCTION', /Preserve the meaning of the event and its effects/],
     ['DATE_INSTRUCTION', /date_placement "date_pending"/],
   ];
   for (const [name, rule] of cases) assert.match(prompt[name], rule, name);
 });
 
 const policy = policySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
+
+test('single-call instructions agree on order, date eligibility and prose priorities', () => {
+  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
+    for (const provider of [GEMINI, NVIDIA]) {
+      const body = provider.body({ article, policy, model: provider.model, variant,
+        retry: { mode: 'verify', verify_candidate_ids: ['investment:3'] } });
+      const system = systemText(provider, body);
+      const audit = userTexts(provider, body)[1];
+      const keys = Object.keys(prompt.decisionsEnvelopeFor(variant).properties.decisions.items.properties);
+      assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason']);
+      assert.match(audit, /first copy evidence_quotes, then begin reason in English/);
+      assert.match(system, /Only for `date_placement="date_pending"`/);
+      assert.match(system, /For all other placements return empty date fields/);
+      assert.match(system, /Accuracy and grammatical completeness take priority over layout/);
+      assert.equal(system.split('when they fit in one sentence, write one sentence').length - 1, 1);
+      assert.doesNotMatch(system, /first two sentences|targeting 2–4 sentences|never rounding it, rescaling it/);
+      assert.match(system, /Preserve value and precision/);
+      assert.match(system, /using established terminology for the meaning in context/);
+      if (!variant.startsWith('shared_facts')) assert.equal(keys.length, 11);
+    }
+  }
+});
 
 test('every provider and variant requests an English reason before summaries', async () => {
   assert.doesNotMatch(policy.split('## Summary wording')[0], /[가-힣]/);
@@ -235,7 +257,7 @@ test('real provider prompts keep common summary rules once across every variant'
     'complete sentences with finite verbs',
     'the quantity is fixed, the notation is not',
     'keep the tense and certainty of the evidence',
-    'Joining a programme or agreeing to take part is not signing an agreement',
+    'participation into a signed agreement',
     'Preserve the actor and counterparty',
     "is the company's claim, not a confirmed fact",
     'never translate or transliterate them into Hangul',
@@ -257,7 +279,7 @@ test('real provider prompts keep common summary rules once across every variant'
         /Translate general industry terms that are not names into Korean/,
         /Mark annualized figures as `연간 환산 기준`/,
         /Use one ` - ` separator between headline and detail/,
-        /Detail: Target 60–110 characters and 1–2 sentences/,
+        /Detail: Aim for 60–110 characters when the selected facts fit/,
         /Investment summary \(English\): Target at most 400 characters/,
       ]) assert.match(system, rule);
     }

@@ -62,7 +62,7 @@ test('the existing safeguards are still stated in the criteria', () => {
   assert.match(CRITERIA, /S2 production expansion cannot use precursor/);
   assert.match(CRITERIA, /committed\/completed: The commitment to or completion of the final production-facility investment or acquisition itself/);
   assert.match(CRITERIA, /Do not relabel it precursor to approve it/);
-  assert.match(CRITERIA, /`evidence_quotes` is an array of verbatim source sentences/);
+  assert.match(CRITERIA, /Approval requires at least one verbatim source sentence preserving the context/);
   assert.match(CRITERIA, /String matching is not semantic validation/);
   assert.match(CRITERIA, /Quotes used for approval must exist in the prepared article's `evidence`/);
   assert.match(CRITERIA, /Do not downgrade content judgements or reject candidates because the publication date is uncertain/);
@@ -124,7 +124,7 @@ test('each indicator states what counts and what does not', () => {
   assert.match(CRITERIA, /appointments solely to board positions such as outside directors/);
   assert.match(CRITERIA, /sales or earnings forecasts and guidance/);
   assert.match(CRITERIA, /merely reporting results.*has no new precursor activity/);
-  assert.match(CRITERIA, /Do not choose a verdict first and retrofit the explanation/);
+  assert.match(CRITERIA, /do not preselect a verdict and fit the fields to it/);
 });
 
 test('the criteria sent to the model contain no step only a local agent can take', () => {

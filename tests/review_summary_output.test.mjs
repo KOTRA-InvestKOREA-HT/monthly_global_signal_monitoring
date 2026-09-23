@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GEMINI, NVIDIA, SUMMARY_INSTRUCTION } from '../scripts/review_providers.mjs';
-import { requestReview } from '../scripts/review_report.mjs';
+import fs from 'node:fs';
+import { requestReview, policySection } from '../scripts/review_report.mjs';
 import { groupArticles, importReview } from '../scripts/local_report.mjs';
 
 // The failed EPIC response supplied S4 summaries but omitted both relevant summaries.
 // Use a technology-exempt company so false technology is not mistaken for rejection.
+const policy = policySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
 const quote = 'Acme and University will jointly develop advanced chip packaging processes.';
 // 본문 없는 기사는 승인되지 않으므로 기사 길이의 본문을 둔다.
 const TAIL = 'The work starts with qualification volumes, and both partners said the first results are expected next year ' +
@@ -31,7 +33,7 @@ function response(provider, ds) {
 
 for (const provider of [GEMINI, NVIDIA]) {
   test(`${provider.id}: initial and retry payloads require separate bilingual relevant summaries`, () => {
-    const body = retry => provider.body({ article, policy: 'POLICY', retry, model: provider.model });
+    const body = retry => provider.body({ article, policy, retry, model: provider.model });
     const initial = body(false), retried = body(true);
     const system = provider.id === 'gemini' ? initial.systemInstruction.parts[0].text : initial.messages[0].content;
     const retry = provider.id === 'gemini' ? retried.contents[0].parts[1].text : retried.messages[2].content;
@@ -43,9 +45,9 @@ for (const provider of [GEMINI, NVIDIA]) {
     assert.equal(retrySystem.split(SUMMARY_INSTRUCTION).length - 1, 1);
     assert.match(retry, /missing summary_ko or summary_en, especially relevant/);
     assert.match(system, /whether investment candidates are approved or rejected/);
-    assert.match(system, /approval summary conditions in the supplied report criteria/);
-    assert.match(system, /Do not change evidence-based fields or quality/);
-    assert.match(system, /write BOTH summary_ko and summary_en/);
+    assert.match(system, /Write summaries only for candidates meeting all approval conditions/);
+    assert.match(system, /Do not lower judgement fields or `quality` to avoid summaries/);
+    assert.match(system, /Approved candidates require both `summary_ko` and `summary_en`/);
     const feedback = { reason: 'review_validation', validation_message: 'S4: missing ai_summary_ko' };
     const targeted = body(feedback);
     const targetedText = provider.id === 'gemini' ? targeted.contents[0].parts[1].text : targeted.messages[2].content;

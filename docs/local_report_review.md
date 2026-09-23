@@ -38,7 +38,7 @@ Judge each field independently. `entity_supported`, `target_technology_supported
    - Eligible stages are exploratory/planned and precursor for S1, S3, S4 and S5. unclear remains unconfirmed.
 5. Business activity (`kind=relevant`): Judge entity attribution and target-technology linkage. Set `indicator_supported=true` for concrete technology or business activity. Mere event notices, dividends or company profiles remain false even for technology-exempt companies. Climate or carbon-reduction goals and their certification, ESG or sustainability reporting, share-price or valuation commentary, and general company or product-family descriptions are false without concrete target-technology or business activity. Do not reject solely by document type; independently assess any concrete production, process introduction, development or business event inside it. Completed business activities can qualify. Set `leading_indicator_supported=true` and `event_stage=not_applicable`.
 6. `quality` describes evidence sufficiency only. Use `pass` when evidence supports a definite judgement and needs_review when evidence is insufficient. `pass` is not approval or a positive verdict: a clearly ineligible event also receives `pass`. Do not approve evidence based on subjective confidence or summary length.
-7. For each candidate, first copy the original sentences showing its indicator event into `evidence_quotes`, write a brief English `reason` from those sentences, and then set the remaining fields from what they show. Do not choose a verdict first and retrofit the explanation. `evidence_quotes` is an array of verbatim source sentences; approval requires at least one. Preserve context that supports the judgement rather than quoting an isolated word. String matching is not semantic validation.
+7. Follow the evidence → reason → judgement order in system section 1. Approval requires at least one verbatim source sentence preserving the context that supports the judgement. String matching is not semantic validation.
 
 ### Additional judgement boundaries
 
@@ -72,7 +72,7 @@ Articles carry `date_status` and `date_placement`. These are independent of cont
 - An officially confirmed publication month (`published_month`) is sufficient for monthly candidacy. Do not invent day 1; display the month with the day marked unknown.
 - The report covers information made public in the reporting month. Describe the event date separately; do not substitute it for the publication date. When a new announcement is confirmed this month about an older article or event, judge from that announcement.
 - For date-pending candidates, note the issue in the English `reason`, e.g. "May meet investment-signal criteria; publication month needs confirmation." Do not confuse it with "no signal" or "technology unrelated".
-- When the article states its publication date, record `published_date` (YYYY-MM-DD, or YYYY-MM for month-only dates) and a verbatim `published_date_quote`. Never propose a date without its quote. A proposed date is supporting evidence only and does not by itself confirm the date.
+- Only for `date_placement="date_pending"`, when the article states its publication date, record `published_date` (YYYY-MM-DD, or YYYY-MM for month-only dates) and a verbatim `published_date_quote`. Never propose a date without its quote. A proposed date is supporting evidence only and does not by itself confirm the date. For all other placements return empty date fields.
 
 ## Summary wording
 
@@ -80,27 +80,17 @@ Follow section 5 of the system instructions for common summary rules. Its source
 
 ### Korean terminology and expression
 
-Translate general industry terms that are not names into Korean. Preserving original names does not mean leaving general terms in English. Use `자동차 부문` for automotive and `생산량을 단계적으로 늘리는 작업` for ramp-up. Do not leave unexplained transliterations such as `램프업` or `런레이트`. Use established Korean technical terms such as `반도체` and `임상시험`.
+Translate general industry terms that are not names into Korean, using established terminology for the meaning in context. When no clear Korean equivalent exists, retain the technical term with a short Korean explanation. Do not replace a term by a literal translation or unexplained transliteration. State the evidenced action or change directly, avoiding empty predicates.
 
-State directly what changes and by how much. Avoid empty predicates such as `개선을 제공하는 것임`; put the evidenced object and figure into the predicate, e.g. `처리량을 20~50% 높임`.
-
-Preserve the type of measurement. Annualized figures, run rates, order backlogs and targets are not realized results. Mark annualized figures as `연간 환산 기준` to distinguish them from actual annual results.
-
-| Avoid | Use instead |
-| --- | --- |
-| 고영향력 연구 프로그램 | The stated research purpose; otherwise `공동연구` |
-| 선도 연산 실리콘 공급 | 주요 연산용 반도체 공급업체 역할 |
-| 해상풍력터빈 램프업 진척 상황 | 해상풍력터빈 생산량을 단계적으로 늘리는 작업의 진행 상황 |
-| 연간 생산 런레이트 | 연간 환산 생산량 수준 |
-| 개선을 제공하는 것임 | State what improves and by how much |
+Preserve measurement type: annualized figures, run rates, order backlogs and targets are not realized results. Mark annualized figures as `연간 환산 기준` to distinguish them from actual annual results.
 
 ### Layout targets
 
 - Investment summary (Korean): Use one ` - ` separator between headline and detail in a single string. Only the first separator splits them.
   - Headline: A 20–40-character noun phrase naming what happened that month. Do not use the indicator name or company name as the headline: the card already displays them.
-  - Detail: Target 60–110 characters and 1–2 sentences.
+  - Detail: Aim for 60–110 characters when the selected facts fit; expand as needed to preserve their meaning.
 - Investment summary (English): Target at most 400 characters. The report extracts the card's first line itself.
-- Business activity: Describe activity relevant to the target product, targeting 2–4 sentences.
+- Business activity: Describe the concrete activity relevant to the target product in concise prose; use the shared sentence-count rule in system section 5.
 
 ## 기사별 응답 형식
 

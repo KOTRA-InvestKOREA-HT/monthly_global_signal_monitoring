@@ -177,7 +177,7 @@ def indicator_entries(indicators):
     entries = []
     for item in indicators:
         if report.LANG == "en":
-            label = item.get("label_en") or item["label_ko"]
+            label = report.SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
             description = report.INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
         else:
             label, description = item["label_ko"], item["description_ko"]
