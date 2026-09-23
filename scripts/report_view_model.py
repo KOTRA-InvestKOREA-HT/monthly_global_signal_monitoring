@@ -180,7 +180,7 @@ def indicator_entries(indicators):
             label = report.SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
             description = report.INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
         else:
-            label, description = item["label_ko"], item["description_ko"]
+            label, description = report.INDICATOR_LABEL_KO.get(item["no"], item["label_ko"]), item["description_ko"]
         entries.append({"no": item["no"], "label": label, "description": description})
     return entries
 

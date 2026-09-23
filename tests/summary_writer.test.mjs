@@ -135,6 +135,13 @@ test('a missing Korean headline or an English headline is rejected', async () =>
   assert.equal(stats2.rejected.english_headline, 1);
 });
 
+test('an English summary with Hangul in it is rejected and the prompt asks for American spelling', async () => {
+  const ws = await workspace();
+  const stats = await run(ws, async () => gemini([{ ...good, summary_en: good.summary_en.replace('Dresden', 'Dresden(드레스덴)') }]));
+  assert.equal(stats.rejected.hangul_in_english, 1);
+  assert.match(buildWriterInstruction(wording), /American spelling/);
+});
+
 test('a free-tier 429 or timeout keeps the judge summary, stops asking and never blocks the report', async () => {
   const ws = await workspace();
   let calls = 0;

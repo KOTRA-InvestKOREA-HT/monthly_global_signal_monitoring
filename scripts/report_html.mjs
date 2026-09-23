@@ -438,12 +438,13 @@ html[lang="en"] .cover-indicators .desc {
 .items { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .items.first { top: 116pt; }
 .items .matrix-desc { margin: 0 0 18pt; }
+/* 3쪽(기업 카드)부터는 카드·배지·필을 각지게 그린다. 표지와 매트릭스는 둥근 모양을 유지한다. */
 .item-card {
   margin-bottom: 14pt;
   padding: 0 0 15.2pt;
   background: #fff;
   border: 0.9pt solid ${COLORS.boxLine};
-  border-radius: 10pt;
+  border-radius: 0;
   break-inside: avoid;
 }
 .item-card .detail-head { padding: 11pt 0 16pt; }
@@ -483,7 +484,7 @@ html[lang="en"] .cover-indicators .desc {
 .detail { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .signal-box, .business-box {
   border: 0.9pt solid ${COLORS.boxLine};
-  border-radius: 10pt;
+  border-radius: 0;
 }
 .signal-box { background: #fff; padding: 0 0 24pt; }
 .detail-head {
@@ -499,7 +500,7 @@ html[lang="en"] .cover-indicators .desc {
 .pill {
   display: inline-block;
   padding: 2pt 9pt;
-  border-radius: 3pt;
+  border-radius: 0;
   background: ${COLORS.light};
   font-size: 9pt;
   font-weight: 600;
@@ -528,7 +529,7 @@ html[lang="en"] .cover-indicators .desc {
   flex: none;
   width: 16pt;
   height: 16pt;
-  border-radius: 3pt;
+  border-radius: 0;
   background: ${COLORS.navy};
   color: #fff;
   font-size: 9pt;

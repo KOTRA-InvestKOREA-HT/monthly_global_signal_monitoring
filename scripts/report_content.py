@@ -21,7 +21,7 @@ __all__ = [
     "APPROVAL_POLICY", "BUSINESS_STAGE", "COMPANY_LEVEL_INDICATORS", "CONFIRMED_DATE_SOURCES",
     "COUNTRY_BY_COMPANY", "COUNTRY_EN", "DEFAULT_ISSUE_NUMBER",
     "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES",
-    "INDICATOR_DESCRIPTION_EN", "LEADING_STAGES", "TARGET_TECHNOLOGY_DISPLAY_EN", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
+    "INDICATOR_DESCRIPTION_EN", "INDICATOR_LABEL_KO", "LEADING_STAGES", "TARGET_TECHNOLOGY_DISPLAY_EN", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
     "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
@@ -175,11 +175,15 @@ DETAILED_INDUSTRY_BY_GROUP = {
 
 SIGNAL_DESCRIPTIONS = {
     1: "공급망·지정학 리스크 대응 · 공급망 재편·지정학 리스크 발생 및 대응 등",
-    2: "생산 확대 및 다변화 의지 · 증설·거점 다변화 검토·타당성 조사 등",
-    3: "투자 재원 확보 · 회사채·증자·신용공여 등 대규모 자금 조달",
-    4: "기술 생태계 밀착 (R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등",
-    5: "핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등",
+    2: "생산 확대 및 거점 다변화 · 증설·거점 다변화 검토·타당성 조사 등",
+    3: "자금 조달 및 유동성 확보 · 회사채·증자·신용공여 등 대규모 자금 조달",
+    4: "기술생태계 협력(R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등",
+    5: "핵심경영진 행보 · C-Level 이동·극비 방한·실사 조율 등",
 }
+
+# 표지에 싣는 국문 지표 이름. config/investment_signal_indicators.json 의 label_ko 는 판정 캐시 식별자에
+# 들어가므로(reviewPolicy) 표시 이름만 바꾸려고 그 파일을 고치면 저장된 판정이 모두 무효가 된다.
+INDICATOR_LABEL_KO = {no: text.split(" · ", 1)[0] for no, text in SIGNAL_DESCRIPTIONS.items()}
 
 # 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
 # 지표 이름은 국문을 옮기지 않고 영어 독자가 무엇이 일어났는지 바로 알 이름으로 짓는다.
@@ -315,10 +319,10 @@ TEXTS = {
         "matrix_title": "이번 달 시그널 매트릭스",
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
         "matrix_company": "기업",
-        "matrix_legend_on": "AI 확인 시그널",
-        "matrix_legend_off": "신호없음",
-        "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대·다변화 의지 · ③ 투자 재원 확보 · ④ 기술 생태계 밀착(R&D) · ⑤ 핵심 전략 인력의 이동",
-        "matrix_footnote": "AI 확인 시그널 {on}개사 · 신호없음 {off}개사",
+        "matrix_legend_on": "AI 탐지(미검증)",
+        "matrix_legend_off": "미탐지",
+        "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대 및 거점 다변화 · ③ 자금 조달 및 유동성 확보 · ④ 기술생태계 협력(R&D) · ⑤ 핵심경영진 행보",
+        "matrix_footnote": "AI 탐지(미검증) {on}개사 · 미탐지 {off}개사",
         "detail_title": "기업별 시그널 상세",
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
@@ -337,7 +341,7 @@ TEXTS = {
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
     },
     "en": {
-        "footer": "Invest KOREA · Investment Signals · {issue}",
+        "footer": "Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies",
         # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("INVESTMENT SIGNALS")이라 바로 위에
         # 같은 말을 작게 한 번 더 적는 꼴이 된다. 한국어 표지는 제목이 달라 그대로 둔다.
         # 본문 면의 머리글은 이 값을 쓰지 않으므로(draw_detail_page 의 자체 문자열) 영향이 없다.
@@ -352,14 +356,14 @@ TEXTS = {
         # 영어 독자는 무엇인지 모른다. 카드 라벨(Korea seeks investment in ...)과 같은 개념으로 적는다.
         "cover_line_1": "Including 30 major Investment Promotion Projects and 77 target companies selected by MOTIR",
         "cover_line_2": "Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)",
-        "cover_indicator_heading": "5 EARLY INVESTMENT SIGNALS",
+        "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
         "matrix_title": "Investment Signals at a Glance",
         "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
         "matrix_company": "Company",
-        "matrix_legend_on": "Signal identified",
+        "matrix_legend_on": "AI-detected signal",
         "matrix_legend_off": "No signal",
         "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & Geographical Diversification · ③ Capital Raising & Securing Liquidity · ④ Tech Ecosystem Partnerships (R&D) · ⑤ C-Suite Actions",
-        "matrix_footnote": "{on} companies showed signals · {off} showed none",
+        "matrix_footnote": "{on} companies with AI-detected signals · {off} not detected",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
         "business_heading": "BUSINESS DEVELOPMENTS",

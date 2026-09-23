@@ -383,7 +383,7 @@ def draw_cover(report, summary, indicators):
             label = SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
             description = INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
         else:
-            label = item["label_ko"]
+            label = INDICATOR_LABEL_KO.get(item["no"], item["label_ko"])
             description = item["description_ko"]
         if report_content.LANG == "en":
             # 영문 지표 이름은 길어 한 줄에 설명까지 두면 둘 다 잘린다. 설명을 이름 아래 줄에 둔다.
@@ -533,7 +533,7 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
 def draw_badge(report, x, y, value, active):
     c = report.canvas
     c.setFillColor(NAVY if active else colors.HexColor("#D8DADF"))
-    c.roundRect(x, y - 9, 16, 16, 3, fill=1, stroke=0)
+    c.rect(x, y - 9, 16, 16, fill=1, stroke=0)
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
@@ -548,7 +548,7 @@ def draw_industry_pill(report, x, y, max_width, text, color):
         return 0
     pill_width = report.canvas.stringWidth(text, report.fonts["semibold"], 9) + 18
     report.canvas.setFillColor(LIGHT)
-    report.canvas.roundRect(x, y - 7, pill_width, 18, 3, fill=1, stroke=0)
+    report.canvas.rect(x, y - 7, pill_width, 18, fill=1, stroke=0)
     report.text(x + 9, y - 2, text, 9, color, weight="semibold")
     return pill_width
 
@@ -701,7 +701,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     label = short_text_to_width(report.canvas, label, width - 190 - 16, report.fonts["semibold"], 7.6, f"signal_label[{no}]")
     label_w = report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14
     c.setFillColor(LIGHT)
-    c.roundRect(label_x, y - 9, label_w, 16, 3, fill=1, stroke=0)
+    c.rect(label_x, y - 9, label_w, 16, fill=1, stroke=0)
     report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), weight="semibold")
 
     if not active:
@@ -772,7 +772,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setStrokeColor(BOX_LINE)
     c.setLineWidth(0.9)
     c.setFillColor(WHITE)
-    c.roundRect(x, top_y, width, top_h, 10, fill=1, stroke=1)
+    c.rect(x, top_y, width, top_h, fill=1, stroke=1)
 
     header_y = DETAIL_BOX_TOP - 29
     display_name = profile.get("display_name") or company
@@ -805,7 +805,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
 
     c.setStrokeColor(TEAL_LINE)
     c.setFillColor(TEAL_BG)
-    c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
+    c.rect(x, bottom_y, width, bottom_h, fill=1, stroke=1)
     top = bottom_y + bottom_h
     header_y = top - 25
     heading = t("business_heading")
@@ -813,7 +813,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     if target_layout["text"]:
         # 품목별 사업동향 카드와 같은 회색 라벨. 이모지와 청록 배경 위 청록 글씨는 보고서 톤과 대비 모두 어긋났다.
         c.setFillColor(WHITE)
-        c.roundRect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, 3, fill=1, stroke=0)
+        c.rect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, fill=1, stroke=0)
         report.text(
             target_layout["label_x"] + 8, header_y, target_layout["label"], 7.6, colors.HexColor("#56687B"), weight="semibold"
         )
@@ -906,7 +906,7 @@ def draw_label_pill(report, x, y, label):
     c = report.canvas
     pill_width = c.stringWidth(label, report.fonts["semibold"], ITEM_LABEL_SIZE) + 14
     c.setFillColor(LIGHT)
-    c.roundRect(x, y - 5, pill_width, 15, 3, fill=1, stroke=0)
+    c.rect(x, y - 5, pill_width, 15, fill=1, stroke=0)
     report.text(x + 7, y, label, ITEM_LABEL_SIZE, ITEM_LABEL_COLOR, weight="semibold")
     return pill_width
 
@@ -920,7 +920,7 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     c.setStrokeColor(BOX_LINE)
     c.setLineWidth(0.9)
     c.setFillColor(WHITE)
-    c.roundRect(x, top - layout["height"], width, layout["height"], 10, fill=1, stroke=1)
+    c.rect(x, top - layout["height"], width, layout["height"], fill=1, stroke=1)
 
     header_y = top - ITEM_CARD_TITLE_TOP
     display_name = profile.get("display_name") or company

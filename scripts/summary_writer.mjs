@@ -134,7 +134,7 @@ export function buildWriterInstruction(policyWording) {
       'For an investment item, state only facts supported by its evidence_quotes. A relevant item may also use article_evidence, ' +
       'but must stay on the event its evidence_quotes describe. ' + SUMMARY_GROUNDING_INSTRUCTION + ' ' + SUMMARY_FACT_BASIS_INSTRUCTION),
     section('Order and independence', SUMMARY_ENGLISH_FIRST_INSTRUCTION),
-    section('English', SUMMARY_ENGLISH_STYLE_INSTRUCTION + ' Do not repeat promotional adverbs or adjectives such as "successfully", "significant" or "sizable"; give the figure instead or leave it out.'),
+    section('English', SUMMARY_ENGLISH_STYLE_INSTRUCTION + ' Do not repeat promotional adverbs or adjectives such as "successfully", "significant" or "sizable"; give the figure instead or leave it out. Use American spelling (aluminum, commercialization, program) even when the source is British.'),
     section('Korean', SUMMARY_STYLE_INSTRUCTION + ' Write the Korean a Korean business reporter would write, not a word-for-word rendering of English: ' +
       'use the established Korean term, not a Hangul transliteration of an English common noun.'),
     section('Korean terminology and layout', policyWording),
@@ -199,6 +199,8 @@ export function writtenProblems(article, decision, written, styleProblems = () =
   if (!en || !ko) return ['empty'];
   const next = { ...decision, summary_en: en, summary_ko: ko };
   const problems = [];
+  // Issue 3 영문판 검토에서 Veolia 영문 문안에 한글이 섞여 나갔다. 영문 문안에는 한글이 한 글자도 없어야 한다.
+  if (/[가-힣]/.test(en)) problems.push('hangul_in_english');
   if (candidate.kind === 'investment') {
     if (!ko.includes(' - ')) problems.push('korean_headline_missing');
     if (en.includes(' - ')) problems.push('english_headline');

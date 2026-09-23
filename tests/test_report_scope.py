@@ -162,7 +162,7 @@ class CoverTitleTests(unittest.TestCase):
     def test_the_english_report_is_called_investment_signals(self):
         titles, footer, _ = self.title_texts("en")
         self.assertEqual(titles, ["Investment Signals"])
-        self.assertEqual(footer, "Invest KOREA · Investment Signals · Issue 3")
+        self.assertEqual(footer, "Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies")
         for gone in ("Target-Company", "Global Investment Signal Monitor", "Target Companies"):
             self.assertNotIn(gone, footer)
             self.assertNotIn(gone, " ".join(titles))
