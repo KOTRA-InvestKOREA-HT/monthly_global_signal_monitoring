@@ -88,7 +88,7 @@ function coverPage(state, model, assets) {
       <div class="cover-body">
         ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : ''}
         <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
-          `<span class="${index === 1 ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
+          `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
         <div class="cover-lines">${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
         <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
         <ul class="cover-indicators">${cover.indicators.map(item => `

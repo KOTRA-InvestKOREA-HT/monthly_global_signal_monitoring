@@ -149,7 +149,7 @@
           "headline",
           "detail"
         ],
-        "source": "출처  Google News: Yahoo Finance 2026.08.17",
+        "source": "출처  Yahoo Finance 2026.08.17",
         "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
         "date": "2026.08.17",
         "technology_linked": true
@@ -159,7 +159,7 @@
           "headline",
           "detail"
         ],
-        "source": "출처  공식보도자료 · Applied Materials - Official RSS 2026.08.13",
+        "source": "출처  공식보도자료 · Applied Materials 2026.08.13",
         "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
         "date": "2026.08.13",
         "technology_linked": true
@@ -169,7 +169,7 @@
           "headline",
           "detail"
         ],
-        "source": "출처  Nexeon - Media / Newsroom / Media 2026.08.31",
+        "source": "출처  Nexeon - Media / Newsroom 2026.08.31",
         "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
         "date": "2026.08.31",
         "technology_linked": true
@@ -179,7 +179,7 @@
           "headline",
           "detail"
         ],
-        "source": "출처  공식보도자료 · Veolia - Official RSS 2026.08.26",
+        "source": "출처  공식보도자료 · Veolia 2026.08.26",
         "url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market",
         "date": "2026.08.26",
         "technology_linked": false
@@ -220,7 +220,7 @@
         "company": "Albemarle",
         "target": "양극재 소재(수산화리튬, 탄산리튬)",
         "text": "2026년 2분기 에너지 스토리지 부문에서 13억 달러의 순매출과 65킬로톤 LCE의 판매량을 기록했음. Wodgina 광산의 생산량 증대를 통해 Talison CGP3 화재에 따른 지연 영향을 일부 상쇄하며, 연간 판매량이 225~235킬로톤 LCE 범위가 될 것으로 예상됨.",
-        "source": "출처  Albemarle - Newsroom / Newsroom / News 2026.08.05"
+        "source": "출처  Albemarle - Newsroom / News 2026.08.05"
       }
     ],
     "period": [
@@ -380,7 +380,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Google News: Yahoo Finance 2026.08.17",
+        "source": "Source  Yahoo Finance 2026.08.17",
         "url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html",
         "date": "2026.08.17",
         "technology_linked": true
@@ -390,7 +390,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Applied Materials - Official RSS 2026.08.13",
+        "source": "Source  Official press release · Applied Materials 2026.08.13",
         "url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results",
         "date": "2026.08.13",
         "technology_linked": true
@@ -400,7 +400,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Nexeon - Media / Newsroom / Media 2026.08.31",
+        "source": "Source  Nexeon - Media / Newsroom 2026.08.31",
         "url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round",
         "date": "2026.08.31",
         "technology_linked": true
@@ -410,7 +410,7 @@
           "headline",
           "detail"
         ],
-        "source": "Source  Official press release · Veolia - Official RSS 2026.08.26",
+        "source": "Source  Official press release · Veolia 2026.08.26",
         "url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market",
         "date": "2026.08.26",
         "technology_linked": false
@@ -451,7 +451,7 @@
         "company": "Albemarle",
         "target": "Cathode material lithium hydroxide/carbonate",
         "text": "Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.",
-        "source": "Source  Albemarle - Newsroom / Newsroom / News 2026.08.05"
+        "source": "Source  Albemarle - Newsroom / News 2026.08.05"
       }
     ],
     "period": [

@@ -26,7 +26,7 @@ __all__ = [
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
     "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
-    "company_status", "cover_kicker", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
+    "company_status", "cover_kicker", "cover_title_accent", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
     "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
@@ -35,7 +35,7 @@ __all__ = [
     "parse_ignored_signal_keys", "phrase_ending_text", "phraseify_summary_text", "report_month_label",
     "report_period", "row_in_report_period", "sentence_spans", "set_language", "short_text",
     "signal_cell_state", "signal_fingerprint", "signal_publishable", "signal_supported",
-    "sort_signal_rows", "source_line", "source_url", "split_sentences", "strip_summary_lead",
+    "sort_signal_rows", "source_display_name", "source_line", "source_url", "split_sentences", "strip_summary_lead",
     "summary_detail_text", "summary_field", "summary_parts", "summary_plain_text", "t",
     "target_section_for_profile", "target_technology_required",
 ]
@@ -183,9 +183,9 @@ SIGNAL_DESCRIPTIONS = {
 
 # 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
 SIGNAL_DESCRIPTIONS_EN = {
-    1: "Supply Chain Risk Management · sourcing, regulatory risks",
+    1: "Supply Chain Risk Management · sourcing, geopolitical risks",
     2: "Production Expansion Plans · capacity, site selection",
-    3: "Investment Financing · bonds, equity, credit facilities",
+    3: "Capital Raising · bonds, equity, credit facilities",
     4: "Technology Partnerships · joint R&D, licensing",
     5: "Executive Changes & Visits · appointments, site inspections",
 }
@@ -195,7 +195,8 @@ INDICATOR_DESCRIPTION_EN = {
     2: "Asia-Pacific expansion plans and feasibility studies",
     3: "Bonds, equity financing and credit facilities",
     4: "Joint R&D, licensing, proof-of-concept projects and equity stakes",
-    5: "Leadership appointments, visits to Korea and due diligence",
+    # "실사"를 due diligence 로 옮기면 인수 전 재무·법률 검토로 읽힌다. 현장 방문의 뜻으로 적는다.
+    5: "Leadership appointments, Korea visits and site inspections",
 }
 
 COUNTRY_EN = {
@@ -265,6 +266,8 @@ TEXTS = {
         # 남는 언어가 그 자리를 빈 문자열로 채워야 하는데, t() 는 빈 문자열을 "없음"으로 보고
         # 국문으로 폴백하므로 영문판 표지에 한글 줄이 섞여 나온다.
         "cover_titles": ["타겟기업", "글로벌 투자시그널", "모니터링"],
+        # 금색으로 칠할 제목 줄의 순번. 국문은 가운데 줄, 영문은 한 줄뿐이라 그 줄이다.
+        "cover_title_accent": 1,
         "cover_line_1": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
         "cover_line_2": "기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반",
         "cover_indicator_heading": "5대 투자동향 지표",
@@ -293,24 +296,25 @@ TEXTS = {
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
     },
     "en": {
-        "footer": "Invest KOREA · Company Signals · {issue}",
+        "footer": "Invest KOREA · Investment Signals · {issue}",
         # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("COMPANY SIGNALS")이라 바로 위에
         # 같은 말을 작게 한 번 더 적는 꼴이 된다. 한국어 표지는 제목이 달라 그대로 둔다.
         # 본문 면의 머리글은 이 값을 쓰지 않으므로(draw_detail_page 의 자체 문자열) 영향이 없다.
         "cover_kicker": "",
         # 영문 제목은 한 줄이다. 예전 제목 "Target-Company Global Investment Signal Monitor" 는
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
-        "cover_titles": ["COMPANY SIGNALS"],
-        "cover_line_1": "30 investment projects selected by MOTIE · 77 target companies",
+        "cover_titles": ["INVESTMENT SIGNALS"],
+        "cover_title_accent": 0,
+        "cover_line_1": "30 Korean government-selected investment projects · 77 target companies",
         "cover_line_2": "Tracking early signs of corporate investment",
         "cover_indicator_heading": "FIVE EARLY INVESTMENT SIGNALS",
         "matrix_title": "Investment Signals at a Glance",
         "matrix_desc": "Investment signals identified among 77 target companies during {period}. Highlighted cells mark early-stage plans or preparatory activities, not final investment commitments or completed investments.",
         "matrix_company": "Company",
-        "matrix_legend_on": "AI-confirmed signal",
+        "matrix_legend_on": "Signal identified",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain Risk Management · ② Expansion Plans · ③ Investment Financing · ④ Technology Partnerships · ⑤ Executive Changes & Visits",
-        "matrix_footnote": "{on} companies with AI-confirmed signals · {off} with no signal",
+        "matrix_indicators": "① Supply Chain Risk Management · ② Production Expansion Plans · ③ Capital Raising · ④ Technology Partnerships · ⑤ Executive Changes & Visits",
+        "matrix_footnote": "{on} companies with signals · {off} with no signal",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
         "business_heading": "BUSINESS DEVELOPMENTS",
@@ -323,7 +327,7 @@ TEXTS = {
         "item_title": "Business Developments by Product",
         "item_target_label": "Target product / technology",
         "item_trend_label": "Business developments in {month}",
-        "item_note": "This section covers business developments in {month} at companies with no qualifying investment signals. Updates focus on the target products and technologies, with exceptions noted. We monitor these developments for early signs of investment.",
+        "item_note": "This section covers business developments in {month} at companies with no qualifying investment signals. Updates focus on the target products and technologies unless a card is marked otherwise. We monitor these developments for early signs of investment.",
         "item_exempt_note": "Business update · technology link not required",
     },
 }
@@ -1062,8 +1066,34 @@ def company_status(company, signal_index, covered):
 SOURCE_LINE_LIMIT = 120
 
 
+# 수집 설정의 출처 이름은 "기업 - 페이지 제목 / 분류 / 하위 분류" 모양의 내부 경로다. 그대로 실으면
+# "Media / Newsroom / Media", "Official RSS", "IR-filtered News", "Google News: Yahoo Finance" 처럼
+# 수집 경로가 독자에게 보인다. 발행처와 게시 위치만 남기고 같은 말은 한 번만 적는다.
+SOURCE_INTERNAL_WORDS = re.compile(r"\b(?:RSS|Filter|Subscription|Official)\b", re.IGNORECASE)
+
+
+def source_display_name(source):
+    # clean_text 는 본문용이라 "News Release" 같은 상투 문구를 지운다. 출처 이름에서는 그것이 이름이다.
+    text = re.sub(r"\s+", " ", str(source or "")).strip()
+    aggregated = re.match(r"^Google News:\s*(.+)$", text)
+    if aggregated:
+        return aggregated.group(1).strip()
+    if " - " not in text:
+        return text
+    name, path = text.split(" - ", 1)
+    segments, seen = [], {name.strip().lower()}
+    for segment in path.split(" / "):
+        segment = re.sub(r"\bIR-filtered\b", "Investor", segment, flags=re.IGNORECASE)
+        segment = re.sub(r"\s{2,}", " ", SOURCE_INTERNAL_WORDS.sub("", segment)).strip(" :")
+        segment = re.sub(r"^:\s*|\s+(?=:)", "", segment)
+        if segment and segment.lower() not in seen:
+            seen.add(segment.lower())
+            segments.append(segment)
+    return f"{name.strip()} - {' / '.join(segments)}" if segments else name.strip()
+
+
 def source_line(row):
-    source = row.get("source") or row.get("collector") or t("source_fallback")
+    source = source_display_name(row.get("source") or row.get("collector") or "") or t("source_fallback")
     if is_press_release(row):
         source = f"{t('source_press_release')} · {source}"
     prefix = f"{t('source_prefix')}  "
@@ -1095,6 +1125,12 @@ def cover_titles():
     """
     titles = TEXTS.get(LANG, TEXTS["ko"]).get("cover_titles") or TEXTS["ko"]["cover_titles"]
     return [title for title in titles if clean_text(title)]
+
+
+def cover_title_accent():
+    """금색으로 칠할 표지 제목 줄의 순번. 두 렌더러가 같은 줄을 칠하도록 여기서 정한다."""
+    texts = TEXTS.get(LANG, TEXTS["ko"])
+    return texts.get("cover_title_accent", TEXTS["ko"]["cover_title_accent"])
 
 
 def source_url(row):

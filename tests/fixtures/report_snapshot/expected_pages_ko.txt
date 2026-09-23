@@ -116,7 +116,7 @@ Ouster
 로봇용 라이다 생산 능력 확대 및 런레이트 증대 계획 추진
 — Ouster는 수요 증가에 대응하기 위해 라이다 생산 능력을 확대하고 있으며, 연간 생산 런레이트를 약 4만
 대에서 10만 대 수준으로 늘릴 예정임.
-출처 Google News: Yahoo Finance 2026.08.17
+출처 Yahoo Finance 2026.08.17
 3 투자 재원 확보 · 회사채·증자·신용공여 등 대규모 자금 조달 이번 달 해당 신호 없음 —
 4 기술 생태계 밀착 (R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등 이번 달 해당 신호 없음 —
 5 핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등 이번 달 해당 신호 없음 —
@@ -124,7 +124,7 @@ Ouster
 Ouster는 2026년 2분기 세계 최초의 네이티브 컬러 라이다 센서인 Rev8을 출시함. 대형 중기 제조사, 자율주행 농기계 개발사,
 자율주행차 공급업체 등으로부터 100만 달러를 초과하는 다수의 고객 주문을 확보함. 또한 유타주 교통국과 계약을 체결하여 주
 전역 수백 개의 교차로에 라이다를 배치할 예정임.
-출처 Google News: Yahoo Finance 2026.08.17
+출처 Yahoo Finance 2026.08.17
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 05
 
 ===== PAGE 6 =====
@@ -139,12 +139,12 @@ Applied Materials
 AI 컴퓨팅 소재·공정 혁신 공동 연구 협력
 — Applied Materials가 University of California, Berkeley와 실리콘밸리의 EPIC Center에서 차세대
 반도체 기술의 공동 연구와 상용화 촉진을 위한 연구 협력을 체결했음.
-출처 공식보도자료 · Applied Materials - Official RSS 2026.08.11
+출처 공식보도자료 · Applied Materials 2026.08.11
 5 핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등 이번 달 해당 신호 없음 —
 글로벌 사업현황
 Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad
 CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함.
-출처 공식보도자료 · Applied Materials - Official RSS 2026.08.13
+출처 공식보도자료 · Applied Materials 2026.08.13
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 06
 
 ===== PAGE 7 =====
@@ -158,7 +158,7 @@ Nexeon
 배터리 소재 기업의 1억 파운드 규모 투자 라운드 완료
 — National Wealth Fund의 5,260만 파운드 출자를 포함해 총 1억 파운드 규모의 투자 라운드가 완료되었음.
 해당 자금은 스케일업 및 상용화 활동을 지원할 예정임.
-출처 Nexeon - Media / Newsroom / Media 2026.08.31
+출처 Nexeon - Media / Newsroom 2026.08.31
 4 기술 생태계 밀착 (R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등 이번 달 해당 신호 없음 —
 5 핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등 이번 달 해당 신호 없음 —
 글로벌 사업현황 투자유치 필요 품목·기술 실리콘 음극재 기술(증착형 Si-C)
@@ -166,7 +166,7 @@ Nexeon은 최근 National Wealth Fund, Korea Development Bank, Honda Xcelerator 
 1억 파운드(약 1억 3,300만 달러) 규모의 투자 라운드를 완료했음. 이번 투자를 통해 영국 내 파일럿 제조 시설 개발을 추진하고
 첨단 제조 기술 부서를 확장할 예정임. 또한 Nexeon은 한국 군산에서 실리콘-탄소 소재를 위한 세계 최초의 상업용 양산 시설을
 가동했음.
-출처 Nexeon - Media / Newsroom / Media 2026.08.31
+출처 Nexeon - Media / Newsroom 2026.08.31
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 07
 
 ===== PAGE 8 =====
@@ -179,16 +179,16 @@ Veolia
 3 투자 재원 확보 · 회사채·증자·신용공여 등 대규모 자금 조달
 11억 5000만 유로 규모 회사채 발행 완료
 — Veolia 가 2026년 8월 26일 총 11억 5000만 유로 규모의 회사채를 발행해 자금 조달을 마쳤음.
-출처 공식보도자료 · Veolia - Official RSS 2026.08.26
+출처 공식보도자료 · Veolia 2026.08.26
 4 기술 생태계 밀착 (R&D) · 공동연구·라이선싱·PoC·지분투자 타진 등 이번 달 해당 신호 없음 —
 5 핵심 전략 인력의 이동 · C-Level 이동·극비 방한·실사 조율 등 이번 달 해당 신호 없음 —
 글로벌 사업현황 투자유치 필요 품목·기술 이온교환막 및 바이폴라 이온교환막
 Veolia 가 2026년 8월 26일 총 11억 5000만 유로 규모의 회사채를 발행해 자금 조달을 마쳤음.
-출처 공식보도자료 · Veolia - Official RSS 2026.08.26
+출처 공식보도자료 · Veolia 2026.08.26
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 08
 
 ===== PAGE 9 =====
-T A R G E T - P R O D U C T S I G N A L S · 1/1
+P R O D U C T D E V E L O P M E N T S · 1/1
 품목별 글로벌 사업동향
 5대시그널에는미포착되었으나,8월중투자유치필요품목·기술과직접연계되는글로벌사업동향이포착된기업.기술관련성확인면제기업은품목연계와
 별개로 주요 사업동향을 싣고 카드에 표시함. 향후 시그널 발전 가능성을 모니터링함.
@@ -199,5 +199,5 @@ Albemarle
 2026년 2분기 에너지 스토리지 부문에서 13억 달러의 순매출과 65킬로톤 LCE의 판매량을 기록했음. Wodgina 광산의 생산량
 증대를 통해 Talison CGP3 화재에 따른 지연 영향을 일부 상쇄하며, 연간 판매량이 225~235킬로톤 LCE 범위가 될 것으로
 예상됨.
-출처 Albemarle - Newsroom / Newsroom / News 2026.08.05
+출처 Albemarle - Newsroom / News 2026.08.05
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 09

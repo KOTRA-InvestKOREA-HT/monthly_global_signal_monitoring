@@ -359,7 +359,7 @@ def draw_cover(report, summary, indicators):
         # kicker 가 없는 표지는 그 자리를 빈 띠로 남기지 않는다. 제목이 첫 줄이 되므로 kicker
         # 베이스라인만큼만 내려 제목 윗변이 kicker 윗변 자리에 오게 한다.
         y -= (56 if kicker else 26) if index == 0 else 45
-        report.text(43, y, title, title_size, GOLD if index == 1 else WHITE, weight="semibold")
+        report.text(43, y, title, title_size, GOLD if index == cover_title_accent() else WHITE, weight="semibold")
 
     y -= 42
     report.text(43, y, short_text_to_width(c, t("cover_line_1"), text_width, report.fonts["demilight"], 12, "cover_line_1"), 12, WHITE)
@@ -1054,7 +1054,7 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
     note = t("item_note", month=month_label)
     for index, page in enumerate(pages, start=1):
         report.new_page()
-        report.header("T A R G E T - P R O D U C T   S I G N A L S", t("item_title"), f"{index}/{len(pages)}")
+        report.header("P R O D U C T   D E V E L O P M E N T S", t("item_title"), f"{index}/{len(pages)}")
         if index == 1:
             report.wrapped(note, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
         for placed in page:

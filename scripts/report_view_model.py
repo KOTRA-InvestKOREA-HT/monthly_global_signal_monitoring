@@ -151,7 +151,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
         return None
     month = report.report_month_label(summary)
     return {
-        "kicker": "T A R G E T - P R O D U C T   S I G N A L S",
+        "kicker": "P R O D U C T   D E V E L O P M E N T S",
         "title": report.t("item_title"),
         "note": report.t("item_note", month=month),
         "target_label": report.t("item_target_label"),
@@ -217,6 +217,7 @@ def build(args):
         "cover": {
             "kicker": report.cover_kicker(),
             "titles": titles,
+            "accent": report.cover_title_accent(),
             "title_size": title_size(titles, measure),
             "lines": [report.t("cover_line_1"), report.t("cover_line_2")],
             "indicator_heading": report.t("cover_indicator_heading"),

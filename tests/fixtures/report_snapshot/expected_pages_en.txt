@@ -1,15 +1,15 @@
 ===== PAGE 1 =====
 Issue 3
 September 2026
-COMPANY SIGNALS
-30 investment projects selected by MOTIE · 77 target companies
+INVESTMENT SIGNALS
+30 Korean government-selected investment projects · 77 target companies
 Tracking early signs of corporate investment
 FIVE EARLY INVESTMENT SIGNALS
 1 Supply Chain Risk Management Diversifying supply and responding to geopolitical risks
 2 Production Expansion Plans Asia-Pacific expansion plans and feasibility studies
-3 Investment Financing Bonds, equity financing and credit facilities
+3 Capital Raising Bonds, equity financing and credit facilities
 4 Technology Partnerships Joint R&D, licensing, proof-of-concept projects and equity stakes
-5 Executive Changes & Visits Leadership appointments, visits to Korea and due diligence
+5 Executive Changes & Visits Leadership appointments, Korea visits and site inspections
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X
@@ -56,19 +56,19 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 37 Merck 76 Cheng Uei Precision
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
-AI-confirmed signal No signal
-① Supply Chain Risk Management · ② Expansion Plans · ③ Investment Financing · ④ Technology Partnerships · ⑤ Executive Changes & Visits
-6 companies with AI-confirmed signals · 71 with no signal
-Invest KOREA · Company Signals · Issue 3 02
+Signal identified No signal
+① Supply Chain Risk Management · ② Production Expansion Plans · ③ Capital Raising · ④ Technology Partnerships · ⑤ Executive Changes & Visits
+6 companies with signals · 71 with no signal
+Invest KOREA · Investment Signals · Issue 3 02
 
 ===== PAGE 3 =====
 C O M P A N Y S I G N A L S · 1/6
 Investment Signals by Company
 Charles River
 Bioanalysis & safety testing USA
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection No signal this month —
-3 Investment Financing · bonds, equity, credit facilities No signal this month —
+3 Capital Raising · bonds, equity, credit facilities No signal this month —
 4 Technology Partnerships · joint R&D, licensing
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine
 Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation
@@ -83,16 +83,16 @@ characterize and validate the virus seed bank for MVC's next-generation multival
 companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate
 high-quality vaccine development and support global regulatory readiness.
 Source Official press release · Charles River - News Releases / Press Releases 2026.08.20
-Invest KOREA · Company Signals · Issue 3 03
+Invest KOREA · Investment Signals · Issue 3 03
 
 ===== PAGE 4 =====
 C O M P A N Y S I G N A L S · 2/6
 Investment Signals by Company
 Boeing
 Aircraft & clean propulsion USA
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection No signal this month —
-3 Investment Financing · bonds, equity, credit facilities No signal this month —
+3 Capital Raising · bonds, equity, credit facilities No signal this month —
 4 Technology Partnerships · joint R&D, licensing
 Boeing Investment and Technology Collaboration
 — Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
@@ -107,20 +107,20 @@ Aviation. Under the transaction, Boeing will take a stake in Archer and establis
 technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy
 technologies with Archer's platform to advance the aerospace and defense sector.
 Source Official press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
-Invest KOREA · Company Signals · Issue 3 04
+Invest KOREA · Investment Signals · Issue 3 04
 
 ===== PAGE 5 =====
 C O M P A N Y S I G N A L S · 3/6
 Investment Signals by Company
 Ouster
 Robotics LiDAR USA
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection
 Ouster is expanding its LiDAR production capacity to support rising demand, with its
 production run rate expected to increase from approximately 40,000 units annually toward
 100,000 units.
-Source Google News: Yahoo Finance 2026.08.17
-3 Investment Financing · bonds, equity, credit facilities No signal this month —
+Source Yahoo Finance 2026.08.17
+3 Capital Raising · bonds, equity, credit facilities No signal this month —
 4 Technology Partnerships · joint R&D, licensing No signal this month —
 5 Executive Changes & Visits · appointments, site inspections No signal this month —
 BUSINESS DEVELOPMENTS Target product / technology Robot LiDAR
@@ -129,45 +129,45 @@ adoption was reflected in several orders exceeding $1 million from major industr
 largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah
 Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across
 the state.
-Source Google News: Yahoo Finance 2026.08.17
-Invest KOREA · Company Signals · Issue 3 05
+Source Yahoo Finance 2026.08.17
+Invest KOREA · Investment Signals · Issue 3 05
 
 ===== PAGE 6 =====
 C O M P A N Y S I G N A L S · 4/6
 Investment Signals by Company
 Applied Materials
 Advanced packaging USA
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection No signal this month —
-3 Investment Financing · bonds, equity, credit facilities No signal this month —
+3 Capital Raising · bonds, equity, credit facilities No signal this month —
 4 Technology Partnerships · joint R&D, licensing
 AI Computing Material and Process Innovation Research Collaboration
 — Applied Materials announced that University of California, Berkeley will join its EPIC Center in
 Silicon Valley as a research collaborator to pursue research programs accelerating material and
 process innovations.
-Source Official press release · Applied Materials - Official RSS 2026.08.11
+Source Official press release · Applied Materials 2026.08.11
 5 Executive Changes & Visits · appointments, site inspections No signal this month —
 BUSINESS DEVELOPMENTS
 Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company
 unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and
 Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
-Source Official press release · Applied Materials - Official RSS 2026.08.13
-Invest KOREA · Company Signals · Issue 3 06
+Source Official press release · Applied Materials 2026.08.13
+Invest KOREA · Investment Signals · Issue 3 06
 
 ===== PAGE 7 =====
 C O M P A N Y S I G N A L S · 5/6
 Investment Signals by Company
 Nexeon
 Battery anode materials UK
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection No signal this month —
-3 Investment Financing · bonds, equity, credit facilities
+3 Capital Raising · bonds, equity, credit facilities
 Completion of £100 Million Investment Round.
 — The completion of the £100 million ($133 million) investment round includes a £52.6 million
 ($70 million) commitment from the National Wealth Fund along with new investors Korea
 Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
 commercialisation activities.
-Source Nexeon - Media / Newsroom / Media 2026.08.31
+Source Nexeon - Media / Newsroom 2026.08.31
 4 Technology Partnerships · joint R&D, licensing No signal this month —
 5 Executive Changes & Visits · appointments, site inspections No signal this month —
 BUSINESS DEVELOPMENTS Target product / technology Silicon anode material technology
@@ -176,33 +176,33 @@ Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding 
 development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing
 technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for
 silicon-carbon materials in Gunsan, South Korea.
-Source Nexeon - Media / Newsroom / Media 2026.08.31
-Invest KOREA · Company Signals · Issue 3 07
+Source Nexeon - Media / Newsroom 2026.08.31
+Invest KOREA · Investment Signals · Issue 3 07
 
 ===== PAGE 8 =====
 C O M P A N Y S I G N A L S · 6/6
 Investment Signals by Company
 Veolia
 Advanced membranes France
-1 Supply Chain Risk Management · sourcing, regulatory risks No signal this month —
+1 Supply Chain Risk Management · sourcing, geopolitical risks No signal this month —
 2 Production Expansion Plans · capacity, site selection No signal this month —
-3 Investment Financing · bonds, equity, credit facilities
+3 Capital Raising · bonds, equity, credit facilities
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
 bond market.
-Source Official press release · Veolia - Official RSS 2026.08.26
+Source Official press release · Veolia 2026.08.26
 4 Technology Partnerships · joint R&D, licensing No signal this month —
 5 Executive Changes & Visits · appointments, site inspections No signal this month —
 BUSINESS DEVELOPMENTS Target product / technology
 Ion exchange membrane and bipolar membrane
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
-Source Official press release · Veolia - Official RSS 2026.08.26
-Invest KOREA · Company Signals · Issue 3 08
+Source Official press release · Veolia 2026.08.26
+Invest KOREA · Investment Signals · Issue 3 08
 
 ===== PAGE 9 =====
-T A R G E T - P R O D U C T S I G N A L S · 1/1
+P R O D U C T D E V E L O P M E N T S · 1/1
 Business Developments by Product
 ThissectioncoversbusinessdevelopmentsinAugustatcompanieswithnoqualifyinginvestmentsignals.Updatesfocusonthetarget
-products and technologies, with exceptions noted. We monitor these developments for early signs of investment.
+products and technologies unless a card is marked otherwise. We monitor these developments for early signs of investment.
 Albemarle
 Battery cathode materials USA
 Target product / technology Cathode material lithium hydroxide/carbonate
@@ -210,5 +210,5 @@ Business developments in August
 Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second
 quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due
 to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.
-Source Albemarle - Newsroom / Newsroom / News 2026.08.05
-Invest KOREA · Company Signals · Issue 3 09
+Source Albemarle - Newsroom / News 2026.08.05
+Invest KOREA · Investment Signals · Issue 3 09

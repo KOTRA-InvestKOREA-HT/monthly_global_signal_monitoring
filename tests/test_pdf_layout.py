@@ -143,9 +143,23 @@ class SourceLineTests(unittest.TestCase):
         self.assertIn("...", line)
         # 잘린 자리가 낱말 경계인지 원문과 대조한다. 남은 앞부분이 원문의 접두사이고,
         # 원문에서 그 다음 글자가 공백이어야 낱말이 온전히 끝난 것이다.
+        # 출처 줄은 내부 경로 낱말(RSS)을 뺀 이름을 자르므로, 정리된 이름과 대조한다.
+        shown = pdf.source_display_name(long_source)
         kept = line[len("Source  "):line.index("...")]
-        self.assertTrue(long_source.startswith(kept), kept)
-        self.assertTrue(long_source[len(kept)].isspace(), repr(long_source[len(kept) - 3:len(kept) + 3]))
+        self.assertTrue(shown.startswith(kept), kept)
+        self.assertTrue(shown[len(kept)].isspace(), repr(shown[len(kept) - 3:len(kept) + 3]))
+
+    def test_source_names_drop_collection_paths_and_repeats(self):
+        cases = {
+            "Evonik Industries - Media / Newsroom / Media": "Evonik Industries - Media / Newsroom",
+            "GE Healthcare - Official RSS": "GE Healthcare",
+            "Nabtesco - IR-filtered News / Investor News / Timely Disclosures": "Nabtesco - Investor News / Timely Disclosures",
+            "Google News: Yahoo Finance": "Yahoo Finance",
+            "Charles River - News Releases / Press Releases": "Charles River - News Releases / Press Releases",
+            "Toppan Holdings - Newsroom / Newsroom / News": "Toppan Holdings - Newsroom / News",
+        }
+        for source, expected in cases.items():
+            self.assertEqual(pdf.source_display_name(source), expected)
 
     def test_a_short_source_is_left_alone(self):
         line = pdf.source_line(self.row("Albemarle - Newsroom / News"))
