@@ -197,7 +197,7 @@ class CoverTitleTests(unittest.TestCase):
         """
         _, _, ko = self.title_texts("ko")
         _, _, en = self.title_texts("en")
-        self.assertEqual(ko, "C O M P A N Y   S I G N A L S")
+        self.assertEqual(ko, "I N V E S T M E N T   S I G N A L S")
         self.assertEqual(en, "")
         # 폴백이 되살아나면 여기서 국문 머리말이 잡힌다.
         self.assertFalse(any("가" <= ch <= "힣" for ch in en))

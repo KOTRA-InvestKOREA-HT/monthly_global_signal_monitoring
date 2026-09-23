@@ -261,7 +261,8 @@ TEXTS = {
         "footer": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
         # 표지 맨 위 한 줄. 예전에는 두 렌더러가 각자 같은 문자열을 박아 두어, 한쪽만 고치면
         # PDF 와 화면의 표지가 달라졌다. 자간은 글자 사이 공백으로 낸다.
-        "cover_kicker": "C O M P A N Y   S I G N A L S",
+        # 영문판 제목(INVESTMENT SIGNALS)과 같은 이름을 쓴다. 본문 면 머리글 "COMPANY SIGNALS"는 기업별 상세라는 섹션 이름이라 따로 둔다.
+        "cover_kicker": "I N V E S T M E N T   S I G N A L S",
         # 제목 줄 수는 언어마다 다르므로 목록으로 둔다. 번호 키(cover_title_1..3)로 두면 줄이
         # 남는 언어가 그 자리를 빈 문자열로 채워야 하는데, t() 는 빈 문자열을 "없음"으로 보고
         # 국문으로 폴백하므로 영문판 표지에 한글 줄이 섞여 나온다.
@@ -297,7 +298,7 @@ TEXTS = {
     },
     "en": {
         "footer": "Invest KOREA · Investment Signals · {issue}",
-        # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("COMPANY SIGNALS")이라 바로 위에
+        # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("INVESTMENT SIGNALS")이라 바로 위에
         # 같은 말을 작게 한 번 더 적는 꼴이 된다. 한국어 표지는 제목이 달라 그대로 둔다.
         # 본문 면의 머리글은 이 값을 쓰지 않으므로(draw_detail_page 의 자체 문자열) 영향이 없다.
         "cover_kicker": "",
@@ -1111,7 +1112,7 @@ def cover_kicker():
     본문 면의 머리글은 이 값이 아니라 draw_detail_page 의 자체 문자열이므로 영향받지 않는다.
 
     clean_text 로 다듬지 않는다. 이 머리말은 자간을 진짜 공백으로 내므로 공백을 접으면
-    "C O M P A N Y   S I G N A L S" 가 낱말 사이 간격을 잃는다.
+    "I N V E S T M E N T   S I G N A L S" 가 낱말 사이 간격을 잃는다.
     """
     value = TEXTS.get(LANG, TEXTS["ko"]).get("cover_kicker", "")
     return value if value.strip() else ""
