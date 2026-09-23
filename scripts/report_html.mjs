@@ -89,6 +89,7 @@ function coverPage(state, model, assets) {
         ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : ''}
         <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
           `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
+        ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
         <div class="cover-lines">${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
         <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
         <ul class="cover-indicators">${cover.indicators.map(item => `
@@ -349,6 +350,7 @@ body {
 }
 .cover h1 span { display: block; }
 .cover h1 .accent { color: ${COLORS.gold}; }
+.cover-subtitle { margin: 6pt 0 0; font-size: 15pt; font-weight: 500; line-height: 20pt; }
 .cover-lines { margin: 22pt 0 0; font-size: 12pt; line-height: 20pt; }
 .cover-lines p { margin: 0; word-break: keep-all; }
 .cover-indicator-heading { margin: 33pt 0 0; font-size: 9pt; color: ${COLORS.onNavy}; }
@@ -403,6 +405,20 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* English indicator names are long enough that a description beside them cuts
+   both. The description takes its own line under the name instead. */
+html[lang="en"] .cover-lines { font-size: 11pt; }
+/* A long line breaks into two even halves instead of leaving one word behind. */
+html[lang="en"] .cover-lines p { text-wrap: balance; }
+html[lang="en"] .cover-indicators li { flex-wrap: wrap; align-content: flex-start; row-gap: 0; height: 38pt; }
+html[lang="en"] .cover-indicators .label { line-height: 17pt; }
+html[lang="en"] .cover-indicators .desc {
+  flex: 0 0 100%;
+  padding-left: 24pt;
+  font-size: 8.5pt;
+  line-height: 11pt;
+  text-align: left;
 }
 .cover-foot {
   bottom: 0;

@@ -161,7 +161,7 @@ class CoverTitleTests(unittest.TestCase):
 
     def test_the_english_report_is_called_investment_signals(self):
         titles, footer, _ = self.title_texts("en")
-        self.assertEqual(titles, ["INVESTMENT SIGNALS"])
+        self.assertEqual(titles, ["Investment Signals"])
         self.assertEqual(footer, "Invest KOREA · Investment Signals · Issue 3")
         for gone in ("Target-Company", "Global Investment Signal Monitor", "Target Companies"):
             self.assertNotIn(gone, footer)
@@ -251,7 +251,7 @@ class LayeringTests(unittest.TestCase):
             pdf.set_language("en")
             self.assertEqual(pdf.LANG, "en")
             self.assertEqual(report_content.LANG, "en")
-            self.assertEqual(pdf.cover_titles(), ["INVESTMENT SIGNALS"])
+            self.assertEqual(pdf.cover_titles(), ["Investment Signals"])
             # 예전에는 모듈 전역이라 대입으로도 바뀌었다. 나눈 뒤에도 같은 값을 가리켜야 한다.
             pdf.LANG = "ko"
             self.assertEqual(report_content.LANG, "ko")

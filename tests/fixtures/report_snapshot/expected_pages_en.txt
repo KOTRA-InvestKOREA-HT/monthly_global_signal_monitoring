@@ -1,15 +1,22 @@
 ===== PAGE 1 =====
 Issue 3
 September 2026
-INVESTMENT SIGNALS
-77 companies Korea aims to attract for 30 priority investment projects
-Tracking early signs of corporate investment
-FIVE EARLY INVESTMENT SIGNALS
-1 Supply Chain Shifts New suppliers, local sourcing and responses to geopolitical risk
-2 Production Expansion New capacity, Asia-Pacific sites and feasibility studies
-3 Capital Raising Bond and share issues, loans and credit facilities
-4 Technology Partnerships Joint R&D, licensing, pilot projects and equity stakes
-5 Leadership Moves & Visits Senior appointments, visits to Korea and site inspections
+Investment Signals
+Monthly Pre-Decision Indicators Across 77 Priority Companies
+Including 30 major Investment Promotion Projects and 77 target companies selected by
+MOTIR
+Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)
+5 EARLY INVESTMENT SIGNALS
+1 Supply Chain & Geopolitical Risk
+New suppliers, local sourcing and responses to geopolitical risk
+2 Production Expansion & Geographical Diversification
+New capacity, Asia-Pacific sites and feasibility studies
+3 Capital Raising & Securing Liquidity
+Bond and share issues, loans and credit facilities
+4 Tech Ecosystem Partnerships (R&D)
+Joint R&D, licensing, pilot projects and equity stakes
+5 C-Suite Actions
+Senior appointments, visits to Korea and site inspections
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X
@@ -57,7 +64,8 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
 Signal identified No signal
-① Supply Chain Shifts · ② Production Expansion · ③ Capital Raising · ④ Technology Partnerships · ⑤ Leadership Moves & Visits
+① Supply Chain & Geopolitical Risk · ② Production Expansion & Geographical Diversification · ③ Capital Raising & Securing Liquidity · ④ Tech Ecosystem
+Partnerships (R&D) · ⑤ C-Suite Actions
 6 companies showed signals · 71 showed none
 Invest KOREA · Investment Signals · Issue 3 02
 
@@ -66,16 +74,16 @@ C O M P A N Y S I G N A L S · 1/6
 Investment Signals by Company
 Charles River
 Bioanalysis & safety testing USA
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection No signal this month —
-3 Capital Raising · bonds, equity, credit facilities No signal this month —
-4 Technology Partnerships · joint R&D, licensing
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification No signal this month —
+3 Capital Raising & Securing Liquidity No signal this month —
+4 Tech Ecosystem Partnerships (R&D)
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine
 Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation
 multivalent enterovirus vaccine by leveraging advanced analytical platforms including
 Next-Generation Sequencing.
 Source Press release · Charles River - News Releases / Press Releases 2026.08.20
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in
 Viral safety testing and cell bank (MCB/WCB) characterization
 On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to
@@ -90,16 +98,16 @@ C O M P A N Y S I G N A L S · 2/6
 Investment Signals by Company
 Boeing
 Electric aircraft propulsion USA
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection No signal this month —
-3 Capital Raising · bonds, equity, credit facilities No signal this month —
-4 Technology Partnerships · joint R&D, licensing
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification No signal this month —
+3 Capital Raising & Securing Liquidity No signal this month —
+4 Tech Ecosystem Partnerships (R&D)
 Boeing Investment and Technology Collaboration
 — Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
 while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
 arrangement.
 Source Press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in
 Electric motors and high-power battery modules for aircraft
 Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer
@@ -114,15 +122,15 @@ C O M P A N Y S I G N A L S · 3/6
 Investment Signals by Company
 Ouster
 Robotics LiDAR USA
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification
 Ouster is expanding its LiDAR production capacity to support rising demand, with its
 production run rate expected to increase from approximately 40,000 units annually toward
 100,000 units.
 Source Yahoo Finance 2026.08.17
-3 Capital Raising · bonds, equity, credit facilities No signal this month —
-4 Technology Partnerships · joint R&D, licensing No signal this month —
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+3 Capital Raising & Securing Liquidity No signal this month —
+4 Tech Ecosystem Partnerships (R&D) No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in LiDAR for robots
 Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer
 adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's
@@ -137,16 +145,16 @@ C O M P A N Y S I G N A L S · 4/6
 Investment Signals by Company
 Applied Materials
 Advanced packaging USA
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection No signal this month —
-3 Capital Raising · bonds, equity, credit facilities No signal this month —
-4 Technology Partnerships · joint R&D, licensing
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification No signal this month —
+3 Capital Raising & Securing Liquidity No signal this month —
+4 Tech Ecosystem Partnerships (R&D)
 AI Computing Material and Process Innovation Research Collaboration
 — Applied Materials announced that University of California, Berkeley will join its EPIC Center in
 Silicon Valley as a research collaborator to pursue research programs accelerating material and
 process innovations.
 Source Press release · Applied Materials 2026.08.11
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS
 Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company
 unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and
@@ -159,17 +167,17 @@ C O M P A N Y S I G N A L S · 5/6
 Investment Signals by Company
 Nexeon
 Battery anode materials UK
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection No signal this month —
-3 Capital Raising · bonds, equity, credit facilities
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification No signal this month —
+3 Capital Raising & Securing Liquidity
 Completion of £100 Million Investment Round.
 — The completion of the £100 million ($133 million) investment round includes a £52.6 million
 ($70 million) commitment from the National Wealth Fund along with new investors Korea
 Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
 commercialisation activities.
 Source Nexeon - Media / Newsroom 2026.08.31
-4 Technology Partnerships · joint R&D, licensing No signal this month —
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+4 Tech Ecosystem Partnerships (R&D) No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in Silicon-carbon (Si-C) anode materials
 Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National
 Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the
@@ -184,14 +192,14 @@ C O M P A N Y S I G N A L S · 6/6
 Investment Signals by Company
 Veolia
 Ion-exchange membranes France
-1 Supply Chain Shifts · sourcing, geopolitical risk No signal this month —
-2 Production Expansion · new capacity, site selection No signal this month —
-3 Capital Raising · bonds, equity, credit facilities
+1 Supply Chain & Geopolitical Risk No signal this month —
+2 Production Expansion & Geographical Diversification No signal this month —
+3 Capital Raising & Securing Liquidity
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
 bond market.
 Source Press release · Veolia 2026.08.26
-4 Technology Partnerships · joint R&D, licensing No signal this month —
-5 Leadership Moves & Visits · appointments, site visits No signal this month —
+4 Tech Ecosystem Partnerships (R&D) No signal this month —
+5 C-Suite Actions No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in Ion-exchange and bipolar membranes
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
 Source Press release · Veolia 2026.08.26

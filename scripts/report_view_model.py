@@ -217,6 +217,7 @@ def build(args):
         "cover": {
             "kicker": report.cover_kicker(),
             "titles": titles,
+            "subtitle": report.cover_subtitle(),
             "accent": report.cover_title_accent(),
             "title_size": title_size(titles, measure),
             "lines": [report.t("cover_line_1"), report.t("cover_line_2")],

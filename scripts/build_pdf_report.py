@@ -360,13 +360,18 @@ def draw_cover(report, summary, indicators):
         # 베이스라인만큼만 내려 제목 윗변이 kicker 윗변 자리에 오게 한다.
         y -= (56 if kicker else 26) if index == 0 else 45
         report.text(43, y, title, title_size, GOLD if index == cover_title_accent() else WHITE, weight="semibold")
+    subtitle = cover_subtitle()
+    if subtitle:
+        y -= 26
+        y = report.wrapped(subtitle, 43, y, text_width, 15, WHITE, line_gap=5, weight="medium") + 20
 
+    # 부제는 잘라내면 뜻이 사라지므로 줄을 바꿔 통째로 싣는다. HTML 표지도 같은 자리에서 줄을 바꾼다.
     y -= 42
-    report.text(43, y, short_text_to_width(c, t("cover_line_1"), text_width, report.fonts["demilight"], 12, "cover_line_1"), 12, WHITE)
-    y -= 20
-    report.text(43, y, short_text_to_width(c, t("cover_line_2"), text_width, report.fonts["demilight"], 12, "cover_line_2"), 12, WHITE)
+    line_size = 11 if report_content.LANG == "en" else 12
+    y = report.wrapped(t("cover_line_1"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
+    y = report.wrapped(t("cover_line_2"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
 
-    y -= 45
+    y -= 25
     report.text(43, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
     y -= 29
     for item in indicators:
@@ -380,6 +385,14 @@ def draw_cover(report, summary, indicators):
         else:
             label = item["label_ko"]
             description = item["description_ko"]
+        if report_content.LANG == "en":
+            # 영문 지표 이름은 길어 한 줄에 설명까지 두면 둘 다 잘린다. 설명을 이름 아래 줄에 둔다.
+            label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
+            report.text(67, y - 1, label, 12, WHITE, weight="semibold")
+            description = short_text_to_width(c, description, PAGE_W - 43 - 67, report.fonts["demilight"], 8.5, f"cover_indicator_desc[{item['no']}]")
+            report.text(67, y - 14, description, 8.5, colors.HexColor("#C8D2DF"))
+            y -= 36
+            continue
         # 라벨을 먼저 폭 안에 맞추고, 설명은 남은 자리만큼만 쓴다.
         # 예전에는 남은 폭에 하한 60pt를 걸어서, 라벨이 길면 설명이 라벨 위로 겹쳐 찍혔다.
         label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
@@ -456,13 +469,8 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
         c.roundRect(legend_x, y + 9, 8, 8, 2, fill=1, stroke=0)
         report.text(legend_x + 13, y + 9, label, 8, legend_color)
         legend_x += 13 + c.stringWidth(label, report.fonts["demilight"], 8) + 18
-    report.text(
-        32,
-        y - 6,
-        short_text_to_width(c, t("matrix_indicators"), PAGE_W - 64, report.fonts["demilight"], 7, "matrix_indicators"),
-        7,
-        MUTED,
-    )
+    # 영문 지표 이름이 길어 한 줄에 다 들어가지 않는다. 잘라내지 않고 두 줄까지 싣고 각주를 그만큼 내린다.
+    legend_end = report.wrapped(t("matrix_indicators"), 32, y - 6, PAGE_W - 64, 7, MUTED, max_lines=2, line_gap=2)
     # 각주는 행 상태를 센 것이다. 따로 계산하면 표와 숫자가 어긋난다.
     statuses = [company_status(profile["company"], signal_index, covered) for profile in profiles]
     footnote = t(
@@ -473,7 +481,7 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
     )
     report.text(
         32,
-        y - 24,
+        legend_end - 9,
         short_text_to_width(c, footnote, PAGE_W - 64, report.fonts["extrabold"], 8, "matrix_footnote"),
         8,
         colors.HexColor("#4B5870"),

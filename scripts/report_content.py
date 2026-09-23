@@ -26,7 +26,7 @@ __all__ = [
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
     "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
     "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
-    "company_status", "cover_kicker", "cover_title_accent", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
+    "company_status", "cover_kicker", "cover_subtitle", "cover_title_accent", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
     "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
@@ -185,11 +185,13 @@ SIGNAL_DESCRIPTIONS = {
 # 지표 이름은 국문을 옮기지 않고 영어 독자가 무엇이 일어났는지 바로 알 이름으로 짓는다.
 # "Supply Chain Risk Management"는 회사 내부 부서 업무처럼 읽혀 사건 이름이 되지 못했다.
 SIGNAL_DESCRIPTIONS_EN = {
-    1: "Supply Chain Shifts · sourcing, geopolitical risk",
-    2: "Production Expansion · new capacity, site selection",
-    3: "Capital Raising · bonds, equity, credit facilities",
-    4: "Technology Partnerships · joint R&D, licensing",
-    5: "Leadership Moves & Visits · appointments, site visits",
+    # 카드 라벨에는 이름만 싣는다. 이름이 길어 " · 설명"까지 붙이면 라벨과 "No signal this month"가 잘린다.
+    # 설명은 표지(INDICATOR_DESCRIPTION_EN)에 있다.
+    1: "Supply Chain & Geopolitical Risk",
+    2: "Production Expansion & Geographical Diversification",
+    3: "Capital Raising & Securing Liquidity",
+    4: "Tech Ecosystem Partnerships (R&D)",
+    5: "C-Suite Actions",
 }
 
 INDICATOR_DESCRIPTION_EN = {
@@ -342,17 +344,21 @@ TEXTS = {
         "cover_kicker": "",
         # 영문 제목은 한 줄이다. 예전 제목 "Target-Company Global Investment Signal Monitor" 는
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
-        "cover_titles": ["INVESTMENT SIGNALS"],
+        "cover_titles": ["Investment Signals"],
+        # 제목 아래 흰색 한 줄. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다.
+        "cover_subtitle": "Monthly Pre-Decision Indicators Across 77 Priority Companies",
         "cover_title_accent": 0,
-        "cover_line_1": "77 companies Korea aims to attract for 30 priority investment projects",
-        "cover_line_2": "Tracking early signs of corporate investment",
-        "cover_indicator_heading": "FIVE EARLY INVESTMENT SIGNALS",
+        # 국문 "30대 투자유치 프로젝트"의 실체는 한국이 해외 투자를 유치하려는 품목·기술 30개다. "project"로 옮기면
+        # 영어 독자는 무엇인지 모른다. 카드 라벨(Korea seeks investment in ...)과 같은 개념으로 적는다.
+        "cover_line_1": "Including 30 major Investment Promotion Projects and 77 target companies selected by MOTIR",
+        "cover_line_2": "Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)",
+        "cover_indicator_heading": "5 EARLY INVESTMENT SIGNALS",
         "matrix_title": "Investment Signals at a Glance",
         "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal identified",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain Shifts · ② Production Expansion · ③ Capital Raising · ④ Technology Partnerships · ⑤ Leadership Moves & Visits",
+        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & Geographical Diversification · ③ Capital Raising & Securing Liquidity · ④ Tech Ecosystem Partnerships (R&D) · ⑤ C-Suite Actions",
         "matrix_footnote": "{on} companies showed signals · {off} showed none",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
@@ -1141,6 +1147,11 @@ def source_line(row):
     tail = f" {date}" if date else ""
     room = SOURCE_LINE_LIMIT - len(prefix) - len(tail)
     return f"{prefix}{short_text(source, room)}{tail}" if room > 0 else short_text(f"{prefix}{source}{tail}", SOURCE_LINE_LIMIT)
+
+
+def cover_subtitle():
+    """제목 아래 흰색 부제목. 국문 표지에는 없다. cover_kicker() 와 같은 이유로 t() 를 거치지 않는다."""
+    return str(TEXTS.get(LANG, TEXTS["ko"]).get("cover_subtitle", "") or "").strip()
 
 
 def cover_kicker():
