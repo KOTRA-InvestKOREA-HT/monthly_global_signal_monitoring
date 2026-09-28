@@ -61,11 +61,16 @@ jobs:
       - name: Write report copy and build both PDFs
         id: publish
         env:
+          # 문안 단계 전용 키. 판정 단계(GEMINI_API_KEY)와 무료 한도를 나눠 쓰지 않는다. 비어 있으면 GEMINI_API_KEY 를 쓴다.
+          GEMINI_FOR_SUMMARY: ${{ secrets.GEMINI_FOR_SUMMARY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다.
+          # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다. 두 키 모두에 해당한다.
           GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
           # 비워 두면 gemini-3.7-flash. 문안 검사에 걸리면 걸린 이유를 알려 주며 최대 세 번까지 다시 쓰게 한다.
           GEMINI_WRITER_MODEL: ${{ vars.GEMINI_WRITER_MODEL }}
+          # 비워 두면 gemini-3.5-flash-lite. 기본 모델이 할당량·장애로 막히면 남은 문안을 이어 쓰고,
+          # 기본 모델로 세 번 모두 검사에 걸린 후보를 한 번 더 써 본다. off 로 끈다.
+          GEMINI_WRITER_FALLBACK_MODEL: ${{ vars.GEMINI_WRITER_FALLBACK_MODEL }}
           GEMINI_WRITER_THINKING_LEVEL: ${{ vars.GEMINI_WRITER_THINKING_LEVEL }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}

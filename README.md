@@ -60,7 +60,11 @@ Take over the finished judgement → write Korean/English copy for approved cand
 ```
 
 The judge call writes no report copy. The writer (`gemini-3.7-flash`, `GEMINI_WRITER_MODEL`)
-gets only the evidence quotes and the wording rules. Copy that fails a grounding,
+gets only the evidence quotes and the wording rules, and uses the `GEMINI_FOR_SUMMARY` key
+(falling back to `GEMINI_API_KEY`). If the writer model hits its quota or stays unavailable,
+`gemini-3.5-flash-lite` (`GEMINI_WRITER_FALLBACK_MODEL`, `off` to disable) writes the rest;
+it also gets one more try at copy the writer model failed three times. Each summary records
+the model that wrote it. Copy that fails a grounding,
 number, format or style check is written again with the failed checks named, up to three
 times; a signal whose copy never passes is left out of that report, kept on the dashboard,
 and written again on the next publish run.

@@ -51,9 +51,18 @@ export function issueNumberFor(input, judged) {
   return pick || '2';
 }
 
+// 문안 단계 전용 키. 판정 단계와 다른 키(다른 프로젝트)를 쓰면 무료 한도를 서로 나눠 쓰지 않는다.
+// 비어 있으면 판정 단계와 같은 GEMINI_API_KEY 를 쓴다.
+export function summaryApiKey(env = process.env) {
+  return [env.GEMINI_FOR_SUMMARY, env.GEMINI_API_KEY].map(value => String(value || '').trim()).find(Boolean) || '';
+}
+
 function writerSummary(stats) {
-  return `### Report copy (${stats.model})\n${stats.articles} articles; ${stats.requests} requests; ${stats.cached} summaries reused; ` +
-    `${stats.written} written; ${stats.failed.length} gave up` +
+  const byModel = Object.entries(stats.written_by || {}).map(([model, n]) => `${model} ${n}`).join(', ');
+  return `### Report copy (${stats.model}${stats.fallback_model ? `, fallback ${stats.fallback_model}` : ''})\n` +
+    `${stats.articles} articles; ${stats.requests} requests; ${stats.cached} summaries reused; ` +
+    `${stats.written} written${byModel ? ` (${byModel})` : ''}; ${stats.failed.length} gave up` +
+    `${stats.switched ? `; switched to ${stats.switched.to} after ${stats.switched.reason}` : ''}` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${Object.keys(stats.rejected).length ? `; rejected by ${JSON.stringify(stats.rejected)}` : ''}.\n` +
     stats.failed.map(item => `- ${item.company} ${item.candidate_id}: left out of this report (${item.problems.join('; ') || 'no usable copy'})\n`).join('') +
@@ -71,9 +80,9 @@ async function main() {
   try {
     const judged = judgementFor(await read(path.join(ROOT, 'status.json')).catch(() => null), period);
     const writer = resolveWriter();
-    const apiKey = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? String(process.env.GEMINI_API_KEY || '').trim() : '';
+    const apiKey = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? summaryApiKey() : '';
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY with GEMINI_FREE_TIER_CONFIRMED=true is required to write the report copy. ' +
+      throw new Error('GEMINI_FOR_SUMMARY (or GEMINI_API_KEY) with GEMINI_FREE_TIER_CONFIRMED=true is required to write the report copy. ' +
         'Set GEMINI_FREE_TIER_CONFIRMED only after confirming the key belongs to a project with no paid billing.');
     }
     const runDir = path.join(ROOT, judged.run_dir);

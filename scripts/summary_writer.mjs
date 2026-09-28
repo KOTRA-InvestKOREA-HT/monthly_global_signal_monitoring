@@ -35,7 +35,14 @@ const DEFAULT_TIMEOUT_MS = 120000;
 // 사업동향 문안은 기사 전체를 풀어 쓰므로 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 const ARTICLE_EVIDENCE_CHARS = 12000;
 
-// 문안은 이 단계만 쓰므로 끄는 선택지는 없다.
+// 대체 문안 모델. 기본 모델이 할당량·장애로 멈추거나 세 번 모두 검사에 걸린 후보를 이 모델이 이어 쓴다.
+// 무료 한도는 모델마다 따로라, 기본 모델 한도가 끝나도 그날 안에 보고서를 끝낼 수 있다. 판정 모델과 같은
+// flash-lite 지만 여기서는 판정 기준 없이 문안 규칙만 받는다. 대체 모델이 쓴 문안도 같은 검사를 통과해야 실린다.
+export const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
+// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격을 쓴다.
+const FALLBACK_DELAY_MS = 4500;
+
+// 문안은 이 단계만 쓰므로 끄는 선택지는 없다. 대체 모델만 GEMINI_WRITER_FALLBACK_MODEL=off 로 끌 수 있다.
 export function resolveWriter(env = process.env) {
   const model = String(env.GEMINI_WRITER_MODEL || DEFAULT_WRITER_MODEL).trim();
   const thinkingLevel = String(env.GEMINI_WRITER_THINKING_LEVEL || DEFAULT_THINKING).trim().toLowerCase();
@@ -46,7 +53,10 @@ export function resolveWriter(env = process.env) {
   if (!Number.isFinite(delayMs) || delayMs < 4000 || delayMs > 60000) throw new Error('GEMINI_WRITER_DELAY_MS must be 4000..60000');
   const timeoutMs = Number(env.GEMINI_WRITER_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 10000 || timeoutMs > 600000) throw new Error('GEMINI_WRITER_TIMEOUT_MS must be 10000..600000');
-  return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs };
+  const fallbackModel = String(env.GEMINI_WRITER_FALLBACK_MODEL || DEFAULT_FALLBACK_MODEL).trim();
+  const fallback = ['off', 'false', '0', 'no'].includes(fallbackModel.toLowerCase()) || fallbackModel === model ? null
+    : { ...GEMINI, label: 'Gemini writer (fallback)', model: fallbackModel, thinkingLevel, delayMs: FALLBACK_DELAY_MS, timeoutMs };
+  return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs, fallback };
 }
 
 // 정책 문서의 한국어 용어·배치 절만 가져온다. 판정 기준은 넣지 않는다. 이 단계가 판정 기준을 받지 않는
@@ -332,31 +342,43 @@ const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 export async function writeSummaries({ articles, reviewDir, writer, apiKey, policyWording,
   fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = console.log, attempts = WRITER_ATTEMPTS }) {
   const instruction = buildWriterInstruction(policyWording);
-  const stats = { model: writer.model, articles: 0, requests: 0, cached: 0, written: 0, failed: [], errors: {}, rejected: {} };
+  const stats = { model: writer.model, fallback_model: writer.fallback?.model || null, articles: 0, requests: 0, cached: 0,
+    written: 0, written_by: {}, failed: [], errors: {}, rejected: {} };
+  // 모델별로 더 쓸 수 없게 된 이유. 기본 모델이 막히면 대체 모델로 넘어가고, 둘 다 막히면 실행을 멈춘다.
+  const blocked = new Map();
+  const usable = model => Boolean(model) && !blocked.has(model.model);
+  const current = () => (usable(writer) ? writer : usable(writer.fallback) ? writer.fallback : null);
   let stopped = null, nextStart = 0;
-  const call = async request => {
+  const block = (model, reason, error) => {
+    blocked.set(model.model, { reason, ...(error?.status ? { http_status: error.status } : {}) });
+    if (model === writer && usable(writer.fallback)) {
+      stats.switched = { from: writer.model, to: writer.fallback.model, reason };
+      log(`Writer ${writer.model} unavailable (${reason}); continuing with ${writer.fallback.model}`);
+    }
+    if (!current()) stopped = { ...blocked.get(writer.model), ...(writer.fallback ? { fallback: blocked.get(writer.fallback.model) } : {}) };
+  };
+  // 한 요청. 일시 장애는 두 번 다시 해 보고, 할당량·설정 오류나 거듭된 장애면 그 모델을 막는다.
+  // 돌려주는 answer 가 null 이면 이 시도에서 쓸 문안이 없다는 뜻이다. blockedNow 면 시도 횟수로 세지 않는다.
+  const call = async (request, model) => {
     for (let retry = 0; ; retry++) {
       const wait = nextStart - Date.now();
       if (wait > 0) await sleep(wait);
-      nextStart = Date.now() + writer.delayMs;
+      nextStart = Date.now() + model.delayMs;
       stats.requests += 1;
       try {
-        return await requestWriter(writer, apiKey, writerBody(writer, instruction, request), fetchImpl);
+        return { answer: await requestWriter(model, apiKey, writerBody(model, instruction, request), fetchImpl) };
       } catch (error) {
         const reason = error.writer_reason || 'error';
-        stats.errors[reason] = (stats.errors[reason] || 0) + 1;
-        // 할당량이 끝났거나 키·모델 설정이 틀렸으면 남은 기사도 같은 답을 받는다. 더 두드리지 않는다.
-        if (reason === 'quota' || reason === 'provider_error') {
-          stopped = { reason, ...(error.status ? { http_status: error.status } : {}) };
-          return null;
-        }
+        const key = model === writer ? reason : `${model.model}:${reason}`;
+        stats.errors[key] = (stats.errors[key] || 0) + 1;
+        if (reason === 'quota' || reason === 'provider_error') { block(model, reason, error); return { answer: null, blockedNow: true }; }
         if (TRANSIENT.has(reason)) {
           if (retry < 2) { await sleep(15000 * 2 ** retry); continue; }
-          stopped = { reason };
-          return null;
+          block(model, reason, error);
+          return { answer: null, blockedNow: true };
         }
         // 형식이 깨진 응답은 이 기사의 시도 하나를 쓴 것으로 센다.
-        return null;
+        return { answer: null };
       }
     }
   };
@@ -388,18 +410,30 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     stats.cached += written.size;
     let todo = targets.filter(decision => !written.has(decision.candidate_id));
     const rejected = {};
-    for (let attempt = 1; attempt <= attempts && todo.length && !stopped; attempt++) {
-      const answer = await call(writerRequest(article, todo, rejected));
-      if (!answer) continue;
+    const accept = (answer, model) => {
       const byId = new Map(answer.map(item => [item?.candidate_id, item]));
       for (const decision of todo) {
         const item = byId.get(decision.candidate_id);
         const problems = item ? writtenProblems(article, decision, item) : ['missing_item'];
         if (problems.length) { rejected[decision.candidate_id] = problems; continue; }
-        written.set(decision.candidate_id, { summary_en: item.summary_en.trim(), summary_ko: item.summary_ko.trim() });
+        written.set(decision.candidate_id, { summary_en: item.summary_en.trim(), summary_ko: item.summary_ko.trim(), model: model.model });
         delete rejected[decision.candidate_id];
       }
       todo = todo.filter(decision => !written.has(decision.candidate_id));
+    };
+    let lastModel = null;
+    for (let attempt = 1; attempt <= attempts && todo.length && current();) {
+      const model = current();
+      const { answer, blockedNow } = await call(writerRequest(article, todo, rejected), model);
+      if (blockedNow) continue;
+      attempt++;
+      lastModel = model;
+      if (answer) accept(answer, model);
+    }
+    // 기본 모델로 세 번 모두 검사에 걸린 후보는 대체 모델로 한 번 더 써 본다.
+    if (todo.length && lastModel === writer && usable(writer.fallback)) {
+      const { answer } = await call(writerRequest(article, todo, rejected), writer.fallback);
+      if (answer) accept(answer, writer.fallback);
     }
     const targetIds = new Set(targets.map(decision => decision.candidate_id));
     let decisions = review.decisions.map(decision => {
@@ -409,7 +443,10 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       // 키가 바뀐 옛 문안은 남기지 않는다. 지금 인용과 다른 인용에서 쓴 문안일 수 있다.
       if (!text) return withoutSummary(decision);
       stats.written += 1;
-      return { ...decision, ...text, summary_writer: { version: WRITER_VERSION, model: writer.model, key: keys[decision.candidate_id] } };
+      stats.written_by[text.model] = (stats.written_by[text.model] || 0) + 1;
+      const { model, ...copy } = text;
+      // 키는 기본 모델 기준이다. 대체 모델이 쓴 문안도 인용이 같으면 다음 실행에서 다시 묻지 않는다. model 은 실제로 쓴 모델이다.
+      return { ...decision, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
     });
     // 멈춘 실행은 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
     const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id)));
