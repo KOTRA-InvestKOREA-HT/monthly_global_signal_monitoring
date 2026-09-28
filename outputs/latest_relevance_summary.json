@@ -1,11 +1,11 @@
 {
-  "relevant_signal_count": 39,
-  "companies_with_relevant_signals": 23,
-  "approved_count": 19,
-  "near_miss_count": 20,
-  "report_signal_count": 16,
-  "date_pending_count": 3,
+  "relevant_signal_count": 65,
+  "companies_with_relevant_signals": 35,
+  "approved_count": 25,
+  "near_miss_count": 40,
+  "report_signal_count": 21,
+  "date_pending_count": 4,
   "out_of_period_count": 0,
-  "companies_in_report": 9,
+  "companies_in_report": 12,
   "provider": "gemini"
 }
