@@ -1,11 +1,11 @@
 {
-  "run_started_at": "2026-09-28T07:27:33Z",
+  "run_started_at": "2026-09-28T08:32:56Z",
   "collection_resume_version": 1,
   "collection_input_digest": "356dfc84be5cc5b3089ecf0db6bf7c949a7ce27ddbfb3a22018dc2d974976f30",
   "html_network": {
-    "attempts": 15,
-    "skipped": 4,
-    "elapsed_ms": 10841
+    "attempts": 14,
+    "skipped": 7,
+    "elapsed_ms": 7462
   },
   "cached_company_count": 75,
   "retryable_company_count": 2,
@@ -473,18 +473,18 @@
       "cached": false
     }
   ],
-  "run_finished_at": "2026-09-28T07:27:47Z",
+  "run_finished_at": "2026-09-28T08:33:09Z",
   "company_timings": [
     {
       "company": "Australian Strategic Metals",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Cognex",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
@@ -498,28 +498,28 @@
     },
     {
       "company": "Charles River",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Cytiva",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Moderna",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "West Pharmaceutical",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 8,
       "cached": true
@@ -533,21 +533,21 @@
     },
     {
       "company": "Albemarle",
-      "elapsed_ms": 6,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "TIMET",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 1,
       "cached": true
     },
     {
       "company": "Air Products",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
@@ -561,35 +561,35 @@
     },
     {
       "company": "BorgWarner",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "DOW",
-      "elapsed_ms": 5,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Thermo Fisher",
-      "elapsed_ms": 3,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Amkor Technology",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Onsemi",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -603,7 +603,7 @@
     },
     {
       "company": "Skyworks",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 8,
       "cached": true
@@ -617,21 +617,21 @@
     },
     {
       "company": "GE Healthcare",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Boeing",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "3M",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 6,
       "cached": true
@@ -652,7 +652,7 @@
     },
     {
       "company": "Magnix",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 0,
       "cached": true
@@ -666,14 +666,14 @@
     },
     {
       "company": "ASML",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Besi",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -687,7 +687,7 @@
     },
     {
       "company": "Norsk Hydro",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 11,
       "cached": true
@@ -701,14 +701,14 @@
     },
     {
       "company": "Heidenhain",
-      "elapsed_ms": 5,
+      "elapsed_ms": 4,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Infineon",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 7,
       "cached": true
@@ -722,21 +722,21 @@
     },
     {
       "company": "Bayer",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Merck",
-      "elapsed_ms": 4,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Schott Pharma",
-      "elapsed_ms": 1,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 5,
       "cached": true
@@ -750,84 +750,84 @@
     },
     {
       "company": "Evonik Industries",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Heraeus",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 5,
       "cached": true
     },
     {
       "company": "Jenoptik",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "EMM(Umicore)",
-      "elapsed_ms": 4,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 6,
       "cached": true
     },
     {
       "company": "Umicore",
-      "elapsed_ms": 5,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Solvay",
-      "elapsed_ms": 10,
+      "elapsed_ms": 6,
       "request_count": 0,
       "result_count": 2,
       "cached": true
     },
     {
       "company": "Syensqo",
-      "elapsed_ms": 9,
+      "elapsed_ms": 12,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "Hexagon AB",
-      "elapsed_ms": 8,
+      "elapsed_ms": 12,
       "request_count": 0,
       "result_count": 4,
       "cached": true
     },
     {
       "company": "ABB",
-      "elapsed_ms": 7,
+      "elapsed_ms": 11,
       "request_count": 0,
       "result_count": 11,
       "cached": true
     },
     {
       "company": "Maxon",
-      "elapsed_ms": 3,
+      "elapsed_ms": 9,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Siemens-Gamesa",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Renishaw",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 11,
       "cached": true
@@ -841,7 +841,7 @@
     },
     {
       "company": "Rio Tinto",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 9,
       "cached": true
@@ -869,56 +869,56 @@
     },
     {
       "company": "Texcell",
-      "elapsed_ms": 10991,
+      "elapsed_ms": 9721,
       "request_count": 7,
       "result_count": 4,
       "cached": false
     },
     {
       "company": "Veolia",
-      "elapsed_ms": 42,
+      "elapsed_ms": 34,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Airbus",
-      "elapsed_ms": 41,
+      "elapsed_ms": 33,
       "request_count": 0,
       "result_count": 7,
       "cached": true
     },
     {
       "company": "Safran",
-      "elapsed_ms": 41,
+      "elapsed_ms": 34,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Air Liquide",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
     },
     {
       "company": "Arkema",
-      "elapsed_ms": 5,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "DNP",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 8,
       "cached": true
     },
     {
       "company": "Hitachi Metals",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 6,
       "cached": true
@@ -932,14 +932,14 @@
     },
     {
       "company": "Nabtesco",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Glass",
-      "elapsed_ms": 3,
+      "elapsed_ms": 2,
       "request_count": 0,
       "result_count": 4,
       "cached": true
@@ -981,14 +981,14 @@
     },
     {
       "company": "Sumitomo Chemical",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 9,
       "cached": true
     },
     {
       "company": "Asahi Kasei",
-      "elapsed_ms": 4,
+      "elapsed_ms": 3,
       "request_count": 0,
       "result_count": 10,
       "cached": true
@@ -1009,8 +1009,8 @@
     },
     {
       "company": "Shanghai Electric Wind Power",
-      "elapsed_ms": 14332,
-      "request_count": 7,
+      "elapsed_ms": 12717,
+      "request_count": 3,
       "result_count": 1,
       "cached": false
     }
@@ -1965,9 +1965,9 @@
   "max_detail_per_company": 10,
   "fallback_mode": "missing",
   "fallback_min_results": 1,
-  "request_count": 14,
+  "request_count": 10,
   "fetch_retries": 2,
-  "retry_count": 4,
+  "retry_count": 6,
   "result_count": 556,
   "official_result_count": 403,
   "press_release_result_count": 205,
@@ -1983,32 +1983,19 @@
   "undated_with_body_count": 46,
   "link_policy": "proposed",
   "link_verdict_counts": {
-    "hard_reject": 318,
+    "hard_reject": 19,
     "accept": 4
   },
   "max_verify_per_company": 0,
-  "excluded_non_article_count": 318,
+  "excluded_non_article_count": 19,
   "excluded_non_article_reasons": {
-    "site_root": 27,
-    "no_article_affordance": 255,
-    "offsite_link": 27,
-    "navigation_label": 5,
+    "site_root": 3,
+    "no_article_affordance": 11,
+    "navigation_label": 1,
     "boilerplate_or_social": 4
   },
-  "excluded_non_article_sample_count": 15,
+  "excluded_non_article_sample_count": 7,
   "excluded_non_article_samples": [
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "EN",
-      "url": "https://www.shanghai-electric.com/",
-      "reason": "site_root"
-    },
     {
       "company": "Texcell",
       "title": "",
@@ -2020,18 +2007,6 @@
       "title": "Headquarter ABL Texcell SA France",
       "url": "https://texcell.com/",
       "reason": "site_root"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "CN",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "首页",
-      "url": "https://www.shanghai-electric.com/listed/",
-      "reason": "no_article_affordance"
     },
     {
       "company": "Texcell",
@@ -2046,33 +2021,9 @@
       "reason": "no_article_affordance"
     },
     {
-      "company": "Shanghai Electric Wind Power",
-      "title": "上证E互动",
-      "url": "http://sns.sseinfo.com/company.do?uid=1727",
-      "reason": "offsite_link"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "校园招聘",
-      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
-      "reason": "offsite_link"
-    },
-    {
       "company": "Texcell",
       "title": "About us",
       "url": "https://texcell.com/about-us/",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "About Us",
-      "url": "https://wecruit.hotjob.cn/SU60de8350bef57c519874bd36/pb/index.html",
-      "reason": "navigation_label"
-    },
-    {
-      "company": "Shanghai Electric Wind Power",
-      "title": "About Us",
-      "url": "https://www.shanghai-electric.com/listed_en/jtjj/",
       "reason": "navigation_label"
     },
     {
@@ -2089,10 +2040,9 @@
     }
   ],
   "excluded_non_article_sample_reasons": {
-    "site_root": 4,
-    "no_article_affordance": 4,
-    "offsite_link": 2,
-    "navigation_label": 3,
+    "site_root": 2,
+    "no_article_affordance": 2,
+    "navigation_label": 1,
     "boilerplate_or_social": 2
   },
   "published_at_source_counts": {
@@ -2271,7 +2221,7 @@
     "Cheng Uei Precision": 1,
     "Shanghai Electric Wind Power": 0
   },
-  "error_count": 93,
+  "error_count": 97,
   "errors": [
     {
       "target_no": 2,
@@ -3051,16 +3001,52 @@
       "target_no": 77,
       "company": "Shanghai Electric Wind Power",
       "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
+      "source_name": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
+      "kind": "ir",
+      "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
+      "source_name": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
+      "kind": "ir",
+      "error": "domain_cooldown: www.shanghai-electric.com"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
+      "source_name": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
+      "kind": "filing",
+      "error": "domain_cooldown: www.shanghai-electric.com"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
       "source_url": "https://www.sewpg.com/",
       "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
       "kind": "official_page",
       "error": "fetch failed"
+    },
+    {
+      "target_no": 77,
+      "company": "Shanghai Electric Wind Power",
+      "source": "official_pages",
+      "source_url": "https://www.shanghai-electric.com/listed_en/windpower/",
+      "source_name": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
+      "kind": "official_page",
+      "error": "domain_cooldown: www.shanghai-electric.com"
     }
   ],
   "outputs": {
-    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260928T072733Z.json",
-    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260928T072733Z.csv",
-    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260928T072733Z.json",
+    "json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260928T083256Z.json",
+    "csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/company_signals_20260928T083256Z.csv",
+    "summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/collection_summary_20260928T083256Z.json",
     "latest_json": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.json",
     "latest_csv": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_company_signals.csv",
     "latest_summary": "/home/runner/work/monthly_global_signal_monitoring/monthly_global_signal_monitoring/outputs/review_work/2026-08-01_2026-08-31/latest_collection_summary.json"
@@ -3596,7 +3582,7 @@
       "status": "incomplete_evidence",
       "reasons": [
         "date_deferred",
-        "review_failed"
+        "recheck_pending"
       ],
       "follow_up": [
         {
@@ -5624,21 +5610,14 @@
       "date_follow_up": []
     }
   ],
-  "review_failed_articles": [
-    {
-      "company": "Skyworks",
-      "title": "2025 SWKS Annual Report",
-      "url": "https://www.skyworksinc.com/-/media/SkyWorks/Documents/IR/2025-SWKS-Annual-Report.pdf",
-      "article_id": "629ea10f1ba93f5716acc713"
-    }
-  ],
+  "review_failed_articles": [],
   "review_scope": {
     "articles": 382,
-    "reviewed_articles": 381,
-    "review_failed_articles": 1,
+    "reviewed_articles": 382,
+    "review_failed_articles": 0,
     "adjudicated_articles": 0,
     "wording_fixed_articles": 0,
-    "recheck_pending_candidates": 0,
+    "recheck_pending_candidates": 1,
     "date_pending_investment_rows": 6,
     "date_pending_business_rows": 10,
     "deferred_articles": 31,
