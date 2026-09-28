@@ -222,9 +222,13 @@ export function writtenProblems(article, decision, written, styleProblems = summ
     if (en.includes(' - ')) problems.push('english_headline');
     const names = ungroundedSummaryNames(en, decision.evidence_quotes, article.title);
     if (names.length) problems.push(`ungrounded_names:${names.join('|')}`);
-    const dates = ungroundedSummaryDates(en, article.evidence, article.title);
-    if (dates.length) problems.push(`ungrounded_dates:${dates.join('|')}`);
   } else if (en.includes(' - ') || ko.includes(' - ')) problems.push('business_headline');
+  // 연도는 사업동향 문안에도 건다. Issue 3 Jenoptik 사업현황 영문이 없는 연도(2015)를 지어냈다.
+  // 달 이름은 시그널 문안에만 건다. 일본어·독일어 원문은 달을 "8月3日"처럼 적어 사업동향이 자주 오탐으로 걸린다.
+  // 한국어 문안에는 달 이름이 없으므로 연도와 YYYY-MM-DD 만 걸린다.
+  const dates = [...new Set([en, ko].flatMap(text => ungroundedSummaryDates(text, article.evidence, article.title, article.published_at)))]
+    .filter(date => candidate.kind === 'investment' || /^\d{4}$/.test(date));
+  if (dates.length) problems.push(`ungrounded_dates:${dates.join('|')}`);
   const numbers = decisionNumberProblems(article, next);
   if (numbers.length) problems.push(`ungrounded_numbers:${numbers.join('|')}`);
   problems.push(...styleProblems(article, next));
@@ -403,9 +407,11 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       [decision.candidate_id, writerKey(writer, instruction, writerRequest(article, [decision]))]));
     // 값이 null 이면 이전 실행이 같은 키로 이미 쓴 문안이다. 그대로 둔다.
     const written = new Map();
+    // 검사가 강해진 뒤에도 옛 문안을 그대로 쓰지 않도록, 재사용할 문안도 지금 검사를 다시 통과해야 한다.
     for (const decision of targets) {
       if (decision.summary_writer?.key === keys[decision.candidate_id] &&
-        String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim()) written.set(decision.candidate_id, null);
+        String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim() &&
+        !writtenProblems(article, decision, decision).length) written.set(decision.candidate_id, null);
     }
     stats.cached += written.size;
     let todo = targets.filter(decision => !written.has(decision.candidate_id));

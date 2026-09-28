@@ -56,11 +56,28 @@ test('a month name leaves the name check and enters the date check', () => {
   assert.deepEqual(ungroundedSummaryDates(summary,
     ['Veolia a finalise l acquisition en August 2026 sur le site de Paris.'], 'Veolia acquisition'), []);
   // 기사 어디에도 없으면 요약이 지어낸 날짜다.
-  assert.deepEqual(ungroundedSummaryDates(summary, quotes, 'Veolia acquisition'), ['August']);
+  assert.deepEqual(ungroundedSummaryDates(summary, quotes, 'Veolia acquisition', '2026-08-20'), ['August']);
   assert.deepEqual(ungroundedSummaryDates('Signed on 2026-08-14.', ['Signed last summer.'], 'Deal'), ['2026-08-14']);
   // May 는 달 이름이자 보통 낱말이다. 달로 읽히는 자리에서만 센다.
   assert.deepEqual(ungroundedSummaryDates('The plant may expand next year.', ['The plant may expand.'], 'Plant'), []);
-  assert.deepEqual(ungroundedSummaryDates('The plant opened in May 2026.', ['The plant opened.'], 'Plant'), ['May']);
+  assert.deepEqual(ungroundedSummaryDates('The plant opened in May 2026.', ['The plant opened.'], 'Plant', '2026-08-20'), ['May']);
+});
+
+// Issue 3 Jenoptik: 원문 "same period last year"가 영문 문안에서 "same period of 2015"가 됐다.
+test('a year the article never gives is caught; the publication year, amounts and ISO dates are not', () => {
+  const source = ['Revenue of 503.2 million euros in the first half of 2026, up 1.0 percent on the same period last year.'];
+  assert.deepEqual(ungroundedSummaryDates('Revenue rose to 503.2 million euros from the same period of 2015.', source, 'H1', '2026-08-12'), ['2015']);
+  assert.deepEqual(ungroundedSummaryDates('First-half 2026 revenue rose 1.0 percent.', source, 'H1', '2026-08-12'), []);
+  // 게시 연도는 본문에 없어도 근거가 있다.
+  assert.deepEqual(ungroundedSummaryDates('Revenue rose in 2026.', ['Revenue rose.'], 'H1', '2026-08-12'), []);
+  // 한국어 문안에도 같은 연도 검사가 걸린다.
+  assert.deepEqual(ungroundedSummaryDates('2015년 동기 대비 매출이 증가했음.', source, 'H1', '2026-08-12'), ['2015']);
+  // 연도처럼 보이는 금액은 연도가 아니다.
+  assert.deepEqual(ungroundedSummaryDates('Acme raised $2000 million and 1999 percent.', ['Acme raised funds.'], 'Deal', '2026-08-12'), []);
+  assert.deepEqual(ungroundedSummaryDates('Signed on 2026-08-14.', ['Signed on 2026-08-14.'], 'Deal'), []);
+  // 두 자리 회계연도 표기는 네 자리 연도의 근거다.
+  assert.deepEqual(ungroundedSummaryDates('The first quarterly profit since the fourth quarter of fiscal 2022.',
+    ['First quarter with positive result since Q4 FY22'], 'Q3 FY26', '2026-08-05'), []);
 });
 
 // 3. 인용에 없는 기업·기관을 새로 불러온 요약은 계속 검출된다.

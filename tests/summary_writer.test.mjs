@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { groupArticles, importReview } from '../scripts/local_report.mjs';
+import { groupArticles, importReview, summaryNumberProblems } from '../scripts/local_report.mjs';
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
@@ -277,4 +277,32 @@ test('publish takes over only a finished judgement for the same dates', () => {
   assert.equal(issueNumberFor('4', judged), '4');
   assert.equal(issueNumberFor('', judged), '3');
   assert.equal(issueNumberFor('', {}), '2');
+});
+
+// ---- Issue 3(9월 28일 실행) 검토에서 나온 세 가지 ----
+
+test('copy that invents a year is sent back, and so is cached copy that no longer passes the checks', async () => {
+  const ws = await workspace();
+  const invented = { ...good, summary_en: 'Acme priced EUR 500 million of senior notes in 2015 to fund a new wafer plant in Dresden, Germany.' };
+  const bodies = [];
+  await run(ws, async (url, init) => { bodies.push(bodyText(init)); return gemini([bodies.length === 1 ? invented : good]); });
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1], /ungrounded_dates:2015/);
+  // 예전 검사로 통과해 저장된 문안도, 지금 검사에 걸리면 다시 쓴다.
+  const saved = await ws.read();
+  await fsp.writeFile(path.join(ws.reviewDir, `${article.id}.json`), JSON.stringify({ ...saved,
+    decisions: saved.decisions.map(decision => ({ ...decision, summary_en: invented.summary_en })) }));
+  let calls = 0;
+  const again = await run(ws, async () => { calls += 1; return gemini([good]); });
+  assert.equal(calls, 1);
+  assert.equal(again.cached, 0);
+  assert.equal((await ws.read()).decisions[0].summary_en, good.summary_en);
+});
+
+test('an amount written as $1.4B in the source grounds $1.4 billion in the copy', () => {
+  const source = ['Additive ~$1.4B debt issued; $0.7B cash to 3M; ~$450M sales'];
+  assert.deepEqual(summaryNumberProblems('3M issued about $1.4 billion of debt and received $0.7 billion in cash.', source, 'en'), []);
+  assert.deepEqual(summaryNumberProblems('3M는 약 14억 달러의 부채를 발행했음.', source, 'ko'), []);
+  assert.deepEqual(summaryNumberProblems('Sales of about $450 million.', source, 'en'), []);
+  assert.deepEqual(summaryNumberProblems('3M issued about $2.4 billion of debt.', source, 'en'), ['$2.4 billion']);
 });

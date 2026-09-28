@@ -141,7 +141,7 @@ export function ungroundedSummaryNames(summaryEn, quotes, title) {
 // 있을 수 있다. 기사 어디에도 없는 달이면 요약이 지어낸 것이다.
 const SUMMARY_MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
   "september", "october", "november", "december"];
-export function ungroundedSummaryDates(summaryEn, evidence, title) {
+export function ungroundedSummaryDates(summaryEn, evidence, title, publishedAt = "") {
   const text = summaryBody(clean(summaryEn));
   const grounded = clean([...(evidence || []), title].join(" ")).toLowerCase();
   const stated = new Set();
@@ -156,6 +156,17 @@ export function ungroundedSummaryDates(summaryEn, evidence, title) {
   for (const [iso] of text.matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)) {
     if (!grounded.includes(iso.toLowerCase())) stated.add(iso);
   }
+  // 연도도 본다. Issue 3(9월 28일 실행) Jenoptik 영문 문안이 원문 "same period last year"를
+  // "same period of 2015"로 옮겼다. 기사 어디에도 없고 게시 연도도 아닌 연도는 지어낸 것이다.
+  // 금액(2000 million)과 위의 연-월-일 표기는 여기서 세지 않는다.
+  const years = new Set([...grounded.matchAll(/(?<!\d)((?:19|20)\d{2})(?!\d)/g)].map((match) => match[1]));
+  // 실적 자료는 회계연도를 "Q4 FY22"처럼 두 자리로 적는다(Issue 3 Siemens Energy). "fiscal 2022"는 맞게 옮긴 것이다.
+  for (const [, short] of grounded.matchAll(/\bfy\s?'?(\d{2})(?!\d)/g)) years.add(`20${short}`);
+  if (/^\d{4}/.test(String(publishedAt || ""))) years.add(String(publishedAt).slice(0, 4));
+  const YEAR = /(?<![\d.,$€£¥])((?:19|20)\d{2})(?!\d|[.,]\d|-\d{2}-\d{2}|\s?(?:%|percent|trillion|billion|million|thousand|[조억만]))/gi;
+  for (const [, year] of text.matchAll(YEAR)) {
+    if (!years.has(year)) stated.add(year);
+  }
   return [...stated];
 }
 
@@ -166,7 +177,8 @@ export function ungroundedSummaryDates(summaryEn, evidence, title) {
 // 영문자에 붙은 번호(RLE100, Q3, FY26)는 보지 않는다. 표기 차이로 생기는 오탐이 남으므로 importReview 는
 // 새로 받은 응답에서만(strictNumbers) 되묻고, 재시도 뒤에도 숫자만 걸리면 경고를 남기고 받는다.
 // 통화 코드를 앞에 두고 백만 단위를 m 으로 적는 공시가 있다(2026-08 Vestas "EUR 4,723m").
-const AMOUNT_SCALE = { trillion: 1e12, tn: 1e12, billion: 1e9, bn: 1e9, million: 1e6, mn: 1e6, m: 1e6, thousand: 1e3, k: 1e3,
+// 발표 자료는 "~$1.4B"처럼 B 한 글자로 적는다(Issue 3 3M 실적 자료). 없으면 맞게 옮긴 금액이 근거 없음으로 걸린다.
+const AMOUNT_SCALE = { trillion: 1e12, tn: 1e12, billion: 1e9, bn: 1e9, b: 1e9, million: 1e6, mn: 1e6, m: 1e6, thousand: 1e3, k: 1e3,
   "兆": 1e12, "億": 1e8, "万": 1e4, "조": 1e12, "억": 1e8, "만": 1e4 };
 const CURRENCY_CODE = { "$": "USD", "US$": "USD", "A$": "USD", "C$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₩": "KRW",
   usd: "USD", dollar: "USD", dollars: "USD", "달러": "USD", eur: "EUR", euro: "EUR", euros: "EUR", "유로": "EUR",
@@ -174,7 +186,7 @@ const CURRENCY_CODE = { "$": "USD", "US$": "USD", "A$": "USD", "C$": "USD", "€
   krw: "KRW", "원": "KRW", chf: "CHF", franc: "CHF", francs: "CHF", "프랑": "CHF" };
 const CURRENCY_MARKER = { USD: /\$|\bUSD\b|dollar/i, EUR: /€|\bEUR\b|euro/i, GBP: /£|\bGBP\b|pound|sterling/i,
   JPY: /¥|円|\bJPY\b|\byen\b/i, KRW: /₩|\bKRW\b|\bwon\b|원/i, CHF: /\bCHF\b|franc/i };
-const LATIN_AMOUNT = /(US\$|A\$|C\$|[$€£¥₩]|(?:USD|EUR|GBP|JPY|CHF)(?=\s?\d))?\s?(?<![A-Za-z0-9.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s?(%|percent\b|trillion\b|billion\b|million\b|thousand\b|tn\b|bn\b|mn\b|m\b|k\b|兆|億|万)|(?![A-Za-z0-9]))(?:\s?(?:(USD|EUR|GBP|JPY|KRW|CHF|dollars?|euros?|pounds?|yen|francs?)\b|(円)))?/gi;
+const LATIN_AMOUNT = /(US\$|A\$|C\$|[$€£¥₩]|(?:USD|EUR|GBP|JPY|CHF)(?=\s?\d))?\s?(?<![A-Za-z0-9.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s?(%|percent\b|trillion\b|billion\b|million\b|thousand\b|tn\b|bn\b|mn\b|m\b|b\b|k\b|兆|億|万)|(?![A-Za-z0-9]))(?:\s?(?:(USD|EUR|GBP|JPY|KRW|CHF|dollars?|euros?|pounds?|yen|francs?)\b|(円)))?/gi;
 const KOREAN_AMOUNT = /(?<![A-Za-z0-9.,])((?:\d+(?:\.\d+)?\s?[조억만]\s?)*(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(?![A-Za-z0-9.,])\s?([조억만])?\s?(%|퍼센트|달러|유로|파운드|엔|원|프랑|년|월|일|분기|개월|주년|주|차|번째|위|세대|호|시|분|배)?/g;
 const KOREAN_SKIP = new Set(["년", "월", "일", "분기", "개월", "주년", "주", "차", "번째", "위", "세대", "호", "시", "분", "배"]);
 
@@ -560,7 +572,7 @@ export function importReview(article, review, { strictNumbers = false, summaries
           `Quote the passage the summary describes, or summarize only the quoted event.`);
       }
       // 달 이름을 고유명사 검사에서 뺀 자리를 이 검사가 메운다. 근거는 기사 본문 전체로 본다.
-      const dates = ungroundedSummaryDates(decision.summary_en, article.evidence, article.title);
+      const dates = ungroundedSummaryDates(decision.summary_en, article.evidence, article.title, article.published_at);
       if (dates.length) {
         throw new Error(`${context}: summary dates ${dates.join(", ")} are not stated in this article. ` +
           `State only a date the article itself gives.`);
