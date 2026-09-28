@@ -448,6 +448,19 @@ class SourceLinkTests(unittest.TestCase):
         self.assertEqual(profiles[0]["company"], "Australian Strategic Metals")
         self.assertEqual(profiles[0]["display_name"], "Australian Strategic Materials")
 
+    def test_exempt_company_header_names_its_own_business_not_the_hidden_product(self):
+        # 2026-08 호: 품목이 없는 Air Products 헤더에 배정 그룹의 라벨 "Nylon intermediates"가 찍혔다.
+        tech_map = {"companies": [{"company": "Air Products", "technology_group": "hexamethylenediamine_hmd",
+                                   "excluded_from_relevance": True}]}
+        for lang, expected in (("ko", "산업용 가스"), ("en", "Industrial gases")):
+            pdf.set_language(lang)
+            profile = pdf.build_profiles([{"target_no": 11, "company": "Air Products"}], tech_map)[0]
+            self.assertEqual(profile["detailed_industry"], expected)
+            self.assertEqual(pdf.target_section_for_profile(profile), ("", ""))
+
+    def test_every_exempt_company_has_its_own_industry_label(self):
+        self.assertEqual(set(pdf.EXEMPT_INDUSTRY), set(pdf.EXEMPT_COMPANIES))
+
 
 class SummaryDetailProseTests(unittest.TestCase):
     """2026-08 report (run on 2026-09-14): detail sentences were compressed like headlines."""

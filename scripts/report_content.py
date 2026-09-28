@@ -20,7 +20,7 @@ from pathlib import Path
 __all__ = [
     "APPROVAL_POLICY", "BUSINESS_STAGE", "COMPANY_LEVEL_INDICATORS", "CONFIRMED_DATE_SOURCES",
     "COUNTRY_BY_COMPANY", "COUNTRY_EN", "DEFAULT_ISSUE_NUMBER",
-    "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES",
+    "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES", "EXEMPT_INDUSTRY",
     "INDICATOR_DESCRIPTION_EN", "INDICATOR_LABEL_KO", "LEADING_STAGES", "TARGET_TECHNOLOGY_DISPLAY_EN", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
     "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
     "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
@@ -58,6 +58,20 @@ EXEMPT_COMPANIES = {
     "3M",
     "Air Liquide",
     "Air Products",
+}
+
+# 면제 기업도 데이터에는 처음 배정된 technology_group 이 남아 있어, 그룹으로 업종 라벨을 만들면
+# 숨긴 품목이 헤더에 다시 찍힌다(Air Products 가 "Nylon intermediates"로 나왔다). 회사 자체 업종을 쓴다.
+EXEMPT_INDUSTRY = {
+    "Prodrive": ("전력·제어 전자", "Power & control electronics"),
+    "JSR": ("반도체 소재", "Semiconductor materials"),
+    "Applied Materials": ("반도체 장비", "Semiconductor equipment"),
+    "Amkor Technology": ("반도체 패키징·테스트", "Semiconductor packaging & test"),
+    "Heraeus": ("귀금속·특수소재", "Precious metals & materials"),
+    "Toray": ("첨단 소재", "Advanced materials"),
+    "3M": ("다각화 소재·제조", "Diversified materials"),
+    "Air Liquide": ("산업용 가스", "Industrial gases"),
+    "Air Products": ("산업용 가스", "Industrial gases"),
 }
 
 COUNTRY_BY_COMPANY = {
@@ -907,6 +921,9 @@ def build_profiles(targets, tech_map):
             country = COUNTRY_EN.get(country, country)
             industry = DETAILED_INDUSTRY_EN.get(group, industry)
             target_technology = TARGET_TECHNOLOGY_DISPLAY_EN.get(group) or tech.get("target_technology_en") or target_technology
+        exempt = bool(tech.get("excluded_from_relevance")) or company in EXEMPT_COMPANIES
+        if exempt and company in EXEMPT_INDUSTRY:
+            industry = EXEMPT_INDUSTRY[company][1 if LANG == "en" else 0]
         profiles.append(
             {
                 **target,
@@ -918,7 +935,7 @@ def build_profiles(targets, tech_map):
                 "country": country,
                 "detailed_industry": industry,
                 "target_technology": target_technology,
-                "exempt_from_relevance": bool(tech.get("excluded_from_relevance")) or company in EXEMPT_COMPANIES,
+                "exempt_from_relevance": exempt,
             }
         )
     return profiles
