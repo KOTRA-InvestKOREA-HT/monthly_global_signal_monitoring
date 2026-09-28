@@ -96,7 +96,8 @@ export function investmentStageSupported(stage, indicatorNo) {
     (stage === "precursor" && APPROVAL_POLICY.precursor_indicators.includes(Number(indicatorNo)));
 }
 
-export function validateRows(rows, kind) {
+// requireSummaries=false 는 판정 단계의 검사다. 판정 호출은 문안을 쓰지 않고, 문안은 다음 단계가 쓴다.
+export function validateRows(rows, kind, { requireSummaries = true } = {}) {
   const errors = [];
   rows.forEach((row, index) => {
     const id = rowId(row, kind, index);
@@ -106,7 +107,7 @@ export function validateRows(rows, kind) {
     // 승인되지 않은 행은 보고서에 실리지 않고 대시보드에만 남으므로 문안이 없어도 된다. 어떤 행을
     // 그렇게 남길지는 local_report.mjs 의 nearMissCandidate 가 정한다(기업 귀속·지표 사건 확인 필수).
     // 여기서 지키는 것은 발행되는 행의 기준이다.
-    if (row.ai_signal_supported !== false) {
+    if (requireSummaries && row.ai_signal_supported !== false) {
       if (!cleanText(row.ai_summary_ko)) errors.push(`${id}: missing ai_summary_ko`);
       if (!cleanText(row.ai_summary_en)) errors.push(`${id}: missing ai_summary_en`);
     }

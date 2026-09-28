@@ -6,7 +6,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { reviewArticles, requestReview, facilityStageSuspects, fundingSuspects, needsFundingReview, needsFacilityStageReview,
-  needsTechnologyReview, needsSummaryRefresh, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
+  needsTechnologyReview, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
   bilingualFactProblems, nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
 import { groupArticles, importReview, sourceCandidates, ungroundedSummaryNames } from '../scripts/local_report.mjs';
 
@@ -63,25 +63,24 @@ test('a wrong quote on a rejected candidate no longer discards the approvable ca
 test('an approvable candidate with unverifiable evidence becomes pending while the rest of the article is kept', async () => {
   const a = nexeon();
   const review = decisions => ({ article_id: a.id, reviewer: 'test', decisions });
-  // 승인 후보의 틀린 인용: 인용은 빼고, 그 후보는 문안을 비운 채 미완료로 둔다. AI 승인으로는 싣지 않는다.
+  // 승인 후보의 틀린 인용: 인용은 빼고, 그 후보는 미완료로 둔다. AI 승인으로는 싣지 않는다.
   const salvaged = salvageCandidateEvidence(a, review([approvedS2, { ...approvedS3, evidence_quotes: [ROUND, 'Invented.'] }, rejectedS5, business]));
   // S5 는 탈락 판정이라 틀린 인용만 빠지고 미완료로 두지 않는다.
   assert.deepEqual(salvaged.semantic_recheck_pending.candidate_ids, ['investment:3']);
   const s3 = salvaged.decisions.find(d => d.candidate_id === 'investment:3');
   assert.deepEqual(s3.evidence_quotes, [ROUND]);
-  assert.equal(s3.summary_ko, '');
   const results = Object.fromEntries(importReview(a, salvaged).map(r => [r.candidate_id, r]));
   // AI 승인으로는 싣지 않되, 무엇이 보류됐는지 볼 수 있게 대시보드용 행으로는 남긴다.
   assert.equal(results['investment:3'].supported, false);
   assert.equal(results['investment:3'].near_miss, true);
   assert.equal(results['investment:3'].row.ai_signal_supported, false);
-  assert.equal(results['investment:3'].row.ai_summary_ko, '');
   assert.equal(results['investment:2'].supported, true);
   assert.equal(results.relevant.supported, true);
-  // 인용 밖 고유명사를 쓴 승인 후보도 같은 방식으로 그 후보만 미완료가 된다.
+  // 인용 밖 고유명사 검사는 판정이 아니라 문안의 일이다. 판정 단계의 salvage 는 문안을 보지 않는다
+  // (문안 단계 summary_writer.writtenProblems 가 같은 검사를 건다).
   const named = salvageCandidateEvidence(a, review([approvedS2, { ...approvedS3,
     summary_en: 'Completion of round - Nexeon completed a round led by Barclays Capital.' }, rejectedS5, business]));
-  assert.deepEqual(named.semantic_recheck_pending.candidate_ids, ['investment:3']);
+  assert.equal((named?.semantic_recheck_pending?.candidate_ids || []).includes('investment:3'), false);
   // 사업동향의 틀린 인용: 사람 검토 단계가 없으므로 미완료 동안 싣지 않는다.
   const relevant = salvageCandidateEvidence(a, review([approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] },
     { ...business, evidence_quotes: ['Invented.'] }]));
@@ -210,11 +209,11 @@ test('a renewed or replaced credit facility is selected for the S3 funding reche
   const article = { candidates: [{ id: 'investment:3', kind: 'investment', row: { investment_signal_no: 3, title: '8-K - Current report' } }] };
   const decision = { candidate_id: 'investment:3', entity_supported: true, indicator_supported: true, target_technology_supported: false,
     leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass',
-    evidence_quotes: ['On August 17, 2026, 3M Company entered into a new credit agreement with JPMorgan Chase Bank, N.A.'],
-    summary_en: 'providing a $4.25 billion unsecured revolving credit facility that replaced its former revolving credit agreement.' };
+    evidence_quotes: ['On August 17, 2026, 3M Company entered into a new credit agreement with JPMorgan Chase Bank, N.A.',
+      'The new $4.25 billion unsecured revolving credit facility replaced its former revolving credit agreement.'] };
   assert.equal(needsFundingReview(article, { decisions: [decision] }), true);
   assert.equal(needsFundingReview(article, { decisions: [decision], funding_review_version: 'funding-event-v2' }), false);
-  assert.deepEqual(fundingSuspects(article, [{ ...decision, summary_en: 'Nexeon completed a £100 million investment round.' }]), []);
+  assert.deepEqual(fundingSuspects(article, [{ ...decision, evidence_quotes: ['Nexeon completed a £100 million investment round.'] }]), []);
 });
 
 // Air Liquide 반기보고서: 결정된 애리조나 생산유닛(2028년 가동)이 S2 planned 로 승인됐다.
@@ -244,7 +243,7 @@ test('saved business approvals that rely on a technology link are rechecked once
   assert.equal(needsTechnologyReview(article(false), { decisions: [{ ...decision, target_technology_supported: false }] }), false);
 });
 
-test('Korean summaries ending in plain sentences or transliterating the company name are refreshed once', () => {
+test('Korean summaries ending in plain sentences or transliterating the company name are flagged', () => {
   const article = { company: 'Qualcomm', candidates: [{ id: 'relevant', kind: 'relevant', row: { content_text: BODY_TEXT, query_aliases: [] } }] };
   const decision = { candidate_id: 'relevant', entity_supported: true, target_technology_supported: true, indicator_supported: true,
     leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass',
@@ -259,9 +258,14 @@ test('Korean summaries ending in plain sentences or transliterating the company 
     summary_en: 'Target raised - Qualcomm raised its automotive target to about $7 billion.' }), []);
   assert.deepEqual(summaryStyleProblems(article, { ...decision, summary_ko: '매출 목표 상향 - 퀄컴은 자동차 매출 목표를 올렸음.',
     summary_en: 'Target raised - Qualcomm raised its automotive target.' }), ['company_name_not_latin']);
-  const review = { decisions: [decision], summary_accuracy_version: 'summary-accuracy-v1', summary_numbers_version: 'summary-numbers-v1' };
-  assert.equal(needsSummaryRefresh(article, review), true);
-  assert.equal(needsSummaryRefresh(article, { ...review, summary_style_version: 'summary-style-v2' }), false);
+  // 2026-08 재실행: 두 낱말로 음차한 주어("어플라이드 머티어리얼즈가")도 잡는다.
+  const amat = { ...article, company: 'Applied Materials' };
+  assert.deepEqual(summaryStyleProblems(amat, { ...decision,
+    summary_ko: '어플라이드 머티어리얼즈가 첨단 패키징용 Opta Quad CMP 시스템을 출시했음.',
+    summary_en: 'Applied Materials introduced the Opta Quad CMP system for advanced packaging.' }), ['company_name_not_latin']);
+  assert.deepEqual(summaryStyleProblems(amat, { ...decision,
+    summary_ko: 'Applied Materials가 첨단 패키징용 Opta Quad CMP 시스템을 출시했음.',
+    summary_en: 'Applied Materials introduced the Opta Quad CMP system for advanced packaging.' }), []);
 });
 
 // 실행 35175067142: HyproMag S1 이 모회사의 인수 완료와 인수에 딸린 원료 재고를 공급망 전조로 승인했다.
@@ -554,8 +558,8 @@ test('a rejected verifier answer is asked once more with the validation message 
     fetchImpl: async (url, init) => {
       if (!String(url).includes('generativelanguage')) return reply(primary);
       bodies.push(init.body);
-      // 첫 검증 응답은 승인할 S3 의 요약을 빠뜨린다.
-      return geminiReply(bodies.length === 1 ? primary.map(d => d.candidate_id === 'investment:3' ? { ...d, summary_ko: '', summary_en: '' } : d) : primary);
+      // 첫 검증 응답은 승인할 S3 에 기사에 없는 인용을 단다.
+      return geminiReply(bodies.length === 1 ? primary.map(d => d.candidate_id === 'investment:3' ? { ...d, evidence_quotes: ['Nexeon closed a round of one hundred million pounds.'] } : d) : primary);
     } });
   assert.equal(bodies.length, 2);
   assert.match(bodies[1], /previous_response_rejected/);
@@ -568,17 +572,13 @@ test('a rejected verifier answer is asked once more with the validation message 
 const verifyRequest = ids => ({ mode: 'verify', verify_candidate_ids: ids, checks: {} });
 const WRONG_QUOTE = 'Nexeon closed a round of one hundred million pounds.';
 
-test('the first verifier answer is not treated as a repair: evidence and number errors are rejected, not salvaged or downgraded', async () => {
+test('the first verifier answer is not treated as a repair: evidence errors are rejected, not salvaged', async () => {
   const { VERIFIER } = await import('../scripts/review_report.mjs');
   const a = nexeon();
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
   const wrongQuote = primary.map(d => d.candidate_id === 'investment:3' ? { ...d, evidence_quotes: [WRONG_QUOTE] } : d);
   await assert.rejects(requestReview(a, '', 'key', async () => geminiReply(wrongQuote), verifyRequest(['investment:3']), VERIFIER,
     { keepDecisions: primary }), /evidence_mismatch/);
-  const wrongNumber = primary.map(d => d.candidate_id === 'investment:3'
-    ? { ...d, summary_en: 'Completion of £900 million round - Nexeon completed its £900 million investment round.' } : d);
-  await assert.rejects(requestReview(a, '', 'key', async () => geminiReply(wrongNumber), verifyRequest(['investment:3']), VERIFIER,
-    { keepDecisions: primary }), /summary_number_ungrounded/);
   // 보정 응답에서만 기존 완화가 적용된다.
   const salvaged = await requestReview(a, '', 'key', async () => geminiReply(wrongQuote), verifyRequest(['investment:3']), VERIFIER,
     { keepDecisions: primary, repairAttempt: true });
@@ -663,7 +663,7 @@ test('a changed verifier contract re-verifies only the saved verified candidates
   assert.deepEqual(again.verification.primary, first.verification.primary);
 });
 
-test('investment summaries longer than the report signal card are flagged for a summary refresh, business summaries are not', () => {
+test('investment summaries longer than the report signal card are flagged, business summaries are not', () => {
   const a = nexeon();
   const long = 'Nexeon will use the financing for the characterization and validation of its pilot manufacturing facility. '.repeat(5);
   assert.ok(summaryStyleProblems(a, { ...approvedS3, summary_en: long }).includes('summary_too_long'));

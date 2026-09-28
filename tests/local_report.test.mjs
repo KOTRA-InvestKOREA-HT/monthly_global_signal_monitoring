@@ -6,7 +6,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { articleCoverageGap, dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
-import { buildSystemInstruction, promptContract, reviewPromptDigest } from "../scripts/review_prompts.mjs";
+import { buildLocalInstruction, buildSystemInstruction, promptContract, reviewPromptDigest } from "../scripts/review_prompts.mjs";
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
 const TAIL = "The company said the site would support qualification volumes first, "
@@ -686,13 +686,15 @@ test('coverage reasons tell collection, review failure, date and evidence gaps a
 // 로컬 판정자는 API 가 받는 지시문을 그대로 받아야 한다. 예전에는 정책 문서(REVIEW.md)만 주었고,
 // 그 밖의 지시 6,902자(근거 인용 방법, 문안 작성 규칙, 날짜 처리, 응답 형식)는 전달되지 않았다.
 // 같은 기준으로 판정하라면서 기준의 3분의 1을 빼고 주던 셈이다.
-test('prepare hands the local reviewer the same instruction the API sends', async () => {
+test('prepare hands the local reviewer the API judgement instruction plus the summary rules', async () => {
   const policyText = await fs.readFile(new URL('../docs/local_report_review.md', import.meta.url), 'utf8');
-  const instruction = buildSystemInstruction(policyText);
+  const instruction = buildLocalInstruction(policyText);
+  // 판정 지시는 API 와 같다. 로컬 판정자는 문안까지 한 파일에 쓰므로 문안 절이 뒤에 붙는다.
+  assert.ok(instruction.startsWith(buildSystemInstruction(policyText)));
   // 정책 문서는 지시문 안에 들어 있다. 판정자는 PROMPT.md 하나만 읽어도 된다.
   assert.ok(instruction.includes(policyText.trim().slice(0, 200)));
   assert.ok(instruction.length > policyText.length);
-  for (const heading of ['1. Extract candidate evidence', '6. Article-level publication date', 'Output contract']) {
+  for (const heading of ['1. Extract candidate evidence', '5. Article-level publication date', 'Output contract', 'Summaries (local review only']) {
     assert.ok(instruction.includes(heading), heading);
   }
   // 공통 문안 규칙은 전체 지시문에 한 번만 있다. 로컬 작업 안내도 전체본으로 연결한다.
@@ -708,7 +710,7 @@ test('prepare hands the local reviewer the same instruction the API sends', asyn
 test('a changed instruction retires the local reviews too', () => {
   const policyText = 'POLICY';
   const base = reviewPromptDigest(policyText, promptContract());
-  const other = reviewPromptDigest(policyText, promptContract('english_first'));
+  const other = reviewPromptDigest(policyText, { ...promptContract(), system: promptContract().system + ' Changed.' });
   assert.notEqual(base, other);
   const localPolicy = digest => `local-report-v3:${digest}`;
   assert.notEqual(localPolicy(base), localPolicy(other));

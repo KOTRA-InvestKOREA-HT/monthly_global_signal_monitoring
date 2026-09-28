@@ -36,8 +36,10 @@ test('the criteria state which candidates are exempt from the target-technology 
   assert.match(approval, /S3\/S5 candidates are exempt from the technology-link condition/);
   // 완화가 거기서 멈춘다는 것도 같은 문장이 말해야 한다.
   assert.match(approval, /S1\/S2\/S4 and business activity\) require `target_technology_supported=true`/);
-  // 요약 대상도 같이 넓어져야 그 후보가 문안 없이 승인되지 않는다.
-  assert.match(CRITERIA, /S3\/S5 candidates still require summaries with `target_technology_supported=false` when the other approval conditions are met/);
+  // 요약 대상도 같이 넓어져야 그 후보가 문안 없이 승인되지 않는다. 문안 대상 규칙은 판정 호출이 아니라
+  // 문안을 쓰는 쪽(로컬 판정자)이 읽는 절에 있다. API 문안 단계는 코드(writerTargets)가 대상을 고른다.
+  assert.match(DOC.split('## Summary wording')[1], /S3\/S5 candidates still require summaries with `target_technology_supported=false` when the other approval conditions are met/);
+  assert.doesNotMatch(CRITERIA, /require summaries/);
   // 필드 자체는 여전히 근거대로 판단한다. 조건에서 빼는 것이지 true 로 올리는 것이 아니다.
   assert.match(CRITERIA, /Judge this field from evidence even for `relevance_exempt=true`, `investment:3` and `investment:5`/);
 });

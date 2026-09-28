@@ -11,7 +11,7 @@ import { APPROVAL_POLICY, validateRows, investmentStageSupported, targetTechnolo
 // 로컬 판정자도 API 가 받는 지시문을 그대로 받는다. 예전에는 정책 문서(REVIEW.md)만 주었고,
 // 그 문서 밖에 있는 지시(근거 인용 방법, 문안 작성 규칙, 날짜 처리, 응답 형식)는 전달되지 않았다.
 // 같은 기준으로 판정하라면서 기준의 3분의 1을 빼고 주던 셈이다.
-import { DEFAULT_VARIANT, buildSystemInstruction, promptContract, reviewPromptDigest } from "./review_prompts.mjs";
+import { LOCAL_SUMMARY_INSTRUCTION, buildLocalInstruction, promptContract, reviewPromptDigest } from "./review_prompts.mjs";
 import { modelCandidate, technologyTranslationError } from "./model_input.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
@@ -477,7 +477,10 @@ export function decisionOutcome(article, decisions, decision) {
   return { supported, nearMiss: !supported && nearMissCandidate(candidate, gated), gated };
 }
 
-export function importReview(article, review, { strictNumbers = false } = {}) {
+// summaries=false 는 판정 단계의 가져오기다. 판정 호출은 문안을 쓰지 않으므로 문안 검사와 문안 필수 조건을 걸지 않는다.
+// 보고서를 만드는 가져오기(기본값)는 승인 후보마다 문안을 요구한다. 문안 단계가 끝내 쓰지 못한 후보(summary_failed)는
+// 승인에서 내려 대시보드에만 남긴다. 표시 없이 문안이 빈 승인 후보는 문안 단계가 아직 돌지 않은 것이라 가져오기를 멈춘다.
+export function importReview(article, review, { strictNumbers = false, summaries = true } = {}) {
   if (review.article_id !== article.id) throw new Error(`${article.company}: stale or mismatched article_id`);
   if (!clean(review.reviewer)) throw new Error(`${article.company}: reviewer is required`);
   if (!Array.isArray(review.decisions) || review.decisions.length !== article.candidates.length) {
@@ -537,16 +540,20 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     // 뺀 후보도 여기에 들어오므로 엄격 검사를 걸지 않는다. 다음 실행이 이 기사를 다시 판정한다.
     const recheckPending = (review.semantic_recheck_pending?.candidate_ids || []).includes(candidate.id) &&
       (supported || nearMiss);
+    // 문안 단계가 검사를 통과하는 문안을 끝내 쓰지 못한 승인 후보. 판정은 살아 있으므로 대시보드에는 남기고
+    // 다음 문안 단계가 다시 쓴다. 근거 없는 문안을 싣는 대신 그 후보를 이번 보고서에서 뺀다.
+    const summaryFailed = summaries && supported && !recheckPending &&
+      (review.summary_failed?.candidate_ids || []).includes(candidate.id);
     // 승인 후보의 인용·문안 결함만 실행을 세운다. 결함을 고칠 재시도가 이 검사를 위해 존재한다.
     // 대시보드에만 남는 근접 후보는 세우지 않는다.
-    const enforce = supported && !recheckPending;
+    const enforce = supported && !recheckPending && !summaryFailed;
     const quotes = decision.evidence_quotes;
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
       throw new Error(`${context}: evidence_quotes must be exact passages from this article`);
     }
     // 다섯 지표 칸에만 건다. 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이
     // 인용문 밖에서 나오는 것이 정상이고, 같은 기준을 대면 근거 있는 요약까지 막힌다.
-    if (enforce && candidate.kind === "investment") {
+    if (summaries && enforce && candidate.kind === "investment") {
       const ungrounded = ungroundedSummaryNames(decision.summary_en, quotes, article.title);
       if (ungrounded.length) {
         throw new Error(`${context}: summary names ${ungrounded.join(", ")} without an evidence quote. ` +
@@ -561,7 +568,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     }
     // 보고서에 실리는 판정의 문안 숫자. 새로 받은 응답에서만 막는다. 저장된 판정과 보고서 생성은 이 검사로
     // 막히지 않는다(옛 판정은 review_report 의 요약 새로고침이 한 번 다시 받는다).
-    if (strictNumbers && (supported || nearMiss)) {
+    if (summaries && strictNumbers && (supported || nearMiss)) {
       const numbers = decisionNumberProblems(article, decision);
       if (numbers.length) throw new Error(`${context}: summary numbers ${numbers.join(", ")} are not stated in this article`);
     }
@@ -574,10 +581,10 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
     // 상자를 채울 수 없어(근거 발췌를 그대로 실으면 한국어판에 영문 본문이 나간다) 이 경로가 무용해진다.
     const groundedSummary = enforce || candidate.kind === "relevant" ||
       !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
-    const approved = supported && !recheckPending;
+    const approved = supported && !recheckPending && !summaryFailed;
     // 재검토를 끝내지 못해 승인에서 내려온 후보도 대시보드에는 남긴다. 판정 자체는 살아 있고
     // 다음 실행이 다시 물으므로, 조용히 사라지면 그 사이 무엇이 보류됐는지 볼 수 없다.
-    const keepForDashboard = nearMiss || (supported && recheckPending);
+    const keepForDashboard = nearMiss || (supported && (recheckPending || summaryFailed));
     let row = null;
     if (approved || keepForDashboard) {
       row = {
@@ -594,7 +601,7 @@ export function importReview(article, review, { strictNumbers = false } = {}) {
         ai_summary_cache_key: article.id, ai_evidence_quotes: quotes,
       };
       if (approved && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
-      const errors = validateRows([row], candidate.kind);
+      const errors = validateRows([row], candidate.kind, { requireSummaries: summaries });
       if (errors.length) throw new Error(errors.join("\n"));
     }
     return { candidate_id: candidate.id, kind: candidate.kind, supported: approved,
@@ -655,9 +662,8 @@ async function prepare(args) {
   // 새 기준의 결과가 아니다. API 경로의 reviewPolicy 가 같은 이유로 promptDigest 를 넣는다.
   // 두 경로의 식별자는 여전히 다르다. API 쪽은 provider·model·추론 단계까지 넣기 때문이고,
   // 로컬 산출물이 배포 판정을 덮지 않게 하는 이 스크립트의 분리와 같은 방향이다.
-  // API 경로와 같은 변형을 쓴다. 기본값을 옮겼을 때 여기가 baseline 에 머무르면 로컬 판정자는
-  // 다른 지시문을 읽고 다른 순서로 쓰면서 식별자만 같아 보인다.
-  const promptDigest = reviewPromptDigest(policyText, promptContract(DEFAULT_VARIANT));
+  // 로컬 판정자는 판정 지시에 더해 문안 절까지 받으므로 그것도 식별자에 넣는다.
+  const promptDigest = reviewPromptDigest(policyText, { ...promptContract(), local_summary: LOCAL_SUMMARY_INSTRUCTION });
   const policy = `${POLICY_VERSION}:${hash([policyText, indicators, technology, APPROVAL_POLICY, promptDigest])}`;
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
@@ -680,9 +686,10 @@ async function prepare(args) {
     });
   }
   await fs.writeFile(path.join(runDir, "REVIEW.md"), policyText);
-  // API 가 보내는 시스템 지시문 전문. 정책 문서를 그 안에 품고 있으므로 판정자는 이것만 읽어도
-  // 된다. REVIEW.md 는 정책 문서만 따로 보려는 사람을 위해 그대로 둔다.
-  await fs.writeFile(path.join(runDir, "PROMPT.md"), `${buildSystemInstruction(policyText, DEFAULT_VARIANT)}\n`);
+  // API 가 보내는 판정 지시문 전문에 문안 절을 붙인 것. API 는 판정과 문안을 두 단계로 나눠 부르지만,
+  // 로컬 판정자는 한 파일에 둘 다 쓴다. 정책 문서 전체(문안 용어·배치 절 포함)를 품고 있으므로 판정자는
+  // 이것만 읽어도 된다. REVIEW.md 는 정책 문서만 따로 보려는 사람을 위해 그대로 둔다.
+  await fs.writeFile(path.join(runDir, "PROMPT.md"), `${buildLocalInstruction(policyText)}\n`);
   console.log(JSON.stringify({ run_dir: runDir, review_dir: path.join(outDir, "reviews"),
     prompt: path.join(runDir, "PROMPT.md"),
     collection_rows: signals.length, excluded_from_month: signals.length - articles.length,

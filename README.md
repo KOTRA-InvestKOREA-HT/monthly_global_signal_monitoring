@@ -13,14 +13,16 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
 - `config/approval_policy.json`: the investment-signal approval constants shared by `scripts/validate_report_inputs.mjs` (judging/validation) and `scripts/build_pdf_report.py` (publishing). The human-readable criteria, and the text sent to the model, stay in `docs/local_report_review.md`.
 - `scripts/report_month.mjs`: the single definition of which month "the previous month" is (Asia/Seoul), shared by the Actions run, the crawl button and the dashboard.
-- `.github/workflows/collect-company-signals.yml`: manual GitHub Actions workflow for on-demand collection.
+- `.github/workflows/collect-company-signals.yml`: stage 1 — collect, judge and verify (no report copy, no PDF). The dashboard button runs this.
+- `.github/workflows/publish-report.yml`: stage 2 — write the report copy for the finished judgement and build both PDFs.
 - `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.
 - `scripts/extract_pdf_companies.py`: validates PDF page 2 against the canonical list.
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
 - `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
 - `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
 - `scripts/classify_investment_signals.mjs`: evaluates each candidate against the five investment-indicator categories with deterministic keyword rules.
-- `scripts/review_report.mjs`: shared automated collection, article review, validation, and bilingual PDF pipeline.
+- `scripts/review_report.mjs`: stage 1 — automated collection, article judgement and second-stage verification. The judge writes quotes, reason and verdicts only.
+- `scripts/publish_report.mjs`: stage 2 — takes over a finished judgement, writes the Korean/English copy with `scripts/summary_writer.mjs`, and builds both PDFs.
 - `scripts/report_period.mjs`: shared reporting-period resolver for the CLI and Actions.
 - `scripts/summarize_signal_evidence.mjs`: **deprecated.** The older row-by-row summary tool, kept for diagnosis. The monthly pipeline summarises whole articles in `scripts/review_report.mjs`; this tool's prompts, provider settings and `outputs/ai_summary_cache.json` do not configure it.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
@@ -38,13 +40,30 @@ The implemented accuracy controls, verification evidence, known limitations, and
 
 ### Automated monthly report (CLI and GitHub Actions)
 
-`npm run collect:all`, `npm run report:review`, and the
-`collect-company-signals` workflow all execute `scripts/review_report.mjs`:
+The monthly report runs in two stages, usually on two days so each stays within the
+Gemini free-tier daily limit. Both stages resume from saved progress when they stop.
+
+`npm run collect:all`, `npm run report:review`, and the `collect-company-signals`
+workflow execute stage 1, `scripts/review_report.mjs`:
 
 ```text
-Resolve period → collect/resume → review all monthly article candidates
-→ validate decisions → build Korean/English PDFs → update latest report files
+Resolve period → collect/resume → judge all monthly article candidates
+→ second-stage verification → save the judgement (status.json marks it finished)
 ```
+
+`npm run report:publish` and the `publish-report` workflow execute stage 2,
+`scripts/publish_report.mjs`, for the same dates:
+
+```text
+Take over the finished judgement → write Korean/English copy for approved candidates
+(and near-miss business rows) → build Korean/English PDFs → update latest report files
+```
+
+The judge call writes no report copy. The writer (`gemini-3.7-flash`, `GEMINI_WRITER_MODEL`)
+gets only the evidence quotes and the wording rules. Copy that fails a grounding,
+number, format or style check is written again with the failed checks named, up to three
+times; a signal whose copy never passes is left out of that report, kept on the dashboard,
+and written again on the next publish run.
 
 Keyword classification does not remove articles from this review queue. Each
 reviewable article is checked against all five investment indicators and business
@@ -248,6 +267,14 @@ A local build writes `coverage.json` alongside its PDFs. Missing monthly sources
 
 ### GitHub Actions로 월간 보고서 실행
 
-`collect-company-signals`에서 제공자와 기간을 선택하면 위 CLI와 같은 통합 검토를
-수행한다. 요청 한도에는 재시도가 포함되며, 한도에 도달하면 진행분을 저장하고
-중단한다. 같은 기간으로 다시 실행하면 유효한 판정을 재사용한다.
+두 워크플로를 차례로 실행한다. 무료 등급 하루 한도를 나눠 쓰도록 보통 이틀에 걸쳐 돌린다.
+
+1. `collect-company-signals`(대시보드 버튼과 같음): 제공자와 기간을 골라 수집·판정·2차 검증을 한다.
+   요청 한도에는 재시도가 포함되며, 한도에 도달하면 진행분을 저장하고 중단한다. 같은 기간으로
+   다시 실행하면 유효한 판정을 재사용한다. 판정이 끝나면 실행 요약에 "Judgement complete"가 나온다.
+   이 단계는 PDF를 만들거나 커밋하지 않는다.
+2. `publish-report`: 같은 기간으로 실행한다(둘 다 비워 두면 지난달). 끝난 판정을 이어받아 보고서
+   문안을 쓰고 한·영 PDF를 만들어 커밋한다. 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
+   문안 모델이 할당량으로 멈추면 쓴 문안은 저장되므로 다시 실행하면 이어서 쓴다.
+
+두 워크플로는 같은 동시 실행 그룹이라 한쪽이 도는 동안 다른 쪽은 기다린다.

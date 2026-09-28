@@ -3,20 +3,30 @@
 ## Monthly report path
 
 ```text
-Vercel button → POST /api/trigger-crawl → collect-company-signals workflow
+Vercel button → POST /api/trigger-crawl → collect-company-signals workflow (stage 1)
                                             ↓
                                   scripts/review_report.mjs
                                             ↑
                      npm run collect:all / npm run report:review
 
-collect/resume → review all monthly article candidates → validate
-→ Korean/English PDFs → latest JSON/PDF files
+collect/resume → judge all monthly article candidates → verify → save judgement
+
+publish-report workflow (stage 2, run by hand for the same dates, usually the next day)
+                                            ↓
+                                  scripts/publish_report.mjs  ← npm run report:publish
+
+take over the finished judgement → write Korean/English copy → Korean/English PDFs
+→ latest JSON/PDF files
 ```
 
-The automated CLI and Actions use the same collection options, candidate builder,
-review validation, cache, and bilingual PDF builder. Keyword matching does not
-remove articles from the monthly review queue. Provider/model selection remains
-configuration; set the same values when comparing local and Actions results.
+The button starts stage 1 only; it no longer produces PDFs by itself. Stage 1 judges
+and saves progress in the Actions cache; stage 2 restores that cache, writes the report
+copy and commits the PDFs. Splitting them keeps the judge call free of the wording rules
+and spreads the Gemini free-tier daily quota over two days. The automated CLI and Actions
+use the same collection options, candidate builder, review validation, cache, and bilingual
+PDF builder. Keyword matching does not remove articles from the monthly review queue.
+Provider/model selection remains configuration; set the same values when comparing local
+and Actions results.
 
 `prepare-report-brief` and `build-report-from-brief` were removed because their
 brief/merge scripts no longer exist. For review without a model API, use
@@ -32,7 +42,8 @@ Run `.github/workflows/collect-company-signals.yml` with:
   calendar month in `Asia/Seoul`. `scripts/report_period.mjs` validates the dates
   before the period is used in a cache key.
 - `provider`: `gemini` (the form default) or `nvidia`.
-- `issue_number`: the number on both PDFs.
+- `issue_number`: the number on both PDFs. Recorded with the judgement; `publish-report` uses it
+  unless its own `issue_number` input is set.
 - `max_requests`: 1–600 including retries; `concurrency`: 1–12.
 - `delay_ms`: blank uses the provider default; `refresh`: false resumes usable work.
 - `days`: retained for compatibility with the existing dashboard dispatch. The

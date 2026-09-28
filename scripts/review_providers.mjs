@@ -3,7 +3,7 @@
 import { buildSystemInstruction, decisionsEnvelopeFor, retryInstruction } from './review_prompts.mjs';
 import { modelArticle } from './model_input.mjs';
 export {
-  DATE_HINT_VERSION, DATE_INSTRUCTION, SUMMARY_INSTRUCTION,
+  DATE_HINT_VERSION, DATE_INSTRUCTION,
   SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
   // 판정 스키마는 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
   // 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
@@ -41,8 +41,6 @@ export function toGeminiSchema(node) {
   return out;
 }
 
-const decisionsEnvelope = decisionsEnvelopeFor();
-
 // 검증 요청에는 확인할 후보만 싣는다. 예전에는 후보 전부를 보내고 대상 밖 후보에는 정해진
 // 가짜 답(false·needs_review·"검증 대상 아님")을 쓰게 한 뒤 코드가 그것을 버렸다. 실행
 // 35198796190 에서는 그 가짜 답의 형식이 어긋나 검증 응답 33건이 통째로 거부됐다.
@@ -50,7 +48,7 @@ const decisionsEnvelope = decisionsEnvelopeFor();
 const articleText = (article, retry) => {
   const listed = retry?.mode === 'verify' ? new Set(retry.verify_candidate_ids || []) : null;
   const candidates = article.candidates.filter(c => !listed || listed.has(c.id));
-  // 1차·수리·2차 검증과 모든 변형이 이 한 줄을 지난다. 모델이 보는 표현은 여기서만 정해진다.
+  // 1차·수리·2차 검증이 모두 이 한 줄을 지난다. 모델이 보는 표현은 여기서만 정해진다.
   return JSON.stringify({ ...modelArticle(article), candidates: candidates.map(({ row, ...c }) => c) });
 };
 
@@ -78,9 +76,9 @@ export const GEMINI = {
   headers(apiKey) {
     return { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey };
   },
-  body({ article, policy, retry, variant }) {
+  body({ article, policy, retry }) {
     return {
-      systemInstruction: { parts: [{ text: buildSystemInstruction(policy, variant) }] },
+      systemInstruction: { parts: [{ text: buildSystemInstruction(policy) }] },
       contents: [{ role: 'user', parts: [
         { text: articleText(article, retry) },
         ...(retry ? [{ text: retryInstruction(retry) }] : []),
@@ -92,7 +90,7 @@ export const GEMINI = {
         thinkingConfig: { thinkingLevel: this.thinkingLevel || 'high' },
         // high 추론의 추론 토큰이 잘리지 않도록 gemini-3.5-flash-lite 출력 한도(65,536)까지 연다.
         maxOutputTokens: 65536, responseMimeType: 'application/json',
-        responseSchema: toGeminiSchema(decisionsEnvelopeFor(variant)),
+        responseSchema: toGeminiSchema(decisionsEnvelopeFor()),
       },
     };
   },
@@ -140,11 +138,11 @@ export const NVIDIA = {
   headers(apiKey) {
     return { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` };
   },
-  body({ article, policy, retry, model, variant }) {
+  body({ article, policy, retry, model }) {
     return {
       model,
       messages: [
-        { role: 'system', content: buildSystemInstruction(policy, variant) },
+        { role: 'system', content: buildSystemInstruction(policy) },
         { role: 'user', content: articleText(article, retry) },
         ...(retry ? [{ role: 'user', content: retryInstruction(retry) }] : []),
       ],
@@ -159,7 +157,7 @@ export const NVIDIA = {
       chat_template_kwargs: { clear_thinking: true },
       response_format: {
         type: 'json_schema',
-        json_schema: { name: 'review_decisions', strict: true, schema: toJsonSchema(decisionsEnvelopeFor(variant)) },
+        json_schema: { name: 'review_decisions', strict: true, schema: toJsonSchema(decisionsEnvelopeFor()) },
       },
     };
   },

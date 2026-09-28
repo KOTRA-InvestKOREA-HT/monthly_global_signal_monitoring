@@ -1,5 +1,12 @@
 name: collect-company-signals
 
+# 1단계: 수집 → 판정 → 2차 검증. 보고서 문안과 PDF 는 만들지 않는다.
+#
+# 판정 호출은 인용·사유·판정만 쓴다. 문안은 publish-report 워크플로(2단계)가 판정을 이어받아 쓰고
+# 한·영 PDF 를 만들어 커밋한다. 두 단계를 다른 날 돌려 무료 등급의 하루 한도를 나눠 쓴다.
+# 할당량으로 멈추면 진행 상황이 캐시에 남으므로, 같은 기간으로 다시 돌리면 이어서 판정한다.
+# 대시보드 버튼(app/api/trigger-crawl)은 이 파일을 실행한다.
+
 on:
   workflow_dispatch:
     inputs:
@@ -16,7 +23,7 @@ on:
         required: false
         default: ""
       issue_number:
-        description: "Report issue number"
+        description: "Report issue number, recorded for publish-report (it can also be set there)"
         required: false
         default: "2"
 
@@ -46,15 +53,16 @@ on:
         type: string
         default: "4"
 
+# publish-report 와 같은 그룹이다. 두 단계가 같은 진행 캐시를 동시에 고쳐 쓰지 않게 한다.
 concurrency:
-  group: collect-company-signals-${{ github.ref }}
+  group: monthly-report-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   collect:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -80,22 +88,18 @@ jobs:
           key: review-v1-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             review-v1-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-
-      - name: Review articles and build both PDFs
+      - name: Collect and judge articles
         id: review
         env:
           REPORT_PROVIDER: ${{ inputs.provider || vars.REPORT_PROVIDER || 'gemini' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다.
           GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
-          # 비워 두면 코드 기본값(low)을 쓴다. minimal, low, medium, high 중 하나.
+          # 비워 두면 코드 기본값(high)을 쓴다. minimal, low, medium, high 중 하나.
           GEMINI_THINKING_LEVEL: ${{ vars.GEMINI_THINKING_LEVEL }}
           # 2차 검증: 규칙이 고른 의심 후보만 이 모델로 다시 판정한다. 비워 두면 gemini-3.5-flash-lite(1차와 같은 모델, 검증 질문 방식만 다름). off 로 끈다.
           GEMINI_VERIFIER_MODEL: ${{ vars.GEMINI_VERIFIER_MODEL }}
           REVIEW_VERIFIER: ${{ vars.REVIEW_VERIFIER }}
-          # 문안 작성: 판정이 끝난 뒤 승인 후보의 한·영 문안만 이 모델로 다시 쓴다. 비워 두면 gemini-3.7-flash. off 로 끈다.
-          # 실패(429·503·시간 초과)하거나 검사에 걸리면 판정 모델의 문안을 그대로 쓴다.
-          GEMINI_WRITER_MODEL: ${{ vars.GEMINI_WRITER_MODEL }}
-          REVIEW_WRITER: ${{ vars.REVIEW_WRITER }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '600' }}
@@ -103,7 +107,7 @@ jobs:
           REPORT_CONCURRENCY: ${{ inputs.concurrency || vars.REPORT_CONCURRENCY || '4' }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
-          REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '2' }}
+          REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '' }}
           REPORT_REFRESH: ${{ inputs.refresh || 'false' }}
           REPORT_REREVIEW: ${{ inputs.rereview || 'false' }}
           # SEC EDGAR 는 연락처가 든 User-Agent 를 요구한다(예: "KOTRA Invest KOREA signal monitor team@example.org").
@@ -124,15 +128,3 @@ jobs:
           path: outputs/review_work
           retention-days: 30
           if-no-files-found: ignore
-      - name: Validate report inputs
-        run: node scripts/validate_report_inputs.mjs
-      - name: Downloadable bilingual PDFs
-        uses: actions/upload-artifact@v6
-        with:
-          name: monthly-report-pdfs-${{ github.run_id }}
-          path: public/reports/latest_report*.pdf
-          retention-days: 30
-      - uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "Update company signals and bilingual reports"
-          file_pattern: outputs/latest_*.json public/reports/latest_report.pdf public/reports/latest_report_en.pdf

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { PROMPT_VARIANT, policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
+import { policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
+import { buildWriterInstruction, writerPolicySection } from '../scripts/summary_writer.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { GEMINI, NVIDIA, decisionProperties } from '../scripts/review_providers.mjs';
 import * as prompt from '../scripts/review_prompts.mjs';
@@ -10,8 +11,8 @@ const article = { id: 'fixture', evidence: ['Untrusted article text'], candidate
 const systemText = (provider, body) => provider.id === 'gemini' ? body.systemInstruction.parts[0].text : body.messages[0].content;
 const userTexts = (provider, body) => provider.id === 'gemini' ? body.contents[0].parts.map(p => p.text) : body.messages.slice(1).map(m => m.content);
 
-test('the shared prompt separates evidence, judgement, summaries and article date in order', () => {
-  const headings = ['Task and trust boundary', '1. Extract', '2–4. Judge candidates', '5. Write summaries', '6. Article-level', 'Output contract'];
+test('the shared prompt separates evidence, judgement and article date in order', () => {
+  const headings = ['Task and trust boundary', '1. Extract', '2–4. Judge candidates', '5. Article-level', 'Output contract'];
   let previous = -1;
   for (const heading of headings) {
     const position = prompt.SYSTEM_INSTRUCTION.indexOf(`## ${heading}`);
@@ -21,7 +22,9 @@ test('the shared prompt separates evidence, judgement, summaries and article dat
   assert.match(prompt.EVIDENCE_INSTRUCTION, /first copy into evidence_quotes/);
   const fields = Object.keys(decisionProperties);
   assert.ok(fields.indexOf('evidence_quotes') < fields.indexOf('entity_supported'));
-  assert.ok(fields.indexOf('quality') < fields.indexOf('summary_ko'));
+  // 판정 호출은 문안을 쓰지 않는다. 문안은 publish-report 단계가 쓴다.
+  assert.equal(fields.some(field => field.startsWith('summary_')), false);
+  assert.doesNotMatch(prompt.SYSTEM_INSTRUCTION, /Write summaries/);
 });
 
 test('regression boundaries remain in their responsible rule modules', () => {
@@ -35,15 +38,12 @@ test('regression boundaries remain in their responsible rule modules', () => {
     ['SUMMARY_GROUNDING_INSTRUCTION', /supply, equity investment, joint research and licensing/],
     ['SUMMARY_GROUNDING_INSTRUCTION', /Promotional wording in the article.*is the company's claim/],
     // 순서 절은 어느 언어를 먼저 쓰는지와 번역 방향만 말한다.
-    ['SUMMARY_INDEPENDENCE_INSTRUCTION', /not a translation of summary_ko and is not drafted from it/],
     ['SUMMARY_ENGLISH_FIRST_INSTRUCTION', /not a translation of summary_en and is not drafted from it/],
     // 사실 일치 규칙의 기준 문장은 사실 목록 절 하나에만 둔다. 문체 절에 같은 규칙을 다시 적으면
     // "따로 쓰라"와 "같게 쓰라"가 서로 다른 말로 두 번 나와 해석할 여지를 준다.
     ['SUMMARY_FACT_BASIS_INSTRUCTION', /First fix the facts this summary reports/],
     ['SUMMARY_FACT_BASIS_INSTRUCTION', /a month, date or percentage stated in one language must appear\s+in the other/],
     ['SUMMARY_FACT_BASIS_INSTRUCTION', /Independence governs the wording, never which facts appear/],
-    // 영어 문체는 순서·사실 목록 방식과 무관한 공통 규칙이라 제 절에 둔다. 순서 절에 두면 그 절을
-    // 쓰지 않는 변형이 영어 표제 금지 규칙 없이 돈다.
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /complete sentences with finite verbs/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /ordinary English articles, prepositions and collocations/],
     ['SUMMARY_ENGLISH_STYLE_INSTRUCTION', /no " - " headline form and no leading label/],
@@ -59,44 +59,42 @@ test('regression boundaries remain in their responsible rule modules', () => {
   for (const [name, rule] of cases) assert.match(prompt[name], rule, name);
 });
 
-const policy = policySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
+const policyDoc = fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8');
+const policy = policySection(policyDoc);
+const writerInstruction = buildWriterInstruction(writerPolicySection(policyDoc));
 
-test('single-call instructions agree on order, date eligibility and prose priorities', () => {
-  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
-    for (const provider of [GEMINI, NVIDIA]) {
-      const body = provider.body({ article, policy, model: provider.model, variant,
-        retry: { mode: 'verify', verify_candidate_ids: ['investment:3'] } });
-      const system = systemText(provider, body);
-      const audit = userTexts(provider, body)[1];
-      const keys = Object.keys(prompt.decisionsEnvelopeFor(variant).properties.decisions.items.properties);
-      assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason']);
-      assert.match(audit, /first copy evidence_quotes, then begin reason in English/);
-      assert.match(system, /Only for `date_placement="date_pending"`/);
-      assert.match(system, /For all other placements return empty date fields/);
-      assert.match(system, /Accuracy and grammatical completeness take priority over layout/);
-      assert.equal(system.split('when they fit in one sentence, write one sentence').length - 1, 1);
-      assert.doesNotMatch(system, /first two sentences|targeting 2–4 sentences|never rounding it, rescaling it/);
-      assert.match(system, /Preserve value and precision/);
-      assert.match(system, /using established terminology for the meaning in context/);
-      if (!variant.startsWith('shared_facts')) assert.equal(keys.length, 11);
-    }
+test('instructions agree on order and date eligibility; prose priorities live with the writer', () => {
+  for (const provider of [GEMINI, NVIDIA]) {
+    const body = provider.body({ article, policy, model: provider.model,
+      retry: { mode: 'verify', verify_candidate_ids: ['investment:3'] } });
+    const system = systemText(provider, body);
+    const audit = userTexts(provider, body)[1];
+    const keys = Object.keys(prompt.decisionsEnvelopeFor().properties.decisions.items.properties);
+    assert.deepEqual(keys.slice(0, 3), ['candidate_id', 'evidence_quotes', 'reason']);
+    assert.equal(keys.length, 9);
+    assert.match(audit, /first copy evidence_quotes, then begin reason in English/);
+    assert.match(system, /Only for `date_placement="date_pending"`/);
+    assert.match(system, /For all other placements return empty date fields/);
+    assert.doesNotMatch(system, /Accuracy and grammatical completeness take priority over layout/);
   }
+  assert.match(writerInstruction, /Accuracy and grammatical completeness take priority over layout/);
+  assert.equal(writerInstruction.split('when they fit in one sentence, write one sentence').length - 1, 1);
+  assert.doesNotMatch(writerInstruction, /first two sentences|targeting 2–4 sentences|never rounding it, rescaling it/);
+  assert.match(writerInstruction, /Preserve value and precision/);
+  assert.match(writerInstruction, /using established terminology for the meaning in context/);
 });
 
-test('every provider and variant requests an English reason before summaries', async () => {
-  assert.doesNotMatch(policy.split('## Summary wording')[0], /[가-힣]/);
-  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
-    const fields = prompt.decisionsEnvelopeFor(variant).properties.decisions.items.properties;
-    assert.ok(fields.reason);
-    assert.equal('reason_ko' in fields, false);
-    assert.ok(Object.keys(fields).indexOf('reason') < Object.keys(fields).indexOf('summary_en'));
-    for (const provider of [GEMINI, NVIDIA]) {
-      for (const retry of [false, true, { mode: 'verify', verify_candidate_ids: ['investment:3'] }]) {
-        const body = provider.body({ article, policy, model: provider.model, variant, retry });
-        assert.match(systemText(provider, body), /write reason in English/);
-        assert.doesNotMatch(JSON.stringify(body), /reason_ko/);
-        if (retry?.mode === 'verify') assert.match(userTexts(provider, body).join(' '), /begin reason in English/);
-      }
+test('every provider requests an English reason', async () => {
+  assert.doesNotMatch(policy, /[가-힣]/);
+  const fields = prompt.decisionsEnvelopeFor().properties.decisions.items.properties;
+  assert.ok(fields.reason);
+  assert.equal('reason_ko' in fields, false);
+  for (const provider of [GEMINI, NVIDIA]) {
+    for (const retry of [false, true, { mode: 'verify', verify_candidate_ids: ['investment:3'] }]) {
+      const body = provider.body({ article, policy, model: provider.model, retry });
+      assert.match(systemText(provider, body), /write reason in English/);
+      assert.doesNotMatch(JSON.stringify(body), /reason_ko/);
+      if (retry?.mode === 'verify') assert.match(userTexts(provider, body).join(' '), /begin reason in English/);
     }
   }
   await assert.rejects(requestReview(article, policy, 'test-key', async () => new Response(JSON.stringify({
@@ -112,8 +110,11 @@ test('judgement rules have one source and are included once in actual provider r
     /Factories, inventory or raw materials transferred with a completed business acquisition/, /minority investments qualify as S4 events/,
     /A future operating or production start date/, /additional new funds/, /general-purpose revolving credit facility/,
     /progress or clinical results from existing long-running collaborations/, /SEC Form 3/, /Completed business activities can qualify/,
-    /Write summaries only for candidates meeting all approval conditions/, /relevance_exempt=true.*target_technology_supported=true/,
+    /relevance_exempt=true.*target_technology_supported=true/,
   ]) assert.match(policy, rule);
+  // 문안 대상 규칙은 로컬 판정자용 문안 절에만 있다. 판정 호출에는 보내지 않는다.
+  assert.doesNotMatch(policy, /Write summaries only for candidates meeting all approval conditions/);
+  assert.match(policyDoc, /Write summaries only for candidates meeting all approval conditions/);
   // 영문에 한국어 표제를 대응시키라는 지시가 콩글리시의 출처였다(2026-09 보고서). 되돌아오면 잡는다.
   assert.doesNotMatch(policy, /영문도 대응하는 표제/);
   // 근접 후보는 nearMissCandidate 가 코드로 정하고 보고서에 싣지 않는다. 모델에게 그 계층을 설명하지 않는다.
@@ -132,9 +133,8 @@ test('changing only the verifier prompt keeps the primary review cache identity'
   assert.equal(contract.repairs.some(text => /Second-stage/.test(text)), false);
 });
 
-// 실제로 내보내는 변형의 계약으로 잰다. baseline 으로 재면 출하 경로가 아닌 것을 재게 된다.
 test('effective prompt changes invalidate policy and article cache identity, including repairs', () => {
-  const contract = prompt.promptContract(PROMPT_VARIANT);
+  const contract = prompt.promptContract();
   const base = prompt.reviewPromptDigest(policy, contract);
   assert.match(base, /^[a-f0-9]{64}$/);
   const inputs = { policyText: policy, technology: {}, indicators: {} };
@@ -165,32 +165,30 @@ test('effective prompt changes invalidate policy and article cache identity, inc
 test('new API reviews record the effective prompt digest and version for audit', async () => {
   const decision = { candidate_id: 'investment:3', evidence_quotes: [], reason: '근거 부족',
     entity_supported: false, target_technology_supported: false, indicator_supported: false,
-    leading_indicator_supported: false, event_stage: 'unclear', quality: 'needs_review', summary_ko: '', summary_en: '' };
+    leading_indicator_supported: false, event_stage: 'unclear', quality: 'needs_review' };
   const result = await requestReview(article, policy, 'test-key', async () => new Response(JSON.stringify({
     candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify({ decisions: [decision],
       published_date: '', published_date_quote: '' }) }] } }],
   })), false, GEMINI);
   assert.equal(result.prompt_version, prompt.PROMPT_VERSION);
-  // 기록되는 것은 실제로 보낸 프롬프트의 다이제스트다. baseline 과 같아지면 변형 실행이 기본
-  // 판정과 같은 자리에 저장되고 있다는 뜻이므로, 그렇지 않다는 것도 같이 고정한다.
-  assert.equal(result.prompt_digest, prompt.reviewPromptDigest(policy, prompt.promptContract(PROMPT_VARIANT)));
-  assert.notEqual(result.prompt_digest, prompt.reviewPromptDigest(policy, prompt.promptContract('baseline')));
+  // 기록되는 것은 실제로 보낸 프롬프트의 다이제스트다.
+  assert.equal(result.prompt_digest, prompt.reviewPromptDigest(policy, prompt.promptContract()));
 });
 
 for (const provider of [GEMINI, NVIDIA]) {
-  test(`${provider.id}: initial, repair and verifier share one contract without repeated summaries`, () => {
-    const modes = [false, true, { reason: 'summary_ungrounded', candidate_ids: ['investment:3'] },
+  test(`${provider.id}: initial, repair and verifier share one contract`, () => {
+    const modes = [false, true, { reason: 'evidence_mismatch', candidate_ids: ['investment:3'] },
       { reason: 'semantic_recheck', candidate_ids: ['investment:3'] },
       { mode: 'verify', verify_candidate_ids: ['investment:3'], primary_decisions: [], flagged_because: ['funding'] }];
     for (const retry of modes) {
       const body = provider.body({ article, policy: 'FIXTURE_POLICY', model: provider.model, retry });
       const system = systemText(provider, body);
       assert.equal(system, prompt.buildSystemInstruction('FIXTURE_POLICY'));
-      assert.equal(system.split(prompt.SUMMARY_INSTRUCTION).length - 1, 1);
+      assert.doesNotMatch(system, /summary_ko|summary_en/);
       const users = userTexts(provider, body);
       assert.deepEqual(JSON.parse(users[0]), { ...article, candidates: [{ id: 'investment:3' }] });
       assert.equal(users.length, retry ? 2 : 1);
-      if (retry) assert.equal(users[1].includes(prompt.SUMMARY_INSTRUCTION), false);
+      if (retry) assert.doesNotMatch(users[1], /summary/i);
       if (retry && typeof retry === 'object') {
         const { mode, ...data } = retry;
         assert.ok(users[1].includes(JSON.stringify(data)));
@@ -200,10 +198,10 @@ for (const provider of [GEMINI, NVIDIA]) {
 }
 
 test('repair instructions are targeted; semantic checks are not presented as validation failures', () => {
-  const summary = prompt.retryInstruction({ reason: 'summary_ungrounded' });
-  assert.match(summary, /its own evidence_quotes/);
-  assert.doesNotMatch(summary, /Check each summary number/);
-  assert.match(prompt.retryInstruction({ reason: 'summary_number_ungrounded' }), /each summary number, unit and currency/);
+  // 문안 보정 힌트는 없다. 판정 호출은 문안을 쓰지 않는다.
+  for (const reason of ['summary_ungrounded', 'summary_number_ungrounded']) {
+    assert.doesNotMatch(prompt.retryInstruction({ reason }).split('\nValidator feedback')[0], /summar/i);
+  }
   assert.match(prompt.retryInstruction({ reason: 'evidence_mismatch' }), /exact passages from a single evidence block/);
   const semantic = prompt.retryInstruction({ reason: 'semantic_recheck' });
   assert.match(semantic, /A flag is not a verdict/);
@@ -227,7 +225,7 @@ for (const provider of [GEMINI, NVIDIA]) {
     // 근거는 좁히지 않는다. 기사 전체를 봐야 판정할 수 있다.
     assert.deepEqual(sent.evidence, many.evidence);
     // 1차 판정과 보정 요청은 후보 전부를 그대로 받는다.
-    for (const retry of [false, true, { reason: 'summary_ungrounded' }]) {
+    for (const retry of [false, true, { reason: 'evidence_mismatch' }]) {
       const body = provider.body({ article: many, policy: 'P', model: provider.model, retry });
       assert.deepEqual(JSON.parse(userTexts(provider, body)[0]).candidates.map(c => c.id),
         ['investment:1', 'investment:3', 'relevant'], String(retry));
@@ -241,9 +239,9 @@ test('the verifier is no longer asked to invent answers it will not use', () => 
   assert.match(prompt.VERIFY_INSTRUCTION, /Return every candidate in the payload exactly once and no others/);
 });
 
-test('real provider prompts keep common summary rules once across every variant', () => {
+test('the writer prompt keeps common summary rules once, and the judge prompt carries none of them', () => {
   // 정책의 한국어 번역본까지 함께 보내 두 번 지시하던 회귀를 잡는다.
-  const prosePolicy = policy.split('## Summary wording')[1];
+  const prosePolicy = policyDoc.split('## Summary wording')[1];
   for (const duplicate of [
     /먼저 공통 사실 목록을 정한다/, /그다음 표현만 언어별로 쓴다/,
     /숫자는 값을 지키고 표기만 바꾼다/, /표제를 붙이지 않는다/,
@@ -266,22 +264,18 @@ test('real provider prompts keep common summary rules once across every variant'
     'never a particle or a connective ending',
     'when they fit in one sentence, write one sentence',
   ];
-  for (const variant of Object.keys(prompt.PROMPT_VARIANTS)) {
-    for (const provider of [GEMINI, NVIDIA]) {
-      const system = systemText(provider, provider.body({ article, policy, model: provider.model, variant }));
-      for (const rule of rules) assert.equal(system.split(rule).length - 1, 1, `${provider.id}/${variant}: ${rule}`);
-      const explicitFacts = variant.startsWith('shared_facts');
-      const factsInstruction = explicitFacts ? prompt.SHARED_FACTS_INSTRUCTION : prompt.SUMMARY_FACT_BASIS_INSTRUCTION;
-      assert.equal(system.split(factsInstruction).length - 1, 1, variant);
-      // 변경 전에는 한 문장을 허용하면서 정책에서는 최소 2~3문장을 요구했다.
-      assert.doesNotMatch(system, /투자 시그널\(영문\).*2~3문장/);
-      for (const rule of [
-        /Translate general industry terms that are not names into Korean/,
-        /Mark annualized figures as `연간 환산 기준`/,
-        /Use one ` - ` separator between headline and detail/,
-        /Detail: Aim for 60–110 characters when the selected facts fit/,
-        /Investment summary \(English\): Target at most 400 characters/,
-      ]) assert.match(system, rule);
-    }
+  for (const rule of rules) assert.equal(writerInstruction.split(rule).length - 1, 1, rule);
+  assert.equal(writerInstruction.split(prompt.SUMMARY_FACT_BASIS_INSTRUCTION).length - 1, 1);
+  for (const rule of [
+    /Translate general industry terms that are not names into Korean/,
+    /Mark annualized figures as `연간 환산 기준`/,
+    /Use one ` - ` separator between headline and detail/,
+    /Detail: Aim for 60–110 characters when the selected facts fit/,
+    /Investment summary \(English\): Target at most 400 characters/,
+  ]) assert.match(writerInstruction, rule);
+  for (const provider of [GEMINI, NVIDIA]) {
+    const system = systemText(provider, provider.body({ article, policy, model: provider.model }));
+    for (const rule of rules) assert.equal(system.includes(rule), false, `${provider.id}: ${rule}`);
+    assert.doesNotMatch(system, /Translate general industry terms|연간 환산 기준/);
   }
 });

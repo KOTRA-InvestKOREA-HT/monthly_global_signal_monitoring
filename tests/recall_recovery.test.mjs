@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { decodeGoogleNewsUrl, fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
-import { mergeRefreshedSummaries, mergeReviewSummaries, needsForm3Review, needsFundingReview, needsReviewSummary, needsStageReview, needsSummaryRefresh } from '../scripts/review_report.mjs';
+import { needsForm3Review, needsFundingReview, needsStageReview } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 // 본문 없는 기사의 판정은 보고서에 실리지 않으므로 문안 보강·새로고침 대상도 아니다. 고정값에 본문을 둔다.
 const BODY = 'Article body text that is long enough to count as a fetched article rather than a title. '.repeat(3);
@@ -107,47 +107,6 @@ test('an old approved Form 3 S5 decision gets one fresh semantic review', () => 
     row: { ...article.candidates[0].row, source_kind: 'press_release' } }] }, { decisions: [decision] }), false);
 });
 
-test('a saved review whose published candidate lacks prose is asked once for summaries', () => {
-  const article = { candidates: [{ id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } }] };
-  // 발행되는 승인 후보만 문안을 다시 받는다. 대시보드에만 남는 근접 후보는 묻지 않는다(요청 낭비).
-  const decision = { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true,
-    target_technology_supported: true, leading_indicator_supported: true, event_stage: 'planned', quality: 'pass',
-    summary_ko: '', summary_en: '' };
-  assert.equal(needsReviewSummary(article, { decisions: [decision] }), true);
-  assert.equal(needsReviewSummary(article, { decisions: [decision], summary_review_version: 'published-summary-v3' }), false);
-  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, summary_ko: '요약 - 상세', summary_en: 'Summary - detail' }] }), false);
-  // 기술이 미확인이면 승인되지 않으므로 묻지 않는다. 지표 사건이 없는 판정도 마찬가지다.
-  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, target_technology_supported: false }] }), false);
-  assert.equal(needsReviewSummary(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
-});
-
-test('summary backfill copies prose only into empty published decisions and keeps every judgement', () => {
-  const article = { candidates: [
-    { id: 'investment:2', kind: 'investment', row: { content_text: BODY, investment_signal_no: 2 } },
-    { id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3 } },
-  ] };
-  const review = { article_id: 'x', decisions: [
-    { candidate_id: 'investment:2', entity_supported: true, indicator_supported: true, target_technology_supported: true,
-      leading_indicator_supported: true, event_stage: 'planned', quality: 'pass', summary_ko: '', summary_en: '' },
-    { candidate_id: 'investment:3', entity_supported: false, indicator_supported: false, target_technology_supported: false,
-      leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' },
-  ] };
-  // The fresh answer flips judgements; only prose for the published candidate may cross over.
-  const fresh = { decisions: [
-    { ...review.decisions[0], quality: 'needs_review', summary_ko: '표제 - 상세', summary_en: 'Headline - detail' },
-    { ...review.decisions[1], entity_supported: true, summary_ko: '다른 문안', summary_en: 'Other prose' },
-  ] };
-  const merged = mergeReviewSummaries(article, review, fresh);
-  assert.equal(merged.summary_review_version, 'published-summary-v3');
-  assert.equal(merged.decisions[0].quality, 'pass', '판정은 옮기지 않고 문안만 옮긴다');
-  assert.equal(merged.decisions[0].summary_ko, '표제 - 상세');
-  assert.equal(merged.decisions[0].summary_en, 'Headline - detail');
-  assert.deepEqual(merged.decisions[1], review.decisions[1]);
-  assert.equal(needsReviewSummary(article, merged), false);
-  // A fresh answer without prose is still stamped, so the article is not asked again.
-  assert.equal(needsReviewSummary(article, mergeReviewSummaries(article, review, { decisions: [] })), false);
-});
-
 test('an S3 decision that could publish and mentions a debt buyback is asked again once', () => {
   const article = { candidates: [{ id: 'investment:3', kind: 'investment', row: { content_text: BODY, investment_signal_no: 3,
     title: 'BorgWarner Announces Pricing Terms of Cash Tender Offers for its Senior Notes' } }] };
@@ -159,48 +118,4 @@ test('an S3 decision that could publish and mentions a debt buyback is asked aga
   assert.equal(needsFundingReview(article, { decisions: [{ ...decision, indicator_supported: false }] }), false);
   const round = { candidates: [{ ...article.candidates[0], row: { content_text: BODY, investment_signal_no: 3, title: 'Nexeon completes £100m investment round' } }] };
   assert.equal(needsFundingReview(round, { decisions: [{ ...decision, evidence_quotes: ['marks the completion of the investment round'] }] }), false);
-});
-
-test('summary refresh copies new prose into published decisions only and never moves a judgement', () => {
-  const article = { candidates: [
-    { id: 'investment:1', kind: 'investment', row: { content_text: BODY, investment_signal_no: 1 } },
-    { id: 'investment:5', kind: 'investment', row: { content_text: BODY, investment_signal_no: 5 } },
-    { id: 'relevant', kind: 'relevant', row: { content_text: BODY } },
-  ] };
-  const approved = { candidate_id: 'investment:1', entity_supported: true, indicator_supported: true, target_technology_supported: true,
-    leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass', summary_ko: '영국 공급망 다변화 - 국내 운영 확장', summary_en: 'Old' };
-  const rejected = { candidate_id: 'investment:5', entity_supported: false, indicator_supported: false, target_technology_supported: false,
-    leading_indicator_supported: false, event_stage: 'not_applicable', quality: 'pass', summary_ko: '', summary_en: '' };
-  const business = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, target_technology_supported: true,
-    leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass', summary_ko: '옛 사업동향', summary_en: 'Old business' };
-  const review = { decisions: [approved, rejected, business] };
-  assert.equal(needsSummaryRefresh(article, review), true);
-  const fresh = { decisions: [
-    { ...approved, indicator_supported: false, summary_ko: '영국 배터리 공급망 강화 - 영국 내 운영 확장', summary_en: 'UK supply chain strengthened' },
-    { ...rejected, entity_supported: true, summary_ko: '새 문안', summary_en: 'New' },
-    { ...business, summary_ko: '', summary_en: 'Only English' },
-  ] };
-  const merged = mergeRefreshedSummaries(article, review, fresh);
-  assert.equal(merged.decisions[0].summary_ko, '영국 배터리 공급망 강화 - 영국 내 운영 확장');
-  assert.equal(merged.decisions[0].indicator_supported, true);
-  assert.deepEqual(merged.decisions[1], rejected);
-  // Half-empty fresh prose keeps the old business summary.
-  assert.equal(merged.decisions[2].summary_ko, '옛 사업동향');
-  assert.equal(needsSummaryRefresh(article, merged), false);
-});
-
-test('a published summary whose numbers the article does not state is refreshed once', () => {
-  const article = { evidence: ['Automotive revenues surged 61% year over year.'],
-    candidates: [{ id: 'relevant', kind: 'relevant', relevance_exempt: true, row: { content_text: BODY } }] };
-  // 사업동향 판정은 leading_indicator_supported=true, event_stage=not_applicable 가 고정값이다.
-  const decision = { candidate_id: 'relevant', entity_supported: true, indicator_supported: true, quality: 'pass',
-    leading_indicator_supported: true, event_stage: 'not_applicable',
-    summary_ko: '자동차 매출이 69% 급증함', summary_en: 'Automotive revenue surged 61%.' };
-  const stamped = { summary_accuracy_version: 'summary-accuracy-v1' };
-  assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [decision] }), true);
-  assert.equal(needsSummaryRefresh(article, { ...stamped, decisions: [{ ...decision, summary_ko: '자동차 매출이 61% 급증함' }] }), false);
-  assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', decisions: [decision] }), true,
-    'the Korean and English percentages still disagree');
-  assert.equal(needsSummaryRefresh(article, { ...stamped, summary_numbers_version: 'summary-numbers-v1', summary_style_version: 'summary-style-v2',
-    decisions: [decision] }), false);
 });

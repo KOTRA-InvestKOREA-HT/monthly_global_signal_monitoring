@@ -37,14 +37,14 @@ Judge each field independently. `entity_supported`, `target_technology_supported
    - Share-price, valuation, investment-opinion and market commentary, earnings releases, and interim or annual reports often recap earlier events. A mention does not make an event new this month. The reporting period is `reporting_period.from_date` through `reporting_period.to_date`. Without evidence that the event was newly announced, agreed or initiated during that period, set `leading_indicator_supported=false` and explain this in `reason`. Do not infer the reporting period from today's date.
    - Eligible stages are exploratory/planned and precursor for S1, S3, S4 and S5. unclear remains unconfirmed.
 5. Business activity (`kind=relevant`): Judge entity attribution and target-technology linkage. Set `indicator_supported=true` for concrete technology or business activity. Mere event notices, dividends or company profiles remain false even for technology-exempt companies. Climate or carbon-reduction goals and their certification, ESG or sustainability reporting, share-price or valuation commentary, and general company or product-family descriptions are false without concrete target-technology or business activity. Do not reject solely by document type; independently assess any concrete production, process introduction, development or business event inside it. Completed business activities can qualify. Set `leading_indicator_supported=true` and `event_stage=not_applicable`.
-6. `quality` describes evidence sufficiency only. Use `pass` when evidence supports a definite judgement and needs_review when evidence is insufficient. `pass` is not approval or a positive verdict: a clearly ineligible event also receives `pass`. Do not approve evidence based on subjective confidence or summary length.
+6. `quality` describes evidence sufficiency only. Use `pass` when evidence supports a definite judgement and needs_review when evidence is insufficient. `pass` is not approval or a positive verdict: a clearly ineligible event also receives `pass`. Do not approve evidence based on subjective confidence or quote length.
 7. Follow the evidence → reason → judgement order in system section 1. Approval requires at least one verbatim source sentence preserving the context that supports the judgement. String matching is not semantic validation.
 
 ### Additional judgement boundaries
 
 These rules apply to API and local review alike. Do not duplicate judgement exceptions in the system instructions.
 
-- Entity attribution: If a parent, sister company or group entity acts, attribute it to the target only through an explicit connection in the evidence. Name the actual actor in the summary.
+- Entity attribution: If a parent, sister company or group entity acts, attribute it to the target only through an explicit connection in the evidence. Name the actual actor in `reason`.
 - Technology linkage: The event's product, material or process must be the target technology or its direct component. The same industry, end market or application (space, automotive, semiconductors), another product family of the same company, or another material from the same supplier is insufficient. `target_technology_scope.includes` and `excludes` define scope; a product within `excludes` means `target_technology_supported=false`.
 - S1/S4 acquisitions: Factories, inventory or raw materials transferred with a completed business acquisition belong to the acquisition itself. Without a separate new procurement agreement, localization measure, or joint research with a named counterparty and concrete task, do not reclassify them as supply-chain or technology precursors: set `indicator_supported=false`. Distinguish minority equity investments in technology companies from business acquisitions; such minority investments qualify as S4 events. Vague synergies are not concrete collaboration.
 - S2 stage: A facility investment already decided, contracted or under construction is `committed`. A future operating or production start date does not make it `planned`.
@@ -52,11 +52,9 @@ These rules apply to API and local review alike. Do not duplicate judgement exce
 - S4 independent events: Independently judge the stage of separately evidenced technical research, licensing or collaboration even when mentioned alongside an acquisition closing. Supply, distribution, marketing and offtake agreements without explicit joint technical development are not technical collaboration.
 - S5 filings: An executive title in SEC Form 3 or an initial beneficial-ownership filing does not prove personnel movement. Require evidence of an actual appointment, assumption of office, recruitment, promotion or role transition.
 
-### Approval and summary eligibility
+### Approval
 
 Approval requires `entity_supported=true`, the applicable technology-link condition, `indicator_supported=true`, `leading_indicator_supported=true` and `quality=pass`. Candidates with `relevance_exempt=true` and S3/S5 candidates are exempt from the technology-link condition; all others (S1/S2/S4 and business activity) require `target_technology_supported=true`. Investment candidates also need an eligible stage: exploratory/planned, or precursor for S1/S3/S4/S5. Business activity fixes `leading_indicator_supported=true` and `event_stage=not_applicable` and has no investment-stage test.
-
-Write summaries only for candidates meeting all approval conditions, since only those candidates appear in the report. Rejected candidates' summaries are not used on any report page. Approved candidates require both `summary_ko` and `summary_en`. Do not lower judgement fields or `quality` to avoid summaries, or set unsupported fields true to write them. Technology-exempt and S3/S5 candidates still require summaries with `target_technology_supported=false` when the other approval conditions are met. Write S4 precursor and business-activity summaries independently.
 
 ## Date handling
 
@@ -76,7 +74,11 @@ Articles carry `date_status` and `date_placement`. These are independent of cont
 
 ## Summary wording
 
-Follow section 5 of the system instructions for common summary rules. Its source is `scripts/review_prompts.mjs`; this section contains only Korean terminology, expression and layout targets. Follow the selected variant for fact-list construction and language order.
+The judgement call does not receive this section; the report copy is written after judgement. The common summary rules live in `scripts/review_prompts.mjs` and are sent together with the parts of this section below to whoever writes the copy: the summary writer (`scripts/summary_writer.mjs`) or a local reviewer, who writes summaries in the same review file.
+
+### Summary eligibility (local review)
+
+Write summaries only for candidates meeting all approval conditions, since only those candidates appear in the report. Approved candidates require both `summary_ko` and `summary_en`. Technology-exempt and S3/S5 candidates still require summaries with `target_technology_supported=false` when the other approval conditions are met. Write S4 precursor and business-activity summaries independently.
 
 ### Korean terminology and expression
 
@@ -90,7 +92,7 @@ Preserve measurement type: annualized figures, run rates, order backlogs and tar
   - Headline: A 20–40-character noun phrase naming what happened that month. Do not use the indicator name or company name as the headline: the card already displays them.
   - Detail: Aim for 60–110 characters when the selected facts fit; expand as needed to preserve their meaning.
 - Investment summary (English): Target at most 400 characters. The report extracts the card's first line itself.
-- Business activity: Describe the concrete activity relevant to the target product in concise prose; use the shared sentence-count rule in system section 5.
+- Business activity: Describe the concrete activity relevant to the target product in concise prose; let the selected facts determine the sentence count.
 
 ## 기사별 응답 형식
 

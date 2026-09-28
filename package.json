@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "report:review": "node scripts/review_report.mjs",
+    "report:publish": "node scripts/publish_report.mjs",
     "report:local": "node scripts/local_report.mjs",
     "audit:coverage": "node scripts/audit_signal_coverage.mjs",
     "test": "node --test",
