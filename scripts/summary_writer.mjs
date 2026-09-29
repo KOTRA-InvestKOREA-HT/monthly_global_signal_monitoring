@@ -40,7 +40,7 @@ const DEFAULT_TIMEOUT_MS = 180000;
 // 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 // Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
 // 문안도 제목을 옮기는 데 그쳤다. 판정은 본문 전체를 읽고 있었으므로 문안 단계도 본문을 받는다.
-const ARTICLE_EVIDENCE_CHARS = 12000;
+export const ARTICLE_EVIDENCE_CHARS = 12000;
 
 // 대체 문안 모델. 기본 모델이 할당량·장애로 멈추거나 세 번 모두 검사에 걸린 후보를 이 모델이 이어 쓴다.
 // 무료 한도는 모델마다 따로라, 기본 모델 한도가 끝나도 그날 안에 보고서를 끝낼 수 있다. 판정 모델과 같은
@@ -232,8 +232,7 @@ export function writtenProblems(article, decision, written, styleProblems = summ
   const sourceQuotes = Array.isArray(written?.source_quotes) ? written.source_quotes : [];
   const next = { ...decision, summary_en: en, summary_ko: ko, summary_quotes: sourceQuotes };
   const problems = [];
-  // 본문에서 가져온 사실의 근거 문장은 본문에 글자 그대로, 투자 시그널이면 판정 인용 가까이에 있어야 한다.
-  // 이 문장이 인용 밖 사실의 유일한 근거다.
+  // 본문에서 가져온 사실의 근거 문장은 본문에 글자 그대로 있어야 한다. 이 문장이 인용 밖 사실의 유일한 근거다.
   problems.push(...summaryQuoteProblems(article, next).map(problem => `source_quote_${problem}`));
   // 9월 29일 실행 Amkor 한국어 문안이 "…회동하고 있음음음"으로 끝났다. 같은 음절이 세 번 이어지는 한국어는 없다.
   if (/([가-힣])\1\1/.test(ko)) problems.push('garbled_korean');
@@ -365,7 +364,10 @@ const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 // 문안은 판정 파일에 바로 쓴다. 후보마다 요청 내용·지시·모델로 만든 키를 함께 적어 두므로, 다음 실행은
 // 키가 같은 후보를 다시 묻지 않는다. 할당량(429)·권한 오류나 거듭된 장애로 멈추면 stopped 를 돌려주고,
 // 호출자는 보고서를 만들지 않는다.
-export async function writeSummaries({ articles, reviewDir, writer, apiKey, policyWording,
+//
+// feedback 은 검토 단계(summary_reviewer.mjs)가 짚은 후보다: { [article_id]: { [candidate_id]: [문제 설명] } }.
+// 주면 그 후보만, 저장된 문안이 있어도 다시 쓴다. 문제 설명은 rejected_because 로 모델에게 간다. 다른 후보는 건드리지 않는다.
+export async function writeSummaries({ articles, reviewDir, writer, apiKey, policyWording, feedback = null,
   fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = console.log, attempts = WRITER_ATTEMPTS }) {
   const instruction = buildWriterInstruction(policyWording);
   const stats = { model: writer.model, fallback_model: writer.fallback?.model || null, articles: 0, requests: 0, cached: 0,
@@ -410,6 +412,8 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
   };
   for (const article of articles) {
     if (stopped) break;
+    const asked = feedback ? feedback[article.id] : null;
+    if (feedback && !asked) continue;
     const file = path.join(reviewDir, `${article.id}.json`);
     let review;
     try { review = JSON.parse(await fs.readFile(file, 'utf8')); } catch { continue; }
@@ -431,13 +435,16 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     const written = new Map();
     // 검사가 강해진 뒤에도 옛 문안을 그대로 쓰지 않도록, 재사용할 문안도 지금 검사를 다시 통과해야 한다.
     for (const decision of targets) {
+      if (asked?.[decision.candidate_id]) continue;
       if (decision.summary_writer?.key === keys[decision.candidate_id] &&
         String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim() &&
         !writtenProblems(article, decision, { ...decision, source_quotes: decision.summary_quotes }).length) written.set(decision.candidate_id, null);
     }
     stats.cached += written.size;
+    // 검토 지적으로 다시 쓰는 실행에서는 지적받은 후보만 쓴다. 나머지는 지금 상태 그대로 둔다.
+    if (asked) for (const decision of targets) if (!asked[decision.candidate_id]) written.set(decision.candidate_id, null);
     let todo = targets.filter(decision => !written.has(decision.candidate_id));
-    const rejected = {};
+    const rejected = Object.fromEntries(Object.entries(asked || {}).map(([id, problems]) => [id, [...problems]]));
     const accept = (answer, model) => {
       const byId = new Map(answer.map(item => [item?.candidate_id, item]));
       for (const decision of todo) {
@@ -479,11 +486,14 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     });
     // 멈춘 실행은 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
     const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id)));
+    // 검토 지적으로 다시 쓰는 실행은 지적받지 않은 후보의 실패 표시를 그대로 둔다.
+    const carried = asked ? (review.summary_failed?.candidate_ids || []).filter(id => !asked[id]) : [];
     const withFailed = () => {
       const { summary_failed, ...rest } = review;
+      const ids = [...new Set([...carried, ...failed])];
       return { ...rest, decisions,
-        ...(failed.size ? { summary_failed: { version: WRITER_VERSION, candidate_ids: [...failed],
-          problems: Object.fromEntries([...failed].map(id => [id, rejected[id] || []])) } } : {}) };
+        ...(ids.length ? { summary_failed: { version: WRITER_VERSION, candidate_ids: ids,
+          problems: Object.fromEntries(ids.map(id => [id, failed.has(id) ? rejected[id] || [] : summary_failed?.problems?.[id] || []])) } } : {}) };
     };
     let next = withFailed();
     // 마지막 안전장치: 보고서 생성이 쓰는 가져오기 검사를 그대로 통과해야 한다. 걸린 후보는 문안을 비우고 실패로 둔다.
@@ -511,4 +521,23 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
   }
   return { ...stats, ...(stopped ? { stopped } : {}) };
+}
+
+// 검토 단계가 다시 쓰게 해도 끝내 같은 결함을 짚은 문안을 내린다. 근거 없는 숫자와 같이 다룬다:
+// 문안을 비우고 summary_failed 로 표시해 이번 보고서에서 빼고 대시보드에만 남긴다. 다음 실행이 다시 쓴다.
+// items: [{ article_id, candidate_id, problems }]
+export async function withdrawCopy({ reviewDir, items }) {
+  const byArticle = new Map();
+  for (const item of items) byArticle.set(item.article_id, [...(byArticle.get(item.article_id) || []), item]);
+  for (const [articleId, list] of byArticle) {
+    const file = path.join(reviewDir, `${articleId}.json`);
+    const review = JSON.parse(await fs.readFile(file, 'utf8'));
+    const ids = new Set(list.map(item => item.candidate_id));
+    const previous = review.summary_failed || {};
+    const candidateIds = [...new Set([...(previous.candidate_ids || []), ...ids])];
+    const problems = { ...(previous.problems || {}), ...Object.fromEntries(list.map(item => [item.candidate_id, item.problems])) };
+    const next = { ...review, decisions: review.decisions.map(decision => (ids.has(decision.candidate_id) ? withoutSummary(decision) : decision)),
+      summary_failed: { version: WRITER_VERSION, candidate_ids: candidateIds, problems } };
+    await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
+  }
 }

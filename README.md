@@ -281,7 +281,9 @@ A local build writes `coverage.json` alongside its PDFs. Missing monthly sources
    문안을 쓰고 한·영 PDF를 만들어 커밋한다. 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
    문안 모델이 할당량으로 멈추면 쓴 문안은 저장되므로 다시 실행하면 이어서 쓴다.
    문안을 쓴 뒤 검토 모델(`gemini-3.5-flash-lite`, `GEMINI_REVIEWER_MODEL=off`로 끔)이 시제·근거 없는 사실·
-   없는 한국어 용어·한영 불일치를 짚는다. 지금은 기록만 하며, 지적은 실행 요약과
+   없는 한국어 용어·한영 불일치를 짚는다. 투자 시그널 카드의 시제·근거 지적은 문안 모델에게 돌려 최대 두 번
+   다시 쓰게 하고, 그래도 남으면 그 카드를 이번 보고서에서 뺀다(대시보드에는 남고 다음 실행이 다시 쓴다).
+   사업동향 문안과 용어·한영 지적은 기록만 한다. 지적과 뺀 카드는 실행 요약과
    `outputs/latest_ai_summary_summary.json`의 `summary_reviewer`에 남는다.
 
 두 워크플로는 같은 동시 실행 그룹이라 한쪽이 도는 동안 다른 쪽은 기다린다.

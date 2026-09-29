@@ -16,7 +16,7 @@ import { build } from './local_report.mjs';
 import { publishableReviewFailures, publishedSignalCounts, runIdentity } from './review_report.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 import { resolveWriter, writeSummaries, writerPolicySection } from './summary_writer.mjs';
-import { resolveReviewer, reviewSummaries } from './summary_reviewer.mjs';
+import { resolveReviewer, reviewAndRewrite } from './summary_reviewer.mjs';
 
 const ROOT = path.resolve('outputs/review_work');
 const STATUS_FILE = path.join(ROOT, 'publish_status.json');
@@ -74,11 +74,14 @@ function writerSummary(stats) {
 function reviewerSummary(stats) {
   if (!stats) return '### Copy review\nOff (GEMINI_REVIEWER_MODEL=off).\n';
   if (stats.error) return `### Copy review\nFailed: ${stats.error}. The report was built without it.\n`;
-  return `### Copy review (${stats.model}, ${stats.mode})\n` +
-    `${stats.reviewed} summaries reviewed; ${stats.requests} requests; ${stats.cached} reused; ` +
-    `${stats.flagged.length} issues flagged; ${stats.discarded} unverifiable flags discarded` +
+  return `### Copy review (${stats.model})\n` +
+    `${stats.reviewed} summaries reviewed; ${stats.requests} review requests; ` +
+    `first pass flagged ${stats.first_flagged} issues (${stats.first_enforce} signal cards sent back for rewriting); ` +
+    `${stats.rounds.length} rewrite rounds; ${stats.withdrawn.length} cards withdrawn; ` +
+    `${stats.flagged.length} issues left; ${stats.discarded} unverifiable flags discarded` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${stats.stopped ? `; stopped after ${stats.stopped.reason}` : ''}.\n` +
+    stats.withdrawn.map(item => `- Withdrawn: ${item.company} ${item.candidate_id}: ${item.problems.join(' | ')}\n`).join('') +
     stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
       `${item.source_phrase ? ` vs "${item.source_phrase}"` : ''}: ${item.note}\n`).join('');
 }
@@ -113,13 +116,17 @@ async function main() {
       return;
     }
 
-    // 문안 검토. 지금은 기록만 하므로 실패해도 보고서는 만든다.
+    // 문안 검토. 투자 시그널의 시제·근거 지적은 문안 단계로 돌려 다시 쓰게 하고, 끝내 남으면 그 카드를 내린다.
+    // 검토 호출이 실패하면 검토 없이 보고서를 만든다. 문안 검사는 이미 통과한 문안이다.
     stage = 'review';
     const reviewer = resolveReviewer();
     let reviewStats = null;
     if (reviewer) {
+      const reviewDir = path.join(ROOT, 'reviews');
       try {
-        reviewStats = await reviewSummaries({ articles: snapshot.articles, reviewDir: path.join(ROOT, 'reviews'), reviewer, apiKey });
+        reviewStats = await reviewAndRewrite({ articles: snapshot.articles, reviewDir, reviewer, apiKey,
+          rewrite: feedback => writeSummaries({ articles: snapshot.articles, reviewDir, writer, apiKey,
+            policyWording: writerPolicySection(policyDoc), feedback }) });
       } catch (error) {
         reviewStats = { model: reviewer.model, error: String(error.message || error).slice(0, 300) };
       }

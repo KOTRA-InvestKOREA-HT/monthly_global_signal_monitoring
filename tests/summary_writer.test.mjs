@@ -139,21 +139,22 @@ test('copy may add facts from the article body when it cites the exact sentence 
   assert.throws(() => importReview(withBody, forged), /summary_quotes must be exact passages/);
 });
 
-// 9월 29일 실행 3M: 1만 자 떨어진 다른 사안의 각주를 부채 발행의 목적으로 이어 붙였다.
-test('a source quote far from the judged event is rejected for a signal card', () => {
+// 판정 인용과 멀리 떨어진 근거 문장도 본문에 있으면 받는다. 한때 거리로 막았으나 근거로 삼은 3M 사례를 잘못 읽었고
+// 맞게 쓴 Evonik 카드를 떨어뜨렸다. 다른 사안을 잇는지는 검토 단계가 본다.
+test('a source quote is accepted anywhere in the article body', () => {
   const footnote = 'Guidance does not yet reflect the acquisition of Tessaro Engineering, which closed on July 1, 2026.';
   const far = groupArticles([{ ...row, content_text: `${footnote} ${'Segment detail follows. '.repeat(200)}${quote} ${TAIL}` }], [],
     { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
-  const decision = { ...judge, summary_quotes: [footnote] };
-  assert.deepEqual(summaryQuoteProblems(far, decision), ['far_from_event']);
-  // 인용 가까이의 문장은 받는다.
-  const near = groupArticles([{ ...row, content_text: `${footnote} ${quote} ${TAIL}` }], [],
-    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
-  assert.deepEqual(summaryQuoteProblems(near, decision), []);
-  // 사업동향 문안은 기사 전체를 풀어 쓰므로 거리를 보지 않는다.
-  const business = groupArticles([], [{ ...row, content_text: far.evidence.join(' '), investment_signal_no: undefined }],
-    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
-  assert.deepEqual(summaryQuoteProblems(business, { ...decision, candidate_id: 'relevant' }), []);
+  assert.deepEqual(summaryQuoteProblems(far, { ...judge, summary_quotes: [footnote] }), []);
+  assert.deepEqual(summaryQuoteProblems(far, { ...judge, summary_quotes: ['Tessaro Engineering closed the deal.'] }), ['not_in_article']);
+});
+
+// Issue 3 Veolia: "11억 5천만 유로"의 천을 읽지 못해 "11억 5"만 읽혔고 맞게 옮긴 카드가 빠졌다.
+test('a Korean amount written with 천 is read in full', () => {
+  const source = ['a two-tranche transaction totaling € 1.15 billion: a 4-year bond for 650 million euros and an 8-year bond for 500 million euros'];
+  assert.deepEqual(summaryNumberProblems('총 11억 5천만 유로 규모 채권을 발행했음', source, 'ko'), []);
+  assert.deepEqual(summaryNumberProblems('6억 5천만 유로와 5억 유로', source, 'ko'), []);
+  assert.deepEqual(summaryNumberProblems('총 11억 6천만 유로', source, 'ko'), ['11억 6천만 유로']);
 });
 
 // 9월 29일 실행 Amkor 한국어 문안이 "…회동하고 있음음음"으로 끝났다.
