@@ -29,11 +29,14 @@ export const WRITER_ATTEMPTS = 3;
 // gemini-3.8-flash 는 무료 등급에서 503·시간 초과로 끝내지 못했다(review_providers.mjs 의 2차 검증 주석).
 // 한 단계 아래 flash 를 기본값으로 둔다. GEMINI_WRITER_MODEL 로 바꾼다.
 export const DEFAULT_WRITER_MODEL = 'gemini-3.7-flash';
-// 문안은 판정보다 짧은 일이라 추론을 낮게 둔다. 추론을 높이면 응답이 늦어져 시간 초과가 잦아진다.
-const DEFAULT_THINKING = 'low';
+// 추론은 high 로 둔다. 예전에는 문안이 짧은 일이라 low 로 두었는데, 기본 모델이 503 으로 막혀 대체 모델
+// flash-lite 가 거의 모든 문안을 썼고, flash-lite 는 low 이하에서 추론 토큰을 쓰지 않는다(review_providers.mjs
+// GEMINI 주석). Issue 3(9월 29일 실행)에서 원문 "will join"을 "영입했음"으로 옮기는 식의 시제 오류가 되풀이됐다.
+// 추론 단계는 요청 수 한도를 더 쓰지 않는다. 늘어나는 응답 시간에 맞춰 시간 제한을 늘린다.
+const DEFAULT_THINKING = 'high';
 // 무료 등급 flash 의 분당 요청 한도는 flash-lite 보다 낮다. 10 RPM 기준으로 간격을 둔다.
 const DEFAULT_DELAY_MS = 6500;
-const DEFAULT_TIMEOUT_MS = 120000;
+const DEFAULT_TIMEOUT_MS = 180000;
 // 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 // Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
 // 문안도 제목을 옮기는 데 그쳤다. 판정은 본문 전체를 읽고 있었으므로 문안 단계도 본문을 받는다.
@@ -208,7 +211,8 @@ export function writerBody(writer, instruction, request) {
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(request) }] }],
     generationConfig: {
       thinkingConfig: { thinkingLevel: writer.thinkingLevel },
-      maxOutputTokens: 16384, responseMimeType: 'application/json',
+      // 출력 한도에는 추론 토큰도 들어간다. high 추론이 잘려 응답이 끊기지 않게 판정 호출과 같은 한도까지 연다.
+      maxOutputTokens: 65536, responseMimeType: 'application/json',
       responseSchema: toGeminiSchema(writerSchema),
     },
   };

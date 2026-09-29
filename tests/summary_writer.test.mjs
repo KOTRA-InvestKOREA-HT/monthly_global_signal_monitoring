@@ -55,10 +55,11 @@ test('the fixture is an approved judgement that the report cannot import until i
   assert.throws(() => importReview(article, review), /missing ai_summary_ko/);
 });
 
-test('the writer defaults to gemini-3.7-flash with low thinking and cannot be switched off', () => {
+test('the writer defaults to gemini-3.7-flash with high thinking and cannot be switched off', () => {
   assert.equal(DEFAULT_WRITER_MODEL, 'gemini-3.7-flash');
   assert.equal(resolveWriter({}).model, 'gemini-3.7-flash');
-  assert.equal(resolveWriter({}).thinkingLevel, 'low');
+  assert.equal(resolveWriter({}).thinkingLevel, 'high');
+  assert.equal(resolveWriter({}).fallback.thinkingLevel, 'high');
   assert.equal(resolveWriter({ GEMINI_WRITER_MODEL: 'gemini-3.8-flash' }).model, 'gemini-3.8-flash');
   // 보고서 문안은 이 단계만 쓴다. 꺼 두면 보고서를 만들 수 없으므로 끄는 선택지를 두지 않는다.
   assert.equal(resolveWriter({ REVIEW_WRITER: 'off' }).model, 'gemini-3.7-flash');
@@ -100,7 +101,7 @@ test('the writer request carries evidence only, plus the checks a previous copy 
   const retry = writerRequest(article, [judge], { 'investment:3': ['ungrounded_numbers:800'] });
   assert.deepEqual(retry.items[0].rejected_because, ['ungrounded_numbers:800']);
   const body = writerBody(writer, buildWriterInstruction(wording), request);
-  assert.equal(body.generationConfig.thinkingConfig.thinkingLevel, 'low');
+  assert.equal(body.generationConfig.thinkingConfig.thinkingLevel, 'high');
   assert.deepEqual(Object.keys(body.generationConfig.responseSchema.properties.summaries.items.properties),
     ['candidate_id', 'source_quotes', 'summary_en', 'summary_ko']);
 });
