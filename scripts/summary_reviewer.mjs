@@ -19,7 +19,7 @@ import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
 import { importReview, normalizeQuote } from './local_report.mjs';
-import { ARTICLE_EVIDENCE_CHARS, publishedDecisions, withdrawCopy, writerTargets } from './summary_writer.mjs';
+import { ARTICLE_EVIDENCE_CHARS, publishedDecisions, writerTargets } from './summary_writer.mjs';
 
 export const REVIEWER_VERSION = 'summary-reviewer-v3';
 export const DEFAULT_REVIEWER_MODEL = 'gemini-3.5-flash-lite';
@@ -186,7 +186,7 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
     const targets = writerTargets(article, review).filter(decision =>
       String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim());
     if (!targets.length) continue;
-    // 다시 쓰게 하거나 내리는 것은 보고서에 실리는 후보뿐이다. 근접 사업동향 행은 지적만 기록한다.
+    // 다시 쓰게 하는 것은 보고서에 실리는 후보뿐이다. 근접 사업동향 행은 지적만 기록한다.
     const published = new Set(publishedDecisions(article, review).map(decision => decision.candidate_id));
     stats.articles += 1;
     const keys = Object.fromEntries(targets.map(decision => [decision.candidate_id, reviewKey(reviewer, decision, article)]));
@@ -246,12 +246,14 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
   return stats;
 }
 
-// 검토 지적으로 다시 쓰는 횟수. 두 번 다시 써도 같은 종류의 지적이 남는 카드는 내린다.
-export const REVIEW_REWRITE_ROUNDS = 2;
+// 검토 지적으로 다시 쓰는 횟수. 한 번이다. 9월 29일 세 실행에서 다시 쓰게 한 지적 8건 중 4건만 실제 결함이었고,
+// 두 번 다시 쓰게 했더니 같은 카드의 지적 방향이 뒤집히며 문안이 나빠졌다(Charles River "지원하기로 했음" →
+// "지원 중임" → 둘 다 지적, 새 오역 "종균 은행"). 맞는 지적은 대개 한 번 다시 쓰면 고쳐졌다.
+export const REVIEW_REWRITE_ROUNDS = 1;
 
-// 검토 → 지적받은 투자 시그널만 다시 쓰기 → 다시 검토를 되풀이한다. rewrite(feedback) 는 문안 단계
-// (writeSummaries 에 feedback 을 넘긴 것)다. 마지막 검토에도 남은 지적의 카드는 withdrawCopy 로 내린다.
-// 문안 단계가 할당량으로 멈추면 거기서 그만 쓰고, 그때까지 남은 지적의 카드를 내린다.
+// 검토 → 지적받은 후보만 다시 쓰기 → 다시 검토. rewrite(feedback) 는 문안 단계(writeSummaries 에 feedback 을
+// 넘긴 것)다. 다시 쓴 뒤에도 남은 지적은 기록만 하고 문안은 그대로 싣는다. 검토 지적만으로 항목을 빼지 않는다.
+// 같은 실행들에서 틀린 지적 때문에 맞는 카드가 두 번 빠졌다(Jenoptik CEO 취임, GE HealthCare CFO 선임).
 export async function reviewAndRewrite({ articles, reviewDir, reviewer, apiKey, rewrite,
   rounds = REVIEW_REWRITE_ROUNDS, ...options }) {
   const first = await reviewSummaries({ articles, reviewDir, reviewer, apiKey, ...options });
@@ -267,8 +269,6 @@ export async function reviewAndRewrite({ articles, reviewDir, reviewer, apiKey, 
     reviewRequests += last.requests;
     if (written.stopped) break;
   }
-  const withdrawn = last.enforce.map(({ article_id, company, candidate_id, problems }) => ({ article_id, company, candidate_id, problems }));
-  if (withdrawn.length) await withdrawCopy({ reviewDir, items: withdrawn });
   return { ...last, requests: reviewRequests, first_flagged: first.flagged.length, first_enforce: first.enforce.length,
-    rounds: history, withdrawn };
+    rounds: history };
 }

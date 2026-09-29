@@ -85,7 +85,7 @@ test('a review is saved with the copy, and the same copy is not reviewed twice',
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, decision.summary_ko);
   assert.equal(saved.decisions[0].copy_review.issues.length, 1);
-  // 검토 자체는 문안을 바꾸거나 보고서 가져오기를 막지 않는다. 다시 쓰기와 내리기는 reviewAndRewrite 가 한다.
+  // 검토 자체는 문안을 바꾸거나 보고서 가져오기를 막지 않는다. 다시 쓰기는 reviewAndRewrite 가 한다.
   assert.equal(importReview(article, saved)[0].supported, true);
   const again = await run(ws, async () => { calls += 1; return gemini([]); });
   assert.equal(calls, 1);
@@ -144,26 +144,25 @@ test('a flagged signal card is rewritten with the flag as feedback, and kept onc
   assert.match(sent[0], /rejected_because/);
   assert.match(sent[0], /review_certainty/);
   assert.equal(stats.rounds.length, 1);
-  assert.deepEqual(stats.withdrawn, []);
+  assert.equal(stats.enforce.length, 0);
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, fixed.summary_ko);
   assert.equal(importReview(article, saved)[0].supported, true);
 });
 
-test('a signal card still flagged after two rewrites is withdrawn from the report and kept for the dashboard', async () => {
+// 틀린 지적 때문에 맞는 카드가 빠진 일이 두 번 있었다. 한 번 다시 쓴 뒤에도 남은 지적은 기록만 하고 카드는 싣는다.
+test('a card still flagged after one rewrite is rewritten only once and stays in the report', async () => {
   const ws = await workspace();
   let writes = 0;
   const stats = await loop(ws, () => [{ candidate_id: 'investment:4',
     issues: [{ check: 'unsupported', copy_phrase: 'Broadcom Inc.', source_phrase: '', note: 'Illustrative persistent flag.' }] }], () => writes++);
-  assert.equal(writes, 2);
-  assert.equal(stats.rounds.length, 2);
-  assert.equal(stats.withdrawn.length, 1);
+  assert.equal(writes, 1);
+  assert.equal(stats.rounds.length, 1);
+  assert.equal(stats.enforce.length, 1);
   const saved = await ws.read();
-  assert.equal(saved.decisions[0].summary_ko, '');
-  assert.deepEqual(saved.summary_failed.candidate_ids, ['investment:4']);
-  const [result] = importReview(article, saved);
-  assert.equal(result.supported, false);
-  assert.equal(result.near_miss, true);
+  assert.equal(saved.decisions[0].summary_ko, fixed.summary_ko);
+  assert.equal('summary_failed' in saved, false);
+  assert.equal(importReview(article, saved)[0].supported, true);
 });
 
 // 시제는 날짜로 판단한다. 게시일을 모르는 검토 모델은 제 날짜의 일을 현재형으로 쓴 발표를 미래로 읽었다.
@@ -193,8 +192,8 @@ test('a certainty flag on business copy is sent back for rewriting; other busine
   assert.match(stats.enforce[0].problems[0], /^review_certainty/);
 });
 
-// 근접 사업동향 행은 보고서 본문에 실리지 않는다. 지적은 기록하되 다시 쓰게 하거나 내리지 않는다.
-test('a near-miss business row is flagged but never sent back or withdrawn', async () => {
+// 근접 사업동향 행은 보고서 본문에 실리지 않는다. 지적은 기록하되 다시 쓰게 하지 않는다.
+test('a near-miss business row is flagged but never sent back', async () => {
   const business = groupArticles([], [{ ...row, investment_signal_no: undefined }], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
   const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'reviewer-nearmiss-'));
   const reviewDir = path.join(root, 'reviews');

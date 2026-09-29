@@ -522,22 +522,3 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
   }
   return { ...stats, ...(stopped ? { stopped } : {}) };
 }
-
-// 검토 단계가 다시 쓰게 해도 끝내 같은 결함을 짚은 문안을 내린다. 근거 없는 숫자와 같이 다룬다:
-// 문안을 비우고 summary_failed 로 표시해 이번 보고서에서 빼고 대시보드에만 남긴다. 다음 실행이 다시 쓴다.
-// items: [{ article_id, candidate_id, problems }]
-export async function withdrawCopy({ reviewDir, items }) {
-  const byArticle = new Map();
-  for (const item of items) byArticle.set(item.article_id, [...(byArticle.get(item.article_id) || []), item]);
-  for (const [articleId, list] of byArticle) {
-    const file = path.join(reviewDir, `${articleId}.json`);
-    const review = JSON.parse(await fs.readFile(file, 'utf8'));
-    const ids = new Set(list.map(item => item.candidate_id));
-    const previous = review.summary_failed || {};
-    const candidateIds = [...new Set([...(previous.candidate_ids || []), ...ids])];
-    const problems = { ...(previous.problems || {}), ...Object.fromEntries(list.map(item => [item.candidate_id, item.problems])) };
-    const next = { ...review, decisions: review.decisions.map(decision => (ids.has(decision.candidate_id) ? withoutSummary(decision) : decision)),
-      summary_failed: { version: WRITER_VERSION, candidate_ids: candidateIds, problems } };
-    await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
-  }
-}

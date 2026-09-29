@@ -77,11 +77,10 @@ function reviewerSummary(stats) {
   return `### Copy review (${stats.model})\n` +
     `${stats.reviewed} summaries reviewed; ${stats.requests} review requests; ` +
     `first pass flagged ${stats.first_flagged} issues (${stats.first_enforce} signal cards sent back for rewriting); ` +
-    `${stats.rounds.length} rewrite rounds; ${stats.withdrawn.length} cards withdrawn; ` +
+    `${stats.rounds.length} rewrite round(s); ` +
     `${stats.flagged.length} issues left; ${stats.discarded} unverifiable flags discarded` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${stats.stopped ? `; stopped after ${stats.stopped.reason}` : ''}.\n` +
-    stats.withdrawn.map(item => `- Withdrawn: ${item.company} ${item.candidate_id}: ${item.problems.join(' | ')}\n`).join('') +
     stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
       `${item.source_phrase ? ` vs "${item.source_phrase}"` : ''}: ${item.note}\n`).join('');
 }
@@ -116,7 +115,7 @@ async function main() {
       return;
     }
 
-    // 문안 검토. 투자 시그널의 시제·근거 지적은 문안 단계로 돌려 다시 쓰게 하고, 끝내 남으면 그 카드를 내린다.
+    // 문안 검토. 시제 지적과 투자 시그널의 근거 지적은 문안 단계로 돌려 한 번 다시 쓰게 한다. 항목을 빼지는 않는다.
     // 검토 호출이 실패하면 검토 없이 보고서를 만든다. 문안 검사는 이미 통과한 문안이다.
     stage = 'review';
     const reviewer = resolveReviewer();
