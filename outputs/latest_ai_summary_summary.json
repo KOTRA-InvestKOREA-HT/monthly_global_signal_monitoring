@@ -65,37 +65,17 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 97,
-    "cached": 0,
-    "written": 80,
+    "requests": 8,
+    "cached": 80,
+    "written": 2,
     "written_by": {
-      "gemini-3.5-flash-lite": 80
+      "gemini-3.5-flash-lite": 2
     },
-    "failed": [
-      {
-        "article_id": "7f9e8e7a4e30241b9243b92b",
-        "company": "Evonik Industries",
-        "candidate_id": "investment:3",
-        "problems": [
-          "source_quote_far_from_event"
-        ]
-      },
-      {
-        "article_id": "31971ea0af7f0d317c617dfe",
-        "company": "Veolia",
-        "candidate_id": "investment:3",
-        "problems": [
-          "ungrounded_numbers:11억 5|6억 5"
-        ]
-      }
-    ],
+    "failed": [],
     "errors": {
       "unavailable": 3
     },
-    "rejected": {
-      "source_quote_far_from_event": 1,
-      "ungrounded_numbers": 1
-    },
+    "rejected": {},
     "switched": {
       "from": "gemini-3.7-flash",
       "to": "gemini-3.5-flash-lite",
@@ -104,230 +84,235 @@
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "mode": "log_only",
-    "articles": 74,
-    "requests": 74,
-    "cached": 0,
-    "reviewed": 80,
+    "articles": 76,
+    "requests": 81,
+    "cached": 81,
+    "reviewed": 82,
     "flagged": [
       {
-        "company": "Eli Lilly and Company",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "선급금 및 조건부 마일스톤 지급금을 포함하여",
-        "source_phrase": "inclusive of an upfront payment, and contingent milestone payments",
-        "note": "The payment breakdown appears in the Korean summary and sources but is missing from the English summary."
-      },
-      {
-        "company": "Evonik Industries",
+        "article_id": "1e0ca0fbd5bc161e8690a8ae",
+        "company": "Jenoptik",
         "candidate_id": "investment:5",
         "check": "certainty",
-        "copy_phrase": "대행할 예정임",
-        "source_phrase": "Rettig is taking over the duties of Christian Kullmann, who is recovering in the upcoming weeks from a recent serious, unplanned surgery.",
-        "note": "The summary_ko states that taking over the duties is planned or expected (예정임), whereas the source states it as happening now."
+        "copy_phrase": "Dr. Dominic Dorfner assumed office as Chief Executive Officer of JENOPTIK AG on August 3, 2026",
+        "source_phrase": "3. August 2026 Dr. Dominic Dorfner tritt Amt als Vorstandsvorsitzender der JENOPTIK AG an",
+        "note": "The source states the event as a future occurrence using the present tense for a future date, whereas the copy states it as already assumed."
       },
       {
-        "company": "Evonik Industries",
-        "candidate_id": "investment:5",
+        "article_id": "eb98cb5dc7c67c6dd0791df0",
+        "company": "HyproMag",
+        "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "대행할 예정임",
+        "copy_phrase": "with €5 million settled at closing",
         "source_phrase": "",
-        "note": "summary_en states Rettig is taking over the duties ('is taking over'), while summary_ko states it as a future plan ('대행할 예정임')."
+        "note": "The amount of €5 million settled at closing appears in the English summary but is missing in the Korean summary."
       },
       {
+        "article_id": "56b3053a1f2446d907b56c9b",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "네이티브 컬러",
+        "source_phrase": "",
+        "note": "The phrase '네이티브 컬러' is a Hangul transliteration of English words rather than an established Korean term."
+      },
+      {
+        "article_id": "803c25cbb4642c669c75e961",
         "company": "NXP",
         "candidate_id": "relevant",
         "check": "term",
         "copy_phrase": "후양자 암호화",
         "source_phrase": "",
-        "note": "후양자 암호화 is a literal compound; the established Korean term for post-quantum cryptography is 양자내성암호."
+        "note": "The term 후양자 암호화 is a literal compound translation rather than the established Korean term for post-quantum cryptography."
       },
       {
+        "article_id": "37e78fd5324480aceebeb6c7",
         "company": "NXP",
         "candidate_id": "relevant",
         "check": "term",
         "copy_phrase": "무선 프로세서",
         "source_phrase": "",
-        "note": "Radio processor should be translated using the established loanword 라디오 rather than 무선."
+        "note": "The term '무선 프로세서' incorrectly translates 'radio' as wireless rather than broadcast radio."
       },
       {
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "augmented reality",
-        "source_phrase": "Announced a long-term joint development agreement with EssilorLuxottica to accelerate the commercialization of next-generation intelligent optical systems for augmented reality and AI-powered smart eyewear.",
-        "note": "Augmented reality appears in the English summary but is missing in the Korean summary."
-      },
-      {
-        "company": "Applied Materials",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "introduced",
-        "source_phrase": "",
-        "note": "The word 'introduced' appears in the English summary but is missing in the Korean summary."
-      },
-      {
-        "company": "Rio Tinto",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "August 13, 2026",
-        "source_phrase": "",
-        "note": "The source text does not state the specific date August 13, 2026."
-      },
-      {
+        "article_id": "f22e87ee4bbcb61a72455b75",
         "company": "NXP",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "August 12, 2026",
+        "check": "term",
+        "copy_phrase": "어셈블리",
         "source_phrase": "",
-        "note": "The date August 12, 2026 is not stated in the sources."
+        "note": "The word 어셈블리 is a transliteration of the English common noun assembly and should be translated as 조립 or 패키징."
       },
       {
+        "article_id": "07ea4f79bb6d5e874177e733",
         "company": "Ouster",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "REV8 Lidar",
+        "check": "term",
+        "copy_phrase": "유닛",
         "source_phrase": "",
-        "note": "The summary_ko mentions REV8 Lidar, which is not supported by any source passage."
+        "note": "The term 유닛 is a Hangul transliteration of the English common noun unit."
       },
       {
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "REV8 lidar",
-        "source_phrase": "Econolite partnership leverages world's first native color digital lidar to expand Ouster BlueCity across 160 intersections with up to 500-foot advance detection for optimized mobility and enhanced safety.",
-        "note": "The summary_en and summary_ko mention REV8 lidar, while the source mentions world's first native color digital lidar."
-      },
-      {
-        "company": "BorgWarner",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "hybrid",
-        "source_phrase": "V6 engine family",
-        "note": "The copy states the engine family is hybrid, which is not mentioned in the sources."
-      },
-      {
-        "company": "BorgWarner",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "하이브리드",
-        "source_phrase": "V6 engine family",
-        "note": "The copy states the engine family is hybrid, which is not mentioned in the sources."
-      },
-      {
+        "article_id": "af290e3da11c8c4d2ddd0623",
         "company": "Onsemi",
         "candidate_id": "relevant",
         "check": "term",
         "copy_phrase": "연결 연산",
         "source_phrase": "",
-        "note": "The phrase '연결 연산' is a literal compound coined from English parts rather than an established Korean term."
+        "note": "The term '연결 연산' is a literal compound coined from English parts rather than an established Korean business or technical term."
       },
       {
+        "article_id": "c37f72a6a0217b2d03491448",
         "company": "DNP",
         "candidate_id": "relevant",
         "check": "certainty",
         "copy_phrase": "launched",
         "source_phrase": "開始します",
-        "note": "The copy states as done what the source states as a future event."
+        "note": "The copy states the launch as done while the source states it as a future event."
       },
       {
+        "article_id": "c37f72a6a0217b2d03491448",
         "company": "DNP",
         "candidate_id": "relevant",
         "check": "certainty",
         "copy_phrase": "시작했음",
         "source_phrase": "開始します",
-        "note": "The copy states as done what the source states as a future event."
+        "note": "The copy states the start as done while the source states it as a future event."
       },
       {
-        "company": "Veolia",
-        "candidate_id": "investment:3",
-        "check": "unsupported",
-        "copy_phrase": "자금을 조달하기 위해",
-        "source_phrase": "",
-        "note": "The summary introduces an unsupported purpose for issuing bonds."
-      },
-      {
-        "company": "Nexeon",
+        "article_id": "3f4b049eaf147c98d06591f1",
+        "company": "Schmalz",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "South Korea Gunsan",
-        "source_phrase": "Gunsan, South Korea",
-        "note": "Geographic names should be translated into Korean instead of being left in Latin script."
-      },
-      {
-        "company": "Norsk Hydro",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "engineers and assembles",
-        "source_phrase": "Shape Corp. will engineer and assemble the front bumper system to GM specifications, with integration into the Cadillac OPTIQ platform.",
-        "note": "The copy states as present fact what the source states as future."
-      },
-      {
-        "company": "Norsk Hydro",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "engineers and assembles",
+        "copy_phrase": "하부 허리",
         "source_phrase": "",
-        "note": "The English copy describes Shape Corp.'s work in the present tense while the Korean copy describes it as future."
+        "note": "하부 허리 is a literal compound coined from English parts rather than an established Korean term such as 요부 or 허리."
       },
       {
+        "article_id": "e93994247d03fd4b41c95244",
+        "company": "Mitsubishi Chemical",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "용량 확장",
+        "source_phrase": "capacity expansion",
+        "note": "The term 용량 확장 is a literal compound coined from English parts rather than an established Korean business term for production capacity expansion."
+      },
+      {
+        "article_id": "175f268894678b174870e0f5",
         "company": "Nabtesco",
         "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "애플리케이션",
+        "check": "mismatch",
+        "copy_phrase": "Nabtesco",
         "source_phrase": "",
-        "note": "The word 애플리케이션 is a transliteration of an English common noun."
+        "note": "The company name Nabtesco appears in the Korean summary but is missing in the English summary."
       },
       {
-        "company": "Tosoh",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "The company has also developed organic transistor materials for low-temperature and normal-pressure processes",
-        "source_phrase": "当社材を用いた有機トランジスタでこれまでにディスプレイ、センサデバイス等の試作・駆動に成功",
-        "note": "The source states the company succeeded in prototyping and driving displays and sensors using organic transistors with their material, not that they developed organic transistor materials specifically for low-temperature and normal-pressure processes."
-      },
-      {
-        "company": "3M",
-        "candidate_id": "investment:3",
-        "check": "unsupported",
-        "copy_phrase": "for a 50.1% ownership stake",
-        "source_phrase": "",
-        "note": "The source lists debt issued, cash proceeds, and ownership as separate modeling data points without stating the debt and cash were for the ownership stake."
-      },
-      {
-        "company": "3M",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "3M",
-        "source_phrase": "",
-        "note": "The source text does not state that 3M completed the acquisition."
-      },
-      {
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "피부 흑색종 수술 후 보조 치료를 위해",
-        "source_phrase": "",
-        "note": "The copy states the trial was for adjuvant melanoma treatment, which is not mentioned in the sources."
-      },
-      {
-        "company": "Moderna",
+        "article_id": "7147a29627034b8a8f2ca815",
+        "company": "Norsk Hydro",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "Moderna의 첫 mRNA 기반 독감 백신",
+        "copy_phrase": "engineers and assembles",
         "source_phrase": "",
-        "note": "Summary_ko states it is Moderna's first flu vaccine, whereas summary_en states it is a first-of-its-kind flu shot."
+        "note": "English summary describes Shape Corp.'s engineering and assembling in the present tense, whereas the Korean summary states it as a future plan ('설계 및 조립할 예정임')."
       },
       {
-        "company": "Cognex",
+        "article_id": "a70db5bd8d9a265b3612575f",
+        "company": "Tosoh",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "Automate 2026",
-        "source_phrase": "At Automate this year",
-        "note": "The copy specifies the year as 2026, which is not stated in the source."
+        "check": "mismatch",
+        "copy_phrase": "The company has also developed organic transistor materials for low-temperature and normal-pressure processes",
+        "source_phrase": "",
+        "note": "The development of organic transistor materials is present in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "c6fabcd6b7689b12f6b7de9e",
+        "company": "Bayer",
+        "candidate_id": "investment:3",
+        "check": "term",
+        "copy_phrase": "조기상환 미적용 기간",
+        "source_phrase": "",
+        "note": "조기상환 미적용 기간 is a literal compound translation of non-call period rather than an established financial term like 콜옵션 행사 제한 기간."
+      },
+      {
+        "article_id": "9e476810a46f044d7a3ed426",
+        "company": "Moderna",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "재발 무병 생존율",
+        "source_phrase": "",
+        "note": "The term '재발 무병 생존율' is a literal compound rather than the established Korean medical term for recurrence-free survival."
       }
     ],
-    "discarded": 2,
-    "errors": {}
+    "enforce": [
+      {
+        "article_id": "1e0ca0fbd5bc161e8690a8ae",
+        "company": "Jenoptik",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: \"Dr. Dominic Dorfner assumed office as Chief Executive Officer of JENOPTIK AG on August 3, 2026\" vs source \"3. August 2026 Dr. Dominic Dorfner tritt Amt als Vorstandsvorsitzender der JENOPTIK AG an\": The source states the event as a future occurrence using the present tense for a future date, whereas the copy states it as already assumed."
+        ]
+      }
+    ],
+    "discarded": 0,
+    "errors": {},
+    "first_flagged": 22,
+    "first_enforce": 3,
+    "rounds": [
+      {
+        "round": 1,
+        "asked": [
+          {
+            "company": "Jenoptik",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"취임했으며\" vs source \"3. August 2026 Dr. Dominic Dorfner tritt Amt als Vorstandsvorsitzender der JENOPTIK AG an\": The copy states the taking of office as done whereas the source gives a future date."
+            ]
+          },
+          {
+            "company": "Evonik Industries",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"대행할 예정임\" vs source \"Rettig is taking over the duties of Christian Kullmann, who is recovering in the upcoming weeks from a recent serious, unplanned surgery.\": The copy states as planned what the source states as a current action.",
+              "review_unsupported: \"최고경영자\": The source does not state that Christian Kullmann is the chief executive officer."
+            ]
+          },
+          {
+            "company": "Charles River",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: \"지원하기로 했음\" vs source \"Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing (NGS), to support critical steps of Chemistry, Manufacturing, and Controls (CMC) activities for MVC's next-generation multivalent enterovirus vaccine.\": The copy states as decided what the source states as future."
+            ]
+          }
+        ],
+        "written": 3,
+        "failed": 0,
+        "requests": 9
+      },
+      {
+        "round": 2,
+        "asked": [
+          {
+            "company": "Jenoptik",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"assumed office\" vs source \"tritt Amt als Vorstandsvorsitzender der JENOPTIK AG an\": The source states the appointment on August 3, 2026 as a future event, whereas the copy states it as already completed."
+            ]
+          }
+        ],
+        "written": 1,
+        "failed": 0,
+        "requests": 5
+      }
+    ],
+    "withdrawn": [
+      {
+        "article_id": "1e0ca0fbd5bc161e8690a8ae",
+        "company": "Jenoptik",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: \"Dr. Dominic Dorfner assumed office as Chief Executive Officer of JENOPTIK AG on August 3, 2026\" vs source \"3. August 2026 Dr. Dominic Dorfner tritt Amt als Vorstandsvorsitzender der JENOPTIK AG an\": The source states the event as a future occurrence using the present tense for a future date, whereas the copy states it as already assumed."
+        ]
+      }
+    ]
   }
 }
