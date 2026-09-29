@@ -165,3 +165,47 @@ test('a signal card still flagged after two rewrites is withdrawn from the repor
   assert.equal(result.supported, false);
   assert.equal(result.near_miss, true);
 });
+
+// 시제는 날짜로 판단한다. 게시일을 모르는 검토 모델은 제 날짜의 일을 현재형으로 쓴 발표를 미래로 읽었다.
+test('the reviewer is told the published date and reporting period, and judges tense by date', () => {
+  const request = reviewerRequest(article, [decision]);
+  assert.equal(request.published_date, '2026-08-14');
+  assert.deepEqual(request.reporting_period, { from_date: '2026-08-01', to_date: '2026-08-31' });
+  assert.match(REVIEWER_INSTRUCTION, /Decide what is future by date, not by grammatical tense/);
+});
+
+test('a certainty flag on business copy is sent back for rewriting; other business flags are only recorded', async () => {
+  const business = groupArticles([], [{ ...row, investment_signal_no: undefined }], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'reviewer-business-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const businessDecision = { ...decision, candidate_id: 'relevant', leading_indicator_supported: true, event_stage: 'not_applicable',
+    summary_ko: 'Applied Materials는 첨단 칩 패키징 기술 개발을 위해 Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음.' };
+  await fsp.writeFile(path.join(reviewDir, `${business.id}.json`),
+    JSON.stringify({ article_id: business.id, reviewer: 'gemini/test', provider: 'gemini', decisions: [businessDecision] }));
+  const issues = [{ ...flag, copy_phrase: 'Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음' },
+    { check: 'term', copy_phrase: '혁신 파트너', source_phrase: '', note: 'Illustrative term flag.' }];
+  const stats = await reviewSummaries({ articles: [business], reviewDir, reviewer, apiKey: 'AIza-test',
+    fetchImpl: async () => gemini([{ candidate_id: 'relevant', issues }]), sleep: async () => {}, log: () => {} });
+  assert.equal(stats.flagged.length, 2);
+  assert.equal(stats.enforce.length, 1);
+  assert.equal(stats.enforce[0].problems.length, 1);
+  assert.match(stats.enforce[0].problems[0], /^review_certainty/);
+});
+
+// 근접 사업동향 행은 보고서 본문에 실리지 않는다. 지적은 기록하되 다시 쓰게 하거나 내리지 않는다.
+test('a near-miss business row is flagged but never sent back or withdrawn', async () => {
+  const business = groupArticles([], [{ ...row, investment_signal_no: undefined }], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'reviewer-nearmiss-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const nearMiss = { ...decision, candidate_id: 'relevant', target_technology_supported: false, event_stage: 'not_applicable',
+    summary_ko: 'Applied Materials는 첨단 칩 패키징 기술 개발을 위해 Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음.' };
+  await fsp.writeFile(path.join(reviewDir, `${business.id}.json`),
+    JSON.stringify({ article_id: business.id, reviewer: 'gemini/test', provider: 'gemini', decisions: [nearMiss] }));
+  const stats = await reviewSummaries({ articles: [business], reviewDir, reviewer, apiKey: 'AIza-test',
+    fetchImpl: async () => gemini([{ candidate_id: 'relevant', issues: [{ ...flag, copy_phrase: 'Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음' }] }]),
+    sleep: async () => {}, log: () => {} });
+  assert.equal(stats.flagged.length, 1);
+  assert.equal(stats.enforce.length, 0);
+});

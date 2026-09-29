@@ -9,18 +9,19 @@
 // 검토 모델에게는 문안 지시문을 주지 않고 문안과 그 근거만 준다. 문장을 쓰는 것보다 좁은 질문에 답하는 것이
 // 쉬워서, 문안과 같은 경량 모델로도 잡을 수 있다고 보고 시험한다.
 //
-// 투자 시그널 카드의 시제(certainty)와 근거 없는 사실(unsupported) 지적은 문안 단계로 돌려 다시 쓰게 한다
-// (publish_report.mjs). 9월 29일 실행에서 투자 시그널 지적 5건 중 4건이 실제 결함이었다. 사업동향 문안과 용어·한영
-// 불일치 지적은 기록만 한다. 같은 실행의 사업동향 지적은 22건 중 약 9건만 실제 결함이었다.
+// 시제(certainty) 지적과 투자 시그널 카드의 근거 없는 사실(unsupported) 지적은 문안 단계로 돌려 다시 쓰게 한다
+// (publish_report.mjs). 9월 29일 두 실행에서 투자 시그널 지적은 5건 중 4건이 실제 결함이었고, 사업동향의 시제 지적은
+// 모두 실제 결함이었다(원문 「開始します」를 "시작했음"으로 쓴 것 등). 사업동향의 나머지 지적과 용어·한영 불일치
+// 지적은 기록만 한다. 사업동향 지적 전체로는 22건 중 약 9건만 실제 결함이었다.
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
 import { importReview, normalizeQuote } from './local_report.mjs';
-import { ARTICLE_EVIDENCE_CHARS, withdrawCopy, writerTargets } from './summary_writer.mjs';
+import { ARTICLE_EVIDENCE_CHARS, publishedDecisions, withdrawCopy, writerTargets } from './summary_writer.mjs';
 
-export const REVIEWER_VERSION = 'summary-reviewer-v2';
+export const REVIEWER_VERSION = 'summary-reviewer-v3';
 export const DEFAULT_REVIEWER_MODEL = 'gemini-3.5-flash-lite';
 // flash-lite 는 low 이하에서 추론 토큰을 쓰지 않았다(review_providers.mjs GEMINI 주석). 검토는 판단이 일이므로 high 로 둔다.
 // 추론 단계는 요청 수 한도를 더 쓰지 않는다.
@@ -30,8 +31,8 @@ const DEFAULT_DELAY_MS = 4500;
 const DEFAULT_TIMEOUT_MS = 180000;
 
 export const REVIEW_CHECKS = ['certainty', 'unsupported', 'term', 'mismatch'];
-// 문안을 다시 쓰게 하는 지적. 투자 시그널 카드의 이 두 가지만이다.
-export const ENFORCED_CHECKS = { investment: ['certainty', 'unsupported'] };
+// 문안을 다시 쓰게 하는 지적.
+export const ENFORCED_CHECKS = { investment: ['certainty', 'unsupported'], relevant: ['certainty'] };
 
 export function resolveReviewer(env = process.env) {
   const model = String(env.GEMINI_REVIEWER_MODEL || DEFAULT_REVIEWER_MODEL).trim();
@@ -53,7 +54,11 @@ export const REVIEWER_INSTRUCTION = [
   '## Checks',
   'certainty: the copy states as done, decided or signed what the sources state as planned, expected, intended or future ' +
   '("will", "plans to", "expects", "aims to", "is set to", "예정", "계획"), or states as planned what the sources state as done. ' +
-  'Check each fact separately: a source can announce one thing as done and another as future in the same sentence.',
+  'Check each fact separately: a source can announce one thing as done and another as future in the same sentence. ' +
+  'Decide what is future by date, not by grammatical tense: the request gives the article\'s published_date and the ' +
+  'reporting_period. An event the sources date on or before the published_date has happened, even when a headline or ' +
+  'announcement states it in the present tense; only an event dated later, or an undated one the sources describe as ' +
+  'intended or expected, is future.',
   'unsupported: the copy states a fact (organisation, person, amount, date, place, purpose, cause or stage) that no source states, ' +
   'or joins two facts with a purpose or cause ("to fund", "for the acquisition of", "following", "위해", "따라") that no source states. ' +
   'A purpose that is the plain meaning of the event itself, such as a bond issue raising funds, is not a defect. ' +
@@ -92,9 +97,16 @@ export function reviewerRequest(article, decisions) {
     candidate_id: decision.candidate_id, kind: kindOf(article, decision),
     sources: sourcesOf(decision), summary_en: decision.summary_en, summary_ko: decision.summary_ko,
   }));
-  return { company: article.company, items,
+  // 시제는 날짜로 판단해야 한다. 게시일을 모르면 "8월 3일, 취임한다"처럼 제 날짜의 일을 현재형으로 쓴 발표를
+  // 미래로 읽는다(9월 29일 실행 Jenoptik 카드가 이렇게 두 번 지적받고 빠졌다).
+  return { company: article.company, ...datesOf(article), items,
     ...(items.some(item => item.kind === 'relevant') ? { article_evidence: articleEvidence(article) } : {}) };
 }
+
+const datesOf = article => ({
+  ...(/^\d{4}-\d{2}-\d{2}/.test(String(article.published_at || '')) ? { published_date: String(article.published_at).slice(0, 10) } : {}),
+  ...(article.reporting_period ? { reporting_period: article.reporting_period } : {}),
+});
 
 export function reviewerBody(reviewer, request) {
   return {
@@ -111,7 +123,7 @@ export function reviewerBody(reviewer, request) {
 export function reviewKey(reviewer, decision, article) {
   const body = kindOf(article, decision) === 'relevant' ? articleEvidence(article) : '';
   return crypto.createHash('sha256').update(JSON.stringify([REVIEWER_VERSION, reviewer.model, reviewer.thinkingLevel,
-    REVIEWER_INSTRUCTION, sourcesOf(decision), body, decision.summary_en, decision.summary_ko])).digest('hex').slice(0, 24);
+    REVIEWER_INSTRUCTION, datesOf(article), sourcesOf(decision), body, decision.summary_en, decision.summary_ko])).digest('hex').slice(0, 24);
 }
 
 // 검토 모델의 지적을 받는 기준. 문안에 없는 구절을 짚었거나, 근거 구절을 댔는데 근거에 없으면 지어낸 지적이다.
@@ -174,6 +186,8 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
     const targets = writerTargets(article, review).filter(decision =>
       String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim());
     if (!targets.length) continue;
+    // 다시 쓰게 하거나 내리는 것은 보고서에 실리는 후보뿐이다. 근접 사업동향 행은 지적만 기록한다.
+    const published = new Set(publishedDecisions(article, review).map(decision => decision.candidate_id));
     stats.articles += 1;
     const keys = Object.fromEntries(targets.map(decision => [decision.candidate_id, reviewKey(reviewer, decision, article)]));
     const results = new Map();
@@ -217,7 +231,8 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
       for (const issue of result.issues) {
         stats.flagged.push({ article_id: article.id, company: article.company, candidate_id: decision.candidate_id, ...issue });
       }
-      const enforced = result.issues.filter(issue => (ENFORCED_CHECKS[kindOf(article, decision)] || []).includes(issue.check));
+      const enforced = published.has(decision.candidate_id)
+        ? result.issues.filter(issue => (ENFORCED_CHECKS[kindOf(article, decision)] || []).includes(issue.check)) : [];
       if (enforced.length) {
         stats.enforce.push({ article_id: article.id, company: article.company, candidate_id: decision.candidate_id,
           problems: enforced.map(reviewProblem) });
