@@ -65,28 +65,19 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 4,
-    "cached": 82,
-    "written": 1,
-    "written_by": {
-      "gemini-3.5-flash-lite": 1
-    },
+    "requests": 0,
+    "cached": 83,
+    "written": 0,
+    "written_by": {},
     "failed": [],
-    "errors": {
-      "unavailable": 3
-    },
-    "rejected": {},
-    "switched": {
-      "from": "gemini-3.7-flash",
-      "to": "gemini-3.5-flash-lite",
-      "reason": "unavailable"
-    }
+    "errors": {},
+    "rejected": {}
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 2,
-    "cached": 82,
+    "requests": 0,
+    "cached": 83,
     "reviewed": 83,
     "flagged": [
       {
@@ -255,24 +246,8 @@
     "enforce": [],
     "discarded": 0,
     "errors": {},
-    "first_flagged": 19,
-    "first_enforce": 1,
-    "rounds": [
-      {
-        "round": 1,
-        "asked": [
-          {
-            "company": "GE Healthcare",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: \"선임했으며\" vs source \"effective September 14, 2026\": The copy states the appointment as done (선임했으며), while the source states the effective date is in the future relative to the published date."
-            ]
-          }
-        ],
-        "written": 1,
-        "failed": 0,
-        "requests": 3
-      }
-    ]
+    "first_flagged": 18,
+    "first_enforce": 0,
+    "rounds": []
   }
 }
