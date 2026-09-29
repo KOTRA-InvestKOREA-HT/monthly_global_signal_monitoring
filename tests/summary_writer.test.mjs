@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { groupArticles, importReview, summaryNumberProblems } from '../scripts/local_report.mjs';
+import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblems } from '../scripts/local_report.mjs';
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
@@ -136,6 +136,30 @@ test('copy may add facts from the article body when it cites the exact sentence 
   // 보고서 가져오기도 같은 기준이다. 저장된 근거 문장이 본문에 없으면 승인 후보를 가져오지 않는다.
   const forged = { ...saved, decisions: [{ ...saved.decisions[0], summary_quotes: ['Tessaro Engineering will operate the plant.'] }] };
   assert.throws(() => importReview(withBody, forged), /summary_quotes must be exact passages/);
+});
+
+// 9월 29일 실행 3M: 1만 자 떨어진 다른 사안의 각주를 부채 발행의 목적으로 이어 붙였다.
+test('a source quote far from the judged event is rejected for a signal card', () => {
+  const footnote = 'Guidance does not yet reflect the acquisition of Tessaro Engineering, which closed on July 1, 2026.';
+  const far = groupArticles([{ ...row, content_text: `${footnote} ${'Segment detail follows. '.repeat(200)}${quote} ${TAIL}` }], [],
+    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const decision = { ...judge, summary_quotes: [footnote] };
+  assert.deepEqual(summaryQuoteProblems(far, decision), ['far_from_event']);
+  // 인용 가까이의 문장은 받는다.
+  const near = groupArticles([{ ...row, content_text: `${footnote} ${quote} ${TAIL}` }], [],
+    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  assert.deepEqual(summaryQuoteProblems(near, decision), []);
+  // 사업동향 문안은 기사 전체를 풀어 쓰므로 거리를 보지 않는다.
+  const business = groupArticles([], [{ ...row, content_text: far.evidence.join(' '), investment_signal_no: undefined }],
+    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  assert.deepEqual(summaryQuoteProblems(business, { ...decision, candidate_id: 'relevant' }), []);
+});
+
+// 9월 29일 실행 Amkor 한국어 문안이 "…회동하고 있음음음"으로 끝났다.
+test('Korean copy with a syllable repeated three times is rejected as garbled', async () => {
+  const ws = await workspace();
+  const stats = await run(ws, async () => gemini([{ ...good, summary_ko: good.summary_ko.replace(/음\.$/, '음음음') }]));
+  assert.equal(stats.rejected.garbled_korean, 1);
 });
 
 test('written copy is saved into the judgement and reused without another request', async () => {

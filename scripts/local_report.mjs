@@ -272,12 +272,35 @@ export function summaryNumberProblems(summary, evidenceTexts, lang = "en") {
 }
 
 // 문안 단계가 본문에서 가져온 사실의 근거 문장(summary_quotes). 판정 인용과 같은 기준으로 본문에 글자 그대로 있어야 한다.
+// 투자 시그널은 그 문장이 판정 인용 가까이에 있어야 한다. Issue 3(9월 29일 실행) 3M 문안이 실적 자료 앞쪽 각주의
+// "Madison Fire & Rescue 인수"를 1만 자 뒤 Additive 부채 발행에 이어 "인수를 위해 부채를 발행"이라고 썼다.
+// 같은 실행에서 맞게 보탠 사실(Veolia 청약액, Nexeon 신규 투자자, Evonik 투자 목적 등)은 인용에서 1,700자 안이었다.
+// 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 거리를 보지 않는다.
+export const SUMMARY_QUOTE_DISTANCE = 3000;
 export function summaryQuoteProblems(article, decision) {
   const quotes = decision.summary_quotes ?? [];
-  if (!Array.isArray(quotes)) return ["summary_quotes"];
+  if (!Array.isArray(quotes)) return ["not_a_list"];
   const evidence = article.evidence.map(normalizeQuote);
-  return quotes.filter((quote) => typeof quote !== "string" || !normalizeQuote(quote) ||
-    !evidence.some((text) => text.includes(normalizeQuote(quote)))).map(String);
+  const title = normalizeQuote(article.title);
+  const anchors = (decision.evidence_quotes || []).map(normalizeQuote).filter(Boolean);
+  const kind = article.candidates.find((item) => item.id === decision.candidate_id)?.kind;
+  const positions = (block, text) => {
+    const found = [];
+    for (let at = block.indexOf(text); at >= 0; at = block.indexOf(text, at + 1)) found.push(at);
+    return found;
+  };
+  const problems = new Set();
+  for (const quote of quotes) {
+    const text = typeof quote === "string" ? normalizeQuote(quote) : "";
+    if (!text || !evidence.some((block) => block.includes(text))) { problems.add("not_in_article"); continue; }
+    if (kind !== "investment") continue;
+    const near = evidence.some((block) => positions(block, text).some((at) => anchors.some((anchor) =>
+      // 제목만 인용한 판정은 제목이 본문 맨 앞에 있다고 본다.
+      [...positions(block, anchor), ...(title.includes(anchor) ? [0] : [])].some((from) =>
+        Math.max(at, from) - Math.min(at + text.length, from + anchor.length) <= SUMMARY_QUOTE_DISTANCE))));
+    if (!near) problems.add("far_from_event");
+  }
+  return [...problems];
 }
 
 export function decisionNumberProblems(article, decision) {
@@ -599,7 +622,7 @@ export function importReview(article, review, { strictNumbers = false, summaries
     // 문안의 이름은 판정 인용과 이 문장들에서 찾는다. 근거 문장도 본문에 그대로 있어야 한다.
     const copyQuotes = summaries ? [...quotes, ...(Array.isArray(decision.summary_quotes) ? decision.summary_quotes : [])] : quotes;
     if (summaries && enforce && summaryQuoteProblems(article, decision).length) {
-      throw new Error(`${context}: summary_quotes must be exact passages from this article`);
+      throw new Error(`${context}: summary_quotes must be exact passages from this article near its evidence quotes`);
     }
     // 다섯 지표 칸에만 건다. 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이
     // 인용문 밖에서 나오는 것이 정상이고, 같은 기준을 대면 근거 있는 요약까지 막힌다.

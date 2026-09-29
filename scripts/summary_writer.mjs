@@ -152,7 +152,8 @@ export function buildWriterInstruction(policyWording) {
     section('Facts',
       'The evidence_quotes fix the event an item is about. Use article_evidence to add what the quotes leave out about that same event: ' +
       'its purpose, amount, terms, place, timing, counterparty or stage. Never add facts about another event, another news item or another year ' +
-      'that the page happens to list. List in source_quotes every passage of article_evidence, copied exactly, that a fact in the copy comes from ' +
+      'that the page happens to list. Do not join two facts with a purpose, cause or sequence ("to fund", "for the acquisition of", ' +
+      '"following") unless one passage states that link. Take added facts from the passages around the evidence_quotes. List in source_quotes every passage of article_evidence, copied exactly, that a fact in the copy comes from ' +
       'and that evidence_quotes do not already contain; leave it empty when the copy uses the evidence_quotes only. ' +
       'In the rules below, an item\'s quotes are its evidence_quotes together with its source_quotes. ' +
       SUMMARY_GROUNDING_INSTRUCTION + ' ' + SUMMARY_FACT_BASIS_INSTRUCTION),
@@ -227,8 +228,11 @@ export function writtenProblems(article, decision, written, styleProblems = summ
   const sourceQuotes = Array.isArray(written?.source_quotes) ? written.source_quotes : [];
   const next = { ...decision, summary_en: en, summary_ko: ko, summary_quotes: sourceQuotes };
   const problems = [];
-  // 본문에서 가져온 사실의 근거 문장은 본문에 글자 그대로 있어야 한다. 이 문장이 인용 밖 사실의 유일한 근거다.
-  if (summaryQuoteProblems(article, next).length) problems.push('source_quote_not_in_article');
+  // 본문에서 가져온 사실의 근거 문장은 본문에 글자 그대로, 투자 시그널이면 판정 인용 가까이에 있어야 한다.
+  // 이 문장이 인용 밖 사실의 유일한 근거다.
+  problems.push(...summaryQuoteProblems(article, next).map(problem => `source_quote_${problem}`));
+  // 9월 29일 실행 Amkor 한국어 문안이 "…회동하고 있음음음"으로 끝났다. 같은 음절이 세 번 이어지는 한국어는 없다.
+  if (/([가-힣])\1\1/.test(ko)) problems.push('garbled_korean');
   // Issue 3 영문판 검토에서 Veolia 영문 문안에 한글이 섞여 나갔다. 영문 문안에는 한글이 한 글자도 없어야 한다.
   if (/[가-힣]/.test(en)) problems.push('hangul_in_english');
   if (candidate.kind === 'investment') {
