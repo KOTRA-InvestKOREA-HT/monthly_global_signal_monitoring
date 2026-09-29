@@ -4970,17 +4970,23 @@
     {
       "company": "Veolia",
       "monthly_articles": 5,
-      "needs_review_articles": 1,
+      "needs_review_articles": 2,
       "date_pending_articles": 1,
       "deferred_articles": 0,
       "status": "incomplete_evidence",
       "reasons": [
-        "no_body"
+        "no_body",
+        "date_pending"
       ],
       "follow_up": [
         {
           "title": "CP - Veolia émet avec succès 1,15 Md € sur le marché obligataire",
           "url": "https://www.veolia.com/en/veolia-group/finance/press-releases/pr-veolia-successfully-issues-115-bn-eur-bond-market",
+          "publishers": []
+        },
+        {
+          "title": "Nos communiqués de presse",
+          "url": "https://www.veolia.com/fr/newsroom/communiques-de-presse",
           "publishers": []
         }
       ],

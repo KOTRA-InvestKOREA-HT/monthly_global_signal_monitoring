@@ -65,20 +65,19 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 9,
-    "cached": 80,
-    "written": 2,
+    "requests": 98,
+    "cached": 0,
+    "written": 80,
     "written_by": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 80
     },
     "failed": [
       {
-        "article_id": "786d7b1f8059aeafe37c6353",
-        "company": "Veolia",
-        "candidate_id": "investment:3",
+        "article_id": "25e6ee921290b9a6fac6daf4",
+        "company": "Nexeon",
+        "candidate_id": "relevant",
         "problems": [
-          "ungrounded_dates:August",
-          "ungrounded_numbers:11억 5000만 유로|EUR 1.15 billion"
+          "source_quote_not_in_article"
         ]
       }
     ],
@@ -86,8 +85,7 @@
       "unavailable": 3
     },
     "rejected": {
-      "ungrounded_dates": 1,
-      "ungrounded_numbers": 1
+      "source_quote_not_in_article": 1
     },
     "switched": {
       "from": "gemini-3.7-flash",
