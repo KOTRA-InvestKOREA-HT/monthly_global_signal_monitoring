@@ -385,14 +385,8 @@ def draw_cover(report, summary, indicators):
         else:
             label = INDICATOR_LABEL_KO.get(item["no"], item["label_ko"])
             description = item["description_ko"]
-        if report_content.LANG == "en":
-            # 영문 지표 이름은 길어 한 줄에 설명까지 두면 둘 다 잘린다. 설명을 이름 아래 줄에 둔다.
-            label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
-            report.text(67, y - 1, label, 12, WHITE, weight="semibold")
-            description = short_text_to_width(c, description, PAGE_W - 43 - 67, report.fonts["demilight"], 8.5, f"cover_indicator_desc[{item['no']}]")
-            report.text(67, y - 14, description, 8.5, colors.HexColor("#C8D2DF"))
-            y -= 36
-            continue
+        # 영문도 국문처럼 설명을 이름 옆에 둔다. 영문 이름이 50자까지 길던 때는 설명을 아래 줄로 내렸으나,
+        # 지금 이름은 32자 이하라 가장 긴 조합(S1)도 한 줄 폭 안에 든다.
         # 라벨을 먼저 폭 안에 맞추고, 설명은 남은 자리만큼만 쓴다.
         # 예전에는 남은 폭에 하한 60pt를 걸어서, 라벨이 길면 설명이 라벨 위로 겹쳐 찍혔다.
         label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")

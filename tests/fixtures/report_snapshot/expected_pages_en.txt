@@ -8,16 +8,11 @@ Including 30 major Investment Promotion Projects and 77 target companies selecte
 MOTIR
 Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)
 5 LEADING INDICATORS OF INVESTMENT
-1 Supply Chain & Geopolitical Risk
-Supplier shifts, de-risking, tariff and export-control responses
-2 Production Expansion & New Sites
-Plant expansions, new-site reviews and feasibility studies
-3 Capital Raising & Liquidity
-Large bond and share issues, loans and credit lines
-4 R&D and Technology Partnerships
-Joint research, licensing, PoCs and equity-stake talks
-5 Executive Moves & Korea Visits
-C-suite hires and exits, undisclosed Korea trips, site visits
+1 Supply Chain & Geopolitical Risk Supplier shifts, de-risking, tariff and export-control responses
+2 Production Expansion & New Sites Plant expansions, new-site reviews and feasibility studies
+3 Capital Raising & Liquidity Large bond and share issues, loans and credit lines
+4 R&D and Technology Partnerships Joint research, licensing, PoCs and equity-stake talks
+5 Executive Moves & Korea Visits C-suite hires and exits, undisclosed Korea trips, site visits
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X

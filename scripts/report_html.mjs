@@ -406,20 +406,13 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* English indicator names are long enough that a description beside them cuts
-   both. The description takes its own line under the name instead. */
+/* English indicator names were once long enough (up to 50 characters) that the
+   description had to drop to its own line. At up to 32 characters they share the
+   row with it, as the Korean ones do; the longest pair measures about 400pt of the
+   458pt the row allows. */
 html[lang="en"] .cover-lines { font-size: 11pt; }
 /* A long line breaks into two even halves instead of leaving one word behind. */
 html[lang="en"] .cover-lines p { text-wrap: balance; }
-html[lang="en"] .cover-indicators li { flex-wrap: wrap; align-content: flex-start; row-gap: 0; height: 38pt; }
-html[lang="en"] .cover-indicators .label { line-height: 17pt; }
-html[lang="en"] .cover-indicators .desc {
-  flex: 0 0 100%;
-  padding-left: 24pt;
-  font-size: 8.5pt;
-  line-height: 11pt;
-  text-align: left;
-}
 .cover-foot {
   bottom: 0;
   display: flex;
