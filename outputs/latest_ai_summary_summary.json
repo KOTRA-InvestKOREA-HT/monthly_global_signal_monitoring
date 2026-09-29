@@ -65,42 +65,269 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 96,
+    "requests": 97,
     "cached": 0,
     "written": 80,
     "written_by": {
-      "gemini-3.7-flash": 1,
-      "gemini-3.5-flash-lite": 79
+      "gemini-3.5-flash-lite": 80
     },
     "failed": [
       {
-        "article_id": "0937df21d170dd22001bf71a",
-        "company": "Nabtesco",
-        "candidate_id": "relevant",
-        "problems": [
-          "ungrounded_numbers:0.2억 엔"
-        ]
-      },
-      {
-        "article_id": "379e29c1052c76e0eeec4926",
-        "company": "3M",
+        "article_id": "7f9e8e7a4e30241b9243b92b",
+        "company": "Evonik Industries",
         "candidate_id": "investment:3",
         "problems": [
           "source_quote_far_from_event"
         ]
+      },
+      {
+        "article_id": "31971ea0af7f0d317c617dfe",
+        "company": "Veolia",
+        "candidate_id": "investment:3",
+        "problems": [
+          "ungrounded_numbers:11억 5|6억 5"
+        ]
       }
     ],
     "errors": {
-      "unavailable": 5
+      "unavailable": 3
     },
     "rejected": {
-      "ungrounded_numbers": 1,
-      "source_quote_far_from_event": 1
+      "source_quote_far_from_event": 1,
+      "ungrounded_numbers": 1
     },
     "switched": {
       "from": "gemini-3.7-flash",
       "to": "gemini-3.5-flash-lite",
       "reason": "unavailable"
     }
+  },
+  "summary_reviewer": {
+    "model": "gemini-3.5-flash-lite",
+    "mode": "log_only",
+    "articles": 74,
+    "requests": 74,
+    "cached": 0,
+    "reviewed": 80,
+    "flagged": [
+      {
+        "company": "Eli Lilly and Company",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "선급금 및 조건부 마일스톤 지급금을 포함하여",
+        "source_phrase": "inclusive of an upfront payment, and contingent milestone payments",
+        "note": "The payment breakdown appears in the Korean summary and sources but is missing from the English summary."
+      },
+      {
+        "company": "Evonik Industries",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "대행할 예정임",
+        "source_phrase": "Rettig is taking over the duties of Christian Kullmann, who is recovering in the upcoming weeks from a recent serious, unplanned surgery.",
+        "note": "The summary_ko states that taking over the duties is planned or expected (예정임), whereas the source states it as happening now."
+      },
+      {
+        "company": "Evonik Industries",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "대행할 예정임",
+        "source_phrase": "",
+        "note": "summary_en states Rettig is taking over the duties ('is taking over'), while summary_ko states it as a future plan ('대행할 예정임')."
+      },
+      {
+        "company": "NXP",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "후양자 암호화",
+        "source_phrase": "",
+        "note": "후양자 암호화 is a literal compound; the established Korean term for post-quantum cryptography is 양자내성암호."
+      },
+      {
+        "company": "NXP",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "무선 프로세서",
+        "source_phrase": "",
+        "note": "Radio processor should be translated using the established loanword 라디오 rather than 무선."
+      },
+      {
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "augmented reality",
+        "source_phrase": "Announced a long-term joint development agreement with EssilorLuxottica to accelerate the commercialization of next-generation intelligent optical systems for augmented reality and AI-powered smart eyewear.",
+        "note": "Augmented reality appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "company": "Applied Materials",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "introduced",
+        "source_phrase": "",
+        "note": "The word 'introduced' appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "company": "Rio Tinto",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "August 13, 2026",
+        "source_phrase": "",
+        "note": "The source text does not state the specific date August 13, 2026."
+      },
+      {
+        "company": "NXP",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "August 12, 2026",
+        "source_phrase": "",
+        "note": "The date August 12, 2026 is not stated in the sources."
+      },
+      {
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "REV8 Lidar",
+        "source_phrase": "",
+        "note": "The summary_ko mentions REV8 Lidar, which is not supported by any source passage."
+      },
+      {
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "REV8 lidar",
+        "source_phrase": "Econolite partnership leverages world's first native color digital lidar to expand Ouster BlueCity across 160 intersections with up to 500-foot advance detection for optimized mobility and enhanced safety.",
+        "note": "The summary_en and summary_ko mention REV8 lidar, while the source mentions world's first native color digital lidar."
+      },
+      {
+        "company": "BorgWarner",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "hybrid",
+        "source_phrase": "V6 engine family",
+        "note": "The copy states the engine family is hybrid, which is not mentioned in the sources."
+      },
+      {
+        "company": "BorgWarner",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "하이브리드",
+        "source_phrase": "V6 engine family",
+        "note": "The copy states the engine family is hybrid, which is not mentioned in the sources."
+      },
+      {
+        "company": "Onsemi",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "연결 연산",
+        "source_phrase": "",
+        "note": "The phrase '연결 연산' is a literal compound coined from English parts rather than an established Korean term."
+      },
+      {
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "launched",
+        "source_phrase": "開始します",
+        "note": "The copy states as done what the source states as a future event."
+      },
+      {
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "시작했음",
+        "source_phrase": "開始します",
+        "note": "The copy states as done what the source states as a future event."
+      },
+      {
+        "company": "Veolia",
+        "candidate_id": "investment:3",
+        "check": "unsupported",
+        "copy_phrase": "자금을 조달하기 위해",
+        "source_phrase": "",
+        "note": "The summary introduces an unsupported purpose for issuing bonds."
+      },
+      {
+        "company": "Nexeon",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "South Korea Gunsan",
+        "source_phrase": "Gunsan, South Korea",
+        "note": "Geographic names should be translated into Korean instead of being left in Latin script."
+      },
+      {
+        "company": "Norsk Hydro",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "engineers and assembles",
+        "source_phrase": "Shape Corp. will engineer and assemble the front bumper system to GM specifications, with integration into the Cadillac OPTIQ platform.",
+        "note": "The copy states as present fact what the source states as future."
+      },
+      {
+        "company": "Norsk Hydro",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "engineers and assembles",
+        "source_phrase": "",
+        "note": "The English copy describes Shape Corp.'s work in the present tense while the Korean copy describes it as future."
+      },
+      {
+        "company": "Nabtesco",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "애플리케이션",
+        "source_phrase": "",
+        "note": "The word 애플리케이션 is a transliteration of an English common noun."
+      },
+      {
+        "company": "Tosoh",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "The company has also developed organic transistor materials for low-temperature and normal-pressure processes",
+        "source_phrase": "当社材を用いた有機トランジスタでこれまでにディスプレイ、センサデバイス等の試作・駆動に成功",
+        "note": "The source states the company succeeded in prototyping and driving displays and sensors using organic transistors with their material, not that they developed organic transistor materials specifically for low-temperature and normal-pressure processes."
+      },
+      {
+        "company": "3M",
+        "candidate_id": "investment:3",
+        "check": "unsupported",
+        "copy_phrase": "for a 50.1% ownership stake",
+        "source_phrase": "",
+        "note": "The source lists debt issued, cash proceeds, and ownership as separate modeling data points without stating the debt and cash were for the ownership stake."
+      },
+      {
+        "company": "3M",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "3M",
+        "source_phrase": "",
+        "note": "The source text does not state that 3M completed the acquisition."
+      },
+      {
+        "company": "Moderna",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "피부 흑색종 수술 후 보조 치료를 위해",
+        "source_phrase": "",
+        "note": "The copy states the trial was for adjuvant melanoma treatment, which is not mentioned in the sources."
+      },
+      {
+        "company": "Moderna",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "Moderna의 첫 mRNA 기반 독감 백신",
+        "source_phrase": "",
+        "note": "Summary_ko states it is Moderna's first flu vaccine, whereas summary_en states it is a first-of-its-kind flu shot."
+      },
+      {
+        "company": "Cognex",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "Automate 2026",
+        "source_phrase": "At Automate this year",
+        "note": "The copy specifies the year as 2026, which is not stated in the source."
+      }
+    ],
+    "discarded": 2,
+    "errors": {}
   }
 }
