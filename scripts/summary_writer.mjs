@@ -19,9 +19,11 @@ import {
   SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION,
   SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
 } from './review_prompts.mjs';
-import { decisionOutcome, importReview, ungroundedSummaryNames, ungroundedSummaryDates, decisionNumberProblems } from './local_report.mjs';
+import {
+  decisionOutcome, importReview, ungroundedSummaryNames, ungroundedSummaryDates, decisionNumberProblems, summaryQuoteProblems,
+} from './local_report.mjs';
 
-export const WRITER_VERSION = 'summary-writer-v2';
+export const WRITER_VERSION = 'summary-writer-v3';
 // 한 후보의 문안을 검사 결과를 알려 주며 다시 쓰게 하는 최대 횟수(첫 요청 포함).
 export const WRITER_ATTEMPTS = 3;
 // gemini-3.8-flash 는 무료 등급에서 503·시간 초과로 끝내지 못했다(review_providers.mjs 의 2차 검증 주석).
@@ -32,7 +34,9 @@ const DEFAULT_THINKING = 'low';
 // 무료 등급 flash 의 분당 요청 한도는 flash-lite 보다 낮다. 10 RPM 기준으로 간격을 둔다.
 const DEFAULT_DELAY_MS = 6500;
 const DEFAULT_TIMEOUT_MS = 120000;
-// 사업동향 문안은 기사 전체를 풀어 쓰므로 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
+// 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
+// Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
+// 문안도 제목을 옮기는 데 그쳤다. 판정은 본문 전체를 읽고 있었으므로 문안 단계도 본문을 받는다.
 const ARTICLE_EVIDENCE_CHARS = 12000;
 
 // 대체 문안 모델. 기본 모델이 할당량·장애로 멈추거나 세 번 모두 검사에 걸린 후보를 이 모델이 이어 쓴다.
@@ -146,8 +150,12 @@ export function buildWriterInstruction(policyWording) {
       'Each item names its kind: "investment" is a signal card under the stated indicator; "relevant" is a business-development paragraph about the company\'s target product. ' +
       'An item carrying rejected_because had its previous copy rejected by the listed automated checks: write it again so that none of them applies, without dropping supported facts.'),
     section('Facts',
-      'For an investment item, state only facts supported by its evidence_quotes. A relevant item may also use article_evidence, ' +
-      'but must stay on the event its evidence_quotes describe. ' + SUMMARY_GROUNDING_INSTRUCTION + ' ' + SUMMARY_FACT_BASIS_INSTRUCTION),
+      'The evidence_quotes fix the event an item is about. Use article_evidence to add what the quotes leave out about that same event: ' +
+      'its purpose, amount, terms, place, timing, counterparty or stage. Never add facts about another event, another news item or another year ' +
+      'that the page happens to list. List in source_quotes every passage of article_evidence, copied exactly, that a fact in the copy comes from ' +
+      'and that evidence_quotes do not already contain; leave it empty when the copy uses the evidence_quotes only. ' +
+      'In the rules below, an item\'s quotes are its evidence_quotes together with its source_quotes. ' +
+      SUMMARY_GROUNDING_INSTRUCTION + ' ' + SUMMARY_FACT_BASIS_INSTRUCTION),
     section('Order and independence', SUMMARY_ENGLISH_FIRST_INSTRUCTION),
     section('English', SUMMARY_ENGLISH_STYLE_INSTRUCTION + ' Do not repeat promotional adverbs or adjectives such as "successfully", "significant" or "sizable"; give the figure instead or leave it out. Use American spelling (aluminum, commercialization, program) even when the source is British.'),
     section('Korean', SUMMARY_STYLE_INSTRUCTION + ' Write the Korean a Korean business reporter would write, not a word-for-word rendering of English: ' +
@@ -155,6 +163,8 @@ export function buildWriterInstruction(policyWording) {
     section('Korean terminology and layout', policyWording),
     section('Form by kind',
       'investment: summary_ko is "headline - detail" with one " - " separator; summary_en is one or two plain sentences with no headline. ' +
+      `The investment detail fits the report card: at most ${SIGNAL_SUMMARY_LIMITS.ko} characters of Korean after the separator and ` +
+      `${SIGNAL_SUMMARY_LIMITS.en} characters of English, so keep the facts a reader needs to judge the investment and drop the rest. ` +
       'relevant: both summaries are plain prose sentences with no headline, no " - " separator and no leading label.'),
     section('Examples', renderExamples()),
     section('Output contract', 'Return every item exactly once by candidate_id, with no text outside the JSON response.'),
@@ -162,13 +172,15 @@ export function buildWriterInstruction(policyWording) {
 }
 
 // 영어를 먼저 쓴다. 한국어 개조식 문안이 영어 생성 문맥에 먼저 놓이면 영문이 한국어 표제를 따라 쓴다.
+// 본문에서 가져올 문장(source_quotes)을 문안보다 먼저 적게 한다. 근거를 정한 뒤 쓰게 하려는 순서다.
 export const writerSchema = { type: 'OBJECT', properties: {
   summaries: { type: 'ARRAY', items: { type: 'OBJECT', properties: {
-    candidate_id: { type: 'STRING' }, summary_en: { type: 'STRING' }, summary_ko: { type: 'STRING' },
+    candidate_id: { type: 'STRING' }, source_quotes: { type: 'ARRAY', items: { type: 'STRING' } },
+    summary_en: { type: 'STRING' }, summary_ko: { type: 'STRING' },
   } } },
 } };
 
-// 모델이 보는 기사. 판정 사유는 넣지 않는다. 문안은 인용에서만 출발한다.
+// 모델이 보는 기사. 판정 사유는 넣지 않는다. 사건은 인용이 정하고, 본문은 같은 사건의 맥락을 채운다.
 // rejected: 앞선 시도에서 검사에 걸린 후보별 문제 코드. 모델에게 무엇을 고쳐야 하는지 알려 준다.
 export function writerRequest(article, decisions, rejected = {}) {
   const items = decisions.map(decision => {
@@ -181,12 +193,11 @@ export function writerRequest(article, decisions, rejected = {}) {
       ...(rejected[decision.candidate_id]?.length ? { rejected_because: rejected[decision.candidate_id] } : {}),
     };
   });
-  const needsArticle = items.some(item => item.kind === 'relevant');
   return {
     company: article.company, title: article.title,
     reporting_period: article.reporting_period,
     items,
-    ...(needsArticle ? { article_evidence: article.evidence.join('\n\n').slice(0, ARTICLE_EVIDENCE_CHARS) } : {}),
+    article_evidence: article.evidence.join('\n\n').slice(0, ARTICLE_EVIDENCE_CHARS),
   };
 }
 
@@ -213,14 +224,17 @@ export function writtenProblems(article, decision, written, styleProblems = summ
   const candidate = article.candidates.find(item => item.id === decision.candidate_id);
   const en = String(written?.summary_en || '').trim(), ko = String(written?.summary_ko || '').trim();
   if (!en || !ko) return ['empty'];
-  const next = { ...decision, summary_en: en, summary_ko: ko };
+  const sourceQuotes = Array.isArray(written?.source_quotes) ? written.source_quotes : [];
+  const next = { ...decision, summary_en: en, summary_ko: ko, summary_quotes: sourceQuotes };
   const problems = [];
+  // 본문에서 가져온 사실의 근거 문장은 본문에 글자 그대로 있어야 한다. 이 문장이 인용 밖 사실의 유일한 근거다.
+  if (summaryQuoteProblems(article, next).length) problems.push('source_quote_not_in_article');
   // Issue 3 영문판 검토에서 Veolia 영문 문안에 한글이 섞여 나갔다. 영문 문안에는 한글이 한 글자도 없어야 한다.
   if (/[가-힣]/.test(en)) problems.push('hangul_in_english');
   if (candidate.kind === 'investment') {
     if (!ko.includes(' - ')) problems.push('korean_headline_missing');
     if (en.includes(' - ')) problems.push('english_headline');
-    const names = ungroundedSummaryNames(en, decision.evidence_quotes, article.title);
+    const names = ungroundedSummaryNames(en, [...(decision.evidence_quotes || []), ...sourceQuotes], article.title);
     if (names.length) problems.push(`ungrounded_names:${names.join('|')}`);
   } else if (en.includes(' - ') || ko.includes(' - ')) problems.push('business_headline');
   // 연도는 사업동향 문안에도 건다. Issue 3 Jenoptik 사업현황 영문이 없는 연도(2015)를 지어냈다.
@@ -336,7 +350,7 @@ export function writerTargets(article, review) {
 }
 
 const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
-const withoutSummary = ({ summary_writer, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
+const withoutSummary = ({ summary_writer, summary_quotes, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
 const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 
 // 판정이 모두 끝난 뒤 한 번 돈다. 기사당 요청 하나(검사에 걸리면 걸린 후보만 다시), 직렬이다.
@@ -411,7 +425,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     for (const decision of targets) {
       if (decision.summary_writer?.key === keys[decision.candidate_id] &&
         String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim() &&
-        !writtenProblems(article, decision, decision).length) written.set(decision.candidate_id, null);
+        !writtenProblems(article, decision, { ...decision, source_quotes: decision.summary_quotes }).length) written.set(decision.candidate_id, null);
     }
     stats.cached += written.size;
     let todo = targets.filter(decision => !written.has(decision.candidate_id));
@@ -422,7 +436,8 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
         const item = byId.get(decision.candidate_id);
         const problems = item ? writtenProblems(article, decision, item) : ['missing_item'];
         if (problems.length) { rejected[decision.candidate_id] = problems; continue; }
-        written.set(decision.candidate_id, { summary_en: item.summary_en.trim(), summary_ko: item.summary_ko.trim(), model: model.model });
+        written.set(decision.candidate_id, { summary_en: item.summary_en.trim(), summary_ko: item.summary_ko.trim(),
+          summary_quotes: Array.isArray(item.source_quotes) ? item.source_quotes : [], model: model.model });
         delete rejected[decision.candidate_id];
       }
       todo = todo.filter(decision => !written.has(decision.candidate_id));

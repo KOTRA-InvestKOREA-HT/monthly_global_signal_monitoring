@@ -271,6 +271,15 @@ export function summaryNumberProblems(summary, evidenceTexts, lang = "en") {
   return [...new Set(problems)];
 }
 
+// 문안 단계가 본문에서 가져온 사실의 근거 문장(summary_quotes). 판정 인용과 같은 기준으로 본문에 글자 그대로 있어야 한다.
+export function summaryQuoteProblems(article, decision) {
+  const quotes = decision.summary_quotes ?? [];
+  if (!Array.isArray(quotes)) return ["summary_quotes"];
+  const evidence = article.evidence.map(normalizeQuote);
+  return quotes.filter((quote) => typeof quote !== "string" || !normalizeQuote(quote) ||
+    !evidence.some((text) => text.includes(normalizeQuote(quote)))).map(String);
+}
+
 export function decisionNumberProblems(article, decision) {
   return [...summaryNumberProblems(decision.summary_ko, article.evidence, "ko"),
     ...summaryNumberProblems(decision.summary_en, article.evidence, "en")];
@@ -586,10 +595,16 @@ export function importReview(article, review, { strictNumbers = false, summaries
     if (!Array.isArray(quotes) || quotes.some((quote) => typeof quote !== 'string' || !normalizeQuote(quote) || !evidence.some((text) => text.includes(normalizeQuote(quote))))) {
       throw new Error(`${context}: evidence_quotes must be exact passages from this article`);
     }
+    // 문안 단계는 판정 인용 밖의 사실을 본문에서 가져올 수 있고, 그 근거 문장을 summary_quotes 로 남긴다.
+    // 문안의 이름은 판정 인용과 이 문장들에서 찾는다. 근거 문장도 본문에 그대로 있어야 한다.
+    const copyQuotes = summaries ? [...quotes, ...(Array.isArray(decision.summary_quotes) ? decision.summary_quotes : [])] : quotes;
+    if (summaries && enforce && summaryQuoteProblems(article, decision).length) {
+      throw new Error(`${context}: summary_quotes must be exact passages from this article`);
+    }
     // 다섯 지표 칸에만 건다. 사업동향 문안은 기사 전체를 풀어 쓰는 것이 일이라 지명·부문명이
     // 인용문 밖에서 나오는 것이 정상이고, 같은 기준을 대면 근거 있는 요약까지 막힌다.
     if (summaries && enforce && candidate.kind === "investment") {
-      const ungrounded = ungroundedSummaryNames(decision.summary_en, quotes, article.title);
+      const ungrounded = ungroundedSummaryNames(decision.summary_en, copyQuotes, article.title);
       if (ungrounded.length) {
         throw new Error(`${context}: summary names ${ungrounded.join(", ")} without an evidence quote. ` +
           `Quote the passage the summary describes, or summarize only the quoted event.`);
@@ -615,7 +630,7 @@ export function importReview(article, review, { strictNumbers = false, summaries
     // 여기서 같은 기준을 대면 근접 사업동향 행의 문안이 거의 다 비워지고, 문안 없는 행은 사업현황
     // 상자를 채울 수 없어(근거 발췌를 그대로 실으면 한국어판에 영문 본문이 나간다) 이 경로가 무용해진다.
     const groundedSummary = enforce || candidate.kind === "relevant" ||
-      !ungroundedSummaryNames(decision.summary_en, quotes, article.title).length;
+      (!summaryQuoteProblems(article, decision).length && !ungroundedSummaryNames(decision.summary_en, copyQuotes, article.title).length);
     const approved = supported && !recheckPending && !summaryFailed;
     // 재검토를 끝내지 못해 승인에서 내려온 후보도 대시보드에는 남긴다. 판정 자체는 살아 있고
     // 다음 실행이 다시 물으므로, 조용히 사라지면 그 사이 무엇이 보류됐는지 볼 수 없다.

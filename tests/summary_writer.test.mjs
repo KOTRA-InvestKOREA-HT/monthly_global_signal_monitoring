@@ -95,14 +95,47 @@ test('the writer request carries evidence only, plus the checks a previous copy 
   assert.deepEqual(request.items[0].evidence_quotes, [quote]);
   assert.equal(request.items[0].indicator, 'Capital Raising & Financing');
   assert.equal('rejected_because' in request.items[0], false);
-  // 투자 시그널만 있는 기사는 본문을 보내지 않는다.
-  assert.equal('article_evidence' in request, false);
+  // 투자 시그널 문안도 본문을 받는다. 인용이 제목 한 줄이면 인용만으로는 맥락을 쓸 수 없다.
+  assert.match(request.article_evidence, /construction would begin once permits are granted/);
   const retry = writerRequest(article, [judge], { 'investment:3': ['ungrounded_numbers:800'] });
   assert.deepEqual(retry.items[0].rejected_because, ['ungrounded_numbers:800']);
   const body = writerBody(writer, buildWriterInstruction(wording), request);
   assert.equal(body.generationConfig.thinkingConfig.thinkingLevel, 'low');
   assert.deepEqual(Object.keys(body.generationConfig.responseSchema.properties.summaries.items.properties),
-    ['candidate_id', 'summary_en', 'summary_ko']);
+    ['candidate_id', 'source_quotes', 'summary_en', 'summary_ko']);
+});
+
+// 인용 밖 사실은 본문에서 가져올 수 있지만, 가져온 문장을 source_quotes 로 적어야 하고 그 문장은 본문에 그대로 있어야 한다.
+test('copy may add facts from the article body when it cites the exact sentence they come from', async () => {
+  const extra = 'Tessaro Engineering will build the plant, which is due to open in 2028.';
+  const withBody = groupArticles([{ ...row, content_text: `${quote} ${extra} ${TAIL}` }], [],
+    { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'writer-body-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const file = path.join(reviewDir, `${withBody.id}.json`);
+  const reset = () => fsp.writeFile(file, JSON.stringify({ ...review, article_id: withBody.id }));
+  const write = answer => writeSummaries({ articles: [withBody], reviewDir, writer, apiKey: 'AIza-test', policyWording: wording,
+    fetchImpl: async () => gemini([answer]), sleep: async () => {}, log: () => {}, attempts: 1 });
+  const rich = { ...good,
+    summary_en: 'Acme priced EUR 500 million of senior notes to fund a new wafer plant in Dresden, Germany, that Tessaro Engineering will build for a 2028 opening.' };
+
+  await reset();
+  const cited = await write({ ...rich, source_quotes: [extra] });
+  assert.equal(cited.written, 1);
+  const saved = JSON.parse(await fsp.readFile(file, 'utf8'));
+  assert.deepEqual(saved.decisions[0].summary_quotes, [extra]);
+  assert.equal(importReview(withBody, saved)[0].row.ai_summary_en, rich.summary_en);
+
+  // 근거 문장 없이 본문의 이름을 쓰면 이름 검사에 걸린다.
+  await reset();
+  assert.equal((await write(rich)).rejected.ungrounded_names, 1);
+  // 본문에 없는 근거 문장은 받지 않는다.
+  await reset();
+  assert.equal((await write({ ...rich, source_quotes: ['Tessaro Engineering will build and operate the plant.'] })).rejected.source_quote_not_in_article, 1);
+  // 보고서 가져오기도 같은 기준이다. 저장된 근거 문장이 본문에 없으면 승인 후보를 가져오지 않는다.
+  const forged = { ...saved, decisions: [{ ...saved.decisions[0], summary_quotes: ['Tessaro Engineering will operate the plant.'] }] };
+  assert.throws(() => importReview(withBody, forged), /summary_quotes must be exact passages/);
 });
 
 test('written copy is saved into the judgement and reused without another request', async () => {
