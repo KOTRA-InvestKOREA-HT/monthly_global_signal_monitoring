@@ -16,6 +16,7 @@ import { build } from './local_report.mjs';
 import { publishableReviewFailures, publishedSignalCounts, runIdentity } from './review_report.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 import { resolveWriter, writeSummaries, writerPolicySection } from './summary_writer.mjs';
+import { resolveReviewer, reviewSummaries } from './summary_reviewer.mjs';
 
 const ROOT = path.resolve('outputs/review_work');
 const STATUS_FILE = path.join(ROOT, 'publish_status.json');
@@ -70,6 +71,18 @@ function writerSummary(stats) {
       'Written copy is saved; run publish-report again for the same dates to continue. Existing published PDFs are unchanged.\n' : '');
 }
 
+function reviewerSummary(stats) {
+  if (!stats) return '### Copy review\nOff (GEMINI_REVIEWER_MODEL=off).\n';
+  if (stats.error) return `### Copy review\nFailed: ${stats.error}. The report was built without it.\n`;
+  return `### Copy review (${stats.model}, ${stats.mode})\n` +
+    `${stats.reviewed} summaries reviewed; ${stats.requests} requests; ${stats.cached} reused; ` +
+    `${stats.flagged.length} issues flagged; ${stats.discarded} unverifiable flags discarded` +
+    `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
+    `${stats.stopped ? `; stopped after ${stats.stopped.reason}` : ''}.\n` +
+    stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
+      `${item.source_phrase ? ` vs "${item.source_phrase}"` : ''}: ${item.note}\n`).join('');
+}
+
 async function main() {
   const period = resolveReportPeriod();
   process.env.REPORT_FROM_DATE = period.from_date;
@@ -100,6 +113,20 @@ async function main() {
       return;
     }
 
+    // 문안 검토. 지금은 기록만 하므로 실패해도 보고서는 만든다.
+    stage = 'review';
+    const reviewer = resolveReviewer();
+    let reviewStats = null;
+    if (reviewer) {
+      try {
+        reviewStats = await reviewSummaries({ articles: snapshot.articles, reviewDir: path.join(ROOT, 'reviews'), reviewer, apiKey });
+      } catch (error) {
+        reviewStats = { model: reviewer.model, error: String(error.message || error).slice(0, 300) };
+      }
+    }
+    console.log(JSON.stringify({ summary_reviewer: reviewStats }));
+    if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, reviewerSummary(reviewStats));
+
     stage = 'build';
     process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
     const reviewFailed = publishableReviewFailures(judged);
@@ -123,7 +150,8 @@ async function main() {
     const { stage: _stage, judged: _judged, run_dir: _runDir, run, ...judgement } = judged;
     await write('outputs/latest_ai_summary_summary.json', {
       ...judgement, status: reviewFailed.length ? 'completed_with_review_failures' : judgement.status,
-      judgement_run: run || null, summary_writer: stats, issue_number: issueNumber, period, provider, model: judged.model });
+      judgement_run: run || null, summary_writer: stats, summary_reviewer: reviewStats, issue_number: issueNumber, period, provider,
+      model: judged.model });
     await fs.mkdir('public/reports', { recursive: true });
     await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
     await fs.copyFile(path.join(reportDir, 'report_en.pdf'), 'public/reports/latest_report_en.pdf');
