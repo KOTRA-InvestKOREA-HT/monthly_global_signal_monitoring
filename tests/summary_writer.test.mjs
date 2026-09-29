@@ -306,3 +306,15 @@ test('an amount written as $1.4B in the source grounds $1.4 billion in the copy'
   assert.deepEqual(summaryNumberProblems('Sales of about $450 million.', source, 'en'), []);
   assert.deepEqual(summaryNumberProblems('3M issued about $2.4 billion of debt.', source, 'en'), ['$2.4 billion']);
 });
+
+// Issue 3 Veolia: 프랑스어 원문 "1,15 Md €"를 읽지 못해 맞게 옮긴 문안이 근거 없음으로 떨어졌다.
+test('a French amount with a decimal comma and Md grounds the translated amount', () => {
+  const source = ['26 août 2026 Veolia émet avec succès 1,15 Md € sur le marché obligataire'];
+  assert.deepEqual(summaryNumberProblems('채권 발행 - 11억 5000만 유로 규모의 채권을 발행했음.', source, 'ko'), []);
+  assert.deepEqual(summaryNumberProblems('Veolia issued EUR 1.15 billion of bonds.', source, 'en'), []);
+  assert.deepEqual(summaryNumberProblems('Veolia issued EUR 1.5 billion of bonds.', source, 'en'), ['EUR 1.5 billion']);
+  assert.deepEqual(summaryNumberProblems('Siemens Energy raised EUR 2.4 billion.', ['Kapitalerhöhung über 2,4 Mrd. Euro'], 'en'), []);
+  // 쉼표 뒤가 세 자리면 여전히 천 단위 구분이다.
+  assert.deepEqual(summaryNumberProblems('Orders reached 3,349 MW.', ['Orders reached 3,349 MW.'], 'en'), []);
+  assert.deepEqual(summaryNumberProblems('Orders reached 3.349 MW.', ['Orders reached 3,349 MW.'], 'en'), ['3.349']);
+});

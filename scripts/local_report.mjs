@@ -141,16 +141,34 @@ export function ungroundedSummaryNames(summaryEn, quotes, title) {
 // 있을 수 있다. 기사 어디에도 없는 달이면 요약이 지어낸 것이다.
 const SUMMARY_MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
   "september", "october", "november", "december"];
+// 원문은 달을 제 언어로 적는다. Issue 3 Veolia 보도자료 목록은 "26 août 2026"이라 맞게 옮긴 "August"가 근거 없음으로 걸렸다.
+// 영어와 철자가 같은 달(독일어 August·September)은 따로 적지 않는다. 일본어·중국어·한국어 원문은 "8月"·"8월"로 적는다.
+const SOURCE_MONTHS = [
+  ["janvier", "januar", "jänner", "enero", "gennaio", "januari"],
+  ["février", "fevrier", "februar", "febrero", "febbraio", "februari"],
+  ["mars", "märz", "marzo", "maart"],
+  ["avril", "abril", "aprile"],
+  ["mai", "mayo", "maggio", "mei"],
+  ["juin", "juni", "junio", "giugno"],
+  ["juillet", "juli", "julio", "luglio"],
+  ["août", "aout", "agosto", "augustus"],
+  ["septembre", "septiembre", "settembre"],
+  ["octobre", "oktober", "octubre", "ottobre"],
+  ["novembre", "noviembre"],
+  ["décembre", "decembre", "dezember", "diciembre", "dicembre"],
+];
+const MONTH_GROUNDS = SUMMARY_MONTHS.map((month, index) => new RegExp(
+  `(?<![\\p{L}\\d])(?:${[month, ...SOURCE_MONTHS[index]].join("|")})(?!\\p{L})|(?<!\\d)0?${index + 1}\\s?[月월]`, "iu"));
 export function ungroundedSummaryDates(summaryEn, evidence, title, publishedAt = "") {
   const text = summaryBody(clean(summaryEn));
   const grounded = clean([...(evidence || []), title].join(" ")).toLowerCase();
   const stated = new Set();
-  for (const month of SUMMARY_MONTHS) {
+  for (const [index, month] of SUMMARY_MONTHS.entries()) {
     const pattern = new RegExp(`\\b${month}\\b`, "i");
     if (!pattern.test(text)) continue;
     // May·March 는 달 이름이면서 보통 낱말이다. 달로 읽히는 자리에서만 센다.
     if ((month === "may" || month === "march") && !AMBIGUOUS_MONTH.test(text)) continue;
-    if (!pattern.test(grounded)) stated.add(month[0].toUpperCase() + month.slice(1));
+    if (!MONTH_GROUNDS[index].test(grounded)) stated.add(month[0].toUpperCase() + month.slice(1));
   }
   // 연-월-일 표기도 같은 기준으로 본다.
   for (const [iso] of text.matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)) {
@@ -178,15 +196,17 @@ export function ungroundedSummaryDates(summaryEn, evidence, title, publishedAt =
 // 새로 받은 응답에서만(strictNumbers) 되묻고, 재시도 뒤에도 숫자만 걸리면 경고를 남기고 받는다.
 // 통화 코드를 앞에 두고 백만 단위를 m 으로 적는 공시가 있다(2026-08 Vestas "EUR 4,723m").
 // 발표 자료는 "~$1.4B"처럼 B 한 글자로 적는다(Issue 3 3M 실적 자료). 없으면 맞게 옮긴 금액이 근거 없음으로 걸린다.
-const AMOUNT_SCALE = { trillion: 1e12, tn: 1e12, billion: 1e9, bn: 1e9, b: 1e9, million: 1e6, mn: 1e6, m: 1e6, thousand: 1e3, k: 1e3,
-  "兆": 1e12, "億": 1e8, "万": 1e4, "조": 1e12, "억": 1e8, "만": 1e4 };
+// 프랑스어·독일어 공시는 십억을 Md·Mrd·milliard, 백만을 Mio 로 적는다(Issue 3 Veolia "1,15 Md €").
+const AMOUNT_SCALE = { trillion: 1e12, tn: 1e12, billion: 1e9, billions: 1e9, bn: 1e9, b: 1e9, million: 1e6, millions: 1e6, mn: 1e6,
+  m: 1e6, thousand: 1e3, k: 1e3, md: 1e9, mds: 1e9, mrd: 1e9, mrds: 1e9, mia: 1e9, milliard: 1e9, milliards: 1e9, milliarde: 1e9,
+  milliarden: 1e9, mio: 1e6, "兆": 1e12, "億": 1e8, "万": 1e4, "조": 1e12, "억": 1e8, "만": 1e4 };
 const CURRENCY_CODE = { "$": "USD", "US$": "USD", "A$": "USD", "C$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₩": "KRW",
   usd: "USD", dollar: "USD", dollars: "USD", "달러": "USD", eur: "EUR", euro: "EUR", euros: "EUR", "유로": "EUR",
   gbp: "GBP", pound: "GBP", pounds: "GBP", "파운드": "GBP", jpy: "JPY", yen: "JPY", "円": "JPY", "엔": "JPY",
   krw: "KRW", "원": "KRW", chf: "CHF", franc: "CHF", francs: "CHF", "프랑": "CHF" };
 const CURRENCY_MARKER = { USD: /\$|\bUSD\b|dollar/i, EUR: /€|\bEUR\b|euro/i, GBP: /£|\bGBP\b|pound|sterling/i,
   JPY: /¥|円|\bJPY\b|\byen\b/i, KRW: /₩|\bKRW\b|\bwon\b|원/i, CHF: /\bCHF\b|franc/i };
-const LATIN_AMOUNT = /(US\$|A\$|C\$|[$€£¥₩]|(?:USD|EUR|GBP|JPY|CHF)(?=\s?\d))?\s?(?<![A-Za-z0-9.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s?(%|percent\b|trillion\b|billion\b|million\b|thousand\b|tn\b|bn\b|mn\b|m\b|b\b|k\b|兆|億|万)|(?![A-Za-z0-9]))(?:\s?(?:(USD|EUR|GBP|JPY|KRW|CHF|dollars?|euros?|pounds?|yen|francs?)\b|(円)))?/gi;
+const LATIN_AMOUNT = /(US\$|A\$|C\$|[$€£¥₩]|(?:USD|EUR|GBP|JPY|CHF)(?=\s?\d))?\s?(?<![A-Za-z0-9.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s?(%|percent\b|trillion\b|billions?\b|millions?\b|thousand\b|milliard(?:s|e|en)?\b|mrds?\b|mds?\b|mia\b|mio\b|tn\b|bn\b|mn\b|m\b|b\b|k\b|兆|億|万)|(?![A-Za-z0-9]))(?:\s?(?:(USD|EUR|GBP|JPY|KRW|CHF|dollars?|euros?|pounds?|yen|francs?)\b|(円)))?/gi;
 const KOREAN_AMOUNT = /(?<![A-Za-z0-9.,])((?:\d+(?:\.\d+)?\s?[조억만]\s?)*(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(?![A-Za-z0-9.,])\s?([조억만])?\s?(%|퍼센트|달러|유로|파운드|엔|원|프랑|년|월|일|분기|개월|주년|주|차|번째|위|세대|호|시|분|배)?/g;
 const KOREAN_SKIP = new Set(["년", "월", "일", "분기", "개월", "주년", "주", "차", "번째", "위", "세대", "호", "시", "분", "배"]);
 
@@ -233,7 +253,10 @@ const worthChecking = (item) => item.percent || item.scaled || item.currency ||
 
 export function summaryNumberProblems(summary, evidenceTexts, lang = "en") {
   if (!clean(summary)) return [];
-  const source = (evidenceTexts || []).map(normalizeQuote).join("\n");
+  // 유럽 원문은 소수점을 쉼표로 적는다("1,15 Md €"). 쉼표 뒤가 세 자리가 아니면 천 단위 구분이 아니라 소수점이다.
+  // 쉼표를 점으로 한 글자씩 바꾸므로 통화 기호를 찾는 위치는 그대로다.
+  const source = (evidenceTexts || []).map(normalizeQuote).join("\n")
+    .replace(/(?<![\d.,])(\d{1,3}),(\d{1,2})(?![\d,])/g, "$1.$2");
   const amounts = sourceAmounts(source);
   const problems = [];
   for (const item of summaryAmounts(summary, lang).filter(worthChecking)) {

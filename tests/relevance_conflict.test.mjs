@@ -63,6 +63,17 @@ test('a month name leaves the name check and enters the date check', () => {
   assert.deepEqual(ungroundedSummaryDates('The plant opened in May 2026.', ['The plant opened.'], 'Plant', '2026-08-20'), ['May']);
 });
 
+// Issue 3 Veolia: 원문이 "26 août 2026"이라 맞게 옮긴 "August"가 근거 없는 날짜로 걸렸다.
+test('a month named in the source language grounds the English month', () => {
+  const veolia = ['26 août 2026 Veolia émet avec succès 1,15 Md € sur le marché obligataire'];
+  assert.deepEqual(ungroundedSummaryDates('Veolia issued bonds in August 2026.', veolia, 'Communiqués', '2014-02-24'), []);
+  assert.deepEqual(ungroundedSummaryDates('Veolia issued bonds in July 2026.', veolia, 'Communiqués', '2014-02-24'), ['July']);
+  assert.deepEqual(ungroundedSummaryDates('The order was placed in March 2026.', ['Auftrag im März 2026 erteilt.'], 'Auftrag'), []);
+  assert.deepEqual(ungroundedSummaryDates('The plant opened in August 2026.', ['2026年8月3日に工場を開設した。'], '工場'), []);
+  // 18月의 8을 8月로 읽지 않는다.
+  assert.deepEqual(ungroundedSummaryDates('The plant opened in August 2026.', ['18月 2026'], '工場'), ['August']);
+});
+
 // Issue 3 Jenoptik: 원문 "same period last year"가 영문 문안에서 "same period of 2015"가 됐다.
 test('a year the article never gives is caught; the publication year, amounts and ISO dates are not', () => {
   const source = ['Revenue of 503.2 million euros in the first half of 2026, up 1.0 percent on the same period last year.'];
