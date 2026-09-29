@@ -65,27 +65,37 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 98,
+    "requests": 96,
     "cached": 0,
     "written": 80,
     "written_by": {
-      "gemini-3.5-flash-lite": 80
+      "gemini-3.7-flash": 1,
+      "gemini-3.5-flash-lite": 79
     },
     "failed": [
       {
-        "article_id": "25e6ee921290b9a6fac6daf4",
-        "company": "Nexeon",
+        "article_id": "0937df21d170dd22001bf71a",
+        "company": "Nabtesco",
         "candidate_id": "relevant",
         "problems": [
-          "source_quote_not_in_article"
+          "ungrounded_numbers:0.2억 엔"
+        ]
+      },
+      {
+        "article_id": "379e29c1052c76e0eeec4926",
+        "company": "3M",
+        "candidate_id": "investment:3",
+        "problems": [
+          "source_quote_far_from_event"
         ]
       }
     ],
     "errors": {
-      "unavailable": 3
+      "unavailable": 5
     },
     "rejected": {
-      "source_quote_not_in_article": 1
+      "ungrounded_numbers": 1,
+      "source_quote_far_from_event": 1
     },
     "switched": {
       "from": "gemini-3.7-flash",
