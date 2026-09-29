@@ -4406,12 +4406,20 @@
     {
       "company": "Jenoptik",
       "monthly_articles": 8,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 4,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "date_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "Aktuelle Informationen zum Jenoptik-Konzern",
+          "url": "https://www.jenoptik.de/news/pressemitteilungen",
+          "publishers": []
+        }
+      ],
       "date_follow_up": [
         {
           "url": "https://www.jenoptik.de/news/pressemitteilungen",
