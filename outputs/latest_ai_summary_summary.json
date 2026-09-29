@@ -65,11 +65,11 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 8,
-    "cached": 81,
-    "written": 2,
+    "requests": 4,
+    "cached": 82,
+    "written": 1,
     "written_by": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
     "failed": [],
     "errors": {
@@ -85,8 +85,8 @@
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 77,
-    "requests": 90,
-    "cached": 81,
+    "requests": 2,
+    "cached": 82,
     "reviewed": 83,
     "flagged": [
       {
@@ -142,15 +142,6 @@
         "copy_phrase": "네이티브 컬러",
         "source_phrase": "",
         "note": "The term 네이티브 컬러 is a literal transliteration of English words rather than an established Korean term."
-      },
-      {
-        "article_id": "eea59dcdd93753c7a714aa88",
-        "company": "GE Healthcare",
-        "candidate_id": "investment:5",
-        "check": "certainty",
-        "copy_phrase": "GE HealthCare는 William Grogan을 최고재무책임자(CFO)로 선임했으며",
-        "source_phrase": "GE HealthCare (Nasdaq: GEHC), a leading global precision care innovator, today announced the appointment of William (Bill) Grogan as Chief Financial Officer, effective September 14, 2026 .",
-        "note": "The copy states the appointment as already done, whereas the source describes an appointment that is effective on September 14, 2026, which is in the future relative to the published date of August 18, 2026."
       },
       {
         "article_id": "803c25cbb4642c669c75e961",
@@ -261,96 +252,26 @@
         "note": "The development of organic transistor materials is included in the English summary but missing in the Korean summary."
       }
     ],
-    "enforce": [
-      {
-        "article_id": "eea59dcdd93753c7a714aa88",
-        "company": "GE Healthcare",
-        "candidate_id": "investment:5",
-        "problems": [
-          "review_certainty: \"GE HealthCare는 William Grogan을 최고재무책임자(CFO)로 선임했으며\" vs source \"GE HealthCare (Nasdaq: GEHC), a leading global precision care innovator, today announced the appointment of William (Bill) Grogan as Chief Financial Officer, effective September 14, 2026 .\": The copy states the appointment as already done, whereas the source describes an appointment that is effective on September 14,"
-        ]
-      }
-    ],
+    "enforce": [],
     "discarded": 0,
     "errors": {},
-    "first_flagged": 26,
-    "first_enforce": 5,
+    "first_flagged": 19,
+    "first_enforce": 1,
     "rounds": [
       {
         "round": 1,
         "asked": [
           {
-            "company": "Jenoptik",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: \"신설하기로 했음\" vs source \"schafft neue CTO/COO-Funktion.\": The source states that the supervisory board creates the new function (present tense indicating a current decision/fact), but the Korean copy translates it as a future or intended plan '신설하기로 했음'."
-            ]
-          },
-          {
-            "company": "Charles River",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: \"지원 중임\" vs source \"Charles River will leverage its advanced analytical platforms, including Next-Generation Sequencing (NGS), to support critical steps of Chemistry, Manufacturing, and Controls (CMC) activities for MVC's next-generation multivalent enterovirus vaccine.\": The copy states the support activity as currently ongoing, whereas the source states it as a future action."
-            ]
-          },
-          {
             "company": "GE Healthcare",
             "candidate_id": "investment:5",
             "problems": [
-              "review_certainty: \"GE HealthCare는 William Grogan을 최고재무책임자(CFO)로 선임했으며, 2026년 9월 14일부터 업무를 시작할 예정임.\" vs source \"GE HealthCare (Nasdaq: GEHC), a leading global precision care innovator, today announced the appointment of William (Bill) Grogan as Chief Financial Officer, effective September 14, 2026 .\": The source states the effective date is in the future (September 14, 2026), but the copy states th"
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: \"합류하여\" vs source \"will join\": The copy states the joining as a current or completed action with '합류하여', whereas the sources state it as a future event with 'will join'."
-            ]
-          },
-          {
-            "company": "Norsk Hydro",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: \"engineers and assembles\" vs source \"Shape Corp. will engineer and assemble\": The copy states as present what the sources state as future.",
-              "review_certainty: \"공급하며\" vs source \"Hydro will supply\": The copy states as present what the sources state as future."
+              "review_certainty: \"선임했으며\" vs source \"effective September 14, 2026\": The copy states the appointment as done (선임했으며), while the source states the effective date is in the future relative to the published date."
             ]
           }
         ],
-        "written": 5,
+        "written": 1,
         "failed": 0,
-        "requests": 9
-      },
-      {
-        "round": 2,
-        "asked": [
-          {
-            "company": "GE Healthcare",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: \"GE HealthCare는 William Grogan을 최고재무책임자(CFO)로 선임했으며, 2026년 9월 14일부터 업무를 시작할 예정임.\" vs source \"GE HealthCare (Nasdaq: GEHC), a leading global precision care innovator, today announced the appointment of William (Bill) Grogan as Chief Financial Officer, effective September 14, 2026 .\": The source states the effective date is in the future (September 14, 2026), but the copy states th"
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: \"연구 협력 체결\" vs source \"Applied Materials, Inc. today announced that the University of California, Berkeley will join the company's EPIC Center in Silicon Valley as a research collaborator.\": The copy states the research collaboration as signed, whereas the sources state the joining as future."
-            ]
-          }
-        ],
-        "written": 2,
-        "failed": 0,
-        "requests": 5
-      }
-    ],
-    "withdrawn": [
-      {
-        "article_id": "eea59dcdd93753c7a714aa88",
-        "company": "GE Healthcare",
-        "candidate_id": "investment:5",
-        "problems": [
-          "review_certainty: \"GE HealthCare는 William Grogan을 최고재무책임자(CFO)로 선임했으며\" vs source \"GE HealthCare (Nasdaq: GEHC), a leading global precision care innovator, today announced the appointment of William (Bill) Grogan as Chief Financial Officer, effective September 14, 2026 .\": The copy states the appointment as already done, whereas the source describes an appointment that is effective on September 14,"
-        ]
+        "requests": 3
       }
     ]
   }
