@@ -205,20 +205,27 @@ INDICATOR_LABEL_KO = {no: text.split(" · ", 1)[0] for no, text in SIGNAL_DESCRI
 SIGNAL_DESCRIPTIONS_EN = {
     # 카드 라벨에는 이름만 싣는다. 이름이 길어 " · 설명"까지 붙이면 라벨과 "No signal this month"가 잘린다.
     # 설명은 표지(INDICATOR_DESCRIPTION_EN)에 있다.
+    # 2026-09 개정: 직역 느낌이 나거나 국문보다 뜻이 좁던 이름을 고쳤다. "Geographical Diversification"은 길고
+    # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다. 5는 이 범주의 핵심인 방한을 이름에 넣었다.
     1: "Supply Chain & Geopolitical Risk",
-    2: "Production Expansion & Geographical Diversification",
-    3: "Capital Raising & Securing Liquidity",
-    4: "Tech Ecosystem Partnerships (R&D)",
-    5: "C-Suite Actions",
+    2: "Production Expansion & New Sites",
+    3: "Capital Raising & Liquidity",
+    4: "R&D and Technology Partnerships",
+    5: "Executive Moves & Korea Visits",
 }
 
 INDICATOR_DESCRIPTION_EN = {
-    1: "New suppliers, local sourcing and responses to geopolitical risk",
-    2: "New capacity, Asia-Pacific sites and feasibility studies",
-    3: "Bond and share issues, loans and credit facilities",
-    4: "Joint R&D, licensing, pilot projects and equity stakes",
+    # 국문 "공급망 재편"은 공급처 변경에 그치지 않는다. 특정 지역 의존을 줄이는 뜻을 de-risking 으로 담는다.
+    1: "Supplier shifts, de-risking, tariff and export-control responses",
+    # 국문판 표지에 아시아태평양 한정이 없고 범주도 지역을 가리지 않으므로 넣지 않는다.
+    2: "Plant expansions, new-site reviews and feasibility studies",
+    # 국문 "대규모"를 살린다. 일상적인 차입이 아니라는 뜻이다.
+    3: "Large bond and share issues, loans and credit lines",
+    # 국문 "지분투자 타진"은 검토 단계까지 포함한다. "equity stakes"는 취득을 끝낸 것처럼 읽혔다.
+    4: "Joint research, licensing, PoCs and equity-stake talks",
+    # "C-Level 이동"은 영입과 퇴임을 모두 뜻한다. "극비"는 불시(unannounced)가 아니라 비공개(undisclosed)다.
     # "실사"를 due diligence 로 옮기면 인수 전 재무·법률 검토로 읽힌다. 현장 방문의 뜻으로 적는다.
-    5: "Senior appointments, visits to Korea and site inspections",
+    5: "C-suite hires and exits, undisclosed Korea trips, site visits",
 }
 
 COUNTRY_EN = {
@@ -376,7 +383,7 @@ TEXTS = {
         "matrix_company": "Company",
         "matrix_legend_on": "AI-detected signal",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & Geographical Diversification · ③ Capital Raising & Securing Liquidity · ④ Tech Ecosystem Partnerships (R&D) · ⑤ C-Suite Actions",
+        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤ Executive Moves & Korea Visits",
         "matrix_footnote": "{on} companies with AI-detected signals · {off} not detected",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
