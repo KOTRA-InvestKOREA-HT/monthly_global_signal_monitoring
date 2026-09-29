@@ -189,17 +189,16 @@ class CoverTitleTests(unittest.TestCase):
         self.assertTrue(all(title.strip() for title in titles))
         self.assertFalse(any(any("가" <= ch <= "힣" for ch in title) for title in titles))
 
-    def test_the_english_cover_drops_the_kicker_that_repeated_its_title(self):
-        """영문 표지의 kicker 는 제목과 같은 말이었다. 국문은 제목이 달라 그대로 둔다.
+    def test_both_covers_carry_the_report_name_above_the_title(self):
+        """국·영문 표지 모두 제목 위에 금색으로 같은 보고서 이름을 싣는다.
 
-        t() 로 읽으면 빈 영문 값이 국문으로 폴백해 영문 표지에 국문 머리말이 실린다.
-        cover_kicker() 가 그 폴백을 거치지 않는다는 것까지 같이 고정한다.
+        영문 표지는 한때 머리말이 제목과 같은 말("INVESTMENT SIGNALS")이라 비워 두었다. 지금은 다른 말이다.
+        cover_kicker() 는 t() 를 거치지 않으므로 영문 값이 비어도 국문으로 폴백하지 않는다.
         """
         _, _, ko = self.title_texts("ko")
         _, _, en = self.title_texts("en")
-        self.assertEqual(ko, "I N V E S T M E N T   S I G N A L S")
-        self.assertEqual(en, "")
-        # 폴백이 되살아나면 여기서 국문 머리말이 잡힌다.
+        self.assertEqual(ko, "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R")
+        self.assertEqual(en, ko)
         self.assertFalse(any("가" <= ch <= "힣" for ch in en))
         # 본문 면의 머리글은 표지와 다른 자리라 그대로 남는다.
         source = (Path(__file__).resolve().parents[1] / "scripts" / "build_pdf_report.py").read_text(encoding="utf-8")

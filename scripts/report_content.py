@@ -326,8 +326,9 @@ TEXTS = {
         "footer": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
         # 표지 맨 위 한 줄. 예전에는 두 렌더러가 각자 같은 문자열을 박아 두어, 한쪽만 고치면
         # PDF 와 화면의 표지가 달라졌다. 자간은 글자 사이 공백으로 낸다.
-        # 영문판 제목(INVESTMENT SIGNALS)과 같은 이름을 쓴다. 본문 면 머리글 "COMPANY SIGNALS"는 기업별 상세라는 섹션 이름이라 따로 둔다.
-        "cover_kicker": "I N V E S T M E N T   S I G N A L S",
+        # 보고서 이름을 국·영문 표지에 같게 적는다(금색, 제목 위). 본문 면 머리글 "COMPANY SIGNALS"는 기업별 상세라는
+        # 섹션 이름이라 따로 둔다.
+        "cover_kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
         # 제목 줄 수는 언어마다 다르므로 목록으로 둔다. 번호 키(cover_title_1..3)로 두면 줄이
         # 남는 언어가 그 자리를 빈 문자열로 채워야 하는데, t() 는 빈 문자열을 "없음"으로 보고
         # 국문으로 폴백하므로 영문판 표지에 한글 줄이 섞여 나온다.
@@ -363,10 +364,9 @@ TEXTS = {
     },
     "en": {
         "footer": "Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies",
-        # 영문 표지에는 kicker 를 두지 않는다. 제목이 한 줄("INVESTMENT SIGNALS")이라 바로 위에
-        # 같은 말을 작게 한 번 더 적는 꼴이 된다. 한국어 표지는 제목이 달라 그대로 둔다.
-        # 본문 면의 머리글은 이 값을 쓰지 않으므로(draw_detail_page 의 자체 문자열) 영향이 없다.
-        "cover_kicker": "",
+        # 국문 표지와 같은 보고서 이름을 제목 위에 금색으로 싣는다. 예전에는 머리말이 "INVESTMENT SIGNALS"라
+        # 영문 제목과 같은 말이 되어 비워 두었다. 본문 면의 머리글은 이 값을 쓰지 않는다(draw_detail_page 의 자체 문자열).
+        "cover_kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
         # 영문 제목은 한 줄이다. 예전 제목 "Target-Company Global Investment Signal Monitor" 는
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
         "cover_titles": ["Investment Signals"],
@@ -1183,7 +1183,7 @@ def cover_subtitle():
 
 
 def cover_kicker():
-    """표지 머리말. 영문 표지에는 없다.
+    """표지 머리말(제목 위 금색 한 줄). 언어별로 비워 둘 수 있다.
 
     t() 를 거치지 않는다. t() 는 빈 값을 국문으로 대체하므로, "이 언어에는 두지 않는다"를
     "아직 번역하지 않았다"로 읽어 국문 머리말을 영문 표지에 싣는다. cover_titles() 와 같은 이유다.
