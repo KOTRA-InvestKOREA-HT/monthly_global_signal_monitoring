@@ -15,7 +15,8 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-export const CONTENT_COLLECTION_VERSION = 'article-body-v16-listing-date-window';
+// v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
+export const CONTENT_COLLECTION_VERSION = 'article-body-v17-36k-body';
 // 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
 // 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
 export const TREND_DISCOVERY_PER_COMPANY = 1;
@@ -139,7 +140,9 @@ export function parseArgs(argv) {
     companyLimit: 0,
     companyConcurrency: 1,
     fetchOfficialContent: true,
-    contentCharLimit: 24000,
+    // 2026-08 수집본에서 본문 415건 중 52건이 24000자에 걸렸고, 대부분 시그널이 많이 나오는 실적 발표·공시 PDF였다.
+    // 문안 단계(summary_writer.mjs ARTICLE_EVIDENCE_CHARS)도 같은 36000자까지 받는다.
+    contentCharLimit: 36000,
     contentExcerptLimit: 800,
     maxDetailPerCompany: 8,
     fetchRetries: 2,
