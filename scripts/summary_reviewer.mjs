@@ -165,9 +165,16 @@ async function requestReviewer(reviewer, apiKey, body, fetchImpl) {
 
 const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
 
-// 문안 단계에 rejected_because 로 넘기는 문장. 무엇이 왜 틀렸는지 구절째 알려 준다.
-export const reviewProblem = issue => (`review_${issue.check}: "${issue.copy_phrase}"` +
-  `${issue.source_phrase ? ` vs source "${issue.source_phrase}"` : ''}: ${issue.note}`).slice(0, 400);
+// 문안 단계에 rejected_because 로 넘기는 문장. 왜 틀렸는지(note)를 앞에 두고, 길이는 구절에서만 줄인다.
+// 예전에는 구절 뒤에 둔 설명이 전체 400자에서 잘렸다. Issue 4(10월 1일 실행) Applied Materials 지적은 원문 구절이
+// 길어 설명이 빈 채로 문안 단계에 갔고, 다시 쓴 문안에 "joined"가 남았다. 설명이 간 다른 시제 지적은 한 번에 고쳐졌다.
+const clip = (text, limit) => {
+  const value = String(text || '').trim();
+  return value.length > limit ? `${value.slice(0, limit - 1)}…` : value;
+};
+// 원문 구절은 넉넉히 남긴다. 220자로 줄였더니 KIOXIA 문장에서 정작 "will join" 이 잘렸다.
+export const reviewProblem = issue => `review_${issue.check}: ${clip(issue.note, 240)}` +
+  ` Copy: "${clip(issue.copy_phrase, 200)}"` + (issue.source_phrase ? ` Source: "${clip(issue.source_phrase, 500)}"` : '');
 
 // 문안 단계가 끝난 뒤 돈다. 기사당 요청 하나, 직렬이다. 검토 결과는 판정 파일의 결정에 copy_review 로 남겨
 // 다음 실행이 같은 문안을 다시 묻지 않게 한다. 멈추거나 실패해도 보고서 생성을 막지 않는다.

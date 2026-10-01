@@ -7,7 +7,7 @@ import path from 'node:path';
 import { groupArticles, importReview } from '../scripts/local_report.mjs';
 import {
   acceptedIssues, resolveReviewer, reviewAndRewrite, reviewerBody, reviewerRequest, reviewSummaries, DEFAULT_REVIEWER_MODEL,
-  REVIEWER_INSTRUCTION,
+  REVIEWER_INSTRUCTION, reviewProblem,
 } from '../scripts/summary_reviewer.mjs';
 import { resolveWriter, writeSummaries, writerPolicySection } from '../scripts/summary_writer.mjs';
 
@@ -81,7 +81,8 @@ test('a review is saved with the copy, and the same copy is not reviewed twice',
   assert.equal(stats.flagged[0].check, 'certainty');
   // 투자 시그널의 시제 지적은 다시 쓰게 할 목록에 오른다.
   assert.equal(stats.enforce.length, 1);
-  assert.match(stats.enforce[0].problems[0], /^review_certainty: "Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음" vs source/);
+  assert.equal(stats.enforce[0].problems[0], 'review_certainty: The source says Broadcom will join; the copy says it has joined. ' +
+    'Copy: "Broadcom Inc.를 EPIC Center 혁신 파트너로 영입했음" Source: "Broadcom Inc. will join EPIC"');
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, decision.summary_ko);
   assert.equal(saved.decisions[0].copy_review.issues.length, 1);
@@ -143,6 +144,10 @@ test('a flagged signal card is rewritten with the flag as feedback, and kept onc
   assert.equal(sent.length, 1);
   assert.match(sent[0], /rejected_because/);
   assert.match(sent[0], /review_certainty/);
+  // 다시 쓸 때는 걸린 문안과, 시제 문제가 무엇인지 풀어 쓴 안내가 함께 간다.
+  const request = JSON.parse(sent[0]).items[0];
+  assert.match(request.previous_copy.summary_en, /Broadcom Inc\. joined EPIC/);
+  assert.match(request.rejected_because[0], /^Tense or certainty: .*will join.*Reviewer: The source says Broadcom will join/);
   assert.equal(stats.rounds.length, 1);
   assert.equal(stats.enforce.length, 0);
   const saved = await ws.read();
@@ -207,4 +212,17 @@ test('a near-miss business row is flagged but never sent back', async () => {
     sleep: async () => {}, log: () => {} });
   assert.equal(stats.flagged.length, 1);
   assert.equal(stats.enforce.length, 0);
+});
+
+// Issue 4(10월 1일 실행) Applied Materials: 원문 구절이 길어 400자에서 설명이 잘린 채 문안 단계로 갔다.
+test('a long source phrase never cuts the reason out of a rewrite request', () => {
+  const issue = { check: 'certainty', copy_phrase: '차세대 메모리 기술 공동 개발 파트너십 체결',
+    source_phrase: 'Applied Materials, Inc. , the leader in materials engineering solutions for the semiconductor industry, today announced that ' +
+      'KIOXIA Corporation , a leading global supplier of flash memory and solid state drives (SSDs), will join Applied’s EPIC Center in ' +
+      'Silicon Valley as an innovation partner to advance next-generation memory technologies.',
+    note: 'The copy states as done what the sources state as future.' };
+  const problem = reviewProblem(issue);
+  assert.match(problem, /^review_certainty: The copy states as done what the sources state as future\. Copy: "차세대 메모리 기술 공동 개발 파트너십 체결" Source: "Applied Materials/);
+  assert.match(problem, /will join Applied’s EPIC Center/);
+  assert.ok(problem.length < 1000, String(problem.length));
 });

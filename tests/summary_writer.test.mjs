@@ -98,8 +98,13 @@ test('the writer request carries evidence only, plus the checks a previous copy 
   assert.equal('rejected_because' in request.items[0], false);
   // 투자 시그널 문안도 본문을 받는다. 인용이 제목 한 줄이면 인용만으로는 맥락을 쓸 수 없다.
   assert.match(request.article_evidence, /construction would begin once permits are granted/);
-  const retry = writerRequest(article, [judge], { 'investment:3': ['ungrounded_numbers:800'] });
-  assert.deepEqual(retry.items[0].rejected_because, ['ungrounded_numbers:800']);
+  const retry = writerRequest(article, [judge], { 'investment:3': ['ungrounded_numbers:800'] },
+    { 'investment:3': { summary_en: 'The company raised USD 800 million.', summary_ko: '자금 조달 - 8억 달러를 조달했음.' } });
+  // 코드만 보내지 않고 무엇이 틀렸는지 풀어 쓴 안내를 보낸다. 원래 코드는 끝에 남는다.
+  assert.match(retry.items[0].rejected_because[0], /^Number not in the article: .*\[ungrounded_numbers:800\]$/);
+  assert.deepEqual(retry.items[0].previous_copy, { summary_en: 'The company raised USD 800 million.', summary_ko: '자금 조달 - 8억 달러를 조달했음.' });
+  // 걸린 문제가 없으면 이전 문안도 보내지 않는다.
+  assert.equal('previous_copy' in writerRequest(article, [judge], {}, { 'investment:3': { summary_en: 'x', summary_ko: 'y' } }).items[0], false);
   const body = writerBody(writer, buildWriterInstruction(wording), request);
   assert.equal(body.generationConfig.thinkingConfig.thinkingLevel, 'high');
   assert.deepEqual(Object.keys(body.generationConfig.responseSchema.properties.summaries.items.properties),
