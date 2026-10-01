@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText,
+import { capCompanyRows, chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText, parseJsonFeed,
   isUsableTitle, parseAnchors } from '../scripts/collect_company_signals.mjs';
-import { chooseDateEvidence, periodPlacement } from '../scripts/date_state.mjs';
+import { chooseDateEvidence, latestTitleYear, periodPlacement } from '../scripts/date_state.mjs';
 
 const company = { company: 'Umicore', query_aliases: [] };
 
@@ -97,4 +97,63 @@ test('a newsroom that prints no date at all is placed by the CMS modification ti
   // 같은 근거가 기간 안을 가리키면 내용 검토는 하되 본문에는 넣지 않는다.
   const recent = chooseDateEvidence(collectHtmlDateEvidence(html.replace('2025-07-15', '2026-08-15'), ''));
   assert.equal(periodPlacement(recent, { from_date: '2026-08-01', to_date: '2026-08-31' }).placement, 'date_pending');
+});
+
+// 2026-08 수집본: "Archive AGM 2023", "2018 Reference document", "Q4 and full year 2020 press release" 가
+// 날짜 없이 들어와 기업 자리를 차지했다. 지난해를 단 이번 해 문서와 확정 날짜는 건드리지 않는다.
+test('a title naming only years two or more before the period is out of period unless its date is confirmed', () => {
+  const august = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  assert.equal(latestTitleYear('Archive AGM 2023'), 2023);
+  assert.equal(latestTitleYear('FY2024/25 results briefing'), null);
+  assert.equal(latestTitleYear('Results for fiscal 2024/25'), 2025);
+  assert.equal(latestTitleYear('2024-2026 strategy update'), 2026);
+  assert.equal(latestTitleYear('Launches the MC-2000 controller'), null);
+  assert.equal(latestTitleYear('Ships its 2000 units'), null);
+  const placement = title => periodPlacement({ title }, august).placement;
+  for (const title of ['Archive AGM 2023', '2018 Reference document', 'ABB Q4 and full year 2020 press release English'])
+    assert.equal(placement(title), 'out_of_period', title);
+  assert.equal(placement('2025 Annual General Meeting presentation'), 'date_pending');
+  assert.equal(placement('Company opens plant'), 'date_pending');
+  const confirmed = { title: 'Annual Shareholders Meeting 2024 replay', ...chooseDateEvidence([dateEvidence('2026-08-12', 'listing', 'published')]) };
+  assert.equal(periodPlacement(confirmed, august).placement, 'in_period');
+});
+
+test('the company cap fills with rows not known to be out of period before stale ones', () => {
+  const dateRange = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const rows = [
+    { url: 'https://example.com/agm-2023', title: 'Archive AGM 2023', link_rank: 0 },
+    { url: 'https://example.com/ref-2018', title: '2018 Reference document', link_rank: 0 },
+    { url: 'https://example.com/plant', title: 'Company opens plant', link_rank: 1 },
+    { url: 'https://example.com/deal', title: 'Company signs supply deal', link_rank: 1 },
+  ];
+  assert.deepEqual(capCompanyRows(rows, dateRange, 3).map(row => row.url),
+    ['https://example.com/plant', 'https://example.com/deal', 'https://example.com/agm-2023']);
+  assert.equal(capCompanyRows(rows, dateRange, 10).length, 4);
+});
+
+// magniX 뉴스룸은 목록과 상세 페이지를 모두 data/news.json 으로 그린다. HTML 에는 링크도 본문도 없어
+// 2026-08 수집 결과가 0건이었다.
+test('a JSON newsroom feed yields dated official rows that carry their own body', () => {
+  const body = '<p>Everett, WA - September 25, 2026 - magniX today announced that its Samson batteries powered the first flight of the eFlyer 2.</p>'
+    + '<p><img src="data:image/png;base64,AAAA"></p><p>The Samson300 offers industry-leading energy density for electric aircraft programs.</p>';
+  const feed = JSON.stringify({ status: 1, data: [
+    { news_date: '20260925', news_title: 'magniX', news_source_name: 'magniX Samson Batteries Power First Flight of Bye Aerospace eFlyer 2',
+      news_url: 'detail/magnix-samson-batteries-power-first-flight', news_description: body },
+    { news_date: '20260512', news_title: 'Interesting Engineering', news_source_name: 'Hydrogen-electric helicopter completes flight',
+      news_url: 'https://interestingengineering.com/transportation/helicopter', news_description: '' },
+  ] });
+  const spec = { items: 'data', title: 'news_source_name', url: 'news_url', date: 'news_date', body: 'news_description',
+    base: 'https://www.magnix.aero/', include: '/detail/' };
+  const rows = parseJsonFeed(feed, { target_no: 70, company: 'Magnix' }, '2026-10-01T00:00:00Z',
+    'https://www.magnix.aero/data/news.json', 'Magnix - Newsroom JSON', 'press_release', spec);
+  assert.equal(rows.length, 1);
+  const [row] = rows;
+  assert.equal(row.url, 'https://www.magnix.aero/detail/magnix-samson-batteries-power-first-flight');
+  assert.equal(row.title, 'magniX Samson Batteries Power First Flight of Bye Aerospace eFlyer 2');
+  assert.equal(row.published_at.slice(0, 10), '2026-09-25');
+  assert.equal(row.published_at_status, 'confirmed');
+  assert.equal(row.source_type, 'official');
+  assert.equal(row.content_fetch_status, 'fetched');
+  assert.match(row.content_text, /today announced/);
+  assert.doesNotMatch(row.content_text, /base64/);
 });

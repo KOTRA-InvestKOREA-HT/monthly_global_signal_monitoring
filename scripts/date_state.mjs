@@ -196,6 +196,20 @@ export function periodicDocumentPublicationYear(row = {}) {
   return latest || null;
 }
 
+// 제목에 적힌 가장 늦은 연도. "Archive AGM 2023", "2018 Reference document", "Q4 and full year 2020 press release"
+// 처럼 지난 해를 이름에 단 문서는 목록에 날짜가 없으면 기업 자리를 차지하고, 받아 봐도 추정 날짜만 남는다.
+// 2026-08 수집본에서 추정 날짜 87행 가운데 승인은 2행이었다. "2024/25"는 회계연도라 뒤 해(2025)로 읽는다.
+// 모델명과 섞이지 않게 2010년 이후만, 글자·숫자에 붙거나 "XR-2020"처럼 글자와 하이픈으로 이어진 네 자리는 빼고 연도로 본다.
+export function latestTitleYear(title = "") {
+  const text = String(title || "");
+  let latest = 0;
+  for (const match of text.matchAll(/(?<!\w|[A-Za-z]-)(20[1-9]\d)(?:\s*\/\s*(\d{2}))?(?!\w|-[A-Za-z])/g)) {
+    const year = match[2] ? Number(match[1].slice(0, 2) + match[2]) : Number(match[1]);
+    latest = Math.max(latest, year);
+  }
+  return latest || null;
+}
+
 // 기간 배치는 세 갈래다.
 // in_period: 게시월까지 확정돼 월간 보고서 본문에 쓸 수 있다.
 // date_pending: 내용 검토는 하되 날짜가 보강되기 전에는 본문에 넣지 않는다.
@@ -208,6 +222,12 @@ export function periodPlacement(row, period) {
     const publicationYear = periodicDocumentPublicationYear(row);
     if (publicationYear && publicationYear < Number(String(period.from_date).slice(0, 4))) {
       return { placement: "out_of_period", state, reason: `${publicationYear}년 발행 정기 문서` };
+    }
+    // 제목의 가장 늦은 연도가 보고 기간보다 2년 이상 앞이면 이번 달 자료일 수 없다. 1년 앞은 남긴다.
+    // 1월에 나온 전년도 실적이나 "2025 Annual Report"처럼 지난해를 단 이번 해 문서가 있다.
+    const titleYear = latestTitleYear(row.title);
+    if (titleYear && titleYear <= Number(String(period.from_date).slice(0, 4)) - 2) {
+      return { placement: "out_of_period", state, reason: `제목의 연도(${titleYear})가 보고 기간보다 2년 이상 앞` };
     }
   }
   if (state.status === "unknown") return hold("게시일 근거가 전혀 없음");

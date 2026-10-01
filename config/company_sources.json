@@ -194,6 +194,23 @@
         "kind": "press_release",
         "url": "https://www.foxlink.com/web/feed/"
       }
+    ],
+    "Magnix": [
+      {
+        "source": "Magnix - Newsroom JSON",
+        "kind": "press_release",
+        "url": "https://www.magnix.aero/data/news.json",
+        "format": "json",
+        "json": {
+          "items": "data",
+          "title": "news_source_name",
+          "url": "news_url",
+          "date": "news_date",
+          "body": "news_description",
+          "base": "https://www.magnix.aero/",
+          "include": "/detail/"
+        }
+      }
     ]
   },
   "official_pages": {

@@ -145,8 +145,8 @@ test('the limited slots go to the most specific matches, not the first results',
 });
 
 test('the collection identity carries the discovery inputs, and drops them when discovery is off', () => {
-  // 2026-08 전수 probe 뒤 비용 상한을 1건으로 확정했다(최종 로직 31개 후보).
-  assert.equal(TREND_DISCOVERY_PER_COMPANY, 1);
+  // 2026-08 전수 probe 뒤 비용 상한을 1건으로 정했다가(최종 로직 31개 후보), 같은 달 승인 수확률을 보고 2건으로 올렸다.
+  assert.equal(TREND_DISCOVERY_PER_COMPANY, 2);
   const on = trendDigestInputs({ maxTrendDiscovery: 2 }, technology, keywordConfig);
   assert.equal(on.maxTrendDiscovery, 2);
   assert.equal(on.keywordConfig, keywordConfig);

@@ -19,7 +19,9 @@ import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArt
 export const CONTENT_COLLECTION_VERSION = 'article-body-v17-36k-body';
 // 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
 // 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
-export const TREND_DISCOVERY_PER_COMPANY = 1;
+// 2026-08 보고서에서 탐색 기사 27건 중 5건이 승인됐다(본문 있는 13건 기준 38%, 소스 중 가장 높다).
+// 9월 18일 probe 에서 2건 상한은 47건을 남겼다. 판정 호출 약 20회를 더 쓰고 2건으로 올린다.
+export const TREND_DISCOVERY_PER_COMPANY = 2;
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -1263,7 +1265,56 @@ function normalizeOfficialPageEntries(entries) {
     .filter((entry) => entry.url);
 }
 
-async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
+// 목록을 자바스크립트로 그리는 뉴스룸은 HTML 에 기사 링크가 없다. magniX 뉴스 페이지는 data/news.json 을
+// 받아 그리고, 상세 페이지도 같은 JSON 의 news_description 을 그려서 HTML 로는 본문을 받을 수 없다.
+// 그래서 2026-08 수집에서 magniX 는 결과가 0건이었다. 설정의 json 항목이 필드 이름을 정한다:
+// items(배열 경로, 점으로 구분), title, url, date(YYYYMMDD 또는 ISO), body(HTML 본문), base(상대 주소의 기준), include.
+// 본문이 있으면 여기서 싣는다. 본문이 실린 행은 상세 페이지를 다시 받지 않는다(enrichOfficialRowsWithContent).
+export function parseJsonFeed(text, company, collectedAt, query, defaultSource, feedKind, spec = {}, contentCharLimit = 36000) {
+  const payload = JSON.parse(text);
+  const items = String(spec.items || "").split(".").filter(Boolean).reduce((value, key) => value?.[key], payload);
+  const include = spec.include ? new RegExp(spec.include, "i") : null;
+  const rows = [];
+  for (const item of Array.isArray(items) ? items : []) {
+    let url;
+    try {
+      url = new URL(String(item?.[spec.url] || ""), spec.base || query).href;
+    } catch {
+      continue;
+    }
+    if (include && !include.test(url)) continue;
+    const rawDate = String(item?.[spec.date] || "").trim();
+    const date = /^\d{8}$/.test(rawDate) ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6)}` : rawDate;
+    const body = cleanHtmlText(String(item?.[spec.body] || "")).slice(0, contentCharLimit);
+    rows.push({
+      target_no: company.target_no,
+      company: company.company,
+      title: cleanText(item?.[spec.title]),
+      url,
+      source: defaultSource,
+      ...chooseDateEvidence([
+        dateEvidence(date, "feed", "published"),
+        dateEvidence(extractDateFromUrl(url), "url", "context"),
+      ]),
+      collected_at: collectedAt,
+      collector: "official_feed",
+      query,
+      ...officialSourceFields(feedKind, defaultSource, query, url),
+      official_source_url: query,
+      source_direct_url: directUrlCandidate(url),
+      ...(hasArticleBody({ content_text: body }) ? {
+        content_text: body,
+        content_excerpt: contentExcerpt(body),
+        content_fetch_status: "fetched",
+        content_source_url: url,
+        content_fetched_at: collectedAt,
+      } : {}),
+    });
+  }
+  return rows.filter((row) => row.title && row.url);
+}
+
+async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSource, timeoutSeconds, collectedAt, contentCharLimit) {
   const feeds = sourceConfig.official_feeds?.[company.company] || [];
   const rows = [];
   let requestCount = 0;
@@ -1278,9 +1329,12 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
     try {
       const xml = await fetchText(feedUrl, timeoutSeconds);
       requestCount += 1;
+      const parsed = feed.format === "json"
+        ? parseJsonFeed(xml, company, collectedAt, feedUrl, sourceName, feedKind, feed.json, contentCharLimit)
+        : parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind);
       rows.push(
         ...filterByDateRange(
-          parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind)
+          parsed
             // IR 피드는 이사·애널리스트 소개 페이지도 새 항목으로 싣는다. 기사가 아니다.
             .filter((row) => !isPersonOrCoveragePage(row.url)),
           dateRange,
@@ -2151,6 +2205,16 @@ export function trimByRank(rows, limit) {
 // 대체 수집, 상세 페이지를 받아 보니 기간 밖이던 자체 출처. 목록에 날짜가 없어 자리를 받은 기사가
 // 받아 보면 기간 밖인 경우가 많다. 2026-08 실행(34921453566)에서 538행 중 161행이 그랬고, BASF·Shin-Etsu·Maxon 은
 // 이번 달 기사가 없어 Google News 를 찾고도 기간 밖 공식 기사 10건 뒤에 서서 남은 대체 기사가 없었다.
+// 상세 페이지를 받기 전, 목록 날짜나 제목 연도만으로 이미 기간 밖인 행은 남는 자리만 채운다.
+// trimByRank 는 링크 순위로만 자르므로, 순위가 같거나 앞선 기간 밖 문서가 이번 달 후보를 밀어냈다.
+// 2026-08 수집에서 20개사가 기업 상한에 걸렸고, Air Liquide 는 받은 11건 중 10건, BASF·Shin-Etsu 는 8건이 기간 밖이었다.
+export function capCompanyRows(rows, dateRange, limit) {
+  const period = dateRangePeriod(dateRange);
+  const outside = row => periodPlacement(row, period).placement === 'out_of_period';
+  const kept = trimByRank(rows.filter(row => !outside(row)), limit);
+  return [...kept, ...trimByRank(rows.filter(outside), Math.max(0, limit - kept.length))];
+}
+
 export function rankCompanyRows({ usable, rows, fallbackRows, dateRange, limit }) {
   const period = dateRangePeriod(dateRange);
   const outside = row => periodPlacement(row, period).placement === 'out_of_period';
@@ -2435,7 +2499,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
     let result = { rows: [], requestCount: 0 };
     try {
       if (source === "official_feeds") {
-        result = await collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+        result = await collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt, args.contentCharLimit);
       } else if (source === "official_pages") {
         result = await collectOfficialPages(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
       } else if (source === "official_sitemaps") {
@@ -2476,7 +2540,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
 
   // Drop disabled probes before the company cap; keep priority through fetching.
   const candidateRows = selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany);
-  const selectedCompanyRows = trimByRank(candidateRows, args.maxPerCompany);
+  const selectedCompanyRows = capCompanyRows(candidateRows, dateRange, args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company, slot);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
