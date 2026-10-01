@@ -1,253 +1,678 @@
 {
-  "status": "completed",
-  "requests": 5,
-  "cached": 379,
-  "completed": 382,
-  "total": 382,
+  "status": "completed_with_review_failures",
+  "reason": "invalid_responses",
+  "requests": 487,
+  "cached": 0,
+  "completed": 428,
+  "total": 429,
   "date_hints": 0,
-  "failed_articles": [],
+  "failed_articles": [
+    {
+      "article_id": "9fa06a93ce88b5b45b794b2c",
+      "reason": "evidence_mismatch"
+    }
+  ],
   "diagnostics": [
     {
-      "article_id": "629ea10f1ba93f5716acc713",
+      "article_id": "32a5891f3663792f9ca5ed06",
       "attempt": 1,
-      "stage": "verify",
-      "reason": "date_evidence_mismatch",
-      "file": "reviews/diagnostics/629ea10f1ba93f5716acc713/100b26cb-957b-462b-8194-354e270ec991-verify-attempt-1.json"
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/32a5891f3663792f9ca5ed06/2db1db46-3a49-4614-bd53-65ef22c66030-attempt-1.json"
     },
     {
-      "article_id": "629ea10f1ba93f5716acc713",
+      "article_id": "2faf3f2ccac40e474eb3ef5d",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/2faf3f2ccac40e474eb3ef5d/c7f684d7-3c02-4b91-b488-31edf44050ac-attempt-1.json"
+    },
+    {
+      "article_id": "8a028378cfaf54b86ae12e25",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/8a028378cfaf54b86ae12e25/1d4e2212-cfc9-418f-a5cc-786b708c289f-attempt-1.json"
+    },
+    {
+      "article_id": "f21dc76872d777267718e78c",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/f21dc76872d777267718e78c/1a668c6a-7b14-4dc6-bac0-6ea40660d5fe-attempt-1.json"
+    },
+    {
+      "article_id": "caab610fefc4dbd1054580bb",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/caab610fefc4dbd1054580bb/a3dc7888-449b-49ba-8e44-247150155bd2-attempt-1.json"
+    },
+    {
+      "article_id": "3b816bdce54988c33a70bfc3",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/3b816bdce54988c33a70bfc3/a1b2b249-fb44-4300-b55e-c91587b9733e-attempt-1.json"
+    },
+    {
+      "article_id": "4e5e0adb4300c4563bb972d9",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/4e5e0adb4300c4563bb972d9/dc0d5186-c3ea-4c54-a930-98afa2a0bc82-attempt-1.json"
+    },
+    {
+      "article_id": "cde1613cfc8561f7dbd281bb",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/cde1613cfc8561f7dbd281bb/5e72cbe7-6874-4113-a563-f9247bfc27b7-attempt-1.json"
+    },
+    {
+      "article_id": "f111b494e4703aaad6fae8b4",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/f111b494e4703aaad6fae8b4/53173d25-68ca-47b3-87f3-73308bc79bf5-attempt-1.json"
+    },
+    {
+      "article_id": "c807cfd21bf2b00158337570",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/c807cfd21bf2b00158337570/67405468-b058-4c66-91ee-7a33bbb59a0b-attempt-1.json"
+    },
+    {
+      "article_id": "c00e1c044360ccf1a0e8a7ee",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/c00e1c044360ccf1a0e8a7ee/f0020c93-c305-42fb-88b3-d293935d47a0-attempt-1.json"
+    },
+    {
+      "article_id": "99317be5a27f612803785ee1",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/99317be5a27f612803785ee1/839d9525-23ee-4e8b-9813-2b0e28693b79-attempt-1.json"
+    },
+    {
+      "article_id": "4c4447ad49d32b5376304332",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/4c4447ad49d32b5376304332/9da8d04f-a00f-4ac1-9861-b2c3590e59d2-attempt-1.json"
+    },
+    {
+      "article_id": "fe020b10cbac96f84273caa1",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/fe020b10cbac96f84273caa1/b283bd12-c852-400f-a388-1d9191f7c1c4-attempt-1.json"
+    },
+    {
+      "article_id": "104b869770f68e9e7cae79f6",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/104b869770f68e9e7cae79f6/b22d2c7f-c54f-4167-a8d6-fe85f65c238d-attempt-1.json"
+    },
+    {
+      "article_id": "9fa06a93ce88b5b45b794b2c",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/9fa06a93ce88b5b45b794b2c/4bccba28-2882-4c23-84be-7640d7ea7337-attempt-1.json"
+    },
+    {
+      "article_id": "9fa06a93ce88b5b45b794b2c",
       "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/9fa06a93ce88b5b45b794b2c/2e080f28-1c4f-4e85-af32-9712b6e5b690-attempt-2.json"
+    },
+    {
+      "article_id": "8578e113620a03cd80d2e4ab",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/8578e113620a03cd80d2e4ab/6253b37f-1df8-4924-a13f-dddb5fc6bbca-attempt-1.json"
+    },
+    {
+      "article_id": "1bab8726f54bd4f68b2b0745",
+      "attempt": 1,
+      "reason": "date_evidence_mismatch",
+      "file": "reviews/diagnostics/1bab8726f54bd4f68b2b0745/e99c517c-1b3e-4b9a-8cd2-c41a90b43567-attempt-1.json"
+    },
+    {
+      "article_id": "0d6ca4132cf3a76c1986332b",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/0d6ca4132cf3a76c1986332b/a9dbfdfc-9301-42a8-93f7-0d6863c8424c-attempt-1.json"
+    },
+    {
+      "article_id": "0d6ca4132cf3a76c1986332b",
+      "attempt": 1,
       "stage": "verify",
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/629ea10f1ba93f5716acc713/aa2f3b48-37e3-439b-b665-a4f1529044f7-verify-attempt-2.json"
+      "file": "reviews/diagnostics/0d6ca4132cf3a76c1986332b/03d3ef06-f9d5-4a5a-a391-4019e3c9191a-verify-attempt-1.json"
+    },
+    {
+      "article_id": "77b2ee0d3a1ac14a246154a1",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/77b2ee0d3a1ac14a246154a1/ca858fa0-eee6-4841-84ee-5edbdf8d2409-attempt-1.json"
+    },
+    {
+      "article_id": "dc1a93d83ddbeabff3ebc318",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/dc1a93d83ddbeabff3ebc318/6290a895-fbf2-40ad-8ccf-f6179476120b-attempt-1.json"
+    },
+    {
+      "article_id": "974739962903930c722db348",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/974739962903930c722db348/107f5416-b64e-4818-adba-09e169ec7fa1-attempt-1.json"
+    },
+    {
+      "article_id": "974739962903930c722db348",
+      "attempt": 1,
+      "stage": "verify",
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/974739962903930c722db348/602e2c06-1529-4620-a45a-5de31f21352b-verify-attempt-1.json"
     }
   ],
   "concurrency": 4,
-  "quote_removals": [],
-  "recheck_pending": [
+  "quote_removals": [
     {
-      "article_id": "629ea10f1ba93f5716acc713",
+      "article_id": "4e5e0adb4300c4563bb972d9",
+      "candidate_ids": [
+        "relevant"
+      ]
+    },
+    {
+      "article_id": "4c4447ad49d32b5376304332",
       "candidate_ids": [
         "investment:5"
-      ],
-      "reason": "verifier:evidence_mismatch"
+      ]
     }
   ],
+  "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 2,
-    "verified": 0,
+    "requested": 36,
+    "verified": 34,
     "partial": 0,
     "pending": 0,
-    "changed": 0,
-    "failed": 1,
+    "changed": 7,
+    "failed": 0,
     "rejected_responses": 2,
     "errors": {
-      "date_evidence_mismatch": 1,
-      "evidence_mismatch": 1
+      "evidence_mismatch": 2
     }
   },
-  "approved_candidates": 43,
+  "approved_candidates": 57,
   "period": {
-    "from_date": "2026-08-01",
-    "to_date": "2026-08-31"
+    "from_date": "2026-09-01",
+    "to_date": "2026-09-30"
   },
   "provider": "gemini",
   "model": "gemini-3.5-flash-lite",
-  "issue_number": "3",
+  "issue_number": "4",
   "judgement_run": {
-    "id": "36397987605",
+    "id": "36816898647",
     "attempt": "1",
-    "sha": "7df89043a39a2b73cbb70ed57621dbf494fe6653",
+    "sha": "ba8babcd1068ef8bf529352a52f0d91681a27fd5",
     "ref": "main"
   },
   "summary_writer": {
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
-    "articles": 77,
-    "requests": 0,
-    "cached": 83,
-    "written": 0,
-    "written_by": {},
-    "failed": [],
-    "errors": {},
-    "rejected": {}
+    "articles": 95,
+    "requests": 106,
+    "cached": 0,
+    "written": 105,
+    "written_by": {
+      "gemini-3.5-flash-lite": 105
+    },
+    "failed": [
+      {
+        "article_id": "c807cfd21bf2b00158337570",
+        "company": "Boeing",
+        "candidate_id": "investment:5",
+        "problems": [
+          "ungrounded_dates:September"
+        ]
+      },
+      {
+        "article_id": "a7f4b484658c939977d7d5a9",
+        "company": "Bayer",
+        "candidate_id": "investment:3",
+        "problems": [
+          "ungrounded_numbers:10억 유로"
+        ]
+      }
+    ],
+    "errors": {
+      "unavailable": 3
+    },
+    "rejected": {
+      "ungrounded_dates": 1,
+      "ungrounded_numbers": 1
+    },
+    "switched": {
+      "from": "gemini-3.7-flash",
+      "to": "gemini-3.5-flash-lite",
+      "reason": "unavailable"
+    }
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 77,
-    "requests": 0,
-    "cached": 83,
-    "reviewed": 83,
+    "articles": 93,
+    "requests": 101,
+    "cached": 97,
+    "reviewed": 105,
     "flagged": [
       {
-        "article_id": "eb98cb5dc7c67c6dd0791df0",
-        "company": "HyproMag",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "€5 million",
-        "source_phrase": "€5 million",
-        "note": "The amount of €5 million settled at closing appears in the English summary but is missing in the Korean summary."
+        "article_id": "5b5e862c515b0a4c12942e68",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "certainty",
+        "copy_phrase": "joined",
+        "source_phrase": "will join",
+        "note": "The copy states as done what the sources state as future."
       },
       {
-        "article_id": "717370761d73f0a6ec74ebc2",
-        "company": "Sumitomo Chemical",
+        "article_id": "5b5e862c515b0a4c12942e68",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "certainty",
+        "copy_phrase": "공동 개발함",
+        "source_phrase": "will work together",
+        "note": "The copy states as done what the sources state as future."
+      },
+      {
+        "article_id": "5b5e862c515b0a4c12942e68",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "materials engineering",
+        "source_phrase": "",
+        "note": "Materials engineering is present in the English summary and missing in the Korean summary."
+      },
+      {
+        "article_id": "f21dc76872d777267718e78c",
+        "company": "Rio Tinto",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "독점 마케팅하며",
+        "source_phrase": "will exclusively market",
+        "note": "The copy states as a current action what the sources state as a future action."
+      },
+      {
+        "article_id": "672bc8c091efec9fb2de931b",
+        "company": "Veolia",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "서비스를 제공할 예정이며",
+        "source_phrase": "serving more than 230,000 residents",
+        "note": "The copy states the service provision as planned using 예정, whereas the source states it as a fact."
+      },
+      {
+        "article_id": "f3f29f5d6a27de30790c4bae",
+        "company": "Jenoptik",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "공급, 구현 및 설치",
+        "source_phrase": "",
+        "note": "The action deliver present in the English summary is missing in the Korean summary."
+      },
+      {
+        "article_id": "05bd968c4e9039ac6edecec0",
+        "company": "BASF",
         "candidate_id": "relevant",
         "check": "unsupported",
-        "copy_phrase": "Japan",
+        "copy_phrase": "in Germany",
         "source_phrase": "",
-        "note": "The copy states the country as Japan, which is not mentioned in the sources."
+        "note": "The copy states the country Germany, which is not mentioned in the sources."
       },
       {
-        "article_id": "717370761d73f0a6ec74ebc2",
-        "company": "Sumitomo Chemical",
+        "article_id": "05bd968c4e9039ac6edecec0",
+        "company": "BASF",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "독일",
+        "source_phrase": "",
+        "note": "The copy states the country Germany, which is not mentioned in the sources."
+      },
+      {
+        "article_id": "cdc0b907150beadf1412f439",
+        "company": "Safran",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "Akira specializes in propulsion systems",
+        "source_phrase": "",
+        "note": "Akira's specialization in propulsion systems is stated in English but omitted in Korean."
+      },
+      {
+        "article_id": "cdc0b907150beadf1412f439",
+        "company": "Safran",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "수소 연소 연구",
+        "source_phrase": "",
+        "note": "Hydrogen combustion research is included in Korean but omitted in English."
+      },
+      {
+        "article_id": "cdc0b907150beadf1412f439",
+        "company": "Safran",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "Japan",
+        "copy_phrase": "설계를 전문으로 하는",
         "source_phrase": "",
-        "note": "The English summary specifies Japan while the Korean summary specifies Ibaraki Prefecture, creating a discrepancy in the location details between the two languages."
+        "note": "Prototyping and testing activities mentioned in English are omitted in Korean, which only mentions design."
       },
       {
-        "article_id": "fa0a5cbb48d5de822467e432",
-        "company": "Renishaw",
+        "article_id": "f111b494e4703aaad6fae8b4",
+        "company": "Air Liquide",
         "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "introduced",
-        "source_phrase": "September 2026",
-        "note": "The copy states the introduction as a completed action, whereas the source dates it in September 2026, which is in the future relative to the published date."
+        "check": "unsupported",
+        "copy_phrase": "operates TEAL Mobility",
+        "source_phrase": "retail operators such as MB Energy and TEAL Mobility (a 50/50 joint venture between TotalEnergies and Air Liquide, operating under the TotalEnergies brand).",
+        "note": "The source states that TEAL Mobility is a joint venture and a retail operator, not that Air Liquide operates it."
       },
       {
-        "article_id": "fa0a5cbb48d5de822467e432",
-        "company": "Renishaw",
+        "article_id": "f111b494e4703aaad6fae8b4",
+        "company": "Air Liquide",
         "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "출시했음",
-        "source_phrase": "September 2026",
-        "note": "The copy states the launch as a completed action, whereas the source dates it in September 2026, which is in the future relative to the published date."
+        "check": "unsupported",
+        "copy_phrase": "TEAL Mobility를 운영하고 있음",
+        "source_phrase": "retail operators such as MB Energy and TEAL Mobility (a 50/50 joint venture between TotalEnergies and Air Liquide, operating under the TotalEnergies brand).",
+        "note": "The source states that TEAL Mobility is a joint venture and a retail operator, not that Air Liquide operates it."
       },
       {
-        "article_id": "56b3053a1f2446d907b56c9b",
+        "article_id": "5e90e4f375d2a343966c031a",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "네이티브 컬러 디지털 라이다",
+        "source_phrase": "",
+        "note": "The expression '네이티브 컬러' is a literal transliteration rather than an established Korean business term."
+      },
+      {
+        "article_id": "9bd3776abdc1c9d09a00d368",
         "company": "Ouster",
         "candidate_id": "relevant",
         "check": "term",
         "copy_phrase": "네이티브 컬러",
         "source_phrase": "",
-        "note": "The term 네이티브 컬러 is a literal transliteration of English words rather than an established Korean term."
+        "note": "네이티브 컬러 is a literal transliteration of English words and is not an established Korean term."
       },
       {
-        "article_id": "803c25cbb4642c669c75e961",
-        "company": "NXP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "후양자 암호화",
-        "source_phrase": "",
-        "note": "후양자 암호화 is a literal compound translation rather than the established Korean term 포스트 양자 암호."
-      },
-      {
-        "article_id": "f22e87ee4bbcb61a72455b75",
-        "company": "NXP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "어셈블리",
-        "source_phrase": "",
-        "note": "The word 어셈블리 is a Hangul transliteration of an English common noun instead of an established Korean term."
-      },
-      {
-        "article_id": "af290e3da11c8c4d2ddd0623",
-        "company": "Onsemi",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "연결 연산",
-        "source_phrase": "connected compute",
-        "note": "The term connected compute is rendered as a literal compound 연결 연산, which is not an established Korean business or technical term."
-      },
-      {
-        "article_id": "bf7d212a3653abda0f64399d",
-        "company": "Sumitomo Chemical",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "Sumitomo Chemical has established a mass production system for 4-inch indium phosphide (InP) epitaxial wafers, a type of compound semiconductor, at its Ibaraki Works in Hitachi, Ibaraki Prefecture, and has begun selling these products.",
-        "source_phrase": "Sumitomo Chemical has established a mass production system for 4-inch indium phosphide (InP) epitaxial wafers, a type of compound semiconductor, at its Ibaraki Works in Hitachi, Ibaraki Prefecture, and has begun selling these products.",
-        "note": "The article evidence does not contain any information regarding indium phosphide epitaxial wafers or Ibaraki Works."
-      },
-      {
-        "article_id": "e93994247d03fd4b41c95244",
+        "article_id": "ea74bc3c3028420481b71dc1",
         "company": "Mitsubishi Chemical",
         "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "용량 확장",
-        "source_phrase": "capacity expansion",
-        "note": "In Korean business reporting, production capacity expansion is typically referred to as 생산능력 확대 rather than a literal translation like 용량 확장."
+        "check": "unsupported",
+        "copy_phrase": "to support the development of organic electro-optic materials for next-generation optical communications",
+        "source_phrase": "a startup that develops organic electro-optic (OEO) materials for next-generation optical communications.",
+        "note": "The source states that NLM is a startup that develops the materials, not that the investment was made to support their development."
       },
       {
-        "article_id": "bcfcb72f8d1fea77023fdc2b",
-        "company": "DNP",
+        "article_id": "fc08d1de535d910bf5762abf",
+        "company": "Infineon",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "資源循環システムズ",
-        "source_phrase": "資源循環システムズ",
-        "note": "Japanese company names must be written in Korean transcription or translation rather than left in Japanese script."
-      },
-      {
-        "article_id": "bcfcb72f8d1fea77023fdc2b",
-        "company": "DNP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "大栄環境",
-        "source_phrase": "大栄環境",
-        "note": "Japanese company names must be written in Korean transcription or translation rather than left in Japanese script."
-      },
-      {
-        "article_id": "bcfcb72f8d1fea77023fdc2b",
-        "company": "DNP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "三重中央開発",
-        "source_phrase": "三重中央開発",
-        "note": "Japanese company names must be written in Korean transcription or translation rather than left in Japanese script."
-      },
-      {
-        "article_id": "bcfcb72f8d1fea77023fdc2b",
-        "company": "DNP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "八木熊",
-        "source_phrase": "八木熊",
-        "note": "Japanese company names must be written in Korean transcription or translation rather than left in Japanese script."
-      },
-      {
-        "article_id": "bcfcb72f8d1fea77023fdc2b",
-        "company": "DNP",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業",
-        "source_phrase": "令和8年度 プラスチック資源循環に関する先進的社会実装モデル形成支援事業",
-        "note": "Project names in Japanese must be translated into Korean rather than left in Japanese script."
-      },
-      {
-        "article_id": "7147a29627034b8a8f2ca815",
-        "company": "Norsk Hydro",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "포스트컨슈머",
+        "copy_phrase": "양자 후 암호화",
         "source_phrase": "",
-        "note": "포스트컨슈머 is a Hangul transliteration of an English expression and should be rendered using an established Korean expression."
+        "note": "양자 후 암호화 is a literal compound coined from English parts rather than an established Korean technical term."
       },
       {
-        "article_id": "a70db5bd8d9a265b3612575f",
-        "company": "Tosoh",
+        "article_id": "373c7c2bba9da915a413edaf",
+        "company": "DNP",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "developed organic transistor materials for low-temperature and normal-pressure processes",
+        "copy_phrase": "Nagasaki City",
         "source_phrase": "",
-        "note": "The development of organic transistor materials is included in the English summary but missing in the Korean summary."
+        "note": "The place Nagasaki City appears in summary_en but is missing in summary_ko."
+      },
+      {
+        "article_id": "84b8876f5b490c6556f7d8c9",
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "5G communication quality",
+        "source_phrase": "5Gの通信品質向上",
+        "note": "5G is mentioned in summary_en in connection with communication quality, but is omitted in summary_ko."
+      },
+      {
+        "article_id": "84b8876f5b490c6556f7d8c9",
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "NTTドコモ",
+        "source_phrase": "株式会社NTTドコモ",
+        "note": "summary_ko uses Japanese katakana for the company name instead of established Korean terminology."
+      },
+      {
+        "article_id": "0b307197df9c176e6a992892",
+        "company": "Tokyo Electron",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "appointed",
+        "source_phrase": "effective on October 1, 2026",
+        "note": "The copy states the appointment as done, whereas the sources state it as effective in the future."
+      },
+      {
+        "article_id": "0b307197df9c176e6a992892",
+        "company": "Tokyo Electron",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "appointed",
+        "source_phrase": "",
+        "note": "The English summary states the appointment as done, while the Korean summary states it as a future plan."
+      },
+      {
+        "article_id": "829f9cd2744edfab03e5e558",
+        "company": "EVG",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "to evaluate the feasibility of manufacturing waveguides for AR optical devices",
+        "source_phrase": "and evaluated the feasibility of manufacturing waveguides for AR optical devices",
+        "note": "The copy states the evaluation as a purpose rather than a completed action as stated in the sources."
+      },
+      {
+        "article_id": "829f9cd2744edfab03e5e558",
+        "company": "EVG",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "to evaluate",
+        "source_phrase": "and evaluated",
+        "note": "The copy joins the two facts with an unsupported purpose."
+      },
+      {
+        "article_id": "829f9cd2744edfab03e5e558",
+        "company": "EVG",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "to evaluate the feasibility of manufacturing waveguides for AR optical devices",
+        "source_phrase": "",
+        "note": "The English summary states the evaluation as a purpose, whereas the Korean summary states it as a completed action."
+      },
+      {
+        "article_id": "4473212b01085e9c7c154515",
+        "company": "HyproMag",
+        "candidate_id": "investment:4",
+        "check": "term",
+        "copy_phrase": "루프 공정",
+        "source_phrase": "",
+        "note": "The term loop processing is rendered as a literal coined compound rather than using an established Korean term."
+      },
+      {
+        "article_id": "33a017eacdf7567c31b5bd77",
+        "company": "EVG",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "저기생용량",
+        "source_phrase": "low-parasitic",
+        "note": "The copy specifies capacitance (용량), which is not stated in the source."
+      },
+      {
+        "article_id": "ef67646468b3784824d8176c",
+        "company": "Moderna",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "최고운영책임자 직위 신설 및 임원 인사",
+        "source_phrase": "",
+        "note": "The creation of the Chief Operating Officer role and executive personnel changes appear in the Korean summary and sources but are missing in the English summary."
+      },
+      {
+        "article_id": "4ff5a0952de10835f2e16e06",
+        "company": "Cognex",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "깊이 인식 카메라",
+        "source_phrase": "",
+        "note": "The English term depth-sensing is incorrectly rendered as depth recognition ('깊이 인식') where sensing should be translated as 감지."
+      },
+      {
+        "article_id": "b9521e8414026a5f9ad68ddc",
+        "company": "Corning",
+        "candidate_id": "investment:3",
+        "check": "term",
+        "copy_phrase": "애트더마켓",
+        "source_phrase": "",
+        "note": "The term 애트더마켓 is a literal Hangul transliteration of an English financial term rather than an established Korean business term."
+      },
+      {
+        "article_id": "ba8d4b8b848120b3bb2e94e9",
+        "company": "Moderna",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "with an option for an additional $300 million",
+        "source_phrase": "",
+        "note": "The $300 million option is present in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "ba8d4b8b848120b3bb2e94e9",
+        "company": "Moderna",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "capped call transactions",
+        "source_phrase": "",
+        "note": "Capped call transactions are present in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "ba8d4b8b848120b3bb2e94e9",
+        "company": "Moderna",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "종양학 사업 투자",
+        "source_phrase": "",
+        "note": "Investment in the oncology business is present in the Korean summary but missing in the English summary."
+      },
+      {
+        "article_id": "7fa0108190ee39e806c2b8f5",
+        "company": "West Pharmaceutical",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "성장을 위한 유리한 위치에 있음",
+        "source_phrase": "well positioned for growth",
+        "note": "The status of being well positioned for growth appears in summary_ko and the sources but is missing in summary_en."
+      },
+      {
+        "article_id": "c5eb6d9961dbcbc4c9ee15ad",
+        "company": "Ouster",
+        "candidate_id": "investment:4",
+        "check": "unsupported",
+        "copy_phrase": "following joint flight testing and firmware tuning in Huntsville, Alabama",
+        "source_phrase": "",
+        "note": "The copy connects the integration to the joint flight testing with following, which is not stated in the sources."
       }
     ],
-    "enforce": [],
+    "enforce": [
+      {
+        "article_id": "5b5e862c515b0a4c12942e68",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "problems": [
+          "review_certainty: \"joined\" vs source \"will join\": The copy states as done what the sources state as future.",
+          "review_certainty: \"공동 개발함\" vs source \"will work together\": The copy states as done what the sources state as future."
+        ]
+      },
+      {
+        "article_id": "0b307197df9c176e6a992892",
+        "company": "Tokyo Electron",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: \"appointed\" vs source \"effective on October 1, 2026\": The copy states the appointment as done, whereas the sources state it as effective in the future."
+        ]
+      },
+      {
+        "article_id": "c5eb6d9961dbcbc4c9ee15ad",
+        "company": "Ouster",
+        "candidate_id": "investment:4",
+        "problems": [
+          "review_unsupported: \"following joint flight testing and firmware tuning in Huntsville, Alabama\": The copy connects the integration to the joint flight testing with following, which is not stated in the sources."
+        ]
+      }
+    ],
     "discarded": 0,
     "errors": {},
-    "first_flagged": 18,
-    "first_enforce": 0,
-    "rounds": []
+    "first_flagged": 43,
+    "first_enforce": 8,
+    "rounds": [
+      {
+        "round": 1,
+        "asked": [
+          {
+            "company": "Applied Materials",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: \"차세대 메모리 기술 공동 개발 파트너십 체결\" vs source \"Applied Materials, Inc. , the leader in materials engineering solutions for the semiconductor industry, today announced that KIOXIA Corporation , a leading global supplier of flash memory and solid state drives (SSDs), will join Applied's EPIC Center in Silicon Valley as an innovation partner to advance next-generation memory technologies.\": "
+            ]
+          },
+          {
+            "company": "Tokyo Electron",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"appointing Fumihiko Kaminaga and Masaaki Abe as Global Sales Division Officers\" vs source \"Personnel Changes for Division Officers of Tokyo Electron effective on October 1, 2026\": The copy states the appointment as current, whereas the sources indicate a future effective date."
+            ]
+          },
+          {
+            "company": "Norsk Hydro",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: \"파일럿 연구를 수행함\" vs source \"In this pilot study, Hydro will recycle aluminium from decommissioned trains at its recycling facility in Ghlin, Belgium .\": The copy states the pilot study as done, whereas the sources state it as future."
+            ]
+          },
+          {
+            "company": "Moderna",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"appointed\" vs source \"will return to Moderna as Chief Operating Officer, effective October 5, 2026.\": The copy states the appointment as done, whereas the sources state it as a future event effective after the publication date.",
+              "review_certainty: \"재선임하고\" vs source \"will return to Moderna as Chief Operating Officer, effective October 5, 2026.\": The copy states the reappointment as done, whereas the sources state it as a future event effective after the publication date."
+            ]
+          },
+          {
+            "company": "Albemarle",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: \"appointed\" vs source \"Effective February 1, 2027\": The copy states the appointment as already done, whereas the source date is in the future relative to the publication date.",
+              "review_unsupported: \"upon Udd joining the company\": The copy states a timing condition that is not supported by any source.",
+              "review_certainty: \"선임했고\" vs source \"Effective February 1, 2027\": The copy states the appointment as already done, whereas the source date is in the future relative to the publication date.",
+              "review_unsupported: \"이사회 개편\": The copy states a fact about board reorganization that is not supported by the sources."
+            ]
+          },
+          {
+            "company": "Onsemi",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_unsupported: \"차세대\": The sources do not state that the image sensor is next-generation."
+            ]
+          },
+          {
+            "company": "Ouster",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: \"통합하기로 했음\" vs source \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\": The copy states as decided what the sources state as future."
+            ]
+          },
+          {
+            "company": "Ouster",
+            "candidate_id": "relevant",
+            "problems": [
+              "review_certainty: \"통합하기로 했음\" vs source \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\": The copy states as decided what the sources state as future."
+            ]
+          }
+        ],
+        "written": 8,
+        "failed": 0,
+        "requests": 10
+      }
+    ]
   }
 }
