@@ -213,7 +213,7 @@
     "model": "gemini-3.7-flash",
     "fallback_model": "gemini-3.5-flash-lite",
     "articles": 95,
-    "requests": 106,
+    "requests": 109,
     "cached": 0,
     "written": 105,
     "written_by": {
@@ -253,153 +253,216 @@
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 93,
-    "requests": 101,
-    "cached": 97,
+    "requests": 106,
+    "cached": 91,
     "reviewed": 105,
     "flagged": [
       {
-        "article_id": "5b5e862c515b0a4c12942e68",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "certainty",
-        "copy_phrase": "joined",
-        "source_phrase": "will join",
-        "note": "The copy states as done what the sources state as future."
-      },
-      {
-        "article_id": "5b5e862c515b0a4c12942e68",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "certainty",
-        "copy_phrase": "공동 개발함",
-        "source_phrase": "will work together",
-        "note": "The copy states as done what the sources state as future."
-      },
-      {
-        "article_id": "5b5e862c515b0a4c12942e68",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "materials engineering",
-        "source_phrase": "",
-        "note": "Materials engineering is present in the English summary and missing in the Korean summary."
-      },
-      {
-        "article_id": "f21dc76872d777267718e78c",
-        "company": "Rio Tinto",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "독점 마케팅하며",
-        "source_phrase": "will exclusively market",
-        "note": "The copy states as a current action what the sources state as a future action."
-      },
-      {
-        "article_id": "672bc8c091efec9fb2de931b",
-        "company": "Veolia",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "서비스를 제공할 예정이며",
-        "source_phrase": "serving more than 230,000 residents",
-        "note": "The copy states the service provision as planned using 예정, whereas the source states it as a fact."
-      },
-      {
-        "article_id": "f3f29f5d6a27de30790c4bae",
-        "company": "Jenoptik",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "공급, 구현 및 설치",
-        "source_phrase": "",
-        "note": "The action deliver present in the English summary is missing in the Korean summary."
-      },
-      {
-        "article_id": "05bd968c4e9039ac6edecec0",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "in Germany",
-        "source_phrase": "",
-        "note": "The copy states the country Germany, which is not mentioned in the sources."
-      },
-      {
-        "article_id": "05bd968c4e9039ac6edecec0",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "독일",
-        "source_phrase": "",
-        "note": "The copy states the country Germany, which is not mentioned in the sources."
-      },
-      {
-        "article_id": "cdc0b907150beadf1412f439",
-        "company": "Safran",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "Akira specializes in propulsion systems",
-        "source_phrase": "",
-        "note": "Akira's specialization in propulsion systems is stated in English but omitted in Korean."
-      },
-      {
-        "article_id": "cdc0b907150beadf1412f439",
-        "company": "Safran",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "수소 연소 연구",
-        "source_phrase": "",
-        "note": "Hydrogen combustion research is included in Korean but omitted in English."
-      },
-      {
-        "article_id": "cdc0b907150beadf1412f439",
-        "company": "Safran",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "설계를 전문으로 하는",
-        "source_phrase": "",
-        "note": "Prototyping and testing activities mentioned in English are omitted in Korean, which only mentions design."
-      },
-      {
-        "article_id": "f111b494e4703aaad6fae8b4",
+        "article_id": "1356b8a6d4379cd41d136ef4",
         "company": "Air Liquide",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "operates TEAL Mobility",
-        "source_phrase": "retail operators such as MB Energy and TEAL Mobility (a 50/50 joint venture between TotalEnergies and Air Liquide, operating under the TotalEnergies brand).",
-        "note": "The source states that TEAL Mobility is a joint venture and a retail operator, not that Air Liquide operates it."
+        "check": "certainty",
+        "copy_phrase": "투자할 예정임",
+        "source_phrase": "Air Liquide announces a new investment of more than 170 million euros to supply ultra-high purity gases to a leading semiconductor manufacturer in Japan.",
+        "note": "The sources state the investment as done on the publication date, but the copy states it as planned."
       },
       {
-        "article_id": "f111b494e4703aaad6fae8b4",
+        "article_id": "1356b8a6d4379cd41d136ef4",
         "company": "Air Liquide",
         "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "투자할 예정임",
+        "source_phrase": "",
+        "note": "English summary states the investment as announced, but Korean summary states it as planned."
+      },
+      {
+        "article_id": "279da76d92222ba732616619",
+        "company": "BASF",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "BASF is evaluating a potential investment in India",
+        "source_phrase": "",
+        "note": "The fact that BASF is evaluating a potential investment in India appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "6782adfaaba9598d203007d5",
+        "company": "Charles River",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "end-to-end solution",
+        "source_phrase": "",
+        "note": "The descriptor end-to-end appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "6782adfaaba9598d203007d5",
+        "company": "Charles River",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "rapid cell bank and release packages",
+        "source_phrase": "",
+        "note": "Release packages are mentioned in the English summary but omitted in the Korean summary."
+      },
+      {
+        "article_id": "d32d429ad7f53f6b0d354460",
+        "company": "Toppan Holdings",
+        "candidate_id": "relevant",
         "check": "unsupported",
-        "copy_phrase": "TEAL Mobility를 운영하고 있음",
-        "source_phrase": "retail operators such as MB Energy and TEAL Mobility (a 50/50 joint venture between TotalEnergies and Air Liquide, operating under the TotalEnergies brand).",
-        "note": "The source states that TEAL Mobility is a joint venture and a retail operator, not that Air Liquide operates it."
+        "copy_phrase": "establish a supply infrastructure of up to 30,000 tonnes per year",
+        "source_phrase": "Through the operation of this line, together with existing capabilities, the plant will be able to establish an overall supply infrastructure of up to 30,000 tonnes per year for high-performance BOPP films.",
+        "note": "The copy incorrectly states that the new line establishes the supply infrastructure, omitting that it is achieved through the new line together with existing capabilities."
+      },
+      {
+        "article_id": "3e8abc0cd4bcef92dd213b41",
+        "company": "Onsemi",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "is evaluating",
+        "source_phrase": "to Evaluate",
+        "note": "The copy states the evaluation as ongoing, whereas the source states it as future or planned."
+      },
+      {
+        "article_id": "3e8abc0cd4bcef92dd213b41",
+        "company": "Onsemi",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "is evaluating",
+        "source_phrase": "",
+        "note": "English summary states the evaluation as ongoing while Korean summary states it as planned."
       },
       {
         "article_id": "5e90e4f375d2a343966c031a",
         "company": "Ouster",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "네이티브 컬러 디지털 라이다",
+        "copy_phrase": "페이로드 인테그레이터",
         "source_phrase": "",
-        "note": "The expression '네이티브 컬러' is a literal transliteration rather than an established Korean business term."
+        "note": "The term '페이로드 인테그레이터' uses a Hangul transliteration of English common nouns instead of established Korean business terms."
+      },
+      {
+        "article_id": "5e90e4f375d2a343966c031a",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "적용할 예정임",
+        "source_phrase": "",
+        "note": "The Korean summary states the partnership status as planned ('적용할 예정임'), whereas the English summary states it as ongoing ('is pairing')."
+      },
+      {
+        "article_id": "eeb9bbb26c68e2f2a22d9592",
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "for financial service providers",
+        "source_phrase": "",
+        "note": "The target audience of financial service providers is stated in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "72655f89833ddd4eff334e1b",
+        "company": "BorgWarner",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "오퍼링",
+        "source_phrase": "",
+        "note": "The term '오퍼링' is an unestablished Hangul transliteration of an English common noun."
+      },
+      {
+        "article_id": "72655f89833ddd4eff334e1b",
+        "company": "BorgWarner",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "통합",
+        "source_phrase": "",
+        "note": "The Korean summary uses '통합' (unified) which differs from the English summary's 'connected'."
+      },
+      {
+        "article_id": "9bd3776abdc1c9d09a00d368",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "five years",
+        "source_phrase": "",
+        "note": "The five-year duration appears in the English summary but is missing in the Korean summary."
       },
       {
         "article_id": "9bd3776abdc1c9d09a00d368",
         "company": "Ouster",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "네이티브 컬러",
+        "copy_phrase": "네이티브",
         "source_phrase": "",
-        "note": "네이티브 컬러 is a literal transliteration of English words and is not an established Korean term."
+        "note": "네이티브 is a Hangul transliteration of an English common word rather than an established Korean business term."
       },
       {
-        "article_id": "ea74bc3c3028420481b71dc1",
-        "company": "Mitsubishi Chemical",
+        "article_id": "b2b64803665c0b5ac2018e3b",
+        "company": "GE Healthcare",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "to support the development of organic electro-optic materials for next-generation optical communications",
-        "source_phrase": "a startup that develops organic electro-optic (OEO) materials for next-generation optical communications.",
-        "note": "The source states that NLM is a startup that develops the materials, not that the investment was made to support their development."
+        "check": "mismatch",
+        "copy_phrase": "유럽 CE 인증",
+        "source_phrase": "",
+        "note": "The reference to Europe appears in the Korean summary but is missing in the English summary."
+      },
+      {
+        "article_id": "be46994ad87eafd4fad35c60",
+        "company": "Jenoptik",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "부사장으로 임용하며",
+        "source_phrase": "to become Vice President of Global HR at Jenoptik",
+        "note": "The copy states the appointment as done, whereas the sources state it as a future event."
+      },
+      {
+        "article_id": "fb1fa12ed1f2004f97c755b7",
+        "company": "3M",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "fleet and rail operators",
+        "source_phrase": "",
+        "note": "The mention of fleet and rail operators appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "572aa8ac7fa68e130af81f82",
+        "company": "Ouster",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "Rev8 OS1 Max 디지털 라이다",
+        "source_phrase": "",
+        "note": "The English summary includes native color, which is missing in the Korean summary."
+      },
+      {
+        "article_id": "572aa8ac7fa68e130af81f82",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "체결했음",
+        "source_phrase": "",
+        "note": "The English summary states that the partnership was announced, whereas the Korean summary states it was concluded or signed."
+      },
+      {
+        "article_id": "1da9b8564d8dff7f9ae91ca9",
+        "company": "Bayer",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "추체체세포이영양증",
+        "source_phrase": "",
+        "note": "추체체세포이영양증 is not an established Korean medical term for cone-rod dystrophy."
+      },
+      {
+        "article_id": "000d2d9bed0ab0f88c0a03b3",
+        "company": "Norsk Hydro",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "low-carbon aluminum packaging",
+        "source_phrase": "fragrance, makeup, and skincare packaging",
+        "note": "The specific packaging categories (fragrance, makeup, and skincare) appear in the Korean summary and sources but are missing in the English summary."
+      },
+      {
+        "article_id": "000d2d9bed0ab0f88c0a03b3",
+        "company": "Norsk Hydro",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "through 2030",
+        "source_phrase": "between 2026 and 2030",
+        "note": "The start year 2026 is present in the Korean summary and sources but missing in the English summary."
       },
       {
         "article_id": "fc08d1de535d910bf5762abf",
@@ -408,79 +471,97 @@
         "check": "term",
         "copy_phrase": "양자 후 암호화",
         "source_phrase": "",
-        "note": "양자 후 암호화 is a literal compound coined from English parts rather than an established Korean technical term."
+        "note": "'양자 후 암호화' is a literal compound; the established Korean term for post-quantum cryptography is '양자 내성 암호'."
       },
       {
         "article_id": "373c7c2bba9da915a413edaf",
         "company": "DNP",
         "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "Nagasaki City",
-        "source_phrase": "",
-        "note": "The place Nagasaki City appears in summary_en but is missing in summary_ko."
-      },
-      {
-        "article_id": "84b8876f5b490c6556f7d8c9",
-        "company": "DNP",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "5G communication quality",
-        "source_phrase": "5Gの通信品質向上",
-        "note": "5G is mentioned in summary_en in connection with communication quality, but is omitted in summary_ko."
-      },
-      {
-        "article_id": "84b8876f5b490c6556f7d8c9",
-        "company": "DNP",
-        "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "NTTドコモ",
-        "source_phrase": "株式会社NTTドコモ",
-        "note": "summary_ko uses Japanese katakana for the company name instead of established Korean terminology."
+        "copy_phrase": "사회적 실장",
+        "source_phrase": "社会実装",
+        "note": "사회적 실장은 일본어 표현의 직역으로 한국 비즈니스 전문 매체에서 통용되지 않는 비표준어입니다."
       },
       {
-        "article_id": "0b307197df9c176e6a992892",
-        "company": "Tokyo Electron",
-        "candidate_id": "investment:5",
-        "check": "certainty",
-        "copy_phrase": "appointed",
-        "source_phrase": "effective on October 1, 2026",
-        "note": "The copy states the appointment as done, whereas the sources state it as effective in the future."
-      },
-      {
-        "article_id": "0b307197df9c176e6a992892",
-        "company": "Tokyo Electron",
-        "candidate_id": "investment:5",
-        "check": "mismatch",
-        "copy_phrase": "appointed",
-        "source_phrase": "",
-        "note": "The English summary states the appointment as done, while the Korean summary states it as a future plan."
-      },
-      {
-        "article_id": "829f9cd2744edfab03e5e558",
-        "company": "EVG",
+        "article_id": "84b8876f5b490c6556f7d8c9",
+        "company": "DNP",
         "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "to evaluate the feasibility of manufacturing waveguides for AR optical devices",
-        "source_phrase": "and evaluated the feasibility of manufacturing waveguides for AR optical devices",
-        "note": "The copy states the evaluation as a purpose rather than a completed action as stated in the sources."
+        "check": "mismatch",
+        "copy_phrase": "in crowded areas",
+        "source_phrase": "来場者が集中するエリア",
+        "note": "The English summary mentions crowded areas, but this detail is missing in the Korean summary."
       },
       {
-        "article_id": "829f9cd2744edfab03e5e558",
-        "company": "EVG",
+        "article_id": "84b8876f5b490c6556f7d8c9",
+        "company": "DNP",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "across two events",
+        "source_phrase": "2つの大規模イベント",
+        "note": "The English summary specifies across two events, but this detail is missing in the Korean summary."
+      },
+      {
+        "article_id": "2c48619dc18b49024bd57eaa",
+        "company": "Nabtesco",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "autonomous control system integrated with an optimal navigation application for domestic coastal vessels",
+        "source_phrase": "",
+        "note": "Details regarding the optimal navigation application and roll-on/roll-off vessel type present in the English summary are missing in the Korean summary."
+      },
+      {
+        "article_id": "d33a957485ec46089a86cab6",
+        "company": "Norsk Hydro",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "벨기에 Ghlin 재활용 시설에서 폐열차의 알루미늄을 재활용해 철도 부품을 생산할 예정임",
+        "source_phrase": "In this pilot study, Hydro will recycle aluminium from decommissioned trains at its recycling facility in Ghlin, Belgium .",
+        "note": "The Korean summary omits the pilot study detail present in the English summary and sources."
+      },
+      {
+        "article_id": "104b869770f68e9e7cae79f6",
+        "company": "Arkema",
         "candidate_id": "relevant",
         "check": "unsupported",
-        "copy_phrase": "to evaluate",
-        "source_phrase": "and evaluated",
-        "note": "The copy joins the two facts with an unsupported purpose."
+        "copy_phrase": "South Korea",
+        "source_phrase": "",
+        "note": "The source does not state South Korea."
       },
       {
-        "article_id": "829f9cd2744edfab03e5e558",
-        "company": "EVG",
+        "article_id": "104b869770f68e9e7cae79f6",
+        "company": "Arkema",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "to evaluate the feasibility of manufacturing waveguides for AR optical devices",
+        "copy_phrase": "South Korea",
         "source_phrase": "",
-        "note": "The English summary states the evaluation as a purpose, whereas the Korean summary states it as a completed action."
+        "note": "South Korea appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "ee6f81e7341d393400ae608f",
+        "company": "Albemarle",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "has been appointed",
+        "source_phrase": "has been appointed President and Chief Executive Officer, effective February 1, 2027",
+        "note": "The copy states the appointment as done even though its effective date is in the future."
+      },
+      {
+        "article_id": "ee6f81e7341d393400ae608f",
+        "company": "Albemarle",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "선임 계획",
+        "source_phrase": "",
+        "note": "The Korean summary describes the appointment as a plan, whereas the English summary states it as already done."
+      },
+      {
+        "article_id": "4473212b01085e9c7c154515",
+        "company": "HyproMag",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "to prove UK manufacturing capacity combining short, medium, and long-loop processing.",
+        "source_phrase": "",
+        "note": "The English summary mentions proving UK manufacturing capacity, which is missing in the Korean summary."
       },
       {
         "article_id": "4473212b01085e9c7c154515",
@@ -489,189 +570,157 @@
         "check": "term",
         "copy_phrase": "루프 공정",
         "source_phrase": "",
-        "note": "The term loop processing is rendered as a literal coined compound rather than using an established Korean term."
+        "note": "The term '루프 공정' is a literal compound coined from the English common noun 'loop' rather than an established Korean term."
       },
       {
-        "article_id": "33a017eacdf7567c31b5bd77",
-        "company": "EVG",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "저기생용량",
-        "source_phrase": "low-parasitic",
-        "note": "The copy specifies capacitance (용량), which is not stated in the source."
-      },
-      {
-        "article_id": "ef67646468b3784824d8176c",
-        "company": "Moderna",
-        "candidate_id": "investment:5",
-        "check": "mismatch",
-        "copy_phrase": "최고운영책임자 직위 신설 및 임원 인사",
-        "source_phrase": "",
-        "note": "The creation of the Chief Operating Officer role and executive personnel changes appear in the Korean summary and sources but are missing in the English summary."
-      },
-      {
-        "article_id": "4ff5a0952de10835f2e16e06",
+        "article_id": "add816c5b4f86ac9afe9b6fb",
         "company": "Cognex",
         "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "깊이 인식 카메라",
-        "source_phrase": "",
-        "note": "The English term depth-sensing is incorrectly rendered as depth recognition ('깊이 인식') where sensing should be translated as 감지."
-      },
-      {
-        "article_id": "b9521e8414026a5f9ad68ddc",
-        "company": "Corning",
-        "candidate_id": "investment:3",
-        "check": "term",
-        "copy_phrase": "애트더마켓",
-        "source_phrase": "",
-        "note": "The term 애트더마켓 is a literal Hangul transliteration of an English financial term rather than an established Korean business term."
-      },
-      {
-        "article_id": "ba8d4b8b848120b3bb2e94e9",
-        "company": "Moderna",
-        "candidate_id": "investment:3",
         "check": "mismatch",
-        "copy_phrase": "with an option for an additional $300 million",
+        "copy_phrase": "스테레오 비전, 구조광, 비행시간측정(ToF) 기술을 활용하는 RealSense의 3D 깊이 인식 및 로봇 네비게이션 기능을 자사의 기존 머신비전 기술과 결합할 예정임",
         "source_phrase": "",
-        "note": "The $300 million option is present in the English summary but missing in the Korean summary."
-      },
-      {
-        "article_id": "ba8d4b8b848120b3bb2e94e9",
-        "company": "Moderna",
-        "candidate_id": "investment:3",
-        "check": "mismatch",
-        "copy_phrase": "capped call transactions",
-        "source_phrase": "",
-        "note": "Capped call transactions are present in the English summary but missing in the Korean summary."
-      },
-      {
-        "article_id": "ba8d4b8b848120b3bb2e94e9",
-        "company": "Moderna",
-        "candidate_id": "investment:3",
-        "check": "mismatch",
-        "copy_phrase": "종양학 사업 투자",
-        "source_phrase": "",
-        "note": "Investment in the oncology business is present in the Korean summary but missing in the English summary."
-      },
-      {
-        "article_id": "7fa0108190ee39e806c2b8f5",
-        "company": "West Pharmaceutical",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "성장을 위한 유리한 위치에 있음",
-        "source_phrase": "well positioned for growth",
-        "note": "The status of being well positioned for growth appears in summary_ko and the sources but is missing in summary_en."
-      },
-      {
-        "article_id": "c5eb6d9961dbcbc4c9ee15ad",
-        "company": "Ouster",
-        "candidate_id": "investment:4",
-        "check": "unsupported",
-        "copy_phrase": "following joint flight testing and firmware tuning in Huntsville, Alabama",
-        "source_phrase": "",
-        "note": "The copy connects the integration to the joint flight testing with following, which is not stated in the sources."
+        "note": "The Korean summary states that stereo vision, structured light, and time-of-flight technology are utilized by 3D depth perception and robot navigation capabilities, whereas the English summary states these technologies are used by RealSense's depth cameras and omits mention of depth cameras."
       }
     ],
     "enforce": [
       {
-        "article_id": "5b5e862c515b0a4c12942e68",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
+        "article_id": "1356b8a6d4379cd41d136ef4",
+        "company": "Air Liquide",
+        "candidate_id": "relevant",
         "problems": [
-          "review_certainty: \"joined\" vs source \"will join\": The copy states as done what the sources state as future.",
-          "review_certainty: \"공동 개발함\" vs source \"will work together\": The copy states as done what the sources state as future."
+          "review_certainty: The sources state the investment as done on the publication date, but the copy states it as planned. Copy: \"투자할 예정임\" Source: \"Air Liquide announces a new investment of more than 170 million euros to supply ultra-high purity gases to a leading semiconductor manufacturer in Japan.\""
         ]
       },
       {
-        "article_id": "0b307197df9c176e6a992892",
-        "company": "Tokyo Electron",
+        "article_id": "be46994ad87eafd4fad35c60",
+        "company": "Jenoptik",
         "candidate_id": "investment:5",
         "problems": [
-          "review_certainty: \"appointed\" vs source \"effective on October 1, 2026\": The copy states the appointment as done, whereas the sources state it as effective in the future."
+          "review_certainty: The copy states the appointment as done, whereas the sources state it as a future event. Copy: \"부사장으로 임용하며\" Source: \"to become Vice President of Global HR at Jenoptik\""
         ]
       },
       {
-        "article_id": "c5eb6d9961dbcbc4c9ee15ad",
-        "company": "Ouster",
-        "candidate_id": "investment:4",
+        "article_id": "ee6f81e7341d393400ae608f",
+        "company": "Albemarle",
+        "candidate_id": "investment:5",
         "problems": [
-          "review_unsupported: \"following joint flight testing and firmware tuning in Huntsville, Alabama\": The copy connects the integration to the joint flight testing with following, which is not stated in the sources."
+          "review_certainty: The copy states the appointment as done even though its effective date is in the future. Copy: \"has been appointed\" Source: \"has been appointed President and Chief Executive Officer, effective February 1, 2027\""
         ]
       }
     ],
     "discarded": 0,
     "errors": {},
-    "first_flagged": 43,
-    "first_enforce": 8,
+    "first_flagged": 48,
+    "first_enforce": 14,
     "rounds": [
       {
         "round": 1,
         "asked": [
           {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
+            "company": "Air Liquide",
+            "candidate_id": "relevant",
             "problems": [
-              "review_certainty: \"차세대 메모리 기술 공동 개발 파트너십 체결\" vs source \"Applied Materials, Inc. , the leader in materials engineering solutions for the semiconductor industry, today announced that KIOXIA Corporation , a leading global supplier of flash memory and solid state drives (SSDs), will join Applied's EPIC Center in Silicon Valley as an innovation partner to advance next-generation memory technologies.\": "
+              "review_certainty: The copy states the investment as already completed using the past tense, whereas the source describes it as a newly announced investment project. Copy: \"Air Liquide invested more than 170 million euros\" Source: \"Air Liquide announces a new investment of more than 170 million euros\""
             ]
           },
           {
-            "company": "Tokyo Electron",
+            "company": "Applied Materials",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: The copy states the partnership as concluded (체결), whereas the sources state that KIOXIA will join as a partner in the future. Copy: \"차세대 메모리 기술 공동 개발 파트너십 체결\" Source: \"Applied Materials, Inc. , the leader in materials engineering solutions for the semiconductor industry, today announced that KIOXIA Corporation , a leading global supplier of flash memory and solid state drives (SSDs), will join Applied's EPIC Center in Silicon Valley as an innovation partner to advance next-generation memory technologies.\""
+            ]
+          },
+          {
+            "company": "Prodrive",
+            "candidate_id": "relevant",
+            "problems": [
+              "review_certainty: The source states that customer shipments are upcoming, whereas the copy states that the company is beginning shipments. Copy: \"is beginning customer shipments\" Source: \"upcoming customer shipments\""
+            ]
+          },
+          {
+            "company": "Amkor Technology",
+            "candidate_id": "investment:2",
+            "problems": [
+              "review_certainty: The copy states the addition of square meters as a fact, whereas the sources state it as expected. Copy: \"adds 60,000 square meters\" Source: \"is expected to add 60,000 square meters\""
+            ]
+          },
+          {
+            "company": "Jenoptik",
             "candidate_id": "investment:5",
             "problems": [
-              "review_certainty: \"appointing Fumihiko Kaminaga and Masaaki Abe as Global Sales Division Officers\" vs source \"Personnel Changes for Division Officers of Tokyo Electron effective on October 1, 2026\": The copy states the appointment as current, whereas the sources indicate a future effective date."
+              "review_certainty: The copy states as done an event that the source describes as future. Copy: \"assumed the role of Vice President of Global HR at Jenoptik on September 8, 2026\" Source: \"will assume global responsibility of human resources at Jenoptik\"",
+              "review_certainty: The copy states as done an event that the source describes as future. Copy: \"2026년 9월 8일부로 취임했음\" Source: \"will assume global responsibility of human resources at Jenoptik\""
+            ]
+          },
+          {
+            "company": "Arkema",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: The copy states the appointment as done, but the source dates it in the future relative to the publication date. Copy: \"appointed\" Source: \"François Desné joins Arkema as Senior Vice President High Performance Polymers and Fluorogases and a member of the Group's Executive Committee, effective 12 October 2026.\"",
+              "review_certainty: The copy states the appointment as done, but the source dates it in the future relative to the publication date. Copy: \"선임했으며\" Source: \"François Desné joins Arkema as Senior Vice President High Performance Polymers and Fluorogases and a member of the Group's Executive Committee, effective 12 October 2026.\""
             ]
           },
           {
             "company": "Norsk Hydro",
-            "candidate_id": "investment:4",
+            "candidate_id": "relevant",
             "problems": [
-              "review_certainty: \"파일럿 연구를 수행함\" vs source \"In this pilot study, Hydro will recycle aluminium from decommissioned trains at its recycling facility in Ghlin, Belgium .\": The copy states the pilot study as done, whereas the sources state it as future."
-            ]
-          },
-          {
-            "company": "Moderna",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: \"appointed\" vs source \"will return to Moderna as Chief Operating Officer, effective October 5, 2026.\": The copy states the appointment as done, whereas the sources state it as a future event effective after the publication date.",
-              "review_certainty: \"재선임하고\" vs source \"will return to Moderna as Chief Operating Officer, effective October 5, 2026.\": The copy states the reappointment as done, whereas the sources state it as a future event effective after the publication date."
+              "review_certainty: The copy states as done what the sources state as future. Copy: \"압출 빌렛으로 가공함\" Source: \"Upon melting, the aluminium will be processed into extrusion billets, which in turn will be used as input material at Hydro's extrusion facility in Lichtervelde, Belgium .\""
             ]
           },
           {
             "company": "Albemarle",
             "candidate_id": "investment:5",
             "problems": [
-              "review_certainty: \"appointed\" vs source \"Effective February 1, 2027\": The copy states the appointment as already done, whereas the source date is in the future relative to the publication date.",
-              "review_unsupported: \"upon Udd joining the company\": The copy states a timing condition that is not supported by any source.",
-              "review_certainty: \"선임했고\" vs source \"Effective February 1, 2027\": The copy states the appointment as already done, whereas the source date is in the future relative to the publication date.",
-              "review_unsupported: \"이사회 개편\": The copy states a fact about board reorganization that is not supported by the sources."
+              "review_certainty: The copy states the appointment as already done, whereas the sources state it is effective February 1, 2027, which is a future date relative to the published date of September 3, 2026. Copy: \"Albemarle은 Ragnar Udd를 신임 사장 겸 최고경영자(CEO)로 선임했으며\" Source: \"Albemarle Corporation (NYSE: ALB ), a global leader in providing essential elements for mobility, energy, connectivity and health, today announced that Ragnar \"Rag\" Udd has been appointed President and Chief Executive Officer, effective February 1, 2027.\""
+            ]
+          },
+          {
+            "company": "HyproMag",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_certainty: The copy states as current or ongoing what the sources state as future. Copy: \"has commenced to produce\" Source: \"REACT-UK will produce recycled magnets for incorporation and testing in a Jaguar Land Rover (\"JLR\") motor, proving UK capacity for NdFeB manufacture that combines short, medium and long-loop processing.\""
+            ]
+          },
+          {
+            "company": "Albemarle",
+            "candidate_id": "investment:5",
+            "problems": [
+              "review_certainty: The copy states the appointment as done, but the effective date is in the future. Copy: \"appointed\" Source: \"has been appointed\""
             ]
           },
           {
             "company": "Onsemi",
             "candidate_id": "investment:4",
             "problems": [
-              "review_unsupported: \"차세대\": The sources do not state that the image sensor is next-generation."
+              "review_unsupported: The copy states the sensor is next-generation (차세대), which is not supported by the sources. Copy: \"차세대\""
+            ]
+          },
+          {
+            "company": "ASML",
+            "candidate_id": "investment:4",
+            "problems": [
+              "review_unsupported: The source for this investment item does not mention High-NA EUV lithography. Copy: \"for High-NA EUV lithography\"",
+              "review_unsupported: The source for this investment item does not mention High-NA EUV equipment. Copy: \"High-NA EUV 노광 장비 적용을 위해\""
             ]
           },
           {
             "company": "Ouster",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: \"통합하기로 했음\" vs source \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\": The copy states as decided what the sources state as future."
+              "review_certainty: The source states the integration as a future action, whereas the copy states it as a decided action. Copy: \"통합하기로 했으며\" Source: \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\""
             ]
           },
           {
             "company": "Ouster",
             "candidate_id": "relevant",
             "problems": [
-              "review_certainty: \"통합하기로 했음\" vs source \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\": The copy states as decided what the sources state as future."
+              "review_certainty: The source states the integration as a future action, whereas the copy states it as a decided action. Copy: \"통합하기로 했음.\" Source: \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\""
             ]
           }
         ],
-        "written": 8,
+        "written": 14,
         "failed": 0,
-        "requests": 10
+        "requests": 18
       }
     ]
   }
