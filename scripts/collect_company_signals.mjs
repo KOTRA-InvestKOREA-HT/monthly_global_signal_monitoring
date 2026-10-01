@@ -1479,15 +1479,29 @@ export function extractPdfText(bytes) {
 // Business Wire 등). 중계 페이지에 실린 서명으로 Google News 자체의 해독 요청을 보내 발행사 주소를 받는다.
 // 어느 단계든 실패하면 null 이다. 호출하는 쪽은 예전처럼 리다이렉트를 따라가 본다.
 export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch) {
+  return (await decodeGoogleNewsLink(url, timeoutSeconds, fetchImpl)).url || null;
+}
+
+// 해독 결과와, 실패했다면 어느 단계에서 왜 실패했는지. 9월 28일 실행은 Google 확인이 12번 실패한 뒤
+// 멈춰 78건이 본문 없이 남았는데, 429 로 막힌 것인지 동의 페이지가 온 것인지 남지 않아 원인을 가릴 수 없었다.
+export async function decodeGoogleNewsLink(url, timeoutSeconds, fetchImpl = fetch) {
+  try {
+    return await decodeGoogleNewsSteps(url, timeoutSeconds, fetchImpl);
+  } catch (error) {
+    return { reason: error?.name === 'TimeoutError' ? 'decode_timeout' : `decode_network: ${error?.cause?.code || error?.message || 'error'}` };
+  }
+}
+
+async function decodeGoogleNewsSteps(url, timeoutSeconds, fetchImpl) {
   let id;
   try {
     const parsed = new URL(url);
-    if (parsed.hostname !== 'news.google.com') return null;
+    if (parsed.hostname !== 'news.google.com') return { reason: 'not_google_news' };
     id = parsed.pathname.match(/\/articles\/([^/?#]+)/)?.[1];
   } catch {
-    return null;
+    return { reason: 'not_google_news' };
   }
-  if (!id) return null;
+  if (!id) return { reason: 'not_google_news' };
   // 429·5xx 는 잠깐 쉬고 두 번까지 다시 보낸다. 해독 요청이 몰리면 Google 이 잠시 거절한다.
   const send = async (target, init) => {
     for (let attempt = 0; ; attempt += 1) {
@@ -1498,11 +1512,19 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
     }
   };
   const page = await send(`https://news.google.com/articles/${id}`, { headers: { 'User-Agent': USER_AGENT } });
-  if (!page.ok) return null;
+  if (!page.ok) {
+    await page.body?.cancel();
+    return { reason: `article_page_http_${page.status}` };
+  }
   const html = await page.text();
   const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
   const timestamp = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
-  if (!signature || !timestamp) return null;
+  if (!signature || !timestamp) {
+    // 동의 페이지(consent.google.com)로 넘어가면 서명이 없다. 어디에 닿았는지 함께 남긴다.
+    let landed = '';
+    try { landed = page.url ? new URL(page.url).hostname : ''; } catch { /* 주소 없는 응답 */ }
+    return { reason: landed && landed !== 'news.google.com' ? `article_page_no_signature: ${landed}` : 'article_page_no_signature' };
+  }
   const request = ['garturlreq', [['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1],
     'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0], id, Number(timestamp), signature];
   const response = await send('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
@@ -1510,14 +1532,18 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT },
     body: `f.req=${encodeURIComponent(JSON.stringify([[['Fbv4je', JSON.stringify(request), null, 'generic']]]))}`,
   });
-  if (!response.ok) return null;
+  if (!response.ok) {
+    await response.body?.cancel();
+    return { reason: `batchexecute_http_${response.status}` };
+  }
+  let decoded;
   try {
     const payload = (await response.text()).split('\n\n')[1];
-    const decoded = JSON.parse(JSON.parse(payload)[0][2])[1];
-    return /^https?:\/\//i.test(decoded) && !isGoogle(decoded) ? decoded : null;
+    decoded = JSON.parse(JSON.parse(payload)[0][2])[1];
   } catch {
-    return null;
+    return { reason: 'batchexecute_unparsed' };
   }
+  return /^https?:\/\//i.test(decoded) && !isGoogle(decoded) ? { url: decoded } : { reason: 'decoded_not_publisher' };
 }
 
 // Google 차례에서 할 일만 한다. 발행사 본문 다운로드는 차례 밖 downloadArticleDocument 가 맡는다.
@@ -1526,9 +1552,15 @@ export async function decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl = fetch
 // 본문을 차례 밖으로 넘기면 기업 자리를 기다리는 동안 요청 제한 시간이 지나 버린다.
 export async function resolveArticleSource(url, timeoutSeconds, fetchImpl = fetch) {
   if (!isGoogle(url)) return { target: url };
-  const publisherUrl = await decodeGoogleNewsUrl(url, timeoutSeconds, fetchImpl).catch(() => null);
-  if (publisherUrl) return { target: publisherUrl };
-  return { document: await downloadArticleDocument(url, timeoutSeconds, fetchImpl) };
+  const decoded = await decodeGoogleNewsLink(url, timeoutSeconds, fetchImpl);
+  if (decoded.url) return { target: decoded.url };
+  try {
+    return { document: await downloadArticleDocument(url, timeoutSeconds, fetchImpl) };
+  } catch (error) {
+    // 오류 메시지는 그대로 둔다. createPublisherProbe 가 메시지로 연속 실패를 센다.
+    error.decodeFailure = decoded.reason;
+    throw error;
+  }
 }
 
 export async function fetchArticleDocument(url, timeoutSeconds, fetchImpl = fetch) {
@@ -1670,12 +1702,17 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
         document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
       }
+      // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
+      // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
+      // 완료로 저장돼, 9월 28일 실행처럼 78건이 다시 돌려도 시도되지 않은 채 남는다.
       if (!document) {
+        errors.push({ target_no: row.target_no, company: row.company, source: 'official_detail',
+          source_url: row.url, source_name: row.source, error: 'google_probe_paused' });
         if (row.link_verdict === 'fetch_to_verify') {
           recordExclusion(row.company, row.title, row.url, 'unverified_no_fetch');
           continue;
         }
-        enriched.push({ ...row, content_fetch_status: 'publisher_url_unresolved' });
+        enriched.push({ ...row, content_fetch_status: 'google_probe_paused' });
         continue;
       }
       const html = document.html;
@@ -1756,6 +1793,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
         source_url: row.url,
         source_name: row.source,
         error: error.message,
+        ...(error.decodeFailure ? { decode_failure: error.decodeFailure } : {}),
       });
       if (row.link_verdict === 'fetch_to_verify') {
         recordExclusion(row.company, row.title, row.url, 'unverified_fetch_error');
@@ -2594,8 +2632,22 @@ async function main() {
     trend_discovery_found: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_found || 0), 0),
     trend_discovery_kept: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_kept || 0), 0),
     trend_discovery_per_company: args.maxTrendDiscovery,
-    skipped_unresolved_publisher_count: finalRows.filter(row => row.content_fetch_status === 'publisher_url_unresolved').length,
-    publisher_resolution_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
+    // Google News 기사가 발행사 본문에 닿은 두 경로를 따로 센다. 예전 publisher_resolution_count 는 제목 대조만
+    // 세서, 해독으로 50건을 받은 9월 28일 실행에서도 0이라 해독이 안 되는 것처럼 읽혔다.
+    google_news_rows: finalRows.filter(row => isGoogle(row.url)).length,
+    // 중계 주소를 해독(또는 리다이렉트)해 발행사 본문을 받은 행.
+    google_news_decoded_count: finalRows.filter(row => isGoogle(row.url) && !row.publisher_resolution &&
+      row.content_fetch_status === 'fetched' && row.content_source_url && !isGoogle(row.content_source_url)).length,
+    // 같은 제목의 공식 보도자료로 바꿔 받은 행(recoverPublisherRow).
+    official_title_recovery_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
+    // 시도했지만 해독도 리다이렉트도 발행사에 닿지 못한 행과, 그 해독 실패 사유.
+    google_news_unresolved_count: errors.filter(error => error.error === 'publisher_url_unresolved').length,
+    google_news_decode_failures: errors.reduce((counts, error) => {
+      if (error.decode_failure) counts[error.decode_failure] = (counts[error.decode_failure] || 0) + 1;
+      return counts;
+    }, {}),
+    // Google 확인이 멈춰 요청을 보내지 않은 행. 0보다 크면 그 기업들은 재시도 대상이다.
+    google_probe_paused_count: finalRows.filter(row => row.content_fetch_status === 'google_probe_paused').length,
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,

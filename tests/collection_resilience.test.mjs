@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { createDomainGuard, collectWithCheckpoint } from '../scripts/collection_resilience.mjs';
+import { createDomainGuard, collectWithCheckpoint, retryableCollection } from '../scripts/collection_resilience.mjs';
+import { collectionBlockingErrors } from '../scripts/collect_company_signals.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
 test('unavailable host pauses, another host proceeds, and cooldown allows one probe', async () => {
@@ -52,4 +53,12 @@ test('checkpoint resumes completed companies, retries transient failures, expire
   await collectWithCheckpoint(bad);
   assert.equal((await collectWithCheckpoint(bad)).cached, false);
   assert.equal(coverageStatus([], new Map(), 'incomplete'), 'incomplete_evidence');
+});
+
+// 9월 28일 실행: Google 확인이 멈춘 뒤의 78건은 요청 없이 남았고 오류도 없어, 체크포인트가 완료로 저장됐다.
+test('Google rows skipped by a paused probe make the company retryable, detail failures alone do not', () => {
+  const result = errors => ({ rows: [], requestCount: 1, errors });
+  assert.equal(retryableCollection(result([{ source: 'official_detail', error: 'google_probe_paused' }])), true);
+  assert.equal(retryableCollection(result([{ source: 'official_detail', error: 'HTTP 403 Forbidden' }])), false);
+  assert.equal(collectionBlockingErrors([{ source: 'official_detail', error: 'google_probe_paused' }]).length, 0);
 });

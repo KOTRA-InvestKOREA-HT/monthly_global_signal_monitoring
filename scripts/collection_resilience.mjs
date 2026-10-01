@@ -44,8 +44,9 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
   } };
 }
 
+// google_probe_paused: Google 확인이 멈춰 요청조차 보내지 않은 기사. 다음 실행에서 다시 시도해야 한다.
 export function retryableCollection(result) {
-  return result.errors.some(e => /fetch failed|timeout|aborted|domain_cooldown|HTTP (408|425|429|5\d\d)/i.test(e.error || ''));
+  return result.errors.some(e => /fetch failed|timeout|aborted|domain_cooldown|google_probe_paused|HTTP (408|425|429|5\d\d)/i.test(e.error || ''));
 }
 
 export async function collectWithCheckpoint({ directory, identity, collect, now = Date.now, refresh = false }) {

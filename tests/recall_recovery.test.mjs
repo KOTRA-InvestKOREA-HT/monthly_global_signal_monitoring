@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { decodeGoogleNewsUrl, fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
+import { decodeGoogleNewsLink, decodeGoogleNewsUrl, fetchArticleDocument } from '../scripts/collect_company_signals.mjs';
 import { needsForm3Review, needsFundingReview, needsStageReview } from '../scripts/review_report.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 // 본문 없는 기사의 판정은 보고서에 실리지 않으므로 문안 보강·새로고침 대상도 아니다. 고정값에 본문을 둔다.
@@ -42,6 +42,33 @@ test('Google News relay URLs are decoded to the publisher before fetching', asyn
   assert.equal(await decodeGoogleNewsUrl('https://publisher.example/story', 1, fetchImpl), null);
   assert.equal(await decodeGoogleNewsUrl('https://news.google.com/rss/articles/NOSIG', 1,
     async () => new Response('<html>no signature</html>')), null);
+});
+
+// 9월 28일 실행은 해독 실패 12건의 까닭을 남기지 않아, Google 이 막은 것인지 응답이 바뀐 것인지 가릴 수 없었다.
+test('a failed Google News decode reports which step failed and why', async () => {
+  const url = 'https://news.google.com/rss/articles/CBMiABC?oc=5';
+  const landed = (target, body, init) => {
+    const r = new Response(body, init);
+    Object.defineProperty(r, 'url', { value: target });
+    return r;
+  };
+  const page = '<c-wiz><div data-n-a-sg="SIG" data-n-a-ts="1757000000"></div></c-wiz>';
+  const cases = [
+    [async () => new Response('denied', { status: 403 }), 'article_page_http_403'],
+    [async () => landed('https://consent.google.com/m?continue=x', '<form>Before you continue</form>'),
+      'article_page_no_signature: consent.google.com'],
+    [async target => (target.includes('/batchexecute') ? new Response('', { status: 400 }) : new Response(page)), 'batchexecute_http_400'],
+    [async target => (target.includes('/batchexecute') ? new Response(")]}'\n\nnot json") : new Response(page)), 'batchexecute_unparsed'],
+    [async () => { throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ECONNRESET' } }); }, 'decode_network: ECONNRESET'],
+  ];
+  for (const [fetchImpl, reason] of cases) {
+    assert.deepEqual(await decodeGoogleNewsLink(url, 1, fetchImpl), { reason });
+  }
+  // 해독도 리다이렉트도 실패하면 오류 메시지는 그대로 두고(연속 실패를 메시지로 센다) 해독 사유를 덧붙인다.
+  const error = await fetchArticleDocument(url, 1, async target => (target.startsWith('https://news.google.com/articles/')
+    ? new Response('denied', { status: 403 }) : landed('https://consent.google.com/', 'Consent page'))).catch(e => e);
+  assert.equal(error.message, 'publisher_url_unresolved');
+  assert.equal(error.decodeFailure, 'article_page_http_403');
 });
 
 test('only plausible old S4 stage rejections need a new review', () => {
