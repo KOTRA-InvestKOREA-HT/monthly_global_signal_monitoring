@@ -18,6 +18,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
+import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
 import { importReview, normalizeQuote } from './local_report.mjs';
 import { ARTICLE_EVIDENCE_CHARS, publishedDecisions, writerTargets } from './summary_writer.mjs';
 
@@ -41,7 +42,8 @@ export function resolveReviewer(env = process.env) {
   if (!['minimal', 'low', 'medium', 'high'].includes(thinkingLevel)) {
     throw new Error(`GEMINI_REVIEWER_THINKING_LEVEL must be minimal, low, medium or high: ${thinkingLevel}`);
   }
-  return { ...GEMINI, label: 'Gemini reviewer', model, thinkingLevel, delayMs: DEFAULT_DELAY_MS, timeoutMs: DEFAULT_TIMEOUT_MS };
+  return { ...GEMINI, label: 'Gemini reviewer', model, thinkingLevel, delayMs: DEFAULT_DELAY_MS, timeoutMs: DEFAULT_TIMEOUT_MS,
+    concurrency: resolveConcurrency(env) };
 }
 
 export const REVIEWER_INSTRUCTION = [
@@ -176,23 +178,23 @@ const clip = (text, limit) => {
 export const reviewProblem = issue => `review_${issue.check}: ${clip(issue.note, 240)}` +
   ` Copy: "${clip(issue.copy_phrase, 200)}"` + (issue.source_phrase ? ` Source: "${clip(issue.source_phrase, 500)}"` : '');
 
-// 문안 단계가 끝난 뒤 돈다. 기사당 요청 하나, 직렬이다. 검토 결과는 판정 파일의 결정에 copy_review 로 남겨
+// 문안 단계가 끝난 뒤 돈다. 기사당 요청 하나이고, 기사 여러 건을 함께 처리한다(reviewer.concurrency, 기본 4).
+// 요청 시작 간격은 모든 기사가 함께 지킨다. 검토 결과는 판정 파일의 결정에 copy_review 로 남겨
 // 다음 실행이 같은 문안을 다시 묻지 않게 한다. 멈추거나 실패해도 보고서 생성을 막지 않는다.
 // enforce 목록은 다시 쓰게 할 지적이다(ENFORCED_CHECKS). 호출자가 문안 단계에 feedback 으로 넘긴다.
 export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
   fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = console.log }) {
   const stats = { model: reviewer.model, articles: 0, requests: 0, cached: 0, reviewed: 0,
     flagged: [], enforce: [], discarded: 0, errors: {} };
-  let nextStart = 0;
-  for (const article of articles) {
-    if (stats.stopped) break;
+  const pace = createPacer();
+  const reviewArticle = async article => {
     const file = path.join(reviewDir, `${article.id}.json`);
     let review;
-    try { review = JSON.parse(await fs.readFile(file, 'utf8')); } catch { continue; }
-    try { importReview(article, review); } catch { continue; }
+    try { review = JSON.parse(await fs.readFile(file, 'utf8')); } catch { return; }
+    try { importReview(article, review); } catch { return; }
     const targets = writerTargets(article, review).filter(decision =>
       String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim());
-    if (!targets.length) continue;
+    if (!targets.length) return;
     // 다시 쓰게 하는 것은 보고서에 실리는 후보뿐이다. 근접 사업동향 행은 지적만 기록한다.
     const published = new Set(publishedDecisions(article, review).map(decision => decision.candidate_id));
     stats.articles += 1;
@@ -205,16 +207,14 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
     const todo = targets.filter(decision => !results.has(decision.candidate_id));
     if (todo.length) {
       let answer = null;
-      for (let retry = 0; ; retry++) {
-        const wait = nextStart - Date.now();
-        if (wait > 0) await sleep(wait);
-        nextStart = Date.now() + reviewer.delayMs;
+      for (let retry = 0; !stats.stopped; retry++) {
+        await pace(reviewer.delayMs, sleep);
         stats.requests += 1;
         try { answer = await requestReviewer(reviewer, apiKey, reviewerBody(reviewer, reviewerRequest(article, todo)), fetchImpl); break; } catch (error) {
           const reason = error.reviewer_reason || 'error';
           stats.errors[reason] = (stats.errors[reason] || 0) + 1;
           if (TRANSIENT.has(reason) && retry < 2) { await sleep(15000 * 2 ** retry); continue; }
-          if (reason === 'quota' || reason === 'provider_error' || TRANSIENT.has(reason)) {
+          if ((reason === 'quota' || reason === 'provider_error' || TRANSIENT.has(reason)) && !stats.stopped) {
             stats.stopped = { reason, ...(error.status ? { http_status: error.status } : {}) };
             log(`Reviewer stopped (${reason}); the report is built without the remaining reviews.`);
           }
@@ -249,7 +249,8 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
       ? { ...decision, copy_review: results.get(decision.candidate_id) } : decision));
     const next = { ...review, decisions };
     if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
-  }
+  };
+  await forEachConcurrent(articles, reviewer.concurrency || 1, reviewArticle, () => Boolean(stats.stopped));
   return stats;
 }
 

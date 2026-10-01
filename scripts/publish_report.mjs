@@ -60,10 +60,9 @@ export function summaryApiKey(env = process.env) {
 
 function writerSummary(stats) {
   const byModel = Object.entries(stats.written_by || {}).map(([model, n]) => `${model} ${n}`).join(', ');
-  return `### Report copy (${stats.model}${stats.fallback_model ? `, fallback ${stats.fallback_model}` : ''})\n` +
+  return `### Report copy (${stats.model})\n` +
     `${stats.articles} articles; ${stats.requests} requests; ${stats.cached} summaries reused; ` +
     `${stats.written} written${byModel ? ` (${byModel})` : ''}; ${stats.failed.length} gave up` +
-    `${stats.switched ? `; switched to ${stats.switched.to} after ${stats.switched.reason}` : ''}` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${Object.keys(stats.rejected).length ? `; rejected by ${JSON.stringify(stats.rejected)}` : ''}.\n` +
     stats.failed.map(item => `- ${item.company} ${item.candidate_id}: left out of this report (${item.problems.join('; ') || 'no usable copy'})\n`).join('') +

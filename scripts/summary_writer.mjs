@@ -15,6 +15,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
+import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
 import {
   SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION,
   SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
@@ -26,16 +27,16 @@ import {
 export const WRITER_VERSION = 'summary-writer-v3';
 // 한 후보의 문안을 검사 결과를 알려 주며 다시 쓰게 하는 최대 횟수(첫 요청 포함).
 export const WRITER_ATTEMPTS = 3;
-// gemini-3.8-flash 는 무료 등급에서 503·시간 초과로 끝내지 못했다(review_providers.mjs 의 2차 검증 주석).
-// 한 단계 아래 flash 를 기본값으로 둔다. GEMINI_WRITER_MODEL 로 바꾼다.
-export const DEFAULT_WRITER_MODEL = 'gemini-3.7-flash';
-// 추론은 high 로 둔다. 예전에는 문안이 짧은 일이라 low 로 두었는데, 기본 모델이 503 으로 막혀 대체 모델
-// flash-lite 가 거의 모든 문안을 썼고, flash-lite 는 low 이하에서 추론 토큰을 쓰지 않는다(review_providers.mjs
-// GEMINI 주석). Issue 3(9월 29일 실행)에서 원문 "will join"을 "영입했음"으로 옮기는 식의 시제 오류가 되풀이됐다.
+// 문안 모델은 하나다. 예전 기본값 gemini-3.7-flash 는 무료 등급에서 503 으로 막혀, Issue 3(9월 29일)과
+// Issue 4(10월 1일) 실행 모두 대체 모델 flash-lite 가 문안을 사실상 전부 썼다. 쓰지도 못하는 기본 모델에 매번
+// 503 재시도 시간을 쓰고 넘어가던 단계를 없애고 flash-lite 로 바로 쓴다. GEMINI_WRITER_MODEL 로 바꿀 수 있다.
+export const DEFAULT_WRITER_MODEL = 'gemini-3.5-flash-lite';
+// 추론은 high 로 둔다. flash-lite 는 low 이하에서 추론 토큰을 쓰지 않는다(review_providers.mjs GEMINI 주석).
+// Issue 3(9월 29일 실행)에서 원문 "will join"을 "영입했음"으로 옮기는 식의 시제 오류가 되풀이됐다.
 // 추론 단계는 요청 수 한도를 더 쓰지 않는다. 늘어나는 응답 시간에 맞춰 시간 제한을 늘린다.
 const DEFAULT_THINKING = 'high';
-// 무료 등급 flash 의 분당 요청 한도는 flash-lite 보다 낮다. 10 RPM 기준으로 간격을 둔다.
-const DEFAULT_DELAY_MS = 6500;
+// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격으로 요청을 시작하되, 응답은 여러 건을 함께 기다린다.
+const DEFAULT_DELAY_MS = 4500;
 const DEFAULT_TIMEOUT_MS = 180000;
 // 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 // Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
@@ -46,14 +47,7 @@ const DEFAULT_TIMEOUT_MS = 180000;
 // summary_reviewer.mjs 도 이 값을 쓴다. 검토 모델이 문안 모델보다 짧은 본문을 보면 근거 있는 사실을 근거 없다고 짚는다.
 export const ARTICLE_EVIDENCE_CHARS = 36000;
 
-// 대체 문안 모델. 기본 모델이 할당량·장애로 멈추거나 세 번 모두 검사에 걸린 후보를 이 모델이 이어 쓴다.
-// 무료 한도는 모델마다 따로라, 기본 모델 한도가 끝나도 그날 안에 보고서를 끝낼 수 있다. 판정 모델과 같은
-// flash-lite 지만 여기서는 판정 기준 없이 문안 규칙만 받는다. 대체 모델이 쓴 문안도 같은 검사를 통과해야 실린다.
-export const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
-// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격을 쓴다.
-const FALLBACK_DELAY_MS = 4500;
-
-// 문안은 이 단계만 쓰므로 끄는 선택지는 없다. 대체 모델만 GEMINI_WRITER_FALLBACK_MODEL=off 로 끌 수 있다.
+// 문안은 이 단계만 쓰므로 끄는 선택지는 없다.
 export function resolveWriter(env = process.env) {
   const model = String(env.GEMINI_WRITER_MODEL || DEFAULT_WRITER_MODEL).trim();
   const thinkingLevel = String(env.GEMINI_WRITER_THINKING_LEVEL || DEFAULT_THINKING).trim().toLowerCase();
@@ -64,10 +58,7 @@ export function resolveWriter(env = process.env) {
   if (!Number.isFinite(delayMs) || delayMs < 4000 || delayMs > 60000) throw new Error('GEMINI_WRITER_DELAY_MS must be 4000..60000');
   const timeoutMs = Number(env.GEMINI_WRITER_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 10000 || timeoutMs > 600000) throw new Error('GEMINI_WRITER_TIMEOUT_MS must be 10000..600000');
-  const fallbackModel = String(env.GEMINI_WRITER_FALLBACK_MODEL || DEFAULT_FALLBACK_MODEL).trim();
-  const fallback = ['off', 'false', '0', 'no'].includes(fallbackModel.toLowerCase()) || fallbackModel === model ? null
-    : { ...GEMINI, label: 'Gemini writer (fallback)', model: fallbackModel, thinkingLevel, delayMs: FALLBACK_DELAY_MS, timeoutMs };
-  return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs, fallback };
+  return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs, concurrency: resolveConcurrency(env) };
 }
 
 // 정책 문서의 한국어 용어·배치 절만 가져온다. 판정 기준은 넣지 않는다. 이 단계가 판정 기준을 받지 않는
@@ -413,7 +404,8 @@ const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
 const withoutSummary = ({ summary_writer, summary_quotes, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
 const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 
-// 판정이 모두 끝난 뒤 한 번 돈다. 기사당 요청 하나(검사에 걸리면 걸린 후보만 다시), 직렬이다.
+// 판정이 모두 끝난 뒤 한 번 돈다. 기사당 요청 하나(검사에 걸리면 걸린 후보만 다시)이고, 기사 여러 건을 함께 처리한다
+// (writer.concurrency, 기본 4). 한 기사 안의 시도는 차례로 간다. 요청 시작 간격은 모든 기사가 함께 지킨다.
 // 문안은 판정 파일에 바로 쓴다. 후보마다 요청 내용·지시·모델로 만든 키를 함께 적어 두므로, 다음 실행은
 // 키가 같은 후보를 다시 묻지 않는다. 할당량(429)·권한 오류나 거듭된 장애로 멈추면 stopped 를 돌려주고,
 // 호출자는 보고서를 만들지 않는다.
@@ -423,39 +415,26 @@ const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 export async function writeSummaries({ articles, reviewDir, writer, apiKey, policyWording, feedback = null,
   fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = console.log, attempts = WRITER_ATTEMPTS }) {
   const instruction = buildWriterInstruction(policyWording);
-  const stats = { model: writer.model, fallback_model: writer.fallback?.model || null, articles: 0, requests: 0, cached: 0,
+  const stats = { model: writer.model, articles: 0, requests: 0, cached: 0,
     written: 0, written_by: {}, failed: [], errors: {}, rejected: {} };
-  // 모델별로 더 쓸 수 없게 된 이유. 기본 모델이 막히면 대체 모델로 넘어가고, 둘 다 막히면 실행을 멈춘다.
-  const blocked = new Map();
-  const usable = model => Boolean(model) && !blocked.has(model.model);
-  const current = () => (usable(writer) ? writer : usable(writer.fallback) ? writer.fallback : null);
-  let stopped = null, nextStart = 0;
-  const block = (model, reason, error) => {
-    blocked.set(model.model, { reason, ...(error?.status ? { http_status: error.status } : {}) });
-    if (model === writer && usable(writer.fallback)) {
-      stats.switched = { from: writer.model, to: writer.fallback.model, reason };
-      log(`Writer ${writer.model} unavailable (${reason}); continuing with ${writer.fallback.model}`);
-    }
-    if (!current()) stopped = { ...blocked.get(writer.model), ...(writer.fallback ? { fallback: blocked.get(writer.fallback.model) } : {}) };
-  };
-  // 한 요청. 일시 장애는 두 번 다시 해 보고, 할당량·설정 오류나 거듭된 장애면 그 모델을 막는다.
+  // 할당량·설정 오류나 거듭된 장애로 모델을 더 쓸 수 없으면 실행을 멈춘다.
+  let stopped = null;
+  const pace = createPacer();
+  // 한 요청. 일시 장애는 두 번 다시 해 보고, 할당량·설정 오류나 거듭된 장애면 멈춘다.
   // 돌려주는 answer 가 null 이면 이 시도에서 쓸 문안이 없다는 뜻이다. blockedNow 면 시도 횟수로 세지 않는다.
   const call = async (request, model) => {
     for (let retry = 0; ; retry++) {
-      const wait = nextStart - Date.now();
-      if (wait > 0) await sleep(wait);
-      nextStart = Date.now() + model.delayMs;
+      if (stopped) return { answer: null, blockedNow: true };
+      await pace(model.delayMs, sleep);
       stats.requests += 1;
       try {
         return { answer: await requestWriter(model, apiKey, writerBody(model, instruction, request), fetchImpl) };
       } catch (error) {
         const reason = error.writer_reason || 'error';
-        const key = model === writer ? reason : `${model.model}:${reason}`;
-        stats.errors[key] = (stats.errors[key] || 0) + 1;
-        if (reason === 'quota' || reason === 'provider_error') { block(model, reason, error); return { answer: null, blockedNow: true }; }
-        if (TRANSIENT.has(reason)) {
-          if (retry < 2) { await sleep(15000 * 2 ** retry); continue; }
-          block(model, reason, error);
+        stats.errors[reason] = (stats.errors[reason] || 0) + 1;
+        if (TRANSIENT.has(reason) && retry < 2) { await sleep(15000 * 2 ** retry); continue; }
+        if (reason === 'quota' || reason === 'provider_error' || TRANSIENT.has(reason)) {
+          stopped ||= { reason, ...(error?.status ? { http_status: error.status } : {}) };
           return { answer: null, blockedNow: true };
         }
         // 형식이 깨진 응답은 이 기사의 시도 하나를 쓴 것으로 센다.
@@ -463,15 +442,14 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       }
     }
   };
-  for (const article of articles) {
-    if (stopped) break;
+  const writeArticle = async article => {
     const asked = feedback ? feedback[article.id] : null;
-    if (feedback && !asked) continue;
+    if (feedback && !asked) return;
     const file = path.join(reviewDir, `${article.id}.json`);
     let review;
-    try { review = JSON.parse(await fs.readFile(file, 'utf8')); } catch { continue; }
+    try { review = JSON.parse(await fs.readFile(file, 'utf8')); } catch { return; }
     // 판정 단계가 가져오지 못한 판정은 건드리지 않는다. 그런 기사는 어차피 보고서에서 빠진다.
-    try { importReview(article, review, { summaries: false }); } catch { continue; }
+    try { importReview(article, review, { summaries: false }); } catch { return; }
     const targets = writerTargets(article, review);
     const published = new Set(publishedDecisions(article, review).map(decision => decision.candidate_id));
     if (!targets.length) {
@@ -479,7 +457,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
         const { summary_failed, ...rest } = review;
         await fs.writeFile(file, JSON.stringify(rest, null, 2) + '\n');
       }
-      continue;
+      return;
     }
     stats.articles += 1;
     const keys = Object.fromEntries(targets.map(decision =>
@@ -517,19 +495,10 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       }
       todo = todo.filter(decision => !written.has(decision.candidate_id));
     };
-    let lastModel = null;
-    for (let attempt = 1; attempt <= attempts && todo.length && current();) {
-      const model = current();
-      const { answer, blockedNow } = await call(writerRequest(article, todo, rejected, previous), model);
-      if (blockedNow) continue;
-      attempt++;
-      lastModel = model;
-      if (answer) accept(answer, model);
-    }
-    // 기본 모델로 세 번 모두 검사에 걸린 후보는 대체 모델로 한 번 더 써 본다.
-    if (todo.length && lastModel === writer && usable(writer.fallback)) {
-      const { answer } = await call(writerRequest(article, todo, rejected, previous), writer.fallback);
-      if (answer) accept(answer, writer.fallback);
+    for (let attempt = 1; attempt <= attempts && todo.length && !stopped; attempt++) {
+      const { answer, blockedNow } = await call(writerRequest(article, todo, rejected, previous), writer);
+      if (blockedNow) break;
+      if (answer) accept(answer, writer);
     }
     const targetIds = new Set(targets.map(decision => decision.candidate_id));
     let decisions = review.decisions.map(decision => {
@@ -579,6 +548,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       log(`Writer gave up on ${article.company} ${id}: ${(rejected[id] || []).join('; ')}`);
     }
     if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
-  }
+  };
+  await forEachConcurrent(articles, writer.concurrency || 1, writeArticle, () => Boolean(stopped));
   return { ...stats, ...(stopped ? { stopped } : {}) };
 }

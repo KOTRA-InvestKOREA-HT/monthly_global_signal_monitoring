@@ -59,12 +59,12 @@ Take over the finished judgement → write Korean/English copy for approved cand
 (and near-miss business rows) → build Korean/English PDFs → update latest report files
 ```
 
-The judge call writes no report copy. The writer (`gemini-3.7-flash`, `GEMINI_WRITER_MODEL`)
-gets only the evidence quotes and the wording rules, and uses the `GEMINI_FOR_SUMMARY` key
-(falling back to `GEMINI_API_KEY`). If the writer model hits its quota or stays unavailable,
-`gemini-3.5-flash-lite` (`GEMINI_WRITER_FALLBACK_MODEL`, `off` to disable) writes the rest;
-it also gets one more try at copy the writer model failed three times. Each summary records
-the model that wrote it. Copy that fails a grounding,
+The judge call writes no report copy. The writer (`gemini-3.5-flash-lite`, `GEMINI_WRITER_MODEL`)
+gets the evidence quotes, the article body and the wording rules, and uses the `GEMINI_FOR_SUMMARY` key
+(falling back to `GEMINI_API_KEY`). The writer and the copy reviewer handle up to
+`REPORT_CONCURRENCY` (default 4) articles at a time while keeping the per-request start interval.
+If the writer hits its quota or stays unavailable, the run stops and the next run continues.
+Each summary records the model that wrote it. Copy that fails a grounding,
 number, format or style check is written again with the failed checks named, up to three
 times; a signal whose copy never passes is left out of that report, kept on the dashboard,
 and written again on the next publish run.

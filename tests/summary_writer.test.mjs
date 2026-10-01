@@ -8,7 +8,7 @@ import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblem
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
-  DEFAULT_FALLBACK_MODEL, DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES,
+  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES,
 } from '../scripts/summary_writer.mjs';
 import { issueNumberFor, judgementFor, summaryApiKey } from '../scripts/publish_report.mjs';
 
@@ -55,14 +55,20 @@ test('the fixture is an approved judgement that the report cannot import until i
   assert.throws(() => importReview(article, review), /missing ai_summary_ko/);
 });
 
-test('the writer defaults to gemini-3.7-flash with high thinking and cannot be switched off', () => {
-  assert.equal(DEFAULT_WRITER_MODEL, 'gemini-3.7-flash');
-  assert.equal(resolveWriter({}).model, 'gemini-3.7-flash');
-  assert.equal(resolveWriter({}).thinkingLevel, 'high');
-  assert.equal(resolveWriter({}).fallback.thinkingLevel, 'high');
+test('the writer is gemini-3.5-flash-lite alone, with high thinking, four requests at a time, and cannot be switched off', () => {
+  assert.equal(DEFAULT_WRITER_MODEL, 'gemini-3.5-flash-lite');
+  const resolved = resolveWriter({});
+  assert.equal(resolved.model, 'gemini-3.5-flash-lite');
+  assert.equal(resolved.thinkingLevel, 'high');
+  assert.equal(resolved.delayMs, 4500);
+  assert.equal(resolved.concurrency, 4);
+  // 503 으로 막히는 기본 모델에서 넘어가던 대체 모델 단계는 없다.
+  assert.equal('fallback' in resolved, false);
   assert.equal(resolveWriter({ GEMINI_WRITER_MODEL: 'gemini-3.8-flash' }).model, 'gemini-3.8-flash');
+  assert.equal(resolveWriter({ REPORT_CONCURRENCY: '2' }).concurrency, 2);
+  assert.throws(() => resolveWriter({ REPORT_CONCURRENCY: '0' }), /REPORT_CONCURRENCY/);
   // 보고서 문안은 이 단계만 쓴다. 꺼 두면 보고서를 만들 수 없으므로 끄는 선택지를 두지 않는다.
-  assert.equal(resolveWriter({ REVIEW_WRITER: 'off' }).model, 'gemini-3.7-flash');
+  assert.equal(resolveWriter({ REVIEW_WRITER: 'off' }).model, 'gemini-3.5-flash-lite');
   assert.throws(() => resolveWriter({ GEMINI_WRITER_THINKING_LEVEL: 'max' }));
 });
 
@@ -178,7 +184,7 @@ test('written copy is saved into the judgement and reused without another reques
   assert.deepEqual(stats.failed, []);
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, good.summary_ko);
-  assert.equal(saved.decisions[0].summary_writer.model, 'gemini-3.7-flash');
+  assert.equal(saved.decisions[0].summary_writer.model, 'gemini-3.5-flash-lite');
   assert.equal('summary_failed' in saved, false);
   assert.equal(importReview(article, saved)[0].row.ai_summary_en, good.summary_en);
   const again = await run(ws, async () => { calls += 1; return gemini([good]); });
@@ -206,8 +212,8 @@ test('copy that never passes leaves the signal out of this report, keeps it for 
   const wrong = { ...good, summary_en: 'Acme priced EUR 800 million of senior notes to fund a new wafer plant in Dresden, Germany.' };
   const models = [];
   const stats = await run(ws, async url => { models.push(String(url).match(/models\/([^:]+)/)[1]); return gemini([wrong]); });
-  // 기본 모델로 세 번, 대체 모델로 한 번 더 써 본 뒤 포기한다.
-  assert.deepEqual(models, [...Array(WRITER_ATTEMPTS).fill('gemini-3.7-flash'), 'gemini-3.5-flash-lite']);
+  // 세 번 써 본 뒤 포기한다.
+  assert.deepEqual(models, Array(WRITER_ATTEMPTS).fill('gemini-3.5-flash-lite'));
   assert.equal(stats.failed.length, 1);
   assert.equal(stats.rejected.ungrounded_numbers, 1);
   const saved = await ws.read();
@@ -264,48 +270,12 @@ test('a near-miss business row gets copy too, so it can fill the business box', 
 const modelOf = url => String(url).match(/models\/([^:]+)/)[1];
 const quota = () => new Response('{"error":{"message":"quota"}}', { status: 429 });
 
-test('the fallback model is gemini-3.5-flash-lite and can be switched off', () => {
-  assert.equal(DEFAULT_FALLBACK_MODEL, 'gemini-3.5-flash-lite');
-  assert.equal(resolveWriter({}).fallback.model, 'gemini-3.5-flash-lite');
-  assert.equal(resolveWriter({ GEMINI_WRITER_FALLBACK_MODEL: 'off' }).fallback, null);
-  // 기본 모델과 같은 모델을 대체로 두면 대체가 아니다.
-  assert.equal(resolveWriter({ GEMINI_WRITER_MODEL: 'gemini-3.5-flash-lite' }).fallback, null);
-});
-
-test('when the primary hits its quota, the fallback writes the rest and the copy records which model wrote it', async () => {
-  const ws = await workspace();
-  const models = [];
-  const stats = await run(ws, async url => {
-    models.push(modelOf(url));
-    return modelOf(url) === 'gemini-3.7-flash' ? quota() : gemini([good]);
-  });
-  assert.deepEqual(models, ['gemini-3.7-flash', 'gemini-3.5-flash-lite']);
-  assert.equal(stats.stopped, undefined);
-  assert.deepEqual(stats.written_by, { 'gemini-3.5-flash-lite': 1 });
-  assert.equal(stats.switched.reason, 'quota');
-  const saved = await ws.read();
-  assert.equal(saved.decisions[0].summary_writer.model, 'gemini-3.5-flash-lite');
-  assert.equal(importReview(article, saved)[0].supported, true);
-  // 대체 모델이 쓴 문안도 인용이 같으면 다음 실행에서 다시 묻지 않는다.
-  const again = await run(ws, async () => assert.fail('copy must be reused'));
-  assert.equal(again.requests, 0);
-});
-
-test('copy the primary gets wrong three times can still be written by the fallback', async () => {
-  const ws = await workspace();
-  const wrong = { ...good, summary_en: 'Acme priced EUR 800 million of senior notes to fund a new wafer plant in Dresden, Germany.' };
-  const stats = await run(ws, async url => gemini([modelOf(url) === 'gemini-3.7-flash' ? wrong : good]));
-  assert.deepEqual(stats.failed, []);
-  assert.deepEqual(stats.written_by, { 'gemini-3.5-flash-lite': 1 });
-  assert.equal((await ws.read()).decisions[0].summary_en, good.summary_en);
-});
-
-test('only when both models are blocked does the run stop, without marking failures', async () => {
+test('a quota or a repeated outage stops the run without marking failures', async () => {
   const ws = await workspace();
   let calls = 0;
   const stats = await run(ws, async () => { calls += 1; return quota(); });
-  assert.equal(calls, 2);
-  assert.deepEqual(stats.stopped, { reason: 'quota', http_status: 429, fallback: { reason: 'quota', http_status: 429 } });
+  assert.equal(calls, 1);
+  assert.deepEqual(stats.stopped, { reason: 'quota', http_status: 429 });
   const saved = await ws.read();
   // 다 쓰지 못한 후보는 실패가 아니라 미완료다. 다음 실행이 이어서 쓴다. 문안이 없으므로 보고서는 만들 수 없다.
   assert.equal('summary_failed' in saved, false);
@@ -313,14 +283,36 @@ test('only when both models are blocked does the run stop, without marking failu
   const ws2 = await workspace();
   let tries = 0;
   const timeout = await run(ws2, async () => { tries += 1; throw Object.assign(new Error('timed out'), { name: 'TimeoutError' }); });
-  // 모델마다 일시 장애를 두 번 더 기다려 본 뒤 막는다.
-  assert.equal(tries, 6);
+  // 일시 장애는 두 번 더 기다려 본 뒤 멈춘다.
+  assert.equal(tries, 3);
   assert.equal(timeout.stopped.reason, 'timeout');
-  // 대체 모델을 끄면 기본 모델이 막히는 즉시 멈춘다.
-  const ws3 = await workspace();
-  const solo = await writeSummaries({ articles: [article], reviewDir: ws3.reviewDir, writer: { ...writer, fallback: null },
-    apiKey: 'AIza-test', policyWording: wording, fetchImpl: async () => quota(), sleep: async () => {}, log: () => {} });
-  assert.deepEqual(solo.stopped, { reason: 'quota', http_status: 429 });
+});
+
+// Issue 4(10월 1일 실행)는 문안 100여 건을 한 건씩 응답을 기다리며 써서 오래 걸렸다.
+test('articles are written four at a time while request starts stay spaced by the delay', async () => {
+  const rows = Array.from({ length: 6 }, (_, index) => ({ ...row, url: `https://example.com/notes-${index}`, title: `Acme prices notes ${index}` }));
+  const articles = groupArticles(rows, [], { from_date: '2026-08-01', to_date: '2026-08-31' });
+  assert.equal(articles.length, 6);
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'writer-pool-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  for (const item of articles) {
+    await fsp.writeFile(path.join(reviewDir, `${item.id}.json`), JSON.stringify({ ...review, article_id: item.id }));
+  }
+  let inFlight = 0, peak = 0;
+  const waits = [];
+  const stats = await writeSummaries({ articles, reviewDir, writer: { ...writer, delayMs: 4500, concurrency: 4 }, apiKey: 'AIza-test',
+    policyWording: wording, sleep: async ms => { waits.push(ms); }, log: () => {},
+    fetchImpl: async () => {
+      inFlight += 1; peak = Math.max(peak, inFlight);
+      await new Promise(resolve => setTimeout(resolve, 20));
+      inFlight -= 1;
+      return gemini([good]);
+    } });
+  assert.equal(stats.written, 6);
+  assert.equal(peak, 4);
+  // 첫 요청을 뺀 다섯 요청이 앞 요청 시작에서 간격만큼 뒤에 나가도록 기다린다.
+  assert.equal(waits.filter(ms => ms > 0).length, 5);
 });
 
 test('the summary stage uses its own key when one is set', () => {
