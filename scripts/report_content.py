@@ -206,12 +206,14 @@ SIGNAL_DESCRIPTIONS_EN = {
     # 카드 라벨에는 이름만 싣는다. 이름이 길어 " · 설명"까지 붙이면 라벨과 "No signal this month"가 잘린다.
     # 설명은 표지(INDICATOR_DESCRIPTION_EN)에 있다.
     # 2026-09 개정: 직역 느낌이 나거나 국문보다 뜻이 좁던 이름을 고쳤다. "Geographical Diversification"은 길고
-    # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다. 5는 이 범주의 핵심인 방한을 이름에 넣었다.
+    # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다.
+    # 2026-10: 5는 "Executive Moves & Korea Visits"에서 방한을 뺐다. 국문 "핵심경영진 행보"는 방한에 한정되지 않고,
+    # "moves"가 인사 이동과 행보를 함께 뜻한다. 방한·현장 방문은 표지 설명 줄에 남아 있다.
     1: "Supply Chain & Geopolitical Risk",
     2: "Production Expansion & New Sites",
     3: "Capital Raising & Liquidity",
     4: "R&D and Technology Partnerships",
-    5: "Executive Moves & Korea Visits",
+    5: "Executive Moves",
 }
 
 INDICATOR_DESCRIPTION_EN = {
@@ -374,7 +376,7 @@ TEXTS = {
         "cover_subtitle": "Monthly Pre-Decision Indicators Across 77 Priority Companies",
         "cover_title_accent": 0,
         # 국문 "30대 투자유치 프로젝트"의 실체는 한국이 해외 투자를 유치하려는 품목·기술 30개다. "project"로 옮기면
-        # 영어 독자는 무엇인지 모른다. 카드 라벨(Korea seeks investment in ...)과 같은 개념으로 적는다.
+        # 영어 독자는 무엇인지 모른다. 카드 라벨(Target technology)과 같은 개념으로 적는다.
         "cover_line_1": "Including 30 major investment promotion projects and 77 target companies selected by MOTIR",
         "cover_line_2": "Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)",
         "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
@@ -383,7 +385,7 @@ TEXTS = {
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤ Executive Moves & Korea Visits",
+        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤ Executive Moves",
         "matrix_footnote": "Signals detected at {on} companies · none at {off}",
         "detail_title": "Investment Signals by Company",
         "no_signal": "No signal this month",
@@ -395,8 +397,10 @@ TEXTS = {
         "source_empty": "Source  —",
         "source_press_release": "Press release",
         "item_title": "Business Developments by Product",
-        # "타겟 품목"은 누구의 타겟인지 영어로 안 보인다. 한국이 이 품목의 투자를 유치하려 한다는 뜻을 적는다.
-        "item_target_label": "Korea seeks investment in",
+        # 예전 "Korea seeks investment in"은 "in"으로 끝나 라벨로 읽히지 않았고, 한국이 투자하는 쪽으로도 읽혔다.
+        # 굵은 품목명 바로 앞에 붙고 보고서가 Invest Korea 발행이라 누구의 대상인지는 맥락으로 읽힌다.
+        # 시스템 안의 이름(target technology)과도 같다.
+        "item_target_label": "Target technology",
         "item_trend_label": "Developments in {month}",
         "item_note": "Companies with no investment signal this month but with {month} news on the product Korea seeks from them. Cards marked \"General company news\" cover the company's main business instead. Any of these could turn into an investment signal.",
         "item_exempt_note": "General company news",
