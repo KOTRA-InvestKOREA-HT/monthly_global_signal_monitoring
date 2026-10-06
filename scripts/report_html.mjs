@@ -623,11 +623,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 }
 /* Same grey label as the item-linked trend cards. The emoji and teal-on-teal
    pill read as decoration in a formal report and had weak contrast. */
-/* The white pill barely shows on the teal box, so the eye lines up its text,
-   not its edge: hang the 7pt padding into the margin and the label starts on
-   the heading's and body's line instead of reading as indented. The grey item
-   card pills show their edge, so they stay flush. */
-.business-target .target { margin-left: -7pt; padding: 1.9pt 7pt; font-size: 7.6pt; background: #fff; }
+.business-target .target { padding: 1.9pt 7pt; font-size: 7.6pt; background: #fff; }
 /* The target sits on its own line under the heading, as on the item cards; a
    box without one keeps the heading line alone. A name too long to sit beside
    its pill drops below it rather than being cut. */
