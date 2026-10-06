@@ -351,9 +351,6 @@ TEXTS = {
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
         "business_empty": "해당 기간 공식 출처에서 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않음.",
-        # 승인 조건에서 품목 연계 근거만 빠진 행을 실을 때 붙인다. 표시 없이 실으면 확인되지 않은
-        # 품목 연계를 확인된 것처럼 말하게 된다.
-        "business_near_miss_note": "품목 연계 미확인 · 주요 사업동향",
         "source_prefix": "출처",
         "source_fallback": "수집 출처",
         "source_empty": "출처  —",
@@ -392,7 +389,6 @@ TEXTS = {
         "no_signal": "No signal this month",
         "business_heading": "BUSINESS DEVELOPMENTS",
         "business_empty": "No related business news from official sources this month.",
-        "business_near_miss_note": "Business news · product link not confirmed",
         "source_prefix": "Source",
         "source_fallback": "Source publication",
         "source_empty": "Source  —",
@@ -1317,8 +1313,8 @@ def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, 
 
     승인된 후보가 하나도 없으면 근접 사업동향 행을 쓴다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은
     승인된 사업동향이 0건이라 세 기업의 상자가 모두 "확인되지 않음"으로 나갔다. 근접 행은 승인이
-    아니므로 상자에 그렇게 표시된다(report_view_model 의 business.near_miss). 표시 없이 실으면
-    확인되지 않은 품목 연계를 확인된 것처럼 말하는 보고서가 된다.
+    아니다. 예전에는 상자에 "품목 연계 미확인" 표시를 붙였으나 2026-10 검토에서 표시를 뺐다.
+    근접 여부는 report_view_model 의 business.near_miss 로 계속 남긴다.
     """
     shown = {id(row) for row in shown_rows}
     candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]

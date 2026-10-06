@@ -85,13 +85,6 @@ class BusinessNearMissTests(unittest.TestCase):
         self.assertFalse(pdf.signal_publishable(row))
         self.assertEqual(pdf.index_investment_signals([row]), {})
 
-    def test_the_box_says_the_item_link_is_unconfirmed(self):
-        self.assertTrue(pdf.t("business_near_miss_note"))
-        pdf.set_language("en")
-        try:
-            self.assertTrue(pdf.t("business_near_miss_note"))
-        finally:
-            pdf.set_language("ko")
 
 
 class CutTextTests(unittest.TestCase):

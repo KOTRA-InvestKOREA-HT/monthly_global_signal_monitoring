@@ -297,6 +297,24 @@ test('the business box labels its target with a plain pill, not an emoji marker'
   assert.ok(html.includes('<span class="pill target">투자유치 필요 품목·기술</span>'));
 });
 
+test('the business box puts its target on its own line and marks no near-miss row', () => {
+  const m = withDetails(['Jenoptik']);
+  m.details.pages[0].business.near_miss = true;
+  const html = renderReport(m);
+  // 머리글 줄에는 머리글만, 타겟 기술은 그 아랫줄에 싣는다.
+  assert.match(html, /<p class="business-head">\s*<span class="business-heading">글로벌 사업현황<\/span>\s*<\/p>\s*<p class="business-target">/);
+  // 품목 연계가 확인되지 않은 행으로 채운 상자에 붙이던 "품목 연계 미확인" 표시는 2026-10 검토에서 뺐다.
+  assert.equal(occurrences(html, 'near-miss'), 0);
+  assert.equal(occurrences(html, '품목 연계 미확인'), 0);
+});
+
+test('a business box without a target keeps the heading line alone', () => {
+  const m = withDetails(['Amkor']);
+  m.details.pages[0].business.target_text = '';
+  const html = renderReport(m);
+  assert.equal(occurrences(html, 'class="business-target"'), 0);
+});
+
 test('source lines link to the original article when a web address is known', () => {
   const html = renderReport(withDetails(['Ouster'], () => [firing(4, {
     source: 'Source Ouster - Official RSS 2026.08.26',
