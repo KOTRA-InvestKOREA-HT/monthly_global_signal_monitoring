@@ -553,8 +553,11 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .signal.off .signal-body { padding-bottom: 5pt; }
 /* The gap under the last row belongs to the box, not to the row. */
 .signal:last-child { padding-bottom: 0; }
-.signal-head { display: flex; align-items: baseline; gap: 18pt; height: 16pt; margin: 0; }
-.signal-head .pill { flex: 0 1 auto; min-width: 0; padding: 2pt 8pt; font-size: 7.6pt; }
+/* The label pill is as tall as the number badge beside it (16pt), as on the
+   drawn page, and everything in the row is centred on that height. A 13pt pill
+   sat on the badge's top edge and pulled "No signal this month" up with it. */
+.signal-head { display: flex; align-items: center; gap: 18pt; height: 16pt; margin: 0; }
+.signal-head .pill { flex: 0 1 auto; min-width: 0; height: 16pt; padding: 0 8pt; font-size: 7.6pt; line-height: 16pt; }
 /* Every label sits in a slot as wide as the widest of the five, so "No signal
    this month" starts in one column instead of wherever its own label ends. */
 .signal-head .pill-slot { display: flex; flex: 0 1 var(--pill-col, auto); min-width: 0; }
