@@ -17,23 +17,25 @@ export const COLORS = {
   light: '#EEF3F7',
   tableLine: '#D8DDE4',
   text: '#10243E',
-  // 출처 줄과 각주가 쓰는 색. 흰 배경에서 #8591A3 은 대비 3.19:1 로 WCAG AA(4.5:1)
-  // 미달이었고, 7.1pt 로 찍히는 출처가 실제로 읽히지 않았다. 4.59:1 로 올린다.
-  muted: '#6B7688',
+  // 출처 줄·각주·푸터가 쓰는 색. 흰 배경에서 #8591A3 은 3.19:1 이라 출처가 읽히지 않아 #6B7688 로
+  // 올렸으나, 그 값도 푸터 띠(4.15:1)와 청록 상자(4.18:1) 위에서는 AA(4.5:1) 미달이었다.
+  // 쓰는 배경 모두에서 4.69:1 이상이 되게 한 단계 더 진하게 한다.
+  muted: '#626D7E',
   onNavy: '#C8D2DF',
   legend: '#596579',
   bodyGrey: '#555F6E',
   footerBg: '#EFF4F8',
   divider: '#D6DEE9',
-  rowNo: '#737C86',
   boxLine: '#E4EAF0',
   tealBg: '#EAF7F4',
   tealLine: '#9EDCD3',
   teal: '#087A70',
   pill: '#56687B',
-  // 국가명 같은 보조 라벨. 2.04:1 은 너무 흐려서 옛 muted 값까지만 올린다.
-  grey: '#8591A3',
-  faint: '#B5B9BF',
+  // 국가명 같은 보조 라벨. 3.19:1 로는 9pt 가 흐려서 muted 와 같은 값으로 둔다.
+  grey: '#626D7E',
+  // 시그널 없는 행의 번호 배지. 흰 숫자를 #D8DADF 위에 찍던 때는 1.40:1 이라 번호가 보이지 않았다.
+  offBadge: '#E6E9ED',
+  offBadgeText: '#56687B',
 };
 
 // Rows per matrix column, from the page geometry: the table starts 145pt down,
@@ -144,7 +146,7 @@ function matrixPages(state, model) {
           <span><i class="on"></i>${escapeHtml(matrix.legend_on)}</span>
           <span><i class="off"></i>${escapeHtml(matrix.legend_off)}</span>
         </div>
-        <p class="matrix-indicators">${escapeHtml(matrix.indicators)}</p>
+        <p class="matrix-indicators">${String(matrix.indicators).split(' · ').map(name => `<span class="name">${escapeHtml(name)}</span>`).join(' · ')}</p>
         <p class="matrix-footnote">${escapeHtml(matrix.footnote)}</p>
       </div>` : ''}`)).join('');
 }
@@ -155,10 +157,13 @@ function matrixPages(state, model) {
 const summary = signal => {
   if (signal.plain) return `<p class="summary">${escapeHtml(signal.plain)}</p>`;
   const headline = `<strong>${escapeHtml(signal.headline)}</strong>`;
-  if (!signal.detail) return `<p class="summary">${headline}</p>`;
+  // A summary with nothing after its headline is one sentence; set in bold it was
+  // a three- or four-line semibold block (most English summaries came out so).
+  if (!signal.detail) return `<p class="summary">${escapeHtml(signal.headline)}</p>`;
+  // On a line of its own the detail needs no dash; one leading a line read as a list bullet.
   return signal.inline
     ? `<p class="summary">${headline} — ${escapeHtml(signal.detail)}</p>`
-    : `<p class="summary">${headline}</p><p class="summary continued">— ${escapeHtml(signal.detail)}</p>`;
+    : `<p class="summary">${headline}</p><p class="summary continued">${escapeHtml(signal.detail)}</p>`;
 };
 
 // 출처 줄은 원문으로 가는 링크다. Chrome 이 PDF 로 인쇄할 때 링크 주석으로 남긴다.
@@ -479,11 +484,11 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .item-body {
   margin: 4.7pt 16.3pt 0;
   font-size: 8.8pt;
-  line-height: 10.8pt;
-  color: #000;
+  line-height: 11.5pt;
+  color: ${COLORS.text};
   word-break: keep-all;
 }
-.item-card .source { margin: 2pt 16.3pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+.item-card .source { margin: 2pt 16.3pt 0; font-size: 7.5pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
 /* The drawn page decides how many lines of each summary to show by trying a
@@ -547,7 +552,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   line-height: 16pt;
   text-align: center;
 }
-.signal.off .badge { background: #D8DADF; }
+.signal.off .badge { background: ${COLORS.offBadge}; color: ${COLORS.offBadgeText}; }
 .signal-body { flex: 1; min-width: 0; }
 /* A silent row still occupies the 21pt the drawn page gives it. */
 .signal.off .signal-body { padding-bottom: 5pt; }
@@ -561,15 +566,19 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 /* Every label sits in a slot as wide as the widest of the five, so "No signal
    this month" starts in one column instead of wherever its own label ends. */
 .signal-head .pill-slot { display: flex; flex: 0 1 var(--pill-col, auto); min-width: 0; }
-.signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 10pt; color: ${COLORS.faint}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.signal-head .dash { margin-left: auto; font-size: 10pt; color: ${COLORS.faint}; }
+/* Smaller than the summaries it stands in for (8.8pt), so an empty row never
+   outweighs a filled one; muted rather than faint so it can still be read. */
+.signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 8.8pt; color: ${COLORS.muted}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signal-head .dash { margin-left: auto; font-size: 8.8pt; color: ${COLORS.muted}; }
 .summary {
   margin: 3.6pt 0 0;
   /* The summary column is narrower than the row: the drawn page reserves the
      right end of the row for nothing, and the wrapping must match. */
   max-width: 378pt;
   font-size: 8.8pt;
-  line-height: 10.4pt;
+  /* About 1.3x. At 10.4pt (1.18x) on lines of up to 116 characters the eye lost
+     its place going from one line to the next. */
+  line-height: 11.5pt;
   word-break: keep-all;
   /* The ladder stopped at six lines; past that a summary is cut, not carried. */
   display: -webkit-box;
@@ -579,7 +588,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 }
 .summary strong { font-weight: 600; }
 .summary.continued { margin-top: 0; }
-.signal .source, .business-box .source { margin: 2.4pt 0 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+.signal .source, .business-box .source { margin: 2.4pt 0 0; font-size: 7.5pt; color: ${COLORS.muted}; }
 /* The drawn row keeps 2.5pt under the source line before its separator. */
 .signal .source { max-width: 378pt; padding-bottom: 2.6pt; }
 .source a { color: inherit; text-decoration: none; }
@@ -625,7 +634,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .business-body {
   margin: 6.4pt 0 0;
   font-size: 9pt;
-  line-height: 10.35pt;
+  line-height: 11.7pt;
   word-break: keep-all;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -658,10 +667,11 @@ table.matrix td {
   height: 12.8pt;
   padding: 0;
   border-bottom: 0.45pt solid ${COLORS.tableLine};
-  font-size: 6pt;
+  /* 6pt was under the 7pt floor for print and the names blurred together. */
+  font-size: 7pt;
   color: ${COLORS.text};
 }
-table.matrix td.no { width: 22pt; color: ${COLORS.rowNo}; text-align: center; }
+table.matrix td.no { width: 22pt; color: ${COLORS.muted}; text-align: center; }
 table.matrix td.cell { text-align: center; }
 table.matrix td.company { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 i.on, i.off { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius: 2pt; }
@@ -677,6 +687,8 @@ i.off { background: ${COLORS.light}; }
 }
 .matrix-legend span { display: flex; align-items: center; gap: 5pt; }
 .matrix-indicators { margin: 6pt 0 0; font-size: 7pt; color: ${COLORS.muted}; }
+/* An indicator name never breaks across lines ("⑤ Executive / Moves & Korea Visits"). */
+.matrix-indicators .name { white-space: nowrap; }
 .matrix-footnote { margin: 7pt 0 0; font-size: 8pt; font-weight: 800; color: ${COLORS.text}; }
 `;
 }

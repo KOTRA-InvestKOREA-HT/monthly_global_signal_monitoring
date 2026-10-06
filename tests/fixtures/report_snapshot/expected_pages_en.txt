@@ -59,8 +59,8 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
 Signal detected No signal
-① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤
-Executive Moves & Korea Visits
+① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships
+⑤ Executive Moves & Korea Visits
 Signals detected at 6 companies · none at 71
 Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies 02
 
@@ -73,10 +73,10 @@ Bioanalysis & safety testing USA
 2 Production Expansion & New Sites No signal this month —
 3 Capital Raising & Liquidity No signal this month —
 4 R&D and Technology Partnerships
-On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine
-Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation
-multivalent enterovirus vaccine by leveraging advanced analytical platforms including
-Next-Generation Sequencing.
+On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics
+Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent
+enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation
+Sequencing.
 Source Press release · Charles River - News Releases / Press Releases 2026.08.20
 5 Executive Moves & Korea Visits No signal this month —
 BUSINESS DEVELOPMENTS Korea seeks investment in
@@ -98,7 +98,7 @@ Electric aircraft propulsion USA
 3 Capital Raising & Liquidity No signal this month —
 4 R&D and Technology Partnerships
 Boeing Investment and Technology Collaboration
-— Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
+Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
 while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
 arrangement.
 Source Press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
@@ -119,9 +119,8 @@ Ouster
 Robotics LiDAR USA
 1 Supply Chain & Geopolitical Risk No signal this month —
 2 Production Expansion & New Sites
-Ouster is expanding its LiDAR production capacity to support rising demand, with its
-production run rate expected to increase from approximately 40,000 units annually toward
-100,000 units.
+Ouster is expanding its LiDAR production capacity to support rising demand, with its production
+run rate expected to increase from approximately 40,000 units annually toward 100,000 units.
 Source Yahoo Finance 2026.08.17
 3 Capital Raising & Liquidity No signal this month —
 4 R&D and Technology Partnerships No signal this month —
@@ -145,7 +144,7 @@ Semiconductor equipment USA
 3 Capital Raising & Liquidity No signal this month —
 4 R&D and Technology Partnerships
 AI Computing Material and Process Innovation Research Collaboration
-— Applied Materials announced that University of California, Berkeley will join its EPIC Center in
+Applied Materials announced that University of California, Berkeley will join its EPIC Center in
 Silicon Valley as a research collaborator to pursue research programs accelerating material and
 process innovations.
 Source Press release · Applied Materials 2026.08.11
@@ -166,8 +165,8 @@ Battery anode materials UK
 2 Production Expansion & New Sites No signal this month —
 3 Capital Raising & Liquidity
 Completion of £100 Million Investment Round.
-— The completion of the £100 million ($133 million) investment round includes a £52.6 million
-($70 million) commitment from the National Wealth Fund along with new investors Korea
+The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70
+million) commitment from the National Wealth Fund along with new investors Korea
 Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
 commercialisation activities.
 Source Nexeon - Media / Newsroom 2026.08.31

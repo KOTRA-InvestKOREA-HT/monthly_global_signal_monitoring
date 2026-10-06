@@ -137,7 +137,15 @@ test('a headline and its detail share a paragraph only when they fit on a line',
   assert.equal(occurrences(short, 'class="summary continued"'), 0);
 
   const long = renderReport(withDetails(['A'], () => [firing(4, { detail: '아주 긴 설명', inline: false })]));
-  assert.match(long, /<p class="summary"><strong>투자 유치 완료<\/strong><\/p><p class="summary continued">— 아주 긴 설명<\/p>/);
+  // 제 줄에서 시작하는 상세에는 줄표를 붙이지 않는다. 줄 머리의 줄표는 목록 기호처럼 읽혔다.
+  assert.match(long, /<p class="summary"><strong>투자 유치 완료<\/strong><\/p><p class="summary continued">아주 긴 설명<\/p>/);
+});
+
+test('a one-sentence summary with no detail is not set in bold', () => {
+  // 영문 요약 대부분이 이 경우라, 표제로 굵게 찍으면 3–4줄 문단이 통째로 굵어졌다.
+  const html = renderReport(withDetails(['A'], () => [firing(4, { headline: 'One sentence summary.', detail: '' })]));
+  assert.match(html, /<p class="summary">One sentence summary\.<\/p>/);
+  assert.equal(html.includes('<strong>One sentence summary.</strong>'), false);
 });
 
 test('a summary with no headline falls back to the plain text', () => {
@@ -253,11 +261,21 @@ test('body text colours clear the WCAG AA contrast floor on white', () => {
       .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
     return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
   };
-  const onWhite = (hex) => 1.05 / (luminance(hex) + 0.05);
+  const contrast = (fg, bg) => {
+    const [hi, lo] = [luminance(fg), luminance(bg)].sort((a, b) => b - a);
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  const onWhite = (hex) => contrast(hex, '#FFFFFF');
   assert.ok(onWhite(COLORS.muted) >= 4.5, `muted ${COLORS.muted} is ${onWhite(COLORS.muted).toFixed(2)}:1`);
   assert.ok(onWhite(COLORS.text) >= 4.5, `text ${COLORS.text}`);
-  // 보조 라벨은 AA 까지는 못 가도 이전(2.04:1)보다는 읽혀야 한다.
-  assert.ok(onWhite(COLORS.grey) >= 3, `grey ${COLORS.grey} is ${onWhite(COLORS.grey).toFixed(2)}:1`);
+  assert.ok(onWhite(COLORS.grey) >= 4.5, `grey ${COLORS.grey} is ${onWhite(COLORS.grey).toFixed(2)}:1`);
+  // 흰 바탕만 재면 놓친다. 푸터 띠와 청록 사업현황 상자 위의 출처·푸터 글자가 4.15–4.18:1 이었다.
+  for (const [name, bg] of [['footerBg', COLORS.footerBg], ['tealBg', COLORS.tealBg], ['light', COLORS.light]]) {
+    assert.ok(contrast(COLORS.muted, bg) >= 4.5, `muted on ${name} is ${contrast(COLORS.muted, bg).toFixed(2)}:1`);
+  }
+  // 시그널 없는 행의 번호. 흰 숫자를 옅은 회색 위에 찍던 때는 1.40:1 이라 번호가 보이지 않았다.
+  assert.ok(contrast(COLORS.offBadgeText, COLORS.offBadge) >= 4.5,
+    `off badge ${contrast(COLORS.offBadgeText, COLORS.offBadge).toFixed(2)}:1`);
 });
 
 test('the matrix draws two cell states only: a confirmed signal or none', () => {

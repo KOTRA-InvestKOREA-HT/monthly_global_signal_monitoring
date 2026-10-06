@@ -54,8 +54,9 @@ TEAL_LINE = colors.HexColor("#9EDCD3")
 TEXT = colors.HexColor("#10243E")
 # 흰 배경에서 #8591A3 은 대비 3.19:1 로 WCAG AA(4.5:1) 미달이라 7.1pt 출처가 읽히지
 # 않았다. 4.59:1 로 올린다. report_html.mjs 의 COLORS.muted 와 같은 값을 쓴다.
-MUTED = colors.HexColor("#6B7688")
-GREY_TEXT = colors.HexColor("#8591A3")
+# 푸터 띠·청록 상자 위에서도 AA(4.5:1)를 넘는 값. report_html.mjs 의 COLORS.muted 와 같다.
+MUTED = colors.HexColor("#626D7E")
+GREY_TEXT = MUTED
 WHITE = colors.white
 # 표지 제목·부제·지표 머리말의 왼쪽 끝. 번호 동그라미(중심 46, 반지름 10)의 왼쪽 끝에 맞춘다.
 # 43pt 였던 때는 글자만 동그라미보다 안으로 들어가 보였다.
@@ -471,8 +472,9 @@ def draw_matrix_table(report, profiles, signal_index, covered, x, y_top, right=F
         c.setStrokeColor(TABLE_LINE)
         c.setLineWidth(0.45)
         c.line(x, y, x + table_w, y)
-        report.text(index_x, y + 3.7, str(profile["target_no"]), 6, colors.HexColor("#737C86"), align="center")
-        report.text(name_x, y + 3.7, profile.get("display_name") or profile["company"], 6, TEXT)
+        report.text(index_x, y + 3.5, str(profile["target_no"]), 7, MUTED, align="center")
+        report.text(name_x, y + 3.5, short_text_to_width(report.canvas, profile.get("display_name") or profile["company"],
+                                               table_w - 30 - 90 - 4, report.fonts["demilight"], 7), 7, TEXT)
         for idx in range(5):
             # 칸은 두 가지뿐이다. 금색으로 채우면 AI 확인 시그널, 회색이면 신호없음.
             if signal_cell_state(signal_index, profile["company"], idx + 1) == "on":
@@ -505,7 +507,18 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
         report.text(legend_x + 13, y + 9, label, 8, legend_color)
         legend_x += 13 + c.stringWidth(label, report.fonts["demilight"], 8) + 18
     # 영문 지표 이름이 길어 한 줄에 다 들어가지 않는다. 잘라내지 않고 두 줄까지 싣고 각주를 그만큼 내린다.
-    legend_end = report.wrapped(t("matrix_indicators"), 30, y - 6, PAGE_W - 60, 7, MUTED, max_lines=2, line_gap=2)
+    # 지표 이름 하나가 두 줄로 갈라지지 않게 이름 단위로 줄을 바꾼다("⑤ Executive / Moves & Korea Visits").
+    indicator_lines = []
+    for name in t("matrix_indicators").split(" · "):
+        candidate = f"{indicator_lines[-1]} · {name}" if indicator_lines else name
+        if indicator_lines and c.stringWidth(candidate, report.fonts["demilight"], 7) <= PAGE_W - 60:
+            indicator_lines[-1] = candidate
+        else:
+            indicator_lines.append(name)
+    legend_end = y - 6
+    for line in indicator_lines[:2]:
+        report.text(30, legend_end, line, 7, MUTED)
+        legend_end -= 9
     # 각주는 행 상태를 센 것이다. 따로 계산하면 표와 숫자가 어긋난다.
     statuses = [company_status(profile["company"], signal_index, covered) for profile in profiles]
     footnote = t(
@@ -531,13 +544,15 @@ def summary_text_layout(report, row, width, size, max_lines):
     if not parts:
         sections = [(detail_text(row, 560), "demilight", TEXT)]
     else:
-        sections = [(parts["headline"], "semibold", TEXT)]
+        # 뒤에 상세가 없는 표제는 한 문장짜리 요약이다. 굵게 찍으면 3–4줄이 통째로 굵어졌다(영문 대부분).
+        sections = [(parts["headline"], "semibold" if parts["detail"] else "demilight", TEXT)]
         if parts["detail"]:
-            inline = sections + [(" — " + parts["detail"], "demilight", colors.black)]
+            inline = sections + [(" — " + parts["detail"], "demilight", TEXT)]
             if sum(report.canvas.stringWidth(text, report.fonts[weight], size)
                    for text, weight, _ in inline) <= width:
                 return [inline]
-            sections.append(("— " + parts["detail"], "demilight", colors.black))
+            # 제 줄에서 시작하는 상세에는 줄표를 붙이지 않는다. 줄 머리의 줄표는 목록 기호처럼 읽혔다.
+            sections.append((parts["detail"], "demilight", TEXT))
     lines = []
     for text, weight, color in sections:
         for line in wrap_text(report.canvas, text, width, report.fonts[weight], size):
@@ -565,11 +580,16 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
     return max(1, len(lines))
 
 
+# 시그널 없는 행의 번호 배지. 흰 숫자를 #D8DADF 위에 찍던 때는 1.40:1 이라 번호가 보이지 않았다.
+OFF_BADGE = colors.HexColor("#E6E9ED")
+OFF_BADGE_TEXT = colors.HexColor("#56687B")
+
+
 def draw_badge(report, x, y, value, active):
     c = report.canvas
-    c.setFillColor(NAVY if active else colors.HexColor("#D8DADF"))
+    c.setFillColor(NAVY if active else OFF_BADGE)
     c.roundRect(x, y - 9, 16, 16, 3, fill=1, stroke=0)
-    report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
+    report.text(x + 8, y - 4.5, str(value), 9, WHITE if active else OFF_BADGE_TEXT, align="center", weight="semibold")
 
 
 def draw_industry_pill(report, x, y, max_width, text, color):
@@ -596,8 +616,9 @@ DETAIL_SIGNAL_BOTTOM_PAD = 24
 SIGNAL_LABEL_TOP_OFFSET = 7
 SIGNAL_LABEL_TO_BODY = 23
 SIGNAL_BODY_SIZE = 8.8
-SIGNAL_BODY_GAP = 1.6
-SIGNAL_SOURCE_SIZE = 7.1
+# 본문 줄 간격은 1.3배 안팎. 1.15–1.23배에서는 긴 줄 끝에서 다음 줄 머리를 놓쳤다.
+SIGNAL_BODY_GAP = 2.7
+SIGNAL_SOURCE_SIZE = 7.5
 SIGNAL_SOURCE_GAP = 1.0
 SIGNAL_SOURCE_BOTTOM_OFFSET = 2.5
 SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET = 14
@@ -610,7 +631,7 @@ BUSINESS_BODY_TOP_PAD = 44
 BUSINESS_SOURCE_GAP = 8
 BUSINESS_SOURCE_BOTTOM_PAD = 15
 BUSINESS_BODY_SIZE = 9.0
-BUSINESS_BODY_LINE_GAP = 1.35
+BUSINESS_BODY_LINE_GAP = 2.7
 BUSINESS_BODY_MAX_LINES = 5
 # 상세 페이지가 쓸 수 있는 (시그널 본문 줄 수, 사업현황 본문 줄 수) 조합.
 # 작은 것부터 시도해 페이지에 들어가는 마지막 조합을 쓴다. 첫 항목은 기존 값이라 최소 보장선이 된다.
@@ -726,13 +747,21 @@ def business_target_layout(report, profile, x, width):
     }
 
 
+def signal_row_label(no):
+    """기업 카드 행의 지표 라벨. 국·영문 모두 이름만 싣는다.
+
+    국문은 " · 설명"까지 알약에 넣어 알약이 행의 절반을 차지했고, "이번 달 해당 신호 없음"이
+    320pt 까지 밀렸다. 설명은 표지에 있다.
+    """
+    return SIGNAL_DESCRIPTIONS_EN[no] if report_content.LANG == "en" else INDICATOR_LABEL_KO[no]
+
+
 def signal_pill_column(canvas_obj, fonts):
     """다섯 지표 라벨 알약 중 가장 넓은 것의 폭. "이번 달 해당 신호 없음"은 이 열 다음에서 시작한다.
 
     알약마다 바로 뒤에 찍던 때는 라벨 길이에 따라 문구 시작점이 줄마다 달랐다.
     """
-    labels = SIGNAL_DESCRIPTIONS_EN if report_content.LANG == "en" else SIGNAL_DESCRIPTIONS
-    return round(max(canvas_obj.stringWidth(label, fonts["semibold"], 7.6) for label in labels.values()) + 16, 2)
+    return round(max(canvas_obj.stringWidth(signal_row_label(no), fonts["semibold"], 7.6) for no in range(1, 6)) + 16, 2)
 
 
 def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=True):
@@ -740,7 +769,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     c = report.canvas
     draw_badge(report, x, y, no, active)
     label_x = x + 31
-    label = SIGNAL_DESCRIPTIONS_EN[no] if report_content.LANG == "en" else SIGNAL_DESCRIPTIONS[no]
+    label = signal_row_label(no)
     # 알약은 폭 상한이 있으므로 글자를 먼저 그 안에 맞춘다. 예전에는 알약만 잘리고 글자는 그대로 나가서 밖으로 튀어나왔다.
     label = short_text_to_width(report.canvas, label, width - 190 - 16, report.fonts["semibold"], 7.6, f"signal_label[{no}]")
     label_w = report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14
@@ -751,10 +780,11 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     if not active:
         empty_x = label_x + max(label_w, signal_pill_column(c, report.fonts) - 2) + 18
         empty_text = short_text_to_width(
-            report.canvas, t("no_signal"), x + width - 22 - empty_x, report.fonts["demilight"], 10, f"no_signal[{no}]"
+            report.canvas, t("no_signal"), x + width - 22 - empty_x, report.fonts["demilight"], 8.8, f"no_signal[{no}]"
         )
-        report.text(empty_x, y - 4, empty_text, 10, colors.HexColor("#B5B9BF"))
-        report.text(x + width, y - 4, "—", 10, colors.HexColor("#B5B9BF"), align="right")
+        # 실제 요약(8.8pt)보다 크게 찍지 않는다. 흐린 #B5B9BF(1.97:1)는 읽히지 않았다.
+        report.text(empty_x, y - 3.6, empty_text, 8.8, MUTED)
+        report.text(x + width, y - 3.6, "—", 8.8, MUTED, align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
             separator_y = y - SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET - SIGNAL_CONTENT_TO_SEPARATOR
@@ -830,7 +860,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     industry_w = draw_industry_pill(
         report, industry_x, header_y, industry_limit, profile.get("detailed_industry", ""), colors.HexColor("#56687B")
     )
-    report.text(industry_x + industry_w + 10, header_y - 2, country_text, 9, colors.HexColor("#B1B6BE"), weight="semibold")
+    report.text(industry_x + industry_w + 10, header_y - 2, country_text, 9, GREY_TEXT, weight="semibold")
 
     c.setStrokeColor(colors.black)
     c.setLineWidth(1)
@@ -905,10 +935,10 @@ ITEM_RULE_TO_TARGET = 21
 ITEM_TARGET_TO_TREND = 24
 ITEM_TREND_LABEL_TO_BODY = 19
 ITEM_BODY_SIZE = 8.8
-ITEM_BODY_GAP = 2.0
+ITEM_BODY_GAP = 2.7
 ITEM_BODY_MAX_LINES = 6
 ITEM_BODY_TO_SOURCE = 11
-ITEM_SOURCE_SIZE = 7.1
+ITEM_SOURCE_SIZE = 7.5
 ITEM_CARD_BOTTOM_PAD = 16
 ITEM_LABEL_SIZE = 7.6
 ITEM_LABEL_COLOR = colors.HexColor("#56687B")
@@ -1003,7 +1033,7 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
         top - layout["body_offset"],
         layout["body_width"],
         ITEM_BODY_SIZE,
-        colors.black,
+        TEXT,
         max_lines=ITEM_BODY_MAX_LINES,
         line_gap=ITEM_BODY_GAP,
         weight="demilight",
@@ -1109,7 +1139,7 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
         report.new_page()
         report.header("P R O D U C T   D E V E L O P M E N T S", t("item_title"), f"{index}/{len(pages)}")
         if index == 1:
-            report.wrapped(note, 28, PAGE_H - 128, PAGE_W - 56, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
+            report.wrapped(note, 30, PAGE_H - 128, PAGE_W - 60, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
         for placed in page:
             draw_item_card(report, placed["entry"], placed["layout"], x, placed["top"], width, month_label)
         report.footer()

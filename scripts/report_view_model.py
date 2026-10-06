@@ -88,7 +88,7 @@ def summary_cut(row, *pieces):
 
 def signal_entry(no, rows, measure):
     """One of the five signal rows: its label, and the summary if it fired."""
-    label = report.SIGNAL_DESCRIPTIONS_EN[no] if report.LANG == "en" else report.SIGNAL_DESCRIPTIONS[no]
+    label = report.signal_row_label(no)
     if not rows:
         return {"no": no, "label": label, "active": False, "empty": report.t("no_signal")}
     row = rows[0]
