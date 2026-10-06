@@ -313,8 +313,9 @@ class SlideReport:
         c.setFillColor(GOLD)
         c.rect(0, PAGE_H - 100, PAGE_W, 8, fill=1, stroke=0)
         suffix = f" · {page_fraction}" if page_fraction else ""
-        self.text(43, PAGE_H - 39, f"{kicker}{suffix}", 9, GOLD, weight="medium")
-        self.text(43, PAGE_H - 66, title, 22, WHITE, weight="semibold")
+        # 본문 카드·상자의 왼쪽 변(30pt)에 맞춘다. 표지 여백(43pt)을 쓰던 때는 제목만 안으로 들어가 보였다.
+        self.text(30, PAGE_H - 39, f"{kicker}{suffix}", 9, GOLD, weight="medium")
+        self.text(30, PAGE_H - 66, title, 22, WHITE, weight="semibold")
 
     def finish(self):
         self.canvas.save()

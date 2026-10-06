@@ -293,7 +293,9 @@ body {
 /* ---- shared chrome ---- */
 .header {
   height: 100pt;
-  padding: 27pt 43pt 0;
+  /* Left edge on the body cards' (30pt), not the cover's 43pt margin, which
+     left the title looking indented against everything below it. */
+  padding: 27pt 30pt 0;
   background: ${COLORS.navy};
   border-bottom: 8pt solid ${COLORS.gold};
 }
