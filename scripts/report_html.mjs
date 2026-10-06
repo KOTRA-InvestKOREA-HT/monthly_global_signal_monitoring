@@ -171,7 +171,7 @@ const signalRow = signal => `
             <span class="badge">${escapeHtml(signal.no)}</span>
             <div class="signal-body">
               <p class="signal-head">
-                <span class="pill">${escapeHtml(signal.label)}</span>
+                <span class="pill-slot"><span class="pill">${escapeHtml(signal.label)}</span></span>
                 ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
               </p>
               ${signal.active ? `${summary(signal)}${sourceLine(signal.source, signal.source_url)}` : ''}
@@ -182,7 +182,7 @@ function detailPages(state, model, assets) {
   const { details } = model;
   return details.pages.map((entry, index) => page(state, `
       ${header(details.kicker, details.title, `${index + 1}/${details.pages.length}`)}
-      <div class="detail">
+      <div class="detail"${details.pill_width ? ` style="--pill-col:${details.pill_width}pt"` : ''}>
         <section class="signal-box">
           <div class="detail-head">
             <h3>${escapeHtml(entry.company)}</h3>
@@ -305,7 +305,8 @@ body {
   position: absolute;
   inset: auto 0 0 0;
   height: 38pt;
-  padding: 0 42pt;
+  /* Same 30pt side margins as the header and the body boxes. */
+  padding: 0 30pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -315,7 +316,9 @@ body {
   color: ${COLORS.muted};
 }
 .footer .folio { font-weight: 600; color: ${COLORS.text}; }
-.body { padding: 16pt 17pt 0 25pt; }
+/* 30pt each side, the header's and the detail boxes' edges. The matrix used to
+   sit 25pt from the left and 17pt from the right. */
+.body { padding: 16pt 30pt 0; }
 
 /* ---- cover ---- */
 /* The cover's anchor points are design constants, so they are placed rather
@@ -456,7 +459,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .item-card .detail-head { padding: 11pt 0 16pt; }
 .item-card .detail-head h3 { font-size: 13pt; }
 .item-card .detail-head .country { margin-left: auto; }
-.item-target, .item-trend-label { display: flex; align-items: baseline; gap: 10pt; margin: 10.7pt 16.1pt 0; }
+.item-target, .item-trend-label { display: flex; align-items: baseline; gap: 10pt; margin: 10.7pt 16.3pt 0; }
 .item-target .pill, .item-trend-label .pill { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; }
 .item-target .target-text {
   flex: 0 1 auto;
@@ -474,13 +477,13 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .item-trend-label { margin-top: 10.4pt; }
 /* 줄 수로 자르지 않는다. 카드는 문안만큼 커지고, 장 나누기는 빌더가 잰 높이로 한다. */
 .item-body {
-  margin: 4.7pt 16.1pt 0;
+  margin: 4.7pt 16.3pt 0;
   font-size: 8.8pt;
   line-height: 10.8pt;
   color: #000;
   word-break: keep-all;
 }
-.item-card .source { margin: 2pt 16.1pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
+.item-card .source { margin: 2pt 16.3pt 0; font-size: 7.1pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
 /* The drawn page decides how many lines of each summary to show by trying a
@@ -516,9 +519,10 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   text-overflow: ellipsis;
 }
 .detail-head .industry { flex: 0 1 auto; min-width: 0; max-width: 190pt; }
-/* The box border sits inside its 480pt, so the padding is short by it and
-   the row separators still span 49pt to 491pt. */
-.signals { margin: 0; padding: 9.6pt 18.1pt 0; list-style: none; }
+/* Rows, their separators and the business box contents share the edges of
+   the rule under the company name: 47.2pt to 492.8pt (30pt + 0.9pt border +
+   16.3pt). The separators used to stop 1.5pt short of that rule at each end. */
+.signals { margin: 0; padding: 9.6pt 16.3pt 0; list-style: none; }
 .signal { position: relative; display: flex; gap: 15pt; padding-bottom: 10pt; }
 .signal + .signal { padding-top: 6pt; }
 /* Drawn rather than a border: a border would add its own width to the row and
@@ -551,8 +555,11 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .signal:last-child { padding-bottom: 0; }
 .signal-head { display: flex; align-items: baseline; gap: 18pt; height: 16pt; margin: 0; }
 .signal-head .pill { flex: 0 1 auto; min-width: 0; padding: 2pt 8pt; font-size: 7.6pt; }
+/* Every label sits in a slot as wide as the widest of the five, so "No signal
+   this month" starts in one column instead of wherever its own label ends. */
+.signal-head .pill-slot { display: flex; flex: 0 1 var(--pill-col, auto); min-width: 0; }
 .signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 10pt; color: ${COLORS.faint}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.signal-head .dash { margin-left: auto; margin-right: 12pt; font-size: 10pt; color: ${COLORS.faint}; }
+.signal-head .dash { margin-left: auto; font-size: 10pt; color: ${COLORS.faint}; }
 .summary {
   margin: 3.6pt 0 0;
   /* The summary column is narrower than the row: the drawn page reserves the
@@ -576,7 +583,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .business-box {
   margin-top: 15.2pt;
   min-height: 88pt;
-  padding: 11.2pt 15.3pt 22.2pt;
+  padding: 11.2pt 16.3pt 22.2pt;
   background: ${COLORS.tealBg};
   border-color: ${COLORS.tealLine};
 }
@@ -658,7 +665,7 @@ i.on, i.off { display: inline-block; width: 8.2pt; height: 8.2pt; border-radius:
 /* 금색: AI 확인 시그널. 회색: 신호없음. */
 i.on { background: ${COLORS.gold}; }
 i.off { background: ${COLORS.light}; }
-.matrix-tail { position: absolute; top: 671pt; left: 25pt; right: 17pt; }
+.matrix-tail { position: absolute; top: 671pt; left: 30pt; right: 30pt; }
 .matrix-legend {
   display: flex;
   gap: 18pt;

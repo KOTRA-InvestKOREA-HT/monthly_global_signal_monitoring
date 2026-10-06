@@ -38,8 +38,10 @@ export const EXPECTED = [
   ['.page:nth-of-type(2) .matrix-legend', 683, 'baseline'],
   ['.page:nth-of-type(2) .matrix-indicators', 698, 'baseline'],
   ['.page:nth-of-type(2) .matrix-footnote', 716, 'baseline'],
-  ['.page:nth-of-type(2) table.matrix', 25, 'left'],
-  ['.page:nth-of-type(2) table.matrix', 242, 'width'],
+  // Page 2 and the detail boxes share the header's 30pt margins; rows and box
+  // contents share the rule under the company name, 47.2pt to 492.8pt.
+  ['.page:nth-of-type(2) table.matrix', 30, 'left'],
+  ['.page:nth-of-type(2) table.matrix', 233, 'width'],
   // Detail page. These were read back out of the drawn PDF rather than derived,
   // so they are what the page actually does, not what its constants suggest.
   ['.page:nth-of-type(3) .signal-box', 114, 'top'],
@@ -48,7 +50,7 @@ export const EXPECTED = [
   ['.page:nth-of-type(3) .signal-box', 293.7, 'height'],
   ['.page:nth-of-type(3) .detail-head h3', 143, 'baseline'],
   ['.page:nth-of-type(3) .signal:nth-child(1) .badge', 171, 'top'],
-  ['.page:nth-of-type(3) .signal:nth-child(1) .pill', 80, 'left'],
+  ['.page:nth-of-type(3) .signal:nth-child(1) .pill', 78, 'left'],
   ['.page:nth-of-type(3) .signal:nth-child(2) .badge', 208, 'top'],
   ['.page:nth-of-type(3) .signal:nth-child(3) .badge', 245, 'top'],
   ['.page:nth-of-type(3) .signal:nth-child(4) .badge', 282, 'top'],
@@ -59,9 +61,9 @@ export const EXPECTED = [
   ['.page:nth-of-type(3) .business-box', 423.7, 'top'],
   ['.page:nth-of-type(3) .business-box', 95.7, 'height'],
   ['.page:nth-of-type(3) .business-heading', 448.7, 'baseline'],
-  ['.page:nth-of-type(3) .business-heading', 46, 'left'],
+  ['.page:nth-of-type(3) .business-heading', 47.2, 'left'],
   ['.page:nth-of-type(3) .business-body', 467.7, 'baseline'],
-  ['.page:nth-of-type(3) .business-body', 448, 'width'],
+  ['.page:nth-of-type(3) .business-body', 446, 'width'],
   ['.page:nth-of-type(3) .signal:nth-child(4) .summary', 378, 'width'],
   ['.page:nth-of-type(3) .business-box .source', 496.4, 'baseline'],
   ['.page:nth-of-type(3) .detail-head', 47, 'left'],

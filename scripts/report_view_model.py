@@ -252,6 +252,7 @@ def build(args):
             "kicker": "C O M P A N Y   S I G N A L S",
             "title": report.t("detail_title"),
             "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, measure),
+            "pill_width": report.signal_pill_column(measure.canvas, measure.fonts),
         },
         "items": item_entries(profiles, signal_index, relevant, summary, measure),
     }
