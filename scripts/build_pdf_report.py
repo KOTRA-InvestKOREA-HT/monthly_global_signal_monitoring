@@ -332,6 +332,40 @@ def draw_logo(c, path, x, y, height, align="left"):
     return width
 
 
+def cover_line_size(canvas_obj, fonts, lines):
+    """표지 부제 두 줄이 각각 한 줄에 드는 공통 글자 크기.
+
+    영문 첫 줄이 11pt 에서 폭을 넘어 접히자, 접힌 꼬리가 두 줄 사이와 같은 간격으로 찍혀
+    세 줄짜리 목록처럼 읽혔다. 두 줄을 같은 크기로 함께 줄여 국문처럼 두 줄로 둔다.
+    하한까지 줄여도 넘치면 그 크기에서 줄을 바꾼다.
+    """
+    width = PAGE_W - 86
+    size = 11 if report_content.LANG == "en" else 12
+    while size > 9.5 and any(canvas_obj.stringWidth(clean_text(line), fonts["demilight"], size) > width for line in lines):
+        size -= 0.5
+    return size
+
+
+def cover_indicator_texts(item):
+    """표지 지표 한 줄의 (이름, 설명)."""
+    if report_content.LANG == "en":
+        label = SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
+        return label, INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
+    return INDICATOR_LABEL_KO.get(item["no"], item["label_ko"]), item["description_ko"]
+
+
+def cover_description_x(canvas_obj, fonts, entries):
+    """표지 지표 설명들이 함께 시작하는 x.
+
+    설명을 오른쪽 여백에 붙여 찍던 때는 길이마다 시작점이 달라 다섯 줄의 왼쪽 끝이 들쭉날쭉했다.
+    한 열로 왼쪽 정렬하되, 가장 긴 설명이 오른쪽 여백에 닿는 자리에 둔다. 가장 긴 이름과는
+    16pt 를 띄운다. 그래도 넘치는 설명은 그리는 쪽에서 폭에 맞춰 줄인다.
+    """
+    label_w = max((canvas_obj.stringWidth(label, fonts["semibold"], 12) for label, _ in entries), default=0)
+    description_w = max((canvas_obj.stringWidth(clean_text(d), fonts["demilight"], 8) for _, d in entries), default=0)
+    return min(max(PAGE_W - 43 - description_w, 67 + label_w + 16), PAGE_W - 43 - 50)
+
+
 def draw_cover(report, summary, indicators):
     report.new_page()
     c = report.canvas
@@ -367,24 +401,20 @@ def draw_cover(report, summary, indicators):
 
     # 부제는 잘라내면 뜻이 사라지므로 줄을 바꿔 통째로 싣는다. HTML 표지도 같은 자리에서 줄을 바꾼다.
     y -= 42
-    line_size = 11 if report_content.LANG == "en" else 12
+    line_size = cover_line_size(c, report.fonts, [t("cover_line_1"), t("cover_line_2")])
     y = report.wrapped(t("cover_line_1"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
     y = report.wrapped(t("cover_line_2"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
 
     y -= 25
     report.text(43, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
     y -= 29
-    for item in indicators:
+    entries = [cover_indicator_texts(item) for item in indicators]
+    description_x = cover_description_x(c, report.fonts, entries)
+    for item, (label, description) in zip(indicators, entries):
         c.setStrokeColor(GOLD)
         c.setLineWidth(1.2)
         c.circle(46, y + 4, 10, stroke=1, fill=0)
         report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
-        if report_content.LANG == "en":
-            label = SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
-            description = INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
-        else:
-            label = INDICATOR_LABEL_KO.get(item["no"], item["label_ko"])
-            description = item["description_ko"]
         # 영문도 국문처럼 설명을 이름 옆에 둔다. 영문 이름이 50자까지 길던 때는 설명을 아래 줄로 내렸으나,
         # 지금 이름은 32자 이하라 가장 긴 조합(S1)도 한 줄 폭 안에 든다.
         # 라벨을 먼저 폭 안에 맞추고, 설명은 남은 자리만큼만 쓴다.
@@ -392,10 +422,11 @@ def draw_cover(report, summary, indicators):
         label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
         report.text(67, y - 1, label, 12, WHITE, weight="semibold")
         label_w = c.stringWidth(label, report.fonts["semibold"], 12)
-        description_width = PAGE_W - 43 - (67 + label_w + 16)
+        left = max(description_x, 67 + label_w + 16)
+        description_width = PAGE_W - 43 - left
         if description_width >= 50:
             description = short_text_to_width(c, description, description_width, report.fonts["demilight"], 8, f"cover_indicator_desc[{item['no']}]")
-            report.text(PAGE_W - 43, y - 1, description, 8, colors.HexColor("#C8D2DF"), align="right")
+            report.text(left, y - 1, description, 8, colors.HexColor("#C8D2DF"))
         y -= 32
 
     c.setStrokeColor(colors.HexColor("#D6DEE9"))
@@ -527,7 +558,7 @@ def draw_summary_text(report, row, x, y, width, size=9.2, max_lines=2, line_gap=
 def draw_badge(report, x, y, value, active):
     c = report.canvas
     c.setFillColor(NAVY if active else colors.HexColor("#D8DADF"))
-    c.rect(x, y - 9, 16, 16, fill=1, stroke=0)
+    c.roundRect(x, y - 9, 16, 16, 3, fill=1, stroke=0)
     report.text(x + 8, y - 4.5, str(value), 9, WHITE, align="center", weight="semibold")
 
 
@@ -542,7 +573,7 @@ def draw_industry_pill(report, x, y, max_width, text, color):
         return 0
     pill_width = report.canvas.stringWidth(text, report.fonts["semibold"], 9) + 18
     report.canvas.setFillColor(LIGHT)
-    report.canvas.rect(x, y - 7, pill_width, 18, fill=1, stroke=0)
+    report.canvas.roundRect(x, y - 7, pill_width, 18, 3, fill=1, stroke=0)
     report.text(x + 9, y - 2, text, 9, color, weight="semibold")
     return pill_width
 
@@ -695,7 +726,7 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
     label = short_text_to_width(report.canvas, label, width - 190 - 16, report.fonts["semibold"], 7.6, f"signal_label[{no}]")
     label_w = report.canvas.stringWidth(label, report.fonts["semibold"], 7.6) + 14
     c.setFillColor(LIGHT)
-    c.rect(label_x, y - 9, label_w, 16, fill=1, stroke=0)
+    c.roundRect(label_x, y - 9, label_w, 16, 3, fill=1, stroke=0)
     report.text(label_x + 8, y - 4, label, 7.6, colors.HexColor("#56687B"), weight="semibold")
 
     if not active:
@@ -766,7 +797,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     c.setStrokeColor(BOX_LINE)
     c.setLineWidth(0.9)
     c.setFillColor(WHITE)
-    c.rect(x, top_y, width, top_h, fill=1, stroke=1)
+    c.roundRect(x, top_y, width, top_h, 10, fill=1, stroke=1)
 
     header_y = DETAIL_BOX_TOP - 29
     display_name = profile.get("display_name") or company
@@ -799,7 +830,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
 
     c.setStrokeColor(TEAL_LINE)
     c.setFillColor(TEAL_BG)
-    c.rect(x, bottom_y, width, bottom_h, fill=1, stroke=1)
+    c.roundRect(x, bottom_y, width, bottom_h, 10, fill=1, stroke=1)
     top = bottom_y + bottom_h
     header_y = top - 25
     heading = t("business_heading")
@@ -807,7 +838,7 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     if target_layout["text"]:
         # 품목별 사업동향 카드와 같은 회색 라벨. 이모지와 청록 배경 위 청록 글씨는 보고서 톤과 대비 모두 어긋났다.
         c.setFillColor(WHITE)
-        c.rect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, fill=1, stroke=0)
+        c.roundRect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, 3, fill=1, stroke=0)
         report.text(
             target_layout["label_x"] + 8, header_y, target_layout["label"], 7.6, colors.HexColor("#56687B"), weight="semibold"
         )
@@ -900,7 +931,7 @@ def draw_label_pill(report, x, y, label):
     c = report.canvas
     pill_width = c.stringWidth(label, report.fonts["semibold"], ITEM_LABEL_SIZE) + 14
     c.setFillColor(LIGHT)
-    c.rect(x, y - 5, pill_width, 15, fill=1, stroke=0)
+    c.roundRect(x, y - 5, pill_width, 15, 3, fill=1, stroke=0)
     report.text(x + 7, y, label, ITEM_LABEL_SIZE, ITEM_LABEL_COLOR, weight="semibold")
     return pill_width
 
@@ -914,7 +945,7 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     c.setStrokeColor(BOX_LINE)
     c.setLineWidth(0.9)
     c.setFillColor(WHITE)
-    c.rect(x, top - layout["height"], width, layout["height"], fill=1, stroke=1)
+    c.roundRect(x, top - layout["height"], width, layout["height"], 10, fill=1, stroke=1)
 
     header_y = top - ITEM_CARD_TITLE_TOP
     display_name = profile.get("display_name") or company

@@ -176,13 +176,15 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
 def indicator_entries(indicators):
     entries = []
     for item in indicators:
-        if report.LANG == "en":
-            label = report.SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
-            description = report.INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
-        else:
-            label, description = report.INDICATOR_LABEL_KO.get(item["no"], item["label_ko"]), item["description_ko"]
+        label, description = report.cover_indicator_texts(item)
         entries.append({"no": item["no"], "label": label, "description": description})
     return entries
+
+
+def description_offset(entries, measure):
+    """How far right of the label column the descriptions start, as the drawn cover places them."""
+    texts = [(entry["label"], entry["description"]) for entry in entries]
+    return round(report.cover_description_x(measure.canvas, measure.fonts, texts) - 67, 2)
 
 
 def build(args):
@@ -209,6 +211,8 @@ def build(args):
     covered = covered_companies(summary, signals)
     issue = str(args.issue_number or report.DEFAULT_ISSUE_NUMBER)
     titles = report.cover_titles()
+    cover_lines = [report.t("cover_line_1"), report.t("cover_line_2")]
+    cover_indicators = indicator_entries(indicators)
 
     return {
         "lang": report.LANG,
@@ -220,9 +224,11 @@ def build(args):
             "subtitle": report.cover_subtitle(),
             "accent": report.cover_title_accent(),
             "title_size": title_size(titles, measure),
-            "lines": [report.t("cover_line_1"), report.t("cover_line_2")],
+            "lines": cover_lines,
+            "line_size": report.cover_line_size(measure.canvas, measure.fonts, cover_lines),
             "indicator_heading": report.t("cover_indicator_heading"),
-            "indicators": indicator_entries(indicators),
+            "indicators": cover_indicators,
+            "description_offset": description_offset(cover_indicators, measure),
         },
         "matrix": {
             "kicker": "S I G N A L   M A T R I X",

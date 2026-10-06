@@ -90,9 +90,9 @@ function coverPage(state, model, assets) {
         <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
           `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
         ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
-        <div class="cover-lines">${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
+        <div class="cover-lines"${cover.line_size ? ` style="font-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
         <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
-        <ul class="cover-indicators">${cover.indicators.map(item => `
+        <ul class="cover-indicators"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
           <li>
             <span class="badge">${escapeHtml(item.no)}</span>
             <span class="label">${escapeHtml(item.label)}</span>
@@ -406,10 +406,15 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* With the view model's offset the descriptions start in one column, left
+   aligned, as the drawn cover places them, instead of each ending at the margin. */
+.cover-indicators[style] .label { min-width: calc(var(--desc-offset) - 11pt); }
+.cover-indicators[style] .desc { padding-left: 0; text-align: left; }
 /* English indicator names were once long enough (up to 50 characters) that the
    description had to drop to its own line. At up to 32 characters they share the
    row with it, as the Korean ones do; the longest pair measures about 400pt of the
    458pt the row allows. */
+/* The view model's line_size overrides this with the size both lines fit at on one line. */
 html[lang="en"] .cover-lines { font-size: 11pt; }
 /* A long line breaks into two even halves instead of leaving one word behind. */
 html[lang="en"] .cover-lines p { text-wrap: balance; }
@@ -431,13 +436,13 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .items { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .items.first { top: 116pt; }
 .items .matrix-desc { margin: 0 0 18pt; }
-/* 3쪽(기업 카드)부터는 카드·배지·필을 각지게 그린다. 표지와 매트릭스는 둥근 모양을 유지한다. */
+/* 카드·상자는 10pt, 배지·필은 3pt 로 모서리를 살짝 둥글린다. Issue 4 검토에서 각진 모서리를 되돌렸다. */
 .item-card {
   margin-bottom: 14pt;
   padding: 0 0 15.2pt;
   background: #fff;
   border: 0.9pt solid ${COLORS.boxLine};
-  border-radius: 0;
+  border-radius: 10pt;
   break-inside: avoid;
 }
 .item-card .detail-head { padding: 11pt 0 16pt; }
@@ -477,7 +482,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .detail { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .signal-box, .business-box {
   border: 0.9pt solid ${COLORS.boxLine};
-  border-radius: 0;
+  border-radius: 10pt;
 }
 .signal-box { background: #fff; padding: 0 0 24pt; }
 .detail-head {
@@ -493,7 +498,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .pill {
   display: inline-block;
   padding: 2pt 9pt;
-  border-radius: 0;
+  border-radius: 3pt;
   background: ${COLORS.light};
   font-size: 9pt;
   font-weight: 600;
@@ -522,7 +527,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   flex: none;
   width: 16pt;
   height: 16pt;
-  border-radius: 0;
+  border-radius: 3pt;
   background: ${COLORS.navy};
   color: #fff;
   font-size: 9pt;

@@ -375,7 +375,7 @@ TEXTS = {
         "cover_title_accent": 0,
         # 국문 "30대 투자유치 프로젝트"의 실체는 한국이 해외 투자를 유치하려는 품목·기술 30개다. "project"로 옮기면
         # 영어 독자는 무엇인지 모른다. 카드 라벨(Korea seeks investment in ...)과 같은 개념으로 적는다.
-        "cover_line_1": "Including 30 major Investment Promotion Projects and 77 target companies selected by MOTIR",
+        "cover_line_1": "Including 30 major investment promotion projects and 77 target companies selected by MOTIR",
         "cover_line_2": "Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)",
         "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
         "matrix_title": "Investment Signals at a Glance",
