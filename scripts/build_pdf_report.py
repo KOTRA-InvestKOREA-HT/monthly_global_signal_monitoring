@@ -733,7 +733,9 @@ def business_target_layout(report, profile, x, width):
     if not text:
         return {"text": "", "wrapped": False, "extra_top": 0}
     c = report.canvas
-    label_x = x + 17
+    # 흰 알약은 청록 바탕에서 거의 보이지 않아 눈이 글자로 줄을 맞춘다. 안쪽 여백(8pt)만큼 내어 걸어 알약 글자가
+    # 머리글·본문과 같은 선에 오게 한다. 테두리가 보이는 품목 카드의 회색 알약은 그대로 둔다.
+    label_x = x + 17 - 8
     label_w = c.stringWidth(label, report.fonts["semibold"], 7.6) + 16
     value_x = label_x + label_w + 9
     value_width = (x + width - 16) - value_x
