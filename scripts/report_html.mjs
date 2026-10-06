@@ -461,7 +461,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   border-radius: 10pt;
   break-inside: avoid;
 }
-.item-card .detail-head { padding: 11pt 0 16pt; }
+.item-card .detail-head { padding: 13.5pt 0; }
 .item-card .detail-head h3 { font-size: 13pt; }
 .item-card .detail-head .country { margin-left: auto; }
 .item-target, .item-trend-label { display: flex; align-items: baseline; gap: 10pt; margin: 10.7pt 16.3pt 0; }
@@ -500,13 +500,16 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   border: 0.9pt solid ${COLORS.boxLine};
   border-radius: 10pt;
 }
-.signal-box { background: #fff; padding: 0 0 24pt; }
+.signal-box { background: #fff; padding: 0 0 13.5pt; }
+/* Name, industry pill and country are centred on one another, and the row on
+   the band between the box top and the rule. On baselines with 9.5pt above and
+   17.2pt below, the name sat 1.6pt above its pill and well above the band's middle. */
 .detail-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 14pt;
   margin: 0 16.3pt;
-  padding: 9.5pt 0 17.2pt;
+  padding: 13.35pt 0;
   border-bottom: 1pt solid #000;
 }
 .detail-head h3 { margin: 0; font-size: 14pt; font-weight: 600; white-space: nowrap; }
@@ -527,9 +530,12 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 /* Rows, their separators and the business box contents share the edges of
    the rule under the company name: 47.2pt to 492.8pt (30pt + 0.9pt border +
    16.3pt). The separators used to stop 1.5pt short of that rule at each end. */
-.signals { margin: 0; padding: 9.6pt 16.3pt 0; list-style: none; }
-.signal { position: relative; display: flex; gap: 15pt; padding-bottom: 10pt; }
-.signal + .signal { padding-top: 6pt; }
+/* Every row has the same space above and below its content, so it sits centred
+   between its separators. With 6pt above and 15pt below, an empty row's badge
+   hung near the separator over it. The separator is drawn inside the bottom
+   padding, so that side carries its 0.9pt on top of the same 10.05pt. */
+.signals { margin: 0; padding: 0 16.3pt; list-style: none; }
+.signal { position: relative; display: flex; gap: 15pt; padding: 10.05pt 0 10.95pt; }
 /* Drawn rather than a border: a border would add its own width to the row and
    walk every row below it down the page. */
 .signal:not(:last-child)::after {
@@ -549,15 +555,13 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   color: #fff;
   font-size: 9pt;
   font-weight: 600;
-  line-height: 16pt;
+  /* Centred by ink, not by line box: on a 16pt line the numeral sat about 0.6pt high. */
+  padding-top: 1.6pt;
+  line-height: 14.4pt;
   text-align: center;
 }
 .signal.off .badge { background: ${COLORS.offBadge}; color: ${COLORS.offBadgeText}; }
 .signal-body { flex: 1; min-width: 0; }
-/* A silent row still occupies the 21pt the drawn page gives it. */
-.signal.off .signal-body { padding-bottom: 5pt; }
-/* The gap under the last row belongs to the box, not to the row. */
-.signal:last-child { padding-bottom: 0; }
 /* The label pill is as tall as the number badge beside it (16pt), as on the
    drawn page, and everything in the row is centred on that height. A 13pt pill
    sat on the badge's top edge and pulled "No signal this month" up with it. */
@@ -589,8 +593,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .summary strong { font-weight: 600; }
 .summary.continued { margin-top: 0; }
 .signal .source, .business-box .source { margin: 2.4pt 0 0; font-size: 7.5pt; color: ${COLORS.muted}; }
-/* The drawn row keeps 2.5pt under the source line before its separator. */
-.signal .source { max-width: 378pt; padding-bottom: 2.6pt; }
+.signal .source { max-width: 378pt; }
 .source a { color: inherit; text-decoration: none; }
 .business-box {
   margin-top: 15.2pt;
