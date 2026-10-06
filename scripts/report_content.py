@@ -362,7 +362,7 @@ TEXTS = {
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
     },
     "en": {
-        "footer": "Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies",
+        "footer": "Investment Signals: Monthly Early Investment Indicators Across 77 Priority Companies",
         # 국문 표지와 같은 보고서 이름을 제목 위에 금색으로 싣는다. 예전에는 머리말이 "INVESTMENT SIGNALS"라
         # 영문 제목과 같은 말이 되어 비워 두었다. 본문 면의 머리글은 이 값을 쓰지 않는다(draw_detail_page 의 자체 문자열).
         "cover_kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
@@ -370,7 +370,7 @@ TEXTS = {
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
         "cover_titles": ["Investment Signals"],
         # 제목 아래 흰색 한 줄. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다.
-        "cover_subtitle": "Monthly Pre-Decision Indicators Across 77 Priority Companies",
+        "cover_subtitle": "Monthly Early Investment Indicators Across 77 Priority Companies",
         "cover_title_accent": 0,
         # 국문 두 줄의 뜻을 그대로 옮긴다: "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
         # "기업별 5대 전조지표 포착 · 투자 확정 이전 단계만 수록". 예전 문구는 "Including"으로 시작해 주어가 없었고
