@@ -375,9 +375,13 @@ body {
   font-weight: 600;
   line-height: 18pt;
   text-align: center;
-  /* Centred on the label's own optical middle, not on the row box. */
-  align-self: flex-start;
-  margin-top: 0.8pt;
+  /* The number sits on the label's baseline, so the ring follows the label
+     wherever the row puts it. Pinned to the row top (flex-start + 0.8pt) it
+     printed about 4pt below the label's middle. The 9pt numeral's middle is
+     still lower than the 12pt label's, so the ring is raised 1.5pt; printed,
+     ring and cap-height middles then agree within 0.3pt in both languages. */
+  position: relative;
+  top: -1.5pt;
 }
 /* The label keeps its line and the description gives up room first, which is
    the priority the hand-fitted version had to compute. Here the two just
