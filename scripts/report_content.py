@@ -379,7 +379,7 @@ TEXTS = {
         "cover_line_2": "5 leading indicators tracked per company · Only signals before an investment is committed",
         "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
         "matrix_title": "Investment Signals at a Glance",
-        "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
+        "matrix_desc": "Signals found at the 77 companies {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
         "matrix_legend_off": "No signal",
@@ -399,7 +399,7 @@ TEXTS = {
         # 시스템 안의 이름(target technology)과도 같다.
         "item_target_label": "Target technology",
         "item_trend_label": "Developments in {month}",
-        "item_note": "Companies with no investment signal this month but with {month} news on the product Korea seeks from them. Cards marked \"General company news\" cover the company's main business instead. Any of these could turn into an investment signal.",
+        "item_note": "Companies with no investment signal this month but with {month} news tied to their target technology. Cards marked \"General company news\" cover the company's main business instead. Any of these could turn into an investment signal.",
         "item_exempt_note": "General company news",
     },
 }
@@ -589,17 +589,21 @@ def matrix_period_label(summary):
     """매트릭스 설명문에 들어가는 보고 기간. 수집 기간에서 만들며 하드코딩하지 않는다.
 
     영문판은 숫자 날짜(2026.8.1~8.31)를 쓰지 않는다. 그 표기는 국문 서식을 그대로 옮긴 것이라
-    영어 문장 안에서 읽히지 않는다. 한 달 안이면 "August 1-31, 2026", 달을 넘으면 달 이름을
-    양쪽에, 해를 넘으면 연도를 양쪽에 적는다. 국문 표기는 그대로 둔다.
+    영어 문장 안에서 읽히지 않는다. 영문 라벨은 전치사까지 붙여 문장에 그대로 들어간다. 한 달을
+    통째로 보면 "in August 2026"이다. "during August 1–31, 2026"처럼 날짜를 늘어놓으면 원어민에게는
+    기간을 일부러 강조한 것처럼 읽힌다. 한 달의 일부면 "during August 1–15, 2026", 달을 넘으면 달
+    이름을 양쪽에, 해를 넘으면 연도를 양쪽에 적는다. 국문 표기는 그대로 둔다.
     """
     start, end = report_period(summary)
     if LANG == "en":
         first, last = MONTH_NAMES_EN[start.month - 1], MONTH_NAMES_EN[end.month - 1]
         if start.year != end.year:
-            return f"{first} {start.day}, {start.year} – {last} {end.day}, {end.year}"
+            return f"during {first} {start.day}, {start.year} – {last} {end.day}, {end.year}"
         if start.month != end.month:
-            return f"{first} {start.day} – {last} {end.day}, {end.year}"
-        return f"{first} {start.day}–{end.day}, {end.year}"
+            return f"during {first} {start.day} – {last} {end.day}, {end.year}"
+        if start.day == 1 and (end + timedelta(days=1)).month != end.month:
+            return f"in {first} {end.year}"
+        return f"during {first} {start.day}–{end.day}, {end.year}"
     end_text = compact_date(end, include_year=start.year != end.year)
     return f"{start.month}월({compact_date(start)}~{end_text})"
 

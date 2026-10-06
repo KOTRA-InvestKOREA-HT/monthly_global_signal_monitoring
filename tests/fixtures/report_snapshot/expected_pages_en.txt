@@ -16,8 +16,8 @@ Monthly Leading Investment Indicators for 77 Target Companies
 ===== PAGE 2 =====
 S I G N A L M A T R I X
 Investment Signals at a Glance
-Signals found at the 77 companies during August 1–31, 2026. A highlighted cell marks an early plan or a preparatory step, not a
-committed or completed investment.
+Signalsfoundatthe77companiesinAugust2026.Ahighlightedcellmarksanearlyplanorapreparatorystep,notacommittedor
+completed investment.
 Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 1 Australian Strategic Materials 40 Evonik Industries
 2 Cognex 41 Heraeus
@@ -205,7 +205,7 @@ Investment Signals: Monthly Leading Investment Indicators for 77 Target Companie
 ===== PAGE 9 =====
 P R O D U C T T R E N D S · 1/1
 Business Trends by Product
-CompanieswithnoinvestmentsignalthismonthbutwithAugustnewsontheproductKoreaseeksfromthem.Cardsmarked"General
+Companies with no investment signal this month but with August news tied to their target technology. Cards marked "General
 company news" cover the company's main business instead. Any of these could turn into an investment signal.
 Albemarle
 Battery cathode materials USA
