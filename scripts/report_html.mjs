@@ -177,7 +177,7 @@ const signalRow = signal => `
             <div class="signal-body">
               <p class="signal-head">
                 <span class="pill-slot"><span class="pill">${escapeHtml(signal.label)}</span></span>
-                ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span><span class="dash">—</span>`}
+                ${signal.active ? '' : `<span class="empty">${escapeHtml(signal.empty)}</span>`}
               </p>
               ${signal.active ? `${summary(signal)}${sourceLine(signal.source, signal.source_url)}` : ''}
             </div>
@@ -579,7 +579,6 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 /* Smaller than the summaries it stands in for (8.8pt), so an empty row never
    outweighs a filled one; muted rather than faint so it can still be read. */
 .signal-head .empty { flex: 0 1 auto; min-width: 0; font-size: 8.8pt; color: ${COLORS.muted}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.signal-head .dash { margin-left: auto; font-size: 8.8pt; color: ${COLORS.muted}; }
 .summary {
   margin: 3.6pt 0 0;
   /* The summary column is narrower than the row: the drawn page reserves the

@@ -788,7 +788,6 @@ def draw_signal_row(report, no, rows, x, y, width, max_lines=2, draw_separator=T
         )
         # 실제 요약(8.8pt)보다 크게 찍지 않는다. 흐린 #B5B9BF(1.97:1)는 읽히지 않았다.
         report.text(empty_x, y - 3.6, empty_text, 8.8, MUTED)
-        report.text(x + width, y - 3.6, "—", 8.8, MUTED, align="right")
         if draw_separator:
             c.setStrokeColor(BOX_LINE)
             separator_y = y - SIGNAL_EMPTY_CONTENT_BOTTOM_OFFSET - SIGNAL_CONTENT_TO_SEPARATOR
