@@ -719,22 +719,21 @@ def business_box_metrics(report, text, width, max_lines=BUSINESS_BODY_MAX_LINES,
 
 
 TARGET_WRAP_HEIGHT = 15
+# 머리글 기준선에서 타겟 기술 줄 기준선까지.
+TARGET_ROW_HEIGHT = 19
 
 
 def business_target_layout(report, profile, x, width):
-    """청록 박스 머리줄 배치를 미리 계산한다.
+    """청록 박스의 타겟 기술 줄 배치를 미리 계산한다.
 
-    타겟품목 텍스트가 라벨 옆 한 줄에 다 들어가면 예전처럼 옆에 붙이고(국문은 항상 여기),
-    안 들어가면 잘라내는 대신 박스를 한 줄 키워 아랫줄에 통째로 싣는다.
+    타겟 기술은 머리글 아랫줄에 라벨과 함께 싣는다(품목별 카드와 같은 모양). 없는 상자는 머리글 한 줄 그대로다.
+    품목명이 라벨 옆에 다 들어가지 않으면 잘라내는 대신 한 줄 더 내려 통째로 싣는다.
     """
     label, text = target_section_for_profile(profile)
     if not text:
         return {"text": "", "wrapped": False, "extra_top": 0}
     c = report.canvas
-    heading = t("business_heading")
-    heading_w = c.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
-    # 머리글과 알약 사이는 알약과 품목명 사이와 같은 9pt. 18pt 일 때는 둘이 따로 떨어져 보였다.
-    label_x = x + 17 + heading_w + 9
+    label_x = x + 17
     label_w = c.stringWidth(label, report.fonts["semibold"], 7.6) + 16
     value_x = label_x + label_w + 9
     value_width = (x + width - 16) - value_x
@@ -747,7 +746,7 @@ def business_target_layout(report, profile, x, width):
         "value_x": value_x,
         "value_width": value_width,
         "wrapped": not fits,
-        "extra_top": 0 if fits else TARGET_WRAP_HEIGHT,
+        "extra_top": TARGET_ROW_HEIGHT + (0 if fits else TARGET_WRAP_HEIGHT),
     }
 
 
@@ -890,20 +889,21 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     report.spaced_text(x + 17, header_y, heading, 8.5, colors.HexColor("#087A70"), weight="semibold", char_space=0.85)
     if target_layout["text"]:
         # 품목별 사업동향 카드와 같은 회색 라벨. 이모지와 청록 배경 위 청록 글씨는 보고서 톤과 대비 모두 어긋났다.
+        target_y = header_y - TARGET_ROW_HEIGHT
         c.setFillColor(WHITE)
-        c.roundRect(target_layout["label_x"], top - 30, target_layout["label_w"], 16, 3, fill=1, stroke=0)
+        c.roundRect(target_layout["label_x"], target_y - 5, target_layout["label_w"], 16, 3, fill=1, stroke=0)
         report.text(
-            target_layout["label_x"] + 8, header_y, target_layout["label"], 7.6, colors.HexColor("#56687B"), weight="semibold"
+            target_layout["label_x"] + 8, target_y, target_layout["label"], 7.6, colors.HexColor("#56687B"), weight="semibold"
         )
         if target_layout["wrapped"]:
             # 라벨 옆에 안 들어가는 타겟품목은 잘라내지 않고 박스 폭 전체를 쓰는 아랫줄에 싣는다.
             wrapped_text = short_text_to_width(c, target_layout["text"], width - 34, report.fonts["semibold"], 9.5, "detail_target_tech")
             report.text(
-                x + 17, header_y - TARGET_WRAP_HEIGHT, wrapped_text, 9.5, TEXT, weight="semibold"
+                x + 17, target_y - TARGET_WRAP_HEIGHT, wrapped_text, 9.5, TEXT, weight="semibold"
             )
         else:
             report.text(
-                target_layout["value_x"], header_y, target_layout["text"], 9.5, TEXT, weight="semibold"
+                target_layout["value_x"], target_y, target_layout["text"], 9.5, TEXT, weight="semibold"
             )
 
     body_y = top - BUSINESS_BODY_TOP_PAD - target_layout["extra_top"]

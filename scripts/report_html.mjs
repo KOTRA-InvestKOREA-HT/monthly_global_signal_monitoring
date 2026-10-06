@@ -199,11 +199,13 @@ function detailPages(state, model, assets) {
         <section class="business-box">
           <p class="business-head">
             <span class="business-heading">${escapeHtml(entry.business.heading)}</span>
-            ${entry.business.target_text ? `
-            <span class="pill target">${escapeHtml(entry.business.target_label)}</span>
-            <span class="target-text">${escapeHtml(entry.business.target_text)}</span>` : ''}
             ${entry.business.near_miss ? `<span class="pill near-miss">${escapeHtml(entry.business.near_miss_note)}</span>` : ''}
           </p>
+          ${entry.business.target_text ? `
+          <p class="business-target">
+            <span class="pill target">${escapeHtml(entry.business.target_label)}</span>
+            <span class="target-text">${escapeHtml(entry.business.target_text)}</span>
+          </p>` : ''}
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
           ${sourceLine(entry.business.source, entry.business.source_url)}
         </section>
@@ -622,7 +624,11 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 }
 /* Same grey label as the item-linked trend cards. The emoji and teal-on-teal
    pill read as decoration in a formal report and had weak contrast. */
-.business-head .target { padding: 1.9pt 7pt; font-size: 7.6pt; background: #fff; }
+.business-target .target { padding: 1.9pt 7pt; font-size: 7.6pt; background: #fff; }
+/* The target sits on its own line under the heading, as on the item cards; a
+   box without one keeps the heading line alone. A name too long to sit beside
+   its pill drops below it rather than being cut. */
+.business-target { display: flex; flex-wrap: wrap; align-items: center; column-gap: 9pt; row-gap: 4.6pt; margin: 6pt 0 0; }
 /* 승인 조건에서 품목 연계만 빠진 행으로 채운 상자임을 밝히는 표시. 품목 라벨과 같은 크기로 두고
    테두리와 색만 달리해, 확인된 품목 연계 라벨과 나란히 놓였을 때 둘이 구분된다. */
 .business-head .near-miss {
