@@ -375,10 +375,11 @@ TEXTS = {
         # 제목 아래 흰색 한 줄. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다.
         "cover_subtitle": "Monthly Pre-Decision Indicators Across 77 Priority Companies",
         "cover_title_accent": 0,
-        # 국문 "30대 투자유치 프로젝트"의 실체는 한국이 해외 투자를 유치하려는 품목·기술 30개다. "project"로 옮기면
-        # 영어 독자는 무엇인지 모른다. 카드 라벨(Target technology)과 같은 개념으로 적는다.
-        "cover_line_1": "Including 30 major investment promotion projects and 77 target companies selected by MOTIR",
-        "cover_line_2": "Tracking 5 leading indicators of Investment (Covering Pre-Decision Signals only)",
+        # 국문 두 줄의 뜻을 그대로 옮긴다: "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
+        # "기업별 5대 전조지표 포착 · 투자 확정 이전 단계만 수록". 예전 문구는 "Including"으로 시작해 주어가 없었고
+        # 77개사를 부제와 겹쳐 적었으며, 둘째 줄은 문장 중간 대문자와 괄호가 어색했다.
+        "cover_line_1": "30 investment promotion projects selected by MOTIR · 77 target companies",
+        "cover_line_2": "Five leading indicators tracked per company · Only signals before an investment is committed",
         "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
         "matrix_title": "Investment Signals at a Glance",
         "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
