@@ -47,7 +47,7 @@ def title_size(titles, measure):
     with the rest of the view model.
     """
     fonts = measure.fonts
-    width = report.PAGE_W - 86
+    width = report.PAGE_W - report.COVER_TEXT_X - 43
     size = 30 if report.LANG == "en" else 36
     while size > 18 and any(measure.canvas.stringWidth(title, fonts["semibold"], size) > width for title in titles):
         size -= 1

@@ -331,7 +331,9 @@ body {
 .cover .issue { top: 30pt; text-align: right; }
 .issue-label { margin: 0; font-size: 18pt; font-weight: 600; }
 .issue-month { margin: 3pt 0 0; font-size: 10pt; font-weight: 500; color: ${COLORS.onNavy}; }
-.cover-body { top: 185pt; bottom: 76pt; }
+/* The text starts on the number rings' left edge (36pt), not the 43pt page margin,
+   so the title, subtitles and the ring column share one edge. */
+.cover-body { top: 185pt; bottom: 76pt; left: 36pt; }
 .cover-kicker {
   margin: 0;
   font-size: 12pt;
@@ -365,9 +367,9 @@ body {
 }
 .cover-indicators .badge {
   flex: none;
-  /* The ring hangs 7pt outside the text margin, as it does on the drawn cover,
-     which is also what leaves the description its full measure. */
-  margin-left: -7pt;
+  /* The ring starts the row at the cover text's left edge, as on the drawn cover;
+     the label after it stays at 67pt. */
+  margin-left: 0;
   width: 20pt;
   height: 20pt;
   border: 1.2pt solid ${COLORS.gold};

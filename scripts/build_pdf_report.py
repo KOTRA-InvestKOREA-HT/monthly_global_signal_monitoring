@@ -57,6 +57,9 @@ TEXT = colors.HexColor("#10243E")
 MUTED = colors.HexColor("#6B7688")
 GREY_TEXT = colors.HexColor("#8591A3")
 WHITE = colors.white
+# 표지 제목·부제·지표 머리말의 왼쪽 끝. 번호 동그라미(중심 46, 반지름 10)의 왼쪽 끝에 맞춘다.
+# 43pt 였던 때는 글자만 동그라미보다 안으로 들어가 보였다.
+COVER_TEXT_X = 36
 KOTRA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "kotra_logo_white.png"
 INVEST_KOREA_LOGO_PATH = PROJECT_ROOT / "assets" / "images" / "invest_korea_logo_white.png"
 # Role names are kept from the earlier Noto Sans KR cuts; "demilight" is the body text weight.
@@ -340,7 +343,7 @@ def cover_line_size(canvas_obj, fonts, lines):
     세 줄짜리 목록처럼 읽혔다. 두 줄을 같은 크기로 함께 줄여 국문처럼 두 줄로 둔다.
     하한까지 줄여도 넘치면 그 크기에서 줄을 바꾼다.
     """
-    width = PAGE_W - 86
+    width = PAGE_W - COVER_TEXT_X - 43
     size = 11 if report_content.LANG == "en" else 12
     while size > 9.5 and any(canvas_obj.stringWidth(clean_text(line), fonts["demilight"], size) > width for line in lines):
         size -= 0.5
@@ -378,11 +381,11 @@ def draw_cover(report, summary, indicators):
     report.text(PAGE_W - 42, PAGE_H - 58, report.issue_no, 18, WHITE, align="right", weight="semibold")
     report.text(PAGE_W - 42, PAGE_H - 78, issue_month(summary), 10, colors.HexColor("#C8D2DF"), align="right", weight="medium")
 
-    text_width = PAGE_W - 86
+    text_width = PAGE_W - COVER_TEXT_X - 43
     y = PAGE_H - 208
     kicker = cover_kicker()
     if kicker:
-        report.text(43, y, kicker, 12, GOLD, weight="medium")
+        report.text(COVER_TEXT_X, y, kicker, 12, GOLD, weight="medium")
     # 제목은 잘라내면 뜻이 사라지므로, 여백을 넘지 않을 때까지 크기를 줄여서 통째로 싣는다.
     title_size = 30 if report_content.LANG == "en" else 36
     titles = cover_titles()
@@ -394,20 +397,20 @@ def draw_cover(report, summary, indicators):
         # kicker 가 없는 표지는 그 자리를 빈 띠로 남기지 않는다. 제목이 첫 줄이 되므로 kicker
         # 베이스라인만큼만 내려 제목 윗변이 kicker 윗변 자리에 오게 한다.
         y -= (56 if kicker else 26) if index == 0 else 45
-        report.text(43, y, title, title_size, GOLD if index == cover_title_accent() else WHITE, weight="semibold")
+        report.text(COVER_TEXT_X, y, title, title_size, GOLD if index == cover_title_accent() else WHITE, weight="semibold")
     subtitle = cover_subtitle()
     if subtitle:
         y -= 26
-        y = report.wrapped(subtitle, 43, y, text_width, 15, WHITE, line_gap=5, weight="medium") + 20
+        y = report.wrapped(subtitle, COVER_TEXT_X, y, text_width, 15, WHITE, line_gap=5, weight="medium") + 20
 
     # 부제는 잘라내면 뜻이 사라지므로 줄을 바꿔 통째로 싣는다. HTML 표지도 같은 자리에서 줄을 바꾼다.
     y -= 42
     line_size = cover_line_size(c, report.fonts, [t("cover_line_1"), t("cover_line_2")])
-    y = report.wrapped(t("cover_line_1"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
-    y = report.wrapped(t("cover_line_2"), 43, y, text_width, line_size, WHITE, line_gap=20 - line_size)
+    y = report.wrapped(t("cover_line_1"), COVER_TEXT_X, y, text_width, line_size, WHITE, line_gap=20 - line_size)
+    y = report.wrapped(t("cover_line_2"), COVER_TEXT_X, y, text_width, line_size, WHITE, line_gap=20 - line_size)
 
     y -= 25
-    report.text(43, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
+    report.text(COVER_TEXT_X, y, t("cover_indicator_heading"), 9, colors.HexColor("#C8D2DF"))
     y -= 29
     entries = [cover_indicator_texts(item) for item in indicators]
     description_x = cover_description_x(c, report.fonts, entries)
