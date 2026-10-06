@@ -611,7 +611,8 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   font-weight: 600;
   color: ${COLORS.teal};
   letter-spacing: 0.85pt;
-  margin-right: 9pt;
+  /* Only the row's 9pt gap after the heading, the same as between the pill and
+     the target name. An extra 9pt here left the heading 19pt from its pill. */
   white-space: nowrap;
 }
 /* Same grey label as the item-linked trend cards. The emoji and teal-on-teal

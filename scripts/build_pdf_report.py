@@ -732,7 +732,8 @@ def business_target_layout(report, profile, x, width):
     c = report.canvas
     heading = t("business_heading")
     heading_w = c.stringWidth(heading, report.fonts["semibold"], 8.5) + 0.85 * len(heading)
-    label_x = x + 17 + heading_w + 18
+    # 머리글과 알약 사이는 알약과 품목명 사이와 같은 9pt. 18pt 일 때는 둘이 따로 떨어져 보였다.
+    label_x = x + 17 + heading_w + 9
     label_w = c.stringWidth(label, report.fonts["semibold"], 7.6) + 16
     value_x = label_x + label_w + 9
     value_width = (x + width - 16) - value_x
