@@ -856,14 +856,14 @@ def draw_detail_page(report, profile, signal_index, relevant_rows, investment_ro
     display_name = profile.get("display_name") or company
     report.text(x + 17, header_y, display_name, 14, TEXT, weight="semibold")
     name_w = report.canvas.stringWidth(display_name, report.bold_font, 14)
-    industry_x = min(x + 17 + name_w + 14, x + 250)
+    industry_x = min(x + 17 + name_w + 8, x + 250)
     country_text = profile.get("country", "")
     country_w = report.canvas.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0
     industry_limit = min(190, (x + width - 17) - country_w - 12 - industry_x)
     industry_w = draw_industry_pill(
         report, industry_x, header_y, industry_limit, profile.get("detailed_industry", ""), colors.HexColor("#56687B")
     )
-    report.text(industry_x + industry_w + 10, header_y - 2, country_text, 9, GREY_TEXT, weight="semibold")
+    report.text(industry_x + industry_w + 8, header_y - 2, country_text, 9, GREY_TEXT, weight="semibold")
 
     c.setStrokeColor(colors.black)
     c.setLineWidth(1)
@@ -1007,11 +1007,13 @@ def draw_item_card(report, entry, layout, x, top, width, month_label):
     industry_text = profile.get("detailed_industry", "")
     country_text = profile.get("country", "")
     country_w = c.stringWidth(country_text, report.fonts["semibold"], 9) if country_text else 0
+    # 나라는 기업 카드처럼 산업 알약 바로 뒤(8pt)에 둔다. 오른쪽 끝에 두면 두 면의 머리 줄 모양이 달랐다.
+    country_x = x + 17 + name_w + 8
     if industry_text:
-        industry_x = min(x + 17 + name_w + 14, x + 250)
+        industry_x = min(x + 17 + name_w + 8, x + 250)
         industry_limit = min(190, (x + width - 17) - country_w - 12 - industry_x)
-        draw_industry_pill(report, industry_x, header_y, industry_limit, industry_text, ITEM_LABEL_COLOR)
-    report.text(x + width - 17, header_y - 2, country_text, 9, GREY_TEXT, align="right", weight="semibold")
+        country_x = industry_x + draw_industry_pill(report, industry_x, header_y, industry_limit, industry_text, ITEM_LABEL_COLOR) + 8
+    report.text(country_x, header_y - 2, country_text, 9, GREY_TEXT, weight="semibold")
 
     rule_y = top - layout["rule_offset"]
     c.setStrokeColor(colors.black)

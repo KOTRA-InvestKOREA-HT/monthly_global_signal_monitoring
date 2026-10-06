@@ -463,14 +463,14 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 }
 .item-card .detail-head { padding: 13.5pt 0; }
 .item-card .detail-head h3 { font-size: 13pt; }
-.item-card .detail-head .country { margin-left: auto; }
-.item-target, .item-trend-label { display: flex; align-items: baseline; gap: 10pt; margin: 10.7pt 16.3pt 0; }
-.item-target .pill, .item-trend-label .pill { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; }
+/* Centred, not on baselines: on a shared baseline the 9.5pt target name rode
+   0.7-1.5pt above the middle of the 7.6pt pill beside it. */
+.item-target, .item-trend-label { display: flex; align-items: center; gap: 10pt; margin: 10.7pt 16.3pt 0; }
+.item-target .pill, .item-trend-label .pill { padding: 1.9pt 7pt; font-size: 7.6pt; }
 .item-target .target-text {
   flex: 0 1 auto;
   min-width: 0;
-  /* Tighten the leading so the row's baseline is set close to the pill's own,
-     which is what puts the pill 10pt above the line it shares. */
+  /* A one-line box, so the row is as tall as the pill and no taller. */
   line-height: 1;
   font-size: 9.5pt;
   font-weight: 600;
@@ -507,7 +507,9 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 .detail-head {
   display: flex;
   align-items: center;
-  gap: 14pt;
+  /* 8pt between name, pill and country. At 14pt, plus the pill's own 9pt
+     padding, the words stood 23pt apart and read as three separate items. */
+  gap: 8pt;
   margin: 0 16.3pt;
   padding: 13.35pt 0;
   border-bottom: 1pt solid #000;
@@ -605,7 +607,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 /* A target name too long to sit beside its label drops to a line of its own
    and gets the whole box width, which is what the drawn page arranges by
    measuring first and growing the box by a fixed 15pt. */
-.business-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 9pt; row-gap: 4.6pt; margin: 0; }
+.business-head { display: flex; flex-wrap: wrap; align-items: center; column-gap: 9pt; row-gap: 4.6pt; margin: 0; }
 .business-heading {
   font-size: 8.5pt;
   font-weight: 600;
@@ -617,11 +619,11 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
 }
 /* Same grey label as the item-linked trend cards. The emoji and teal-on-teal
    pill read as decoration in a formal report and had weak contrast. */
-.business-head .target { padding: 1.2pt 7pt 2.6pt; font-size: 7.6pt; background: #fff; }
+.business-head .target { padding: 1.9pt 7pt; font-size: 7.6pt; background: #fff; }
 /* 승인 조건에서 품목 연계만 빠진 행으로 채운 상자임을 밝히는 표시. 품목 라벨과 같은 크기로 두고
    테두리와 색만 달리해, 확인된 품목 연계 라벨과 나란히 놓였을 때 둘이 구분된다. */
 .business-head .near-miss {
-  padding: 1.2pt 7pt 2.6pt;
+  padding: 1.9pt 7pt;
   font-size: 7.6pt;
   background: #fff;
   color: ${COLORS.muted};
