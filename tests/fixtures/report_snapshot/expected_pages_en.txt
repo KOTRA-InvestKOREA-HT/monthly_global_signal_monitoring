@@ -58,10 +58,10 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 37 Merck 76 Cheng Uei Precision
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
-AI-detected signal No signal
+Signal detected No signal
 ① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤
 Executive Moves & Korea Visits
-6 companies with AI-detected signals · 71 not detected
+Signals detected at 6 companies · none at 71
 Investment Signals: Monthly Pre-Decision Indicators Across 77 Priority Companies 02
 
 ===== PAGE 3 =====
