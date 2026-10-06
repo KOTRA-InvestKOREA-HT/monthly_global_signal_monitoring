@@ -393,7 +393,7 @@ TEXTS = {
         "source_fallback": "Source publication",
         "source_empty": "Source  —",
         "source_press_release": "Press release",
-        "item_title": "Business Developments by Product",
+        "item_title": "Business Trends by Product",
         # 예전 "Korea seeks investment in"은 "in"으로 끝나 라벨로 읽히지 않았고, 한국이 투자하는 쪽으로도 읽혔다.
         # 굵은 품목명 바로 앞에 붙고 보고서가 Invest Korea 발행이라 누구의 대상인지는 맥락으로 읽힌다.
         # 시스템 안의 이름(target technology)과도 같다.
