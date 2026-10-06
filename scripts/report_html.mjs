@@ -500,7 +500,10 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   border: 0.9pt solid ${COLORS.boxLine};
   border-radius: 10pt;
 }
-.signal-box { background: #fff; padding: 0 0 13.5pt; }
+/* No padding of its own under the rows: the last row keeps the same 10pt below
+   its content as every other row. With 13.5pt more here, an empty row 5 sat in
+   a band twice as tall as rows 1-4. */
+.signal-box { background: #fff; padding: 0; }
 /* Name, industry pill and country are centred on one another, and the row on
    the band between the box top and the rule. On baselines with 9.5pt above and
    17.2pt below, the name sat 1.6pt above its pill and well above the band's middle. */
@@ -538,6 +541,7 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
    padding, so that side carries its 0.9pt on top of the same 10.05pt. */
 .signals { margin: 0; padding: 0 16.3pt; list-style: none; }
 .signal { position: relative; display: flex; gap: 15pt; padding: 10.05pt 0 10.95pt; }
+.signal:last-child { padding-bottom: 10.05pt; }
 /* Drawn rather than a border: a border would add its own width to the row and
    walk every row below it down the page. */
 .signal:not(:last-child)::after {
