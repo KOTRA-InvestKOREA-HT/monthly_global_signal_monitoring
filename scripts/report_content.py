@@ -376,7 +376,7 @@ TEXTS = {
         # "기업별 5대 전조지표 포착 · 투자 확정 이전 단계만 수록". 예전 문구는 "Including"으로 시작해 주어가 없었고
         # 77개사를 부제와 겹쳐 적었으며, 둘째 줄은 문장 중간 대문자와 괄호가 어색했다.
         "cover_line_1": "30 investment promotion projects selected by MOTIR · 77 target companies",
-        "cover_line_2": "Five leading indicators tracked per company · Only signals before an investment is committed",
+        "cover_line_2": "5 leading indicators tracked per company · Only signals before an investment is committed",
         "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
         "matrix_title": "Investment Signals at a Glance",
         "matrix_desc": "Signals found at the 77 companies during {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
