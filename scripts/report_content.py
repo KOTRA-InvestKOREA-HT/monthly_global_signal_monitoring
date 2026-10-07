@@ -377,8 +377,9 @@ TEXTS = {
         "cover_line_1": "30 major investment promotion projects · 77 target companies selected by MOTIR",
         "cover_line_2": "5 leading indicators tracked per company · Pre-decision signals only",
         "cover_indicator_heading": "5 Leading Indicators of Investment",
-        # 보고 달({month}, {period})은 set_report_period 가 채운다. 10월호는 9월을 다루므로 "this month"는 쓰지 않는다.
-        "matrix_title": "{month} Signals at a Glance",
+        # 보고 달({month}, {period})은 set_report_period 가 채운다. 10월호는 9월을 다루므로 본문 문구는 달 이름을 쓴다.
+        # 매트릭스 제목만은 국문 "이번 달 시그널 매트릭스"에 맞춰 this month 로 둔다(2026-10 결정).
+        "matrix_title": "This Month's Signal Matrix",
         "matrix_desc": "Early investment signals at the 77 target companies {period}. Filled cells mark detected signals. Final investment decisions and completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
