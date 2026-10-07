@@ -139,13 +139,13 @@ class SourceLineTests(unittest.TestCase):
                        "next-generation RLE interferometric laser encoder systems")
         line = pdf.source_line(self.row(long_source))
         self.assertLessEqual(len(line), pdf.SOURCE_LINE_LIMIT)
-        self.assertTrue(line.endswith("2026.08.20"), line)
+        self.assertTrue(line.endswith("Aug 20, 2026"), line)
         self.assertIn("...", line)
         # 잘린 자리가 낱말 경계인지 원문과 대조한다. 남은 앞부분이 원문의 접두사이고,
         # 원문에서 그 다음 글자가 공백이어야 낱말이 온전히 끝난 것이다.
         # 출처 줄은 내부 경로 낱말(RSS)을 뺀 이름을 자르므로, 정리된 이름과 대조한다.
         shown = pdf.source_display_name(long_source)
-        kept = line[len("Source  "):line.index("...")]
+        kept = line[len("Source:  "):line.index("...")]
         self.assertTrue(shown.startswith(kept), kept)
         self.assertTrue(shown[len(kept)].isspace(), repr(shown[len(kept) - 3:len(kept) + 3]))
 
@@ -163,7 +163,7 @@ class SourceLineTests(unittest.TestCase):
 
     def test_a_short_source_is_left_alone(self):
         line = pdf.source_line(self.row("Albemarle - Newsroom / News"))
-        self.assertEqual(line, "Source  Albemarle - Newsroom / News 2026.08.20")
+        self.assertEqual(line, "Source:  Albemarle - Newsroom / News Aug 20, 2026")
         self.assertNotIn("...", line)
 
     def test_korean_without_spaces_is_not_emptied_by_the_word_rollback(self):
@@ -452,7 +452,7 @@ class SourceLinkTests(unittest.TestCase):
         # 2026-08 호: 품목이 없는 Air Products 헤더에 배정 그룹의 라벨 "Nylon intermediates"가 찍혔다.
         tech_map = {"companies": [{"company": "Air Products", "technology_group": "hexamethylenediamine_hmd",
                                    "excluded_from_relevance": True}]}
-        for lang, expected in (("ko", "산업용 가스"), ("en", "Industrial gases")):
+        for lang, expected in (("ko", "산업용 가스"), ("en", "Industrial Gases")):
             pdf.set_language(lang)
             profile = pdf.build_profiles([{"target_no": 11, "company": "Air Products"}], tech_map)[0]
             self.assertEqual(profile["detailed_industry"], expected)

@@ -194,6 +194,7 @@ def build(args):
     tech_map = report.load_json(args.technology_map, {"companies": []})
     signals = report.load_json(args.signals, [])
     summary = report.override_summary_period(report.load_json(args.summary, {}), args.from_date, args.to_date)
+    report.set_report_period(summary)
     investment_signals = report.load_json(args.investment_signals, [])
     relevant = report.load_json(args.relevant, [])
     indicators = report.load_json(args.indicator_config, {}).get("indicators", [])
@@ -227,7 +228,10 @@ def build(args):
             "line_size": report.cover_line_size(measure.canvas, measure.fonts, cover_lines),
             "indicator_heading": report.t("cover_indicator_heading"),
             "indicators": cover_indicators,
-            "description_offset": description_offset(cover_indicators, measure),
+            # 설명을 이름 아래 줄로 내리면 옆 칸 시작점(description_offset)은 쓰지 않는다.
+            "stacked": (stacked := report.cover_descriptions_stacked(
+                measure.canvas, measure.fonts, [(e["label"], e["description"]) for e in cover_indicators])),
+            "description_offset": None if stacked else description_offset(cover_indicators, measure),
         },
         "matrix": {
             "kicker": "S I G N A L   M A T R I X",
@@ -237,8 +241,7 @@ def build(args):
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
             "indicators": report.t("matrix_indicators"),
-            "footnote": report.t("matrix_footnote", on=counts["detected"],
-                                 off=counts["reviewed_off"], total=counts["total"]),
+            "footnote": report.matrix_footnote(counts["detected"], counts["reviewed_off"], counts["total"]),
             "counts": counts,
             "rows": [{
                 "target_no": profile["target_no"],

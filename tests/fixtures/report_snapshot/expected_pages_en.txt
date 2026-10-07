@@ -3,21 +3,26 @@ Issue 3
 September 2026
 G L O B A L I N V E S T M E N T S I G N A L M O N I T O R
 Investment Signals
-Monthly Leading Investment Indicators for 77 Target Companies
-30 investment promotion projects selected by MOTIR · 77 target companies
-5 leading indicators tracked per company · Only signals before an investment is committed
-5 LEADING INDICATORS OF INVESTMENT
-1 Supply Chain & Geopolitical Risk Supplier shifts, de-risking, tariff and export-control responses
-2 Production Expansion & New Sites Plant expansions, new-site reviews and feasibility studies
-3 Capital Raising & Liquidity Large bond and share issues, loans and credit lines
-4 R&D and Technology Partnerships Joint research, licensing, PoCs and equity-stake talks
-5 Executive Moves C-suite shifts, unannounced site visits, signs of due diligence
+Monthly monitoring of early signs ahead of investment decisions
+30 major investment promotion projects · 77 target companies selected by MOTIR
+5 leading indicators tracked per company · Pre-decision signals only
+5 Leading Indicators of Investment
+1 Geopolitical Supply Chain Resilience
+Reducing regional dependency, diversifying supply chains, and addressing regulatory risks
+2 Production Expansion & Footprint Diversification
+Evaluating new APAC facility expansions and conducting production site feasibility studies
+3 Capital Raising & Liquidity Securing
+Issuing large-scale corporate bonds, executing capital increases, securing credit facilities
+4 R&D and Technology Partnerships
+Joint R&D, technology licensing, PoCs and equity-stake talks
+5 C-Level Executive Moves
+C-suite shifts, unannounced site visits, due diligence coordination
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X
-Investment Signals at a Glance
-Signalsfoundatthe77companiesinAugust2026.Ahighlightedcellmarksanearlyplanorapreparatorystep,notacommittedor
-completed investment.
+August Signals at a Glance
+Earlyinvestmentsignalsatthe77targetcompaniesinAugust2026.Filledcellsmarkdetectedsignals.Finalinvestmentdecisionsand
+completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.
 Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 1 Australian Strategic Materials 40 Evonik Industries
 2 Cognex 41 Heraeus
@@ -59,160 +64,160 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
 Signal detected No signal
-① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships
-⑤ Executive Moves
-Signals detected at 6 companies · none at 71
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 02
+① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Capital Raising & Liquidity Securing
+④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves
+Signals detected at 6 companies; none detected at 71.
+Invest KOREA · Global Investment Signal Monitor · Issue 3 02
 
 ===== PAGE 3 =====
 C O M P A N Y S I G N A L S · 1/6
-Investment Signals by Company
+Signal Details by Company
 Charles River
-Bioanalysis & safety testing USA
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites No signal this month
-3 Capital Raising & Liquidity No signal this month
+Biologics Safety Testing USA
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification No signal in August
+3 Capital Raising & Liquidity Securing No signal in August
 4 R&D and Technology Partnerships
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics
 Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent
 enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation
 Sequencing.
-Source Press release · Charles River - News Releases / Press Releases 2026.08.20
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
-Target technology Viral safety testing and cell bank (MCB/WCB) characterization
+Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
+5 C-Level Executive Moves No signal in August
+Business Developments
+Target technology Virus validation and master/working cell bank characterization
 On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to
 characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The
 companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate
 high-quality vaccine development and support global regulatory readiness.
-Source Press release · Charles River - News Releases / Press Releases 2026.08.20
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 03
+Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 03
 
 ===== PAGE 4 =====
 C O M P A N Y S I G N A L S · 2/6
-Investment Signals by Company
+Signal Details by Company
 Boeing
-Electric aircraft propulsion USA
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites No signal this month
-3 Capital Raising & Liquidity No signal this month
+Aerospace & E-Propulsion USA
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification No signal in August
+3 Capital Raising & Liquidity Securing No signal in August
 4 R&D and Technology Partnerships
 Boeing Investment and Technology Collaboration
 Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
 while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
 arrangement.
-Source Press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
-Target technology Electric motors and high-power battery modules for aircraft
+Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
+5 C-Level Executive Moves No signal in August
+Business Developments
+Target technology Electric motors and high-power battery propulsion modules for aircraft
 Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer
 Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and
 technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy
 technologies with Archer's platform to advance the aerospace and defense sector.
-Source Press release · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 04
+Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 04
 
 ===== PAGE 5 =====
 C O M P A N Y S I G N A L S · 3/6
-Investment Signals by Company
+Signal Details by Company
 Ouster
-Robotics LiDAR USA
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites
+Lidar & 3D Sensing USA
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification
 Ouster is expanding its LiDAR production capacity to support rising demand, with its production
 run rate expected to increase from approximately 40,000 units annually toward 100,000 units.
-Source Yahoo Finance 2026.08.17
-3 Capital Raising & Liquidity No signal this month
-4 R&D and Technology Partnerships No signal this month
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
-Target technology LiDAR for robots
+Source: Yahoo Finance Aug 17, 2026
+3 Capital Raising & Liquidity Securing No signal in August
+4 R&D and Technology Partnerships No signal in August
+5 C-Level Executive Moves No signal in August
+Business Developments
+Target technology Lidar sensors for robots
 Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer
 adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's
 largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah
 Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across
 the state.
-Source Yahoo Finance 2026.08.17
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 05
+Source: Yahoo Finance Aug 17, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 05
 
 ===== PAGE 6 =====
 C O M P A N Y S I G N A L S · 4/6
-Investment Signals by Company
+Signal Details by Company
 Applied Materials
-Semiconductor equipment USA
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites No signal this month
-3 Capital Raising & Liquidity No signal this month
+Semiconductor Equipment USA
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification No signal in August
+3 Capital Raising & Liquidity Securing No signal in August
 4 R&D and Technology Partnerships
 AI Computing Material and Process Innovation Research Collaboration
 Applied Materials announced that University of California, Berkeley will join its EPIC Center in
 Silicon Valley as a research collaborator to pursue research programs accelerating material and
 process innovations.
-Source Press release · Applied Materials 2026.08.11
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
+Source: Press release · Applied Materials Aug 11, 2026
+5 C-Level Executive Moves No signal in August
+Business Developments
 Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company
 unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP,
 and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
-Source Press release · Applied Materials 2026.08.13
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 06
+Source: Press release · Applied Materials Aug 13, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 06
 
 ===== PAGE 7 =====
 C O M P A N Y S I G N A L S · 5/6
-Investment Signals by Company
+Signal Details by Company
 Nexeon
-Battery anode materials UK
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites No signal this month
-3 Capital Raising & Liquidity
+Battery Anode Materials UK
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification No signal in August
+3 Capital Raising & Liquidity Securing
 Completion of £100 Million Investment Round.
 The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70
 million) commitment from the National Wealth Fund along with new investors Korea
 Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
 commercialisation activities.
-Source Nexeon - Media / Newsroom 2026.08.31
-4 R&D and Technology Partnerships No signal this month
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
-Target technology Silicon-carbon (Si-C) anode materials
+Source: Nexeon - Media / Newsroom Aug 31, 2026
+4 R&D and Technology Partnerships No signal in August
+5 C-Level Executive Moves No signal in August
+Business Developments
+Target technology CVD silicon-carbon (Si-C) anode materials
 Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National
 Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the
 development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing
 technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for
 silicon-carbon materials in Gunsan, South Korea.
-Source Nexeon - Media / Newsroom 2026.08.31
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 07
+Source: Nexeon - Media / Newsroom Aug 31, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 07
 
 ===== PAGE 8 =====
 C O M P A N Y S I G N A L S · 6/6
-Investment Signals by Company
+Signal Details by Company
 Veolia
-Ion-exchange membranes France
-1 Supply Chain & Geopolitical Risk No signal this month
-2 Production Expansion & New Sites No signal this month
-3 Capital Raising & Liquidity
+Ion-Exchange Membranes France
+1 Geopolitical Supply Chain Resilience No signal in August
+2 Production Expansion & Footprint Diversification No signal in August
+3 Capital Raising & Liquidity Securing
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
 bond market.
-Source Press release · Veolia 2026.08.26
-4 R&D and Technology Partnerships No signal this month
-5 Executive Moves No signal this month
-BUSINESS DEVELOPMENTS
+Source: Press release · Veolia Aug 26, 2026
+4 R&D and Technology Partnerships No signal in August
+5 C-Level Executive Moves No signal in August
+Business Developments
 Target technology Ion-exchange and bipolar membranes
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
-Source Press release · Veolia 2026.08.26
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 08
+Source: Press release · Veolia Aug 26, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 08
 
 ===== PAGE 9 =====
 P R O D U C T T R E N D S · 1/1
-Business Trends by Product
-Companies with no investment signal this month but with August news tied to their target technology. Cards marked "General
-company news" cover the company's main business instead. Any of these could turn into an investment signal.
+Global Business Developments by Company
+ThesecompanieshadnosignalsinAugustbutreporteddevelopmentstieddirectlytotheirtargettechnologies.Cardswithoutatarget
+technology cover all of a company's businesses. All are monitored for emerging signals.
 Albemarle
-Battery cathode materials USA
-Target technology Lithium hydroxide and lithium carbonate for cathodes
-Developments in August
+Lithium & Cathode Materials USA
+Target technology Cathode raw materials (lithium hydroxide, lithium carbonate)
+August Developments
 Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second
 quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due
 to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.
-Source Albemarle - Newsroom / News 2026.08.05
-Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies 09
+Source: Albemarle - Newsroom / News Aug 5, 2026
+Invest KOREA · Global Investment Signal Monitor · Issue 3 09

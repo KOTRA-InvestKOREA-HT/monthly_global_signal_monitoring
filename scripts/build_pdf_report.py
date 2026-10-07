@@ -372,6 +372,17 @@ def cover_description_x(canvas_obj, fonts, entries):
     return min(max(PAGE_W - 43 - description_w, 67 + label_w + 16), PAGE_W - 43 - 50)
 
 
+def cover_descriptions_stacked(canvas_obj, fonts, entries):
+    """설명이 이름 옆 한 열에 다 들어가지 않으면 다섯 설명을 모두 이름 아래 줄로 내린다.
+
+    2026-10 영문 지표 이름이 48자까지 길어지자 옆 칸에 145pt 만 남아 설명 다섯 개가 모두 잘렸다.
+    줄마다 따로 정하면 배치가 들쭉날쭉하므로 다섯 줄을 함께 정한다. 국문은 옆 칸에 든다.
+    """
+    label_w = max((canvas_obj.stringWidth(label, fonts["semibold"], 12) for label, _ in entries), default=0)
+    description_w = max((canvas_obj.stringWidth(clean_text(d), fonts["demilight"], 8) for _, d in entries), default=0)
+    return 67 + label_w + 16 + description_w > PAGE_W - 43
+
+
 def draw_cover(report, summary, indicators):
     report.new_page()
     c = report.canvas
@@ -416,13 +427,19 @@ def draw_cover(report, summary, indicators):
     y -= 29
     entries = [cover_indicator_texts(item) for item in indicators]
     description_x = cover_description_x(c, report.fonts, entries)
+    stacked = cover_descriptions_stacked(c, report.fonts, entries)
     for item, (label, description) in zip(indicators, entries):
         c.setStrokeColor(GOLD)
         c.setLineWidth(1.2)
         c.circle(46, y + 4, 10, stroke=1, fill=0)
         report.text(46, y, str(item["no"]), 9, GOLD, align="center", weight="semibold")
-        # 영문도 국문처럼 설명을 이름 옆에 둔다. 영문 이름이 50자까지 길던 때는 설명을 아래 줄로 내렸으나,
-        # 지금 이름은 32자 이하라 가장 긴 조합(S1)도 한 줄 폭 안에 든다.
+        if stacked:
+            label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
+            report.text(67, y - 1, label, 12, WHITE, weight="semibold")
+            description = short_text_to_width(c, description, PAGE_W - 43 - 67, report.fonts["demilight"], 8.5, f"cover_indicator_desc[{item['no']}]")
+            report.text(67, y - 14, description, 8.5, colors.HexColor("#C8D2DF"))
+            y -= 36
+            continue
         # 라벨을 먼저 폭 안에 맞추고, 설명은 남은 자리만큼만 쓴다.
         # 예전에는 남은 폭에 하한 60pt를 걸어서, 라벨이 길면 설명이 라벨 위로 겹쳐 찍혔다.
         label = short_text_to_width(c, label, PAGE_W - 43 - 67, report.fonts["semibold"], 12, f"cover_indicator_label[{item['no']}]")
@@ -521,12 +538,7 @@ def draw_matrix(report, profiles, signal_index, summary, signal_rows):
         legend_end -= 9
     # 각주는 행 상태를 센 것이다. 따로 계산하면 표와 숫자가 어긋난다.
     statuses = [company_status(profile["company"], signal_index, covered) for profile in profiles]
-    footnote = t(
-        "matrix_footnote",
-        on=statuses.count("detected"),
-        off=statuses.count("reviewed"),
-        total=len(profiles),
-    )
+    footnote = matrix_footnote(statuses.count("detected"), statuses.count("reviewed"), len(profiles))
     report.text(
         30,
         legend_end - 9,
@@ -1156,6 +1168,7 @@ def build_report(args):
     tech_map = load_json(args.technology_map, {"companies": []})
     signals = load_json(args.signals, [])
     summary = override_summary_period(load_json(args.summary, {}), args.from_date, args.to_date)
+    set_report_period(summary)
     relevant = load_json(args.relevant, [])
     investment_signals = load_json(args.investment_signals, [])
     investment_summary = load_json(args.investment_summary, {})

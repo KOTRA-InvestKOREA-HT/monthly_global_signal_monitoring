@@ -94,7 +94,7 @@ function coverPage(state, model, assets) {
         ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
         <div class="cover-lines"${cover.line_size ? ` style="font-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
         <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
-        <ul class="cover-indicators"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
+        <ul class="cover-indicators${cover.stacked ? ' stacked' : ''}"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
           <li>
             <span class="badge">${escapeHtml(item.no)}</span>
             <span class="label">${escapeHtml(item.label)}</span>
@@ -427,10 +427,18 @@ body {
    aligned, as the drawn cover places them, instead of each ending at the margin. */
 .cover-indicators[style] .label { min-width: calc(var(--desc-offset) - 11pt); }
 .cover-indicators[style] .desc { padding-left: 0; text-align: left; }
-/* English indicator names were once long enough (up to 50 characters) that the
-   description had to drop to its own line. At up to 32 characters they share the
-   row with it, as the Korean ones do; the longest pair measures about 400pt of the
-   458pt the row allows. */
+/* When a name and its description do not fit one row (the view model measures
+   all five together), every description drops to its own line under its name. */
+.cover-indicators.stacked li { flex-wrap: wrap; align-content: flex-start; row-gap: 0; height: 38pt; }
+.cover-indicators.stacked .label { line-height: 17pt; }
+.cover-indicators.stacked .desc {
+  flex: 0 0 100%;
+  /* Under the name: the ring's 20pt plus the 11pt gap. */
+  padding-left: 31pt;
+  font-size: 8.5pt;
+  line-height: 11pt;
+  text-align: left;
+}
 /* The view model's line_size overrides this with the size both lines fit at on one line. */
 html[lang="en"] .cover-lines { font-size: 11pt; }
 /* A long line breaks into two even halves instead of leaving one word behind. */

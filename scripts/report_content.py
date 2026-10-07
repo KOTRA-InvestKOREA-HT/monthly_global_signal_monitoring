@@ -30,10 +30,10 @@ __all__ = [
     "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
     "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
     "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
-    "load_json", "matrix_period_label", "month_bounds", "normalize_company_key",
+    "load_json", "matrix_footnote", "matrix_period_label", "month_bounds", "normalize_company_key",
     "normalize_summary_text", "override_summary_period", "parse_date_only", "parse_datetime",
     "parse_ignored_signal_keys", "phrase_ending_text", "phraseify_summary_text", "report_month_label",
-    "report_period", "row_in_report_period", "sentence_spans", "set_language", "short_text",
+    "report_period", "row_in_report_period", "sentence_spans", "set_language", "set_report_period", "short_text",
     "signal_cell_state", "signal_fingerprint", "signal_publishable", "signal_supported",
     "sort_signal_rows", "source_display_name", "source_line", "source_url", "split_sentences", "strip_summary_lead",
     "summary_detail_text", "summary_field", "summary_parts", "summary_plain_text", "t",
@@ -63,15 +63,15 @@ EXEMPT_COMPANIES = {
 # 면제 기업도 데이터에는 처음 배정된 technology_group 이 남아 있어, 그룹으로 업종 라벨을 만들면
 # 숨긴 품목이 헤더에 다시 찍힌다(Air Products 가 "Nylon intermediates"로 나왔다). 회사 자체 업종을 쓴다.
 EXEMPT_INDUSTRY = {
-    "Prodrive": ("전력·제어 전자", "Power & control electronics"),
-    "JSR": ("반도체 소재", "Semiconductor materials"),
-    "Applied Materials": ("반도체 장비", "Semiconductor equipment"),
-    "Amkor Technology": ("반도체 패키징·테스트", "Semiconductor packaging & test"),
-    "Heraeus": ("귀금속·특수소재", "Precious metals & materials"),
-    "Toray": ("첨단 소재", "Advanced materials"),
-    "3M": ("다각화 소재·제조", "Diversified materials"),
-    "Air Liquide": ("산업용 가스", "Industrial gases"),
-    "Air Products": ("산업용 가스", "Industrial gases"),
+    "Prodrive": ("전력·제어 전자", "Power & Control Electronics"),
+    "JSR": ("반도체 소재", "Semiconductor Materials"),
+    "Applied Materials": ("반도체 장비", "Semiconductor Equipment"),
+    "Amkor Technology": ("반도체 패키징·테스트", "Semiconductor Packaging & Test"),
+    "Heraeus": ("귀금속·특수소재", "Precious Metals & Materials"),
+    "Toray": ("첨단 소재", "Advanced Materials"),
+    "3M": ("다각화 소재·제조", "Diversified Industrials"),
+    "Air Liquide": ("산업용 가스", "Industrial Gases"),
+    "Air Products": ("산업용 가스", "Industrial Gases"),
 }
 
 COUNTRY_BY_COMPANY = {
@@ -207,27 +207,21 @@ SIGNAL_DESCRIPTIONS_EN = {
     # 설명은 표지(INDICATOR_DESCRIPTION_EN)에 있다.
     # 2026-09 개정: 직역 느낌이 나거나 국문보다 뜻이 좁던 이름을 고쳤다. "Geographical Diversification"은 길고
     # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다.
-    # 2026-10: 5는 "Executive Moves & Korea Visits"에서 방한을 뺐다. 국문 "핵심경영진 행보"는 방한에 한정되지 않고,
-    # "moves"가 인사 이동과 행보를 함께 뜻한다. 방한·현장 방문은 표지 설명 줄에 남아 있다.
-    1: "Supply Chain & Geopolitical Risk",
-    2: "Production Expansion & New Sites",
-    3: "Capital Raising & Liquidity",
+    # 2026-10 개정: 이름과 설명을 국문 표지(지표 이름, config 의 description_ko)의 항목을 그대로 따르도록 새로 정했다.
+    1: "Geopolitical Supply Chain Resilience",
+    2: "Production Expansion & Footprint Diversification",
+    3: "Capital Raising & Liquidity Securing",
     4: "R&D and Technology Partnerships",
-    5: "Executive Moves",
+    5: "C-Level Executive Moves",
 }
 
 INDICATOR_DESCRIPTION_EN = {
-    # 국문 "공급망 재편"은 공급처 변경에 그치지 않는다. 특정 지역 의존을 줄이는 뜻을 de-risking 으로 담는다.
-    1: "Supplier shifts, de-risking, tariff and export-control responses",
-    # 국문판 표지에 아시아태평양 한정이 없고 범주도 지역을 가리지 않으므로 넣지 않는다.
-    2: "Plant expansions, new-site reviews and feasibility studies",
-    # 국문 "대규모"를 살린다. 일상적인 차입이 아니라는 뜻이다.
-    3: "Large bond and share issues, loans and credit lines",
-    # 국문 "지분투자 타진"은 검토 단계까지 포함한다. "equity stakes"는 취득을 끝낸 것처럼 읽혔다.
-    4: "Joint research, licensing, PoCs and equity-stake talks",
-    # "C-Level 이동"은 영입과 퇴임을 모두 뜻한다. "극비"는 불시(unannounced)가 아니라 비공개(undisclosed)다.
-    # "실사"를 due diligence 로 옮기면 인수 전 재무·법률 검토로 읽힌다. 현장 방문의 뜻으로 적는다.
-    5: "C-suite shifts, unannounced site visits, signs of due diligence",
+    1: "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks",
+    # 국문 표지에 APAC 이 있어 영문에도 둔다.
+    2: "Evaluating new APAC facility expansions and conducting production site feasibility studies",
+    3: "Issuing large-scale corporate bonds, executing capital increases, securing credit facilities",
+    4: "Joint R&D, technology licensing, PoCs and equity-stake talks",
+    5: "C-suite shifts, unannounced site visits, due diligence coordination",
 }
 
 COUNTRY_EN = {
@@ -250,72 +244,78 @@ COUNTRY_EN = {
 }
 
 DETAILED_INDUSTRY_EN = {
-    "rare_earth_magnet_recycling": "Rare-earth magnet recycling",
-    "3d_vision_sensor": "Machine vision & sensors",
-    "euv_blank_mask": "EUV mask materials",
-    "virus_validation_mcb_wcb": "Bioanalysis & safety testing",
-    "bioprocess_culture_purification": "Bioprocess equipment",
-    "gene_cell_therapy_delivery_gmp": "Cell & gene therapy",
-    "autoinjector_pfs_fill_finish": "Drug delivery & fill-finish",
-    "ag_al_paste": "Solar electrode materials",
-    "lithium_cathode_materials": "Battery cathode materials",
-    "nonferrous_scrap_recycling": "Non-ferrous metal recycling",
-    "hexamethylenediamine_hmd": "Nylon intermediates",
-    "ion_exchange_membrane": "Ion-exchange membranes",
-    "autonomous_imu_rf_baseband": "Automotive RF & sensor chips",
-    "semiconductor_thermal_material": "Chip thermal materials",
-    "autonomous_camera_isp": "Automotive vision chips",
-    "aerospace_electric_propulsion": "Electric aircraft propulsion",
-    "robot_lidar": "Robotics LiDAR",
-    "hybrid_bonding_w2w": "Advanced packaging",
-    "euv_lithography": "Semiconductor lithography",
-    "satellite_radar_rf_semiconductor": "Aerospace RF chips",
-    "offshore_wind_turbine": "Offshore wind turbines",
-    "linear_scale": "Precision position encoders",
-    "robot_reducer": "Robot gearboxes",
-    "pharma_excipient": "Pharmaceutical materials",
-    "precipitated_silica_tire": "Silica for green tires",
-    "silicon_anode_sic": "Battery anode materials",
-    "pvdf": "Battery binder materials",
-    "metal_target_ti_ta": "Sputtering targets",
-    "fine_metal_mask": "Display materials",
-    "tgv_glass_substrate": "Glass core substrates",
+    "rare_earth_magnet_recycling": "Rare Earths & Magnet Recycling",
+    "3d_vision_sensor": "Machine Vision & Sensors",
+    # Corning 은 블랭크가 아니라 EUV 마스크 블랭크용 유리 기판을 공급한다.
+    "euv_blank_mask": "EUV Mask Substrates",
+    "virus_validation_mcb_wcb": "Biologics Safety Testing",
+    "bioprocess_culture_purification": "Bioprocessing Technology",
+    "gene_cell_therapy_delivery_gmp": "Cell & Gene Therapy",
+    "autoinjector_pfs_fill_finish": "Drug Delivery & Fill-Finish",
+    "ag_al_paste": "Solar Metallization Pastes",
+    "lithium_cathode_materials": "Lithium & Cathode Materials",
+    "nonferrous_scrap_recycling": "Non-Ferrous Metals & Recycling",
+    "hexamethylenediamine_hmd": "Nylon Intermediates",
+    "ion_exchange_membrane": "Ion-Exchange Membranes",
+    "autonomous_imu_rf_baseband": "Automotive Semiconductors",
+    "semiconductor_thermal_material": "Chip Packaging Materials",
+    # onsemi 는 카메라가 아니라 이미지 센서를 만든다. 센서와 모듈을 함께 담는 이름으로 둔다.
+    "autonomous_camera_isp": "Automotive Vision & Imaging",
+    "aerospace_electric_propulsion": "Aerospace & E-Propulsion",
+    "robot_lidar": "Lidar & 3D Sensing",
+    "hybrid_bonding_w2w": "Advanced Packaging Equipment",
+    "euv_lithography": "Lithography Equipment",
+    "satellite_radar_rf_semiconductor": "RF & Radar Semiconductors",
+    "offshore_wind_turbine": "Offshore Wind Turbines",
+    "linear_scale": "Precision Position Measurement",
+    "robot_reducer": "Robot Drives & Motion Control",
+    "pharma_excipient": "Pharmaceutical Excipients",
+    "precipitated_silica_tire": "Precipitated Silica for Tires",
+    "silicon_anode_sic": "Battery Anode Materials",
+    "pvdf": "Battery Binders (PVDF)",
+    "metal_target_ti_ta": "Sputtering Targets",
+    # 업계에서 "OLED materials"는 발광·호스트 유기재료를 뜻한다.
+    "fine_metal_mask": "OLED Fine Metal Masks",
+    "tgv_glass_substrate": "Semiconductor Glass Substrates",
 }
 
 # 보고서에 싣는 영문 타겟 품목명. data/company_technology_map.json 의 target_technology_en 은 판정 모델
 # 입력에도 들어가 바꾸면 그 기업 기사의 판정 캐시가 모두 무효가 된다. 그 값은 국문 품목명을 낱말 순서대로
 # 옮긴 것이 많아("robot reducer", "cathode material lithium hydroxide/carbonate") 독자용 이름은 여기 따로 둔다.
 TARGET_TECHNOLOGY_DISPLAY_EN = {
-    "rare_earth_magnet_recycling": "High-purity rare earths recovered from end-of-life magnets",
+    "rare_earth_magnet_recycling": "High-purity rare-earth recovery from end-of-life permanent magnets",
     "3d_vision_sensor": "3D vision sensors",
     "euv_blank_mask": "EUV mask blanks",
-    "virus_validation_mcb_wcb": "Viral safety testing and cell bank (MCB/WCB) characterization",
-    "bioprocess_culture_purification": "Cell culture and purification systems for biologics",
-    "gene_cell_therapy_delivery_gmp": "Gene and cell therapy delivery vectors and GMP raw materials",
-    "autoinjector_pfs_fill_finish": "Autoinjectors, prefilled syringes and fill-finish",
-    "ag_al_paste": "Silver and aluminum conductive pastes",
-    "lithium_cathode_materials": "Lithium hydroxide and lithium carbonate for cathodes",
-    "nonferrous_scrap_recycling": "Non-ferrous metal scrap recycling",
-    "hexamethylenediamine_hmd": "Hexamethylenediamine (HMD) production",
+    "virus_validation_mcb_wcb": "Virus validation and master/working cell bank characterization",
+    "bioprocess_culture_purification": "Cell-culture and purification systems for biologics production",
+    # "delivery vehicles"는 운송 차량으로 읽힌다.
+    "gene_cell_therapy_delivery_gmp": "Delivery systems and GMP raw materials for gene and cell therapies",
+    "autoinjector_pfs_fill_finish": "Autoinjector and prefilled-syringe (PFS) manufacturing and fill-finish",
+    "ag_al_paste": "Silver and aluminum (Ag/Al) pastes for solar cells",
+    "lithium_cathode_materials": "Cathode raw materials (lithium hydroxide, lithium carbonate)",
+    "nonferrous_scrap_recycling": "Maximizing recycled (scrap) content in non-ferrous metal production",
+    "hexamethylenediamine_hmd": "Hexamethylenediamine (HMD) production technology for nylon",
     "ion_exchange_membrane": "Ion-exchange and bipolar membranes",
     "autonomous_imu_rf_baseband": "IMU, RF and baseband chips for autonomous vehicles",
-    "semiconductor_thermal_material": "Thermal materials for chip packaging",
-    "autonomous_camera_isp": "Cameras and image signal processors for autonomous vehicles",
-    "aerospace_electric_propulsion": "Electric motors and high-power battery modules for aircraft",
-    "robot_lidar": "LiDAR for robots",
-    "hybrid_bonding_w2w": "Wafer-to-wafer hybrid bonding equipment",
-    "euv_lithography": "EUV lithography equipment",
+    "semiconductor_thermal_material": "High-performance thermal materials for semiconductor packaging",
+    "autonomous_camera_isp": "Cameras and image signal processors (ISPs) for autonomous vehicles",
+    "aerospace_electric_propulsion": "Electric motors and high-power battery propulsion modules for aircraft",
+    "robot_lidar": "Lidar sensors for robots",
+    # 국문 "nm급"은 장비 크기가 아니라 정렬 정밀도다.
+    "hybrid_bonding_w2w": "High-precision wafer-to-wafer (W2W) hybrid bonding equipment",
+    "euv_lithography": "EUV lithography systems",
     "satellite_radar_rf_semiconductor": "RF chips for satellite communications and radar",
     "offshore_wind_turbine": "Offshore wind turbines",
-    "linear_scale": "Linear encoders",
-    "robot_reducer": "Robot gearboxes (reducers)",
+    "linear_scale": "Linear scales (linear encoders)",
+    "robot_reducer": "Precision speed reducers for robots",
     "pharma_excipient": "Pharmaceutical excipients",
-    "precipitated_silica_tire": "Precipitated silica for fuel-efficient tires",
-    "silicon_anode_sic": "Silicon-carbon (Si-C) anode materials",
-    "pvdf": "PVDF (polyvinylidene fluoride)",
+    "precipitated_silica_tire": "Highly dispersible silica (HDS) for low-rolling-resistance tires",
+    # 국문 "증착형"을 업계는 CVD 라고 부른다.
+    "silicon_anode_sic": "CVD silicon-carbon (Si-C) anode materials",
+    "pvdf": "Polyvinylidene fluoride (PVDF)",
     "metal_target_ti_ta": "Titanium and tantalum sputtering targets",
-    "fine_metal_mask": "Fine metal masks (FMM) for OLED displays",
-    "tgv_glass_substrate": "Glass substrates with through-glass vias (TGV)",
+    "fine_metal_mask": "Fine metal masks (FMMs) for OLED displays",
+    "tgv_glass_substrate": "Glass substrates and through-glass via (TGV) processing",
 }
 
 MONTH_NAMES_EN = [
@@ -362,7 +362,8 @@ TEXTS = {
         "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
     },
     "en": {
-        "footer": "Investment Signals: Monthly Leading Investment Indicators for 77 Target Companies",
+        # 국문 꼬리말과 같은 구조로 발행처와 호수를 싣는다. 보고서 이름은 표지 머리말과 같다.
+        "footer": "Invest KOREA · Global Investment Signal Monitor · {issue}",
         # 국문 표지와 같은 보고서 이름을 제목 위에 금색으로 싣는다. 예전에는 머리말이 "INVESTMENT SIGNALS"라
         # 영문 제목과 같은 말이 되어 비워 두었다. 본문 면의 머리글은 이 값을 쓰지 않는다(draw_detail_page 의 자체 문자열).
         "cover_kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
@@ -370,37 +371,42 @@ TEXTS = {
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
         "cover_titles": ["Investment Signals"],
         # 제목 아래 흰색 한 줄. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다.
-        "cover_subtitle": "Monthly Leading Investment Indicators for 77 Target Companies",
+        "cover_subtitle": "Monthly monitoring of early signs ahead of investment decisions",
         "cover_title_accent": 0,
-        # 국문 두 줄의 뜻을 그대로 옮긴다: "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
-        # "기업별 5대 전조지표 포착 · 투자 확정 이전 단계만 수록". 예전 문구는 "Including"으로 시작해 주어가 없었고
-        # 77개사를 부제와 겹쳐 적었으며, 둘째 줄은 문장 중간 대문자와 괄호가 어색했다.
-        "cover_line_1": "30 investment promotion projects selected by MOTIR · 77 target companies",
-        "cover_line_2": "5 leading indicators tracked per company · Only signals before an investment is committed",
-        "cover_indicator_heading": "5 LEADING INDICATORS OF INVESTMENT",
-        "matrix_title": "Investment Signals at a Glance",
-        "matrix_desc": "Signals found at the 77 companies {period}. A highlighted cell marks an early plan or a preparatory step, not a committed or completed investment.",
+        # MOTIR 는 산업통상부의 공식 영문 약칭이다(Ministry of Trade, Industry and Resources).
+        "cover_line_1": "30 major investment promotion projects · 77 target companies selected by MOTIR",
+        "cover_line_2": "5 leading indicators tracked per company · Pre-decision signals only",
+        "cover_indicator_heading": "5 Leading Indicators of Investment",
+        # 보고 달({month}, {period})은 set_report_period 가 채운다. 10월호는 9월을 다루므로 "this month"는 쓰지 않는다.
+        "matrix_title": "{month} Signals at a Glance",
+        "matrix_desc": "Early investment signals at the 77 target companies {period}. Filled cells mark detected signals. Final investment decisions and completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.",
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Supply Chain & Geopolitical Risk · ② Production Expansion & New Sites · ③ Capital Raising & Liquidity · ④ R&D and Technology Partnerships · ⑤ Executive Moves",
-        "matrix_footnote": "Signals detected at {on} companies · none at {off}",
-        "detail_title": "Investment Signals by Company",
-        "no_signal": "No signal this month",
-        "business_heading": "BUSINESS DEVELOPMENTS",
-        "business_empty": "No related business news from official sources this month.",
-        "source_prefix": "Source",
-        "source_fallback": "Source publication",
-        "source_empty": "Source  —",
+        "matrix_indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Capital Raising & Liquidity Securing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
+        # 단수·0개사·전체 문장은 matrix_footnote() 가 고른다.
+        "matrix_footnote": "Signals detected at {on} {companies}; none detected at {off}.",
+        "matrix_footnote_none": "No signals detected at any of the {total} companies.",
+        "matrix_footnote_all": "Signals detected at all {total} companies.",
+        "detail_title": "Signal Details by Company",
+        "no_signal": "No signal in {month}",
+        "business_heading": "Business Developments",
+        # 출처는 공식 채널에 한정되지 않는다(제3자 뉴스 포함).
+        "business_empty": "No business developments found {period}.",
+        "source_prefix": "Source:",
+        "source_fallback": "Online source",
+        "source_empty": "Source: —",
         "source_press_release": "Press release",
-        "item_title": "Business Trends by Product",
+        # 카드는 품목별로 묶이지 않고 기업마다 한 장이다.
+        "item_title": "Global Business Developments by Company",
         # 예전 "Korea seeks investment in"은 "in"으로 끝나 라벨로 읽히지 않았고, 한국이 투자하는 쪽으로도 읽혔다.
         # 굵은 품목명 바로 앞에 붙고 보고서가 Invest Korea 발행이라 누구의 대상인지는 맥락으로 읽힌다.
         # 시스템 안의 이름(target technology)과도 같다.
         "item_target_label": "Target technology",
-        "item_trend_label": "Developments in {month}",
-        "item_note": "Companies with no investment signal this month but with {month} news tied to their target technology. Cards marked \"General company news\" cover the company's main business instead. Any of these could turn into an investment signal.",
-        "item_exempt_note": "General company news",
+        "item_trend_label": "{month} Developments",
+        # 면제 기업 카드에는 표시가 그려지지 않는다. 품목 줄이 없는 것으로 구분된다.
+        "item_note": "These companies had no signals in {month} but reported developments tied directly to their target technologies. Cards without a target technology cover all of a company's businesses. All are monitored for emerging signals.",
+        "item_exempt_note": "Company-wide coverage: major business developments",
     },
 }
 
@@ -413,9 +419,28 @@ def set_language(lang):
     return LANG
 
 
+# 영문 문구 몇 개는 보고 달·기간을 문장 안에 적는다({month}, {period}). 칸마다 summary 를 넘기지 않도록
+# 빌드를 시작할 때 한 번 정한다. 다른 모듈이 가져간 이름도 같은 값을 보도록 다시 묶지 않고 내용만 바꾼다.
+REPORT_PERIOD_TEXT = {}
+
+
+def set_report_period(summary):
+    REPORT_PERIOD_TEXT.clear()
+    REPORT_PERIOD_TEXT.update(month=report_month_label(summary), period=matrix_period_label(summary))
+
+
 def t(key, **kwargs):
     text = TEXTS.get(LANG, TEXTS["ko"]).get(key) or TEXTS["ko"].get(key, "")
-    return text.format(**kwargs) if kwargs else text
+    values = {**REPORT_PERIOD_TEXT, **kwargs}
+    return text.format(**values) if values else text
+
+
+def matrix_footnote(on, off, total):
+    if LANG == "en" and not on:
+        return t("matrix_footnote_none", total=total)
+    if LANG == "en" and not off:
+        return t("matrix_footnote_all", total=total)
+    return t("matrix_footnote", on=on, off=off, total=total, companies="company" if on == 1 else "companies")
 
 
 def summary_field(row, name):
@@ -451,6 +476,8 @@ def parse_date_only(value):
 
 def format_date(value):
     dt = parse_datetime(value)
+    if dt and LANG == "en":
+        return f"{MONTH_NAMES_EN[dt.month - 1][:3]} {dt.day}, {dt.year}"
     if dt:
         return dt.strftime("%Y.%m.%d")
     return str(value or "-")[:10]
@@ -547,7 +574,7 @@ def format_row_date(row):
         return format_date(row.get("published_at"))
     year, month = state["month"].split("-")
     if LANG == "en":
-        return f"{MONTH_NAMES_EN[int(month) - 1]} {year} (day unknown)"
+        return f"{MONTH_NAMES_EN[int(month) - 1][:3]} {year} (exact date unknown)"
     return f"{year}.{int(month)}. 일자 미상"
 
 
@@ -591,19 +618,19 @@ def matrix_period_label(summary):
     영문판은 숫자 날짜(2026.8.1~8.31)를 쓰지 않는다. 그 표기는 국문 서식을 그대로 옮긴 것이라
     영어 문장 안에서 읽히지 않는다. 영문 라벨은 전치사까지 붙여 문장에 그대로 들어간다. 한 달을
     통째로 보면 "in August 2026"이다. "during August 1–31, 2026"처럼 날짜를 늘어놓으면 원어민에게는
-    기간을 일부러 강조한 것처럼 읽힌다. 한 달의 일부면 "during August 1–15, 2026", 달을 넘으면 달
-    이름을 양쪽에, 해를 넘으면 연도를 양쪽에 적는다. 국문 표기는 그대로 둔다.
+    기간을 일부러 강조한 것처럼 읽힌다. 한 달의 일부면 "from August 1 to 15, 2026", 달을 넘으면 달
+    이름을 양쪽에, 해를 넘으면 연도를 양쪽에 적는다(미국식이라 연도 뒤에 쉼표). 국문 표기는 그대로 둔다.
     """
     start, end = report_period(summary)
     if LANG == "en":
         first, last = MONTH_NAMES_EN[start.month - 1], MONTH_NAMES_EN[end.month - 1]
         if start.year != end.year:
-            return f"during {first} {start.day}, {start.year} – {last} {end.day}, {end.year}"
+            return f"from {first} {start.day}, {start.year}, to {last} {end.day}, {end.year}"
         if start.month != end.month:
-            return f"during {first} {start.day} – {last} {end.day}, {end.year}"
+            return f"from {first} {start.day} to {last} {end.day}, {end.year}"
         if start.day == 1 and (end + timedelta(days=1)).month != end.month:
             return f"in {first} {end.year}"
-        return f"during {first} {start.day}–{end.day}, {end.year}"
+        return f"from {first} {start.day} to {end.day}, {end.year}"
     end_text = compact_date(end, include_year=start.year != end.year)
     return f"{start.month}월({compact_date(start)}~{end_text})"
 
