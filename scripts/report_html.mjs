@@ -429,12 +429,26 @@ body {
 .cover-indicators[style] .desc { padding-left: 0; text-align: left; }
 /* When a name and its description do not fit one row (the view model measures
    all five together), every description drops to its own line under its name. */
-.cover-indicators.stacked li { flex-wrap: wrap; align-content: flex-start; row-gap: 0; height: 38pt; }
-.cover-indicators.stacked .label { line-height: 17pt; }
+/* The ring then stands beside the two-line block, centred on name and description
+   together. Kept on the name's baseline it sat level with the name and left the
+   description hanging below it (English cover, 2026-10). */
+.cover-indicators.stacked li {
+  display: grid;
+  grid-template-columns: 20pt minmax(0, 1fr);
+  column-gap: 11pt;
+  row-gap: 0;
+  align-content: start;
+  /* The one-row layout's baseline alignment would tie the name to the ring and
+     push the description a full ring-height down. */
+  align-items: start;
+  height: 38pt;
+}
+.cover-indicators.stacked .badge { grid-row: 1 / span 2; align-self: center; top: 0; }
+.cover-indicators.stacked .label { grid-column: 2; line-height: 17pt; }
 .cover-indicators.stacked .desc {
-  flex: 0 0 100%;
-  /* Under the name: the ring's 20pt plus the 11pt gap. */
-  padding-left: 31pt;
+  grid-column: 2;
+  /* Under the name, in the ring's neighbouring column. */
+  padding-left: 0;
   font-size: 8.5pt;
   line-height: 11pt;
   text-align: left;
