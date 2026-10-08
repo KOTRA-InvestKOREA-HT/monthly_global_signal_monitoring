@@ -375,9 +375,7 @@ TEXTS = {
         "cover_title_accent": 0,
         # MOTIR 는 산업통상부의 공식 영문 약칭이다(Ministry of Trade, Industry and Resources).
         "cover_line_1": "30 major investment promotion projects · 77 target companies selected by MOTIR",
-        # 지표는 leading indicators 로 통일한다(2026-10). 예전 뒷부분 "Pre-decision signals only"는 같은 줄에 용어를
-        # 하나 더 세웠고, pre-decision 은 학술 용례에서 기업 내부 승인 통제를 뜻한다. 국문 "투자 검토·전조 활동 근거 기반"에 맞춘다.
-        "cover_line_2": "5 leading indicators tracked per company · Based on evidence of investment review and preparation",
+        "cover_line_2": "5 leading indicators tracked per company · Pre-decision signals only",
         "cover_indicator_heading": "5 Leading Indicators of Investment",
         # 보고 달({month}, {period})은 set_report_period 가 채운다. 10월호는 9월을 다루므로 본문 문구는 달 이름을 쓴다.
         # 매트릭스 제목만은 국문 "이번 달 시그널 매트릭스"에 맞춰 this month 로 둔다(2026-10 결정).
