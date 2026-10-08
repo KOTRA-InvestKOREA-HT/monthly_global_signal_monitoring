@@ -5,7 +5,7 @@
 // 상태 표시는 "확인 실패"가 되고 신호 조회는 말없이 로컬 파일로 떨어진다. 화면에는 크롤링이
 // 돌아간 흔적이 없는 것처럼 보인다. 읽는 방법을 한 곳에 둬야 세 화면이 같은 저장소를 본다.
 
-// GITHUB_WORKFLOW_FILE, GITHUB_REF는 기본값이 있어 필수 항목에서 제외한다.
+// GITHUB_WORKFLOW_FILE, GITHUB_PUBLISH_WORKFLOW_FILE, GITHUB_REF는 기본값이 있어 필수 항목에서 제외한다.
 export const REQUIRED_GITHUB_ENV = ["GITHUB_TOKEN", "GITHUB_OWNER", "GITHUB_REPO"];
 
 const CONFIG_KEY = {
@@ -30,6 +30,8 @@ export function githubConfig() {
     owner: envValue("GITHUB_OWNER"),
     repo: envValue("GITHUB_REPO"),
     workflowFile: envValue("GITHUB_WORKFLOW_FILE", "collect-company-signals.yml"),
+    // 판정이 끝난 뒤 보고서를 쓰는 2단계. "발행만 실행" 버튼과 상태 표시가 쓴다.
+    publishWorkflowFile: envValue("GITHUB_PUBLISH_WORKFLOW_FILE", "publish-report.yml"),
     ref: envValue("GITHUB_REF", "main"),
   };
 }

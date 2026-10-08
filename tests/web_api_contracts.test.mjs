@@ -90,10 +90,11 @@ test('every GitHub-backed route reads the same cleaned environment', async t => 
   process.env.GITHUB_TOKEN = ' ghp_example ';
   delete process.env.GITHUB_REF;
   delete process.env.GITHUB_WORKFLOW_FILE;
+  delete process.env.GITHUB_PUBLISH_WORKFLOW_FILE;
 
   const config = githubConfig();
   assert.deepEqual(config, { token: 'ghp_example', owner: 'kotra', repo: 'signal-monitor',
-    workflowFile: 'collect-company-signals.yml', ref: 'main' });
+    workflowFile: 'collect-company-signals.yml', publishWorkflowFile: 'publish-report.yml', ref: 'main' });
   assert.deepEqual(missingGithubEnv(config), []);
 
   // 공백만 든 값은 없는 값이다. 예전에는 소유자가 " " 여도 설정된 것으로 세어 GitHub 를 불렀다.

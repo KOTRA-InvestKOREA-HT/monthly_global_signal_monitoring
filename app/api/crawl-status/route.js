@@ -1,55 +1,23 @@
-import { githubConfig, githubHeaders } from "../../lib/github_env.mjs";
+import { githubConfig } from "../../lib/github_env.mjs";
+import { loadPipelineStatus } from "../../lib/report_pipeline.mjs";
 
 export const dynamic = "force-dynamic";
 
-function statusLabel(run) {
-  if (!run) return "대기";
-  if (run.status !== "completed") return "진행 중";
-  if (run.conclusion === "success") return "완료";
-  if (run.conclusion === "cancelled") return "취소";
-  return "실패";
-}
-
+// 판정(collect-company-signals)과 발행(publish-report) 중 더 최근 실행의 상태를 돌려준다.
+// 한도로 멈춘 실행은 "일시정지"로, 그 밖의 실패는 "실패"로 나눠 보여 준다.
 export async function GET() {
   try {
-    const { owner, repo, workflowFile, ref, token } = githubConfig();
+    const config = githubConfig();
 
-    if (!owner || !repo) {
+    if (!config.owner || !config.repo) {
       return Response.json({ label: "대기", status: "unknown", message: "GitHub 저장소 환경변수가 없습니다." });
     }
 
-    const headers = githubHeaders(token);
-
-    const response = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowFile}/runs?branch=${encodeURIComponent(
-        ref,
-      )}&per_page=1`,
-      { headers, cache: "no-store" },
-    );
-
-    if (!response.ok) {
-      const detail = await response.text();
-      return Response.json(
-        { label: "확인 실패", status: "error", error: `GitHub Actions 상태 확인 실패: ${response.status}`, detail },
-        { status: 502 },
-      );
-    }
-
-    const payload = await response.json();
-    const run = payload.workflow_runs?.[0] || null;
-
-    return Response.json({
-      label: statusLabel(run),
-      status: run?.status || "unknown",
-      conclusion: run?.conclusion || null,
-      run_number: run?.run_number || null,
-      run_id: run?.id || null,
-      html_url: run?.html_url || null,
-      created_at: run?.created_at || null,
-      run_started_at: run?.run_started_at || null,
-      updated_at: run?.updated_at || null,
-    });
+    return Response.json(await loadPipelineStatus(config));
   } catch (error) {
-    return Response.json({ label: "확인 실패", status: "error", error: error.message }, { status: 500 });
+    return Response.json(
+      { label: "확인 실패", status: "error", error: error.message },
+      { status: error.status ? 502 : 500 },
+    );
   }
 }

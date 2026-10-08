@@ -1,13 +1,14 @@
 "use client";
 
-import { Calendar, Download, ExternalLink, Eye, EyeOff, ListChecks, Play, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Calendar, Download, ExternalLink, Eye, EyeOff, FileText, ListChecks, Play, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // 게시일 근거의 등급은 수집(JS)·검토(JS)·PDF 생성(Python)과 같은 파일을 읽는다.
 import dateEvidenceSources from "../config/date_evidence_sources.json";
 // 전월이 언제인지도 실행 버튼·자동 실행과 같은 함수로 정한다. 화면만 브라우저 시간을
 // 쓰면 해외에서 연 사람과 자동 실행이 서로 다른 달을 본다.
 import { monthRange as seoulMonthRange, previousMonthRange } from "../scripts/report_month.mjs";
+import { suggestedIssue } from "./lib/issue_number.mjs";
 
 const CONFIRMED_DATE_SOURCES = new Set(dateEvidenceSources.confirmed);
 
@@ -422,7 +423,11 @@ export default function HomePage() {
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [ignoreDialogOpen, setIgnoreDialogOpen] = useState(false);
-  const [issueNumber, setIssueNumber] = useState("2");
+  // 호수는 마지막으로 발행한 호수에서 고른 달에 맞춰 채운다(아래 effect). 짐작할 수 없는 달은 비워 두고 사람이 넣는다.
+  const [issueNumber, setIssueNumber] = useState("");
+  const [published, setPublished] = useState(null);
+  // 실행 확인 창. "collect" 는 크롤링 수행(판정 후 발행까지), "publish" 는 발행만 실행이다.
+  const [runDialog, setRunDialog] = useState(null);
   const [reportLang, setReportLang] = useState("ko");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
@@ -439,6 +444,7 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const selectedPeriod = useMemo(() => monthRange(monthValue), [monthValue]);
+  const wasActive = useRef(false);
 
   function openMonthPicker() {
     const current = monthRange(monthValue);
@@ -459,7 +465,11 @@ export default function HomePage() {
   }
 
   async function downloadReport() {
-    const safeIssue = String(issueNumber).replace(/[^\d]/g, "") || "2";
+    const safeIssue = String(issueNumber).replace(/[^\d]/g, "");
+    if (!safeIssue) {
+      setError("Issue 번호를 입력해 주세요.");
+      return;
+    }
     setIssueNumber(safeIssue);
     const params = new URLSearchParams({
       issue: safeIssue,
@@ -530,6 +540,7 @@ export default function HomePage() {
       setSummary(payload.summary || null);
       setRelevanceSummary(payload.relevanceSummary || null);
       setInvestmentSummary(payload.investmentSummary || null);
+      setPublished(payload.published || null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -543,15 +554,22 @@ export default function HomePage() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "크롤링 상태를 확인하지 못했습니다.");
       setCrawlStatus(payload);
-      if (payload.label === "완료" || payload.label === "실패" || payload.label === "취소") {
+      // 실행이 끝나는 순간 한 번만 다시 읽는다. 발행이 커밋한 새 결과가 여기서 화면에 들어온다.
+      if (wasActive.current && !payload.active) {
         loadSignals();
       }
+      wasActive.current = Boolean(payload.active);
     } catch (err) {
       setCrawlStatus({ label: "확인 실패", status: "error", error: err.message });
     }
   }
 
-  async function triggerCrawl() {
+  async function triggerRun(stage) {
+    const safeIssue = String(issueNumber).replace(/[^\d]/g, "");
+    if (!safeIssue) {
+      setError("Issue 번호를 입력해 주세요.");
+      return;
+    }
     setTriggering(true);
     setError("");
     setMessage("");
@@ -560,15 +578,22 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          stage,
           fromDate: selectedPeriod.fromDate,
           toDate: selectedPeriod.toDate,
-          issueNumber,
+          issueNumber: safeIssue,
         }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "크롤링 실행 요청에 실패했습니다.");
-      setCrawlStatus({ label: "진행 중", status: "queued", requested_at: payload.requested_at });
-      setMessage(`${selectedPeriod.label} 기준으로 GitHub Actions 크롤링 실행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.`);
+      if (!response.ok) throw new Error(payload.error || "실행 요청에 실패했습니다.");
+      setRunDialog(null);
+      wasActive.current = true;
+      setCrawlStatus({ label: stage === "publish" ? "발행 중" : "판정 중", status: "queued", active: true, requested_at: payload.requested_at });
+      setMessage(
+        stage === "publish"
+          ? `${selectedPeriod.label} 판정 결과로 Issue ${safeIssue} 보고서 발행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.`
+          : `${selectedPeriod.label} 기준으로 크롤링·판정을 요청했습니다. 판정이 끝나면 Issue ${safeIssue} 보고서 발행이 이어서 실행됩니다.`,
+      );
       window.setTimeout(loadCrawlStatus, 3000);
     } catch (err) {
       setError(err.message);
@@ -605,10 +630,14 @@ export default function HomePage() {
   }, [ignoredSignalKeys]);
 
   useEffect(() => {
-    if (crawlStatus?.label !== "진행 중") return undefined;
+    setIssueNumber(suggestedIssue(published, selectedPeriod.fromDate));
+  }, [published, selectedPeriod.fromDate]);
+
+  useEffect(() => {
+    if (!crawlStatus?.active) return undefined;
     const timer = window.setInterval(loadCrawlStatus, 10000);
     return () => window.clearInterval(timer);
-  }, [crawlStatus?.label]);
+  }, [crawlStatus?.active]);
 
   const displayedSignals = useMemo(
     () => pressReleaseFirst(signals.filter((item) => isWithinPeriod(item, selectedPeriod))),
@@ -663,10 +692,16 @@ export default function HomePage() {
               </small>
             </button>
           </div>
-          <button className="primary" onClick={triggerCrawl} disabled={triggering}>
+          <button className="primary" onClick={() => setRunDialog("collect")} disabled={triggering}>
             {triggering ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
             <span>{triggering ? "요청 중" : "크롤링 수행"}</span>
           </button>
+          {crawlStatus?.can_publish ? (
+            <button className="secondary" onClick={() => setRunDialog("publish")} disabled={triggering}>
+              <FileText size={18} />
+              <span>발행만 실행</span>
+            </button>
+          ) : null}
           <button className="secondary" onClick={loadSignals} disabled={loading}>
             <RefreshCw className={loading ? "spin" : ""} size={18} />
             <span>새로고침</span>
@@ -713,6 +748,39 @@ export default function HomePage() {
               </button>
               <button className="primary" type="button" onClick={applyMonthPicker}>
                 적용
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {runDialog ? (
+        <div className="modalBackdrop" role="presentation" onMouseDown={() => setRunDialog(null)}>
+          <section className="modal compactModal" role="dialog" aria-modal="true" aria-labelledby="run-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="modalHeader">
+              <h2 id="run-dialog-title">{runDialog === "publish" ? "발행만 실행" : "크롤링 수행"}</h2>
+              <p>
+                {runDialog === "publish"
+                  ? `${selectedPeriod.label}(${selectedPeriod.fromDate} ~ ${selectedPeriod.toDate}) 판정 결과로 보고서 문안을 쓰고 국문·영문 PDF를 발행합니다. 판정과 같은 기간이어야 합니다.`
+                  : `${selectedPeriod.label}(${selectedPeriod.fromDate} ~ ${selectedPeriod.toDate}) 기사를 수집·판정하고, 판정이 끝나면 보고서 발행까지 이어서 실행합니다. 판정이 한도로 멈추면 다시 누르면 이어서 진행합니다.`}
+              </p>
+            </div>
+            <label className="modalField">
+              <span>Issue 번호</span>
+              <input
+                type="number"
+                min="1"
+                value={issueNumber}
+                placeholder="예: 5"
+                onChange={(event) => setIssueNumber(event.target.value)}
+              />
+            </label>
+            <div className="modalActions">
+              <button className="secondary" type="button" onClick={() => setRunDialog(null)}>
+                취소
+              </button>
+              <button className="primary" type="button" onClick={() => triggerRun(runDialog)} disabled={triggering}>
+                {triggering ? "요청 중" : "실행"}
               </button>
             </div>
           </section>
@@ -805,6 +873,19 @@ export default function HomePage() {
       ) : null}
 
       {message ? <div className="notice success">{message}</div> : null}
+      {crawlStatus?.hint && ["판정 완료", "판정 일시정지", "발행 일시정지", "판정 실패", "발행 실패"].includes(crawlStatus.label) ? (
+        <div className={`notice ${crawlStatus.label.endsWith("실패") ? "error" : ""}`}>
+          {crawlStatus.hint}
+          {crawlStatus.html_url ? (
+            <>
+              {" "}
+              <a href={crawlStatus.html_url} target="_blank" rel="noreferrer">
+                실행 기록 보기
+              </a>
+            </>
+          ) : null}
+        </div>
+      ) : null}
       {error ? <div className="notice error">{error}</div> : null}
 
       <section className="metrics">
@@ -850,7 +931,10 @@ export default function HomePage() {
         </div>
         <div>
           <span>크롤링 상태</span>
-          <strong className={crawlStatus?.label === "진행 중" ? "statusRunning" : ""}>
+          <strong
+            className={crawlStatus?.active ? "statusRunning" : crawlStatus?.paused ? "statusWarning" : ""}
+            title={crawlStatus?.title || undefined}
+          >
             {triggering ? "요청 중" : crawlStatus?.label || "대기"}
           </strong>
         </div>

@@ -49,7 +49,8 @@ test('monthly CLI aliases and Actions retain one article-review entrypoint', asy
   const pkg = JSON.parse(await fs.readFile('package.json', 'utf8'));
   const workflow = await fs.readFile('.github/workflows/collect-company-signals.yml', 'utf8');
   assert.equal(pkg.scripts['collect:all'], pkg.scripts['report:review']);
-  assert.ok(workflow.includes(`run: ${pkg.scripts['collect:all']}`));
+  // 종료 코드 75(일시정지)를 가르는 감싸기 안에서 부른다.
+  assert.match(workflow, new RegExp(String.raw`^\s+${pkg.scripts['collect:all']} \|\| code=\$\?`, 'm'));
   assert.match(workflow, /run: node scripts\/report_period\.mjs --github-output/);
   const entry = await fs.readFile(pkg.scripts['collect:all'].split(' ').at(-1), 'utf8');
   assert.match(entry, /sourceCandidates\(signals, technology, indicators, period\)/);

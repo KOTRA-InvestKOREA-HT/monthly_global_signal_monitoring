@@ -13,8 +13,8 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
 - `config/approval_policy.json`: the investment-signal approval constants shared by `scripts/validate_report_inputs.mjs` (judging/validation) and `scripts/build_pdf_report.py` (publishing). The human-readable criteria, and the text sent to the model, stay in `docs/local_report_review.md`.
 - `scripts/report_month.mjs`: the single definition of which month "the previous month" is (Asia/Seoul), shared by the Actions run, the crawl button and the dashboard.
-- `.github/workflows/collect-company-signals.yml`: stage 1 — collect, judge and verify (no report copy, no PDF). The dashboard button runs this.
-- `.github/workflows/publish-report.yml`: stage 2 — write the report copy for the finished judgement and build both PDFs.
+- `.github/workflows/collect-company-signals.yml`: stage 1 — collect, judge and verify (no report copy, no PDF). The dashboard button runs this with `auto_publish=true`, so a finished judgement starts stage 2; manual runs judge only unless that box is ticked.
+- `.github/workflows/publish-report.yml`: stage 2 — write the report copy for the finished judgement and build both PDFs. Also the dashboard's `발행만 실행` button.
 - `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.
 - `scripts/extract_pdf_companies.py`: validates PDF page 2 against the canonical list.
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
@@ -274,6 +274,8 @@ A local build writes `coverage.json` alongside its PDFs. Missing monthly sources
 두 워크플로를 차례로 실행한다. 무료 등급 하루 한도를 나눠 쓰도록 보통 이틀에 걸쳐 돌린다.
 
 1. `collect-company-signals`(대시보드 버튼과 같음): 제공자와 기간을 골라 수집·판정·2차 검증을 한다.
+   수동 실행은 `auto_publish`가 꺼져 있어 판정만 한다. 켜면(대시보드 버튼은 항상 켠다) 판정이 끝났을 때 같은 기간·호수로
+   `publish-report`를 이어서 실행한다.
    요청 한도에는 재시도가 포함되며, 한도에 도달하면 진행분을 저장하고 중단한다. 같은 기간으로
    다시 실행하면 유효한 판정을 재사용한다. 판정이 끝나면 실행 요약에 "Judgement complete"가 나온다.
    이 단계는 PDF를 만들거나 커밋하지 않는다.

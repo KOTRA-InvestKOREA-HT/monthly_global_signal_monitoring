@@ -5,6 +5,10 @@ name: publish-report
 # 판정과 같은 기간으로 실행한다(비워 두면 둘 다 지난달). 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
 # 문안 모델(gemini-3.5-flash-lite)이 할당량으로 멈추면 쓴 문안은 캐시에 남으므로, 같은 기간으로 다시 돌리면 이어서 쓴다.
 # 두 PDF 가 모두 만들어졌을 때만 outputs/latest_*.json 과 PDF 를 커밋한다.
+# 대시보드 버튼으로 시작한 collect-company-signals 는 판정이 끝나면 이 워크플로를 실행한다. 대시보드의
+# "발행만 실행" 버튼과 수동 실행은 이 워크플로만 돌린다.
+
+run-name: "publish ${{ inputs.from_date || 'previous month' }} ${{ inputs.to_date }}"
 
 on:
   workflow_dispatch:
@@ -74,7 +78,12 @@ jobs:
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
           REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '' }}
-        run: node scripts/publish_report.mjs
+        # 종료 코드 75 는 문안 모델이 한도로 멈춘 것이다. 아래 "Paused" 단계가 실행을 실패로 끝낸다(collect-company-signals 와 같다).
+        run: |
+          code=0
+          node scripts/publish_report.mjs || code=$?
+          if [ "$code" -eq 75 ]; then echo "paused=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          exit "$code"
       - name: Save progress even when quota is exhausted
         if: ${{ always() && steps.publish.outcome != 'skipped' }}
         uses: actions/cache/save@v5
@@ -89,6 +98,12 @@ jobs:
           path: outputs/review_work
           retention-days: 30
           if-no-files-found: ignore
+      # 멈췄으면 여기서 실행을 끝내 아래 검증·PDF 업로드·커밋을 건너뛴다. 이름은 app/lib/report_pipeline.mjs 의 PAUSED_STEP 과 같다.
+      - name: Paused - run again to resume
+        if: ${{ steps.publish.outputs.paused == 'true' }}
+        run: |
+          echo "::warning::Writing the report copy stopped before finishing (quota). Run publish-report again for the same dates to resume."
+          exit 75
       - name: Validate report inputs
         run: node scripts/validate_report_inputs.mjs
       - name: Downloadable bilingual PDFs
