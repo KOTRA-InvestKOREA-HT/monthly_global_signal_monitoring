@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { dateParam } from "../../lib/date_range.mjs";
+import { internalRequestHeaders, protectionError } from "../../lib/internal_request.mjs";
 import { browserLaunchOptions, printReportPdf } from "../../lib/report_pdf.mjs";
 
 export const dynamic = "force-dynamic";
@@ -122,7 +123,7 @@ async function viewModelFromPython({ issue, ignored, fromDate, toDate, lang }) {
   throw new Error(`보고서 내용을 계산하지 못했습니다. ${errors.join(" | ")}`.trim());
 }
 
-async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toDate, lang }) {
+async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toDate, lang }, incomingHeaders) {
   const endpoint = new URL("/api/report-view-model", requestUrl.origin);
   endpoint.searchParams.set("issue", issue);
   endpoint.searchParams.set("lang", lang);
@@ -130,7 +131,8 @@ async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toD
   if (fromDate) endpoint.searchParams.set("from", fromDate);
   if (toDate) endpoint.searchParams.set("to", toDate);
 
-  const response = await fetch(endpoint, { cache: "no-store" });
+  // 배포 보호를 통과하도록 사용자의 쿠키를 넘긴다. 막히면 로그인 화면으로 넘어가지 않고 그 응답을 그대로 본다.
+  const response = await fetch(endpoint, { cache: "no-store", redirect: "manual", headers: internalRequestHeaders(incomingHeaders) });
   const body = await response.text();
   let payload = null;
   try {
@@ -139,21 +141,22 @@ async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toD
     // JSON 이 아니면 아래에서 본문을 오류로 돌려준다.
   }
   if (!response.ok || !payload) {
-    throw new Error(payload?.error || body || "Vercel Python 보고서 함수 호출에 실패했습니다.");
+    throw new Error(payload?.error || protectionError(response.status, body) || body.slice(0, 500)
+      || "Vercel Python 보고서 함수 호출에 실패했습니다.");
   }
   return payload;
 }
 
-async function reportViewModel(requestUrl, options) {
+async function reportViewModel(requestUrl, options, incomingHeaders) {
   // Vercel 에는 전용 Python 함수가 있다. Node 함수에서 로컬 해석기를 찾거나 Python 입력을 싣지 않는다.
-  if (process.env.VERCEL === "1") return viewModelFromFunction(requestUrl, options);
+  if (process.env.VERCEL === "1") return viewModelFromFunction(requestUrl, options, incomingHeaders);
   try {
     return await viewModelFromPython(options);
   } catch (error) {
     // vercel dev 처럼 로컬 Python 이 없고 Python 함수는 떠 있는 경우.
     if (!/ENOENT/i.test(error.message || "")) throw error;
     try {
-      return await viewModelFromFunction(requestUrl, options);
+      return await viewModelFromFunction(requestUrl, options, incomingHeaders);
     } catch (functionError) {
       throw new Error(`${error.message} | ${functionError.message}`);
     }
@@ -170,7 +173,7 @@ export async function GET(request) {
       toDate: dateParam(url.searchParams.get("to")),
       lang: langParam(url.searchParams.get("lang")),
     };
-    const model = await reportViewModel(url, options);
+    const model = await reportViewModel(url, options, request.headers);
     const { default: puppeteer } = await import("puppeteer-core");
     const output = await printReportPdf(model, {
       puppeteer,

@@ -60,3 +60,41 @@ test('outside Vercel the download prints with the browser CHROME_PATH names', as
     else process.env.CHROME_PATH = saved;
   }
 });
+
+// 보고서 라우트는 같은 배포의 Python 함수를 서버에서 다시 부른다. 배포 보호가 켜진 첫 배포(2026-10-08)에서
+// 이 호출이 로그인 화면으로 돌려보내져, 다운로드 오류 문구로 Vercel 로그인 화면 HTML 이 통째로 찍혔다.
+test('the internal view-model call carries the viewer cookie and the bypass secret', async () => {
+  const { internalRequestHeaders, protectionError } = await import('../app/lib/internal_request.mjs');
+  const incoming = new Headers({ cookie: '_vercel_jwt=abc' });
+  assert.deepEqual(internalRequestHeaders(incoming, {}), { cookie: '_vercel_jwt=abc' });
+  assert.deepEqual(internalRequestHeaders(new Headers(), { VERCEL_AUTOMATION_BYPASS_SECRET: ' s3cret ' }),
+    { 'x-vercel-protection-bypass': 's3cret' });
+  assert.match(protectionError(302, 'Protected by Vercel Authentication'), /Deployment Protection/);
+  assert.match(protectionError(200, '<!DOCTYPE html><html data-dpl-id="dpl_x">'), /배포 보호/);
+  assert.equal(protectionError(500, '{"error":"x"}'), null);
+});
+
+test('a protected view-model call is reported plainly, not as the login page', async t => {
+  const saved = { fetch: globalThis.fetch, vercel: process.env.VERCEL };
+  t.after(() => {
+    globalThis.fetch = saved.fetch;
+    if (saved.vercel === undefined) delete process.env.VERCEL; else process.env.VERCEL = saved.vercel;
+  });
+  process.env.VERCEL = '1';
+  const calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push({ url: String(url), init });
+    return new Response('Protected by Vercel Authentication', { status: 302, headers: { location: 'https://vercel.com/sso-api' } });
+  };
+  const route = await import(`../app/api/report/route.js?case=${Math.random()}`);
+  const response = await route.GET(new Request('https://deploy.example/api/report?issue=4&lang=en',
+    { headers: { cookie: '_vercel_jwt=abc' } }));
+  assert.equal(response.status, 500);
+  const { error } = await response.json();
+  assert.match(error, /배포 보호/);
+  assert.doesNotMatch(error, /<html|Protected by/);
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].url, /^https:\/\/deploy\.example\/api\/report-view-model\?issue=4&lang=en/);
+  assert.equal(calls[0].init.redirect, 'manual');
+  assert.equal(calls[0].init.headers.cookie, '_vercel_jwt=abc');
+});
