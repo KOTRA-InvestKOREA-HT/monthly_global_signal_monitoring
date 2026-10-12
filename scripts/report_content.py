@@ -375,7 +375,9 @@ TEXTS = {
         # 한국어 제목을 낱말마다 옮겨 붙인 것이라 영어로 읽히지 않았다.
         "cover_titles": ["Investment Signals"],
         # 제목 아래 흰색 한 줄. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다.
-        "cover_subtitle": "Monthly monitoring of early signs ahead of investment decisions",
+        # 뜻은 "매달 77개 타겟기업의 투자 시그널 모니터링"이다. monthly 는 monitoring 에 붙인다. signals 앞에 두면
+        # 월 구독형 매매 신호로 읽힌다. 기업에서 포착한 신호라 from 이 아니라 at 을 쓴다(매트릭스 문구와 같음).
+        "cover_subtitle": "Monthly monitoring of investment signals at 77 target companies",
         "cover_title_accent": 0,
         # MOTIR 는 산업통상부의 공식 영문 약칭이다(Ministry of Trade, Industry and Resources).
         "cover_line_1": "30 major investment promotion projects · 77 target companies selected by MOTIR",

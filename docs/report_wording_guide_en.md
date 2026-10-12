@@ -98,6 +98,7 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | `matrix_title` | This Month's Signal Matrix | 3905c25: 국문 "이번 달 시그널 매트릭스"에 맞춤(2026-10 결정) |
 | `item_target_label` | Target technology | e749a7c |
 | `cover_line_1`의 MOTIR | MOTIR | 산업통상부 공식 영문 약칭 |
+| `cover_subtitle` | Monthly monitoring of investment signals at 77 target companies | 2026-10-12 사용자 승인. 뜻은 "매달 77개 타겟기업의 투자 시그널 모니터링"으로 고정한다. 이 뜻을 바꾸는 재해석(결정 전 조짐, 기업이 하는 일 등)은 제안하지 않는다 |
 
 ## 5. 다시 제안하지 않는 문구
 
@@ -127,6 +128,13 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | Changing C-level executives, Changing C-level leaders, Changing C-level leadership | 지표 ⑤ 설명 | 2026-10-12 사용자 지적: "임원을 교체한다"로 좁아져 선임·퇴임·이동을 다 담는 "C-Level 이동"과 맞지 않고, '변하는 임원들'로도 읽힘. "C-level leaders"는 흔한 말이 아님 |
 | unannounced site visits | 지표 ⑤ 설명 | "site"가 붙어 현장 점검처럼 읽힐 수 있고, 국문 "극비 방한"의 방한을 전하지 못함. "unannounced visits to Korea"는 이 행에 해당하지 않는다 |
 | confidential visits to Korea | 지표 ⑤ 설명 | 2026-10-12 검수 반려: 기밀을 입수해 공개하는 감시처럼 읽힘(어조) |
+| Monthly Pre-Decision Indicators Across 77 Priority Companies | 표지 부제 | 다섯 분류를 leading indicators 와 다른 이름으로, 77개사를 target companies 와 다른 이름으로 부름 |
+| Monthly monitoring of early signs ahead of investment decisions | 표지 부제 | 2026-10-12 교체: 명사 나열 관청투, early 와 ahead of 가 같은 뜻을 겹쳐 말함 |
+| What multinationals are doing before they commit capital (및 What (global) companies do before they commit capital 류) | 표지 부제 | 사용자 지적: 원래 뜻(매달 / 77개사 / 투자 시그널)에서 너무 멀어짐 |
+| Tracking the groundwork (that) companies lay before they invest | 표지 부제 | 사용자 거부: groundwork 같은 건설 비유 |
+| Early signs of investment decisions, … / Early signs that companies may invest, … | 표지 부제 | "signs of a decision"은 이미 내린 결정의 흔적으로도 읽힘 / 원래 뜻(77개사·투자 시그널)이 빠짐 |
+| Monthly investment signals from 77 companies | 표지 부제 | 검수 반려: monthly 가 signals 를 꾸며 월 구독형 매매 신호로 읽히고, from 은 기업의 공식 발표로 좁게 읽힘 |
+| Monthly signals of investment at 77 companies | 표지 부제 | 검수 반려: signals of investment 는 번역투이고 이미 이루어진 투자의 흔적으로 읽힘. 77개사가 투자받는 쪽으로도 읽힘 |
 | PRODUCT TRENDS | 품목 면 머리글 | 카드가 기업별이고 내용이 개별 사건이라 product, trends 모두 맞지 않음(§2 용어 근거) |
 
 ## 6. 결정 기록
@@ -144,9 +152,13 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | 2026-10-12 | `INDICATOR_DESCRIPTION_EN[4]` | …PoCs and equity-stake talks → …PoCs, and equity-stake talks | R5 | 사용자 승인, 원어민 최종 검수 통과 |
 | 2026-10-12 | `INDICATOR_DESCRIPTION_EN[5]` | C-suite shifts, unannounced site visits, due diligence coordination → C-suite shifts, low-profile visits to Korea, and due diligence coordination | R2, R4, R5 | 사용자 승인, 원어민 최종 검수 통과. Korea 포함 결정(§5 "Korea Visits"는 이름에 대한 결정으로 해석) |
 | 2026-10-12 | `cover_line_1` | (변경 안 함) "selected by MOTIR" 위치 이동 제안 | R4 | 사용자 결정으로 보류 |
+| 2026-10-12 | `cover_subtitle` | Monthly monitoring of early signs ahead of investment decisions → Monthly monitoring of investment signals at 77 target companies | R1, R3 | 사용자 승인, 원어민·일관성 최종 검수 통과 (후보는 원어민 3명 교차 채점 4라운드를 거침) |
 
 ## 7. 진행 절차
 
+0. **뜻부터 고정한다.** 제목·부제처럼 뜻이 핵심인 문구는 고쳐 쓰기 전에 사람에게 담아야 할 뜻(핵심 요소)을 확인하고,
+   그 요소를 조건으로 건다. 지금 문구의 낱말에서 뜻을 추측하지 않는다. 반복을 피하려고 핵심어를 금지하지 않는다
+   (2026-10-12: 부제에서 signals·77·monitor 를 금지했더니 후보가 모두 원래 뜻 "매달 77개사의 투자 시그널"에서 벗어났다).
 1. **고쳐 쓰기** (`en-wording-rewriter`): §1 대상을 읽고 §3 위반만 찾아 변경안을 낸다. 코드는 고치지 않는다.
 2. **검수** (서로 독립, 고쳐 쓴 쪽의 근거 설명은 넘기지 않고 전후 문구만 넘긴다)
    - `en-reader-reviewer`: 영어 독자 관점에서 아직 어색하거나 오독되는가(R1, R2, R8)
