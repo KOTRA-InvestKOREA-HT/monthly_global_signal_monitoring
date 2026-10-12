@@ -437,10 +437,12 @@ body {
 }
 .cover h1 span { display: block; }
 .cover h1 .accent { color: ${COLORS.gold}; }
+/* One line at 13pt, about as wide as the 44pt title above it. Capped at 400pt
+   it broke between "investment" and "signals" (2026-10-12). A longer subtitle
+   would still wrap, into even halves. */
 .cover-subtitle {
   margin: 16pt 0 0;
-  max-width: 400pt;
-  font-size: 14pt;
+  font-size: 13pt;
   font-weight: 500;
   line-height: 19pt;
   text-wrap: balance;
