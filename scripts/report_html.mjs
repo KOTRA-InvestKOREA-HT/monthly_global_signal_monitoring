@@ -77,29 +77,63 @@ const header = (kicker, title, fraction = '') => `
         <h2>${escapeHtml(title)}</h2>
       </header>`;
 
+// The cover's one ornament: hairline rings spreading from beyond the right edge,
+// a signal travelling outward, drawn in the brand gold and fading with distance.
+// Inline SVG, so the PDF keeps it as vectors and it adds no text to the page.
+function coverMark() {
+  const radii = Array.from({ length: 8 }, (_, i) => 64 + i * 42);
+  return `<svg class="cover-mark" viewBox="0 0 540 772" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="cover-mark-fade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0.075" stop-color="#fff" stop-opacity="0"/>
+            <stop offset="0.24" stop-color="#fff" stop-opacity="1"/>
+            <stop offset="0.5" stop-color="#fff" stop-opacity="1"/>
+            <stop offset="0.72" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <!-- Fades in under the masthead rule, so no ring crosses the running head
+               and none is cut off square, and out before the indicator index. -->
+          <mask id="cover-mark-mask"><rect width="540" height="772" fill="url(#cover-mark-fade)"/></mask>
+        </defs>
+        <g fill="none" stroke="${COLORS.gold}" stroke-width="0.6" mask="url(#cover-mark-mask)">${radii.map((r, i) =>
+          `<circle cx="566" cy="236" r="${r}" stroke-opacity="${(0.40 - i * 0.045).toFixed(3)}"/>`).join('')}</g>
+      </svg>`;
+}
+
 function coverPage(state, model, assets) {
   const { cover, issue } = model;
   const logo = (file, alt, className) => assets
     ? `<img class="${className}" src="${assets}/images/${file}" alt="${alt}">`
     : `<span class="${className}">${alt}</span>`;
+  // The masthead carries the kicker and the issue on one ruled line, as a
+  // periodical's does; the title block then owns the upper half of the page and
+  // the indicator table the lower, with the free space falling between them.
+  // Every description now sits under its name in both languages, so the view
+  // model's stacked/description_offset choice no longer changes the layout.
   return page(state, `
-      <div class="issue">
-        <p class="issue-label">${escapeHtml(issue.label)}</p>
-        <p class="issue-month">${escapeHtml(issue.month)}</p>
+      ${coverMark()}
+      <div class="cover-mast">
+        <p class="cover-kicker">${escapeHtml(cover.kicker || '')}</p>
+        <div class="issue">
+          <p class="issue-label">${escapeHtml(issue.label)}</p>
+          <p class="issue-month">${escapeHtml(issue.month)}</p>
+        </div>
       </div>
       <div class="cover-body">
-        ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : ''}
-        <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
-          `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
-        ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
-        <div class="cover-lines"${cover.line_size ? ` style="font-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
-        <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
-        <ul class="cover-indicators${cover.stacked ? ' stacked' : ''}"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
-          <li>
-            <span class="badge">${escapeHtml(item.no)}</span>
-            <span class="label">${escapeHtml(item.label)}</span>
-            <span class="desc">${escapeHtml(item.description)}</span>
-          </li>`).join('')}</ul>
+        <div class="cover-head">
+          <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
+            `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
+          ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
+          <div class="cover-lines"${cover.line_size ? ` style="--line-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
+        </div>
+        <div class="cover-index">
+          <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
+          <ul class="cover-indicators">${cover.indicators.map(item => `
+            <li>
+              <span class="badge">${escapeHtml(item.no)}</span>
+              <span class="label">${escapeHtml(item.label)}</span>
+              <span class="desc">${escapeHtml(item.description)}</span>
+            </li>`).join('')}</ul>
+        </div>
       </div>
       <div class="cover-foot">
         ${logo('kotra_logo_white.png', 'kotra', 'logo-kotra')}
@@ -327,143 +361,173 @@ body {
 .body { padding: 16pt 30pt 0; }
 
 /* ---- cover ---- */
-/* The cover's anchor points are design constants, so they are placed rather
-   than flowed. What HTML is here for is inside each block: the title shrinks
-   to fit, and a long indicator label pushes its description instead of being
-   overprinted by it. */
+/* Redesigned 2026-10 as an editorial cover. The old one stacked every block
+   down one left column at similar weights and left the top 40% of the page
+   empty, so nothing on it read as designed. Now three bands share one 43pt
+   grid edge: a ruled masthead (kicker and issue), a display title block, and
+   the five indicators set as a ruled index. The two text bands are pinned to
+   the top and the bottom of the body, so the space between them is the only
+   free space and it moves with the language rather than pooling at the top. */
 .cover {
   background: ${COLORS.navy};
   border-top: 8pt solid ${COLORS.gold};
   color: #fff;
 }
 .cover > * { position: absolute; left: 43pt; right: 43pt; }
-.cover .issue { top: 30pt; text-align: right; }
-.issue-label { margin: 0; font-size: 18pt; font-weight: 600; }
-.issue-month { margin: 3pt 0 0; font-size: 10pt; font-weight: 500; color: ${COLORS.onNavy}; }
-/* The text starts on the number rings' left edge (36pt), not the 43pt page margin,
-   so the title, subtitles and the ring column share one edge. */
-.cover-body { top: 185pt; bottom: 76pt; left: 36pt; }
+/* Full bleed behind everything; the rings are cut by the page edge on purpose. */
+.cover .cover-mark { inset: 0; width: 100%; height: 100%; }
+
+/* Masthead: what this is on the left, which issue on the right, one gold rule
+   under both, as a periodical's running head. */
+.cover-mast {
+  top: 26pt;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16pt;
+  padding-bottom: 10pt;
+  border-bottom: 0.6pt solid ${COLORS.gold};
+}
 .cover-kicker {
   margin: 0;
-  font-size: 12pt;
-  font-weight: 500;
+  font-size: 7.5pt;
+  font-weight: 600;
   color: ${COLORS.gold};
   /* The kicker spaces its letters with real spaces; collapsing them runs the
      words together. */
   white-space: pre-wrap;
 }
+.cover .issue { display: flex; align-items: baseline; flex: none; white-space: nowrap; }
+.issue-label { margin: 0; font-size: 9pt; font-weight: 600; }
+/* A short gold stroke between number and month, not a "·" the text would carry. */
+.issue-month {
+  margin: 0 0 0 8pt;
+  padding-left: 8pt;
+  border-left: 0.6pt solid ${COLORS.gold};
+  font-size: 9pt;
+  font-weight: 500;
+  color: ${COLORS.onNavy};
+}
+
+.cover-body {
+  top: 118pt;
+  bottom: 92pt;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* The least the two bands may close to if the text ever grows (about 40pt
+     free in English and 70pt in Korean as of 2026-10). */
+  gap: 24pt;
+}
 .cover h1 {
-  margin: 11pt 0 0;
+  margin: 0;
   /* Overridden per language: the size that fits comes with the view model. */
   font-size: 36pt;
   font-weight: 600;
-  line-height: 45pt;
-  /* Korean breaks between any two syllables unless told otherwise. */
+  /* Display sizes need tighter leading and tracking than text, or the lines
+     drift apart and the word looks spaced out. */
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  /* Korean breaks between any two syllables unless told otherwise. The English
+     title breaks at its space on purpose and stacks into two lines. */
   word-break: keep-all;
 }
 .cover h1 span { display: block; }
 .cover h1 .accent { color: ${COLORS.gold}; }
-.cover-subtitle { margin: 6pt 0 0; font-size: 15pt; font-weight: 500; line-height: 20pt; }
-.cover-lines { margin: 22pt 0 0; font-size: 12pt; line-height: 20pt; }
-.cover-lines p { margin: 0; word-break: keep-all; }
-.cover-indicator-heading { margin: 33pt 0 0; font-size: 9pt; color: ${COLORS.onNavy}; }
-.cover-indicators { margin: 13pt 0 0; padding: 0; list-style: none; }
-.cover-indicators li {
-  display: flex;
-  align-items: baseline;
-  gap: 11pt;
-  height: 32pt;
+.cover-subtitle {
+  margin: 16pt 0 0;
+  max-width: 400pt;
+  font-size: 14pt;
+  font-weight: 500;
+  line-height: 19pt;
+  text-wrap: balance;
 }
-.cover-indicators .badge {
-  flex: none;
-  /* The ring starts the row at the cover text's left edge, as on the drawn cover;
-     the label after it stays at 67pt. */
-  margin-left: 0;
-  width: 20pt;
-  height: 20pt;
-  border: 1.2pt solid ${COLORS.gold};
-  border-radius: 50%;
-  color: ${COLORS.gold};
-  font-size: 9pt;
-  font-weight: 600;
-  line-height: 18pt;
-  text-align: center;
-  /* The number sits on the label's baseline, so the ring follows the label
-     wherever the row puts it. Pinned to the row top (flex-start + 0.8pt) it
-     printed about 4pt below the label's middle. The 9pt numeral's middle is
-     still lower than the 12pt label's, so the ring is raised 1.5pt; printed,
-     ring and cap-height middles then agree within 0.3pt in both languages. */
+/* The scope lines are a standfirst, not body copy: smaller, softer, and set off
+   from the headline by a short gold rule. */
+.cover-lines {
   position: relative;
-  top: -1.5pt;
+  margin: 26pt 0 0;
+  padding-top: 15pt;
+  /* The view model's line_size is the size both lines fit one line at; the
+     standfirst never sets larger than 10.5pt. */
+  font-size: min(10.5pt, var(--line-size, 10.5pt));
+  line-height: 1.65;
+  color: ${COLORS.onNavy};
 }
-/* The label keeps its line and the description gives up room first, which is
-   the priority the hand-fitted version had to compute. Here the two just
-   negotiate: nothing overprints and nothing pushes a row out of its rhythm. */
+.cover-lines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34pt;
+  height: 1.6pt;
+  background: ${COLORS.gold};
+}
+.cover-lines p { margin: 0; word-break: keep-all; text-wrap: balance; }
+
+/* Indicator index: a gold section label running into its rule, then five rows
+   between hairlines. Every description sits under its name, so a long English
+   name has the whole column and a short Korean one leaves no gap to bridge. */
+.cover-indicator-heading {
+  display: flex;
+  align-items: center;
+  gap: 10pt;
+  margin: 0 0 3pt;
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: ${COLORS.gold};
+  white-space: nowrap;
+}
+.cover-indicator-heading::after {
+  content: '';
+  flex: 1;
+  height: 0.6pt;
+  background: ${COLORS.gold};
+  opacity: 0.55;
+}
+.cover-indicators { margin: 0; padding: 0; list-style: none; }
+.cover-indicators li {
+  display: grid;
+  grid-template-columns: 30pt minmax(0, 1fr);
+  padding: 8pt 0 8.5pt;
+  border-bottom: 0.5pt solid rgba(200, 210, 223, 0.22);
+}
+/* The footer's rule closes the page; a second one just above it read as a slip. */
+.cover-indicators li:last-child { border-bottom: 0; }
+/* A plain gold numeral in its own column, set like a table's row number; the
+   rings it replaces made the list read as bullets. */
+.cover-indicators .badge {
+  grid-row: 1 / span 2;
+  font-size: 15pt;
+  font-weight: 600;
+  line-height: 16pt;
+  color: ${COLORS.gold};
+  /* No tabular-nums: Chrome maps Pretendard's tabular figures to private-use
+     code points in the PDF, so the numbers stop extracting as digits. */
+}
 .cover-indicators .label {
-  flex: 0 1 auto;
-  min-width: 0;
+  grid-column: 2;
   font-size: 12pt;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 16pt;
 }
-/* The description takes the room the label leaves and shrinks rather than
-   overprinting it, which is what the hand-fitted version had to guard against. */
+/* Wraps rather than ellipsizes: nothing on the cover may be cut. */
 .cover-indicators .desc {
-  /* Grow into the slack, but give room up far faster than the label does, so a
-     long label shortens the description rather than itself. */
-  flex: 1 999 auto;
-  min-width: 0;
-  padding-left: 16pt;
-  font-size: 8pt;
-  color: ${COLORS.onNavy};
-  text-align: right;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* With the view model's offset the descriptions start in one column, left
-   aligned, as the drawn cover places them, instead of each ending at the margin. */
-.cover-indicators[style] .label { min-width: calc(var(--desc-offset) - 11pt); }
-.cover-indicators[style] .desc { padding-left: 0; text-align: left; }
-/* When a name and its description do not fit one row (the view model measures
-   all five together), every description drops to its own line under its name. */
-/* The ring then stands beside the two-line block, centred on name and description
-   together. Kept on the name's baseline it sat level with the name and left the
-   description hanging below it (English cover, 2026-10). */
-.cover-indicators.stacked li {
-  display: grid;
-  grid-template-columns: 20pt minmax(0, 1fr);
-  column-gap: 11pt;
-  row-gap: 0;
-  align-content: start;
-  /* The one-row layout's baseline alignment would tie the name to the ring and
-     push the description a full ring-height down. */
-  align-items: start;
-  height: 38pt;
-}
-.cover-indicators.stacked .badge { grid-row: 1 / span 2; align-self: center; top: 0; }
-.cover-indicators.stacked .label { grid-column: 2; line-height: 17pt; }
-.cover-indicators.stacked .desc {
   grid-column: 2;
-  /* Under the name, in the ring's neighbouring column. */
-  padding-left: 0;
+  margin-top: 2pt;
   font-size: 8.5pt;
-  line-height: 11pt;
-  text-align: left;
+  line-height: 12pt;
+  color: ${COLORS.onNavy};
+  word-break: keep-all;
 }
-/* The view model's line_size overrides this with the size both lines fit at on one line. */
-html[lang="en"] .cover-lines { font-size: 11pt; }
-/* A long line breaks into two even halves instead of leaving one word behind. */
-html[lang="en"] .cover-lines p { text-wrap: balance; }
 .cover-foot {
   bottom: 0;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 8pt 0 20pt;
-  border-top: 0.7pt solid ${COLORS.divider};
+  padding: 12pt 0 22pt;
+  border-top: 0.5pt solid rgba(200, 210, 223, 0.35);
 }
 .logo-kotra { height: 34pt; }
 .logo-ik { height: 32pt; }

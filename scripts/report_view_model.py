@@ -39,17 +39,29 @@ def matrix_counts(profiles, signal_index, summary, signal_rows):
     }
 
 
+# The HTML cover's display title: the largest size it starts from, and the text
+# column it must fit, 43pt in from both edges (the masthead's and the logos' edges).
+COVER_TITLE_START = {"ko": 50, "en": 64}
+COVER_TITLE_WIDTH = 540 - 2 * 43
+
+
 def title_size(titles, measure):
-    """The size the three cover titles fit at, by the rule the reportlab cover uses.
+    """The size the cover titles fit at.
 
     Shrinking to fit needs text measurement, which CSS cannot do on its own, so
     the decision is made here where the font metrics already live and travels
     with the rest of the view model.
+
+    The HTML cover sets the title as a display headline (2026-10 redesign), so it
+    starts larger than the reportlab cover's 36/30pt. Each Korean line must fit
+    whole. The one-line English title is meant to break between its words and
+    stack ("Investment / Signals"), so only its longest word has to fit.
     """
     fonts = measure.fonts
-    width = report.PAGE_W - report.COVER_TEXT_X - 43
-    size = 30 if report.LANG == "en" else 36
-    while size > 18 and any(measure.canvas.stringWidth(title, fonts["semibold"], size) > width for title in titles):
+    pieces = titles if report.LANG != "en" else [word for title in titles for word in title.split()]
+    size = COVER_TITLE_START.get(report.LANG, COVER_TITLE_START["ko"])
+    while size > 18 and any(measure.canvas.stringWidth(piece, fonts["semibold"], size) > COVER_TITLE_WIDTH
+                            for piece in pieces):
         size -= 1
     return size
 

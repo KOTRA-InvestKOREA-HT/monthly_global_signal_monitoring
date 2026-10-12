@@ -17,18 +17,19 @@ import { browserCandidates, run } from './build_html_report.mjs';
 // Baselines come from build_pdf_report.py, converted from its bottom-left
 // origin: a run drawn at y is PAGE_H - y from the top.
 export const EXPECTED = [
-  ['.cover-kicker', 208, 'baseline'],
-  ['.cover h1 span:nth-child(1)', 264, 'baseline'],
-  ['.cover h1 span:nth-child(2)', 309, 'baseline'],
-  ['.cover h1 span:nth-child(3)', 354, 'baseline'],
-  ['.cover-lines p:nth-child(1)', 396, 'baseline'],
-  ['.cover-lines p:nth-child(2)', 416, 'baseline'],
-  ['.cover-indicator-heading', 461, 'baseline'],
-  // Not the reportlab ring (475): the HTML ring is placed on the label's
-  // optical middle as printed, which in this screen-mode measure reads 472.7.
-  ['.cover-indicators li:nth-child(1) .badge', 472.7, 'top'],
-  ['.cover-indicators li:nth-child(1) .label', 490, 'baseline'],
-  ['.cover-indicators li:nth-child(5) .label', 618, 'baseline'],
+  // The cover no longer follows the reportlab drawing: the HTML cover was
+  // redesigned in 2026-10 (masthead, display title, ruled indicator index), so
+  // these are the Korean cover's own positions as rendered, kept to catch drift.
+  ['.cover-kicker', 43.2, 'baseline'],
+  ['.cover h1 span:nth-child(1)', 180.5, 'baseline'],
+  ['.cover h1 span:nth-child(2)', 235.5, 'baseline'],
+  ['.cover h1 span:nth-child(3)', 290.5, 'baseline'],
+  ['.cover-lines p:nth-child(1)', 348.8, 'baseline'],
+  ['.cover-lines p:nth-child(2)', 366.1, 'baseline'],
+  ['.cover-indicator-heading', 449.6, 'baseline'],
+  ['.cover-indicators li:nth-child(1) .badge', 460.6, 'top'],
+  ['.cover-indicators li:nth-child(1) .label', 473.4, 'baseline'],
+  ['.cover-indicators li:nth-child(5) .label', 662.3, 'baseline'],
   ['.page:nth-of-type(2) .header .kicker', 39, 'baseline'],
   ['.page:nth-of-type(2) .header h2', 66, 'baseline'],
   ['.page:nth-of-type(2) .matrix-desc', 128, 'baseline'],
