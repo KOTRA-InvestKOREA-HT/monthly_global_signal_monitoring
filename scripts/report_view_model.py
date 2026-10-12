@@ -159,8 +159,7 @@ def item_entries(profiles, signal_index, relevant, summary, measure):
             "company": entry["profile"].get("display_name") or entry["profile"]["company"],
             "industry": entry["profile"].get("detailed_industry", ""),
             "country": entry["profile"].get("country", ""),
-            # 유치필요 품목이 지정되지 않은 면제 9개사는 품목 줄 없이 지난달 동향만 싣는다.
-            "target_text": "" if entry["profile"].get("exempt_from_relevance") else report.item_target_text(entry["profile"]),
+            "target_text": report.item_target_text(entry["profile"]),
             # 문장 수를 줄 수에 맞춰 자르지 않고 문안 전체를 싣는다. 카드 높이는 Chrome 이 잰 값으로 장을 나눈다.
             # 줄 수에 맞춰 자르던 때는 긴 영문의 뒷문장이 빠져, HyproMag 인수금액이 영문에만, Renishaw 전시
             # 일정이 한글에만 남았다(실행 35167466191).

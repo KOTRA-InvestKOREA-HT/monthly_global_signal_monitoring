@@ -1,6 +1,7 @@
 import io
 import sys
 import unittest
+import unittest.mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -457,6 +458,18 @@ class SourceLinkTests(unittest.TestCase):
             profile = pdf.build_profiles([{"target_no": 11, "company": "Air Products"}], tech_map)[0]
             self.assertEqual(profile["detailed_industry"], expected)
             self.assertEqual(pdf.target_section_for_profile(profile), ("", ""))
+
+    def test_item_page_leaves_out_companies_never_matched_to_their_target_technology(self):
+        # 2026-10-12: 면제 기업은 품목 연계를 확인하지 않았으므로 품목별 사업동향 페이지에 싣지 않는다.
+        import report_content
+        profiles = [{"company": "Cognex", "target_technology": "machine vision"},
+                    {"company": "Air Products", "target_technology": "HMD", "exempt_from_relevance": True},
+                    {"company": "EVG", "target_technology": "wafer bonding"}]
+        rows = [{"company": "Cognex"}, {"company": "Air Products"},
+                {"company": "EVG", "technology_gate_decision": "relevance_exempt"}]
+        with unittest.mock.patch.object(report_content, "signal_supported", return_value=True):
+            entries = report_content.build_item_trend_entries(profiles, {}, rows)
+        self.assertEqual([entry["profile"]["company"] for entry in entries], ["Cognex"])
 
     def test_every_exempt_company_has_its_own_industry_label(self):
         self.assertEqual(set(pdf.EXEMPT_INDUSTRY), set(pdf.EXEMPT_COMPANIES))

@@ -225,7 +225,8 @@ INDICATOR_DESCRIPTION_EN = {
     3: "Large-scale funding through corporate bonds, equity raises, and credit facilities",
     4: "Joint R&D, technology licensing, PoCs, and equity-stake talks",
     # "unannounced site visits"는 현장 점검처럼 읽히고 국문 "극비 방한"의 방한을 전하지 못했다.
-    5: "C-suite shifts, low-profile visits to Korea, and due diligence coordination",
+    # "C-suite shifts"는 전략·우선순위의 변화로 읽혀, 선임·이동·퇴임을 모두 덮는 "changes"로 바꿨다.
+    5: "C-suite changes, low-profile visits to Korea, and due diligence coordination",
 }
 
 COUNTRY_EN = {
@@ -362,8 +363,7 @@ TEXTS = {
         "item_title": "품목별 글로벌 사업동향",
         "item_target_label": "투자유치 필요 품목·기술",
         "item_trend_label": "{month} 글로벌 사업동향",
-        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 기술 관련성 확인 면제 기업은 품목 연계와 별개로 주요 사업동향을 싣고 카드에 표시함. 향후 시그널 발전 가능성을 모니터링함.",
-        "item_exempt_note": "기술 관련성 확인 면제 · 주요 사업동향",
+        "item_note": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함.",
     },
     "en": {
         # 국문 꼬리말과 같은 구조로 발행처와 호수를 싣는다. 보고서 이름은 표지 머리말과 같다.
@@ -411,9 +411,7 @@ TEXTS = {
         # 시스템 안의 이름(target technology)과도 같다.
         "item_target_label": "Target technology",
         "item_trend_label": "{month} Developments",
-        # 면제 기업 카드에는 표시가 그려지지 않는다. 품목 줄이 없는 것으로 구분된다.
-        "item_note": "These companies had no signals in {month} but reported developments tied directly to their target technologies. Cards without a target technology cover all of a company's businesses. All are monitored for emerging signals.",
-        "item_exempt_note": "Company-wide coverage: major business developments",
+        "item_note": "These companies had no signals in {month} but reported developments tied directly to their target technologies. All are monitored for emerging signals.",
     },
 }
 
@@ -1399,7 +1397,12 @@ def build_item_trend_entries(profiles, signal_index, relevant_rows):
             continue
         # 이 카드의 존재 이유가 '타겟 품목·기술과 직접 연계된 사업동향'이므로,
         # 그 연계가 확인되지 않은 행으로는 카드를 만들지 않는다.
-        candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
+        # 기술 관련성 확인을 면제받은 기업과 행은 품목과의 연계를 확인하지 않았으므로 싣지 않는다.
+        # 예전에는 품목 줄만 숨긴 채 회사 전반의 사업동향 카드로 실었다(2026-10-12 사용자 결정으로 제외).
+        if profile.get("exempt_from_relevance"):
+            continue
+        candidates = [row for row in relevant_rows
+                      if row.get("company") == company and signal_supported(row) and not is_relevance_exempt(row)]
         if not candidates:
             continue
         if not str(profile.get("target_technology") or "").strip():

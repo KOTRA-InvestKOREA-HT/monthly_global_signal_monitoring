@@ -136,6 +136,8 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | Monthly investment signals from 77 companies | 표지 부제 | 검수 반려: monthly 가 signals 를 꾸며 월 구독형 매매 신호로 읽히고, from 은 기업의 공식 발표로 좁게 읽힘 |
 | Monthly signals of investment at 77 companies | 표지 부제 | 검수 반려: signals of investment 는 번역투이고 이미 이루어진 투자의 흔적으로 읽힘. 77개사가 투자받는 쪽으로도 읽힘 |
 | PRODUCT TRENDS | 품목 면 머리글 | 카드가 기업별이고 내용이 개별 사건이라 product, trends 모두 맞지 않음(§2 용어 근거) |
+| C-suite shifts | 지표 ⑤ 설명 | 원어민 3명: shifts 가 전략·우선순위 변화로 읽혀 사람의 이동이 드러나지 않음 |
+| 5 Leading Investment Indicators / 5 leading investment indicators tracked per company | 표지 5대 지표 머리글·정보 줄 | 원어민 3명 반려: leading 이 "top"으로, investment indicators 가 투자자용 지표나 LEI 같은 계량 지수로 읽힘. leading indicators 는 붙여 쓰고 of investment 로 대상을 밝힌다 |
 
 ## 6. 결정 기록
 
@@ -153,6 +155,9 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | 2026-10-12 | `INDICATOR_DESCRIPTION_EN[5]` | C-suite shifts, unannounced site visits, due diligence coordination → C-suite shifts, low-profile visits to Korea, and due diligence coordination | R2, R4, R5 | 사용자 승인, 원어민 최종 검수 통과. Korea 포함 결정(§5 "Korea Visits"는 이름에 대한 결정으로 해석) |
 | 2026-10-12 | `cover_line_1` | (변경 안 함) "selected by MOTIR" 위치 이동 제안 | R4 | 사용자 결정으로 보류 |
 | 2026-10-12 | `cover_subtitle` | Monthly monitoring of early signs ahead of investment decisions → Monthly monitoring of investment signals at 77 target companies | R1, R3 | 사용자 승인, 원어민·일관성 최종 검수 통과 (후보는 원어민 3명 교차 채점 4라운드를 거침) |
+| 2026-10-12 | `item_note` (국·영문), `item_exempt_note` 삭제 | 기술 관련성 확인 면제 기업 카드 설명 문장 삭제: 영문 "Cards without a target technology cover all of a company's businesses." | — | 사용자 결정: 타겟기술을 매칭하지 않은 면제 기업은 품목 면에 싣지 않음 (`build_item_trend_entries`) |
+| 2026-10-12 | `cover_line_2`, `cover_indicator_heading` | (변경 안 함) 5 leading indicators → 5 leading investment indicators, 5 Leading Indicators of Investment → 5 Leading Investment Indicators | R1 | 원어민 3명 모두 반려: "leading"이 "top"으로, "investment indicators"가 투자자용 지표(P/E·ROI)나 LEI 같은 계량 지수로 읽힘 |
+| 2026-10-12 | `INDICATOR_DESCRIPTION_EN[5]` | C-suite shifts → C-suite changes (low-profile visits to Korea 는 유지) | R2 | 사용자 승인. 사전 정보 없는 원어민 3명 모두 "shifts"가 전략·우선순위 변화로도 읽혀 모호하다고 봄. changes 는 국문 "C-Level 이동"의 선임·이동·퇴임을 모두 덮음. low-profile 은 2명 유지, 1명 unpublicized 제안(다른 1명은 unpublicized 가 더 감시처럼 읽힌다고 반대) |
 
 ## 7. 진행 절차
 
