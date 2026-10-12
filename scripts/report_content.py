@@ -208,9 +208,11 @@ SIGNAL_DESCRIPTIONS_EN = {
     # 2026-09 개정: 직역 느낌이 나거나 국문보다 뜻이 좁던 이름을 고쳤다. "Geographical Diversification"은 길고
     # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다.
     # 2026-10 개정: 이름과 설명을 국문 표지(지표 이름, config 의 description_ko)의 항목을 그대로 따르도록 새로 정했다.
+    # ③ "Capital Raising & Liquidity Securing"은 명사 뒤에 동명사를 붙인 번역투라 IR 표준어로 바꿨다(2026-10-12).
+    # 회사채·신용공여(debt)와 유상증자(equity)를 모두 덮는다. 문구 기준은 docs/report_wording_guide_en.md.
     1: "Geopolitical Supply Chain Resilience",
     2: "Production Expansion & Footprint Diversification",
-    3: "Capital Raising & Liquidity Securing",
+    3: "Debt & Equity Financing",
     4: "R&D and Technology Partnerships",
     5: "C-Level Executive Moves",
 }
@@ -219,9 +221,11 @@ INDICATOR_DESCRIPTION_EN = {
     1: "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks",
     # 국문 표지에 APAC 이 있어 영문에도 둔다.
     2: "Evaluating new APAC facility expansions and conducting production site feasibility studies",
-    3: "Issuing large-scale corporate bonds, executing capital increases, securing credit facilities",
-    4: "Joint R&D, technology licensing, PoCs and equity-stake talks",
-    5: "C-suite shifts, unannounced site visits, due diligence coordination",
+    # 국문 표지 "회사채·증자·신용공여 등 대규모 자금 조달"처럼 대규모가 조달 전체에 걸린다.
+    3: "Large-scale funding through corporate bonds, equity raises, and credit facilities",
+    4: "Joint R&D, technology licensing, PoCs, and equity-stake talks",
+    # "unannounced site visits"는 현장 점검처럼 읽히고 국문 "극비 방한"의 방한을 전하지 못했다.
+    5: "C-suite shifts, low-profile visits to Korea, and due diligence coordination",
 }
 
 COUNTRY_EN = {
@@ -296,7 +300,7 @@ TARGET_TECHNOLOGY_DISPLAY_EN = {
     "nonferrous_scrap_recycling": "Maximizing recycled (scrap) content in non-ferrous metal production",
     "hexamethylenediamine_hmd": "Hexamethylenediamine (HMD) production technology for nylon",
     "ion_exchange_membrane": "Ion-exchange and bipolar membranes",
-    "autonomous_imu_rf_baseband": "IMU, RF and baseband chips for autonomous vehicles",
+    "autonomous_imu_rf_baseband": "IMU, RF, and baseband chips for autonomous vehicles",
     "semiconductor_thermal_material": "High-performance thermal materials for semiconductor packaging",
     "autonomous_camera_isp": "Cameras and image signal processors (ISPs) for autonomous vehicles",
     "aerospace_electric_propulsion": "Electric motors and high-power battery propulsion modules for aircraft",
@@ -384,7 +388,7 @@ TEXTS = {
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Capital Raising & Liquidity Securing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
+        "matrix_indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
         # 단수·0개사·전체 문장은 matrix_footnote() 가 고른다.
         "matrix_footnote": "Signals detected at {on} {companies}; none detected at {off}.",
         "matrix_footnote_none": "No signals detected at any of the {total} companies.",

@@ -11,12 +11,12 @@ Monthly monitoring of early signs ahead of investment decisions
 Reducing regional dependency, diversifying supply chains, and addressing regulatory risks
 2 Production Expansion & Footprint Diversification
 Evaluating new APAC facility expansions and conducting production site feasibility studies
-3 Capital Raising & Liquidity Securing
-Issuing large-scale corporate bonds, executing capital increases, securing credit facilities
+3 Debt & Equity Financing
+Large-scale funding through corporate bonds, equity raises, and credit facilities
 4 R&D and Technology Partnerships
-Joint R&D, technology licensing, PoCs and equity-stake talks
+Joint R&D, technology licensing, PoCs, and equity-stake talks
 5 C-Level Executive Moves
-C-suite shifts, unannounced site visits, due diligence coordination
+C-suite shifts, low-profile visits to Korea, and due diligence coordination
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X
@@ -64,7 +64,7 @@ Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
 38 Schott Pharma 77 Shanghai Electric Wind Power
 39 BASF
 Signal detected No signal
-① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Capital Raising & Liquidity Securing
+① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing
 ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves
 Signals detected at 6 companies; none detected at 71.
 Invest KOREA · Global Investment Signal Monitor · Issue 3 02
@@ -76,7 +76,7 @@ Charles River
 Biologics Safety Testing USA
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
-3 Capital Raising & Liquidity Securing No signal in August
+3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics
 Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent
@@ -100,7 +100,7 @@ Boeing
 Aerospace & E-Propulsion USA
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
-3 Capital Raising & Liquidity Securing No signal in August
+3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
 Boeing Investment and Technology Collaboration
 Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
@@ -127,7 +127,7 @@ Lidar & 3D Sensing USA
 Ouster is expanding its LiDAR production capacity to support rising demand, with its production
 run rate expected to increase from approximately 40,000 units annually toward 100,000 units.
 Source: Yahoo Finance Aug 17, 2026
-3 Capital Raising & Liquidity Securing No signal in August
+3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships No signal in August
 5 C-Level Executive Moves No signal in August
 Business Developments
@@ -147,7 +147,7 @@ Applied Materials
 Semiconductor Equipment USA
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
-3 Capital Raising & Liquidity Securing No signal in August
+3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
 AI Computing Material and Process Innovation Research Collaboration
 Applied Materials announced that University of California, Berkeley will join its EPIC Center in
@@ -169,7 +169,7 @@ Nexeon
 Battery Anode Materials UK
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
-3 Capital Raising & Liquidity Securing
+3 Debt & Equity Financing
 Completion of £100 Million Investment Round.
 The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70
 million) commitment from the National Wealth Fund along with new investors Korea
@@ -195,7 +195,7 @@ Veolia
 Ion-Exchange Membranes France
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
-3 Capital Raising & Liquidity Securing
+3 Debt & Equity Financing
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
 bond market.
 Source: Press release · Veolia Aug 26, 2026
@@ -208,7 +208,7 @@ Source: Press release · Veolia Aug 26, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 08
 
 ===== PAGE 9 =====
-P R O D U C T T R E N D S · 1/1
+K E Y D E V E L O P M E N T S · 1/1
 Global Business Developments by Company
 ThesecompanieshadnosignalsinAugustbutreporteddevelopmentstieddirectlytotheirtargettechnologies.Cardswithoutatarget
 technology cover all of a company's businesses. All are monitored for emerging signals.

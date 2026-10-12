@@ -1148,7 +1148,8 @@ def draw_item_trends(report, profiles, signal_index, relevant_rows, summary):
     note = t("item_note", month=month_label)
     for index, page in enumerate(pages, start=1):
         report.new_page()
-        report.header("P R O D U C T   T R E N D S", t("item_title"), f"{index}/{len(pages)}")
+        # 카드가 기업별 개별 사건이라 product·trends 가 맞지 않는다. 화면(report_view_model)도 같은 문자열을 쓴다.
+        report.header("K E Y   D E V E L O P M E N T S", t("item_title"), f"{index}/{len(pages)}")
         if index == 1:
             report.wrapped(note, 30, PAGE_H - 128, PAGE_W - 60, 8, colors.HexColor("#555F6E"), max_lines=2, line_gap=4, align="justify")
         for placed in page:
