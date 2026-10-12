@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport, COLORS, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
+import { renderReport, coverFigure, COLORS, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
 import { itemBreaks, cutTexts } from '../scripts/build_html_report.mjs';
 
 const row = (no, company, signals = [false, false, false, false, false]) => ({ target_no: no, company, signals });
@@ -107,6 +107,28 @@ test('company names are escaped, not injected', () => {
 test('without an asset base the logos fall back to text instead of broken images', () => {
   assert.equal(renderReport(model(1)).includes('<img'), false);
   assert.match(renderReport(model(1), { assets: 'file:///x' }), /<img class="logo-kotra"/);
+});
+
+test('a cover key figure keeps every word of its info line, in order', () => {
+  // The info lines are locked wording; the cover only sets their numbers large.
+  for (const part of ['산업부 선정 30대 투자유치 프로젝트', '77개 타겟기업', '기업별 5대 시그널(전조현상) 포착',
+    '30 major investment promotion projects', '77 target companies selected by MOTIR']) {
+    const { pre, num, unit, post } = coverFigure(part);
+    assert.equal([pre, `${num}${unit}`, post].filter(Boolean).join(' '), part);
+  }
+  assert.deepEqual(coverFigure('산업부 선정 30대 투자유치 프로젝트'),
+    { pre: '산업부 선정', num: '30', unit: '대', post: '투자유치 프로젝트' });
+  assert.equal(coverFigure('Pre-decision signals only'), null);
+});
+
+test('the cover prints every info-line part, as a figure or as a note', () => {
+  const withFigures = model(1);
+  withFigures.cover.lines = ['산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업', '기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반'];
+  const html = renderReport(withFigures);
+  assert.equal(occurrences(html, 'class="figure"'), 3);
+  assert.match(html, /<p class="cover-notes"><span>투자 검토·전조 활동 근거 기반<\/span><\/p>/);
+  // Lines with no number in them are printed whole instead.
+  assert.match(renderReport(model(1)), /<div class="cover-lines"><p>첫 줄<\/p><p>둘째 줄<\/p><\/div>/);
 });
 
 

@@ -77,29 +77,74 @@ const header = (kicker, title, fraction = '') => `
         <h2>${escapeHtml(title)}</h2>
       </header>`;
 
+// One " · " part of a cover info line, cut around its first number so the number
+// can be set as a key figure: "산업부 선정 30대 투자유치 프로젝트" gives pre "산업부 선정",
+// figure 30, unit "대", post "투자유치 프로젝트". Every word stays, in its order; only
+// the type changes. A part with no number (e.g. "Pre-decision signals only") is not
+// a figure and is set as a note under the row instead.
+export function coverFigure(text) {
+  const found = /^(.*?)(\d+)(\S*)\s*(.*)$/s.exec(String(text ?? '').trim());
+  return found ? { pre: found[1].trim(), num: found[2], unit: found[3], post: found[4].trim() } : null;
+}
+
+// The five signal bars in the indicator heading tile: one per indicator, rising,
+// the report's subject drawn as a mark rather than an image file.
+const signalBars = count => `<svg class="bars" viewBox="0 0 ${count * 7 - 3} 20" aria-hidden="true">${
+  Array.from({ length: count }, (_, i) => {
+    const height = 6 + (14 * i) / Math.max(1, count - 1);
+    return `<rect x="${i * 7}" y="${20 - height}" width="4" height="${height}" rx="1"/>`;
+  }).join('')}</svg>`;
+
 function coverPage(state, model, assets) {
   const { cover, issue } = model;
   const logo = (file, alt, className) => assets
     ? `<img class="${className}" src="${assets}/images/${file}" alt="${alt}">`
     : `<span class="${className}">${alt}</span>`;
+  const parts = cover.lines.flatMap(line => String(line).split(' · '));
+  const figures = parts.map(coverFigure);
+  // With no number in either line there is nothing to set as a figure, so the
+  // lines are printed whole, as before.
+  const hasFigures = figures.some(Boolean);
+  // The small line above a figure is kept on every figure once one needs it, so
+  // the numbers of a row stand on one line.
+  const hasPre = figures.some(figure => figure?.pre);
+  const figureHtml = figure => `
+          <div class="figure">
+            ${hasPre ? `<p class="pre">${escapeHtml(figure.pre)}</p>` : ''}
+            <p class="num">${escapeHtml(figure.num)}${figure.unit ? `<span class="unit">${escapeHtml(figure.unit)}</span>` : ''}</p>
+            <p class="post">${escapeHtml(figure.post)}</p>
+          </div>`;
+  const notes = parts.filter((_, index) => !figures[index]);
   return page(state, `
-      <div class="issue">
-        <p class="issue-label">${escapeHtml(issue.label)}</p>
-        <p class="issue-month">${escapeHtml(issue.month)}</p>
-      </div>
       <div class="cover-body">
-        ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : ''}
-        <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
-          `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
-        ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
-        <div class="cover-lines"${cover.line_size ? ` style="font-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
-        <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
-        <ul class="cover-indicators${cover.stacked ? ' stacked' : ''}"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
-          <li>
-            <span class="badge">${escapeHtml(item.no)}</span>
-            <span class="label">${escapeHtml(item.label)}</span>
-            <span class="desc">${escapeHtml(item.description)}</span>
-          </li>`).join('')}</ul>
+        <div class="cover-mast">
+          ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : '<span></span>'}
+          <div class="issue">
+            <p class="issue-label">${escapeHtml(issue.label)}</p>
+            <p class="issue-month">${escapeHtml(issue.month)}</p>
+          </div>
+        </div>
+        <div class="cover-title">
+          <h1 class="${cover.titles.length === 1 ? 'single' : ''}">${cover.titles.map((title, index) =>
+            `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
+          ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
+        </div>
+        ${hasFigures ? `
+        <div class="cover-figures">${figures.filter(Boolean).map(figureHtml).join('')}
+        </div>
+        ${notes.length ? `<p class="cover-notes">${notes.map(note => `<span>${escapeHtml(note)}</span>`).join('')}</p>` : ''}` : `
+        <div class="cover-lines">${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>`}
+        <div class="cover-grid">
+          <div class="tile head">
+            ${signalBars(cover.indicators.length || 5)}
+            <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
+          </div>${cover.indicators.map(item => `
+          <div class="tile">
+            <span class="no">${escapeHtml(String(item.no).padStart(2, '0'))}</span>
+            <p class="label">${escapeHtml(item.label)}</p>
+            <p class="desc">${escapeHtml(item.description)}</p>
+          </div>`).join('')}
+        </div>
       </div>
       <div class="cover-foot">
         ${logo('kotra_logo_white.png', 'kotra', 'logo-kotra')}
@@ -327,136 +372,183 @@ body {
 .body { padding: 16pt 30pt 0; }
 
 /* ---- cover ---- */
-/* The cover's anchor points are design constants, so they are placed rather
-   than flowed. What HTML is here for is inside each block: the title shrinks
-   to fit, and a long indicator label pushes its description instead of being
-   overprinted by it. */
+/* A briefing cover in four bands on one 3-column grid: masthead, title, key
+   figures, indicator tiles. The bands stack in one flex column, so the title
+   band takes whatever height the language leaves and centres itself in it;
+   the old cover pinned its text 185pt down and left the top third empty. */
 .cover {
   background: ${COLORS.navy};
   border-top: 8pt solid ${COLORS.gold};
   color: #fff;
 }
 .cover > * { position: absolute; left: 43pt; right: 43pt; }
-.cover .issue { top: 30pt; text-align: right; }
-.issue-label { margin: 0; font-size: 18pt; font-weight: 600; }
-.issue-month { margin: 3pt 0 0; font-size: 10pt; font-weight: 500; color: ${COLORS.onNavy}; }
-/* The text starts on the number rings' left edge (36pt), not the 43pt page margin,
-   so the title, subtitles and the ring column share one edge. */
-.cover-body { top: 185pt; bottom: 76pt; left: 36pt; }
+.cover-body { top: 26pt; bottom: 76pt; display: flex; flex-direction: column; }
+.cover-body p { margin: 0; }
+
+/* Masthead: the report name and the issue share one line under the gold bar,
+   as a periodical's masthead does, and a hairline closes it off. */
+.cover-mast {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16pt;
+  padding-bottom: 10pt;
+  border-bottom: 0.7pt solid rgba(255, 255, 255, 0.22);
+}
 .cover-kicker {
-  margin: 0;
-  font-size: 12pt;
-  font-weight: 500;
+  font-size: 8pt;
+  font-weight: 600;
   color: ${COLORS.gold};
   /* The kicker spaces its letters with real spaces; collapsing them runs the
      words together. */
   white-space: pre-wrap;
 }
+.cover .issue { text-align: right; flex: none; }
+.issue-label { font-size: 13pt; font-weight: 600; line-height: 15pt; }
+.cover-body .issue-month { margin-top: 1pt; font-size: 8.5pt; font-weight: 500; color: ${COLORS.onNavy}; }
+
+/* Title band. The size is the cover's own, not the view model's fit size: the
+   old 36pt was set for a 3-line title and left the 1-line English title small. */
+.cover-title {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18pt 0;
+}
+.cover-title::before {
+  content: '';
+  width: 30pt;
+  height: 3pt;
+  margin-bottom: 16pt;
+  background: ${COLORS.gold};
+}
 .cover h1 {
-  margin: 11pt 0 0;
-  /* Overridden per language: the size that fits comes with the view model. */
-  font-size: 36pt;
-  font-weight: 600;
-  line-height: 45pt;
+  margin: 0;
+  font-size: 44pt;
+  font-weight: 800;
+  line-height: 52pt;
+  letter-spacing: -0.5pt;
   /* Korean breaks between any two syllables unless told otherwise. */
   word-break: keep-all;
 }
 .cover h1 span { display: block; }
 .cover h1 .accent { color: ${COLORS.gold}; }
-.cover-subtitle { margin: 6pt 0 0; font-size: 15pt; font-weight: 500; line-height: 20pt; }
-.cover-lines { margin: 22pt 0 0; font-size: 12pt; line-height: 20pt; }
-.cover-lines p { margin: 0; word-break: keep-all; }
-.cover-indicator-heading { margin: 33pt 0 0; font-size: 9pt; color: ${COLORS.onNavy}; }
-.cover-indicators { margin: 13pt 0 0; padding: 0; list-style: none; }
-.cover-indicators li {
-  display: flex;
-  align-items: baseline;
-  gap: 11pt;
-  height: 32pt;
+/* A one-line title (English) is set larger and on two lines, word over word,
+   so it holds the band the way the three-line Korean title does. */
+.cover h1.single { font-size: 60pt; line-height: 62pt; letter-spacing: -1pt; }
+.cover h1.single span { width: min-content; }
+.cover-body .cover-subtitle {
+  margin-top: 16pt;
+  font-size: 13.5pt;
+  font-weight: 500;
+  line-height: 19pt;
+  /* Should it ever wrap, two even lines rather than one word left behind. */
+  text-wrap: balance;
 }
-.cover-indicators .badge {
-  flex: none;
-  /* The ring starts the row at the cover text's left edge, as on the drawn cover;
-     the label after it stays at 67pt. */
-  margin-left: 0;
-  width: 20pt;
-  height: 20pt;
-  border: 1.2pt solid ${COLORS.gold};
-  border-radius: 50%;
-  color: ${COLORS.gold};
-  font-size: 9pt;
-  font-weight: 600;
-  line-height: 18pt;
-  text-align: center;
-  /* The number sits on the label's baseline, so the ring follows the label
-     wherever the row puts it. Pinned to the row top (flex-start + 0.8pt) it
-     printed about 4pt below the label's middle. The 9pt numeral's middle is
-     still lower than the 12pt label's, so the ring is raised 1.5pt; printed,
-     ring and cap-height middles then agree within 0.3pt in both languages. */
-  position: relative;
-  top: -1.5pt;
-}
-/* The label keeps its line and the description gives up room first, which is
-   the priority the hand-fitted version had to compute. Here the two just
-   negotiate: nothing overprints and nothing pushes a row out of its rhythm. */
-.cover-indicators .label {
-  flex: 0 1 auto;
-  min-width: 0;
-  font-size: 12pt;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* The description takes the room the label leaves and shrinks rather than
-   overprinting it, which is what the hand-fitted version had to guard against. */
-.cover-indicators .desc {
-  /* Grow into the slack, but give room up far faster than the label does, so a
-     long label shortens the description rather than itself. */
-  flex: 1 999 auto;
-  min-width: 0;
-  padding-left: 16pt;
-  font-size: 8pt;
-  color: ${COLORS.onNavy};
-  text-align: right;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* With the view model's offset the descriptions start in one column, left
-   aligned, as the drawn cover places them, instead of each ending at the margin. */
-.cover-indicators[style] .label { min-width: calc(var(--desc-offset) - 11pt); }
-.cover-indicators[style] .desc { padding-left: 0; text-align: left; }
-/* When a name and its description do not fit one row (the view model measures
-   all five together), every description drops to its own line under its name. */
-/* The ring then stands beside the two-line block, centred on name and description
-   together. Kept on the name's baseline it sat level with the name and left the
-   description hanging below it (English cover, 2026-10). */
-.cover-indicators.stacked li {
+
+/* Key figures: each " · " part of the info lines that carries a number, the
+   number set large in gold and the words around it kept as its caption. */
+.cover-figures {
   display: grid;
-  grid-template-columns: 20pt minmax(0, 1fr);
-  column-gap: 11pt;
-  row-gap: 0;
-  align-content: start;
-  /* The one-row layout's baseline alignment would tie the name to the ring and
-     push the description a full ring-height down. */
-  align-items: start;
-  height: 38pt;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 10pt;
 }
-.cover-indicators.stacked .badge { grid-row: 1 / span 2; align-self: center; top: 0; }
-.cover-indicators.stacked .label { grid-column: 2; line-height: 17pt; }
-.cover-indicators.stacked .desc {
-  grid-column: 2;
-  /* Under the name, in the ring's neighbouring column. */
-  padding-left: 0;
-  font-size: 8.5pt;
-  line-height: 11pt;
-  text-align: left;
+.cover-figures .figure {
+  position: relative;
+  padding-top: 10pt;
+  border-top: 0.7pt solid rgba(255, 255, 255, 0.22);
+  word-break: keep-all;
 }
-/* The view model's line_size overrides this with the size both lines fit at on one line. */
-html[lang="en"] .cover-lines { font-size: 11pt; }
-/* A long line breaks into two even halves instead of leaving one word behind. */
-html[lang="en"] .cover-lines p { text-wrap: balance; }
+/* A short gold tick on each column's rule marks where the figure starts. */
+.cover-figures .figure::before {
+  content: '';
+  position: absolute;
+  top: -1.2pt;
+  left: 0;
+  width: 22pt;
+  height: 2pt;
+  background: ${COLORS.gold};
+}
+.cover-figures .pre { min-height: 11pt; font-size: 8.5pt; line-height: 11pt; color: ${COLORS.onNavy}; }
+.cover-figures .num {
+  margin-top: 2pt;
+  font-size: 40pt;
+  font-weight: 800;
+  line-height: 42pt;
+  letter-spacing: -1pt;
+  color: ${COLORS.gold};
+}
+.cover-figures .unit { margin-left: 1.5pt; font-size: 16pt; font-weight: 600; letter-spacing: 0; }
+.cover-figures .post { margin-top: 3pt; padding-right: 6pt; font-size: 9.5pt; font-weight: 500; line-height: 13pt; text-wrap: balance; }
+.cover-body .cover-notes { margin-top: 12pt; font-size: 8.5pt; color: ${COLORS.onNavy}; }
+/* A gold diamond before a note sets it apart from the captions above. */
+.cover-notes span::before {
+  content: '';
+  display: inline-block;
+  width: 4pt;
+  height: 4pt;
+  margin: 0 7pt 1.2pt 1pt;
+  background: ${COLORS.gold};
+  transform: rotate(45deg);
+}
+.cover-notes span + span { margin-left: 16pt; }
+/* With no figure in the lines they print whole, as on the old cover. */
+.cover-lines { font-size: 11pt; line-height: 18pt; word-break: keep-all; }
+
+/* Indicator tiles on the figures' 3-column grid: the heading takes the first
+   cell, the five indicators the rest, so 6 cells close the grid without an
+   orphan tile. */
+.cover-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 10pt;
+  margin: 26pt 0 22pt;
+}
+.cover-grid .tile {
+  min-height: 92pt;
+  padding: 11pt 12pt 12pt;
+  border: 0.7pt solid rgba(255, 255, 255, 0.14);
+  border-radius: 6pt;
+  background: rgba(255, 255, 255, 0.05);
+  word-break: keep-all;
+}
+.cover-grid .no {
+  display: block;
+  font-size: 11pt;
+  font-weight: 800;
+  line-height: 13pt;
+  letter-spacing: 0.5pt;
+  color: ${COLORS.gold};
+}
+/* "pretty", not "balance", for the descriptions: balance broke Korean lines just
+   before a middle dot ("·생산기지"); pretty only keeps "등" from standing alone. */
+.cover-grid .label { margin-top: 8pt; font-size: 10.5pt; font-weight: 600; line-height: 13.5pt; text-wrap: balance; }
+.cover-grid .desc { margin-top: 5pt; font-size: 8pt; line-height: 11pt; color: ${COLORS.onNavy}; text-wrap: pretty; }
+/* The heading cell is a label, not a sixth card: open, on the same rule and
+   gold tick as the figures above it, so the gold stays with the numbers. */
+.cover-grid .tile.head {
+  position: relative;
+  padding: 12pt 8pt 0 0;
+  border: 0;
+  border-top: 0.7pt solid rgba(255, 255, 255, 0.22);
+  border-radius: 0;
+  background: none;
+}
+.cover-grid .tile.head::before {
+  content: '';
+  position: absolute;
+  top: -1.2pt;
+  left: 0;
+  width: 22pt;
+  height: 2pt;
+  background: ${COLORS.gold};
+}
+/* Bars and heading sit together at the top, as a tile's number and name do. */
+.cover-grid .bars { display: block; width: 31pt; height: 20pt; fill: ${COLORS.gold}; }
+.cover-grid .cover-indicator-heading { margin-top: 12pt; font-size: 14pt; font-weight: 600; line-height: 18pt; text-wrap: balance; }
 .cover-foot {
   bottom: 0;
   display: flex;

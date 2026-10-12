@@ -16,19 +16,9 @@ import { browserCandidates, run } from './build_html_report.mjs';
 // [selector, expected distance from the top of its own page, what to measure]
 // Baselines come from build_pdf_report.py, converted from its bottom-left
 // origin: a run drawn at y is PAGE_H - y from the top.
+// The cover is not here: the HTML cover was redesigned as a key-figure grid
+// (2026-10) and no longer follows the reportlab cover's coordinates.
 export const EXPECTED = [
-  ['.cover-kicker', 208, 'baseline'],
-  ['.cover h1 span:nth-child(1)', 264, 'baseline'],
-  ['.cover h1 span:nth-child(2)', 309, 'baseline'],
-  ['.cover h1 span:nth-child(3)', 354, 'baseline'],
-  ['.cover-lines p:nth-child(1)', 396, 'baseline'],
-  ['.cover-lines p:nth-child(2)', 416, 'baseline'],
-  ['.cover-indicator-heading', 461, 'baseline'],
-  // Not the reportlab ring (475): the HTML ring is placed on the label's
-  // optical middle as printed, which in this screen-mode measure reads 472.7.
-  ['.cover-indicators li:nth-child(1) .badge', 472.7, 'top'],
-  ['.cover-indicators li:nth-child(1) .label', 490, 'baseline'],
-  ['.cover-indicators li:nth-child(5) .label', 618, 'baseline'],
   ['.page:nth-of-type(2) .header .kicker', 39, 'baseline'],
   ['.page:nth-of-type(2) .header h2', 66, 'baseline'],
   ['.page:nth-of-type(2) .matrix-desc', 128, 'baseline'],
