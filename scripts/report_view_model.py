@@ -39,16 +39,23 @@ def matrix_counts(profiles, signal_index, summary, signal_rows):
     }
 
 
+# The HTML cover sets its title as display type on the 43pt page margin, larger
+# than the drawn cover's 30/36pt: at 30pt the one-line English title read small
+# for a cover.
+COVER_TITLE_START = {"en": 46, "ko": 40}
+COVER_TEXT_WIDTH = report.PAGE_W - 43 - 43
+
+
 def title_size(titles, measure):
-    """The size the three cover titles fit at, by the rule the reportlab cover uses.
+    """The largest size up to COVER_TITLE_START at which every cover title fits one line.
 
     Shrinking to fit needs text measurement, which CSS cannot do on its own, so
     the decision is made here where the font metrics already live and travels
     with the rest of the view model.
     """
     fonts = measure.fonts
-    width = report.PAGE_W - report.COVER_TEXT_X - 43
-    size = 30 if report.LANG == "en" else 36
+    width = COVER_TEXT_WIDTH
+    size = COVER_TITLE_START["en" if report.LANG == "en" else "ko"]
     while size > 18 and any(measure.canvas.stringWidth(title, fonts["semibold"], size) > width for title in titles):
         size -= 1
     return size
@@ -179,12 +186,6 @@ def indicator_entries(indicators):
     return entries
 
 
-def description_offset(entries, measure):
-    """How far right of the label column the descriptions start, as the drawn cover places them."""
-    texts = [(entry["label"], entry["description"]) for entry in entries]
-    return round(report.cover_description_x(measure.canvas, measure.fonts, texts) - 67, 2)
-
-
 def build(args):
     report.set_language(args.lang)
     # One font registration and measurement canvas for the entire report.
@@ -227,10 +228,6 @@ def build(args):
             "line_size": report.cover_line_size(measure.canvas, measure.fonts, cover_lines),
             "indicator_heading": report.t("cover_indicator_heading"),
             "indicators": cover_indicators,
-            # 설명을 이름 아래 줄로 내리면 옆 칸 시작점(description_offset)은 쓰지 않는다.
-            "stacked": (stacked := report.cover_descriptions_stacked(
-                measure.canvas, measure.fonts, [(e["label"], e["description"]) for e in cover_indicators])),
-            "description_offset": None if stacked else description_offset(cover_indicators, measure),
         },
         "matrix": {
             "kicker": "S I G N A L   M A T R I X",

@@ -77,29 +77,188 @@ const header = (kicker, title, fraction = '') => `
         <h2>${escapeHtml(title)}</h2>
       </header>`;
 
+// ---- cover motif ----
+// The cover's graphic: a dot-grid globe turned to Asia, a few great-circle arcs
+// from other regions converging on Korea, and signal rings spreading from it.
+// It is computed rather than drawn so the globe stays a true orthographic
+// projection, and inlined so the PDF needs no image asset. It carries no text:
+// every word on the cover stays in the HTML where the wording guide governs it.
+const MOTIF = { cx: 404, cy: 236, r: 196, tilt: 24, lon0: 112, step: 4 };
+const MOTIF_HOME = [37.5, 127];
+// Frankfurt, Dubai, Bengaluru and Singapore, all on the visible face (Sydney's
+// route swept down beside the subtitle): regions, not data, so they never change
+// month to month.
+const MOTIF_SOURCES = [[50.1, 8.7], [25.2, 55.3], [13, 77.6], [1.3, 103.8]];
+
+const rad = degrees => (degrees * Math.PI) / 180;
+const fix = value => Math.round(value * 10) / 10;
+
+// A latitude/longitude as a unit vector in view space: x right, y up, z towards the reader.
+function motifVector(lat, lon) {
+  const [phi, lambda, tilt] = [rad(lat), rad(lon - MOTIF.lon0), rad(MOTIF.tilt)];
+  return [
+    Math.cos(phi) * Math.sin(lambda),
+    Math.cos(tilt) * Math.sin(phi) - Math.sin(tilt) * Math.cos(phi) * Math.cos(lambda),
+    Math.sin(tilt) * Math.sin(phi) + Math.cos(tilt) * Math.cos(phi) * Math.cos(lambda),
+  ];
+}
+
+// A point is hidden only when it is behind the globe and inside its disc, so an
+// arc lifted off the surface can still show where it passes over the horizon.
+const motifPoint = ([x, y, z], lift = 1) => ({
+  x: MOTIF.cx + MOTIF.r * lift * x,
+  y: MOTIF.cy - MOTIF.r * lift * y,
+  z,
+  seen: z >= 0 || lift * Math.hypot(x, y) > 1,
+});
+
+// The motif dissolves diagonally towards the lower left, where the title stands,
+// so no word sits on a busy ground. The fade is worked into each mark's opacity
+// here rather than drawn as an SVG mask: Chrome prints a mask as a soft-mask
+// image, which made each PDF about 340KB heavier.
+const MOTIF_FADE = { from: [480, 40], to: [260, 500], stops: [[0.35, 1], [0.62, 0.2], [0.78, 0]] };
+
+function motifFade(x, y) {
+  const { from, to, stops } = MOTIF_FADE;
+  const [dx, dy] = [to[0] - from[0], to[1] - from[1]];
+  const t = ((x - from[0]) * dx + (y - from[1]) * dy) / (dx * dx + dy * dy);
+  if (t <= stops[0][0]) return stops[0][1];
+  for (let i = 1; i < stops.length; i += 1) {
+    const [[t0, o0], [t1, o1]] = [stops[i - 1], stops[i]];
+    if (t <= t1) return o0 + ((o1 - o0) * (t - t0)) / (t1 - t0);
+  }
+  return stops[stops.length - 1][1];
+}
+
+// Opacities are rounded to steps of 0.02 so each stroke style is one path.
+const fadeLevel = (opacity, x, y) => Math.round(opacity * motifFade(x, y) * 50) / 50;
+
+// Polylines as strokes whose opacity follows the fade. A run keeps one subpath
+// while its level holds: separate overlapping segments would darken at every joint.
+function fadedStrokes(lines, { color, opacity, width }) {
+  const levels = new Map();
+  const add = (level, d) => level > 0 && levels.set(level, (levels.get(level) || '') + d);
+  for (const line of lines) {
+    let [run, runLevel] = ['', 0];
+    for (let i = 1; i < line.length; i += 1) {
+      const [a, b] = [line[i - 1], line[i]];
+      const level = a.seen && b.seen ? fadeLevel(opacity, (a.x + b.x) / 2, (a.y + b.y) / 2) : 0;
+      if (level !== runLevel || !run) {
+        add(runLevel, run);
+        [run, runLevel] = [level ? `M${fix(a.x)} ${fix(a.y)}` : '', level];
+      }
+      if (level) run += `L${fix(b.x)} ${fix(b.y)}`;
+    }
+    add(runLevel, run);
+  }
+  return [...levels].map(([level, d]) =>
+    `<path d="${d}" stroke="${color}" stroke-opacity="${level}" stroke-width="${width}"/>`).join('');
+}
+
+// Filled dots, grouped by faded opacity in the same way.
+function fadedDots(points, { color, opacity, size }) {
+  const levels = new Map();
+  for (const point of points) {
+    const level = fadeLevel(typeof opacity === 'function' ? opacity(point) : opacity, point.x, point.y);
+    if (level > 0) levels.set(level, (levels.get(level) || '') + `M${fix(point.x)} ${fix(point.y)}h0`);
+  }
+  return [...levels].map(([level, d]) =>
+    `<path d="${d}" stroke="${color}" stroke-opacity="${level}" stroke-width="${size}" stroke-linecap="round"/>`).join('');
+}
+
+const circlePoints = (x, y, radius, steps = 120) => Array.from({ length: steps + 1 }, (_, i) => ({
+  x: x + radius * Math.cos((2 * Math.PI * i) / steps),
+  y: y + radius * Math.sin((2 * Math.PI * i) / steps),
+  seen: true,
+}));
+
+function motifArc(from, to) {
+  const [a, b] = [motifVector(...from), motifVector(...to)];
+  const angle = Math.acos(Math.min(1, a.reduce((sum, value, i) => sum + value * b[i], 0)));
+  // Longer routes arc higher, as flight paths on a globe do.
+  const height = 0.03 + 0.16 * (angle / Math.PI);
+  return Array.from({ length: 49 }, (_, step) => {
+    const t = step / 48;
+    const [wa, wb] = [Math.sin((1 - t) * angle) / Math.sin(angle), Math.sin(t * angle) / Math.sin(angle)];
+    return motifPoint(a.map((value, i) => wa * value + wb * b[i]), 1 + height * Math.sin(Math.PI * t));
+  });
+}
+
+// One wide orbit around the globe, rising to the left so it reaches into the
+// upper-left corner the globe leaves empty. Its far side passes behind the globe.
+function motifOrbit() {
+  const [scale, rise] = [1.5, rad(-14)];
+  const u = [Math.cos(rise), Math.sin(rise), 0];
+  // Mostly towards the reader and a little down, made perpendicular to u, so the
+  // near side passes low across the faded part of the globe, not over the rings.
+  const w0 = [0, -0.3, 0.954];
+  const dot = w0.reduce((sum, value, i) => sum + value * u[i], 0);
+  const w1 = w0.map((value, i) => value - dot * u[i]);
+  const w = w1.map(value => value / Math.hypot(...w1));
+  return Array.from({ length: 181 }, (_, step) => {
+    const theta = (2 * Math.PI * step) / 180;
+    return motifPoint(u.map((value, i) => Math.cos(theta) * value + Math.sin(theta) * w[i]), scale);
+  });
+}
+
+function coverMotif() {
+  const { cx, cy, r, step } = MOTIF;
+  const grid = [];
+  for (let lat = -90 + step / 2; lat < 90; lat += step) {
+    const count = Math.max(1, Math.round((360 / step) * Math.cos(rad(lat))));
+    for (let i = 0; i < count; i += 1) {
+      const point = motifPoint(motifVector(lat, (360 * i) / count));
+      if (point.z >= 0.08) grid.push(point);
+    }
+  }
+  const home = motifPoint(motifVector(...MOTIF_HOME));
+  const sources = MOTIF_SOURCES.map(source => motifPoint(motifVector(...source)));
+  const orbit = motifOrbit();
+  const rings = [11, 21, 33, 50, 72, 100];
+  return `
+      <svg class="cover-motif" viewBox="0 0 ${PAGE_WIDTH_PT} ${PAGE_HEIGHT_PT}" aria-hidden="true" fill="none" stroke-linecap="butt">
+        ${fadedStrokes([circlePoints(cx, cy, r, 240)], { color: COLORS.onNavy, opacity: 0.22, width: 0.6 })}
+        ${fadedStrokes([orbit], { color: COLORS.onNavy, opacity: 0.32, width: 0.6 })}
+        ${fadedDots([orbit[84]], { color: '#fff', opacity: 0.85, size: 4.4 })}
+        <!-- Dots fade towards the rim, which is all the shading a sphere needs here. -->
+        ${fadedDots(grid, { color: COLORS.onNavy, opacity: point => (point.z < 0.4 ? 0.18 : point.z < 0.75 ? 0.34 : 0.54), size: 1.5 })}
+        ${rings.slice(0, 3).map((ring, i) => fadedStrokes([circlePoints(home.x, home.y, ring)], { color: COLORS.gold, opacity: [0.75, 0.5, 0.3][i], width: 0.8 })).join('')}
+        ${rings.slice(3).map((ring, i) => fadedStrokes([circlePoints(home.x, home.y, ring)], { color: COLORS.onNavy, opacity: [0.17, 0.14, 0.11][i], width: 0.6 })).join('')}
+        ${fadedStrokes(MOTIF_SOURCES.map(source => motifArc(source, MOTIF_HOME)), { color: '#fff', opacity: 0.42, width: 0.7 })}
+        ${fadedDots(sources.filter(point => point.seen), { color: '#fff', opacity: 0.8, size: 3.8 })}
+        <circle cx="${fix(home.x)}" cy="${fix(home.y)}" r="6" fill="${COLORS.gold}" fill-opacity="0.25"/>
+        <circle cx="${fix(home.x)}" cy="${fix(home.y)}" r="3" fill="${COLORS.gold}"/>
+      </svg>`;
+}
+
+// The motif never changes with the data, so it is built once per process.
+const COVER_MOTIF = coverMotif();
+
 function coverPage(state, model, assets) {
   const { cover, issue } = model;
   const logo = (file, alt, className) => assets
     ? `<img class="${className}" src="${assets}/images/${file}" alt="${alt}">`
     : `<span class="${className}">${alt}</span>`;
-  return page(state, `
-      <div class="issue">
-        <p class="issue-label">${escapeHtml(issue.label)}</p>
-        <p class="issue-month">${escapeHtml(issue.month)}</p>
-      </div>
-      <div class="cover-body">
+  return page(state, `${COVER_MOTIF}
+      <header class="cover-mast">
         ${cover.kicker ? `<p class="cover-kicker">${escapeHtml(cover.kicker)}</p>` : ''}
-        <h1 style="font-size:${cover.title_size ?? 36}pt">${cover.titles.map((title, index) =>
+        <div class="issue">
+          <p class="issue-label">${escapeHtml(issue.label)}</p>
+          <p class="issue-month">${escapeHtml(issue.month)}</p>
+        </div>
+      </header>
+      <div class="cover-body">
+        <h1 style="font-size:${cover.title_size ?? 40}pt">${cover.titles.map((title, index) =>
           `<span class="${index === (cover.accent ?? 1) ? 'accent' : ''}">${escapeHtml(title)}</span>`).join('')}</h1>
         ${cover.subtitle ? `<p class="cover-subtitle">${escapeHtml(cover.subtitle)}</p>` : ''}
         <div class="cover-lines"${cover.line_size ? ` style="font-size:${cover.line_size}pt"` : ''}>${cover.lines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}</div>
         <p class="cover-indicator-heading">${escapeHtml(cover.indicator_heading)}</p>
-        <ul class="cover-indicators${cover.stacked ? ' stacked' : ''}"${cover.description_offset ? ` style="--desc-offset:${cover.description_offset}pt"` : ''}>${cover.indicators.map(item => `
+        <ol class="cover-indicators">${cover.indicators.map(item => `
           <li>
             <span class="badge">${escapeHtml(item.no)}</span>
             <span class="label">${escapeHtml(item.label)}</span>
             <span class="desc">${escapeHtml(item.description)}</span>
-          </li>`).join('')}</ul>
+          </li>`).join('')}</ol>
       </div>
       <div class="cover-foot">
         ${logo('kotra_logo_white.png', 'kotra', 'logo-kotra')}
@@ -327,134 +486,123 @@ body {
 .body { padding: 16pt 30pt 0; }
 
 /* ---- cover ---- */
-/* The cover's anchor points are design constants, so they are placed rather
-   than flowed. What HTML is here for is inside each block: the title shrinks
-   to fit, and a long indicator label pushes its description instead of being
-   overprinted by it. */
+/* Three bands on one 43pt margin: a masthead, the motif filling the upper half,
+   and the text stacked up from the logos. The text is flowed from the bottom so
+   the three-line Korean title and the one-line English title with its subtitle
+   both end the same distance above the indicators, and the motif simply shows
+   more of itself above the shorter English block. */
 .cover {
   background: ${COLORS.navy};
   border-top: 8pt solid ${COLORS.gold};
   color: #fff;
 }
 .cover > * { position: absolute; left: 43pt; right: 43pt; }
-.cover .issue { top: 30pt; text-align: right; }
-.issue-label { margin: 0; font-size: 18pt; font-weight: 600; }
-.issue-month { margin: 3pt 0 0; font-size: 10pt; font-weight: 500; color: ${COLORS.onNavy}; }
-/* The text starts on the number rings' left edge (36pt), not the 43pt page margin,
-   so the title, subtitles and the ring column share one edge. */
-.cover-body { top: 185pt; bottom: 76pt; left: 36pt; }
+.cover > .cover-motif { inset: 0; width: 100%; height: 100%; }
+/* Series name and issue read as one periodical masthead, ruled off from the page. */
+.cover-mast {
+  top: 22pt;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12pt;
+  padding-bottom: 9pt;
+  border-bottom: 0.6pt solid rgba(255, 255, 255, 0.22);
+}
 .cover-kicker {
   margin: 0;
-  font-size: 12pt;
-  font-weight: 500;
+  font-size: 8pt;
+  font-weight: 600;
   color: ${COLORS.gold};
   /* The kicker spaces its letters with real spaces; collapsing them runs the
      words together. */
   white-space: pre-wrap;
 }
+.cover .issue { display: flex; align-items: baseline; margin-left: auto; white-space: nowrap; }
+.issue-label { margin: 0; font-size: 10pt; font-weight: 600; }
+.issue-month {
+  margin: 0 0 0 8pt;
+  padding-left: 8pt;
+  border-left: 0.8pt solid ${COLORS.gold};
+  font-size: 10pt;
+  font-weight: 500;
+  color: ${COLORS.onNavy};
+}
+.cover-body {
+  top: 70pt;
+  bottom: 80pt;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
 .cover h1 {
-  margin: 11pt 0 0;
+  margin: 0;
   /* Overridden per language: the size that fits comes with the view model. */
-  font-size: 36pt;
+  font-size: 40pt;
   font-weight: 600;
-  line-height: 45pt;
+  line-height: 1.2;
+  /* Display sizes look loose at the font's text spacing. */
+  letter-spacing: -0.02em;
   /* Korean breaks between any two syllables unless told otherwise. */
   word-break: keep-all;
 }
 .cover h1 span { display: block; }
 .cover h1 .accent { color: ${COLORS.gold}; }
-.cover-subtitle { margin: 6pt 0 0; font-size: 15pt; font-weight: 500; line-height: 20pt; }
-.cover-lines { margin: 22pt 0 0; font-size: 12pt; line-height: 20pt; }
-.cover-lines p { margin: 0; word-break: keep-all; }
-.cover-indicator-heading { margin: 33pt 0 0; font-size: 9pt; color: ${COLORS.onNavy}; }
-.cover-indicators { margin: 13pt 0 0; padding: 0; list-style: none; }
-.cover-indicators li {
-  display: flex;
-  align-items: baseline;
-  gap: 11pt;
-  height: 32pt;
-}
-.cover-indicators .badge {
-  flex: none;
-  /* The ring starts the row at the cover text's left edge, as on the drawn cover;
-     the label after it stays at 67pt. */
-  margin-left: 0;
-  width: 20pt;
-  height: 20pt;
-  border: 1.2pt solid ${COLORS.gold};
-  border-radius: 50%;
-  color: ${COLORS.gold};
-  font-size: 9pt;
-  font-weight: 600;
-  line-height: 18pt;
-  text-align: center;
-  /* The number sits on the label's baseline, so the ring follows the label
-     wherever the row puts it. Pinned to the row top (flex-start + 0.8pt) it
-     printed about 4pt below the label's middle. The 9pt numeral's middle is
-     still lower than the 12pt label's, so the ring is raised 1.5pt; printed,
-     ring and cap-height middles then agree within 0.3pt in both languages. */
-  position: relative;
-  top: -1.5pt;
-}
-/* The label keeps its line and the description gives up room first, which is
-   the priority the hand-fitted version had to compute. Here the two just
-   negotiate: nothing overprints and nothing pushes a row out of its rhythm. */
-.cover-indicators .label {
-  flex: 0 1 auto;
-  min-width: 0;
+.cover-subtitle { margin: 8pt 0 0; font-size: 14pt; font-weight: 500; line-height: 19pt; }
+/* The scope lines are a standfirst, set off by a gold rule, not body text. */
+.cover-lines {
+  margin: 18pt 0 0;
+  padding-left: 11pt;
+  border-left: 1.6pt solid ${COLORS.gold};
   font-size: 12pt;
+  line-height: 1.6;
+  color: #DDE4EC;
+}
+.cover-lines p { margin: 0; word-break: keep-all; }
+/* The heading carries a hairline to the margin, which opens the indicator table. */
+.cover-indicator-heading {
+  display: flex;
+  align-items: center;
+  gap: 10pt;
+  margin: 30pt 0 2pt;
+  font-size: 8.5pt;
   font-weight: 600;
+  letter-spacing: 0.04em;
+  color: ${COLORS.gold};
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-/* The description takes the room the label leaves and shrinks rather than
-   overprinting it, which is what the hand-fitted version had to guard against. */
-.cover-indicators .desc {
-  /* Grow into the slack, but give room up far faster than the label does, so a
-     long label shortens the description rather than itself. */
-  flex: 1 999 auto;
-  min-width: 0;
-  padding-left: 16pt;
-  font-size: 8pt;
-  color: ${COLORS.onNavy};
-  text-align: right;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.cover-indicator-heading::after {
+  content: '';
+  flex: 1;
+  border-top: 0.6pt solid rgba(255, 255, 255, 0.22);
 }
-/* With the view model's offset the descriptions start in one column, left
-   aligned, as the drawn cover places them, instead of each ending at the margin. */
-.cover-indicators[style] .label { min-width: calc(var(--desc-offset) - 11pt); }
-.cover-indicators[style] .desc { padding-left: 0; text-align: left; }
-/* When a name and its description do not fit one row (the view model measures
-   all five together), every description drops to its own line under its name. */
-/* The ring then stands beside the two-line block, centred on name and description
-   together. Kept on the name's baseline it sat level with the name and left the
-   description hanging below it (English cover, 2026-10). */
-.cover-indicators.stacked li {
+/* Ruled rows with the description under its name, in both languages. Set
+   beside the name, the short Korean descriptions sat a long gap away from it,
+   and the English ones did not fit at all. Names and descriptions wrap rather
+   than being cut. */
+.cover-indicators { margin: 0; padding: 0; list-style: none; }
+.cover-indicators li {
   display: grid;
-  grid-template-columns: 20pt minmax(0, 1fr);
-  column-gap: 11pt;
-  row-gap: 0;
-  align-content: start;
-  /* The one-row layout's baseline alignment would tie the name to the ring and
-     push the description a full ring-height down. */
-  align-items: start;
-  height: 38pt;
+  grid-template-columns: 24pt minmax(0, 1fr);
+  align-items: baseline;
+  padding: 6.5pt 0 7pt;
+  border-bottom: 0.6pt solid rgba(255, 255, 255, 0.12);
 }
-.cover-indicators.stacked .badge { grid-row: 1 / span 2; align-self: center; top: 0; }
-.cover-indicators.stacked .label { grid-column: 2; line-height: 17pt; }
-.cover-indicators.stacked .desc {
+.cover-indicators li:last-child { border-bottom: 0; }
+.cover-indicators .badge {
+  grid-row: 1 / span 2;
+  font-size: 11pt;
+  font-weight: 600;
+  color: ${COLORS.gold};
+  font-variant-numeric: tabular-nums;
+}
+.cover-indicators .label { grid-column: 2; font-size: 11.5pt; font-weight: 600; line-height: 15pt; }
+.cover-indicators .desc {
   grid-column: 2;
-  /* Under the name, in the ring's neighbouring column. */
-  padding-left: 0;
+  margin-top: 1pt;
   font-size: 8.5pt;
   line-height: 11pt;
-  text-align: left;
+  color: ${COLORS.onNavy};
 }
-/* The view model's line_size overrides this with the size both lines fit at on one line. */
-html[lang="en"] .cover-lines { font-size: 11pt; }
 /* A long line breaks into two even halves instead of leaving one word behind. */
 html[lang="en"] .cover-lines p { text-wrap: balance; }
 .cover-foot {
@@ -462,8 +610,8 @@ html[lang="en"] .cover-lines p { text-wrap: balance; }
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 8pt 0 20pt;
-  border-top: 0.7pt solid ${COLORS.divider};
+  padding: 10pt 0 20pt;
+  border-top: 0.6pt solid rgba(255, 255, 255, 0.22);
 }
 .logo-kotra { height: 34pt; }
 .logo-ik { height: 32pt; }
