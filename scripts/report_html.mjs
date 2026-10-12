@@ -415,10 +415,13 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* The least the two bands may close to if the text ever grows (about 40pt
-     free in English and 70pt in Korean as of 2026-10). */
+  /* The least the two bands may close to if the text ever grows. */
   gap: 24pt;
 }
+/* The title block floats in the middle of the room the indicator table leaves.
+   Pinned to the top, the one-line English title (2026-10-12) left about 130pt
+   of empty navy above the table. */
+.cover-head { margin-block: auto; }
 .cover h1 {
   margin: 0;
   /* Overridden per language: the size that fits comes with the view model. */
@@ -428,8 +431,8 @@ body {
      drift apart and the word looks spaced out. */
   line-height: 1.1;
   letter-spacing: -0.02em;
-  /* Korean breaks between any two syllables unless told otherwise. The English
-     title breaks at its space on purpose and stacks into two lines. */
+  /* Korean breaks between any two syllables unless told otherwise. The view
+     model sizes every title line to fit whole, the English one included. */
   word-break: keep-all;
 }
 .cover h1 span { display: block; }
