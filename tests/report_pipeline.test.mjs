@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import { githubConfig } from '../app/lib/github_env.mjs';
 import { suggestedIssue } from '../app/lib/issue_number.mjs';
 import { PAUSED_STEP, dispatchFor, pipelineStatus } from '../app/lib/report_pipeline.mjs';
+import { HANDOFF_WAIT_MS, NOT_STARTED_LABEL, START_WAIT_MS, followRequest, requestedStatus, runRequest } from '../app/lib/run_request.mjs';
 
 // 대시보드 버튼 한 번이 판정(collect-company-signals)과 발행(publish-report)을 차례로 돌린다.
 // 상태 표시는 두 워크플로의 최근 실행을 합쳐 지금 단계를 보여 준다.
@@ -46,6 +47,79 @@ test('the newer run is the current stage, and a pause is not a failure', () => {
     publish: run('2026-10-01T03:00:00Z', 'completed', 'success'),
   });
   assert.deepEqual([rejudging.stage, rejudging.label, rejudging.can_publish], ['collect', '판정 중', false]);
+});
+
+// 버튼을 누른 직후 GitHub 목록에는 아직 지난 실행(끝남)만 있다. 그것을 믿으면 폴링이 멈추고 진행이 보이지 않았다.
+test('the dashboard keeps polling until the run it dispatched appears and finishes', () => {
+  const pressed = Date.parse('2026-10-13T00:00:00Z');
+  const at = seconds => pressed + seconds * 1000;
+  const iso = seconds => new Date(at(seconds)).toISOString();
+  const lastCollect = run('2026-10-01T00:00:00Z', 'completed', 'success');
+  const lastPublish = run('2026-10-01T03:00:00Z', 'completed', 'success');
+  const before = pipelineStatus({ collect: lastCollect, publish: lastPublish });
+  assert.equal(before.active, false);
+
+  const crawl = runRequest('collect', iso(0), at(1));
+  assert.deepEqual([requestedStatus(crawl).label, requestedStatus(crawl).active], ['판정 대기', true]);
+
+  // 3초 뒤 첫 확인: 새 판정이 아직 목록에 없다. 지난 발행 완료를 보이지 않고 계속 확인한다.
+  let step = followRequest(before, crawl, at(4));
+  assert.deepEqual([step.status.label, step.status.active, step.status.can_publish, step.status.html_url], ['판정 대기', true, false, undefined]);
+  assert.equal(step.request, crawl);
+
+  // 시계 차이(초 단위로 잘린 created_at)로 몇 초 이르게 찍힌 새 실행도 이번 실행이다.
+  const judging = pipelineStatus({ collect: run(iso(-2), 'in_progress'), publish: lastPublish });
+  step = followRequest(judging, step.request, at(14));
+  assert.deepEqual([step.status.label, step.status.active], ['판정 중', true]);
+  assert.ok(step.request);
+
+  // 판정이 끝나면 발행이 이어진다. 발행 실행이 목록에 오를 때까지 판정 완료에서 멈추지 않는다.
+  const judged = pipelineStatus({ collect: run(iso(-2), 'completed', 'success'), publish: lastPublish });
+  step = followRequest(judged, step.request, at(3600));
+  assert.deepEqual([step.status.label, step.status.active, step.status.can_publish], ['발행 대기', true, false]);
+  assert.equal(step.request.handoff_deadline, at(3600) + HANDOFF_WAIT_MS);
+  const publishing = pipelineStatus({ collect: run(iso(-2), 'completed', 'success'), publish: run(iso(3590), 'queued') });
+  step = followRequest(publishing, step.request, at(3610));
+  assert.deepEqual([step.status.label, step.status.active], ['발행 중', true]);
+  const published = pipelineStatus({ collect: run(iso(-2), 'completed', 'success'), publish: run(iso(3590), 'completed', 'success') });
+  step = followRequest(published, step.request, at(4700));
+  assert.deepEqual([step.status.label, step.status.active, step.request], ['완료', false, null]);
+
+  // 수동으로 끈 발행 등으로 발행이 끝내 나타나지 않으면 판정 완료와 '발행만 실행' 안내를 보인다.
+  const waited = followRequest(judged, { ...crawl, handoff_deadline: at(3600) + HANDOFF_WAIT_MS }, at(3601) + HANDOFF_WAIT_MS);
+  assert.deepEqual([waited.status.label, waited.status.active, waited.request], ['판정 완료', false, null]);
+
+  // 판정이 멈추면 따라가기를 끝낸다.
+  const paused = pipelineStatus({ collect: run(iso(5), 'completed', 'failure'), publish: lastPublish, collectPaused: true });
+  assert.deepEqual([followRequest(paused, crawl, at(600)).status.label, followRequest(paused, crawl, at(600)).request], ['판정 일시정지', null]);
+});
+
+test('a dispatch that never shows up stops polling with a clear message', () => {
+  const pressed = Date.parse('2026-10-13T00:00:00Z');
+  const before = pipelineStatus({ collect: run('2026-10-01T00:00:00Z', 'completed', 'success'),
+    publish: run('2026-10-01T03:00:00Z', 'completed', 'failure'), publishPaused: true });
+  const publishOnly = runRequest('publish', new Date(pressed).toISOString(), pressed);
+  assert.equal(followRequest(before, publishOnly, pressed + START_WAIT_MS).status.label, '발행 대기');
+  const gaveUp = followRequest(before, publishOnly, pressed + START_WAIT_MS + 1);
+  assert.deepEqual([gaveUp.status.label, gaveUp.status.active, gaveUp.request], [NOT_STARTED_LABEL, false, null]);
+  assert.match(gaveUp.status.hint, /새 실행이 보이지 않습니다/);
+  assert.equal(gaveUp.status.html_url, null, '지난 실행 링크를 이번 실행처럼 걸지 않는다');
+  assert.equal(gaveUp.status.can_publish, true, '다시 누를 수 있다');
+
+  // 상태 확인이 실패해도 곧바로 그만두지 않는다. 연달아 실패하면 그만둔다.
+  let request = publishOnly;
+  let step;
+  for (let i = 0; i < 30; i += 1) {
+    step = followRequest({ label: '확인 실패', status: 'error', error: 'HTTP 502' }, request, pressed + i * 10000);
+    assert.deepEqual([step.status.label, step.status.active], ['확인 실패', true]);
+    request = step.request;
+  }
+  step = followRequest({ label: '확인 실패', status: 'error' }, request, pressed + 300000);
+  assert.equal(step.request, null);
+  assert.equal(step.status.active, undefined);
+
+  // 요청이 없으면 상태를 그대로 보인다.
+  assert.deepEqual(followRequest(before, null), { status: before, request: null });
 });
 
 test('the issue number follows the last published issue for that month and the next', () => {
@@ -171,9 +245,12 @@ const reply = (status, body) => new Response(body === undefined ? null : JSON.st
 const runs = list => reply(200, { workflow_runs: list });
 
 test('the crawl button dispatches the judgement with auto_publish on', async () => {
-  const { response, calls } = await withGitHub(() => reply(204),
+  let dispatchedAt = null;
+  const { response, payload, calls } = await withGitHub(() => { dispatchedAt ??= Date.now(); return reply(204); },
     { fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' });
   assert.equal(response.status, 202);
+  // 화면은 이 시각보다 먼저 만들어진 실행을 지난 실행으로 본다. 실행은 응답 전에 만들어질 수 있어 보내기 전에 잰다.
+  assert.ok(Date.parse(payload.requested_at) <= dispatchedAt);
   const dispatch = calls.find(call => call.method === 'POST');
   assert.match(dispatch.url, /workflows\/collect-company-signals\.yml\/dispatches$/);
   assert.deepEqual(dispatch.body.inputs,

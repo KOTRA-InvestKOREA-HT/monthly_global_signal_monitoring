@@ -9,6 +9,7 @@ import dateEvidenceSources from "../config/date_evidence_sources.json";
 // 쓰면 해외에서 연 사람과 자동 실행이 서로 다른 달을 본다.
 import { monthRange as seoulMonthRange, previousMonthRange } from "../scripts/report_month.mjs";
 import { suggestedIssue } from "./lib/issue_number.mjs";
+import { NOT_STARTED_LABEL, followRequest, requestedStatus, runRequest } from "./lib/run_request.mjs";
 
 const CONFIRMED_DATE_SOURCES = new Set(dateEvidenceSources.confirmed);
 
@@ -445,6 +446,8 @@ export default function HomePage() {
   const [error, setError] = useState("");
   const selectedPeriod = useMemo(() => monthRange(monthValue), [monthValue]);
   const wasActive = useRef(false);
+  // 버튼으로 보낸 실행. GitHub 목록에 오르기 전에는 지난 실행이 보여도 대기로 두고 계속 확인한다.
+  const pendingRun = useRef(null);
 
   function openMonthPicker() {
     const current = monthRange(monthValue);
@@ -549,19 +552,23 @@ export default function HomePage() {
   }
 
   async function loadCrawlStatus() {
+    let payload;
     try {
       const response = await fetch("/api/crawl-status", { cache: "no-store" });
-      const payload = await response.json();
+      payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "크롤링 상태를 확인하지 못했습니다.");
-      setCrawlStatus(payload);
-      // 실행이 끝나는 순간 한 번만 다시 읽는다. 발행이 커밋한 새 결과가 여기서 화면에 들어온다.
-      if (wasActive.current && !payload.active) {
-        loadSignals();
-      }
-      wasActive.current = Boolean(payload.active);
     } catch (err) {
-      setCrawlStatus({ label: "확인 실패", status: "error", error: err.message });
+      payload = { label: "확인 실패", status: "error", error: err.message };
     }
+    const { status, request } = followRequest(payload, pendingRun.current);
+    pendingRun.current = request;
+    setCrawlStatus(status);
+    if (status.status === "error") return;
+    // 실행이 끝나는 순간 한 번만 다시 읽는다. 발행이 커밋한 새 결과가 여기서 화면에 들어온다.
+    if (wasActive.current && !status.active) {
+      loadSignals();
+    }
+    wasActive.current = Boolean(status.active);
   }
 
   async function triggerRun(stage) {
@@ -588,7 +595,8 @@ export default function HomePage() {
       if (!response.ok) throw new Error(payload.error || "실행 요청에 실패했습니다.");
       setRunDialog(null);
       wasActive.current = true;
-      setCrawlStatus({ label: stage === "publish" ? "발행 중" : "판정 중", status: "queued", active: true, requested_at: payload.requested_at });
+      pendingRun.current = runRequest(stage, payload.requested_at);
+      setCrawlStatus(requestedStatus(pendingRun.current));
       setMessage(
         stage === "publish"
           ? `${selectedPeriod.label} 판정 결과로 Issue ${safeIssue} 보고서 발행을 요청했습니다. 진행 상태가 자동으로 갱신됩니다.`
@@ -873,8 +881,8 @@ export default function HomePage() {
       ) : null}
 
       {message ? <div className="notice success">{message}</div> : null}
-      {crawlStatus?.hint && ["판정 완료", "판정 일시정지", "발행 일시정지", "판정 실패", "발행 실패"].includes(crawlStatus.label) ? (
-        <div className={`notice ${crawlStatus.label.endsWith("실패") ? "error" : ""}`}>
+      {crawlStatus?.hint && ["판정 완료", "판정 일시정지", "발행 일시정지", "판정 실패", "발행 실패", NOT_STARTED_LABEL].includes(crawlStatus.label) ? (
+        <div className={`notice ${crawlStatus.label.endsWith("실패") || crawlStatus.label === NOT_STARTED_LABEL ? "error" : ""}`}>
           {crawlStatus.hint}
           {crawlStatus.html_url ? (
             <>

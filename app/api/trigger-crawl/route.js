@@ -72,6 +72,8 @@ export async function POST(request) {
     }
 
     const { workflowFile, inputs } = dispatchFor(stage, config, { days, fromDate, toDate, issueNumber });
+    // 보내기 전에 잰다. 실행은 응답이 오기 전에 만들어질 수 있고, 화면은 이 시각보다 먼저 만들어진 실행을 지난 실행으로 본다.
+    const requestedAt = new Date().toISOString();
     const response = await fetch(
       `https://api.github.com/repos/${config.owner}/${config.repo}/actions/workflows/${workflowFile}/dispatches`,
       {
@@ -113,7 +115,7 @@ export async function POST(request) {
         toDate,
         issueNumber,
         ref: config.ref,
-        requested_at: new Date().toISOString(),
+        requested_at: requestedAt,
       },
       { status: 202 },
     );
