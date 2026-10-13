@@ -68,6 +68,11 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
+    # 기본값 360분이면 응답 없는 제공자 하나가 publish-report 와 같이 쓰는 동시 실행 그룹을 6시간 막는다.
+    # 판정은 요청 최대 600건을 4.5초 간격으로 시작해 약 45분, 수집이 6~10분, 준비가 몇 분이라 한 시간 남짓이다.
+    # 판정 단계에 그 두 배인 120분을 주고, 진행 저장·업로드·발행 시작이 돌 시간을 더해 140분에서 끊는다.
+    # delay_ms 를 크게 주는 수동 실행(예: 10초면 600건에 100분)은 이 값들도 함께 올린다.
+    timeout-minutes: 140
     permissions:
       contents: read
       # auto_publish 일 때 publish-report 를 실행한다.
@@ -101,6 +106,8 @@ jobs:
             review-v1-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-
       - name: Collect and judge articles
         id: review
+        # 판정 단계가 먼저 끊겨야 아래 진행 저장이 작업 제한 시간 안에서 평소처럼 돈다(이 단계는 실패로 끝난다).
+        timeout-minutes: 120
         env:
           REPORT_PROVIDER: ${{ inputs.provider || vars.REPORT_PROVIDER || 'gemini' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

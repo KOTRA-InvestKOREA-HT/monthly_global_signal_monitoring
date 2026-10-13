@@ -34,6 +34,10 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # 기본값 360분이면 멈춘 실행이 collect-company-signals 와 같이 쓰는 동시 실행 그룹을 6시간 막는다.
+    # 지난 발행은 문안·검토 호출 약 221건에 17분, PDF 두 개에 1분이 안 걸렸다.
+    # 문안 단계에 45분을 주고, 진행 저장·업로드·커밋이 돌 시간을 더해 60분에서 끊는다.
+    timeout-minutes: 60
     permissions:
       contents: write
     # 커밋하는 결과 파일. 아래 main 맞추기 단계와 커밋 단계가 같은 목록을 쓴다.
@@ -69,6 +73,8 @@ jobs:
             review-v1-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-
       - name: Write report copy and build both PDFs
         id: publish
+        # 문안 단계가 먼저 끊겨야 아래 진행 저장이 작업 제한 시간 안에서 평소처럼 돈다(이 단계는 실패로 끝난다).
+        timeout-minutes: 45
         env:
           # 문안 단계 전용 키. 판정 단계(GEMINI_API_KEY)와 무료 한도를 나눠 쓰지 않는다. 비어 있으면 GEMINI_API_KEY 를 쓴다.
           GEMINI_FOR_SUMMARY: ${{ secrets.GEMINI_FOR_SUMMARY }}

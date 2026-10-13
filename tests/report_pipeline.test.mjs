@@ -106,6 +106,23 @@ test('manual collection judges only; the publish hand-off waits for a finished j
   assert.ok(publish.indexOf(`- name: ${PAUSED_STEP}`) < publish.indexOf('git-auto-commit-action'));
 });
 
+// 제한 시간이 없으면 멈춘 실행이 두 워크플로가 같이 쓰는 동시 실행 그룹을 6시간 막는다.
+// 긴 단계가 작업보다 먼저 끊겨야 진행 저장이 작업 제한 시간 안에서 돈다. 저장은 실패·취소에도 돈다.
+test('both stages stop well before six hours and still save progress', async () => {
+  for (const [file, step] of [['collect-company-signals.yml', 'review'], ['publish-report.yml', 'publish']]) {
+    const text = (await fs.readFile(`.github/workflows/${file}`, 'utf8')).replace(/\r\n/g, '\n');
+    const job = Number(text.match(/\n {4}timeout-minutes: (\d+)\n/)?.[1]);
+    const long = Number(text.match(new RegExp(`\\n {8}id: ${step}\\n(?: {8}#[^\\n]*\\n)* {8}timeout-minutes: (\\d+)\\n`))?.[1]);
+    assert.ok(job > 0 && job <= 180, `${file} job timeout ${job}`);
+    assert.ok(long > 0 && job - long >= 15, `${file} leaves ${job - long} minutes after the ${step} step`);
+    // 진행 상황(outputs/review_work)을 캐시에 저장하고 아티팩트로 올리는 두 단계.
+    const saves = text.split('\n      - ').filter(block => /uses: actions\/(?:cache\/save|upload-artifact)@/.test(block)
+      && /path: outputs\/review_work\n/.test(block));
+    assert.equal(saves.length, 2, `${file} progress save and upload`);
+    for (const block of saves) assert.match(block, new RegExp(`\\n {8}if: \\$\\{\\{ always\\(\\) && steps\\.${step}\\.outcome != 'skipped' \\}\\}\\n`));
+  }
+});
+
 // 한 시간 남짓 도는 사이 main 에 커밋이 올라오면 push 가 fast-forward 가 아니라 거절됐다.
 // 얕은 체크아웃에서는 rebase 가 공통 조상을 못 찾을 수 있어, 커밋 전에 새 main 으로 옮기고 결과 파일만 얹는다.
 test('the publish commit lands on the latest main from a shallow checkout', async () => {
