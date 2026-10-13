@@ -396,9 +396,18 @@ export function policySection(doc) {
 // 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
 // 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
 // golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
-// approvalPolicy 도 식별자에 들어간다. 어느 후보가 승인되는지가 바뀌면 모델이 문안을 써야 하는
-// 후보도 바뀌기 때문이다. 지표 3·5 의 품목 연결을 풀었을 때 저장된 판정에는 그 후보의 문안이
-// 없었다. 상수만 고치고 기준 문서를 그대로 두면 옛 판정이 문안 없이 승인으로 올라온다.
+//
+// 식별자에는 모델에 보내는 것과, 모델 답을 검증하고 쓰는 방식을 바꾸는 것만 넣는다. 예전에는 기술 매핑
+// 전체와 지표 설정 전체(키워드·label_en·description_ko)도 넣어서, 2026-09 이후 지표 이름·키워드만 고친
+// 커밋 4건이 저장된 판정 약 430건을 매번 무효로 만들었다. 둘 다 모델에 가지 않는다. 모델이 받는 기업별
+// 기술(영문)·범위·면제 여부와 지표 번호(후보 id)는 기사 id 의 재료(groupArticles 의 material)에 이미 있어,
+// 그것이 바뀌면 그 기사만 다시 판정된다.
+//
+// 승인 규칙(approvalRules)은 남긴다. 판정 문안 때문에 넣었던 이유는 사라졌지만(판정 호출은 문안을 쓰지
+// 않는다), 규칙은 여전히 판정 단계에서 쓰인다. 저장된 판정의 가져오기 검증(importReview)과, 같은 실행 안의
+// 재질문·2차 검증 대상 선택(stageSuspects, relevanceConflictSuspects, verificationSuspects)이 이 규칙을
+// 본다. 규칙이 바뀌면 그때 새로 걸리는 후보가 재질문·검증을 거치지 않은 채 승인될 수 있다. 사람이 읽는
+// 설명(description, *_note)만 뺀다.
 // outputs/review_work 는 실행마다 커지기만 했다. 이 디렉터리는 캐시로 복원되고 아티팩트로
 // 30일 보관되므로, 안 지우면 아티팩트와 캐시가 함께 불어난다.
 //
@@ -432,7 +441,14 @@ export async function pruneReviewWork(root, runDir, articles) {
   return removed;
 }
 
-export function reviewPolicy({ policyText, technology, indicators, approvalPolicy = APPROVAL_POLICY,
+// 승인 규칙 파일에서 코드가 집행하는 값만. 설명 문장은 판정에도 검증에도 쓰이지 않는다.
+// 새 키는 기본으로 들어간다. 집행하는 값을 빠뜨리는 쪽보다 설명을 하나 더 넣는 쪽이 안전하다.
+export function approvalRules(policy = APPROVAL_POLICY) {
+  return Object.fromEntries(Object.entries(policy).filter(([key]) => key !== 'description' && !key.endsWith('_note')));
+}
+
+// technology·indicators 는 더 이상 받지 않는다(위 주석). 예전 호출 모양으로 넘겨도 식별자에 들어가지 않는다.
+export function reviewPolicy({ policyText, approvalPolicy = APPROVAL_POLICY,
   provider = PROVIDER, promptDigest = reviewPromptDigest(policyText, promptContract()) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
@@ -440,7 +456,7 @@ export function reviewPolicy({ policyText, technology, indicators, approvalPolic
   const normalized = String(policyText).split('\r\n').join('\n');
   // 추론 단계와 실제 프롬프트(재시도·2차 검증 포함)도 판정 결과를 바꾸므로 식별자에 넣는다.
   // 프롬프트 버전 수동 갱신을 잊어도 내용 digest가 달라져 이전 review 파일을 재사용하지 않는다.
-  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, technology, indicators, approvalPolicy])}`;
+  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, approvalRules(approvalPolicy)])}`;
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
@@ -1207,7 +1223,7 @@ async function main() {
   const [targets, technology, indicators] = await Promise.all([
     read('data/target_companies.json'), read('data/company_technology_map.json'), read('config/investment_signal_indicators.json'),
   ]);
-  const policy = reviewPolicy({ policyText, technology, indicators });
+  const policy = reviewPolicy({ policyText });
   const inputDir = path.join(root, `${from}_${to}`);
   const sourceFile = path.join(inputDir, 'latest_company_signals.json');
   if (process.env.REPORT_REFRESH === 'true') await fs.rm(inputDir, { recursive: true, force: true });
