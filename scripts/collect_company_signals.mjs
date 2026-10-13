@@ -2,7 +2,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createDomainGuard, collectWithCheckpoint, retryableCollection, collectionInputDigest } from './collection_resilience.mjs';
+import { createDomainGuard, collectWithCheckpoint, createStepLog, retryableCollection, collectionInputDigest, stepKey } from './collection_resilience.mjs';
 import { ARTICLE_BODY_MIN_CHARS, chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState, unextractableBody } from "./date_state.mjs";
 import {
   augustRule,
@@ -1682,7 +1682,9 @@ export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
 }
 
 // yieldSlot: Google 차례를 기다리는 동안 기업 작업 자리를 내놓는다(mapWithConcurrency 참고).
-export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company, { yieldSlot = task => task() } = {}) {
+// probe: Google 확인 차례(createPublisherProbe). log: 기업 수집의 단계 기록(createStepLog).
+export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company,
+  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
     return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
@@ -1744,138 +1746,145 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       continue;
     }
 
-    try {
-      let document;
-      if (row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)) {
-        requestCount += 1;
-        detailCount += 1;
-        document = { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl };
-      } else {
-        const resolve = () => probePublisher(detailUrl, async () => {
-          requestCount += 1;
-          detailCount += 1;
-          return resolveArticleSource(detailUrl, args.timeoutSeconds);
-        });
-        const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
-        document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
-      }
-      // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
-      // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
-      // 완료로 저장돼, 9월 28일 실행처럼 78건이 다시 돌려도 시도되지 않은 채 남는다.
-      if (!document) {
-        errors.push({ target_no: row.target_no, company: row.company, source: 'official_detail',
-          source_url: row.url, source_name: row.source, error: 'google_probe_paused' });
-        if (row.link_verdict === 'fetch_to_verify') {
-          recordExclusion(row.company, row.title, row.url, 'unverified_no_fetch');
-          continue;
-        }
-        enriched.push({ ...row, content_fetch_status: 'google_probe_paused' });
-        continue;
-      }
-      const html = document.html;
-      let content = document.content ?? extractArticleText(html);
-      const pageTitle = extractPageTitle(html);
-      const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
-      if (row.publisher_resolution === 'official_exact_title' &&
-          !fetchedTitleMatchesPublisherArticle(row, pageTitle || content.split(/\r?\n/, 1)[0])) {
-        throw new Error('publisher_article_title_mismatch');
-      }
-      // 읽을 수 없는 문서였음을 "본문 없음"과 구분해 남긴다. 수집을 보완할 사람이 무엇을 고쳐야
-      // 하는지 알 수 있어야 한다(PDF 추출 실패인지, 애초에 표 파일이었는지).
-      let contentFetchStatus = content ? 'fetched' : document.documentType ? `unreadable_${document.documentType}` : 'empty';
-      // Some official AEM pages return only a title shell in HTML. After an
-      // independently discovered same-host exact-title URL, try that page's
-      // same-path model once. The model helper accepts content only when its
-      // own title identifies the same article.
-      if (row.publisher_resolution === 'official_exact_title' && content.length < ARTICLE_BODY_MIN_CHARS) {
-        const modelUrl = aemModelUrl(document.resolvedUrl);
-        try {
-          requestCount += 1;
-          const modelArticle = extractQualcommAemArticle(row, await fetchJson(modelUrl, args.timeoutSeconds), cleanHtmlText);
-          if (modelArticle?.content && modelArticle.content.length > content.length) {
-            content = `${modelArticle.title}\n${modelArticle.content}`;
-            contentFetchStatus = 'fetched_aem_model';
-          }
-        } catch (error) {
-          errors.push({ target_no: row.target_no, company: row.company, source: 'official_model',
-            source_url: modelUrl, source_name: row.source, error: error.message });
-        }
-      }
-      let limitedContent = content.slice(0, args.contentCharLimit);
-      // PDF·XLSX 를 글자로 읽어 저장하면 2만 자짜리 "본문"이 생기지만 내용은 없다. 근거로 넘기기
-      // 전에 추출 실패로 구분한다. 행은 남겨 목록의 제목·날짜를 지키고, 본문만 비워 재수집 대상이 되게 한다.
-      const unextractable = unextractableBody(limitedContent);
-      if (unextractable) {
-        contentFetchStatus = `unextractable_${unextractable}`;
-        limitedContent = "";
-      }
-      // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
-      // 상세 페이지를 보고 나서야 알 수 있다.
-      const bodyHead = limitedContent.slice(0, 4000);
-      const dates = chooseDateEvidence([
-        ...(row.date_candidates || []),
-        ...collectHtmlDateEvidence(html, document.resolvedUrl),
-        dateEvidence(extractDateFromText(`${resolvedTitle} ${bodyHead}`) ||
-          extractMonthFromText(`${resolvedTitle} ${bodyHead}`), "body_text", "context"),
-      ]);
-      // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
-      // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
-      // 확인 대상으로 넘어온 링크는 제목에 더해 문서 자체가 목록이 아닌지도 여기서 본다.
-      const usable = isUsableTitle(resolvedTitle, company);
-      // 이미 기사 링크로 받아들인 행도 받아온 제목이 목록·문서번호 모양이면 기사가 아니다.
-      // 2026-08에는 "Press releases from 2020" 목록이 투자 시그널 승인까지 받았다. 링크 밀도 검사는
-      // 확인 대상에만 둔다. 메뉴 링크가 많은 사이트에서는 짧은 정상 공지까지 떨어뜨리기 때문이다.
-      const verdict = verifyFetchedArticle({ title: resolvedTitle, content,
-        html: row.link_verdict === "fetch_to_verify" ? html : "", usableTitle: usable });
-      if (!verdict.ok) {
-        recordExclusion(row.company, resolvedTitle || row.title, row.url, verdict.reason);
-        continue;
-      }
-      enriched.push({
-        ...row,
-        title: resolvedTitle,
-        ...dates,
-        content_text: limitedContent,
-        content_source_url: document.resolvedUrl,
-        content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
-        content_word_count: limitedContent.split(/\s+/).filter(Boolean).length,
-        content_fetch_status: contentFetchStatus,
-        content_fetched_at: collectedAt,
-      });
-    } catch (error) {
-      errors.push({
-        target_no: row.target_no,
-        company: row.company,
-        source: "official_detail",
-        source_url: row.url,
-        source_name: row.source,
-        error: error.message,
-        ...(error.decodeFailure ? { decode_failure: error.decodeFailure } : {}),
-      });
-      if (row.link_verdict === 'fetch_to_verify') {
-        recordExclusion(row.company, row.title, row.url, 'unverified_fetch_error');
-        continue;
-      }
-      // 받아오지 못한 기사도 제목·URL에 남은 날짜는 살린다. 2026-08 실행에서 /2026/04/ 경로의 Air Products
-      // 실적 발표가 날짜 미상으로 남아 8월 수집 보완 대상에 섞였다.
-      enriched.push({
-        ...row,
-        ...chooseDateEvidence([
-          ...(row.date_candidates || []),
-          dateEvidence(extractDateFromText(row.title) || extractMonthFromText(row.title), "text", "context"),
-          dateEvidence(sitemapUrlDate(row.url), "url", "context"),
-        ]),
-        content_fetch_status: "error",
-        content_fetched_at: collectedAt,
-      });
-    }
-
-    if (args.rateLimitSeconds > 0) {
+    // 상세 페이지 한 건이 한 단계다. Google 확인 멈춤만 남은 기업을 이어 받을 때는 앞선 실행이 받아 둔 결과를
+    // 그대로 쓰고, 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
+    const { value: outcome, replayed } = await log.run(stepKey("detail", row),
+      () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }));
+    if (!replayed) requestCount += outcome.requestCount;
+    detailCount += outcome.detailCount;
+    errors.push(...outcome.errors);
+    if (outcome.exclusion && !replayed) recordExclusion(row.company, ...outcome.exclusion);
+    if (outcome.row) enriched.push(outcome.row);
+    if (outcome.paced && !replayed && args.rateLimitSeconds > 0) {
       await sleep(args.rateLimitSeconds * 1000);
     }
   }
 
   return { rows: enriched, requestCount, errors };
+}
+
+// 상세 페이지 한 건을 받아 판정한 결과. 체크포인트에 그대로 남으므로 데이터만 담는다.
+// row: 남길 행, exclusion: 버린 까닭([제목, URL, 사유]), detailCount: 상세 페이지 상한에 세는 요청 수,
+// paced: 요청 간격을 둘지. 본문을 받았거나 오류 행을 남긴 경우에만 둔다. 버리거나 멈춘 기사 뒤에는 두지 않는다.
+async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }) {
+  const outcome = { requestCount: 0, detailCount: 0, errors: [], row: null, exclusion: null, paced: false };
+  const errors = outcome.errors;
+  const exclude = (title, url, reason) => ({ ...outcome, exclusion: [title, url, reason] });
+  try {
+    let document;
+    if (row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)) {
+      outcome.requestCount += 1;
+      outcome.detailCount += 1;
+      document = { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl };
+    } else {
+      const resolve = () => probe(detailUrl, async () => {
+        outcome.requestCount += 1;
+        outcome.detailCount += 1;
+        return resolveArticleSource(detailUrl, args.timeoutSeconds);
+      });
+      const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
+      document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
+    }
+    // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
+    // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
+    // 완료로 저장돼, 9월 28일 실행처럼 78건이 다시 돌려도 시도되지 않은 채 남는다.
+    if (!document) {
+      errors.push({ target_no: row.target_no, company: row.company, source: 'official_detail',
+        source_url: row.url, source_name: row.source, error: 'google_probe_paused' });
+      if (row.link_verdict === 'fetch_to_verify') return exclude(row.title, row.url, 'unverified_no_fetch');
+      return { ...outcome, row: { ...row, content_fetch_status: 'google_probe_paused' } };
+    }
+    const html = document.html;
+    let content = document.content ?? extractArticleText(html);
+    const pageTitle = extractPageTitle(html);
+    const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
+    if (row.publisher_resolution === 'official_exact_title' &&
+        !fetchedTitleMatchesPublisherArticle(row, pageTitle || content.split(/\r?\n/, 1)[0])) {
+      throw new Error('publisher_article_title_mismatch');
+    }
+    // 읽을 수 없는 문서였음을 "본문 없음"과 구분해 남긴다. 수집을 보완할 사람이 무엇을 고쳐야
+    // 하는지 알 수 있어야 한다(PDF 추출 실패인지, 애초에 표 파일이었는지).
+    let contentFetchStatus = content ? 'fetched' : document.documentType ? `unreadable_${document.documentType}` : 'empty';
+    // Some official AEM pages return only a title shell in HTML. After an
+    // independently discovered same-host exact-title URL, try that page's
+    // same-path model once. The model helper accepts content only when its
+    // own title identifies the same article.
+    if (row.publisher_resolution === 'official_exact_title' && content.length < ARTICLE_BODY_MIN_CHARS) {
+      const modelUrl = aemModelUrl(document.resolvedUrl);
+      try {
+        outcome.requestCount += 1;
+        const modelArticle = extractQualcommAemArticle(row, await fetchJson(modelUrl, args.timeoutSeconds), cleanHtmlText);
+        if (modelArticle?.content && modelArticle.content.length > content.length) {
+          content = `${modelArticle.title}\n${modelArticle.content}`;
+          contentFetchStatus = 'fetched_aem_model';
+        }
+      } catch (error) {
+        errors.push({ target_no: row.target_no, company: row.company, source: 'official_model',
+          source_url: modelUrl, source_name: row.source, error: error.message });
+      }
+    }
+    let limitedContent = content.slice(0, args.contentCharLimit);
+    // PDF·XLSX 를 글자로 읽어 저장하면 2만 자짜리 "본문"이 생기지만 내용은 없다. 근거로 넘기기
+    // 전에 추출 실패로 구분한다. 행은 남겨 목록의 제목·날짜를 지키고, 본문만 비워 재수집 대상이 되게 한다.
+    const unextractable = unextractableBody(limitedContent);
+    if (unextractable) {
+      contentFetchStatus = `unextractable_${unextractable}`;
+      limitedContent = "";
+    }
+    // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
+    // 상세 페이지를 보고 나서야 알 수 있다.
+    const bodyHead = limitedContent.slice(0, 4000);
+    const dates = chooseDateEvidence([
+      ...(row.date_candidates || []),
+      ...collectHtmlDateEvidence(html, document.resolvedUrl),
+      dateEvidence(extractDateFromText(`${resolvedTitle} ${bodyHead}`) ||
+        extractMonthFromText(`${resolvedTitle} ${bodyHead}`), "body_text", "context"),
+    ]);
+    // 상세 페이지를 받아본 뒤에도 쓸 만한 제목이 없으면 기사로 인정하지 않는다.
+    // 링크 텍스트로 추측하는 대신 실제 받아온 문서로 판정하는 지점이다.
+    // 확인 대상으로 넘어온 링크는 제목에 더해 문서 자체가 목록이 아닌지도 여기서 본다.
+    const usable = isUsableTitle(resolvedTitle, company);
+    // 이미 기사 링크로 받아들인 행도 받아온 제목이 목록·문서번호 모양이면 기사가 아니다.
+    // 2026-08에는 "Press releases from 2020" 목록이 투자 시그널 승인까지 받았다. 링크 밀도 검사는
+    // 확인 대상에만 둔다. 메뉴 링크가 많은 사이트에서는 짧은 정상 공지까지 떨어뜨리기 때문이다.
+    const verdict = verifyFetchedArticle({ title: resolvedTitle, content,
+      html: row.link_verdict === "fetch_to_verify" ? html : "", usableTitle: usable });
+    if (!verdict.ok) return exclude(resolvedTitle || row.title, row.url, verdict.reason);
+    return { ...outcome, paced: true, row: {
+      ...row,
+      title: resolvedTitle,
+      ...dates,
+      content_text: limitedContent,
+      content_source_url: document.resolvedUrl,
+      content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
+      content_word_count: limitedContent.split(/\s+/).filter(Boolean).length,
+      content_fetch_status: contentFetchStatus,
+      content_fetched_at: collectedAt,
+    } };
+  } catch (error) {
+    errors.push({
+      target_no: row.target_no,
+      company: row.company,
+      source: "official_detail",
+      source_url: row.url,
+      source_name: row.source,
+      error: error.message,
+      ...(error.decodeFailure ? { decode_failure: error.decodeFailure } : {}),
+    });
+    if (row.link_verdict === 'fetch_to_verify') return exclude(row.title, row.url, 'unverified_fetch_error');
+    // 받아오지 못한 기사도 제목·URL에 남은 날짜는 살린다. 2026-08 실행에서 /2026/04/ 경로의 Air Products
+    // 실적 발표가 날짜 미상으로 남아 8월 수집 보완 대상에 섞였다.
+    return { ...outcome, paced: true, row: {
+      ...row,
+      ...chooseDateEvidence([
+        ...(row.date_candidates || []),
+        dateEvidence(extractDateFromText(row.title) || extractMonthFromText(row.title), "text", "context"),
+        dateEvidence(sitemapUrlDate(row.url), "url", "context"),
+      ]),
+      content_fetch_status: "error",
+      content_fetched_at: collectedAt,
+    } };
+  }
 }
 
 // 사업동향(kind=relevant) 탐색. 기존 google_news 대체 수집은 공식 자료가 없을 때만 돌기 때문에,
@@ -2527,34 +2536,54 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
   return { rows, requestCount, errors };
 }
 
-async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, slot = {}) {
+function collectSource(source, company, sourceConfig, args, dateRange, collectedAt) {
+  if (source === "official_feeds") {
+    return collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt, args.contentCharLimit);
+  } else if (source === "official_pages") {
+    return collectOfficialPages(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+  } else if (source === "official_sitemaps") {
+    return collectOfficialSitemaps(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+  } else if (source === "sec_filings") {
+    return collectSecFilings(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+  } else if (source === "gdelt") {
+    return collectGdelt(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+  }
+  throw new Error(`Unknown source: ${source}`);
+}
+
+// options: yieldSlot·probe·log 는 상세 페이지 받기로 넘긴다(enrichOfficialRowsWithContent).
+// log 의 단계는 출처 하나, 대체 수집 검색, 사업동향 검색, 상세 페이지 한 건이다. 이어 받을 때 다시 쓴 단계의
+// 요청은 이번 실행의 요청 수에 더하지 않는다(collectWithCheckpoint 의 cached 기업과 같다).
+// 대체 수집과 GDELT 질의의 when:Nd 는 실행 날짜에 따라 달라지지만, 이어 받을 때는 처음 받은 검색 결과를 쓴다.
+// 처음부터 다시 받는 기업은 지금처럼 새로 검색한다. trend: 시험용으로 사업동향 탐색 입력을 바꿔 넣는다.
+export async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, options = {}) {
+  const { log = createStepLog(), trend = {} } = options;
+  const slot = { ...options, log };
+  const { technologyMap = trendTechnology, keywordConfig = trendKeywordConfig, searchTerms = trendSearchTerms } = trend;
   const companyRows = [];
   const publisherCandidates = [];
   const errors = [];
   let requestCount = 0;
 
   for (const source of selectedSources) {
+    // Decide after official detail/date enrichment, not from undated listing links.
+    if (source === "google_news") continue;
     let result = { rows: [], requestCount: 0 };
+    let replayed = false;
     try {
-      if (source === "official_feeds") {
-        result = await collectOfficialFeeds(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt, args.contentCharLimit);
-      } else if (source === "official_pages") {
-        result = await collectOfficialPages(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-      } else if (source === "official_sitemaps") {
-        result = await collectOfficialSitemaps(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-      } else if (source === "sec_filings") {
-        result = await collectSecFilings(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-      } else if (source === "google_news") {
-        // Decide after official detail/date enrichment, not from undated listing links.
-        continue;
-      } else if (source === "gdelt") {
-        result = await collectGdelt(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-      } else {
-        throw new Error(`Unknown source: ${source}`);
-      }
+      const step = await log.run(`source:${source}`, async () => {
+        try {
+          return await collectSource(source, company, sourceConfig, args, dateRange, collectedAt);
+        } catch (error) {
+          return { failed: error.message };
+        }
+      });
+      replayed = step.replayed;
+      if (step.value.failed !== undefined) throw new Error(step.value.failed);
+      result = step.value;
       companyRows.push(...result.rows);
       publisherCandidates.push(...(result.recoveryCandidates || result.rows || []));
-      requestCount += result.requestCount;
+      if (!replayed) requestCount += result.requestCount;
       for (const sourceError of result.errors || []) {
         errors.push({
           target_no: company.target_no,
@@ -2571,7 +2600,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
         error: error.message,
       });
     }
-    if (result.requestCount > 0) {
+    if (!replayed && result.requestCount > 0) {
       await sleep(args.rateLimitSeconds * 1000);
     }
   }
@@ -2592,10 +2621,11 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
       (args.fallbackMode !== "missing" || usable.length < args.fallbackMinResults)) {
     stats.fallback = "run";
     try {
-      const fallback = await collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
+      const { value: fallback, replayed } = await log.run("google_news",
+        () => collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt));
       stats.fallback_found = fallback.rows.length;
-      requestCount += fallback.requestCount;
-      if (fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
+      if (!replayed) requestCount += fallback.requestCount;
+      if (!replayed && fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       const recoveredFallback = fallback.rows
         .map(row => recoverPublisherRow(row, publisherCandidates, sourceConfig));
       const split = mergePublisherDuplicateDates(rows.filter(row => row.source_type === 'official'), recoveredFallback);
@@ -2622,18 +2652,18 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
 
   // 사업동향 탐색은 대체 수집과 달리 공식 자료가 있어도 돌린다. 기업 자리(maxPerCompany)를 두고
   // 다투게 하면 공식 보도자료를 밀어내므로, 그 상한을 적용한 뒤에 최대 maxTrendDiscovery 건만 덧붙인다.
-  const technology = companyTechnology(company, trendTechnology);
+  const technology = companyTechnology(company, technologyMap);
   stats.trend_discovery = "not_selected";
   if (selectedSources.includes("google_news") && args.maxTrendDiscovery > 0 && technology) {
     stats.trend_discovery = "run";
     try {
-      const discovered = await collectTrendDiscovery(company, technology, trendKeywordConfig, dateRange,
-        args.timeoutSeconds, collectedAt, trendSearchTerms);
-      requestCount += discovered.requestCount;
-      if (discovered.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
+      const { value: discovered, replayed } = await log.run("google_news_trend",
+        () => collectTrendDiscovery(company, technology, keywordConfig, dateRange, args.timeoutSeconds, collectedAt, searchTerms));
+      if (!replayed) requestCount += discovered.requestCount;
+      if (!replayed && discovered.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       if (!discovered.query) stats.trend_discovery = "no_query";
       stats.trend_discovery_found = discovered.rows.length;
-      const keywords = trendKeywords(technology, trendKeywordConfig, company, trendSearchTerms);
+      const keywords = trendKeywords(technology, keywordConfig, company, searchTerms);
       const selected = selectTrendRows(discovered.rows, rows, keywords, args.maxTrendDiscovery);
       stats.trend_discovery_kept = selected.length;
       if (selected.length) {
@@ -2691,9 +2721,10 @@ async function main() {
       const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
         identity: companyCollectionIdentity({ company, sourceConfig, args, selectedSources, dateRange,
           trendInputs: companyTrendInputs(args, company) }), refresh: args.refresh, toDate: dateRange.toDate,
-        collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, { yieldSlot }) });
+        collect: (log) => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, { yieldSlot, log }) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
-        request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };
+        request_count: result.requestCount, result_count: result.rows.length, cached: result.cached,
+        ...(result.resumed ? { resumed: true } : {}) };
       console.log(`Collected ${company.company}: ${result.rows.length} rows in ${(result.timing.elapsed_ms / 1000).toFixed(1)}s`);
       return result;
     },
@@ -2720,6 +2751,8 @@ async function main() {
     collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args)),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
+    // Google 확인 멈춤만 남아, 받아 둔 단계는 다시 쓰고 멈춘 기사만 다시 받은 기업.
+    resumed_company_count: companyResults.filter(result => result.resumed).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,
     collection_coverage: companies.map((company, index) => ({ company: company.company,
       status: collectionBlockingErrors(companyResults[index].errors).length ? 'incomplete' : 'completed',

@@ -60,28 +60,92 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
   } };
 }
 
+const TRANSIENT_ERROR = /fetch failed|timeout|aborted|domain_cooldown|HTTP (408|425|429|5\d\d)/i;
 // google_probe_paused: Google 확인이 멈춰 요청조차 보내지 않은 기사. 다음 실행에서 다시 시도해야 한다.
+const PROBE_PAUSED = /google_probe_paused/i;
+
+export function retryableError(error) {
+  const message = error?.error || '';
+  return TRANSIENT_ERROR.test(message) || PROBE_PAUSED.test(message);
+}
+
 export function retryableCollection(result) {
-  return result.errors.some(e => /fetch failed|timeout|aborted|domain_cooldown|google_probe_paused|HTTP (408|425|429|5\d\d)/i.test(e.error || ''));
+  return result.errors.some(retryableError);
+}
+
+// 재시도할 까닭이 Google 확인 멈춤뿐인 기업. 9월 실행(10월 1일)에서 재시도 대상 28개 기업 가운데 26개가 그랬다.
+// 공식 출처·검색·상세 페이지는 이미 다 받았으므로 멈춘 기사만 다시 받으면 된다.
+export function onlyProbePaused(result) {
+  const retryable = result.errors.filter(retryableError);
+  return retryable.length > 0 && !retryable.some(error => TRANSIENT_ERROR.test(error.error || ''));
+}
+
+// 다시 써도 되는 단계 결과. 일시 오류나 Google 확인 멈춤이 든 결과는 다음에 다시 시도해야 하므로 남기지 않는다.
+// failed: 출처 수집기가 던진 오류의 메시지.
+export function reusableStep(value) {
+  return !retryableError({ error: value?.failed }) && !(value?.errors || []).some(retryableError);
+}
+
+export function stepKey(kind, input) {
+  return `${kind}:${crypto.createHash('sha256').update(JSON.stringify(input)).digest('hex')}`;
+}
+
+// 기업 수집의 단계별 결과 기록. 출처 하나, 검색 하나, 상세 페이지 한 건이 각각 한 단계다.
+// previous 가 있으면 같은 단계는 요청하지 않고 그 결과를 쓴다. 단계 사이의 판단(대체 수집 여부, 기업 상한,
+// 상세 페이지 상한, 사업동향 후보 선택)은 지금처럼 다시 계산하므로, 결과는 같은 응답을 받은 전체 재수집과 같다.
+// 멈춘 기사를 이번에 받으면 그 뒤 기사가 상세 페이지 상한에 걸리는 것까지 그대로 따라간다.
+// replayed 단계는 이번 실행의 작업이 아니므로 요청 수에 더하지 않고 요청 간격도 두지 않는다.
+// 기록은 그 순간의 사본이다. 뒤 단계가 받은 객체를 고쳐도 기록은 단계가 돌려준 그대로 남는다.
+export function createStepLog(previous = null) {
+  const copy = value => JSON.parse(JSON.stringify(value));
+  const saved = new Map(previous || []);
+  const steps = [], recorded = new Set();
+  const record = (key, value) => {
+    if (recorded.has(key)) return;
+    recorded.add(key);
+    steps.push([key, copy(value)]);
+  };
+  return {
+    steps,
+    async run(key, task, reusable = reusableStep) {
+      if (saved.has(key)) {
+        const value = copy(saved.get(key));
+        record(key, value);
+        return { value, replayed: true };
+      }
+      const value = await task();
+      if (reusable(value)) record(key, value);
+      return { value, replayed: false };
+    },
+  };
 }
 
 // toDate: 수집 기간의 끝날. 체크포인트를 얼마나 오래 쓸지 정한다(collectionMaxAgeMs).
+// collect 는 단계 기록(createStepLog)을 받는다. 체크포인트에 결과와 함께 단계 결과를 남겨, 재시도할 까닭이
+// Google 확인 멈춤뿐인 기업은 다음 실행에서 멈춘 기사만 다시 받는다. 다른 일시 오류가 있으면 처음부터 받는다.
+// 이어 받은 체크포인트는 처음 받은 시각을 그대로 지닌다. 재사용한 단계가 그때 받은 것이기 때문이다.
 export async function collectWithCheckpoint({ directory, identity, collect, now = Date.now, refresh = false, toDate = '' }) {
   const key = crypto.createHash('sha256').update(JSON.stringify(identity)).digest('hex');
   const file = path.join(directory, `${key}.json`);
+  let replay = null, savedAt = null;
   if (!refresh) {
     try {
       const saved = JSON.parse(await fs.readFile(file, 'utf8'));
       const age = now() - saved.saved_at;
-      if (saved.version === 1 && Number.isFinite(age) && age >= 0 && age < collectionMaxAgeMs(toDate, saved.saved_at) && !retryableCollection(saved.result)) {
-        return { ...saved.result, requestCount: 0, cached: true };
+      if (saved.version === 1 && Number.isFinite(age) && age >= 0 && age < collectionMaxAgeMs(toDate, saved.saved_at)) {
+        if (!retryableCollection(saved.result)) return { ...saved.result, requestCount: 0, cached: true };
+        if (onlyProbePaused(saved.result) && Array.isArray(saved.steps)) {
+          replay = createStepLog(saved.steps);
+          savedAt = saved.saved_at;
+        }
       }
     } catch { /* missing/corrupt progress is recollected */ }
   }
-  const result = await collect();
+  const log = replay || createStepLog();
+  const result = await collect(log);
   await fs.mkdir(directory, { recursive: true });
   const temp = `${file}.${crypto.randomUUID()}.tmp`;
-  await fs.writeFile(temp, JSON.stringify({ version: 1, saved_at: now(), result }));
+  await fs.writeFile(temp, JSON.stringify({ version: 1, saved_at: savedAt ?? now(), result, steps: log.steps }));
   await fs.rename(temp, file);
-  return { ...result, cached: false };
+  return { ...result, cached: false, resumed: replay !== null };
 }
