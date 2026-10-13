@@ -77,9 +77,13 @@ export function reviewerSummary(stats) {
     `${stats.reviewed} summaries reviewed; ${stats.requests} review requests; ` +
     `first pass flagged ${stats.first_flagged} issues (${stats.first_enforce} signal cards sent back for rewriting); ` +
     `${stats.rounds.length} rewrite round(s); ${stats.unchecked.length} rewritten cards not re-checked; ` +
+    `${stats.kept?.length || 0} cards kept their previous copy; ` +
     `${stats.flagged.length} issues left on copy that was not rewritten; ${stats.discarded} unverifiable flags discarded` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${stats.stopped ? `; stopped after ${stats.stopped.reason}` : ''}.\n` +
+    (stats.rounds.find(round => round.stopped) ? `Rewriting stopped after ${stats.rounds.find(round => round.stopped).stopped.reason}; ` +
+      'the cards it did not rewrite keep their previous copy in this report, and a later publish-report run sends them back for rewriting.\n' : '') +
+    (stats.kept || []).map(item => `- ${item.company} ${item.candidate_id}: previous copy kept (${item.reason})\n`).join('') +
     stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
       `${item.source_phrase ? ` vs "${item.source_phrase}"` : ''}: ${item.note}\n`).join('');
 }
@@ -117,6 +121,7 @@ async function main() {
     // 문안 검토. 시제 지적과 투자 시그널의 근거 지적은 문안 단계로 돌려 한 번 다시 쓰게 한다. 다시 쓴 문안은 다시
     // 검토하지 않는다(summary_reviewer.mjs reviewAndRewrite). 항목을 빼지는 않는다.
     // 검토 호출이 실패하면 검토 없이 보고서를 만든다. 문안 검사는 이미 통과한 문안이다.
+    // 다시 쓰기가 할당량으로 멈춰도 같다. 다시 쓰지 못한 카드는 원래 문안을 그대로 두므로(summary_writer.mjs) 멈추지 않고 만든다.
     stage = 'review';
     const reviewer = resolveReviewer();
     let reviewStats = null;

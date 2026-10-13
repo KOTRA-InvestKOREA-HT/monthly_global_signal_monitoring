@@ -264,22 +264,30 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
 // 검토 지적만으로 항목을 빼지 않는다. 같은 실행들에서 틀린 지적 때문에 맞는 카드가 두 번 빠졌다(Jenoptik CEO 취임,
 // GE HealthCare CFO 선임).
 //
-// 돌려주는 기록은 지금 실린 문안 기준이다. flagged·enforce 는 다시 쓰지 않은 문안에 남은 지적이고, 다시 쓰게 한 후보는
-// unchecked 에 따로 둔다. 그 후보의 첫 검토 지적은 바뀌기 전 문안에 대한 것이라 남은 지적으로 세지 않는다.
+// 다시 쓰다가 할당량으로 멈추거나 다시 쓴 문안이 끝내 검사를 통과하지 못하면 원래 문안을 그대로 싣는다(kept).
+//
+// 돌려주는 기록은 지금 실린 문안 기준이다. flagged·enforce 는 지금 실린 문안에 남은 지적이다(원래 문안을 둔 카드 포함).
+// 실제로 다시 쓴 후보는 unchecked 에 따로 둔다. 그 후보의 첫 검토 지적은 바뀌기 전 문안에 대한 것이라 남은 지적으로 세지 않는다.
 export async function reviewAndRewrite({ articles, reviewDir, reviewer, apiKey, rewrite, ...options }) {
   const first = await reviewSummaries({ articles, reviewDir, reviewer, apiKey, ...options });
   const history = [];
-  let unchecked = [];
+  let unchecked = [], kept = [], dropped = [];
   if (first.enforce.length && !first.stopped) {
     const feedback = {};
     for (const item of first.enforce) (feedback[item.article_id] ||= {})[item.candidate_id] = item.problems;
     const written = await rewrite(feedback);
     history.push({ round: 1, asked: first.enforce.map(({ company, candidate_id, problems }) => ({ company, candidate_id, problems })),
-      written: written.written, failed: written.failed.length, requests: written.requests, ...(written.stopped ? { stopped: written.stopped } : {}) });
-    unchecked = first.enforce.map(({ article_id, company, candidate_id }) => ({ article_id, company, candidate_id }));
+      written: written.written, failed: written.failed.length, kept: written.kept?.length || 0, requests: written.requests,
+      ...(written.stopped ? { stopped: written.stopped } : {}) });
+    // 실제로 바뀐 카드만 다시 확인하지 않은 것으로 센다. 다시 쓰지 못해 원래 문안을 둔 카드(할당량으로 멈췄거나 검사를
+    // 끝내 통과하지 못함)와 멈춘 뒤 손대지 못한 카드는 지금 실린 문안에 첫 검토 지적이 그대로 남아 있다.
+    unchecked = (written.rewritten || []).map(({ article_id, company, candidate_id }) => ({ article_id, company, candidate_id }));
+    kept = written.kept || [];
+    // 가져오기 검사에 걸려 문안을 비운 카드는 이번 보고서에서 빠졌으므로 남은 지적으로 세지 않는다.
+    dropped = written.failed || [];
   }
-  const sent = new Set(unchecked.map(item => `${item.article_id}\n${item.candidate_id}`));
-  const kept = item => !sent.has(`${item.article_id}\n${item.candidate_id}`);
-  return { ...first, flagged: first.flagged.filter(kept), enforce: first.enforce.filter(kept), unchecked,
+  const gone = new Set([...unchecked, ...dropped].map(item => `${item.article_id}\n${item.candidate_id}`));
+  const onCopy = item => !gone.has(`${item.article_id}\n${item.candidate_id}`);
+  return { ...first, flagged: first.flagged.filter(onCopy), enforce: first.enforce.filter(onCopy), unchecked, kept,
     first_flagged: first.flagged.length, first_enforce: first.enforce.length, rounds: history };
 }

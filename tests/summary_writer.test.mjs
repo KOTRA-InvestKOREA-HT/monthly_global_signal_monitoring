@@ -288,6 +288,51 @@ test('a quota or a repeated outage stops the run without marking failures', asyn
   assert.equal(timeout.stopped.reason, 'timeout');
 });
 
+// 검토 지적으로 다시 쓰는 실행. 원래 문안은 이미 검사를 통과해 실려 있던 것이다.
+const flagged = { [article.id]: { 'investment:3': ['review_tense: Illustrative tense flag.'] } };
+const rewriteRun = (ws, fetchImpl) => writeSummaries({ articles: [article], reviewDir: ws.reviewDir, writer, apiKey: 'AIza-test',
+  policyWording: wording, fetchImpl, sleep: async () => {}, log: () => {}, feedback: flagged });
+
+test('a review rewrite stopped by the quota keeps the previous copy, so the report can still be built', async () => {
+  const ws = await workspace();
+  await run(ws, async () => gemini([good]));
+  const stats = await rewriteRun(ws, async () => quota());
+  assert.deepEqual(stats.stopped, { reason: 'quota', http_status: 429 });
+  assert.deepEqual(stats.rewritten, []);
+  assert.deepEqual(stats.kept, [{ article_id: article.id, company: 'Acme', candidate_id: 'investment:3', reason: 'quota', problems: [] }]);
+  const saved = await ws.read();
+  assert.equal(saved.decisions[0].summary_ko, good.summary_ko);
+  assert.equal('summary_failed' in saved, false);
+  assert.equal(importReview(article, saved)[0].row.ai_summary_en, good.summary_en);
+});
+
+// 검토 지적만으로 항목을 빼지 않는다. 다시 쓴 문안이 검사에 걸리면 원래 문안을 싣는다.
+test('a review rewrite that never passes the checks keeps the previous copy and the card stays in the report', async () => {
+  const ws = await workspace();
+  await run(ws, async () => gemini([good]));
+  const invented = { ...good, summary_en: good.summary_en.replace('500', '900') };
+  const stats = await rewriteRun(ws, async () => gemini([invented]));
+  assert.equal(stats.requests, WRITER_ATTEMPTS);
+  assert.deepEqual(stats.failed, []);
+  assert.equal(stats.kept.length, 1);
+  assert.equal(stats.kept[0].reason, 'rewrite_failed');
+  assert.ok(stats.kept[0].problems.length);
+  const saved = await ws.read();
+  assert.equal(saved.decisions[0].summary_en, good.summary_en);
+  assert.equal('summary_failed' in saved, false);
+  assert.equal(importReview(article, saved)[0].supported, true);
+});
+
+test('a review rewrite that passes replaces the copy and is listed as rewritten', async () => {
+  const ws = await workspace();
+  await run(ws, async () => gemini([good]));
+  const better = { ...good, summary_ko: good.summary_ko.replace('마련하기 위해', '조달하기 위해') };
+  const stats = await rewriteRun(ws, async () => gemini([better]));
+  assert.deepEqual(stats.rewritten, [{ article_id: article.id, company: 'Acme', candidate_id: 'investment:3' }]);
+  assert.deepEqual(stats.kept, []);
+  assert.equal((await ws.read()).decisions[0].summary_ko, better.summary_ko);
+});
+
 // Issue 4(10월 1일 실행)는 문안 100여 건을 한 건씩 응답을 기다리며 써서 오래 걸렸다.
 test('articles are written four at a time while request starts stay spaced by the delay', async () => {
   const rows = Array.from({ length: 6 }, (_, index) => ({ ...row, url: `https://example.com/notes-${index}`, title: `Acme prices notes ${index}` }));

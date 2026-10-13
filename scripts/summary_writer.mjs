@@ -416,7 +416,9 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
   fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), log = console.log, attempts = WRITER_ATTEMPTS }) {
   const instruction = buildWriterInstruction(policyWording);
   const stats = { model: writer.model, articles: 0, requests: 0, cached: 0,
-    written: 0, written_by: {}, failed: [], errors: {}, rejected: {} };
+    written: 0, written_by: {}, failed: [], errors: {}, rejected: {},
+    // 검토 지적으로 다시 쓰는 실행만: 실제로 바뀐 후보와, 원래 문안을 그대로 둔 후보.
+    ...(feedback ? { rewritten: [], kept: [] } : {}) };
   // 할당량·설정 오류나 거듭된 장애로 모델을 더 쓸 수 없으면 실행을 멈춘다.
   let stopped = null;
   const pace = createPacer();
@@ -501,10 +503,15 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       if (answer) accept(answer, writer);
     }
     const targetIds = new Set(targets.map(decision => decision.candidate_id));
+    // 검토 지적으로 다시 쓰다가 멈추거나 끝내 검사를 통과하지 못한 후보는 원래 문안을 둔다. 원래 문안은 이미 문안 검사를
+    // 통과해 실려 있던 것이고, 검토 지적만으로 항목을 빼지 않는다. 비우면 할당량으로 멈춘 실행이 빈 승인 카드를 남겨
+    // 보고서 가져오기를 막았고, 다시 쓰기가 실패하면 summary_failed 로 카드가 보고서에서 빠졌다.
+    const kept = new Set(asked ? todo.filter(decision => String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim())
+      .map(decision => decision.candidate_id) : []);
     let decisions = review.decisions.map(decision => {
       if (!targetIds.has(decision.candidate_id)) return decision;
       const text = written.get(decision.candidate_id);
-      if (text === null) return decision;
+      if (text === null || kept.has(decision.candidate_id)) return decision;
       // 키가 바뀐 옛 문안은 남기지 않는다. 지금 인용과 다른 인용에서 쓴 문안일 수 있다.
       if (!text) return withoutSummary(decision);
       stats.written += 1;
@@ -514,7 +521,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       return { ...decision, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
     });
     // 멈춘 실행은 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
-    const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id)));
+    const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
     // 검토 지적으로 다시 쓰는 실행은 지적받지 않은 후보의 실패 표시를 그대로 둔다.
     const carried = asked ? (review.summary_failed?.candidate_ids || []).filter(id => !asked[id]) : [];
     const withFailed = () => {
@@ -546,6 +553,16 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
         stats.rejected[name] = (stats.rejected[name] || 0) + 1;
       }
       log(`Writer gave up on ${article.company} ${id}: ${(rejected[id] || []).join('; ')}`);
+    }
+    for (const id of Object.keys(asked || {})) {
+      if (!targetIds.has(id) || failed.has(id)) continue;
+      const item = { article_id: article.id, company: article.company, candidate_id: id };
+      if (written.get(id)) stats.rewritten.push(item);
+      else if (kept.has(id)) {
+        const reason = stopped ? stopped.reason : 'rewrite_failed';
+        stats.kept.push({ ...item, reason, problems: stopped ? [] : rejected[id] || [] });
+        log(`Writer kept the previous copy of ${article.company} ${id} (${reason})`);
+      }
     }
     if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
   };

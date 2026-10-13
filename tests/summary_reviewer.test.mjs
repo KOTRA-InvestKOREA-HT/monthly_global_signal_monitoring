@@ -192,7 +192,7 @@ test('flags that are only recorded stay as issues left, with nothing marked unch
   assert.deepEqual(stats.unchecked, []);
   assert.equal(stats.flagged.length, 1);
   assert.equal(stats.first_flagged, 1);
-  assert.match(reviewerSummary(stats), /0 rewritten cards not re-checked; 1 issues left on copy that was not rewritten/);
+  assert.match(reviewerSummary(stats), /0 rewritten cards not re-checked; 0 cards kept their previous copy; 1 issues left on copy that was not rewritten/);
 });
 
 test('the workflow summary says rewritten cards were not re-checked instead of counting them as clean', async () => {
@@ -200,9 +200,31 @@ test('the workflow summary says rewritten cards were not re-checked instead of c
   const stats = await loop(ws, () => [{ candidate_id: 'investment:4', issues: [flag] }]);
   const text = reviewerSummary(stats);
   assert.match(text, /first pass flagged 1 issues \(1 signal cards sent back for rewriting\)/);
-  assert.match(text, /1 rewrite round\(s\); 1 rewritten cards not re-checked; 0 issues left on copy that was not rewritten/);
+  assert.match(text, /1 rewrite round\(s\); 1 rewritten cards not re-checked; 0 cards kept their previous copy; 0 issues left on copy that was not rewritten/);
   assert.doesNotMatch(text, /Broadcom Inc\.를 EPIC/);
   assert.match(reviewerSummary(null), /^### Copy review\nOff/);
+});
+
+// 다시 쓰다가 할당량으로 멈추면 원래 문안이 실린다. 그 문안에는 첫 검토 지적이 그대로 남아 있다.
+test('a rewrite stopped by the quota keeps the card on its previous copy with the flag still counted', async () => {
+  const ws = await workspace();
+  const writer = { ...resolveWriter({}), delayMs: 0, fallback: null };
+  const wording = writerPolicySection(fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8'));
+  const stats = await reviewAndRewrite({ articles: [article], reviewDir: ws.reviewDir, reviewer, apiKey: 'AIza-test',
+    fetchImpl: async () => gemini([{ candidate_id: 'investment:4', issues: [flag] }]), sleep: async () => {}, log: () => {},
+    rewrite: feedback => writeSummaries({ articles: [article], reviewDir: ws.reviewDir, writer, apiKey: 'AIza-test', policyWording: wording,
+      feedback, fetchImpl: async () => new Response('{"error":{"message":"quota"}}', { status: 429 }), sleep: async () => {}, log: () => {} }) });
+  assert.deepEqual(stats.unchecked, []);
+  assert.equal(stats.kept.length, 1);
+  assert.equal(stats.enforce.length, 1);
+  assert.equal(stats.rounds[0].stopped.reason, 'quota');
+  const saved = await ws.read();
+  assert.equal(saved.decisions[0].summary_ko, decision.summary_ko);
+  assert.equal(importReview(article, saved)[0].supported, true);
+  const text = reviewerSummary(stats);
+  assert.match(text, /0 rewritten cards not re-checked; 1 cards kept their previous copy; 1 issues left/);
+  assert.match(text, /Rewriting stopped after quota; the cards it did not rewrite keep their previous copy/);
+  assert.match(text, /- Applied Materials investment:4: previous copy kept \(quota\)/);
 });
 
 // 시제는 날짜로 판단한다. 게시일을 모르는 검토 모델은 제 날짜의 일을 현재형으로 쓴 발표를 미래로 읽었다.
