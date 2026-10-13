@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL,
-  publishableReviewFailures } from '../scripts/review_report.mjs';
+  publishableReviewFailures, stripRejectedCandidateQuotes } from '../scripts/review_report.mjs';
 import { groupArticles, importReview, articlesWithoutCompanyBody, companyCoverageGaps, coverageReasons, coverageStatus } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
@@ -582,6 +582,75 @@ test('rate-limit header capture is name-based and redacts the key', () => {
   assert.equal(found['x-detail'], undefined);
   assert.equal(found.authorization, undefined);
   assert.equal(rateLimitHeaders(new Headers({ 'x-ratelimit-key': 'test-key' }), 'test-key')['x-ratelimit-key'], '[REDACTED]');
+});
+
+// 2026-09 판정: 인용 불일치 재시도 가운데 최대 15건은 맞지 않는 인용이 모두 탈락 후보의 것이었다.
+// 탈락 후보의 인용은 어디에도 실리지 않는다. 첫 응답에서 그 인용만 빼고 받는다.
+const PLANT = 'The company plans a pilot plant.';
+const OTHER = 'It declined to give a timeline, and said the plan stays under review until the board meets.';
+const withBusiness = company => {
+  const row = article(company).candidates[0].row;
+  return groupArticles([row], [{ ...row, investment_signal_no: undefined }], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+};
+const businessDecision = overrides => ({ ...decisions[0], candidate_id: 'relevant', event_stage: 'not_applicable',
+  leading_indicator_supported: true, evidence_quotes: [OTHER], ...overrides });
+
+test('an unmatched quote of a rejected candidate is removed on the first answer instead of asking again', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'strip-rejected-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = withBusiness('Stripped');
+  // 투자 후보는 승인, 사업동향은 기업 귀속부터 탈락이다. 사업동향 인용 하나가 원문에 없다.
+  const rejected = businessDecision({ entity_supported: false, target_technology_supported: false, indicator_supported: false,
+    quality: 'needs_review', evidence_quotes: [OTHER, 'Invented business quote'] });
+  let calls = 0;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return response([decisions[0], rejected]); } });
+  assert.equal(calls, 1);
+  assert.equal(state.status, 'completed');
+  assert.deepEqual(state.diagnostics, []);
+  assert.deepEqual(state.quote_removals, [{ article_id: a.id, candidate_ids: ['relevant'] }]);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'relevant').evidence_quotes, [OTHER]);
+  assert.deepEqual(stored.unverified_quotes_removed, [{ candidate_id: 'relevant', removed_quotes: ['Invented business quote'] }]);
+  assert.equal(stored.semantic_recheck_pending, undefined);
+  // 승인 결과는 인용을 빼기 전과 같다. 승인 후보의 판정은 손대지 않는다.
+  assert.deepEqual(importReview(a, stored, { summaries: false }).map(r => [r.candidate_id, r.supported, r.near_miss]),
+    [['investment:2', true, false], ['relevant', false, false]]);
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:2'), decisions[0]);
+
+  // 날짜 힌트까지 어긋나도 한 번에 끝난다. 힌트는 버리고 탈락 후보의 인용만 뺀다.
+  const p = pendingArticle('StrippedUndated');
+  const pendingRejected = { ...pendingDecisions[0], entity_supported: false, indicator_supported: false, quality: 'needs_review',
+    evidence_quotes: ['Invented quote'] };
+  const dropped = await requestReview(p, '', 'key', async () => dated('2026-08-15', datedQuote, [pendingRejected]));
+  assert.equal(dropped.published_date, '');
+  assert.deepEqual(dropped.decisions[0].evidence_quotes, []);
+});
+
+test('an unmatched quote that could still publish or change another approval keeps the retry', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'strip-kept-retry-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const cases = {
+    // 승인될 후보: 인용 결함은 지금처럼 되묻는다.
+    Approved: a => [{ ...decisions[0], evidence_quotes: [PLANT, 'Invented quote'] }, businessDecision({})],
+    // 근접 후보(조건 하나만 모자람): 대시보드와 사업현황 상자에 실릴 수 있으므로 되묻는다.
+    NearMiss: a => [decisions[0], businessDecision({ quality: 'needs_review', evidence_quotes: [OTHER, 'Invented quote'] })],
+    // 탈락 후보의 인용이 같은 사건 판단을 바꾼다. 빼면 투자 후보의 기술 인정이 살아나 승인이 달라진다.
+    SameEvent: a => [decisions[0], businessDecision({ entity_supported: false, target_technology_supported: false,
+      indicator_supported: false, quality: 'needs_review', evidence_quotes: [OTHER, `Invented: ${PLANT}`] })],
+  };
+  for (const [company, answer] of Object.entries(cases)) {
+    const a = withBusiness(company);
+    const bodies = [];
+    await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+      fetchImpl: async (_, init) => { bodies.push(JSON.parse(init.body)); return response(bodies.length === 1 ? answer(a) : [decisions[0], businessDecision({})]); } });
+    assert.equal(bodies.length, 2, company);
+    assert.match(bodies[1].messages[2].content, /evidence_quotes must be exact passages/, company);
+  }
+  // 직접 확인: 같은 사건 판단이 바뀌는 경우는 인용을 빼지 않는다.
+  const a = withBusiness('Direct');
+  const review = { article_id: a.id, reviewer: 'x', decisions: cases.SameEvent(a) };
+  assert.equal(stripRejectedCandidateQuotes(a, review), null);
 });
 
 // 2026-09 판정: 이번 달 기사가 모두 제목뿐인 9개사(Airbus·Texcell·Nexeon 등) 기사 33건에 요청을 하나씩 썼다.

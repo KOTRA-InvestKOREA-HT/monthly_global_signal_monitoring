@@ -625,7 +625,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 게시일 제안은 기사 단위 필드다. 여기서 review 로 옮기지 않으면 스키마를 고쳐도 dateHints 는
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
-  const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
+  let review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy, promptContract()),
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
@@ -641,13 +641,25 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 예전에는 첫 실패를 재시도에 맡겼다. 보고서에 쓰이지 않는 힌트 하나를 고치려고 요청을 하나 더 썼고,
   // 2026-09 판정의 재시도 22건 가운데 8건(Asahi Kasei 5건)이 그것이었다. 이제 첫 응답에서도 힌트만 버린다.
   // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않고 아래 경로로 간다.
+  // 아래 경로도 힌트를 지운 판정을 받는다. 힌트가 남아 있으면 인용만 고친 판정도 날짜 때문에 다시 걸린다.
   if (problem && /published_date/.test(problem.message)) {
-    const withoutHint = { ...review, published_date: '', published_date_quote: '' };
+    review = { ...review, published_date: '', published_date_quote: '' };
     try {
-      importReview(article, withoutHint, { summaries: false });
+      importReview(article, review, { summaries: false });
       console.log(`Article ${article.id}: unusable publication date discarded, content review kept`);
-      return withoutHint;
+      return review;
     } catch (error) { problem = error; }
+  }
+  // 1차 판정의 첫 응답에서 원문과 맞지 않는 인용이 모두 승인도 근접도 아닌 후보의 것이면, 그 인용만 빼고
+  // 받는다. 2026-09 판정은 이런 응답에도 재시도를 썼다(최대 15건). 탈락 후보의 인용은 보고서에도 대시보드에도
+  // 실리지 않는다. 승인되거나 근접 후보로 남을 후보의 인용 결함은 지금처럼 되묻고, 2차 검증 응답에는 쓰지 않는다.
+  if (problem && !retry && CANDIDATE_EVIDENCE_PROBLEM.test(problem.message)) {
+    const stripped = stripRejectedCandidateQuotes(article, review);
+    if (stripped) {
+      console.log(`Article ${article.id}: unverifiable quotes removed from rejected candidates ` +
+        `${stripped.unverified_quotes_removed.map(item => item.candidate_id).join(', ')}`);
+      return stripped;
+    }
   }
   // 후보 하나의 인용 결함으로 기사 전체를 잃지 않게 한다. 실행 35167466191·35175067142 의 Nexeon 은
   // 두 번 모두 한 후보가 검증에 걸려 1억 파운드 조달 기사 전체가 보고서에서 빠졌다.
@@ -674,6 +686,40 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
 }
 
 const CANDIDATE_EVIDENCE_PROBLEM = /(?:evidence_quotes must be exact|needs an evidence quote)/;
+
+// 맞지 않는 인용을 뺀 판정. 다음 중 하나라도 걸리면 null 이고 호출자는 지금처럼 되묻는다.
+// 인용을 뺄 후보가 승인되거나 근접 후보로 남는다(근접 사업동향은 사업현황 상자에 실린다). 인용을 빼서 어느
+// 후보든 승인·근접 여부가 달라진다(같은 사건 판단 sameEventAsBusiness 는 인용을 본다). 뺀 뒤에도 검증을
+// 통과하지 못한다. 없는 인용을 통과시키지 않고, 뺀 인용은 unverified_quotes_removed 로 남긴다.
+export function stripRejectedCandidateQuotes(article, review) {
+  try {
+    const evidence = article.evidence.map(normalizeQuote);
+    const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
+      evidence.some(text => text.includes(normalizeQuote(quote)));
+    const outcomes = decisions => decisions.map(decision => {
+      const { supported, nearMiss } = decisionOutcome(article, decisions, decision);
+      return [decision.candidate_id, Boolean(supported), Boolean(nearMiss)];
+    });
+    const removed = [];
+    const decisions = review.decisions.map(decision => {
+      if (!Array.isArray(decision.evidence_quotes)) return decision;
+      const unverified = decision.evidence_quotes.filter(quote => !verified(quote));
+      if (!unverified.length) return decision;
+      removed.push({ candidate_id: decision.candidate_id, removed_quotes: unverified });
+      return { ...decision, evidence_quotes: decision.evidence_quotes.filter(verified) };
+    });
+    if (!removed.length) return null;
+    const ids = new Set(removed.map(item => item.candidate_id));
+    const before = outcomes(review.decisions);
+    if (before.some(([id, supported, nearMiss]) => ids.has(id) && (supported || nearMiss))) return null;
+    if (JSON.stringify(before) !== JSON.stringify(outcomes(decisions))) return null;
+    const stripped = { ...review, decisions, unverified_quotes_removed: removed };
+    importReview(article, stripped, { summaries: false });
+    return stripped;
+  } catch {
+    return null;
+  }
+}
 export function salvageCandidateEvidence(article, review) {
   const evidence = article.evidence.map(normalizeQuote);
   const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
