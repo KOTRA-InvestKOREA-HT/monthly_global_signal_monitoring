@@ -195,8 +195,9 @@ SIGNAL_DESCRIPTIONS = {
     5: "핵심경영진 행보 · C-Level 이동·극비 방한·실사 조율 등",
 }
 
-# 표지에 싣는 국문 지표 이름. config/investment_signal_indicators.json 의 label_ko 는 판정 캐시 식별자에
-# 들어가므로(reviewPolicy) 표시 이름만 바꾸려고 그 파일을 고치면 저장된 판정이 모두 무효가 된다.
+# 표지에 싣는 국문 지표 이름. config/investment_signal_indicators.json 의 label_ko 는 예전에 판정 캐시
+# 식별자에 들어가(reviewPolicy) 표시 이름만 고쳐도 저장된 판정이 모두 무효가 됐다. 지금은 식별자에 없지만
+# 표지 문구는 여기서 따로 관리한다.
 INDICATOR_LABEL_KO = {no: text.split(" · ", 1)[0] for no, text in SIGNAL_DESCRIPTIONS.items()}
 
 # 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.

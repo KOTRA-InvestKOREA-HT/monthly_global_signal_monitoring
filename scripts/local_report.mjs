@@ -883,6 +883,8 @@ export function articleCoverageGap(article, review, published = false) {
   // 보고서까지 판정 없이 온 기사는 재시도해도 인용 검증을 통과하지 못한 것뿐이다(build 의 reviewFailed).
   // 읽어 보지 못했으니 신호가 없다고 할 수 없다.
   if (!review) return 'review_failed';
+  // 모델에 보내지 않고 규칙으로 기록한 판정(companyWithoutBodyReview). 판정 실패가 아니라 본문 미수집이다.
+  if (review.reviewer === NO_BODY_REVIEWER) return 'no_body';
   // 재검토를 끝내지 못한 판정은 신호 유무를 확정하지 못한 것이다.
   if (review.semantic_recheck_pending) return 'recheck_pending';
   const decisions = review.decisions || [];
@@ -897,10 +899,44 @@ export function articleCoverageGap(article, review, published = false) {
 // 하나도 없는데 제목만으로 "검토 후 미포착"이라 할 수는 없다. 2026-08 보고서(9월 14일 실행)에서
 // Google News 확인이 멈춘 뒤 Airbus 6건, Heraeus 5건, Schott Pharma 6건이 본문 없이 이렇게 표시됐다.
 export function companyCoverageGaps(articles, reviewByArticle, publishedArticleIds = new Set()) {
-  if (articles.length && !articles.some((article) => article.candidates.some((candidate) => hasArticleBody(candidate.row)))) {
-    return articles;
-  }
+  if (articles.length && !companyHasBody(articles)) return articles;
   return articles.filter((article) => articleCoverageGap(article, reviewByArticle.get(article.id), publishedArticleIds.has(article.id)));
+}
+
+const articleHasBody = (article) => article.candidates.some((candidate) => hasArticleBody(candidate.row));
+const companyHasBody = (articles) => articles.some(articleHasBody);
+
+// 모델 판정이 결과를 바꾸지 못하는 기사. 이번 달 기사가 모두 본문 없이 제목뿐인 기업의 기사다.
+// 본문 없는 기사는 승인되지 않고(decisionForApproval), 근접 후보로도 남지 않으며, 그 기업은 판정과
+// 무관하게 근거 부족이다(companyCoverageGaps). 2026-09 판정은 이런 기사 33건(9개사: Airbus·Texcell·
+// Nexeon·Syensqo·Heraeus 등)에 요청을 하나씩 썼다. 무료 등급에서는 요청마다 4.5초와 하루 한도 한 칸이다.
+// 본문 있는 기사가 하나라도 있는 기업의 본문 없는 기사는 여기 들지 않는다. 그 판정은 no_body 사유를 정한다.
+// 기업은 build 의 커버리지와 같이 회사 이름으로 묶는다. 전체 기사 목록을 받아야 한다. 일부만 넘기면
+// 본문 있는 기사를 못 보고 그 기업을 본문 없는 기업으로 잘못 읽는다.
+export function articlesWithoutCompanyBody(articles) {
+  const byCompany = new Map();
+  for (const article of articles) byCompany.set(article.company, [...(byCompany.get(article.company) || []), article]);
+  return new Set([...byCompany.values()].filter((list) => !companyHasBody(list)).flat().map((article) => article.id));
+}
+
+// 위 기사에 모델 대신 기록하는 판정. 승인 필드는 모두 false 이고 인용은 없다. 본문이 없으면 판단을 미룬다는
+// 판정 지시(needs_review)를 따른다. 커버리지 사유는 articleCoverageGap 이 이 판정자 표시를 보고 no_body 로 둔다.
+// 기사 id 는 본문이 들어오면 바뀌고, 같은 기업에 본문 있는 기사가 생기면 판정자가 맞지 않아 캐시로 쓰이지
+// 않으므로(review_report 의 캐시 검사) 어느 경우든 모델이 다시 판정한다.
+export const NO_BODY_REVIEWER = "rule/company-without-body-v1";
+export function companyWithoutBodyReview(article) {
+  return {
+    article_id: article.id, reviewer: NO_BODY_REVIEWER,
+    decisions: article.candidates.map((candidate) => ({
+      candidate_id: candidate.id, evidence_quotes: [],
+      reason: "이 기업의 이번 달 기사가 모두 본문 없이 제목뿐이라 판정하지 않았다(본문 미수집).",
+      entity_supported: false, target_technology_supported: false, indicator_supported: false,
+      // 사업동향은 이 필드와 단계가 고정값이다(importReview).
+      leading_indicator_supported: candidate.kind === "relevant",
+      event_stage: candidate.kind === "relevant" ? APPROVAL_POLICY.business_stage : "unclear",
+      quality: "needs_review",
+    })),
+  };
 }
 
 // 근거 부족 기업이 왜 그런지. 한 기업이 여러 사유를 가질 수 있다. 실행 35167466191 보고서는 77개사 중 43개사를

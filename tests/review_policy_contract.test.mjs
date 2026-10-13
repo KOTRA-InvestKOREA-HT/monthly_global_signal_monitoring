@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { groupArticles } from '../scripts/local_report.mjs';
+import { groupArticles, sourceCandidates } from '../scripts/local_report.mjs';
 import { policySection, reviewPolicy } from '../scripts/review_report.mjs';
+import { APPROVAL_POLICY } from '../scripts/validate_report_inputs.mjs';
+import { GEMINI } from '../scripts/review_providers.mjs';
 
 // 모델에게 실제로 전달되는 구간만 본다. 이 바깥의 문장은 프롬프트가 아니다.
 const DOC = fs.readFileSync(path.resolve('docs/local_report_review.md'), 'utf8');
@@ -84,6 +86,56 @@ test('a criteria change gives every article a new id, so stored reviews are not 
     groupArticles([source], [], period, after)[0].id);
   // 같은 기준이면 같은 식별자여야 재개가 동작한다.
   assert.equal(reviewPolicy({ policyText: '옛 판정 기준', ...inputs }), before);
+});
+
+// 2026-09 이후 지표 label_en·키워드만 고친 커밋 4건이 저장된 판정 약 430건을 매번 무효로 만들었다.
+// 식별자에는 모델이 받는 것과 모델 답의 검증·사용을 바꾸는 것만 남는다.
+test('cosmetic config edits keep saved judgements; what the model sees or how its answer is used retires them', () => {
+  const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
+  const base = reviewPolicy({ policyText: '판정 기준' });
+  // 기술 매핑·지표 설정 전체는 더 이상 식별자의 재료가 아니다. 예전 호출 모양으로 넘겨도 같다.
+  assert.equal(reviewPolicy({ policyText: '판정 기준', technology: { companies: [{ company: 'X' }] },
+    indicators: { indicators: [{ no: 1, label_en: 'Anything' }] } }), base);
+  // 승인 규칙의 설명 문장은 빠지고, 집행하는 값은 남는다.
+  const rules = overrides => reviewPolicy({ policyText: '판정 기준', approvalPolicy: { ...APPROVAL_POLICY, ...overrides } });
+  assert.equal(rules({ description: '다른 설명', relevance_denial_patterns_note: '다른 메모' }), base);
+  for (const changed of [{ leading_stages: ['exploratory'] }, { precursor_indicators: [1, 4] }, { company_level_indicators: [5] },
+    { business_stage: 'other' }, { relevance_denial_patterns: ['no direct link'] }, { new_rule: true }]) {
+    assert.notEqual(rules(changed), base, JSON.stringify(changed));
+  }
+
+  // 기업별 기술·범위·면제와 지표 번호는 모델에 가고, 기사 id 의 재료에 들어 있다. 바뀐 기업의 기사만 다시 판정된다.
+  const signal = { company: 'Acme', target_no: 1, url: 'https://example.com/acme', title: 'Acme pilot',
+    published_at: '2026-08-10', content_text: 'Acme plans a pilot plant for its target material.' };
+  const tech = { company: 'Acme', target_no: 1, industry: '소재', target_technology: '타겟 소재', target_technology_en: 'target material',
+    technology_group: 'materials', excluded_from_relevance: false };
+  const indicator = { id: 'production', no: 2, label_ko: '생산 확대', label_en: 'Production Expansion',
+    description_ko: '증설 등', keywords: ['expansion'] };
+  const scopes = { materials: { includes_en: 'target material', excludes_en: 'other material', includes_ko: '포함', excludes_ko: '제외' } };
+  const articleFor = ({ t = tech, i = indicator, s = scopes } = {}) => {
+    const candidates = sourceCandidates([signal], { companies: [t] }, { indicators: [i] }, period, s);
+    return groupArticles(candidates.investment, candidates.relevant, period, base)[0];
+  };
+  const sent = article => JSON.stringify(GEMINI.body({ article, policy: '', retry: false }));
+  const same = articleFor();
+  for (const cosmetic of [{ i: { ...indicator, label_en: 'Capacity Build-out', label_ko: '증설', description_ko: '다른 설명', keywords: ['capacity'] } },
+    { t: { ...tech, target_technology: '다른 국문 표기', industry: '화학' } },
+    { s: { materials: { ...scopes.materials, includes_ko: '다른 국문 범위' } } }]) {
+    const article = articleFor(cosmetic);
+    assert.equal(article.id, same.id, JSON.stringify(cosmetic));
+    assert.equal(sent(article), sent(same), JSON.stringify(cosmetic));
+  }
+  for (const material of [{ t: { ...tech, target_technology_en: 'other material' } }, { t: { ...tech, excluded_from_relevance: true } },
+    { s: { materials: { ...scopes.materials, excludes_en: 'nothing' } } }, { i: { ...indicator, no: 3 } }]) {
+    assert.notEqual(articleFor(material).id, same.id, JSON.stringify(material));
+  }
+});
+
+test('golden evaluation keys its articles exactly like the production judgement', () => {
+  // 두 경로가 같은 인자로 식별자를 만들어야 golden 평가가 운영과 같은 기사 id 를 쓴다.
+  const call = /reviewPolicy\(\{ policyText \}\)/;
+  assert.match(fs.readFileSync(path.resolve('scripts/review_report.mjs'), 'utf8'), call);
+  assert.match(fs.readFileSync(path.resolve('scripts/golden_review.mjs'), 'utf8'), call);
 });
 
 test('committed and completed are reserved for the final investment itself', () => {

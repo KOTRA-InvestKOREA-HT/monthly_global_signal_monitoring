@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL } from '../scripts/review_report.mjs';
-import { groupArticles } from '../scripts/local_report.mjs';
+import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL,
+  publishableReviewFailures, stripRejectedCandidateQuotes } from '../scripts/review_report.mjs';
+import { groupArticles, importReview, articlesWithoutCompanyBody, companyCoverageGaps, coverageReasons, coverageStatus } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
@@ -63,7 +64,7 @@ const pendingDecisions = [{ ...decisions[0], evidence_quotes: [pendingBody] }];
 const dated = (published_date, published_date_quote, ds = pendingDecisions) =>
   new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ decisions: ds, published_date, published_date_quote }) } }], usage: {} }));
 
-test('the article-level date reaches the review object, and a date it cannot quote is rejected', async () => {
+test('the article-level date reaches the review object, and a date it cannot quote is dropped', async () => {
   const a = pendingArticle('Undated');
   assert.equal(a.date_placement, 'date_pending');
   const review = await requestReview(a, '', 'key', async () => dated('2026-08-14', datedQuote));
@@ -75,10 +76,14 @@ test('the article-level date reaches the review object, and a date it cannot quo
   assert.equal(empty.published_date_quote, '');
   const emptyPair = await requestReview(a, '', 'key', async () => dated('', ''));
   assert.equal(emptyPair.published_date, '');
-  // 인용문이 그 날짜를 말하지 않으면 거부한다. 인용이 기사에 있다는 것만으로는 부족하다.
+  // 인용문이 그 날짜를 말하지 않으면 받지 않는다. 인용이 기사에 있다는 것만으로는 부족하다.
+  // 받지 않는 것은 힌트뿐이다. 판정은 그대로 남고, 힌트 하나 때문에 요청을 더 쓰지 않는다.
   for (const [date, quote] of [['2026-08-15', datedQuote], ['2026-08-14', 'The company plans a pilot plant.'],
     ['2026-08-14', 'Published on August 14, 2026 by staff.'], ['August 14, 2026', datedQuote]]) {
-    await assert.rejects(requestReview(a, '', 'key', async () => dated(date, quote)), /date_evidence_mismatch/);
+    const dropped = await requestReview(a, '', 'key', async () => dated(date, quote));
+    assert.equal(dropped.published_date, '');
+    assert.equal(dropped.published_date_quote, '');
+    assert.deepEqual(dropped.decisions, pendingDecisions);
   }
 });
 
@@ -128,22 +133,33 @@ test('a failed or unavailable date hint never costs the cached decision or the r
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.equal('published_date' in stored, false);
   assert.deepEqual(stored.decisions, pendingDecisions);
-  const rejected = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-15', datedQuote) });
+  // 인용이 말하지 않는 날짜는 버린다. 버린 것도 물어본 것이라 다음 실행이 같은 힌트를 다시 사지 않는다.
+  // 보강 응답의 판정은 이때도 버린다.
+  const rejected = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-15', datedQuote,
+    [{ ...pendingDecisions[0], summary_ko: '재판정된 다른 요약' }]) });
   assert.equal(rejected.status, 'completed');
+  assert.equal(rejected.requests, 1);
   assert.equal(rejected.date_hints, 0);
-  assert.equal('published_date' in JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8')), false);
+  const dropped = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(dropped.published_date, '');
+  assert.equal(dropped.date_hint_version, DATE_HINT_VERSION);
+  assert.deepEqual(dropped.decisions, pendingDecisions);
 });
 
-test('a date hint that is still unusable on retry is discarded so the content review survives', async t => {
+// 2026-09 판정: 재시도 22건 가운데 8건(Asahi Kasei 5건)이 판정은 정상이고 날짜 힌트만 어긋난 응답이었다.
+// 힌트는 보고서에 쓰이지 않는다. 그것을 고치려고 요청을 하나 더 쓰지 않는다.
+test('a date hint the quote does not state is discarded on the first answer so the content review survives', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-discard-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const a = pendingArticle('Undated');
   let calls = 0;
-  // 인용문은 8월 14일을 말하는데 제안은 8월 15일이다. 판정 자체는 두 번 다 정상이다.
+  // 인용문은 8월 14일을 말하는데 제안은 8월 15일이다. 판정 자체는 정상이다.
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
     fetchImpl: async () => { calls++; return dated('2026-08-15', datedQuote); } });
-  // 첫 실패는 기존 재시도를 쓴다. 두 번째에도 날짜만 어긋나면 힌트를 버린다.
-  assert.equal(calls, 2);
+  // 재시도 없이 힌트만 버린다.
+  assert.equal(calls, 1);
+  assert.equal(state.requests, 1);
+  assert.deepEqual(state.diagnostics, []);
   assert.equal(state.status, 'completed');
   assert.equal(state.completed, 1);
   assert.deepEqual(state.failed_articles, []);
@@ -161,11 +177,16 @@ test('discarding the date hint never hides a decision that failed its own valida
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const a = pendingArticle('Undated');
   // 날짜도 인용도 어긋난 응답. 날짜를 버린 뒤 판정을 다시 검증하면 인용 위조가 그대로 드러난다.
+  const bodies = [];
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
-    fetchImpl: async () => dated('2026-08-15', datedQuote, [{ ...pendingDecisions[0], evidence_quotes: ['Invented quote'] }]) });
+    fetchImpl: async (_, init) => { bodies.push(JSON.parse(init.body));
+      return dated('2026-08-15', datedQuote, [{ ...pendingDecisions[0], evidence_quotes: ['Invented quote'] }]); } });
   assert.equal(state.status, 'paused');
   assert.equal(state.reason, 'invalid_responses');
   assert.deepEqual(state.failed_articles, [{ article_id: a.id, reason: 'evidence_mismatch' }]);
+  // 승인될 후보의 인용 결함은 지금처럼 한 번 되묻는다. 되묻는 사유는 날짜가 아니라 인용이다.
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1].messages[2].content, /evidence_quotes must be exact passages/);
   await assert.rejects(fs.access(path.join(reviewDir, `${a.id}.json`)));
 });
 
@@ -561,4 +582,155 @@ test('rate-limit header capture is name-based and redacts the key', () => {
   assert.equal(found['x-detail'], undefined);
   assert.equal(found.authorization, undefined);
   assert.equal(rateLimitHeaders(new Headers({ 'x-ratelimit-key': 'test-key' }), 'test-key')['x-ratelimit-key'], '[REDACTED]');
+});
+
+// 2026-09 판정: 인용 불일치 재시도 가운데 최대 15건은 맞지 않는 인용이 모두 탈락 후보의 것이었다.
+// 탈락 후보의 인용은 어디에도 실리지 않는다. 첫 응답에서 그 인용만 빼고 받는다.
+const PLANT = 'The company plans a pilot plant.';
+const OTHER = 'It declined to give a timeline, and said the plan stays under review until the board meets.';
+const withBusiness = company => {
+  const row = article(company).candidates[0].row;
+  return groupArticles([row], [{ ...row, investment_signal_no: undefined }], { from_date: '2026-08-01', to_date: '2026-08-31' })[0];
+};
+const businessDecision = overrides => ({ ...decisions[0], candidate_id: 'relevant', event_stage: 'not_applicable',
+  leading_indicator_supported: true, evidence_quotes: [OTHER], ...overrides });
+
+test('an unmatched quote of a rejected candidate is removed on the first answer instead of asking again', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'strip-rejected-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const a = withBusiness('Stripped');
+  // 투자 후보는 승인, 사업동향은 기업 귀속부터 탈락이다. 사업동향 인용 하나가 원문에 없다.
+  const rejected = businessDecision({ entity_supported: false, target_technology_supported: false, indicator_supported: false,
+    quality: 'needs_review', evidence_quotes: [OTHER, 'Invented business quote'] });
+  let calls = 0;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return response([decisions[0], rejected]); } });
+  assert.equal(calls, 1);
+  assert.equal(state.status, 'completed');
+  assert.deepEqual(state.diagnostics, []);
+  assert.deepEqual(state.quote_removals, [{ article_id: a.id, candidate_ids: ['relevant'] }]);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'relevant').evidence_quotes, [OTHER]);
+  assert.deepEqual(stored.unverified_quotes_removed, [{ candidate_id: 'relevant', removed_quotes: ['Invented business quote'] }]);
+  assert.equal(stored.semantic_recheck_pending, undefined);
+  // 승인 결과는 인용을 빼기 전과 같다. 승인 후보의 판정은 손대지 않는다.
+  assert.deepEqual(importReview(a, stored, { summaries: false }).map(r => [r.candidate_id, r.supported, r.near_miss]),
+    [['investment:2', true, false], ['relevant', false, false]]);
+  assert.deepEqual(stored.decisions.find(d => d.candidate_id === 'investment:2'), decisions[0]);
+
+  // 날짜 힌트까지 어긋나도 한 번에 끝난다. 힌트는 버리고 탈락 후보의 인용만 뺀다.
+  const p = pendingArticle('StrippedUndated');
+  const pendingRejected = { ...pendingDecisions[0], entity_supported: false, indicator_supported: false, quality: 'needs_review',
+    evidence_quotes: ['Invented quote'] };
+  const dropped = await requestReview(p, '', 'key', async () => dated('2026-08-15', datedQuote, [pendingRejected]));
+  assert.equal(dropped.published_date, '');
+  assert.deepEqual(dropped.decisions[0].evidence_quotes, []);
+});
+
+test('an unmatched quote that could still publish or change another approval keeps the retry', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'strip-kept-retry-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const cases = {
+    // 승인될 후보: 인용 결함은 지금처럼 되묻는다.
+    Approved: a => [{ ...decisions[0], evidence_quotes: [PLANT, 'Invented quote'] }, businessDecision({})],
+    // 근접 후보(조건 하나만 모자람): 대시보드와 사업현황 상자에 실릴 수 있으므로 되묻는다.
+    NearMiss: a => [decisions[0], businessDecision({ quality: 'needs_review', evidence_quotes: [OTHER, 'Invented quote'] })],
+    // 탈락 후보의 인용이 같은 사건 판단을 바꾼다. 빼면 투자 후보의 기술 인정이 살아나 승인이 달라진다.
+    SameEvent: a => [decisions[0], businessDecision({ entity_supported: false, target_technology_supported: false,
+      indicator_supported: false, quality: 'needs_review', evidence_quotes: [OTHER, `Invented: ${PLANT}`] })],
+  };
+  for (const [company, answer] of Object.entries(cases)) {
+    const a = withBusiness(company);
+    const bodies = [];
+    await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+      fetchImpl: async (_, init) => { bodies.push(JSON.parse(init.body)); return response(bodies.length === 1 ? answer(a) : [decisions[0], businessDecision({})]); } });
+    assert.equal(bodies.length, 2, company);
+    assert.match(bodies[1].messages[2].content, /evidence_quotes must be exact passages/, company);
+  }
+  // 직접 확인: 같은 사건 판단이 바뀌는 경우는 인용을 빼지 않는다.
+  const a = withBusiness('Direct');
+  const review = { article_id: a.id, reviewer: 'x', decisions: cases.SameEvent(a) };
+  assert.equal(stripRejectedCandidateQuotes(a, review), null);
+});
+
+// 2026-09 판정: 이번 달 기사가 모두 제목뿐인 9개사(Airbus·Texcell·Nexeon 등) 기사 33건에 요청을 하나씩 썼다.
+// 본문 없는 기사는 승인될 수 없고 그 기업은 판정과 무관하게 근거 부족이라, 그 요청은 결과를 바꾸지 못했다.
+const titleOnlyRow = (company, slug) => ({ company, target_no: 1, url: `https://example.com/${company}/${slug}`,
+  title: `${company} ${slug} headline`, published_at: '2026-08-02', investment_signal_no: 2,
+  target_technology: 'material', target_technology_en: 'material', content_text: '' });
+const bodiedRow = (company, slug) => ({ ...titleOnlyRow(company, slug), content_text: `The company plans a pilot plant. ${TAIL}` });
+const skipArticles = () => groupArticles([titleOnlyRow('TitleOnly', 'a'), titleOnlyRow('TitleOnly', 'b'),
+  bodiedRow('Mixed', 'a'), titleOnlyRow('Mixed', 'b')], [], { from_date: '2026-08-01', to_date: '2026-08-31' });
+const rejectedAnswer = article => decisions.map(d => ({ ...d, entity_supported: false, indicator_supported: false, quality: 'needs_review',
+  evidence_quotes: article.evidence.some(text => text.includes('pilot plant')) ? d.evidence_quotes : [] }));
+
+test('articles of a company without any article body are recorded without a request and count as completed', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'no-body-skip-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = skipArticles();
+  const skip = articlesWithoutCompanyBody(articles);
+  // 본문 있는 기사가 하나라도 있는 기업(Mixed)의 제목뿐인 기사는 그대로 판정한다. 그 판정이 no_body 사유를 정한다.
+  assert.deepEqual(articles.filter(a => skip.has(a.id)).map(a => a.company), ['TitleOnly', 'TitleOnly']);
+  const asked = [];
+  const fetchImpl = async (_, init) => {
+    const sent = JSON.parse(JSON.parse(init.body).messages[1].content);
+    asked.push(sent.company);
+    return response(rejectedAnswer(articles.find(a => a.id === sent.id)));
+  };
+  for (const concurrency of [1, 2]) {
+    asked.length = 0;
+    await fs.rm(reviewDir, { recursive: true, force: true });
+    const state = await reviewArticles({ articles, reviewDir, policy: '', config: { ...config, concurrency }, sleep: async () => {},
+      noBodyArticleIds: skip, fetchImpl });
+    assert.equal(state.status, 'completed');
+    assert.equal(state.completed, 4);
+    assert.equal(state.total, 4);
+    assert.equal(state.no_body_skipped, 2);
+    assert.equal(state.requests, 2);
+    assert.deepEqual(asked, ['Mixed', 'Mixed']);
+    // 판정 완료로 읽힌다. 문안·발행 단계가 이 표시가 있는 판정만 받는다.
+    assert.deepEqual(publishableReviewFailures(state), []);
+  }
+  // 기록된 판정은 보고서 단계의 검사를 그대로 통과하고, 승인 행도 근접 행도 만들지 않는다.
+  const titleOnly = articles.filter(a => a.company === 'TitleOnly');
+  const reviewByArticle = new Map();
+  for (const a of titleOnly) {
+    const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+    reviewByArticle.set(a.id, stored);
+    for (const summaries of [false, true]) {
+      const results = importReview(a, stored, { summaries });
+      assert.equal(results.length, a.candidates.length);
+      assert.ok(results.every(r => !r.supported && !r.near_miss && r.row === null));
+    }
+  }
+  // 그 기업은 지금처럼 근거 부족이고 사유는 본문 미수집이다. 판정 실패(review_failed)로 읽히지 않는다.
+  assert.equal(coverageStatus(titleOnly, reviewByArticle, 'completed'), 'incomplete_evidence');
+  assert.deepEqual(companyCoverageGaps(titleOnly, reviewByArticle).map(a => a.id), titleOnly.map(a => a.id));
+  assert.deepEqual(coverageReasons(titleOnly, reviewByArticle, new Set(), 'completed'), ['no_body']);
+  // 판정 파일이 없을 때와 다르다. 그때는 판정 실패다.
+  assert.deepEqual(coverageReasons(titleOnly, new Map(), new Set(), 'completed'), ['review_failed']);
+  // 다시 돌려도 요청하지 않는다.
+  const again = await reviewArticles({ articles, reviewDir, policy: '', config, sleep: async () => {}, noBodyArticleIds: skip,
+    fetchImpl: async () => assert.fail('saved reviews and skipped articles need no request') });
+  assert.equal(again.status, 'completed');
+  assert.equal(again.requests, 0);
+  assert.equal(again.cached, 2);
+  assert.equal(again.no_body_skipped, 2);
+});
+
+test('a rule-recorded review is never reused as a model judgement once the company has a body', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'no-body-reuse-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const [a] = skipArticles();
+  await reviewArticles({ articles: [a], reviewDir, policy: '', config, noBodyArticleIds: new Set([a.id]),
+    fetchImpl: async () => assert.fail('not sent') });
+  // 같은 기사 id 인데 이번에는 같은 기업에 본문 있는 기사가 생겨 건너뛰지 않는다. 규칙 판정은 캐시가 아니다.
+  let calls = 0;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return response(rejectedAnswer(a)); } });
+  assert.equal(calls, 1);
+  assert.equal(state.cached, 0);
+  assert.equal(state.no_body_skipped, 0);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.reviewer, `${MODEL}/article-review-v1`);
 });

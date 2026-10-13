@@ -58,6 +58,22 @@ test('a golden run calls the API once per selected article and for nobody else',
     selected.map(a => `${a.id}.json`).sort());
 });
 
+// 운영 판정은 이번 달 기사가 모두 제목뿐인 기업의 기사를 모델에 보내지 않는다. 그 판단은 그 기업의 기사 전체를
+// 봐야 내릴 수 있다. golden 은 고른 기사만 받으므로 건너뛰지 않고, 고른 기사는 모두 새 기준으로 판정한다.
+test('a golden run judges a title-only article instead of recording it by rule', async t => {
+  const outDir = await fs.mkdtemp(path.join(os.tmpdir(), 'golden-title-only-'));
+  t.after(() => fs.rm(outDir, { recursive: true, force: true }));
+  const [article] = build([{ ...source('Alpha', 'https://example.com/Alpha'), content_text: '' }], 'new-policy');
+  let calls = 0;
+  const state = await runGolden({ articles: [article], outDir, policyText: 'criteria',
+    config: { apiKey: 'k', maxRequests: 40, delayMs: 0, concurrency: 1 }, sleep: async () => {},
+    fetchImpl: async () => { calls++; return apiResponse(article, { evidence_quotes: [article.title], quality: 'needs_review' }); } });
+  assert.equal(calls, 1);
+  assert.equal(state.no_body_skipped, 0);
+  const stored = JSON.parse(await fs.readFile(path.join(outDir, 'reviews', `${article.id}.json`), 'utf8'));
+  assert.equal(stored.reviewer, `${MODEL}/article-review-v1`);
+});
+
 test('a golden run leaves production outputs and the operational review cache untouched', async t => {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'golden-isolation-'));
   t.after(() => fs.rm(temp, { recursive: true, force: true }));

@@ -4,7 +4,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness } from './local_report.mjs';
+import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness,
+  articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
@@ -395,9 +396,18 @@ export function policySection(doc) {
 // 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
 // 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
 // golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
-// approvalPolicy 도 식별자에 들어간다. 어느 후보가 승인되는지가 바뀌면 모델이 문안을 써야 하는
-// 후보도 바뀌기 때문이다. 지표 3·5 의 품목 연결을 풀었을 때 저장된 판정에는 그 후보의 문안이
-// 없었다. 상수만 고치고 기준 문서를 그대로 두면 옛 판정이 문안 없이 승인으로 올라온다.
+//
+// 식별자에는 모델에 보내는 것과, 모델 답을 검증하고 쓰는 방식을 바꾸는 것만 넣는다. 예전에는 기술 매핑
+// 전체와 지표 설정 전체(키워드·label_en·description_ko)도 넣어서, 2026-09 이후 지표 이름·키워드만 고친
+// 커밋 4건이 저장된 판정 약 430건을 매번 무효로 만들었다. 둘 다 모델에 가지 않는다. 모델이 받는 기업별
+// 기술(영문)·범위·면제 여부와 지표 번호(후보 id)는 기사 id 의 재료(groupArticles 의 material)에 이미 있어,
+// 그것이 바뀌면 그 기사만 다시 판정된다.
+//
+// 승인 규칙(approvalRules)은 남긴다. 판정 문안 때문에 넣었던 이유는 사라졌지만(판정 호출은 문안을 쓰지
+// 않는다), 규칙은 여전히 판정 단계에서 쓰인다. 저장된 판정의 가져오기 검증(importReview)과, 같은 실행 안의
+// 재질문·2차 검증 대상 선택(stageSuspects, relevanceConflictSuspects, verificationSuspects)이 이 규칙을
+// 본다. 규칙이 바뀌면 그때 새로 걸리는 후보가 재질문·검증을 거치지 않은 채 승인될 수 있다. 사람이 읽는
+// 설명(description, *_note)만 뺀다.
 // outputs/review_work 는 실행마다 커지기만 했다. 이 디렉터리는 캐시로 복원되고 아티팩트로
 // 30일 보관되므로, 안 지우면 아티팩트와 캐시가 함께 불어난다.
 //
@@ -431,7 +441,14 @@ export async function pruneReviewWork(root, runDir, articles) {
   return removed;
 }
 
-export function reviewPolicy({ policyText, technology, indicators, approvalPolicy = APPROVAL_POLICY,
+// 승인 규칙 파일에서 코드가 집행하는 값만. 설명 문장은 판정에도 검증에도 쓰이지 않는다.
+// 새 키는 기본으로 들어간다. 집행하는 값을 빠뜨리는 쪽보다 설명을 하나 더 넣는 쪽이 안전하다.
+export function approvalRules(policy = APPROVAL_POLICY) {
+  return Object.fromEntries(Object.entries(policy).filter(([key]) => key !== 'description' && !key.endsWith('_note')));
+}
+
+// technology·indicators 는 더 이상 받지 않는다(위 주석). 예전 호출 모양으로 넘겨도 식별자에 들어가지 않는다.
+export function reviewPolicy({ policyText, approvalPolicy = APPROVAL_POLICY,
   provider = PROVIDER, promptDigest = reviewPromptDigest(policyText, promptContract()) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
@@ -439,7 +456,7 @@ export function reviewPolicy({ policyText, technology, indicators, approvalPolic
   const normalized = String(policyText).split('\r\n').join('\n');
   // 추론 단계와 실제 프롬프트(재시도·2차 검증 포함)도 판정 결과를 바꾸므로 식별자에 넣는다.
   // 프롬프트 버전 수동 갱신을 잊어도 내용 digest가 달라져 이전 review 파일을 재사용하지 않는다.
-  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, technology, indicators, approvalPolicy])}`;
+  return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, approvalRules(approvalPolicy)])}`;
 }
 
 function invalidResponse(code, label = PROVIDER.label) {
@@ -547,8 +564,8 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
 const REVIEW_REQUEST_TIMEOUT_MS = 300000;
 
 // keepDecisions: 2차 검증에서 검증 대상이 아닌 후보의 1차 판정. 검증 응답의 그 후보 답은 버리므로 형식 검사에도 넣지 않는다.
-// repairAttempt: 이 응답이 검증 피드백을 받고 다시 쓴 답인지. 날짜 힌트 폐기·숫자 경고·후보 salvage 같은 완화는 보정 기회를
-// 한 번 준 뒤에만 쓴다. 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
+// repairAttempt: 이 응답이 검증 피드백을 받고 다시 쓴 답인지. 숫자 경고·발행될 후보의 salvage 같은 완화는 보정 기회를
+// 한 번 준 뒤에만 쓴다(날짜 힌트 폐기는 보고서에 쓰이지 않는 값이라 첫 응답에서도 한다). 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
 // 실행 35200022672 의 Applied Materials·Boeing S4 가 보정 요청 없이 곧바로 인용을 걷어내고 미완료가 됐다.
 export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER,
   { keepDecisions = null, repairAttempt = Boolean(retry) && retry?.mode !== 'verify' } = {}) {
@@ -624,7 +641,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   // 게시일 제안은 기사 단위 필드다. 여기서 review 로 옮기지 않으면 스키마를 고쳐도 dateHints 는
   // 계속 비어 있다. 스키마상 항상 문자열이지만, 빠졌거나 문자열이 아니면 제안 없음으로 읽는다.
   const suggested = value => (typeof value === 'string' ? value : '');
-  const review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
+  let review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy, promptContract()),
     date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
     form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
@@ -634,17 +651,31 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
   try { importReview(article, review, { summaries: false }); } catch (error) { problem = error; }
-  // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다. 첫 실패는 기존 재시도에 맡기되, 재시도에서도
-  // 인용이 그 날짜를 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는
-  // 날짜 하나 때문에 잃으면 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
-  // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않는다.
-  if (problem && repairAttempt && /published_date/.test(problem.message)) {
-    const withoutHint = { ...review, published_date: '', published_date_quote: '' };
+  // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다(dateHints, 다음 수집의 출발점). 인용이 그 날짜를
+  // 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는 날짜 하나 때문에 잃으면
+  // 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
+  // 예전에는 첫 실패를 재시도에 맡겼다. 보고서에 쓰이지 않는 힌트 하나를 고치려고 요청을 하나 더 썼고,
+  // 2026-09 판정의 재시도 22건 가운데 8건(Asahi Kasei 5건)이 그것이었다. 이제 첫 응답에서도 힌트만 버린다.
+  // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않고 아래 경로로 간다.
+  // 아래 경로도 힌트를 지운 판정을 받는다. 힌트가 남아 있으면 인용만 고친 판정도 날짜 때문에 다시 걸린다.
+  if (problem && /published_date/.test(problem.message)) {
+    review = { ...review, published_date: '', published_date_quote: '' };
     try {
-      importReview(article, withoutHint, { summaries: false });
+      importReview(article, review, { summaries: false });
       console.log(`Article ${article.id}: unusable publication date discarded, content review kept`);
-      return withoutHint;
+      return review;
     } catch (error) { problem = error; }
+  }
+  // 1차 판정의 첫 응답에서 원문과 맞지 않는 인용이 모두 승인도 근접도 아닌 후보의 것이면, 그 인용만 빼고
+  // 받는다. 2026-09 판정은 이런 응답에도 재시도를 썼다(최대 15건). 탈락 후보의 인용은 보고서에도 대시보드에도
+  // 실리지 않는다. 승인되거나 근접 후보로 남을 후보의 인용 결함은 지금처럼 되묻고, 2차 검증 응답에는 쓰지 않는다.
+  if (problem && !retry && CANDIDATE_EVIDENCE_PROBLEM.test(problem.message)) {
+    const stripped = stripRejectedCandidateQuotes(article, review);
+    if (stripped) {
+      console.log(`Article ${article.id}: unverifiable quotes removed from rejected candidates ` +
+        `${stripped.unverified_quotes_removed.map(item => item.candidate_id).join(', ')}`);
+      return stripped;
+    }
   }
   // 후보 하나의 인용 결함으로 기사 전체를 잃지 않게 한다. 실행 35167466191·35175067142 의 Nexeon 은
   // 두 번 모두 한 후보가 검증에 걸려 1억 파운드 조달 기사 전체가 보고서에서 빠졌다.
@@ -671,6 +702,40 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
 }
 
 const CANDIDATE_EVIDENCE_PROBLEM = /(?:evidence_quotes must be exact|needs an evidence quote)/;
+
+// 맞지 않는 인용을 뺀 판정. 다음 중 하나라도 걸리면 null 이고 호출자는 지금처럼 되묻는다.
+// 인용을 뺄 후보가 승인되거나 근접 후보로 남는다(근접 사업동향은 사업현황 상자에 실린다). 인용을 빼서 어느
+// 후보든 승인·근접 여부가 달라진다(같은 사건 판단 sameEventAsBusiness 는 인용을 본다). 뺀 뒤에도 검증을
+// 통과하지 못한다. 없는 인용을 통과시키지 않고, 뺀 인용은 unverified_quotes_removed 로 남긴다.
+export function stripRejectedCandidateQuotes(article, review) {
+  try {
+    const evidence = article.evidence.map(normalizeQuote);
+    const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
+      evidence.some(text => text.includes(normalizeQuote(quote)));
+    const outcomes = decisions => decisions.map(decision => {
+      const { supported, nearMiss } = decisionOutcome(article, decisions, decision);
+      return [decision.candidate_id, Boolean(supported), Boolean(nearMiss)];
+    });
+    const removed = [];
+    const decisions = review.decisions.map(decision => {
+      if (!Array.isArray(decision.evidence_quotes)) return decision;
+      const unverified = decision.evidence_quotes.filter(quote => !verified(quote));
+      if (!unverified.length) return decision;
+      removed.push({ candidate_id: decision.candidate_id, removed_quotes: unverified });
+      return { ...decision, evidence_quotes: decision.evidence_quotes.filter(verified) };
+    });
+    if (!removed.length) return null;
+    const ids = new Set(removed.map(item => item.candidate_id));
+    const before = outcomes(review.decisions);
+    if (before.some(([id, supported, nearMiss]) => ids.has(id) && (supported || nearMiss))) return null;
+    if (JSON.stringify(before) !== JSON.stringify(outcomes(decisions))) return null;
+    const stripped = { ...review, decisions, unverified_quotes_removed: removed };
+    importReview(article, stripped, { summaries: false });
+    return stripped;
+  } catch {
+    return null;
+  }
+}
 export function salvageCandidateEvidence(article, review) {
   const evidence = article.evidence.map(normalizeQuote);
   const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
@@ -762,7 +827,7 @@ export async function reviewArticles(options) {
           supplementFetchImpl: supplementFetch, supplementStop, verifierFetchImpl: verifierFetch, verifierStop, logReviewed: false });
         results.push(result);
         progressCompleted += result.completed;
-        if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
+        if (result.completed > result.cached + result.no_body_skipped) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
         // 검증기 중단은 판정을 멈추지 않는다. 남은 기사의 1차 판정은 계속 받고, 실행 상태는 끝에서 verifierStop 으로 정한다.
         if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped', 'verifier_unavailable'].includes(result.reason)) {
           // The gate stops queued work knowing only the status code; the worker
@@ -784,6 +849,7 @@ export async function reviewArticles(options) {
       : verifierStop.stopped ? { status: 'paused', ...verifierStop.stopped, reason: verifierStop.stopped.reason === 'request_budget' ? 'request_budget' : 'verifier_unavailable' }
       : completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
     requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
+    no_body_skipped: results.reduce((n, r) => n + (r.no_body_skipped || 0), 0),
     date_hints: results.reduce((n, r) => n + (r.date_hints || 0), 0),
     failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
     quote_removals: results.flatMap(r => r.quote_removals || []),
@@ -804,9 +870,12 @@ function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
+// noBodyArticleIds: 모델에 보내지 않고 규칙 판정으로 기록할 기사(articlesWithoutCompanyBody). 전체 기사 목록을 아는
+// 호출자(main)가 정한다. golden 평가처럼 고른 기사만 넘기는 호출자는 넘기지 않으므로 모든 기사를 판정한다.
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
-  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null } }) {
-  let requests = 0, cached = 0, completed = 0, dateHints = 0;
+  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null },
+  noBodyArticleIds = new Set() }) {
+  let requests = 0, cached = 0, completed = 0, dateHints = 0, noBodySkipped = 0;
   const failed = [];
   const diagnostics = [];
   const quoteRemovals = [], recheckPending = [];
@@ -816,7 +885,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   // pending: 통과한 후보 없이 미완료. failed: 끝내 검증 응답을 못 받은 기사. rejected_responses: 형식 검사에서 거부된 응답 수.
   const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null,
     ...Object.fromEntries(VERIFICATION_COUNTS.map(key => [key, 0])), errors: {} };
-  const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
+  const state = extra => ({ requests, cached, completed, no_body_skipped: noBodySkipped, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
     quote_removals: quoteRemovals, recheck_pending: recheckPending, verification: verifications, ...extra });
   // 검증 응답이 거부된 시도마다 1차 판정처럼 진단을 남긴다. 실행 35200022672 의 Nabtesco 는 어느 인용이 틀렸는지 남지 않았다.
   const recordVerifierDiagnostic = async (article, suspects, error, attempt) => {
@@ -927,6 +996,15 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   };
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
+    // 모델 판정이 결과를 바꾸지 못하는 기사는 요청 없이 규칙 판정을 기록하고 완료로 센다. 판정 파일이 있어야
+    // 보고서 단계가 이 기사를 판정 실패(review_failed)로 읽지 않는다. 같은 내용이면 다시 쓰지 않는다.
+    if (noBodyArticleIds.has(article.id)) {
+      const skipped = companyWithoutBodyReview(article);
+      const saved = await read(file).catch(() => null);
+      if (JSON.stringify(saved) !== JSON.stringify(skipped)) await write(file, skipped);
+      noBodySkipped++; completed++;
+      continue;
+    }
     // 저장된 판정을 재검토하는 중이면 그 판정과 이유. 재판정이 끝내 실패하면 이 판정을 재검토 미완료로 남긴다.
     let stale = null;
     try {
@@ -1145,7 +1223,7 @@ async function main() {
   const [targets, technology, indicators] = await Promise.all([
     read('data/target_companies.json'), read('data/company_technology_map.json'), read('config/investment_signal_indicators.json'),
   ]);
-  const policy = reviewPolicy({ policyText, technology, indicators });
+  const policy = reviewPolicy({ policyText });
   const inputDir = path.join(root, `${from}_${to}`);
   const sourceFile = path.join(inputDir, 'latest_company_signals.json');
   if (process.env.REPORT_REFRESH === 'true') await fs.rm(inputDir, { recursive: true, force: true });
@@ -1188,7 +1266,8 @@ async function main() {
   await write(path.join(runDir, 'snapshot.json'), snapshot);
   await pruneReviewWork(root, runDir, articles);
   failedStage = 'review';
-  const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
+  const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config,
+    noBodyArticleIds: articlesWithoutCompanyBody(articles) });
   const reviewFailed = publishableReviewFailures(state);
   // 판정 완료: 모든 기사를 판정했거나, 남은 것이 재시도까지 인용 검증에 실패한 기사뿐이다. 문안·발행 단계
   // (publish_report.mjs)는 이 표시가 있는 판정만 받는다. 같은 실행 식별자·기간·스냅샷 폴더를 함께 남겨
@@ -1201,6 +1280,7 @@ async function main() {
   console.log(JSON.stringify(state));
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} judgement\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
+    `${state.no_body_skipped ? `; ${state.no_body_skipped} not sent (every article of the company lacks a body)` : ''}` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
     (reviewFailed.length ? `${reviewFailed.length} article(s) failed evidence validation twice; the report will be built without them ` +
       'and their companies are marked as incomplete evidence.\n' : '') +

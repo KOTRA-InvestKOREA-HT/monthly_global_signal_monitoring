@@ -88,8 +88,13 @@ test('an approvable candidate with unverifiable evidence becomes pending while t
   // 발행될 후보가 모두 근거를 잃으면 살릴 판정이 없으므로 실패로 둔다.
   assert.equal(salvageCandidateEvidence(a, review([{ ...approvedS2, evidence_quotes: ['Invented.'] },
     { ...approvedS3, evidence_quotes: ['Invented.'] }, { ...rejectedS5, evidence_quotes: [] }, { ...business, evidence_quotes: ['Invented.'] }])), null);
-  // 첫 응답에서는 되묻기가 우선이다. 재시도 전에는 인용을 빼지 않는다.
-  await assert.rejects(requestReview(a, '', 'key', async () => reply([approvedS2, approvedS3, rejectedS5, business])), /evidence_mismatch/);
+  // 첫 응답에서는 승인될 후보의 인용 결함을 되묻는 것이 우선이다. 재시도 전에는 그 인용을 빼지 않는다.
+  await assert.rejects(requestReview(a, '', 'key', async () => reply([approvedS2, { ...approvedS3, evidence_quotes: [ROUND, 'Invented.'] },
+    rejectedS5, business])), /evidence_mismatch/);
+  // 틀린 인용이 탈락 후보(S5)의 것뿐이면 첫 응답에서 그 인용만 뺀다. 되물어도 보고서는 달라지지 않는다.
+  const first = await requestReview(a, '', 'key', async () => reply([approvedS2, approvedS3, rejectedS5, business]));
+  assert.deepEqual(first.unverified_quotes_removed, [{ candidate_id: 'investment:5', removed_quotes: rejectedS5.evidence_quotes }]);
+  assert.equal(first.semantic_recheck_pending, undefined);
   // "UK-based" 의 based 는 이름이 아니다.
   assert.deepEqual(ungroundedSummaryNames('Round - Nexeon will build a UK-based pilot facility.', [ROUND], 'Nexeon £100m round'), []);
 });
