@@ -19,6 +19,19 @@ test('top-level collection cache respects expiry, inputs, failures and version',
   assert.notEqual(digest, collectionInputDigest([{ company: 'A' }], { feeds: ['https://example.com/new-feed'] }));
 });
 
+test('a collection taken three days after the period closed is reused for 72 hours', () => {
+  const digest = collectionInputDigest([{ company: 'A' }], {});
+  const summary = { content_collection_version: 'v5', collection_resume_version: 1, collection_input_digest: digest,
+    retryable_company_count: 0, to_date: '2026-09-30', run_started_at: '2026-10-05T09:00:00Z', run_finished_at: '2026-10-05T09:07:00Z' };
+  const at = now => ({ version: 'v5', inputDigest: digest, now: Date.parse(now) });
+  assert.equal(collectionNeedsRefresh(summary, at('2026-10-07T09:00:00Z')), false);
+  assert.equal(collectionNeedsRefresh(summary, at('2026-10-08T09:07:00Z')), true);
+  // 마감 직후의 수집본(10월 1일)은 지금처럼 하루가 지나면 다시 받는다.
+  const early = { ...summary, run_started_at: '2026-10-01T04:49:52Z', run_finished_at: '2026-10-01T04:56:13Z' };
+  assert.equal(collectionNeedsRefresh(early, at('2026-10-01T20:00:00Z')), false);
+  assert.equal(collectionNeedsRefresh(early, at('2026-10-02T05:00:00Z')), true);
+});
+
 test('unreviewable collected rows remain follow-up candidates and prevent completed coverage', () => {
   const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
   const rows = [{ company: 'A', target_no: 1, title: 'No body or date', url: 'https://example.com/a', published_at_source: '' }];
