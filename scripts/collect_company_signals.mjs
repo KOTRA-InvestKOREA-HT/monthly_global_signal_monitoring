@@ -1901,6 +1901,44 @@ export function trendDigestInputs(args, technology = trendTechnology, keywordCon
   return { maxTrendDiscovery: args.maxTrendDiscovery, technology, keywordConfig, searchTerms };
 }
 
+// 출처 설정에서 기업 이름을 키로 갖는 항목. 수집기는 여기서 자기 기업 몫만 읽는다(collectOfficialFeeds·
+// collectOfficialPages·collectOfficialSitemaps·collectSecFilings 와 publisher_recovery 의 configuredOfficialHosts).
+const PER_COMPANY_SOURCE_KEYS = new Set(["official_feeds", "official_pages", "official_sitemaps", "sec_filers"]);
+
+// 기업 체크포인트 식별자. 전에는 출처 설정 전체를 넣어, 한 기업의 출처만 고쳐도 77개 기업을 모두 다시 받았다.
+// 이제 그 기업의 결과를 바꿀 수 있는 것만 넣는다: 회사 항목, 출처 설정의 자기 몫, 사업동향 탐색 입력의 자기 몫,
+// 수집 설정 전체(기간·출처 목록·상한·링크 정책 등), 수집 버전.
+// 기업별 항목이 아닌 출처 설정 최상위 값은 통째로 넣는다. 수집기가 나중에 전역 값을 읽게 돼도 빠지지 않게 하려는
+// 것이다. 설명문을 고쳐도 다시 받게 되지만 드문 일이다.
+export function companySourceConfig(sourceConfig, company) {
+  return Object.fromEntries(Object.entries(sourceConfig || {}).map(([key, value]) =>
+    [key, PER_COMPANY_SOURCE_KEYS.has(key) ? value?.[company.company] ?? null : value]));
+}
+
+// 사업동향 탐색 입력의 기업 몫. 탐색은 기술 매핑의 자기 항목, 그 항목의 기술 그룹 키워드, 자기 검색어만 쓴다.
+// 키워드 파일의 groups 밖 값은 전역 값이라 통째로 넣는다. 상한이 0이면 탐색을 돌리지 않으므로 넣지 않는다.
+export function companyTrendInputs(args, company, technology = trendTechnology, keywordConfig = trendKeywordConfig,
+  searchTerms = trendSearchTerms) {
+  if (!(args.maxTrendDiscovery > 0)) return null;
+  const entry = companyTechnology(company, technology);
+  const { groups, ...keywordSettings } = keywordConfig || {};
+  return { maxTrendDiscovery: args.maxTrendDiscovery, technology: entry, keywordSettings,
+    keywordGroup: entry ? groups?.[entry.technology_group] ?? null : null,
+    searchTerms: companySearchTerms(company, searchTerms) };
+}
+
+function companyTechnology(company, technology) {
+  return technology?.companies?.find(
+    (item) => item.company === company.company && item.target_no === company.target_no) || null;
+}
+
+export function companyCollectionIdentity({ company, sourceConfig, args, selectedSources, dateRange, trendInputs }) {
+  const { outDir, refresh, ...settings } = args;
+  return { version: CONTENT_COLLECTION_VERSION, company, sourceConfig: companySourceConfig(sourceConfig, company),
+    trend: trendInputs, settings, active_sources: selectedSources,
+    period: { from: dateRange.fromDate, to: dateRange.toDate } };
+}
+
 // 기업별로 손으로 적는 검색어. 카탈로그는 기술 그룹 단위라 제품명·시장 표현을 담지 못한다.
 // Norsk Hydro 의 8월 사업동향이 그 틈으로 빠졌다: 외부 보도 제목이 "recycled alu alloy" 였고
 // 그룹 키워드에는 그 표현도, 미국식 철자 "aluminum" 도 없었다. 여기 적으면 질의에 먼저 들어가고
@@ -2584,8 +2622,7 @@ async function collectCompany(company, sourceConfig, selectedSources, args, date
 
   // 사업동향 탐색은 대체 수집과 달리 공식 자료가 있어도 돌린다. 기업 자리(maxPerCompany)를 두고
   // 다투게 하면 공식 보도자료를 밀어내므로, 그 상한을 적용한 뒤에 최대 maxTrendDiscovery 건만 덧붙인다.
-  const technology = trendTechnology?.companies?.find(
-    (item) => item.company === company.company && item.target_no === company.target_no);
+  const technology = companyTechnology(company, trendTechnology);
   stats.trend_discovery = "not_selected";
   if (selectedSources.includes("google_news") && args.maxTrendDiscovery > 0 && technology) {
     stats.trend_discovery = "run";
@@ -2651,10 +2688,9 @@ async function main() {
     args.companyConcurrency,
     async (company, index, yieldSlot) => {
       const started = Date.now();
-      const { outDir, refresh, ...settings } = args;
       const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
-        identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings, active_sources: selectedSources,
-          period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh, toDate: dateRange.toDate,
+        identity: companyCollectionIdentity({ company, sourceConfig, args, selectedSources, dateRange,
+          trendInputs: companyTrendInputs(args, company) }), refresh: args.refresh, toDate: dateRange.toDate,
         collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, { yieldSlot }) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
         request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };
