@@ -548,8 +548,8 @@ function quoteDiagnostics(article, decisions, apiKey, validationMessage = null) 
 const REVIEW_REQUEST_TIMEOUT_MS = 300000;
 
 // keepDecisions: 2차 검증에서 검증 대상이 아닌 후보의 1차 판정. 검증 응답의 그 후보 답은 버리므로 형식 검사에도 넣지 않는다.
-// repairAttempt: 이 응답이 검증 피드백을 받고 다시 쓴 답인지. 날짜 힌트 폐기·숫자 경고·후보 salvage 같은 완화는 보정 기회를
-// 한 번 준 뒤에만 쓴다. 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
+// repairAttempt: 이 응답이 검증 피드백을 받고 다시 쓴 답인지. 숫자 경고·발행될 후보의 salvage 같은 완화는 보정 기회를
+// 한 번 준 뒤에만 쓴다(날짜 힌트 폐기는 보고서에 쓰이지 않는 값이라 첫 응답에서도 한다). 예전에는 retry 값의 truthiness 로 판단해, 첫 2차 검증 요청({mode:'verify'})도 재시도로 취급돼
 // 실행 35200022672 의 Applied Materials·Boeing S4 가 보정 요청 없이 곧바로 인용을 걷어내고 미완료가 됐다.
 export async function requestReview(article, policy, apiKey, fetchImpl = fetch, retry = false, provider = PROVIDER,
   { keepDecisions = null, repairAttempt = Boolean(retry) && retry?.mode !== 'verify' } = {}) {
@@ -635,11 +635,13 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
   try { importReview(article, review, { summaries: false }); } catch (error) { problem = error; }
-  // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다. 첫 실패는 기존 재시도에 맡기되, 재시도에서도
-  // 인용이 그 날짜를 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는
-  // 날짜 하나 때문에 잃으면 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
-  // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않는다.
-  if (problem && repairAttempt && /published_date/.test(problem.message)) {
+  // 날짜 힌트는 보조 정보이고 언제나 추정으로만 쓰인다(dateHints, 다음 수집의 출발점). 인용이 그 날짜를
+  // 말하지 못하면 힌트만 버리고 판정은 살린다. 근거 있는 판정 전체를 근거 없는 날짜 하나 때문에 잃으면
+  // 그 기사는 보고서에서 조용히 사라지고 build 까지 막힌다.
+  // 예전에는 첫 실패를 재시도에 맡겼다. 보고서에 쓰이지 않는 힌트 하나를 고치려고 요청을 하나 더 썼고,
+  // 2026-09 판정의 재시도 22건 가운데 8건(Asahi Kasei 5건)이 그것이었다. 이제 첫 응답에서도 힌트만 버린다.
+  // 힌트를 지운 뒤 판정을 다시 검증하므로, 판정 자체의 결함은 여기서 가려지지 않고 아래 경로로 간다.
+  if (problem && /published_date/.test(problem.message)) {
     const withoutHint = { ...review, published_date: '', published_date_quote: '' };
     try {
       importReview(article, withoutHint, { summaries: false });

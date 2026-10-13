@@ -64,7 +64,7 @@ const pendingDecisions = [{ ...decisions[0], evidence_quotes: [pendingBody] }];
 const dated = (published_date, published_date_quote, ds = pendingDecisions) =>
   new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ decisions: ds, published_date, published_date_quote }) } }], usage: {} }));
 
-test('the article-level date reaches the review object, and a date it cannot quote is rejected', async () => {
+test('the article-level date reaches the review object, and a date it cannot quote is dropped', async () => {
   const a = pendingArticle('Undated');
   assert.equal(a.date_placement, 'date_pending');
   const review = await requestReview(a, '', 'key', async () => dated('2026-08-14', datedQuote));
@@ -76,10 +76,14 @@ test('the article-level date reaches the review object, and a date it cannot quo
   assert.equal(empty.published_date_quote, '');
   const emptyPair = await requestReview(a, '', 'key', async () => dated('', ''));
   assert.equal(emptyPair.published_date, '');
-  // 인용문이 그 날짜를 말하지 않으면 거부한다. 인용이 기사에 있다는 것만으로는 부족하다.
+  // 인용문이 그 날짜를 말하지 않으면 받지 않는다. 인용이 기사에 있다는 것만으로는 부족하다.
+  // 받지 않는 것은 힌트뿐이다. 판정은 그대로 남고, 힌트 하나 때문에 요청을 더 쓰지 않는다.
   for (const [date, quote] of [['2026-08-15', datedQuote], ['2026-08-14', 'The company plans a pilot plant.'],
     ['2026-08-14', 'Published on August 14, 2026 by staff.'], ['August 14, 2026', datedQuote]]) {
-    await assert.rejects(requestReview(a, '', 'key', async () => dated(date, quote)), /date_evidence_mismatch/);
+    const dropped = await requestReview(a, '', 'key', async () => dated(date, quote));
+    assert.equal(dropped.published_date, '');
+    assert.equal(dropped.published_date_quote, '');
+    assert.deepEqual(dropped.decisions, pendingDecisions);
   }
 });
 
@@ -129,22 +133,33 @@ test('a failed or unavailable date hint never costs the cached decision or the r
   const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
   assert.equal('published_date' in stored, false);
   assert.deepEqual(stored.decisions, pendingDecisions);
-  const rejected = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-15', datedQuote) });
+  // 인용이 말하지 않는 날짜는 버린다. 버린 것도 물어본 것이라 다음 실행이 같은 힌트를 다시 사지 않는다.
+  // 보강 응답의 판정은 이때도 버린다.
+  const rejected = await reviewArticles({ ...args, fetchImpl: async () => dated('2026-08-15', datedQuote,
+    [{ ...pendingDecisions[0], summary_ko: '재판정된 다른 요약' }]) });
   assert.equal(rejected.status, 'completed');
+  assert.equal(rejected.requests, 1);
   assert.equal(rejected.date_hints, 0);
-  assert.equal('published_date' in JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8')), false);
+  const dropped = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(dropped.published_date, '');
+  assert.equal(dropped.date_hint_version, DATE_HINT_VERSION);
+  assert.deepEqual(dropped.decisions, pendingDecisions);
 });
 
-test('a date hint that is still unusable on retry is discarded so the content review survives', async t => {
+// 2026-09 판정: 재시도 22건 가운데 8건(Asahi Kasei 5건)이 판정은 정상이고 날짜 힌트만 어긋난 응답이었다.
+// 힌트는 보고서에 쓰이지 않는다. 그것을 고치려고 요청을 하나 더 쓰지 않는다.
+test('a date hint the quote does not state is discarded on the first answer so the content review survives', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'date-hint-discard-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const a = pendingArticle('Undated');
   let calls = 0;
-  // 인용문은 8월 14일을 말하는데 제안은 8월 15일이다. 판정 자체는 두 번 다 정상이다.
+  // 인용문은 8월 14일을 말하는데 제안은 8월 15일이다. 판정 자체는 정상이다.
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
     fetchImpl: async () => { calls++; return dated('2026-08-15', datedQuote); } });
-  // 첫 실패는 기존 재시도를 쓴다. 두 번째에도 날짜만 어긋나면 힌트를 버린다.
-  assert.equal(calls, 2);
+  // 재시도 없이 힌트만 버린다.
+  assert.equal(calls, 1);
+  assert.equal(state.requests, 1);
+  assert.deepEqual(state.diagnostics, []);
   assert.equal(state.status, 'completed');
   assert.equal(state.completed, 1);
   assert.deepEqual(state.failed_articles, []);
@@ -162,11 +177,16 @@ test('discarding the date hint never hides a decision that failed its own valida
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
   const a = pendingArticle('Undated');
   // 날짜도 인용도 어긋난 응답. 날짜를 버린 뒤 판정을 다시 검증하면 인용 위조가 그대로 드러난다.
+  const bodies = [];
   const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
-    fetchImpl: async () => dated('2026-08-15', datedQuote, [{ ...pendingDecisions[0], evidence_quotes: ['Invented quote'] }]) });
+    fetchImpl: async (_, init) => { bodies.push(JSON.parse(init.body));
+      return dated('2026-08-15', datedQuote, [{ ...pendingDecisions[0], evidence_quotes: ['Invented quote'] }]); } });
   assert.equal(state.status, 'paused');
   assert.equal(state.reason, 'invalid_responses');
   assert.deepEqual(state.failed_articles, [{ article_id: a.id, reason: 'evidence_mismatch' }]);
+  // 승인될 후보의 인용 결함은 지금처럼 한 번 되묻는다. 되묻는 사유는 날짜가 아니라 인용이다.
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1].messages[2].content, /evidence_quotes must be exact passages/);
   await assert.rejects(fs.access(path.join(reviewDir, `${a.id}.json`)));
 });
 
