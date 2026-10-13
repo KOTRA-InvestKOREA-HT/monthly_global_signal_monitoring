@@ -37,9 +37,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      # 기록은 쓰지 않는다(스크립트에 git 호출이 없다). 마지막 커밋만 받고, 커밋 직전에 main 의 마지막 커밋을 다시 받는다.
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
