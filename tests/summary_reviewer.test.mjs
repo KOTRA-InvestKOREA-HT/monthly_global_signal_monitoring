@@ -10,6 +10,7 @@ import {
   REVIEWER_INSTRUCTION, reviewProblem,
 } from '../scripts/summary_reviewer.mjs';
 import { resolveWriter, writeSummaries, writerPolicySection } from '../scripts/summary_writer.mjs';
+import { reviewerSummary } from '../scripts/publish_report.mjs';
 
 // Issue 3 Applied Materials: 원문은 "will join"(합류 예정)인데 문안은 "영입했음"(완료)이었다.
 const quote = 'Broadcom Inc. will join EPIC as an innovation partner to accelerate development of advanced chip packaging technologies.';
@@ -135,12 +136,14 @@ const loop = (ws, reviews, onWrite = () => {}) => {
       sleep: async () => {}, log: () => {} }) });
 };
 
-test('a flagged signal card is rewritten with the flag as feedback, and kept once the review is clean', async () => {
+test('a flagged signal card is rewritten once with the flag as feedback, and the rewrite is not reviewed again', async () => {
   const ws = await workspace();
   const sent = [];
   let reviews = 0;
   const stats = await loop(ws, () => (reviews++ === 0 ? [{ candidate_id: 'investment:4', issues: [flag] }] : [{ candidate_id: 'investment:4', issues: [] }]),
     body => sent.push(body));
+  assert.equal(reviews, 1);
+  assert.equal(stats.requests, 1);
   assert.equal(sent.length, 1);
   assert.match(sent[0], /rejected_because/);
   assert.match(sent[0], /review_certainty/);
@@ -149,25 +152,57 @@ test('a flagged signal card is rewritten with the flag as feedback, and kept onc
   assert.match(request.previous_copy.summary_en, /Broadcom Inc\. joined EPIC/);
   assert.match(request.rejected_because[0], /^Tense or certainty: .*will join.*Reviewer: The source says Broadcom will join/);
   assert.equal(stats.rounds.length, 1);
+  // 다시 쓴 문안은 검토하지 않았으므로 남은 지적 0건이 아니라 다시 확인하지 않은 카드로 센다.
   assert.equal(stats.enforce.length, 0);
+  assert.equal(stats.flagged.length, 0);
+  assert.deepEqual(stats.unchecked, [{ article_id: article.id, company: 'Applied Materials', candidate_id: 'investment:4' }]);
+  assert.equal(stats.first_flagged, 1);
+  assert.equal(stats.first_enforce, 1);
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, fixed.summary_ko);
+  // 판정 파일의 검토 기록은 바뀌기 전 문안의 것이다. 다음 실행은 키가 달라 다시 쓴 문안을 새로 검토한다.
+  assert.equal(saved.decisions[0].copy_review.issues.length, 1);
   assert.equal(importReview(article, saved)[0].supported, true);
 });
 
-// 틀린 지적 때문에 맞는 카드가 빠진 일이 두 번 있었다. 한 번 다시 쓴 뒤에도 남은 지적은 기록만 하고 카드는 싣는다.
-test('a card still flagged after one rewrite is rewritten only once and stays in the report', async () => {
+// 틀린 지적 때문에 맞는 카드가 빠진 일이 두 번 있었다. 다시 쓴 카드는 다시 묻지 않고 싣는다.
+test('a rewritten card is rewritten only once and stays in the report', async () => {
   const ws = await workspace();
-  let writes = 0;
-  const stats = await loop(ws, () => [{ candidate_id: 'investment:4',
-    issues: [{ check: 'unsupported', copy_phrase: 'Broadcom Inc.', source_phrase: '', note: 'Illustrative persistent flag.' }] }], () => writes++);
+  let writes = 0, reviews = 0;
+  const stats = await loop(ws, () => { reviews++; return [{ candidate_id: 'investment:4',
+    issues: [{ check: 'unsupported', copy_phrase: 'Broadcom Inc.', source_phrase: '', note: 'Illustrative persistent flag.' }] }]; }, () => writes++);
   assert.equal(writes, 1);
+  assert.equal(reviews, 1);
   assert.equal(stats.rounds.length, 1);
-  assert.equal(stats.enforce.length, 1);
+  assert.equal(stats.unchecked.length, 1);
   const saved = await ws.read();
   assert.equal(saved.decisions[0].summary_ko, fixed.summary_ko);
   assert.equal('summary_failed' in saved, false);
   assert.equal(importReview(article, saved)[0].supported, true);
+});
+
+// 다시 쓰게 하지 않은 지적은 지금 실린 문안에 대한 것이므로 남은 지적으로 그대로 센다.
+test('flags that are only recorded stay as issues left, with nothing marked unchecked', async () => {
+  const ws = await workspace();
+  let writes = 0;
+  const term = { check: 'term', copy_phrase: '혁신 파트너', source_phrase: '', note: 'Illustrative term flag.' };
+  const stats = await loop(ws, () => [{ candidate_id: 'investment:4', issues: [term] }], () => writes++);
+  assert.equal(writes, 0);
+  assert.equal(stats.rounds.length, 0);
+  assert.deepEqual(stats.unchecked, []);
+  assert.equal(stats.flagged.length, 1);
+  assert.equal(stats.first_flagged, 1);
+  assert.match(reviewerSummary(stats), /0 rewritten cards not re-checked; 1 issues left on copy that was not rewritten/);
+});
+
+test('the workflow summary says rewritten cards were not re-checked instead of counting them as clean', async () => {
+  const ws = await workspace();
+  const stats = await loop(ws, () => [{ candidate_id: 'investment:4', issues: [flag] }]);
+  const text = reviewerSummary(stats);
+  assert.match(text, /first pass flagged 1 issues \(1 signal cards sent back for rewriting\)/);
+  assert.match(text, /1 rewrite round\(s\); 1 rewritten cards not re-checked; 0 issues left on copy that was not rewritten/);
+  assert.doesNotMatch(text, /Broadcom Inc\.를 EPIC/);
+  assert.match(reviewerSummary(null), /^### Copy review\nOff/);
 });
 
 // 시제는 날짜로 판단한다. 게시일을 모르는 검토 모델은 제 날짜의 일을 현재형으로 쓴 발표를 미래로 읽었다.

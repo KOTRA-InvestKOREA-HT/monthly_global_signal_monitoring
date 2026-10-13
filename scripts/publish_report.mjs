@@ -70,14 +70,14 @@ function writerSummary(stats) {
       'Written copy is saved; run publish-report again for the same dates to continue. Existing published PDFs are unchanged.\n' : '');
 }
 
-function reviewerSummary(stats) {
+export function reviewerSummary(stats) {
   if (!stats) return '### Copy review\nOff (GEMINI_REVIEWER_MODEL=off).\n';
   if (stats.error) return `### Copy review\nFailed: ${stats.error}. The report was built without it.\n`;
   return `### Copy review (${stats.model})\n` +
     `${stats.reviewed} summaries reviewed; ${stats.requests} review requests; ` +
     `first pass flagged ${stats.first_flagged} issues (${stats.first_enforce} signal cards sent back for rewriting); ` +
-    `${stats.rounds.length} rewrite round(s); ` +
-    `${stats.flagged.length} issues left; ${stats.discarded} unverifiable flags discarded` +
+    `${stats.rounds.length} rewrite round(s); ${stats.unchecked.length} rewritten cards not re-checked; ` +
+    `${stats.flagged.length} issues left on copy that was not rewritten; ${stats.discarded} unverifiable flags discarded` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${stats.stopped ? `; stopped after ${stats.stopped.reason}` : ''}.\n` +
     stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
@@ -114,7 +114,8 @@ async function main() {
       return;
     }
 
-    // 문안 검토. 시제 지적과 투자 시그널의 근거 지적은 문안 단계로 돌려 한 번 다시 쓰게 한다. 항목을 빼지는 않는다.
+    // 문안 검토. 시제 지적과 투자 시그널의 근거 지적은 문안 단계로 돌려 한 번 다시 쓰게 한다. 다시 쓴 문안은 다시
+    // 검토하지 않는다(summary_reviewer.mjs reviewAndRewrite). 항목을 빼지는 않는다.
     // 검토 호출이 실패하면 검토 없이 보고서를 만든다. 문안 검사는 이미 통과한 문안이다.
     stage = 'review';
     const reviewer = resolveReviewer();

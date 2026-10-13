@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { articleCoverageGap, dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
+import { articleCoverageGap, buildLanguages, dateHints, followUpEvents, groupArticles, importReview, inPeriod, monthPeriod, packArticle, sourceCandidates, summaryNumberProblems, unpackArticle } from "../scripts/local_report.mjs";
 import { hasArticleBody, periodPlacement, reviewCandidate } from "../scripts/date_state.mjs";
 import { buildLocalInstruction, buildSystemInstruction, promptContract, reviewPromptDigest } from "../scripts/review_prompts.mjs";
 
@@ -717,4 +717,56 @@ test('a changed instruction retires the local reviews too', () => {
   // 같은 기사라도 지시문이 다르면 기사 id 가 다르다. 옛 판정 파일을 찾지 못한다.
   const of = policy => groupArticles([source], [], period, policy)[0].id;
   assert.notEqual(of(localPolicy(base)), of(localPolicy(other)));
+});
+
+// 한·영 PDF 는 함께 만든다. 두 언어가 같은 실패 파일을 덮어쓰지 않도록 언어마다 다른 파일을 주고, 실패하면 부모가 합친다.
+async function languageBuild(outcomes) {
+  const buildDir = await fs.mkdtemp(path.join(os.tmpdir(), "build-languages-"));
+  const failureFile = path.join(buildDir, "parent", "build_failure.json");
+  const calls = [];
+  let running = 0, overlap = 0;
+  const run = async (command, args, { env, label }) => {
+    calls.push({ args, file: env.REPORT_BUILD_FAILURE_FILE, label });
+    running += 1;
+    overlap = Math.max(overlap, running);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    running -= 1;
+    const outcome = outcomes[args[0]];
+    if (!outcome) return;
+    if (outcome.detail) await fs.writeFile(env.REPORT_BUILD_FAILURE_FILE, JSON.stringify(outcome.detail));
+    throw new Error(outcome.message);
+  };
+  const error = await buildLanguages(["ko", "en"], { buildDir, argsFor: (lang) => [lang], run, failureFile }).then(() => null, (e) => e);
+  const failure = await fs.readFile(failureFile, "utf8").then(JSON.parse, () => null);
+  return { calls, overlap, error, failure };
+}
+const cut = (lang, company) => ({ stage: "render", error_code: "cut_text", lang, cut_text: [{ company, part: "signal 4" }] });
+
+test("the two report languages are built at the same time, each with its own failure file", async () => {
+  const { calls, overlap, error, failure } = await languageBuild({});
+  assert.equal(error, null);
+  assert.equal(overlap, 2);
+  assert.deepEqual(calls.map((call) => call.label), ["PDF build (ko)", "PDF build (en)"]);
+  assert.notEqual(calls[0].file, calls[1].file);
+  assert.equal(failure, null);
+});
+
+test("a cut-text failure in one language fails the build, names the language and reaches the parent's failure file", async () => {
+  const { error, failure } = await languageBuild({ en: { message: "PDF build (en) failed (1)", detail: cut("en", "Charles River") } });
+  assert.match(error.message, /^PDF build failed for en: PDF build \(en\) failed \(1\)$/);
+  // publish_report.mjs 가 실행 상태에 붙이는 모양은 차례로 만들 때와 같다.
+  assert.deepEqual(failure, cut("en", "Charles River"));
+});
+
+test("when both languages fail, both are named and the second failure is kept", async () => {
+  const { error, failure } = await languageBuild({ ko: { message: "ko broke", detail: cut("ko", "3M") },
+    en: { message: "en broke", detail: cut("en", "Renishaw") } });
+  assert.match(error.message, /failed for ko, en: ko broke \| en broke/);
+  assert.deepEqual(failure, { ...cut("ko", "3M"), other_failures: [cut("en", "Renishaw")] });
+});
+
+test("a language that fails without leaving failure details still fails the build", async () => {
+  const { error, failure } = await languageBuild({ ko: { message: "chrome crashed" } });
+  assert.match(error.message, /failed for ko: chrome crashed/);
+  assert.equal(failure, null);
 });
