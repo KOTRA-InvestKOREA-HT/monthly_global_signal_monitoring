@@ -254,29 +254,32 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
   return stats;
 }
 
-// 검토 지적으로 다시 쓰는 횟수. 한 번이다. 9월 29일 세 실행에서 다시 쓰게 한 지적 8건 중 4건만 실제 결함이었고,
-// 두 번 다시 쓰게 했더니 같은 카드의 지적 방향이 뒤집히며 문안이 나빠졌다(Charles River "지원하기로 했음" →
-// "지원 중임" → 둘 다 지적, 새 오역 "종균 은행"). 맞는 지적은 대개 한 번 다시 쓰면 고쳐졌다.
-export const REVIEW_REWRITE_ROUNDS = 1;
-
-// 검토 → 지적받은 후보만 다시 쓰기 → 다시 검토. rewrite(feedback) 는 문안 단계(writeSummaries 에 feedback 을
-// 넘긴 것)다. 다시 쓴 뒤에도 남은 지적은 기록만 하고 문안은 그대로 싣는다. 검토 지적만으로 항목을 빼지 않는다.
-// 같은 실행들에서 틀린 지적 때문에 맞는 카드가 두 번 빠졌다(Jenoptik CEO 취임, GE HealthCare CFO 선임).
-export async function reviewAndRewrite({ articles, reviewDir, reviewer, apiKey, rewrite,
-  rounds = REVIEW_REWRITE_ROUNDS, ...options }) {
+// 검토 지적으로 다시 쓰는 횟수는 한 번이고, 다시 쓴 문안은 다시 검토하지 않는다. 9월 29일 세 실행에서 다시 쓰게 한
+// 지적 8건 중 4건만 실제 결함이었고, 두 번 다시 쓰게 했더니 같은 카드의 지적 방향이 뒤집히며 문안이 나빠졌다
+// (Charles River "지원하기로 했음" → "지원 중임" → 둘 다 지적, 새 오역 "종균 은행"). 맞는 지적은 대개 한 번 다시 쓰면
+// 고쳐졌다. 다시 검토한 결과는 기록에만 쓰였고(남은 지적 수) 문안이나 게재를 바꾸지 않았으므로, 그 요청(10월 실행
+// 13건)을 들이지 않는다.
+//
+// 검토 → 지적받은 후보만 한 번 다시 쓰기. rewrite(feedback) 는 문안 단계(writeSummaries 에 feedback 을 넘긴 것)다.
+// 검토 지적만으로 항목을 빼지 않는다. 같은 실행들에서 틀린 지적 때문에 맞는 카드가 두 번 빠졌다(Jenoptik CEO 취임,
+// GE HealthCare CFO 선임).
+//
+// 돌려주는 기록은 지금 실린 문안 기준이다. flagged·enforce 는 다시 쓰지 않은 문안에 남은 지적이고, 다시 쓰게 한 후보는
+// unchecked 에 따로 둔다. 그 후보의 첫 검토 지적은 바뀌기 전 문안에 대한 것이라 남은 지적으로 세지 않는다.
+export async function reviewAndRewrite({ articles, reviewDir, reviewer, apiKey, rewrite, ...options }) {
   const first = await reviewSummaries({ articles, reviewDir, reviewer, apiKey, ...options });
-  let last = first, reviewRequests = first.requests;
   const history = [];
-  for (let round = 1; round <= rounds && last.enforce.length && !last.stopped; round++) {
+  let unchecked = [];
+  if (first.enforce.length && !first.stopped) {
     const feedback = {};
-    for (const item of last.enforce) (feedback[item.article_id] ||= {})[item.candidate_id] = item.problems;
+    for (const item of first.enforce) (feedback[item.article_id] ||= {})[item.candidate_id] = item.problems;
     const written = await rewrite(feedback);
-    history.push({ round, asked: last.enforce.map(({ company, candidate_id, problems }) => ({ company, candidate_id, problems })),
+    history.push({ round: 1, asked: first.enforce.map(({ company, candidate_id, problems }) => ({ company, candidate_id, problems })),
       written: written.written, failed: written.failed.length, requests: written.requests, ...(written.stopped ? { stopped: written.stopped } : {}) });
-    last = await reviewSummaries({ articles, reviewDir, reviewer, apiKey, ...options });
-    reviewRequests += last.requests;
-    if (written.stopped) break;
+    unchecked = first.enforce.map(({ article_id, company, candidate_id }) => ({ article_id, company, candidate_id }));
   }
-  return { ...last, requests: reviewRequests, first_flagged: first.flagged.length, first_enforce: first.enforce.length,
-    rounds: history };
+  const sent = new Set(unchecked.map(item => `${item.article_id}\n${item.candidate_id}`));
+  const kept = item => !sent.has(`${item.article_id}\n${item.candidate_id}`);
+  return { ...first, flagged: first.flagged.filter(kept), enforce: first.enforce.filter(kept), unchecked,
+    first_flagged: first.flagged.length, first_enforce: first.enforce.length, rounds: history };
 }
