@@ -2654,7 +2654,7 @@ async function main() {
       const { outDir, refresh, ...settings } = args;
       const result = await collectWithCheckpoint({ directory: path.join(args.outDir, 'company_progress'),
         identity: { version: CONTENT_COLLECTION_VERSION, company, sourceConfig, settings, active_sources: selectedSources,
-          period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh,
+          period: { from: dateRange.fromDate, to: dateRange.toDate } }, refresh, toDate: dateRange.toDate,
         collect: () => collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, { yieldSlot }) });
       result.timing = { company: company.company, elapsed_ms: Date.now() - started,
         request_count: result.requestCount, result_count: result.rows.length, cached: result.cached };

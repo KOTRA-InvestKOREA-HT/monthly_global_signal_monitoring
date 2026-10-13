@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { createDomainGuard, collectWithCheckpoint, retryableCollection } from '../scripts/collection_resilience.mjs';
+import { createDomainGuard, collectWithCheckpoint, collectionMaxAgeMs, retryableCollection } from '../scripts/collection_resilience.mjs';
 import { collectionBlockingErrors } from '../scripts/collect_company_signals.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
@@ -61,4 +61,34 @@ test('Google rows skipped by a paused probe make the company retryable, detail f
   assert.equal(retryableCollection(result([{ source: 'official_detail', error: 'google_probe_paused' }])), true);
   assert.equal(retryableCollection(result([{ source: 'official_detail', error: 'HTTP 403 Forbidden' }])), false);
   assert.equal(collectionBlockingErrors([{ source: 'official_detail', error: 'google_probe_paused' }]).length, 0);
+});
+
+// 무료 한도로 판정이 멈추면 다음 날 이어 돌린다. 마감 뒤 사흘이 지나 받은 수집본만 72시간까지 쓴다.
+test('collection lasts 72 hours only when it was taken three days after the period closed', async t => {
+  const at = value => Date.parse(value);
+  // 9월 기간은 10월 1일 0시에 닫힌다. 10월 4일 0시부터 받은 수집본이 72시간 대상이다.
+  assert.equal(collectionMaxAgeMs('2026-09-30', at('2026-10-04T00:00:00Z')), 72 * 3600000);
+  assert.equal(collectionMaxAgeMs('2026-09-30', at('2026-10-03T23:59:59Z')), 24 * 3600000);
+  assert.equal(collectionMaxAgeMs('2026-09-30', at('2026-10-01T04:49:52Z')), 24 * 3600000);
+  // 기간이 없는 조회와 잘못된 시각은 기본값이다.
+  assert.equal(collectionMaxAgeMs('', at('2026-12-01T00:00:00Z')), 24 * 3600000);
+  assert.equal(collectionMaxAgeMs('2026-09-30', NaN), 24 * 3600000);
+
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'company-progress-'));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  let calls = 0, now = at('2026-10-05T09:00:00Z');
+  const args = { directory, identity: { company: 'A', period: '2026-09' }, toDate: '2026-09-30', now: () => now,
+    collect: async () => { calls++; return { rows: [{ title: 'article' }], requestCount: 3, errors: [] }; } };
+  await collectWithCheckpoint(args);
+  now += 48 * 3600000;
+  assert.equal((await collectWithCheckpoint(args)).cached, true);
+  now += 24 * 3600000;
+  assert.equal((await collectWithCheckpoint(args)).cached, false);
+  assert.equal(calls, 2);
+  // 마감 다음 날 받은 수집본은 실행이 마감 사흘 뒤여도 24시간만 쓴다.
+  const early = { ...args, identity: { company: 'B', period: '2026-09' } };
+  now = at('2026-10-02T09:00:00Z');
+  await collectWithCheckpoint(early);
+  now = at('2026-10-04T08:00:00Z');
+  assert.equal((await collectWithCheckpoint(early)).cached, false);
 });
