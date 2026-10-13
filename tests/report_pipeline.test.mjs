@@ -106,6 +106,29 @@ test('manual collection judges only; the publish hand-off waits for a finished j
   assert.ok(publish.indexOf(`- name: ${PAUSED_STEP}`) < publish.indexOf('git-auto-commit-action'));
 });
 
+// 한 시간 남짓 도는 사이 main 에 커밋이 올라오면 push 가 fast-forward 가 아니라 거절됐다.
+// 얕은 체크아웃에서는 rebase 가 공통 조상을 못 찾을 수 있어, 커밋 전에 새 main 으로 옮기고 결과 파일만 얹는다.
+test('the publish commit lands on the latest main from a shallow checkout', async () => {
+  const collect = (await fs.readFile('.github/workflows/collect-company-signals.yml', 'utf8')).replace(/\r\n/g, '\n');
+  const publish = (await fs.readFile('.github/workflows/publish-report.yml', 'utf8')).replace(/\r\n/g, '\n');
+  for (const text of [collect, publish]) assert.doesNotMatch(text, /fetch-depth/);
+
+  const sync = publish.indexOf('- name: Move onto the latest main before committing');
+  const commit = publish.indexOf('git-auto-commit-action');
+  assert.ok(publish.indexOf('- name: Downloadable bilingual PDFs') < sync && sync < commit, 'PDFs are kept before the sync can fail');
+  const step = publish.slice(sync, commit);
+  assert.match(step, /git fetch --no-tags --depth=1 origin "refs\/heads\/\$GITHUB_REF_NAME"/);
+  // 조상이 필요한 명령은 쓰지 않는다.
+  assert.doesNotMatch(step, /git (?:rebase|merge|pull)\b/);
+  // 결과 파일이 main 에서도 바뀌었으면 덮어쓰지 않고 실패한다. 패턴은 셸이 아니라 git 이 펼친다.
+  assert.match(step, /set -f\n\s+changed=\$\(git diff --name-only "\$base" "\$latest" -- \$REPORT_COMMIT_FILES\)/);
+  assert.match(step, /if \[ -n "\$changed" \]; then\n\s+echo "::error::[^\n]+\n\s+exit 1/);
+  assert.match(step, /git reset --hard "\$latest"/);
+  // 비교하는 파일과 커밋하는 파일이 같은 목록이다.
+  assert.match(publish, /\n {6}REPORT_COMMIT_FILES: outputs\/latest_\*\.json public\/reports\/latest_report\.pdf public\/reports\/latest_report_en\.pdf\n/);
+  assert.match(publish.slice(commit), /file_pattern: \$\{\{ env\.REPORT_COMMIT_FILES \}\}/);
+});
+
 // 라우트는 호출 시점에 globalThis.fetch 를 쓴다.
 const withGitHub = async (answer, body) => {
   const saved = { fetch: globalThis.fetch, env: { ...process.env } };

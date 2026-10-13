@@ -36,6 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # 커밋하는 결과 파일. 아래 main 맞추기 단계와 커밋 단계가 같은 목록을 쓴다.
+    env:
+      REPORT_COMMIT_FILES: outputs/latest_*.json public/reports/latest_report.pdf public/reports/latest_report_en.pdf
     steps:
       # 기록은 쓰지 않는다(스크립트에 git 호출이 없다). 마지막 커밋만 받고, 커밋 직전에 main 의 마지막 커밋을 다시 받는다.
       - uses: actions/checkout@v7
@@ -114,7 +117,40 @@ jobs:
           name: monthly-report-pdfs-${{ github.run_id }}
           path: public/reports/latest_report*.pdf
           retention-days: 30
+      # 판정부터 발행까지 한 시간 남짓 도는 사이 main 에 다른 커밋이 올라오면(10/12 에 다섯 번) 아래 push 가
+      # fast-forward 가 아니라 거절되고 단계 전체를 다시 돌려야 했다. 커밋 직전에 main 의 마지막 커밋으로 옮긴다.
+      # 아직 커밋 전이라 rebase 가 아니라 "새 main 을 받아 결과 파일만 얹기"다. 얕은 체크아웃에는 공통 조상이 없어
+      # rebase·merge 가 실패할 수 있지만, 여기서 쓰는 것은 두 커밋의 트리 비교와 체크아웃뿐이라 조상이 필요 없다.
+      # 결과 파일이 main 에서도 바뀌었으면 어느 쪽이 맞는지 알 수 없으므로 덮어쓰지 않고 실패한다.
+      # PDF 는 바로 위 단계에서 아티팩트로 올라가 있다.
+      - name: Move onto the latest main before committing
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "refs/heads/$GITHUB_REF_NAME"
+          base=$(git rev-parse HEAD)
+          latest=$(git rev-parse FETCH_HEAD)
+          if [ "$latest" = "$base" ]; then
+            echo "$GITHUB_REF_NAME has not moved since checkout ($base)."
+            exit 0
+          fi
+          # 패턴을 셸이 펼치지 않고 git 에 그대로 넘긴다. main 에만 있는 파일도 비교에 들어간다.
+          set -f
+          changed=$(git diff --name-only "$base" "$latest" -- $REPORT_COMMIT_FILES)
+          set +f
+          if [ -n "$changed" ]; then
+            echo "::error::$GITHUB_REF_NAME changed files this run commits since the run started: $(echo $changed). Not committing over them. Check those commits, then run publish-report again for the same dates; the PDFs are in this run's artifacts."
+            exit 1
+          fi
+          kept=$(mktemp -d)
+          for file in $REPORT_COMMIT_FILES; do
+            if [ -e "$file" ]; then cp --parents -- "$file" "$kept/"; fi
+          done
+          # 브랜치와 추적 설정은 그대로 두고 main 의 마지막 커밋으로 옮긴다. 결과 파일 밖의 작업 트리 변경은 커밋하지 않으므로 버린다.
+          git reset --hard "$latest"
+          cp -R "$kept/." .
+          echo "Moved from $base to $latest; result files carried over:"
+          git status --short -- $REPORT_COMMIT_FILES
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update company signals and bilingual reports"
-          file_pattern: outputs/latest_*.json public/reports/latest_report.pdf public/reports/latest_report_en.pdf
+          file_pattern: ${{ env.REPORT_COMMIT_FILES }}
