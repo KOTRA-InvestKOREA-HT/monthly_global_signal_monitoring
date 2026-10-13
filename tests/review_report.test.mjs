@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL } from '../scripts/review_report.mjs';
-import { groupArticles } from '../scripts/local_report.mjs';
+import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL,
+  publishableReviewFailures } from '../scripts/review_report.mjs';
+import { groupArticles, importReview, articlesWithoutCompanyBody, companyCoverageGaps, coverageReasons, coverageStatus } from '../scripts/local_report.mjs';
 import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
@@ -561,4 +562,86 @@ test('rate-limit header capture is name-based and redacts the key', () => {
   assert.equal(found['x-detail'], undefined);
   assert.equal(found.authorization, undefined);
   assert.equal(rateLimitHeaders(new Headers({ 'x-ratelimit-key': 'test-key' }), 'test-key')['x-ratelimit-key'], '[REDACTED]');
+});
+
+// 2026-09 판정: 이번 달 기사가 모두 제목뿐인 9개사(Airbus·Texcell·Nexeon 등) 기사 33건에 요청을 하나씩 썼다.
+// 본문 없는 기사는 승인될 수 없고 그 기업은 판정과 무관하게 근거 부족이라, 그 요청은 결과를 바꾸지 못했다.
+const titleOnlyRow = (company, slug) => ({ company, target_no: 1, url: `https://example.com/${company}/${slug}`,
+  title: `${company} ${slug} headline`, published_at: '2026-08-02', investment_signal_no: 2,
+  target_technology: 'material', target_technology_en: 'material', content_text: '' });
+const bodiedRow = (company, slug) => ({ ...titleOnlyRow(company, slug), content_text: `The company plans a pilot plant. ${TAIL}` });
+const skipArticles = () => groupArticles([titleOnlyRow('TitleOnly', 'a'), titleOnlyRow('TitleOnly', 'b'),
+  bodiedRow('Mixed', 'a'), titleOnlyRow('Mixed', 'b')], [], { from_date: '2026-08-01', to_date: '2026-08-31' });
+const rejectedAnswer = article => decisions.map(d => ({ ...d, entity_supported: false, indicator_supported: false, quality: 'needs_review',
+  evidence_quotes: article.evidence.some(text => text.includes('pilot plant')) ? d.evidence_quotes : [] }));
+
+test('articles of a company without any article body are recorded without a request and count as completed', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'no-body-skip-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = skipArticles();
+  const skip = articlesWithoutCompanyBody(articles);
+  // 본문 있는 기사가 하나라도 있는 기업(Mixed)의 제목뿐인 기사는 그대로 판정한다. 그 판정이 no_body 사유를 정한다.
+  assert.deepEqual(articles.filter(a => skip.has(a.id)).map(a => a.company), ['TitleOnly', 'TitleOnly']);
+  const asked = [];
+  const fetchImpl = async (_, init) => {
+    const sent = JSON.parse(JSON.parse(init.body).messages[1].content);
+    asked.push(sent.company);
+    return response(rejectedAnswer(articles.find(a => a.id === sent.id)));
+  };
+  for (const concurrency of [1, 2]) {
+    asked.length = 0;
+    await fs.rm(reviewDir, { recursive: true, force: true });
+    const state = await reviewArticles({ articles, reviewDir, policy: '', config: { ...config, concurrency }, sleep: async () => {},
+      noBodyArticleIds: skip, fetchImpl });
+    assert.equal(state.status, 'completed');
+    assert.equal(state.completed, 4);
+    assert.equal(state.total, 4);
+    assert.equal(state.no_body_skipped, 2);
+    assert.equal(state.requests, 2);
+    assert.deepEqual(asked, ['Mixed', 'Mixed']);
+    // 판정 완료로 읽힌다. 문안·발행 단계가 이 표시가 있는 판정만 받는다.
+    assert.deepEqual(publishableReviewFailures(state), []);
+  }
+  // 기록된 판정은 보고서 단계의 검사를 그대로 통과하고, 승인 행도 근접 행도 만들지 않는다.
+  const titleOnly = articles.filter(a => a.company === 'TitleOnly');
+  const reviewByArticle = new Map();
+  for (const a of titleOnly) {
+    const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+    reviewByArticle.set(a.id, stored);
+    for (const summaries of [false, true]) {
+      const results = importReview(a, stored, { summaries });
+      assert.equal(results.length, a.candidates.length);
+      assert.ok(results.every(r => !r.supported && !r.near_miss && r.row === null));
+    }
+  }
+  // 그 기업은 지금처럼 근거 부족이고 사유는 본문 미수집이다. 판정 실패(review_failed)로 읽히지 않는다.
+  assert.equal(coverageStatus(titleOnly, reviewByArticle, 'completed'), 'incomplete_evidence');
+  assert.deepEqual(companyCoverageGaps(titleOnly, reviewByArticle).map(a => a.id), titleOnly.map(a => a.id));
+  assert.deepEqual(coverageReasons(titleOnly, reviewByArticle, new Set(), 'completed'), ['no_body']);
+  // 판정 파일이 없을 때와 다르다. 그때는 판정 실패다.
+  assert.deepEqual(coverageReasons(titleOnly, new Map(), new Set(), 'completed'), ['review_failed']);
+  // 다시 돌려도 요청하지 않는다.
+  const again = await reviewArticles({ articles, reviewDir, policy: '', config, sleep: async () => {}, noBodyArticleIds: skip,
+    fetchImpl: async () => assert.fail('saved reviews and skipped articles need no request') });
+  assert.equal(again.status, 'completed');
+  assert.equal(again.requests, 0);
+  assert.equal(again.cached, 2);
+  assert.equal(again.no_body_skipped, 2);
+});
+
+test('a rule-recorded review is never reused as a model judgement once the company has a body', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'no-body-reuse-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const [a] = skipArticles();
+  await reviewArticles({ articles: [a], reviewDir, policy: '', config, noBodyArticleIds: new Set([a.id]),
+    fetchImpl: async () => assert.fail('not sent') });
+  // 같은 기사 id 인데 이번에는 같은 기업에 본문 있는 기사가 생겨 건너뛰지 않는다. 규칙 판정은 캐시가 아니다.
+  let calls = 0;
+  const state = await reviewArticles({ articles: [a], reviewDir, policy: '', config, sleep: async () => {},
+    fetchImpl: async () => { calls++; return response(rejectedAnswer(a)); } });
+  assert.equal(calls, 1);
+  assert.equal(state.cached, 0);
+  assert.equal(state.no_body_skipped, 0);
+  const stored = JSON.parse(await fs.readFile(path.join(reviewDir, `${a.id}.json`), 'utf8'));
+  assert.equal(stored.reviewer, `${MODEL}/article-review-v1`);
 });

@@ -4,7 +4,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness } from './local_report.mjs';
+import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness,
+  articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
@@ -762,7 +763,7 @@ export async function reviewArticles(options) {
           supplementFetchImpl: supplementFetch, supplementStop, verifierFetchImpl: verifierFetch, verifierStop, logReviewed: false });
         results.push(result);
         progressCompleted += result.completed;
-        if (result.completed > result.cached) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
+        if (result.completed > result.cached + result.no_body_skipped) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
         // 검증기 중단은 판정을 멈추지 않는다. 남은 기사의 1차 판정은 계속 받고, 실행 상태는 끝에서 verifierStop 으로 정한다.
         if (result.status === 'paused' && !['invalid_responses', 'scheduling_stopped', 'verifier_unavailable'].includes(result.reason)) {
           // The gate stops queued work knowing only the status code; the worker
@@ -784,6 +785,7 @@ export async function reviewArticles(options) {
       : verifierStop.stopped ? { status: 'paused', ...verifierStop.stopped, reason: verifierStop.stopped.reason === 'request_budget' ? 'request_budget' : 'verifier_unavailable' }
       : completed === articles.length ? { status: 'completed' } : stopped || { status: 'paused', reason: 'invalid_responses' }),
     requests, cached: results.reduce((n, r) => n + r.cached, 0), completed, total: articles.length,
+    no_body_skipped: results.reduce((n, r) => n + (r.no_body_skipped || 0), 0),
     date_hints: results.reduce((n, r) => n + (r.date_hints || 0), 0),
     failed_articles, diagnostics: results.flatMap(r => r.diagnostics), concurrency,
     quote_removals: results.flatMap(r => r.quote_removals || []),
@@ -804,9 +806,12 @@ function needsDateHint(article, review) {
   return article.date_placement === 'date_pending' && review.date_hint_version !== DATE_HINT_VERSION;
 }
 
+// noBodyArticleIds: 모델에 보내지 않고 규칙 판정으로 기록할 기사(articlesWithoutCompanyBody). 전체 기사 목록을 아는
+// 호출자(main)가 정한다. golden 평가처럼 고른 기사만 넘기는 호출자는 넘기지 않으므로 모든 기사를 판정한다.
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
-  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null } }) {
-  let requests = 0, cached = 0, completed = 0, dateHints = 0;
+  supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null },
+  noBodyArticleIds = new Set() }) {
+  let requests = 0, cached = 0, completed = 0, dateHints = 0, noBodySkipped = 0;
   const failed = [];
   const diagnostics = [];
   const quoteRemovals = [], recheckPending = [];
@@ -816,7 +821,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   // pending: 통과한 후보 없이 미완료. failed: 끝내 검증 응답을 못 받은 기사. rejected_responses: 형식 검사에서 거부된 응답 수.
   const verifications = { model: config.verifierApiKey ? VERIFIER?.model : null,
     ...Object.fromEntries(VERIFICATION_COUNTS.map(key => [key, 0])), errors: {} };
-  const state = extra => ({ requests, cached, completed, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
+  const state = extra => ({ requests, cached, completed, no_body_skipped: noBodySkipped, date_hints: dateHints, total: articles.length, failed_articles: failed, diagnostics,
     quote_removals: quoteRemovals, recheck_pending: recheckPending, verification: verifications, ...extra });
   // 검증 응답이 거부된 시도마다 1차 판정처럼 진단을 남긴다. 실행 35200022672 의 Nabtesco 는 어느 인용이 틀렸는지 남지 않았다.
   const recordVerifierDiagnostic = async (article, suspects, error, attempt) => {
@@ -927,6 +932,15 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
   };
   for (const article of articles) {
     const file = path.join(reviewDir, `${article.id}.json`);
+    // 모델 판정이 결과를 바꾸지 못하는 기사는 요청 없이 규칙 판정을 기록하고 완료로 센다. 판정 파일이 있어야
+    // 보고서 단계가 이 기사를 판정 실패(review_failed)로 읽지 않는다. 같은 내용이면 다시 쓰지 않는다.
+    if (noBodyArticleIds.has(article.id)) {
+      const skipped = companyWithoutBodyReview(article);
+      const saved = await read(file).catch(() => null);
+      if (JSON.stringify(saved) !== JSON.stringify(skipped)) await write(file, skipped);
+      noBodySkipped++; completed++;
+      continue;
+    }
     // 저장된 판정을 재검토하는 중이면 그 판정과 이유. 재판정이 끝내 실패하면 이 판정을 재검토 미완료로 남긴다.
     let stale = null;
     try {
@@ -1188,7 +1202,8 @@ async function main() {
   await write(path.join(runDir, 'snapshot.json'), snapshot);
   await pruneReviewWork(root, runDir, articles);
   failedStage = 'review';
-  const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config });
+  const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config,
+    noBodyArticleIds: articlesWithoutCompanyBody(articles) });
   const reviewFailed = publishableReviewFailures(state);
   // 판정 완료: 모든 기사를 판정했거나, 남은 것이 재시도까지 인용 검증에 실패한 기사뿐이다. 문안·발행 단계
   // (publish_report.mjs)는 이 표시가 있는 판정만 받는다. 같은 실행 식별자·기간·스냅샷 폴더를 함께 남겨
@@ -1201,6 +1216,7 @@ async function main() {
   console.log(JSON.stringify(state));
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} judgement\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
+    `${state.no_body_skipped ? `; ${state.no_body_skipped} not sent (every article of the company lacks a body)` : ''}` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
     (reviewFailed.length ? `${reviewFailed.length} article(s) failed evidence validation twice; the report will be built without them ` +
       'and their companies are marked as incomplete evidence.\n' : '') +
