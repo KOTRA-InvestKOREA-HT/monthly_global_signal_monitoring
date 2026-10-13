@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { renderReport, COLORS, MATRIX_ROWS_PER_COLUMN, PAGE_WIDTH_PT, PAGE_HEIGHT_PT, ITEM_BAND } from '../scripts/report_html.mjs';
-import { itemBreaks, cutTexts } from '../scripts/build_html_report.mjs';
+import { itemBreaks, cutTexts, probePathFor } from '../scripts/build_html_report.mjs';
+import path from 'node:path';
 
 const row = (no, company, signals = [false, false, false, false, false]) => ({ target_no: no, company, signals });
 
@@ -376,4 +377,14 @@ test('every cut summary, from character limits or rendered clipping, is reported
   assert.deepEqual(cutTexts(base, [{ company: 'Air Liquide', part: 'business-body' }]), [
     { company: '3M', part: 'signal 3' }, { company: 'Nexeon', part: 'business' }, { company: 'Renishaw', part: 'item' },
     { company: 'Air Liquide', part: 'business-body', rendered: true }]);
+});
+
+// 한·영을 같은 폴더에서 함께 만든다. 측정용 사본 이름이 고정이면 두 언어가 서로 덮어쓴다.
+test('each report HTML gets its own layout probe beside it', () => {
+  const dir = path.join('build', 'report-x');
+  const ko = probePathFor(path.join(dir, 'report_ko.html'));
+  const en = probePathFor(path.join(dir, 'report_en.html'));
+  assert.notEqual(ko, en);
+  assert.equal(path.dirname(ko), dir);
+  assert.equal(path.basename(en), '.report_en.card-probe.html');
 });

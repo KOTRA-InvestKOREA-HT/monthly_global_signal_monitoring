@@ -88,8 +88,12 @@ document.title = 'CARDS' + encodeURIComponent(JSON.stringify({ cards: [...docume
   .map(card => card.getBoundingClientRect().height / (96 / 72)), clipped })) + 'END';
 </script>`;
 
+// 측정용 사본은 보고서 HTML 이름을 따서 짓는다. 한·영을 같은 폴더에서 함께 만들면(local_report.mjs build)
+// 고정 이름 하나를 두 언어가 덮어써 서로의 카드를 잴 수 있다.
+export const probePathFor = htmlPath => path.join(path.dirname(htmlPath), `.${path.basename(htmlPath, '.html')}.card-probe.html`);
+
 async function measureLayout(html, near) {
-  const probePath = path.join(path.dirname(near), '.card-probe.html');
+  const probePath = probePathFor(near);
   await fs.writeFile(probePath, html.replace('</body>', `${LAYOUT_PROBE}</body>`), 'utf8');
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-cards-'));
   const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run',
@@ -231,7 +235,8 @@ async function main() {
   // 급히 발행해야 할 때만 REPORT_ALLOW_CUT_TEXT=true 로 넘기고, 그때도 잘린 곳을 출력에 남긴다.
   const cut = cutTexts(model, layout.clipped);
   if (cut.length && process.env.REPORT_ALLOW_CUT_TEXT !== 'true') {
-    // 부모 실행(review_report.mjs)은 하위 프로세스의 오류 문구를 받지 못한다. 어느 언어·회사·칸이 넘쳤는지 파일로 넘긴다.
+    // 부모 실행(local_report.mjs build)은 어느 언어·회사·칸이 넘쳤는지 이 파일로 받는다. 한·영을 함께 만들므로
+    // 부모가 언어마다 다른 파일을 준다.
     if (process.env.REPORT_BUILD_FAILURE_FILE) {
       await fs.writeFile(process.env.REPORT_BUILD_FAILURE_FILE, JSON.stringify({ stage: 'render', error_code: 'cut_text',
         lang: model.lang, cut_text: cut }, null, 2), 'utf8').catch(() => {});

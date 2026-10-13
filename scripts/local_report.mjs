@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { APPROVAL_POLICY, validateRows, investmentStageSupported, targetTechnologyRequired } from "./validate_report_inputs.mjs";
 // 로컬 판정자도 API 가 받는 지시문을 그대로 받는다. 예전에는 정책 문서(REVIEW.md)만 주었고,
@@ -694,6 +694,50 @@ function execute(command, args) {
   if (result.status !== 0) throw new Error(`${command} failed (${result.status ?? result.signal})`);
 }
 
+// 함께 도는 하위 프로세스. 출력은 모아 두었다가 끝난 뒤 한꺼번에 낸다. 한·영 출력이 섞여 찍히면 실행 기록에서
+// 어느 언어의 것인지 알 수 없다. 실패하면 오류 문구 끝부분을 함께 올린다.
+function executeAsync(command, args, { env = process.env, label = command } = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd: ROOT, env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
+    const stdout = [], stderr = [];
+    child.stdout.on("data", (chunk) => stdout.push(chunk));
+    child.stderr.on("data", (chunk) => stderr.push(chunk));
+    child.on("error", reject);
+    child.on("close", (code, signal) => {
+      const out = Buffer.concat(stdout).toString(), err = Buffer.concat(stderr).toString();
+      if (out) process.stdout.write(out);
+      if (err) process.stderr.write(err);
+      if (code === 0) resolve();
+      else reject(new Error(`${label} failed (${code ?? signal})${err.trim() ? `: ${err.trim().slice(-300)}` : ""}`));
+    });
+  });
+}
+
+// 한·영 PDF 를 함께 만든다. Issue 4 로 재 보니 차례로 만들 때보다 4~6초 빨랐다(33초 → 27초, 중앙값 38초 → 34초).
+// 결과 PDF 는 쪽수와 글자가 같았다. 하나가 실패해도 다른 하나가 끝날 때까지 기다려 두 언어의 실패를 함께 알리고,
+// 실패한 언어를 오류에 적는다. 잘린 문안 정보는 언어마다 다른 파일로 받아(같은 파일이면 서로 덮어쓴다) 부모가 준
+// REPORT_BUILD_FAILURE_FILE 하나로 합친다. publish_report.mjs 가 이 파일을 실행 상태에 붙인다. 실패한 언어가 하나면
+// 예전과 같은 모양이고, 둘이면 둘째를 other_failures 에 둔다.
+export async function buildLanguages(langs, { buildDir, argsFor, run = executeAsync,
+  failureFile = process.env.REPORT_BUILD_FAILURE_FILE }) {
+  const failureOf = (lang) => path.join(buildDir, `build_failure_${lang}.json`);
+  const results = await Promise.allSettled(langs.map((lang) => run(process.execPath, argsFor(lang),
+    { env: { ...process.env, REPORT_BUILD_FAILURE_FILE: failureOf(lang) }, label: `PDF build (${lang})` })));
+  const failed = langs.map((lang, index) => ({ lang, result: results[index] })).filter(({ result }) => result.status === "rejected");
+  if (!failed.length) return;
+  const details = [];
+  for (const { lang } of failed) {
+    const detail = await read(failureOf(lang)).catch(() => null);
+    if (detail) details.push(detail);
+  }
+  if (failureFile && details.length) {
+    await fs.mkdir(path.dirname(failureFile), { recursive: true });
+    await write(failureFile, { ...details[0], ...(details.length > 1 ? { other_failures: details.slice(1) } : {}) });
+  }
+  throw new Error(`PDF build failed for ${failed.map(({ lang }) => lang).join(", ")}: ` +
+    failed.map(({ result }) => String(result.reason?.message || result.reason)).join(" | "));
+}
+
 async function collect(month, outDir) {
   const period = monthPeriod(month);
   const dataDir = await fs.mkdtemp(path.join(outDir, "collection-"));
@@ -1014,15 +1058,13 @@ export async function build(args) {
     // build_html_report.mjs 는 --investment-summary 를 쓰지 않으므로 넘기지 않는다.
     // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다.
     if (args.python) process.env.PYTHON = args.python;
-    for (const lang of ["ko", "en"]) {
-      execute(process.execPath, [path.join(ROOT, "scripts/build_html_report.mjs"),
-        "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
-        "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
-        "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
-        "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
-        "--issue-number", args.issueNumber || "2", "--lang", lang,
-        "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)]);
-    }
+    await buildLanguages(["ko", "en"], { buildDir, argsFor: (lang) => [path.join(ROOT, "scripts/build_html_report.mjs"),
+      "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
+      "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
+      "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
+      "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
+      "--issue-number", args.issueNumber || "2", "--lang", lang,
+      "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)] });
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
       reviewed_candidates: results.length,
       approved_investment: investment.filter((row) => row.ai_signal_supported).length,
