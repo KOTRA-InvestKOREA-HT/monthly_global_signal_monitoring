@@ -1,6 +1,6 @@
 import { dateParam, rangeProblem } from "../../lib/date_range.mjs";
 import { previousMonthRange } from "../../../scripts/report_month.mjs";
-import { envValue, githubConfig, githubHeaders, missingGithubEnv } from "../../lib/github_env.mjs";
+import { githubConfig, githubHeaders, missingGithubEnv } from "../../lib/github_env.mjs";
 import { dispatchFor, loadPipelineStatus } from "../../lib/report_pipeline.mjs";
 
 export const dynamic = "force-dynamic";
@@ -10,28 +10,28 @@ function collectEnv() {
   return { config, missing: missingGithubEnv(config) };
 }
 
-function failureHint(status, config, workflowFile = config.workflowFile) {
-  const target = `${config.owner}/${config.repo} · ${workflowFile} · ${config.ref}`;
+// config 를 주면 대상 저장소·워크플로를 덧붙인다. 인증 없이 열리는 진단(GET)에서는 주지 않는다.
+function failureHint(status, config = null, workflowFile = config?.workflowFile) {
+  const target = config ? ` (대상: ${config.owner}/${config.repo} · ${workflowFile} · ${config.ref})` : "";
   if (status === 401) {
-    return `GitHub 토큰이 만료되었거나 잘못되었습니다. Vercel의 GITHUB_TOKEN을 새 토큰으로 교체한 뒤 재배포해 주세요. (대상: ${target})`;
+    return `GitHub 토큰이 만료되었거나 잘못되었습니다. Vercel의 GITHUB_TOKEN을 새 토큰으로 교체한 뒤 재배포해 주세요.${target}`;
   }
   if (status === 403) {
-    return `토큰 권한이 거부되었습니다. 토큰의 Actions 권한(Read and write)과 조직(SSO/토큰 승인) 설정을 확인해 주세요. (대상: ${target})`;
+    return `토큰 권한이 거부되었습니다. 토큰의 Actions 권한(Read and write)과 조직(SSO/토큰 승인) 설정을 확인해 주세요.${target}`;
   }
   if (status === 404) {
-    return `저장소·워크플로·브랜치를 찾지 못했습니다. GITHUB_OWNER/GITHUB_REPO/GITHUB_WORKFLOW_FILE/GITHUB_PUBLISH_WORKFLOW_FILE/GITHUB_REF 값과 토큰의 해당 저장소 접근 권한을 확인해 주세요. (대상: ${target})`;
+    return `저장소·워크플로·브랜치를 찾지 못했습니다. GITHUB_OWNER/GITHUB_REPO/GITHUB_WORKFLOW_FILE/GITHUB_PUBLISH_WORKFLOW_FILE/GITHUB_REF 값과 토큰의 해당 저장소 접근 권한을 확인해 주세요.${target}`;
   }
   if (status === 422) {
-    return `워크플로가 요청한 입력값을 받지 못했습니다. 워크플로의 workflow_dispatch inputs 정의를 확인해 주세요. (대상: ${target})`;
+    return `워크플로가 요청한 입력값을 받지 못했습니다. 워크플로의 workflow_dispatch inputs 정의를 확인해 주세요.${target}`;
   }
-  return `GitHub API가 ${status} 응답을 반환했습니다. (대상: ${target})`;
+  return `GitHub API가 ${status} 응답을 반환했습니다.${target}`;
 }
 
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
     const stage = body.stage === "publish" ? "publish" : "collect";
-    const days = String(body.days || envValue("DEFAULT_CRAWL_DAYS", "45"));
     const fallbackRange = previousMonthRange();
     // 잘못된 기간을 조용히 전월로 바꿔 실행하면, 요청한 기간이 아닌 기간이 돌아간 것을
     // 부르는 쪽이 알 수 없다. 형식이 틀렸거나 순서가 뒤집혔으면 접수하지 않는다.
@@ -61,17 +61,23 @@ export async function POST(request) {
 
     // 판정이 끝나지 않았는데 발행을 보내면 디스패치는 성공하고 실행 안에서 judgement_incomplete 로 실패한다.
     // 화면에서 바로 알 수 있게 보내기 전에 막는다.
-    if (stage === "publish") {
-      const pipeline = await loadPipelineStatus(config);
-      if (!pipeline.can_publish) {
-        const reason = pipeline.active
-          ? `지금 ${pipeline.label} 상태입니다. 끝난 뒤에 다시 눌러 주세요.`
-          : "끝난 판정이 없습니다. '크롤링 수행'으로 판정을 먼저 끝내 주세요.";
-        return Response.json({ error: `발행을 시작하지 않았습니다. ${reason}`, pipeline }, { status: 409 });
-      }
+    // 판정도 무언가 도는 동안에는 보내지 않는다. 두 워크플로는 같은 동시 실행 그룹이고 GitHub 는 그룹마다
+    // 대기 실행을 하나만 둔다. 발행이 기다리는 중에 판정을 보내면 기다리던 발행이 말없이 취소됐다.
+    const pipeline = await loadPipelineStatus(config);
+    if (stage === "collect" && pipeline.active) {
+      return Response.json(
+        { error: `크롤링을 시작하지 않았습니다. 지금 ${pipeline.label} 상태입니다. 끝난 뒤에 다시 눌러 주세요.`, pipeline },
+        { status: 409 },
+      );
+    }
+    if (stage === "publish" && !pipeline.can_publish) {
+      const reason = pipeline.active
+        ? `지금 ${pipeline.label} 상태입니다. 끝난 뒤에 다시 눌러 주세요.`
+        : "끝난 판정이 없습니다. '크롤링 수행'으로 판정을 먼저 끝내 주세요.";
+      return Response.json({ error: `발행을 시작하지 않았습니다. ${reason}`, pipeline }, { status: 409 });
     }
 
-    const { workflowFile, inputs } = dispatchFor(stage, config, { days, fromDate, toDate, issueNumber });
+    const { workflowFile, inputs } = dispatchFor(stage, config, { fromDate, toDate, issueNumber });
     // 보내기 전에 잰다. 실행은 응답이 오기 전에 만들어질 수 있고, 화면은 이 시각보다 먼저 만들어진 실행을 지난 실행으로 본다.
     const requestedAt = new Date().toISOString();
     const response = await fetch(
@@ -110,7 +116,6 @@ export async function POST(request) {
         ok: true,
         stage,
         workflow: workflowFile,
-        days,
         fromDate,
         toDate,
         issueNumber,
@@ -125,20 +130,23 @@ export async function POST(request) {
 }
 
 // 진단용: 브라우저에서 /api/trigger-crawl 을 그대로 열면 어느 단계가 막혔는지 확인할 수 있다.
-// 토큰 값 자체는 절대 노출하지 않고, 설정 여부와 GitHub 응답 코드만 보여 준다.
+// 인증 없이 열리는 주소라 설정값은 보여 주지 않는다. 설정 여부와 GitHub 응답 코드만 돌려준다.
+// 예전에는 토큰 길이·앞 4글자와 토큰 주인의 GitHub 로그인까지 보여 줬다.
+const DIAGNOSTIC_ENV = {
+  GITHUB_TOKEN: "token",
+  GITHUB_OWNER: "owner",
+  GITHUB_REPO: "repo",
+  GITHUB_WORKFLOW_FILE: "workflowFile",
+  GITHUB_PUBLISH_WORKFLOW_FILE: "publishWorkflowFile",
+  GITHUB_REF: "ref",
+};
+
 export async function GET() {
   const { config, missing } = collectEnv();
   const checks = {};
 
   const result = {
-    env: {
-      GITHUB_TOKEN: config.token ? `설정됨 (${config.token.length}자, ${config.token.slice(0, 4)}…)` : "없음",
-      GITHUB_OWNER: config.owner || "없음",
-      GITHUB_REPO: config.repo || "없음",
-      GITHUB_WORKFLOW_FILE: config.workflowFile || "없음",
-      GITHUB_PUBLISH_WORKFLOW_FILE: config.publishWorkflowFile || "없음",
-      GITHUB_REF: config.ref || "없음",
-    },
+    env: Object.fromEntries(Object.entries(DIAGNOSTIC_ENV).map(([name, key]) => [name, config[key] ? "설정됨" : "없음"])),
     missing,
     checks,
   };
@@ -156,47 +164,26 @@ export async function GET() {
       fetch(workflowUrl(config.publishWorkflowFile), { headers: githubHeaders(config.token), cache: "no-store" }),
     ]);
 
-    const tokenPayload = await tokenRes.json().catch(() => ({}));
-    checks.token = {
-      status: tokenRes.status,
-      ok: tokenRes.ok,
-      login: tokenRes.ok ? tokenPayload.login || null : null,
-      message: tokenRes.ok ? null : tokenPayload.message || null,
-    };
-
     const workflowCheck = async (res) => {
       const payload = await res.json().catch(() => ({}));
-      return {
-        status: res.status,
-        ok: res.ok,
-        state: res.ok ? payload.state || null : null,
-        message: res.ok ? null : payload.message || null,
-      };
+      // state 는 active / disabled_manually 같은 값이라 드러나도 괜찮다. 꺼진 워크플로를 찾는 데 쓴다.
+      return { status: res.status, ok: res.ok, state: res.ok ? payload.state || null : null };
     };
+    checks.token = { status: tokenRes.status, ok: tokenRes.ok };
     checks.workflow = await workflowCheck(workflowRes);
     checks.publish_workflow = await workflowCheck(publishRes);
 
     if (!tokenRes.ok) {
-      result.conclusion = `GITHUB_TOKEN이 GitHub에서 거부되었습니다 (HTTP ${tokenRes.status}). ${failureHint(
-        tokenRes.status,
-        config,
-      )}`;
+      result.conclusion = `GITHUB_TOKEN이 GitHub에서 거부되었습니다 (HTTP ${tokenRes.status}). ${failureHint(tokenRes.status)}`;
     } else if (!workflowRes.ok) {
-      result.conclusion = `토큰은 유효하지만 워크플로에 접근하지 못했습니다 (HTTP ${workflowRes.status}). ${failureHint(
-        workflowRes.status,
-        config,
-      )}`;
+      result.conclusion = `토큰은 유효하지만 워크플로에 접근하지 못했습니다 (HTTP ${workflowRes.status}). ${failureHint(workflowRes.status)}`;
     } else if (!publishRes.ok) {
-      result.conclusion = `판정 워크플로는 정상이지만 발행 워크플로에 접근하지 못했습니다 (HTTP ${publishRes.status}). ${failureHint(
-        publishRes.status,
-        config,
-        config.publishWorkflowFile,
-      )}`;
+      result.conclusion = `판정 워크플로는 정상이지만 발행 워크플로에 접근하지 못했습니다 (HTTP ${publishRes.status}). ${failureHint(publishRes.status)}`;
     } else {
       result.conclusion = "환경변수와 토큰, 워크플로 접근이 모두 정상입니다. 크롤링 버튼 실패가 계속되면 실제 오류 메시지의 HTTP 코드를 확인해 주세요.";
     }
-  } catch (error) {
-    result.conclusion = `GitHub API 호출 중 오류: ${error.message}`;
+  } catch {
+    result.conclusion = "GitHub API 호출 중 오류가 났습니다.";
   }
 
   return Response.json(result);

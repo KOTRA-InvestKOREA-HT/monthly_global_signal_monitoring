@@ -13,10 +13,6 @@ run-name: "collect ${{ inputs.from_date || 'previous month' }} ${{ inputs.to_dat
 on:
   workflow_dispatch:
     inputs:
-      days:
-        description: "Legacy input for dashboard compatibility; monthly from_date/to_date take precedence"
-        required: false
-        default: "45"
       from_date:
         description: "Collection start date (YYYY-MM-DD); leave empty for previous calendar month"
         required: false

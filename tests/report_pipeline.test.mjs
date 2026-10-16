@@ -135,7 +135,7 @@ test('the issue number follows the last published issue for that month and the n
 
 test('each button sends only the inputs its workflow defines', async () => {
   const config = { ...githubConfig(), workflowFile: 'collect-company-signals.yml', publishWorkflowFile: 'publish-report.yml' };
-  const values = { days: '45', fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' };
+  const values = { fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' };
   const inputsOf = async file => {
     const text = (await fs.readFile(`.github/workflows/${file}`, 'utf8')).replace(/\r\n/g, '\n');
     const block = text.split('\n    inputs:\n')[1].split(/\n\S/)[0];
@@ -259,15 +259,69 @@ const runs = list => reply(200, { workflow_runs: list });
 
 test('the crawl button dispatches the judgement with auto_publish on', async () => {
   let dispatchedAt = null;
-  const { response, payload, calls } = await withGitHub(() => { dispatchedAt ??= Date.now(); return reply(204); },
-    { fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' });
+  const answer = (url, init) => {
+    if (init.method !== 'POST') return runs([run('2026-10-01T00:00:00Z', 'completed', 'success')]);
+    dispatchedAt ??= Date.now();
+    return reply(204);
+  };
+  const { response, payload, calls } = await withGitHub(answer, { fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' });
   assert.equal(response.status, 202);
   // 화면은 이 시각보다 먼저 만들어진 실행을 지난 실행으로 본다. 실행은 응답 전에 만들어질 수 있어 보내기 전에 잰다.
   assert.ok(Date.parse(payload.requested_at) <= dispatchedAt);
   const dispatch = calls.find(call => call.method === 'POST');
   assert.match(dispatch.url, /workflows\/collect-company-signals\.yml\/dispatches$/);
   assert.deepEqual(dispatch.body.inputs,
-    { days: '45', from_date: '2026-09-01', to_date: '2026-09-30', issue_number: '4', auto_publish: 'true' });
+    { from_date: '2026-09-01', to_date: '2026-09-30', issue_number: '4', auto_publish: 'true' });
+});
+
+// 두 워크플로는 같은 동시 실행 그룹이고 GitHub 는 그룹마다 대기 실행을 하나만 둔다. 발행이 기다리는 중에
+// 판정을 보내면 기다리던 발행이 말없이 취소됐다.
+test('the crawl button is refused while a run is queued or running', async () => {
+  const answer = url => (url.includes('collect-company-signals.yml/runs')
+    ? runs([run('2026-10-01T00:00:00Z', 'completed', 'success')])
+    : url.includes('publish-report.yml/runs') ? runs([run('2026-10-01T03:00:00Z', 'queued')]) : reply(204));
+  const { response, payload, calls } = await withGitHub(answer, { fromDate: '2026-09-01', toDate: '2026-09-30', issueNumber: '4' });
+  assert.equal(response.status, 409);
+  assert.match(payload.error, /발행 중/);
+  assert.equal(calls.some(call => call.method === 'POST'), false);
+});
+
+// 인증 없이 열리는 진단 주소다. 토큰 길이·앞 글자, 토큰 주인의 로그인, 저장소 이름을 내보내지 않는다.
+test('the open diagnostic shows only whether settings exist and the GitHub status codes', async () => {
+  const saved = { fetch: globalThis.fetch, env: { ...process.env } };
+  Object.assign(process.env, { GITHUB_OWNER: 'secret-owner', GITHUB_REPO: 'secret-repo', GITHUB_TOKEN: 'ghp_abcdefghijklmnop' });
+  globalThis.fetch = async url => (String(url).endsWith('/user')
+    ? reply(200, { login: 'token-owner-login' }) : reply(200, { state: 'active' }));
+  try {
+    const route = await import(`../app/api/trigger-crawl/route.js?case=${Math.random()}`);
+    const text = JSON.stringify(await (await route.GET()).json());
+    for (const secret of ['ghp_', 'token-owner-login', 'secret-owner', 'secret-repo', '20자'])
+      assert.ok(!text.includes(secret), `diagnostic leaks ${secret}`);
+    assert.match(text, /"GITHUB_TOKEN":"설정됨"/);
+    assert.match(text, /"token":\{"status":200,"ok":true\}/);
+  } finally {
+    globalThis.fetch = saved.fetch;
+    process.env = saved.env;
+  }
+});
+
+// 토큰 없이 부르면 비공개 저장소는 404 이고, 404 는 "실행 없음"이라 상태가 "대기"로 잘못 보였다.
+test('the status route does not call GitHub without a token', async () => {
+  const saved = { fetch: globalThis.fetch, env: { ...process.env } };
+  Object.assign(process.env, { GITHUB_OWNER: 'o', GITHUB_REPO: 'r' });
+  delete process.env.GITHUB_TOKEN;
+  let called = false;
+  globalThis.fetch = async () => { called = true; return reply(404, {}); };
+  try {
+    const route = await import(`../app/api/crawl-status/route.js?case=${Math.random()}`);
+    const payload = await (await route.GET()).json();
+    assert.equal(called, false);
+    assert.equal(payload.label, '설정 필요');
+    assert.match(payload.message, /GITHUB_TOKEN/);
+  } finally {
+    globalThis.fetch = saved.fetch;
+    process.env = saved.env;
+  }
 });
 
 test('an empty issue number is refused instead of printing issue 2', async () => {

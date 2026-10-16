@@ -1,4 +1,4 @@
-import { githubConfig } from "../../lib/github_env.mjs";
+import { githubConfig, missingGithubEnv } from "../../lib/github_env.mjs";
 import { loadPipelineStatus } from "../../lib/report_pipeline.mjs";
 
 export const dynamic = "force-dynamic";
@@ -9,8 +9,11 @@ export async function GET() {
   try {
     const config = githubConfig();
 
-    if (!config.owner || !config.repo) {
-      return Response.json({ label: "대기", status: "unknown", message: "GitHub 저장소 환경변수가 없습니다." });
+    // 토큰 없이 부르면 비공개 저장소는 404 가 오고, 404 는 "실행 없음"으로 읽혀 "대기"로 잘못 보였다.
+    const missing = missingGithubEnv(config);
+    if (missing.length) {
+      return Response.json({ label: "설정 필요", status: "unknown", active: false, paused: false, can_publish: false,
+        message: `GitHub 환경변수가 없습니다: ${missing.join(", ")}` });
     }
 
     return Response.json(await loadPipelineStatus(config));

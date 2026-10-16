@@ -700,7 +700,13 @@ export default function HomePage() {
               </small>
             </button>
           </div>
-          <button className="primary" onClick={() => setRunDialog("collect")} disabled={triggering}>
+          {/* 도는 실행이 있으면 막는다. 같은 동시 실행 그룹에서 새 판정이 기다리던 발행을 취소한다(서버도 409 로 막는다). */}
+          <button
+            className="primary"
+            onClick={() => setRunDialog("collect")}
+            disabled={triggering || Boolean(crawlStatus?.active)}
+            title={crawlStatus?.active ? `${crawlStatus.label} 상태입니다. 끝난 뒤에 다시 실행할 수 있습니다.` : undefined}
+          >
             {triggering ? <RefreshCw className="spin" size={18} /> : <Play size={18} />}
             <span>{triggering ? "요청 중" : "크롤링 수행"}</span>
           </button>

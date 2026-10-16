@@ -68,15 +68,15 @@ export function pipelineStatus({ collect = null, publish = null, collectPaused =
 }
 
 // 실행할 워크플로와 입력. "크롤링 수행"은 판정을 auto_publish 로 실행해 판정이 끝나면 발행까지 이어 가고,
-// "발행만 실행"(stage=publish)은 끝난 판정으로 보고서만 다시 쓴다. publish-report 는 days 를 입력으로
-// 정의하지 않아서 보내면 GitHub 가 422 로 거절한다.
-export function dispatchFor(stage, config, { days, fromDate, toDate, issueNumber }) {
+// "발행만 실행"(stage=publish)은 끝난 판정으로 보고서만 다시 쓴다. 워크플로가 정의하지 않은 입력을 보내면
+// GitHub 가 422 로 거절한다(publish-report 에는 auto_publish 가 없다).
+export function dispatchFor(stage, config, { fromDate, toDate, issueNumber }) {
   if (stage === "publish") {
     return { workflowFile: config.publishWorkflowFile,
       inputs: { from_date: fromDate, to_date: toDate, issue_number: issueNumber } };
   }
   return { workflowFile: config.workflowFile,
-    inputs: { days, from_date: fromDate, to_date: toDate, issue_number: issueNumber, auto_publish: "true" } };
+    inputs: { from_date: fromDate, to_date: toDate, issue_number: issueNumber, auto_publish: "true" } };
 }
 
 function githubError(message, status) {
