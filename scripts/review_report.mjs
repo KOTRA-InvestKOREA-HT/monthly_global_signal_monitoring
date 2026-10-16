@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness,
   articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
-import { resolveProvider, resolveVerifier, describeKeyShape, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
+import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
 import { PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
@@ -180,7 +180,8 @@ export const VERIFY_QUESTIONS = {
 };
 
 // 2차 검증 식별자. 1차 판정 캐시(reviewPolicy)와 따로 둔다. 검증 지시·질문·응답 스키마·검증 모델·추론 설정·검증 버전 중
-// 하나라도 바뀌면 저장된 검증 결과를 재사용하지 않고, 1차 판정은 그대로 둔 채 지난번 검증한 후보만 다시 검증한다.
+// 하나라도 바뀌면 저장된 검증 결과를 재사용하지 않고, 1차 판정은 그대로 둔 채 지난번 검증한 후보와 지금의 의심 후보를
+// 다시 검증한다(cachedRecheck 주석).
 export function verificationDigest(verifier = VERIFIER) {
   if (!verifier) return null;
   return crypto.createHash('sha256').update(JSON.stringify({ version: VERIFICATION_VERSION, instruction: VERIFY_INSTRUCTION,
@@ -220,8 +221,11 @@ export function mergeVerification(article, primary, checked, suspects, model = V
   };
   const pending = [...(primary.semantic_recheck_pending?.candidate_ids || []).filter(id => !ids.has(id)),
     ...(checked.semantic_recheck_pending?.candidate_ids || []).filter(id => ids.has(id))];
-  const removed = (checked.unverified_quotes_removed || []).filter(item => ids.has(item.candidate_id));
-  const { semantic_recheck_pending, ...rest } = primary;
+  // 1차 판정 때 뺀 인용 기록에 검증 응답에서 뺀 것을 더한다. 예전에는 검증 쪽 기록이 있으면 1차 기록을 덮어썼다.
+  const removed = [...(primary.unverified_quotes_removed || []),
+    ...(checked.unverified_quotes_removed || []).filter(item => ids.has(item.candidate_id))]
+    .filter((item, index, all) => all.findIndex(other => JSON.stringify(other) === JSON.stringify(item)) === index);
+  const { semantic_recheck_pending, unverified_quotes_removed, ...rest } = primary;
   return {
     ...rest, ...RECHECK_VERSIONS(), decisions,
     ...(removed.length ? { unverified_quotes_removed: removed } : {}),
@@ -254,7 +258,10 @@ export function cachedRecheck(article, review, { verifierDigest = null } = {}) {
   if (needsTechnologyReview(article, review)) return { reason: 'technology_link', candidate_ids: ids(review.decisions.filter(d =>
     d.target_technology_supported && !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
     publishedDecision(article, review.decisions, d))) };
-  // 검증 지시·질문·모델 등이 바뀌었으면 지난번 검증한 후보만 다시 검증한다. 1차 판정은 재사용한다.
+  // 검증 지시·질문·모델 등이 바뀌었으면 다시 검증한다. 1차 판정은 재사용한다. 여기서 돌려주는 것은 지난번 검증한
+  // 후보지만, 검증기가 켜져 있으면 호출자(reviewArticlesSerial)가 지금의 의심 후보(verificationSuspects) 전체를 더해
+  // 한 요청으로 보낸다. 검증이 끝나면 모든 재검토 버전이 최신으로 찍히므로, 다른 규칙의 의심 후보를 빼면 그 후보는
+  // 검증 없이 재검토를 마친 것으로 남는다.
   if (verifierDigest && review.verification && review.verification.digest !== verifierDigest) {
     return { reason: 'verification_changed', candidate_ids: review.verification.candidate_ids || [] };
   }
@@ -359,7 +366,12 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   // 2차 검증은 Gemini 키와 무료 등급 확인이 있을 때만 켠다. 없으면 기존처럼 1차 모델에게 한 번 되묻는다.
   const verifier = resolveVerifier(env);
   const verifierApiKey = verifier && env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? String(env.GEMINI_API_KEY || '').trim() : '';
-  return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs, concurrency, ...(verifierApiKey ? { verifierApiKey } : {}) };
+  // 검증 요청의 시작 간격. 검증 모델의 무료 등급 한도를 따른다. 1차도 Gemini 면 같은 키·같은 한도라 1차 간격을 그대로 쓴다.
+  const verifierDelayMs = Number(env.GEMINI_VERIFIER_DELAY_MS || (provider.id === GEMINI.id ? delayMs : GEMINI.defaultDelayMs));
+  if (verifierApiKey && (!Number.isFinite(verifierDelayMs) || verifierDelayMs < GEMINI.minDelayMs || verifierDelayMs > 60000)) {
+    throw new Error(`GEMINI_VERIFIER_DELAY_MS must be ${GEMINI.minDelayMs}..60000`);
+  }
+  return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs, concurrency, ...(verifierApiKey ? { verifierApiKey, verifierDelayMs } : {}) };
 }
 
 // 아티팩트만 보고 어느 실행·어느 커밋의 결과인지 알 수 있어야 한다. 로컬 실행에서는 비어 있다.
@@ -778,9 +790,17 @@ export async function reviewArticles(options) {
   const concurrency = config.concurrency ?? 1;
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 12) throw new Error('REPORT_CONCURRENCY must be 1..12');
   if (concurrency === 1) return reviewArticlesSerial(options);
-  // One start-time gate for all workers AND retries. Waiting for a response
+  // One start-time gate per rate limit for all workers AND retries. Waiting for a response
   // does not hold this gate. The existing per-article validator/cache is reused.
-  let queue = Promise.resolve(), nextStart = 0, requests = 0, index = 0;
+  // 1차 판정과 보강은 1차 제공자의 키를, 2차 검증은 Gemini 키를 쓴다. 예전에는 간격 하나를 모두가 나눠 써서, 1차가
+  // NVIDIA(1.6초)면 Gemini 검증(무료 등급 4초 이상)도 1.6초 간격으로 나가 429 를 받았다. 1차도 Gemini 라 키가 같으면
+  // 한도도 하나이므로 간격 하나를 함께 지키되 둘 중 긴 쪽을 쓴다. 요청 예산(maxRequests)은 실행 전체가 나눠 쓴다.
+  const lane = delayMs => ({ queue: Promise.resolve(), nextStart: 0, delayMs });
+  const verifierDelayMs = config.verifierDelayMs ?? config.delayMs;
+  const sharedKey = !config.verifierApiKey || config.verifierApiKey === config.apiKey;
+  const primaryLane = lane(sharedKey && config.verifierApiKey ? Math.max(config.delayMs, verifierDelayMs) : config.delayMs);
+  const verifierLane = sharedKey ? primaryLane : lane(verifierDelayMs);
+  let requests = 0, index = 0;
   let stopped = null, fatal = null, progressCompleted = 0;
   // 보강 중단은 실행 전체가 공유한다. 기사마다 따로 판단하면 할당량이 끝난 뒤에도 남은 미상 기사
   // 수만큼 계속 두드린다. 판정 중단(stopped)과는 별개다: 보강이 멈춰도 판정은 계속 나간다.
@@ -792,22 +812,33 @@ export async function reviewArticles(options) {
   // 보강이 멈춰도 검증은 막히지 않는다. 검증을 멈출지는 reviewArticlesSerial 의 verify 가 정한다.
   const gate = kind => async (url, init) => {
     const supplement = kind !== 'judgement';
+    const pace = kind === 'verifier' ? verifierLane : primaryLane;
     const blocked = () => stopped || fatal || (kind === 'supplement' && supplementStop.stopped) || (kind === 'verifier' && verifierStop.stopped);
-    const slot = queue.then(async () => {
-      if (blocked()) return false;
+    // 요청을 보내지 않는 이유. 예산이 바닥난 것은 따로 알린다. 검증이 그것을 검증기 장애로 적지 않게 한다.
+    const refusal = () => {
+      if (blocked()) return stopped?.reason === 'request_budget' ? 'request_budget' : 'stopped';
       if (requests >= config.maxRequests) {
-        // 날짜 보강은 보조 작업이다. 예산이 바닥나면 실행을 멈추지 않고 스스로 물러난다.
+        // 날짜 보강과 검증은 보조 작업이다. 예산이 바닥나면 실행을 멈추지 않고 스스로 물러난다.
         if (!supplement) stopped = { status: 'paused', reason: 'request_budget' };
-        return false;
+        return 'request_budget';
       }
-      while (nextStart > performance.now()) await sleep(nextStart - performance.now());
-      if (blocked()) return false;
+      return null;
+    };
+    const slot = pace.queue.then(async () => {
+      const early = refusal();
+      if (early) return early;
+      while (pace.nextStart > performance.now()) await sleep(pace.nextStart - performance.now());
+      // 기다리는 동안 다른 간격의 요청이 예산을 썼을 수 있다. 다시 본다.
+      const refused = refusal();
+      if (refused) return refused;
       requests++;
-      nextStart = performance.now() + config.delayMs;
-      return true;
+      pace.nextStart = performance.now() + pace.delayMs;
+      return null;
     });
-    queue = slot.then(() => {}, () => {});
-    if (!await slot) throw Object.assign(new Error('Request scheduling stopped'), { scheduling_stopped: true });
+    pace.queue = slot.then(() => {}, () => {});
+    const refused = await slot;
+    if (refused) throw Object.assign(new Error('Request scheduling stopped'), { scheduling_stopped: true,
+      ...(refused === 'request_budget' ? { request_budget: true } : {}) });
     const response = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(REVIEW_REQUEST_TIMEOUT_MS) });
     // Stop queued requests promptly on quota/auth errors, but let in-flight
     // successful responses finish validation and durable cache writes.
@@ -824,7 +855,7 @@ export async function reviewArticles(options) {
       const article = articles[index++];
       try {
         const result = await reviewArticlesSerial({ ...options, articles: [article], fetchImpl: gatedFetch,
-          supplementFetchImpl: supplementFetch, supplementStop, verifierFetchImpl: verifierFetch, verifierStop, logReviewed: false });
+          supplementFetchImpl: supplementFetch, supplementStop, verifierFetchImpl: verifierFetch, verifierStop, logReviewed: false, paced: true });
         results.push(result);
         progressCompleted += result.completed;
         if (result.completed > result.cached + result.no_body_skipped) console.log(`Reviewed ${progressCompleted}/${articles.length}: ${article.company}`);
@@ -872,10 +903,15 @@ function needsDateHint(article, review) {
 
 // noBodyArticleIds: 모델에 보내지 않고 규칙 판정으로 기록할 기사(articlesWithoutCompanyBody). 전체 기사 목록을 아는
 // 호출자(main)가 정한다. golden 평가처럼 고른 기사만 넘기는 호출자는 넘기지 않으므로 모든 기사를 판정한다.
+// paced: 요청 시작 간격을 호출자의 게이트가 이미 지킨다(동시 모드). 그때는 여기서 기본 간격을 한 번 더 기다리지 않고
+// 일시 오류 뒤의 대기만 한다.
 async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetchImpl = fetch, sleep = ms => new Promise(r => setTimeout(r, ms)), random = Math.random, logReviewed = true,
   supplementFetchImpl = fetchImpl, supplementStop = { stopped: false }, verifierFetchImpl = fetchImpl, verifierStop = { stopped: null },
-  noBodyArticleIds = new Set() }) {
+  noBodyArticleIds = new Set(), paced = false }) {
   let requests = 0, cached = 0, completed = 0, dateHints = 0, noBodySkipped = 0;
+  // 혼자 돌 때 다음 요청 전에 기다릴 간격. 검증 요청은 검증 모델의 간격도 지킨다(요청이 차례로 나가므로 직전 요청 기준).
+  const judgementWait = paced ? 0 : config.delayMs;
+  const verifierWait = paced ? 0 : Math.max(config.delayMs, config.verifierDelayMs ?? 0);
   const failed = [];
   const diagnostics = [];
   const quoteRemovals = [], recheckPending = [];
@@ -904,14 +940,14 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
     const unverified = reason => ({ ...primary, semantic_recheck_pending: { reason,
       candidate_ids: [...new Set([...(primary.semantic_recheck_pending?.candidate_ids || []), ...suspects.candidate_ids])] } });
     if (verifierStop.stopped) return unverified('verifier_unavailable');
-    let retries = 0, waitMs = config.delayMs, validationFeedback = null;
+    let retries = 0, waitMs = verifierWait, validationFeedback = null;
     for (;;) {
       if (requests >= config.maxRequests) {
         verifierStop.stopped ??= { reason: 'request_budget' };
         return unverified('request_budget');
       }
-      if (requests) await sleep(waitMs);
-      waitMs = config.delayMs;
+      if (requests && waitMs) await sleep(waitMs);
+      waitMs = verifierWait;
       requests++;
       verifications.requested++;
       try {
@@ -940,9 +976,10 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           throw Object.assign(new Error(`Verifier ${VERIFIER.model} rejected the request (HTTP ${error.status}). ` +
             'Check GEMINI_VERIFIER_MODEL and the Gemini key, or set REVIEW_VERIFIER=off.'), { status: error.status, verifier_config: true });
         }
+        // 예산이 바닥나 게이트가 보내지 않은 요청은 검증기 장애가 아니다. 판정 경로처럼 request_budget 으로 남긴다.
         if (error.scheduling_stopped) {
-          verifierStop.stopped ??= { reason: 'scheduling_stopped' };
-          return unverified('verifier_unavailable');
+          verifierStop.stopped ??= { reason: error.request_budget ? 'request_budget' : 'scheduling_stopped' };
+          return unverified(error.request_budget ? 'request_budget' : 'verifier_unavailable');
         }
         const errorKey = [error.status || error.transport_reason || error.response_code || 'error', error.provider_reason].filter(Boolean).join(':');
         verifications.errors[errorKey] = (verifications.errors[errorKey] || 0) + 1;
@@ -1045,7 +1082,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       // 날짜와 무관한 기사까지 전부 다시 판정되고, 같은 기사에서 다른 승인이 나올 수 있다.
       // 날짜 상태와 내용 평가는 독립이므로 그 대가를 치를 이유가 없다.
       if (needsDateHint(article, review) && !supplementStop.stopped && requests < config.maxRequests) {
-        if (requests) await sleep(config.delayMs);
+        if (requests && judgementWait) await sleep(judgementWait);
         requests++;
         try {
           // 보강 전용 게이트로 보낸다. 이 실패가 공유 스케줄러를 멈추면 아직 판정받지 못한
@@ -1067,7 +1104,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (error.verifier_config) throw error;
       if (error.code !== 'ENOENT') console.log(`Rechecking invalid cache: ${article.id}`);
     }
-    let providerRetries = 0, waitMs = config.delayMs;
+    let providerRetries = 0, waitMs = judgementWait;
     let maxAttempts = 2, retryFeedback = false;
     // 되묻기 전의 유효한 응답과 되묻은 이유. 되묻기가 실패하거나 멈춰도 이 판정은 잃지 않되, 재검토가 끝난 것으로
     // 저장하지 않는다. 앞 응답에는 최신 재검토 버전이 이미 찍혀 있어, 그대로 저장하면 다음 실행이 다시 묻지 않고
@@ -1095,8 +1132,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         if (beforeRecheck) { await keepUnrechecked('request_budget'); break; }
         return state({ status: 'paused', reason: 'request_budget' });
       }
-      if (requests) await sleep(waitMs);
-      waitMs = config.delayMs;
+      if (requests && waitMs) await sleep(waitMs);
+      waitMs = judgementWait;
       requests++;
       let review;
       try {

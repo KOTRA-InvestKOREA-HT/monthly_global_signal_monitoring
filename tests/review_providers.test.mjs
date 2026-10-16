@@ -236,7 +236,13 @@ test('Gemini needs a human free-tier confirmation that NVIDIA does not', () => {
   assert.throws(() => configuration(env, GEMINI), /GEMINI_FREE_TIER_CONFIRMED=true/);
   // 확인된 Gemini 키가 있으면 2차 검증도 같은 키로 켜진다. REVIEW_VERIFIER=off 로 끌 수 있다.
   assert.deepEqual(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI),
-    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4, verifierApiKey: 'AIzaKey' });
+    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4, verifierApiKey: 'AIzaKey', verifierDelayMs: 4500 });
+  // 1차가 Gemini 면 검증도 같은 키·같은 한도라 1차 간격을 따른다. NVIDIA 1차 뒤의 검증은 Gemini 기본 간격을 쓴다.
+  assert.equal(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '6000' }, GEMINI).verifierDelayMs, 6000);
+  const mixed = { OPENAI_API_KEY: 'k', GEMINI_API_KEY: 'AIzaKey', GEMINI_FREE_TIER_CONFIRMED: 'true' };
+  assert.deepEqual([configuration(mixed, NVIDIA).delayMs, configuration(mixed, NVIDIA).verifierDelayMs], [1600, 4500]);
+  assert.equal(configuration({ ...mixed, GEMINI_VERIFIER_DELAY_MS: '8000' }, NVIDIA).verifierDelayMs, 8000);
+  assert.throws(() => configuration({ ...mixed, GEMINI_VERIFIER_DELAY_MS: '1600' }, NVIDIA), /GEMINI_VERIFIER_DELAY_MS must be 4000\.\.60000/);
   assert.equal('verifierApiKey' in configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', REVIEW_VERIFIER: 'off' }, GEMINI), false);
   assert.throws(() => configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '3999' }, GEMINI), /4000\.\.60000/);
   assert.throws(() => configuration({ REPORT_PROVIDER: 'gemini', GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI), /GEMINI_API_KEY is required/);

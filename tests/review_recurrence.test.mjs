@@ -587,6 +587,68 @@ test('repeated HTTP failures from the verifier, with no answer received, still s
   assert.equal(state.recheck_pending.length, 4);
 });
 
+// 감사 2-5: 동시 모드에서 예산이 바닥나 게이트가 검증 요청을 보내지 않으면 verifier_unavailable 로 기록됐다.
+test('with parallel workers an exhausted request budget is reported as the budget, not as a verifier outage', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-budget-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const state = await reviewArticles({ articles, reviewDir, policy: '', sleep: async () => {},
+    config: { ...verifierConfig, concurrency: 2, maxRequests: 3 },
+    fetchImpl: async url => (String(url).includes('generativelanguage') ? geminiReply(primary) : reply(primary)) });
+  // 1차 판정 둘과 검증 하나로 예산을 다 쓴다. 남은 검증 하나는 보내지 못한다.
+  assert.equal(state.requests, 3);
+  assert.equal(state.completed, 2);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'request_budget');
+  assert.equal(state.verifier_stop.reason, 'request_budget');
+  assert.deepEqual(state.recheck_pending.map(item => item.reason), ['request_budget']);
+});
+
+// 감사 2-5: 검증 응답에서 뺀 인용이 있으면 1차 판정 때 뺀 인용 기록을 덮어썼다.
+test('merging a verification keeps the quotes removed from the primary answer alongside the verifier\'s', async () => {
+  const { mergeVerification } = await import('../scripts/review_report.mjs');
+  const a = nexeon();
+  const s5 = { ...rejectedS5, evidence_quotes: [] };
+  const fromPrimary = { candidate_id: 'investment:5', removed_quotes: ['Invented appointment.'] };
+  const fromVerifier = { candidate_id: 'investment:3', removed_quotes: ['Invented round.'] };
+  const primary = { article_id: a.id, decisions: [approvedS2, approvedS3, s5, business], unverified_quotes_removed: [fromPrimary] };
+  const checked = { decisions: [approvedS2, approvedS3, s5, business],
+    unverified_quotes_removed: [fromVerifier, { candidate_id: 'investment:2', removed_quotes: ['Outside the audit.'] }] };
+  const suspects = { candidate_ids: ['investment:3'], flagged_because: { 'investment:3': ['q'] } };
+  const merged = mergeVerification(a, primary, checked, suspects, 'model', 'digest');
+  assert.deepEqual(merged.unverified_quotes_removed, [fromPrimary, fromVerifier]);
+  // 다시 검증해도 같은 기록이 겹쳐 쌓이지 않는다.
+  assert.deepEqual(mergeVerification(a, merged, checked, suspects, 'model', 'digest').unverified_quotes_removed, [fromPrimary, fromVerifier]);
+  assert.deepEqual(mergeVerification(a, { ...primary, unverified_quotes_removed: undefined }, { decisions: checked.decisions }, suspects, 'model', 'digest')
+    .unverified_quotes_removed, undefined);
+});
+
+// 감사 2-2: 1차 판정(NVIDIA)과 2차 검증(Gemini)은 한도가 따로다. 검증은 검증 간격을 지키고, 1차 판정은 그 간격에 묶이지 않는다.
+test('with parallel workers verifier requests keep their own spacing and do not hold back judgements', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-lanes-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const starts = { judgement: [], verifier: [] };
+  const sleeps = [];
+  const state = await reviewArticles({ articles, reviewDir, policy: '',
+    sleep: ms => { sleeps.push(ms); return new Promise(resolve => setTimeout(resolve, ms)); },
+    config: { ...verifierConfig, concurrency: 3, maxRequests: 40, delayMs: 5, verifierDelayMs: 80 },
+    fetchImpl: async url => {
+      const verifier = String(url).includes('generativelanguage');
+      starts[verifier ? 'verifier' : 'judgement'].push(performance.now());
+      return verifier ? geminiReply(primary) : reply(primary);
+    } });
+  assert.equal(state.status, 'completed');
+  assert.equal(starts.verifier.length, 3);
+  for (let i = 1; i < starts.verifier.length; i++) assert.ok(starts.verifier[i] - starts.verifier[i - 1] >= 75, 'verifier spacing');
+  // 세 기사의 1차 판정은 검증 간격을 기다리지 않고 모두 먼저 나간다.
+  assert.ok(starts.judgement[2] < starts.verifier[1], 'judgements are not queued behind the verifier');
+  // 게이트가 간격을 지키므로 기사 단위의 기본 간격(5ms·80ms)을 한 번 더 기다리지 않는다.
+  assert.equal(sleeps.filter(ms => ms === 5 || ms === 80).length, 0);
+});
+
 test('a rejected verifier answer is asked once more with the validation message and can then succeed', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-revalidate-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
