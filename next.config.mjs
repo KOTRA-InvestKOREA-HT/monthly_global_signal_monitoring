@@ -32,8 +32,8 @@ const viewModelFiles = [
   ...latestOutputFiles,
   ...reportMetricFonts,
   "./scripts/report_view_model.py",
-  "./scripts/build_pdf_report.py",
-  // build_pdf_report 가 내용 계층을 가져온다.
+  // 뷰 모델이 글자 폭 측정과 내용 계층을 가져온다.
+  "./scripts/report_measure.py",
   "./scripts/report_content.py",
   "./data/target_companies.json",
   "./data/company_technology_map.json",

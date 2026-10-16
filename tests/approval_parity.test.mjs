@@ -77,13 +77,13 @@ test('the JavaScript and Python approval rules agree on every input', async t =>
     'import json, sys',
     'from pathlib import Path',
     'sys.path.insert(0, str(Path("scripts").resolve()))',
-    'import build_pdf_report as pdf',
+    'import report_content as pdf',
     'rows = json.load(open(sys.argv[1], encoding="utf-8"))',
     'print(json.dumps([bool(pdf.signal_supported(r)) for r in rows]))',
   ].join('\n');
   const result = spawnSync(PYTHON, ['-c', script, inputFile], { encoding: 'utf8' });
   if (result.status !== 0) {
-    // reportlab 이 없는 환경에서는 발행 쪽을 부를 수 없다. 조용히 통과시키지 않고 건너뛴 것을 남긴다.
+    // 발행 쪽 승인 규칙(report_content.py)은 reportlab 없이 불린다. Python 이 없을 때만 건너뛰고 그 사실을 남긴다.
     t.skip(`Python approval rule unavailable: ${(result.stderr || result.error?.message || '').trim().split('\n').at(-1)}`);
     return;
   }
@@ -110,9 +110,9 @@ test('the JavaScript and Python approval rules agree on every input', async t =>
 test('both implementations read the approval constants from the shared config', async () => {
   assert.deepEqual(APPROVAL_POLICY.company_level_indicators, [3, 5]);
   const js = await fs.readFile('scripts/validate_report_inputs.mjs', 'utf8');
-  // 발행 쪽 승인 규칙은 report_content.py 에 있다. build_pdf_report.py 는 그것을 다시 내보낼 뿐이다.
+  // 발행 쪽 승인 규칙은 report_content.py 에 있다. 뷰 모델(report_view_model.py)은 그것을 가져다 쓸 뿐이다.
   const py = await fs.readFile('scripts/report_content.py', 'utf8');
-  const layout = await fs.readFile('scripts/build_pdf_report.py', 'utf8');
+  const layout = await fs.readFile('scripts/report_view_model.py', 'utf8');
   assert.match(js, /approval_policy\.json/);
   assert.match(py, /approval_policy\.json/);
   // 예전에 양쪽에 흩어져 있던 값들이 코드로 되돌아오지 않았는지 본다.
@@ -139,7 +139,7 @@ test('neither implementation turns a reason phrase into a rejection', async t =>
   const inputFile = path.join(temp, 'rows.json');
   await fs.writeFile(inputFile, JSON.stringify(rows));
   const script = ['import json, sys', 'from pathlib import Path',
-    'sys.path.insert(0, str(Path("scripts").resolve()))', 'import build_pdf_report as pdf',
+    'sys.path.insert(0, str(Path("scripts").resolve()))', 'import report_content as pdf',
     'rows = json.load(open(sys.argv[1], encoding="utf-8"))',
     'print(json.dumps([bool(pdf.signal_supported(r)) for r in rows]))'].join('\n');
   const result = spawnSync(PYTHON, ['-c', script, inputFile], { encoding: 'utf8' });

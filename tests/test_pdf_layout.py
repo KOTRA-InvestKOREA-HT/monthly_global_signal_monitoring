@@ -1,63 +1,24 @@
-import io
+"""보고서 내용 계층(report_content)의 문안·출처·상태 규칙.
+
+배치는 report_html.mjs 와 Chrome 이 하고, 그 검사는 tests/report_html.test.mjs 와
+tests/report_layout_chrome.test.mjs 가 한다. 여기서는 무엇이 실리는지만 본다.
+"""
+
 import sys
 import unittest
 import unittest.mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-import build_pdf_report as pdf
+import report_content as pdf
 
 
-class SummaryLayoutTests(unittest.TestCase):
-    def setUp(self):
-        self.previous_language = pdf.LANG
-        pdf.set_language("en")
-        fonts = {weight: "Helvetica-Bold" if weight in ("semibold", "extrabold") else "Helvetica"
-                 for weight in pdf.FONT_WEIGHTS}
-        self.report = pdf.SlideReport(io.BytesIO(), fonts, "3")
-
+class ItemTargetTextTests(unittest.TestCase):
     def tearDown(self):
-        pdf.set_language(self.previous_language)
-
-    def check_layout(self, text, max_lines, width=220):
-        row = {"ai_summary_en": text}
-        layout = pdf.summary_text_layout(self.report, row, width, 8.8, max_lines)
-        painted = []
-        self.report.text = lambda x, y, value, *args, **kwargs: painted.append((x, y, value))
-        drawn = pdf.draw_summary_text(self.report, row, 0, 500, width, 8.8, max_lines=max_lines)
-        self.assertEqual(drawn, len(layout))
-        self.assertEqual(drawn, pdf.summary_line_count(self.report, row, width, 8.8, max_lines))
-        self.assertEqual(drawn, len({y for _, y, _ in painted}))
-        self.assertLessEqual(drawn, max_lines)
-        for line in layout:
-            measured = sum(self.report.canvas.stringWidth(value, self.report.fonts[weight], 8.8)
-                           for value, weight, _ in line)
-            self.assertLessEqual(measured, width + 0.01)
-        return " ".join(value for line in layout for value, _, _ in line), drawn
-
-    def test_single_sentence_wraps_without_losing_the_end(self):
-        text = ("Entered into a partnership with Medigen Vaccine Biologics to leverage NGS technologies "
-                "for characterization and validation of virus seed banks in next-generation vaccine programs.")
-        rendered, count = self.check_layout(text, 6)
-        self.assertGreater(count, 1)
-        self.assertIn("vaccine programs", rendered)
-        self.assertNotIn("...", rendered)
-
-    def test_wrapped_headline_and_detail_share_measured_line_count(self):
-        self.check_layout("Research collaboration with university scientists on advanced semiconductor materials "
-                          "- The partners will develop new processes for next-generation chip packaging.", 5)
-
-    def test_one_line_budget_never_overflows(self):
-        rendered, count = self.check_layout("A very long research collaboration headline requiring several lines "
-                                            "- Further supporting details for the collaboration.", 1, 120)
-        self.assertEqual(count, 1)
-        self.assertTrue(rendered.endswith("..."))
-
-    def test_short_headline_and_detail_keep_inline_styling(self):
-        _, count = self.check_layout("New project - Research begins.", 4)
-        self.assertEqual(count, 1)
+        pdf.set_language("ko")
 
     def test_item_initial_case_preserves_acronyms_and_other_languages(self):
+        pdf.set_language("en")
         self.assertEqual(pdf.item_target_text({"target_technology": "silicon anode material technology"}),
                          "Silicon anode material technology")
         self.assertEqual(pdf.item_target_text({"target_technology": "robot LiDAR and GMP"}), "Robot LiDAR and GMP")
@@ -65,10 +26,6 @@ class SummaryLayoutTests(unittest.TestCase):
         self.assertEqual(pdf.item_target_text({}), "")
         pdf.set_language("ko")
         self.assertEqual(pdf.item_target_text({"target_technology": "로봇용 라이다"}), "로봇용 라이다")
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class RepresentativeSignalRowTests(unittest.TestCase):
@@ -114,7 +71,7 @@ class RepresentativeSignalRowTests(unittest.TestCase):
         # 사업현황 상자는 실적 공시가 본래의 근거다. Albemarle·Nabtesco 가 그렇게 실린다.
         earnings = self.row("Albemarle Reports Second Quarter 2026 Results", "05")
         earnings["company"] = "Albemarle"
-        best = pdf.best_business_row("Albemarle", [earnings], [], [])
+        best = pdf.best_business_row("Albemarle", [earnings], [])
         self.assertEqual(best["title"], earnings["title"])
 
 
@@ -173,76 +130,24 @@ class SourceLineTests(unittest.TestCase):
         self.assertEqual(len(pdf.short_text(text, 50)), 50)
 
 
-class ItemPageBalanceTests(unittest.TestCase):
-    """34564332764 영문판: 품목 카드 4장이 3+1 로 갈려 마지막 쪽의 70%가 비었다.
-
-    build_html_report.mjs 의 itemBreaks 와 같은 규칙이어야 한다. 정적 PDF 는 HTML 로,
-    시그널 제외·기간 변경 PDF 는 여기로 만들어지므로 둘이 갈라지면 디자인이 어긋난다.
-    """
-
-    def sizes(self, heights):
-        return pdf._item_sheet_sizes(len(heights), pdf.item_breaks(heights))
-
-    def test_a_lone_last_card_is_evened_out(self):
-        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
-        height = (room - pdf.ITEM_CARD_GAP * 2) / 3  # 한 장에 셋까지
-        self.assertEqual(self.sizes([height] * 4), [2, 2])
-        for count in (4, 5, 6):
-            sizes = self.sizes([height] * count)
-            self.assertLessEqual(max(sizes) - min(sizes), 1, f"{count} cards -> {sizes}")
-
-    def test_page_count_never_grows_and_no_sheet_overflows(self):
-        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
-        height = (room - pdf.ITEM_CARD_GAP * 2) / 3
-        for count in range(1, 9):
-            heights = [height] * count
-            balanced = pdf.item_breaks(heights)
-            self.assertEqual(len(balanced), len(pdf.greedy_item_breaks(heights)))
-            self.assertTrue(pdf._item_plan_fits(heights, balanced), f"{count} overflows")
-
-    def test_an_oversized_card_keeps_its_own_sheet(self):
-        room = pdf.ITEM_SECTION_FIRST_TOP - pdf.ITEM_SECTION_BOTTOM
-        self.assertEqual(pdf.item_breaks([room + 200]), [])
-        # 큰 카드 하나 뒤에 작은 것 셋. 큰 것을 옮기면 들어가지 않으므로 greedy 가 남는다.
-        self.assertEqual(pdf.item_breaks([room - pdf.ITEM_CARD_GAP, 40, 40, 40]), [1])
-
-
 class MatrixStatusTests(unittest.TestCase):
     """매트릭스는 두 상태만 말한다: AI 확인 시그널이 있거나, 신호없음이거나."""
 
     def setUp(self):
         self.index = {"Acme": {3: [{"x": 1}]}, "Quiet": {}, "Unknown": {}}
-        self.summary = {"review_coverage": [
-            {"company": "Acme", "status": "reviewed"},
-            {"company": "Quiet", "status": "reviewed"},
-            {"company": "Unknown", "status": "incomplete_evidence"},
-        ]}
 
     def test_the_two_states_are_distinguished(self):
-        covered = pdf.covered_companies(self.summary, [])
-        self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
-        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
-        # 검토를 끝내지 못한 기업도 표에서는 신호없음과 같은 칸이다. 검토 범위 페이지가 그 수를 따로 말한다.
-        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "reviewed")
-
-    def test_a_company_with_a_signal_is_detected_even_if_coverage_is_incomplete(self):
-        covered = pdf.covered_companies({"review_coverage": []}, [])
-        self.assertEqual(pdf.company_status("Acme", self.index, covered), "detected")
-
-    def test_coverage_no_longer_changes_a_row_state(self):
-        rows = [{"company": "Quiet", "source_type": "official"},
-                {"company": "Unknown", "source_type": "fallback"}]
-        covered = pdf.covered_companies({}, rows)
-        self.assertEqual(pdf.company_status("Quiet", self.index, covered), "reviewed")
-        self.assertEqual(pdf.company_status("Unknown", self.index, covered), "reviewed")
+        self.assertEqual(pdf.company_status("Acme", self.index), "detected")
+        self.assertEqual(pdf.company_status("Quiet", self.index), "reviewed")
+        # 수집이 끝나지 않은 기업도 표에서는 신호없음과 같은 칸이다.
+        self.assertEqual(pdf.company_status("Missing", self.index), "reviewed")
 
     def test_the_footnote_counts_are_the_row_statuses_counted(self):
         # 각주와 표가 어긋나지 않는다는 것이 상태를 행에 붙인 이유다.
         import report_view_model as vm
         profiles = [{"company": c, "target_no": i} for i, c in enumerate(self.index, 1)]
-        counts = vm.matrix_counts(profiles, self.index, self.summary, [])
-        covered = pdf.covered_companies(self.summary, [])
-        statuses = [pdf.company_status(p["company"], self.index, covered) for p in profiles]
+        counts = vm.matrix_counts(profiles, self.index)
+        statuses = [pdf.company_status(p["company"], self.index) for p in profiles]
         self.assertEqual(counts["detected"], statuses.count("detected"))
         self.assertEqual(counts["reviewed_off"], statuses.count("reviewed"))
         self.assertEqual(counts["detected"] + counts["reviewed_off"], counts["total"])
@@ -295,8 +200,8 @@ class MatrixCellStateTests(unittest.TestCase):
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 4), "on")
         self.assertEqual(pdf.signal_cell_state(self.index, "Mixed", 1), "")
         self.assertEqual(pdf.signal_cell_state(self.index, "Both", 4), "on")
-        self.assertEqual(pdf.company_status("Mixed", self.index, set()), "detected")
-        self.assertEqual(pdf.company_status("SecondOnly", self.index, set()), "detected")
+        self.assertEqual(pdf.company_status("Mixed", self.index), "detected")
+        self.assertEqual(pdf.company_status("SecondOnly", self.index), "detected")
 
 
 
@@ -309,9 +214,9 @@ class SentenceBoundaryTests(unittest.TestCase):
         pdf.set_language(self.previous_language)
 
     def test_initials_decimals_and_abbreviations_are_not_sentence_ends(self):
-        self.assertEqual(pdf.split_sentences("Michael J. Fox Foundation joined. Sales rose 23.6% at Acme Inc. in Q2. Next"),
+        self.assertEqual(pdf.sentence_spans("Michael J. Fox Foundation joined. Sales rose 23.6% at Acme Inc. in Q2. Next"),
                          ["Michael J. Fox Foundation joined.", "Sales rose 23.6% at Acme Inc. in Q2.", "Next"])
-        self.assertEqual(pdf.split_sentences("出資しました。連携を強化します。"), ["出資しました。", "連携を強化します。"])
+        self.assertEqual(pdf.sentence_spans("出資しました。連携を強化します。"), ["出資しました。", "連携を強化します。"])
 
     def test_korean_phrasing_keeps_initials_and_decimals(self):
         text = pdf.phraseify_summary_text("써모 피셔 사이언티픽이 마이클 J. 폭스 재단과 협력해 매출 23.6% 증가를 기록함.")
@@ -497,3 +402,7 @@ class SummaryDetailProseTests(unittest.TestCase):
         parts = pdf.summary_parts({"ai_summary_en": text})
         self.assertEqual(parts["headline"], text)
         self.assertEqual(parts["detail"], "")
+
+
+if __name__ == "__main__":
+    unittest.main()

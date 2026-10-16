@@ -1,14 +1,11 @@
 """보고서에 무엇이 실리는지 정하는 계층.
 
 수집 결과를 읽어 어느 기업의 어느 지표가 승인됐는지 고르고, 날짜를 읽고, 실릴 문안을 다듬는다.
-좌표도 글꼴도 색도 다루지 않으므로 reportlab 없이 불러올 수 있다. 페이지 위에 놓는 일은
-scripts/build_pdf_report.py 가 한다.
+좌표도 글꼴도 색도 다루지 않으므로 reportlab 없이 불러올 수 있다. 화면과 PDF 가 함께 쓰는 뷰 모델
+(scripts/report_view_model.py)이 이 판단을 가져가고, 글자 폭이 필요한 판단만 scripts/report_measure.py 가 한다.
 
-화면용 scripts/report_view_model.py 는 예전처럼 build_pdf_report 를 거쳐 이 함수들을 쓴다.
-두 렌더러가 같은 표를 그리려면 그 판단이 한 곳에 있어야 하기 때문이다.
-
-언어는 set_language 가 바꾸는 모듈 상태(LANG)다. 이름을 복사해 가면 언어를 바꾼 뒤에도 옛 값이
-남으므로 __all__ 에서 빼 두고, build_pdf_report 는 읽고 쓸 때마다 이 모듈을 거치게 해 두었다.
+언어는 set_language 가 바꾸는 모듈 상태(LANG)다. `from report_content import LANG` 처럼 이름을 복사해
+가면 언어를 바꾼 뒤에도 옛 값이 남으므로, 다른 모듈은 report_content.LANG 으로 읽는다.
 """
 
 import json
@@ -17,34 +14,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-__all__ = [
-    "APPROVAL_POLICY", "BUSINESS_STAGE", "COMPANY_LEVEL_INDICATORS", "CONFIRMED_DATE_SOURCES",
-    "COUNTRY_BY_COMPANY", "COUNTRY_EN",
-    "DETAILED_INDUSTRY_BY_GROUP", "DETAILED_INDUSTRY_EN", "EXEMPT_COMPANIES", "EXEMPT_INDUSTRY",
-    "INDICATOR_DESCRIPTION_EN", "INDICATOR_LABEL_KO", "LEADING_STAGES", "TARGET_TECHNOLOGY_DISPLAY_EN", "MONTH_NAMES_EN", "MONTH_ONLY", "NOT_A_SENTENCE_END",
-    "PERIODIC_DISCLOSURE_PATTERN", "PRECURSOR_INDICATORS", "PRESS_RELEASE_PATTERN", "PROJECT_ROOT",
-    "SENTENCE_END", "SIGNAL_DESCRIPTIONS", "SIGNAL_DESCRIPTIONS_EN", "SOURCE_LINE_LIMIT", "TEXTS",
-    "best_business_row", "build_item_trend_entries", "build_profiles", "business_near_miss",
-    "business_prose", "business_text", "clean_text", "compact_date", "compact_summary_phrase", "company_sort_key",
-    "company_status", "cover_kicker", "cover_subtitle", "cover_title_accent", "cover_titles", "covered_companies", "date_day", "date_month", "date_state", "detail_text",
-    "expand_business_summary", "filter_ignored_signals", "filter_rows_by_report_period", "fnv1a_utf8",
-    "format_date", "format_row_date", "index_investment_signals", "is_periodic_disclosure",
-    "is_press_release", "is_relevance_exempt", "issue_month", "item_target_text", "item_trend_text",
-    "load_json", "matrix_footnote", "matrix_period_label", "month_bounds", "normalize_company_key",
-    "normalize_summary_text", "override_summary_period", "parse_date_only", "parse_datetime",
-    "parse_ignored_signal_keys", "phrase_ending_text", "phraseify_summary_text", "report_month_label",
-    "report_period", "row_in_report_period", "sentence_spans", "set_language", "set_report_period", "short_text",
-    "signal_cell_state", "signal_fingerprint", "signal_publishable", "signal_supported",
-    "sort_signal_rows", "source_display_name", "source_line", "source_url", "split_sentences", "strip_summary_lead",
-    "summary_detail_text", "summary_field", "summary_parts", "summary_plain_text", "t",
-    "target_section_for_profile", "target_technology_required",
-]
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-
-def normalize_company_key(value):
-    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
 
 
 EXEMPT_COMPANIES = {
@@ -345,6 +315,10 @@ TEXTS = {
         "cover_line_1": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
         "cover_line_2": "기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반",
         "cover_indicator_heading": "5대 투자동향 지표",
+        # 본문 면 머리글(제목 위 금색 한 줄). 국·영문이 같은 값이라 영문판은 t() 가 이 값을 쓴다.
+        "matrix_kicker": "S I G N A L   M A T R I X",
+        "detail_kicker": "C O M P A N Y   S I G N A L S",
+        "item_kicker": "K E Y   D E V E L O P M E N T S",
         "matrix_title": "이번 달 시그널 매트릭스",
         "matrix_desc": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
         "matrix_company": "기업",
@@ -897,10 +871,6 @@ def sentence_spans(text):
     return [sentence for sentence in sentences if sentence]
 
 
-def split_sentences(text):
-    return sentence_spans(text)
-
-
 def signal_fingerprint(row):
     values = [
         row.get("target_no"),
@@ -1138,16 +1108,6 @@ def index_investment_signals(rows):
     return index
 
 
-def covered_companies(summary, signal_rows):
-    """검토를 끝낸 기업. 커버리지가 있으면 그것을 쓰고, 없으면 공식 출처 유무로 본다."""
-    coverage = summary.get("review_coverage")
-    if isinstance(coverage, list):
-        # no_monthly_sources 는 수집이 끝났는데 이번 달 자료가 없었다는 뜻이다. 검토 후 미포착과 같다.
-        return {item.get("company") for item in coverage if item.get("status") in ("reviewed", "no_monthly_sources")}
-    return {row.get("company") for row in signal_rows
-            if row.get("company") and row.get("source_type") == "official"}
-
-
 def signal_cell_state(signal_index, company, no):
     """매트릭스 한 칸. on=AI 확인 시그널, ""=신호없음.
 
@@ -1157,14 +1117,14 @@ def signal_cell_state(signal_index, company, no):
     return "on" if signal_index.get(company, {}).get(no) else ""
 
 
-def company_status(company, signal_index, covered):
+def company_status(company, signal_index):
     """매트릭스 한 행의 상태.
 
     detected     이번 달 AI 확인 시그널이 있다
     reviewed     시그널이 없다
 
-    covered 는 더 이상 행 상태를 가르지 않는다. 각주는 이 상태를 숫자로 말하고,
-    report_view_model.py 가 이 함수를 그대로 쓴다. 규칙을 한 곳에 둬야 두 렌더러가 같은 표를 그린다.
+    검토를 끝내지 못한 기업도 표에서는 신호없음과 같은 칸이다(예전에는 검토 범위로 상태를 하나 더
+    나눴다). 각주는 이 상태를 숫자로 말하고, report_view_model.py 가 이 함수를 그대로 쓴다.
     """
     states = [signal_cell_state(signal_index, company, no) for no in range(1, 6)]
     return "detected" if "on" in states else "reviewed"
@@ -1249,6 +1209,23 @@ def cover_title_accent():
     return texts.get("cover_title_accent", TEXTS["ko"]["cover_title_accent"])
 
 
+def cover_indicator_texts(item):
+    """표지 지표 한 줄의 (이름, 설명)."""
+    if LANG == "en":
+        label = SIGNAL_DESCRIPTIONS_EN[item["no"]].split(" · ", 1)[0]
+        return label, INDICATOR_DESCRIPTION_EN.get(item["no"], item.get("description_ko", ""))
+    return INDICATOR_LABEL_KO.get(item["no"], item["label_ko"]), item["description_ko"]
+
+
+def signal_row_label(no):
+    """기업 카드 행의 지표 라벨. 국·영문 모두 이름만 싣는다.
+
+    국문은 " · 설명"까지 알약에 넣어 알약이 행의 절반을 차지했고, "이번 달 해당 신호 없음"이
+    320pt 까지 밀렸다. 설명은 표지에 있다.
+    """
+    return SIGNAL_DESCRIPTIONS_EN[no] if LANG == "en" else INDICATOR_LABEL_KO[no]
+
+
 def source_url(row):
     """출처 줄이 가리킬 원문 주소. Google 중계 주소보다 발행사 원문을 먼저 쓴다.
 
@@ -1280,10 +1257,6 @@ def detail_text(row, limit=260):
     return short_text(evidence or title, limit)
 
 
-def expand_business_summary(row, text):
-    return normalize_summary_text(text)
-
-
 def business_prose(text):
     """사업동향은 문장으로 싣는다. 모델이 앞에 붙인 "표제 - 본문"의 표제를 뗀다.
 
@@ -1310,8 +1283,8 @@ def business_text(rows):
     row = sort_signal_rows(rows)[0]
     ai_summary = business_prose(normalize_summary_text(summary_field(row, "ai_summary")))
     if ai_summary:
-        return short_text(expand_business_summary(row, ai_summary), 950)
-    return short_text(expand_business_summary(row, detail_text(row, 900)), 950)
+        return short_text(normalize_summary_text(ai_summary), 950)
+    return short_text(normalize_summary_text(detail_text(row, 900)), 950)
 
 
 def business_near_miss(row):
@@ -1341,7 +1314,7 @@ def business_near_miss(row):
     return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
 
 
-def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, shown_rows=()):
+def best_business_row(company, relevant_rows, investment_rows, shown_rows=()):
     """사업현황 상자에 쓸 행. 사업동향 행이 없을 때만 투자 시그널 행으로 대신한다.
 
     별도 사건을 우선하되, 다른 문안이 없으면 시그널 칸에 실린 승인 문안을 재사용한다.
@@ -1350,22 +1323,15 @@ def best_business_row(company, relevant_rows, investment_rows, all_signal_rows, 
     승인된 후보가 하나도 없으면 근접 사업동향 행을 쓴다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은
     승인된 사업동향이 0건이라 세 기업의 상자가 모두 "확인되지 않음"으로 나갔다. 근접 행은 승인이
     아니다. 예전에는 상자에 "품목 연계 미확인" 표시를 붙였으나 2026-10 검토에서 표시를 뺐다.
-    근접 여부는 report_view_model 의 business.near_miss 로 계속 남긴다.
+
+    수집 원본(company_signals)의 공식 출처 행을 찾던 단계는 지웠다. 그 행에는 AI 판정이 없어
+    signal_supported 를 통과한 적이 없다.
     """
     shown = {id(row) for row in shown_rows}
     candidates = [row for row in relevant_rows if row.get("company") == company and signal_supported(row)]
     if not candidates:
         candidates = [row for row in investment_rows
                       if row.get("company") == company and signal_supported(row) and id(row) not in shown]
-    if not candidates:
-        candidates = [
-            row
-            for row in all_signal_rows
-            if row.get("company") == company
-            and row.get("source_type") == "official"
-            and signal_supported(row)
-            and id(row) not in shown
-        ]
     if not candidates:
         candidates = [row for row in relevant_rows
                       if row.get("company") == company and business_near_miss(row) and id(row) not in shown]
