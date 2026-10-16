@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { downloadArticleDocument, sniffDocumentType } from '../scripts/collect_company_signals.mjs';
+import { downloadArticleDocument, enrichOfficialRowsWithContent, extractPdfText, parseArgs, pdfExtractorPython,
+  pdfExtractorUnavailable, sniffDocumentType } from '../scripts/collect_company_signals.mjs';
 
 // 2026-09 수집본에서 Nabtesco 보도자료 5건과 Renishaw 실적 자료 2건이 PDF 였는데도 추출기를 타지
 // 못했다. 주소에 .pdf 가 없고 content-type 도 PDF 라고 말하지 않아 response.text() 로 내려갔고,
@@ -47,22 +48,57 @@ test('the document type comes from the bytes, not from the header or the URL', (
   }
 });
 
+// 추출기는 python 과 pdfplumber 를 쓴다. 그 둘이 없는 환경에서만 건너뛰고, 추출기의 다른 오류는 실패로 드러낸다.
+async function requireExtractor(t, pdf) {
+  try {
+    await extractPdfText(pdf);
+    return true;
+  } catch (error) {
+    if (!pdfExtractorUnavailable(error)) throw error;
+    t.skip(`PDF extractor unavailable (${pdfExtractorPython()}): ${error.message}`);
+    return false;
+  }
+}
+
 test('a PDF served without a PDF header or a .pdf URL still reaches the extractor', async t => {
   const url = 'https://www.nabtesco.com/en/news/20260814-18378/';
   const pdf = minimalPdf('Orders for precision reduction gears rose 11 percent');
   assert.equal(sniffDocumentType(pdf), 'pdf');
-  let document;
-  try {
-    document = await downloadArticleDocument(url, 30, respondWith(pdf, 'text/html; charset=utf-8', url));
-  } catch (error) {
-    // 추출기는 python 과 pdfplumber 를 쓴다. 없는 환경에서는 조용히 통과시키지 않고 건너뛴 것을 남긴다.
-    t.skip(`PDF extractor unavailable: ${error.message}`);
-    return;
-  }
+  if (!await requireExtractor(t, pdf)) return;
+  const document = await downloadArticleDocument(url, 30, respondWith(pdf, 'text/html; charset=utf-8', url));
   assert.equal(document.html, '');
   assert.match(document.content, /precision reduction gears/);
   // 바이트가 본문으로 실리지 않는다.
   assert.doesNotMatch(document.content, /%PDF/);
+});
+
+// 10월 13일 실행에서도 공식 행의 확장자 없는 PDF 가 unextractable_binary_document 로 남았다. 공식 상세 페이지는
+// fetchText → response.text() 로 받아 바이트 판별을 타지 않았기 때문이다. 실제 수집 경로(공식 행)로 확인한다.
+test('an official row whose detail page is an extensionless PDF gets the extracted text', async t => {
+  const url = 'https://www.nabtesco.com/en/news/20260930-18402/';
+  const pdf = minimalPdf('Nabtesco orders for precision reduction gears rose 11 percent');
+  if (!await requireExtractor(t, pdf)) return;
+  const realFetch = globalThis.fetch;
+  const requested = [];
+  globalThis.fetch = async (target, init) => {
+    requested.push(String(target));
+    return respondWith(pdf, 'application/octet-stream', url)(target, init);
+  };
+  try {
+    const company = { target_no: 1, company: 'Nabtesco', query_aliases: [] };
+    const row = { target_no: 1, company: 'Nabtesco', title: 'Nabtesco reports orders for precision reduction gears',
+      url, source: 'Nabtesco news', source_type: 'official', collector: 'official_page', link_verdict: 'accept', link_rank: 0 };
+    const args = { ...parseArgs([]), rateLimitSeconds: 0, timeoutSeconds: 5 };
+    const { rows, errors } = await enrichOfficialRowsWithContent([row], args, '2026-10-13T00:00:00Z', company,
+      { probe: (target, request) => request() });
+    assert.deepEqual(errors, []);
+    assert.deepEqual(requested, [url]);
+    assert.equal(rows[0].content_fetch_status, 'fetched');
+    assert.match(rows[0].content_text, /precision reduction gears/);
+    assert.doesNotMatch(rows[0].content_text, /%PDF/);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });
 
 test('a spreadsheet is kept as a row with an empty body and a stated reason', async () => {

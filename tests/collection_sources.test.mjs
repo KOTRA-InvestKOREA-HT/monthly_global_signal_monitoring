@@ -122,8 +122,17 @@ test('an undated file the collector cannot open is dropped, a dated one stays', 
 test('a company with declared search names is searched by those names only, not its short display name', () => {
   const targets = JSON.parse(fs.readFileSync('data/target_companies.json', 'utf8'));
   const prodrive = targets.find(company => company.company === 'Prodrive');
-  const query = buildQuery(prodrive, 31);
+  const query = buildQuery(prodrive, { mode: 'lookback', lookbackDays: 31 });
   assert.match(query, /^"Prodrive Technologies" \(/);
   assert.doesNotMatch(query, /"Prodrive"/);
-  assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, 31), /^\("Ouster" OR "Ouster Inc"\)/);
+  assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, { mode: 'lookback', lookbackDays: 31 }),
+    /^\("Ouster" OR "Ouster Inc"\) .* when:31d$/);
+});
+
+// 늦게 돌린 수집에서 when:Nd 창은 기간 밖 새 기사로 6건 자리를 채웠다. 기간을 정한 실행은 after/before 를 쓴다.
+test('the fallback news query searches the reporting period, not a window back from today', () => {
+  const query = buildQuery({ company: 'Ouster', query_aliases: [] },
+    { mode: 'explicit', fromDate: '2026-09-01', toDate: '2026-09-30', lookbackDays: 45 });
+  assert.match(query, / after:2026-09-01 before:2026-10-01$/);
+  assert.doesNotMatch(query, /when:/);
 });

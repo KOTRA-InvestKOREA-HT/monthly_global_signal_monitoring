@@ -48,7 +48,8 @@ function fakeNetwork() {
     const own = official.find(([, link]) => link === url);
     if (own) return new Response(body(own[0], own[2]));
     if (url.startsWith('https://news.google.com/rss/search')) {
-      return new Response(rss(decodeURIComponent(url).includes('after:2026-09-01') ? trendItems : fallback));
+      // 대체 수집 질의는 신호 낱말("investor relations" 등)을 싣고, 사업동향 질의는 기술 키워드를 싣는다.
+      return new Response(rss(decodeURIComponent(url).includes('investor') ? fallback : trendItems));
     }
     if (/\/articles\/CBMi\w+$/.test(url)) return new Response('<div data-n-a-sg="SIG" data-n-a-ts="1759000000"></div>');
     if (url.endsWith('/batchexecute')) {
@@ -136,6 +137,25 @@ test('a company with a real transient failure is still collected from scratch', 
   assert.ok(network.requested.includes('https://acme.example/rss'));
   assert.ok(network.requested.includes('https://acme.example/news/a1'));
   assert.equal(network.requested.filter(url => url.startsWith('https://news.google.com/rss/search')).length, 2);
+});
+
+// 본문 단계에서 뺀 대체 기사는 결과에 다시 들어오지 않는다. 예전에는 rows.map 이 빠진 행 자리에 원래 행을 넣었다.
+test('a fallback article excluded at the detail stage stays excluded', async () => {
+  const network = fakeNetwork();
+  // 검색 결과의 짧은 제목은 받아 본 페이지 제목으로 바뀌고, 그 제목이 목록 페이지라 기사에서 빠진다.
+  const shortTitled = fallback.map((item, index) => (index === 0 ? ['Acme update', ...item.slice(1)] : item));
+  const fetch = async (url, init) => {
+    url = String(url);
+    if (url === publisher('G1')) return new Response(body('News archive', 11));
+    if (url.startsWith('https://news.google.com/rss/search') && decodeURIComponent(url).includes('investor')) {
+      return new Response(rss(shortTitled));
+    }
+    return network.fetch(url, init);
+  };
+  const result = await withNetwork({ fetch }, () => collect(always, createStepLog()));
+  const fallbackUrls = result.rows.filter(row => row.collector === 'google_news_rss').map(row => row.url);
+  assert.equal(fallbackUrls.includes('https://news.google.com/rss/articles/CBMiG1'), false);
+  assert.equal(fallbackUrls.length, 3);
 });
 
 test('steps that failed transiently or were paused are never replayed', async () => {

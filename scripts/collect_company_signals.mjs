@@ -831,16 +831,18 @@ async function fetchTextOnce(url, timeoutSeconds) {
       redirect: "follow",
       headers: requestHeaders(url),
     });
-    if (!response.ok) {
-      const error = new Error(`HTTP ${response.status} ${response.statusText}`);
-      error.status = response.status;
-      error.retryAfterSeconds = Number.parseInt(response.headers.get("retry-after") || "", 10) || 0;
-      throw error;
-    }
+    if (!response.ok) throw httpError(response);
     return await response.text();
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function httpError(response) {
+  const error = new Error(`HTTP ${response.status} ${response.statusText || ""}`.trim());
+  error.status = response.status;
+  error.retryAfterSeconds = Number.parseInt(response.headers.get("retry-after") || "", 10) || 0;
+  return error;
 }
 
 function isRetryableFetchError(error) {
@@ -849,24 +851,30 @@ function isRetryableFetchError(error) {
   return error.status === undefined ? true : RETRYABLE_STATUS.has(error.status);
 }
 
-export async function fetchText(url, timeoutSeconds) {
+// 요청 한 번(attempt)에 일시 오류 재시도와 domainGuard 를 씌운다. 목록·피드 요청(fetchText)과 상세 페이지·문서
+// 받기(fetchPublisherDocument)가 같은 규칙을 쓴다. 예전에는 공식 .pdf 링크와 대체 출처 다운로드가 이 둘을 거치지 않았다.
+async function fetchWithRetries(url, attempt) {
   let lastError;
-  for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
-    if (attempt > 0) {
+  for (let tried = 0; tried <= fetchRetries; tried += 1) {
+    if (tried > 0) {
       retryCount += 1;
       // 서버가 Retry-After로 대기 시간을 지정했으면 그 값을 따른다.
-      const backoffMs = 700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 400);
+      const backoffMs = 700 * 2 ** (tried - 1) + Math.floor(Math.random() * 400);
       const retryAfterMs = (lastError?.retryAfterSeconds || 0) * 1000;
       await sleep(Math.min(Math.max(backoffMs, retryAfterMs), 30000));
     }
     try {
-      return await domainGuard.run(url, () => fetchTextOnce(url, timeoutSeconds));
+      return await domainGuard.run(url, attempt);
     } catch (error) {
       lastError = error;
       if (!isRetryableFetchError(error)) throw error;
     }
   }
   throw lastError;
+}
+
+export async function fetchText(url, timeoutSeconds) {
+  return fetchWithRetries(url, () => fetchTextOnce(url, timeoutSeconds));
 }
 
 async function fetchJson(url, timeoutSeconds) {
@@ -886,11 +894,13 @@ function relevantAliases(company) {
   return [...new Map(names.map((name) => [name.toLowerCase(), name])).values()].slice(0, 3);
 }
 
-export function buildQuery(company, days) {
+// 대체 수집 질의도 사업동향 질의처럼 기간으로 검색 창을 정한다(trendSearchWindow). when:Nd 는 요청 시점에서
+// N일 전이라, 마감 한참 뒤에 돌리면 기간 밖 새 기사가 maxPerSource 자리를 채우고 그 달 기사가 밀려난다.
+export function buildQuery(company, dateRange) {
   const names = relevantAliases(company);
   let nameClause = names.map((name) => `"${name}"`).join(" OR ");
   if (names.length > 1) nameClause = `(${nameClause})`;
-  return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) when:${days}d`;
+  return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
 
 function buildGdeltQuery(company) {
@@ -1352,8 +1362,9 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
     if (!feedUrl) continue;
     // 피드 하나가 실패해도 같은 기업의 다른 피드는 계속 읽는다.
     try {
-      const xml = await fetchText(feedUrl, timeoutSeconds);
+      // 실패한 요청도 요청이다. 받은 뒤에 세면 실패한 요청이 요청 수에서 빠진다. 재시도는 retry_count 가 센다.
       requestCount += 1;
+      const xml = await fetchText(feedUrl, timeoutSeconds);
       const parsed = feed.format === "json"
         ? parseJsonFeed(xml, company, collectedAt, feedUrl, sourceName, feedKind, feed.json, contentCharLimit)
         : parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind);
@@ -1380,12 +1391,12 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
   let requestCount = 0;
   for (const page of pages) {
     try {
-      const html = await fetchText(page.url, timeoutSeconds);
       requestCount += 1;
+      const html = await fetchText(page.url, timeoutSeconds);
       for (const feedUrl of discoverFeedLinks(html, page.url)) {
         try {
-          const feedXml = await fetchText(feedUrl, timeoutSeconds);
           requestCount += 1;
+          const feedXml = await fetchText(feedUrl, timeoutSeconds);
           const feedRows = filterByDateRange(
             parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
             dateRange,
@@ -1479,13 +1490,23 @@ export function createPublisherProbe(limit = 3, { pauseMs = 60000, maxPauses = 3
         failures = 0;
         return document;
       } catch (error) {
-        failures = error.message === 'publisher_url_unresolved' ? failures + 1 : 0;
+        failures = googleBlocked(error) ? failures + 1 : 0;
         throw error;
       }
     });
     queue = result.catch(() => {});
     return result;
   };
+}
+
+// Google 이 막고 있다는 신호. 중계 주소가 발행사로 풀리지 않은 것만 세던 탓에, 429·5xx·타임아웃이 나면 오히려
+// 연속 실패가 0으로 돌아가 쉬어 가는 장치가 걸리지 않았다. 404 처럼 서버가 내린 결정은 막힘이 아니다.
+const GOOGLE_BLOCK_MESSAGE = /publisher_url_unresolved|timeout|aborted|fetch failed|^HTTP (?:429|5\d\d)\b/i;
+
+export function googleBlocked(error) {
+  if (error?.status === 429 || error?.status >= 500) return true;
+  if (error?.name === 'TimeoutError' || error?.name === 'AbortError') return true;
+  return GOOGLE_BLOCK_MESSAGE.test(String(error?.message || ''));
 }
 // 기업 수집을 미완료로 만드는 오류. 목록·피드·사이트맵·검색 단계의 실패만 센다.
 // 상세 페이지 실패는 그 기사가 본문 없는 기사로 남아 검토 커버리지에서 따로 드러난다. 여기서도 세면
@@ -1505,10 +1526,13 @@ const probePublisher = createPublisherProbe();
 
 // 응답 본문을 바이트로, 상한을 두고 읽는다. PDF 만 이렇게 읽다가 이제 모든 응답을 이렇게 받는다.
 // 종류를 바이트로 판별해야 하고, 덤으로 HTML 응답에도 상한이 생긴다.
+// 크기 초과는 서버의 일시 장애가 아니다. 다시 받아도 같고, domainGuard 가 호스트 실패로 세지도 않는다.
+const tooLarge = () => Object.assign(new Error('document_too_large'), { noRetry: true });
+
 export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
   if (Number(response.headers.get('content-length')) > limit) {
     await response.body?.cancel();
-    throw new Error('document_too_large');
+    throw tooLarge();
   }
   const reader = response.body.getReader();
   const chunks = [];
@@ -1520,7 +1544,7 @@ export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
       size += value.byteLength;
       if (size > limit) {
         await reader.cancel();
-        throw new Error('document_too_large');
+        throw tooLarge();
       }
       chunks.push(Buffer.from(value));
     }
@@ -1533,12 +1557,23 @@ export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
 // extract_pdf_text.py 가 단을 먼저 나누고 읽는다.
 const PDF_EXTRACTOR = fileURLToPath(new URL('extract_pdf_text.py', import.meta.url));
 
+// 추출기를 돌릴 파이썬. pdfplumber 가 깔린 가상환경을 쓰려면 PDF_EXTRACTOR_PYTHON 에 그 실행 파일을 적는다.
+// Actions 는 setup-python 이 PATH 에 둔 python 을 쓴다.
+export function pdfExtractorPython(env = process.env) {
+  return String(env.PDF_EXTRACTOR_PYTHON || '').trim() || 'python';
+}
+
+// 추출기를 돌릴 수 없는 환경. 파이썬이 없으면 ENOENT, pdfplumber 가 없으면 이 코드다. 문서 탓인 실패와 구분한다.
+export function pdfExtractorUnavailable(error) {
+  return error?.code === 'ENOENT' || error?.code === 'PDF_EXTRACTOR_UNAVAILABLE';
+}
+
 export function extractPdfText(bytes) {
   return new Promise((resolve, reject) => {
-    const child = spawn('python', ['-X', 'utf8', PDF_EXTRACTOR],
-      { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });
+    const child = spawn(pdfExtractorPython(), ['-X', 'utf8', PDF_EXTRACTOR],
+      { windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
     const chunks = [];
-    let size = 0, failure = null;
+    let size = 0, failure = null, stderr = '';
     const timer = setTimeout(() => { failure = new Error('pdf_extraction_timeout'); child.kill(); }, 30000);
     child.on('error', error => { clearTimeout(timer); reject(error); });
     child.stdout.on('data', chunk => {
@@ -1546,9 +1581,14 @@ export function extractPdfText(bytes) {
       if (size > 4 * 1024 * 1024) { failure = new Error('pdf_text_too_large'); child.kill(); }
       else chunks.push(chunk);
     });
+    // 오류 출력은 끝부분만 남긴다. 모듈이 없어서 실패했는지만 가리면 된다.
+    child.stderr.on('data', chunk => { stderr = (stderr + chunk.toString('utf8')).slice(-4000); });
     child.stdin.on('error', () => {}); // close/error determines the extraction result
     child.on('close', code => {
       clearTimeout(timer);
+      if (!failure && code !== 0 && /No module named ['"]?pdfplumber/.test(stderr)) {
+        failure = Object.assign(new Error('pdf_extractor_unavailable'), { code: 'PDF_EXTRACTOR_UNAVAILABLE' });
+      }
       if (failure || code !== 0) reject(failure || new Error('pdf_extraction_failed'));
       else resolve(Buffer.concat(chunks).toString('utf8').trim());
     });
@@ -1667,18 +1707,39 @@ export function sniffDocumentType(bytes) {
   return DOCUMENT_MAGIC.find(([, magic]) => head.startsWith(magic))?.[0] || 'text';
 }
 
-export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
+// 요청 한 번. 응답 바이트까지만 받는다. 재시도·domainGuard 는 이 단계만 감싼다. PDF 추출 실패는 서버 탓이
+// 아니므로 다시 받지 않고 호스트 실패로도 세지 않는다.
+async function requestDocument(target, timeoutSeconds, fetchImpl) {
   const response = await fetchImpl(target, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
     redirect: 'follow', headers: requestHeaders(target) });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  if (!response.ok) {
+    await response.body?.cancel();
+    throw httpError(response);
+  }
   const resolvedUrl = response.url || target;
   // Google consent/RSS wrapper text is not publisher evidence.
-  if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) {
+  // 메시지는 그대로 둔다. createPublisherProbe 가 메시지로 연속 실패를 센다.
+  if (isGoogle(resolvedUrl)) {
     await response.body?.cancel();
-    throw new Error('publisher_url_unresolved');
+    throw Object.assign(new Error('publisher_url_unresolved'), { noRetry: true });
   }
   const declaredPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
-  const bytes = await readLimitedResponse(response);
+  return { bytes: await readLimitedResponse(response), resolvedUrl, declaredPdf };
+}
+
+export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
+  return documentFromBytes(await requestDocument(target, timeoutSeconds, fetchImpl));
+}
+
+// 상세 페이지와 발행사 문서를 받는 수집 경로의 입구. 공식 상세 페이지도 이 길로 받는다. 예전에는 주소가 .pdf 로
+// 끝나지 않는 공식 행이 fetchText → response.text() 로 내려가 바이트 판별을 타지 않았고, 10월 13일 실행에서도
+// Nabtesco 5건, Renishaw 3건, Bayer·Merck 각 1건이 unextractable_binary_document 로 남았다.
+// 반대로 공식 .pdf 링크와 대체 출처 다운로드는 재시도와 domainGuard 를 거치지 않았다. 이제 둘 다 거친다.
+export async function fetchPublisherDocument(target, timeoutSeconds, fetchImpl = fetch) {
+  return documentFromBytes(await fetchWithRetries(target, () => requestDocument(target, timeoutSeconds, fetchImpl)));
+}
+
+async function documentFromBytes({ bytes, resolvedUrl, declaredPdf }) {
   // 머리글도 주소도 PDF 라고 말하지 않는 PDF 가 있다. Nabtesco 보도자료 5건(주소가 .pdf 가 아니다)과
   // Renishaw 실적 자료 2건이 그래서 추출기를 타지 못하고 response.text() 로 내려가, 본문 자리에
   // "%PDF-1.6" 바이트가 그대로 실렸다. 바이트로 판별하면 그 7건이 제 추출기로 돌아온다.
@@ -1797,18 +1858,18 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
   const exclude = (title, url, reason) => ({ ...outcome, exclusion: [title, url, reason] });
   try {
     let document;
-    if (row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)) {
+    // 공식 상세 페이지와 발행사 주소는 같은 길로 받는다: 바이트로 문서 종류를 판별하고, 재시도와 domainGuard 를 거친다.
+    if (!isGoogle(detailUrl)) {
       outcome.requestCount += 1;
       outcome.detailCount += 1;
-      document = { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl };
+      document = await fetchPublisherDocument(detailUrl, args.timeoutSeconds);
     } else {
-      const resolve = () => probe(detailUrl, async () => {
+      const source = await yieldSlot(() => probe(detailUrl, async () => {
         outcome.requestCount += 1;
         outcome.detailCount += 1;
         return resolveArticleSource(detailUrl, args.timeoutSeconds);
-      });
-      const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
-      document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
+      }));
+      document = source && (source.document || await fetchPublisherDocument(source.target, args.timeoutSeconds));
     }
     // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
     // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
@@ -2146,11 +2207,20 @@ export function selectTrendRows(rows, existingRows, keywords, limit) {
   return selected;
 }
 
+// Google News 검색 한 번. 실패해도 요청 한 건을 보냈으므로, 오류에 요청 수를 실어 collectCompany 가 세게 한다.
+async function searchGoogleNews(params, timeoutSeconds) {
+  try {
+    return await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  } catch (error) {
+    throw Object.assign(error, { requestCount: 1 });
+  }
+}
+
 async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt, searchTerms = null) {
   const query = buildTrendQuery(company, technology, keywordConfig, dateRange, searchTerms);
   if (!query) return { rows: [], requestCount: 0, query: "" };
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
-  const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  const xml = await searchGoogleNews(params, timeoutSeconds);
   // RSS 의 <description> 은 사전 필터가 보는 snippet 이다. parseRssOrAtom 은 공식 피드와 공용이라
   // 필드를 늘리지 않고, 여기서 제목으로 맞춰 붙인다. 본문을 받아오기 전이라 이것이 가진 전부다.
   const snippets = new Map();
@@ -2167,14 +2237,14 @@ async function collectTrendDiscovery(company, technology, keywordConfig, dateRan
 }
 
 async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
-  const query = buildQuery(company, dateRange.lookbackDays);
+  const query = buildQuery(company, dateRange);
   const params = new URLSearchParams({
     q: query,
     hl: "en-US",
     gl: "US",
     ceid: "US:en",
   });
-  const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  const xml = await searchGoogleNews(params, timeoutSeconds);
   return {
     rows: filterByDateRange(
       parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
@@ -2551,8 +2621,8 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
   let requestCount = 0;
   for (const entry of entries) {
     try {
-      const xml = await fetchText(entry.url, timeoutSeconds);
       requestCount += 1;
+      const xml = await fetchText(entry.url, timeoutSeconds);
       rows.push(...sitemapRows(xml, company, entry, dateRange, collectedAt).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", kind: "sitemap", error: error.message });
@@ -2667,10 +2737,13 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company, slot);
       requestCount += detailedFallback.requestCount;
       errors.push(...detailedFallback.errors);
+      // 보강 결과를 그대로 쓴다. 본문 단계에서 뺀 대체 기사(no_article_title, verified_index_page 등)는 돌아오지
+      // 않는다. 예전에는 빠진 행 자리에 원래 행을 다시 넣어, 제외로 집계된 기사가 결과에 남았다. 공식·사업동향 경로와 같다.
       const byUrl = new Map(detailedFallback.rows.map(row => [row.url, row]));
-      rows = rows.map(row => byUrl.get(row.url) || row);
+      rows = rows.flatMap(row => (row.source_type === 'official' ? [row] : byUrl.has(row.url) ? [byUrl.get(row.url)] : []));
     } catch (error) {
       stats.fallback = "error";
+      requestCount += error.requestCount || 0;
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
   }
@@ -2700,6 +2773,7 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       }
     } catch (error) {
       stats.trend_discovery = "error";
+      requestCount += error.requestCount || 0;
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news_trend", error: error.message });
     }
   }

@@ -42,7 +42,10 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       stats.skipped++;
       throw Object.assign(new Error(`domain_cooldown: ${host}`), { noRetry: true });
     }
-    if (state.failures >= threshold) state.probing = true;
+    // 쉬는 시간이 지난 뒤 첫 요청 하나만 탐침으로 보낸다. 탐침이 끝날 때만 표시를 푼다. 예전에는 탐침이 아닌
+    // 요청이 끝날 때도 풀어서, 탐침이 진행 중인데 다른 요청이 그 호스트로 함께 나갔다.
+    const probe = state.failures >= threshold;
+    if (probe) state.probing = true;
     const start = now();
     stats.attempts++;
     try {
@@ -51,12 +54,16 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       return result;
     } catch (error) {
       // A reachable server rejecting one URL is different from an unavailable host.
-      if (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500) {
+      // noRetry 오류(크기 초과, Google 중계 주소 등)는 응답을 받은 뒤의 판단이라 호스트 장애가 아니다.
+      if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
         state.failures++;
         if (state.failures >= threshold) state.until = now() + cooldownMs;
       } else state.failures = 0;
       throw error;
-    } finally { state.probing = false; stats.elapsed_ms += now() - start; }
+    } finally {
+      if (probe) state.probing = false;
+      stats.elapsed_ms += now() - start;
+    }
   } };
 }
 
