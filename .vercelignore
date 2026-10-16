@@ -13,3 +13,5 @@ outputs/golden_eval/
 outputs/link_audit/
 outputs/link_trial/
 outputs/pdf_verify/
+outputs/review_*/
+outputs/pdf_companies_extracted.*
