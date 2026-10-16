@@ -15,26 +15,25 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/report_month.mjs`: the single definition of which month "the previous month" is (Asia/Seoul), shared by the Actions run, the crawl button and the dashboard.
 - `.github/workflows/collect-company-signals.yml`: stage 1 — collect, judge and verify (no report copy, no PDF). The dashboard button runs this with `auto_publish=true`, so a finished judgement starts stage 2; manual runs judge only unless that box is ticked.
 - `.github/workflows/publish-report.yml`: stage 2 — write the report copy for the finished judgement and build both PDFs. Also the dashboard's `발행만 실행` button.
-- `app/`: Vercel dashboard and API routes for the `크롤링 수행` button.
+- `app/`: Vercel dashboard and API routes for the `크롤링 수행` button and the web PDF download.
+- `api/report-view-model.py`: the Vercel Python function that computes the report content for the web download.
 - `scripts/extract_pdf_companies.py`: validates PDF page 2 against the canonical list.
 - `scripts/build_company_technology_map.py`: extracts and normalizes company-to-technology mapping from the reference PDF.
-- `scripts/collect_company_signals.mjs`: collects signals from official feeds, Google News RSS, and GDELT without third-party packages.
-- `scripts/filter_relevant_signals.mjs`: filters collected signals to target-technology-related items.
-- `scripts/classify_investment_signals.mjs`: evaluates each candidate against the five investment-indicator categories with deterministic keyword rules.
+- `scripts/collect_company_signals.mjs`: collects signals from official feeds and pages, SEC filings, news sitemaps and Google News RSS without third-party packages.
 - `scripts/review_report.mjs`: stage 1 — automated collection, article judgement and second-stage verification. The judge writes quotes, reason and verdicts only.
 - `scripts/publish_report.mjs`: stage 2 — takes over a finished judgement, writes the Korean/English copy with `scripts/summary_writer.mjs`, and builds both PDFs.
 - `scripts/report_period.mjs`: shared reporting-period resolver for the CLI and Actions.
-- `scripts/summarize_signal_evidence.mjs`: **deprecated.** The older row-by-row summary tool, kept for diagnosis. The monthly pipeline summarises whole articles in `scripts/review_report.mjs`; this tool's prompts, provider settings and `outputs/ai_summary_cache.json` do not configure it.
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
 - `scripts/report_content.py`: decides what goes into the report — approval, date reading, selection and prose shaping. No reportlab, no page coordinates.
-- `scripts/build_pdf_report.py`: draws the Korean or English PDF from those decisions. Re-exports `report_content`, so `build_pdf_report.<name>` still resolves for `report_view_model.py` and the tests.
-- `scripts/collect_company_signals.py`: **deprecated.** An older, much smaller Python collector kept for environments where the Node HTTPS stack is unusable. It is *not* equivalent to the Node collector: it reads only official feeds and Google News, and has none of the official-page, SEC, sitemap, article-body, publication-date grading or trend-discovery collection the report pipeline depends on. Rows it produces lack the body and date evidence the review step requires.
-- `outputs/`: generated JSON/CSV results.
+- `scripts/report_view_model.py`: turns those decisions into the report's view model (JSON). It measures text with reportlab through `scripts/build_pdf_report.py`; reportlab no longer draws the PDFs.
+- `scripts/report_html.mjs` and `scripts/build_html_report.mjs`: render the view model as HTML and print the Korean/English PDFs with Chrome. The web download prints the same HTML.
+- `outputs/`: generated JSON results.
 
 See `docs/github_vercel_button_workflow.md` for the GitHub upload, Vercel deployment, and button-trigger workflow.
 Publication-date handling — how a date is graded and what a date hold means for review and for the PDF — is recorded in `docs/date_criteria_2026-09-07.md`.
-The implemented accuracy controls, verification evidence, known limitations, and Codex hook diagnosis are recorded in `docs/signal_accuracy_improvements_2026-09-03.md`.
+Dated investigation and review notes, including the accuracy controls in
+`docs/archive/signal_accuracy_improvements_2026-09-03.md`, are kept in `docs/archive/`; they describe the code as it was then.
 
 ## Commands
 
@@ -43,7 +42,7 @@ The implemented accuracy controls, verification evidence, known limitations, and
 The monthly report runs in two stages, usually on two days so each stays within the
 Gemini free-tier daily limit. Both stages resume from saved progress when they stop.
 
-`npm run collect:all`, `npm run report:review`, and the `collect-company-signals`
+`npm run report:review` and the `collect-company-signals`
 workflow execute stage 1, `scripts/review_report.mjs`:
 
 ```text
@@ -79,10 +78,11 @@ existing Gemini setup in PowerShell:
 ```powershell
 $env:REPORT_PROVIDER = 'gemini'
 # GEMINI_API_KEY and GEMINI_FREE_TIER_CONFIRMED must already be configured.
-$env:REPORT_FROM_DATE = '2026-08-01'
-$env:REPORT_TO_DATE = '2026-08-31'
-$env:REPORT_ISSUE_NUMBER = '2'
-npm run collect:all
+$env:REPORT_FROM_DATE = '2026-10-01'
+$env:REPORT_TO_DATE = '2026-10-31'
+# The issue printed on the cover. There is no default; publishing without it fails.
+$env:REPORT_ISSUE_NUMBER = '5'
+npm run report:review
 ```
 
 Both dates omitted means the previous completed calendar month in `Asia/Seoul`.
@@ -98,7 +98,8 @@ the direct script retains its existing NVIDIA default. Set `REPORT_PROVIDER` to
 the same value for equivalent local/Actions runs. Gemini uses `GEMINI_API_KEY`
 and requires `GEMINI_FREE_TIER_CONFIRMED=true` after the project has been checked;
 NVIDIA uses the existing `OPENAI_API_KEY` secret. Model settings
-are `GEMINI_MODEL` / `NVIDIA_MODEL`.
+are `GEMINI_MODEL` / `NVIDIA_MODEL`; in Actions they, and the verifier, writer and
+reviewer model settings, come from repository variables of the same name.
 
 `REPORT_MAX_REQUESTS` (1–600), `REPORT_CONCURRENCY` (1–12), `REPORT_DELAY_MS`,
 `REPORT_REFRESH`, `REPORT_REREVIEW`, and `REPORT_ISSUE_NUMBER` use the same implementation in both
@@ -122,11 +123,12 @@ files and saves reviews directly; no chat-to-JSON copy/paste is needed. Included
 subscription usage limits still apply. The scripts themselves never call a model API.
 
 ```bash
-# Reuse the checked-in August 2026 collection (does not crawl or call a model).
-npm run report:local -- prepare --month 2026-08
+# Reuse the checked-in collection (does not crawl or call a model). outputs/latest_* holds
+# one month; from_date in outputs/latest_collection_summary.json says which.
+npm run report:local -- prepare --month 2026-09
 
 # For a new collection, add --collect. All output stays in a separate local directory.
-npm run report:local -- prepare --month 2026-08 --collect
+npm run report:local -- prepare --month 2026-10 --collect
 
 # Use the run_dir printed by prepare. Codex writes the pending article reviews.
 npm run report:local -- status --run-dir RUN_DIR
@@ -151,10 +153,12 @@ a new `outputs/local_reports/.../report-*` folder. Existing dashboard outputs an
 published PDFs are not overwritten. A Codex task must perform the review step;
 `prepare` alone does not generate AI decisions.
 
-Validate that the PDF page 2 list matches `data/target_companies.json`:
+Validate that the PDF page 2 list matches `data/target_companies.json`. The script
+reads the Issue 2 reference PDF committed in `docs/`; pass another file with
+`-- --pdf "<path>"`. Output goes to the ignored `outputs/pdf_verify/`.
 
 ```bash
-python scripts/extract_pdf_companies.py --pdf "C:/Users/buy4u/Desktop/KOTRA/AX 과제/Invest_KOREA_기업 글로벌 시그널_2.pdf" --page 2 --expected data/target_companies.json --out-dir outputs
+npm run validate:pdf
 ```
 
 Run a full 77-company collection test with Node.js and no package install:
@@ -163,54 +167,19 @@ Run a full 77-company collection test with Node.js and no package install:
 node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,official_sitemaps,sec_filings,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5
 ```
 
-Official RSS/Atom feeds and official Newsroom/Press/IR pages are read first. Google News is used only when a company has no official result in the run. GDELT is also implemented as `gdelt`, but its public endpoint can return rate-limit responses unless requests are spaced at roughly 5 seconds or more.
+Official RSS/Atom feeds and official Newsroom/Press/IR pages are read first. Google News is used only when a company has no official result in the run.
 
-Build the company-to-technology mapping from the reference PDF:
+Build the company-to-technology mapping from the reference company-information PDF
+(not in the repository; pass its path):
 
 ```bash
-python scripts/build_company_technology_map.py --pdf "C:/Users/buy4u/Downloads/전체 기업 정보_참고용_최종.pdf" --targets data/target_companies.json --keywords config/technology_keywords.json --out-json data/company_technology_map.json --out-csv data/company_technology_map.csv
+npm run build:technology-map -- --pdf "<path to the company information PDF>"
 ```
 
-### Standalone keyword diagnostics and legacy summaries
-
-The following tools remain available for focused analysis and older datasets.
-They are not steps in `collect:all` or the Actions monthly report pipeline.
-Their default paths overwrite diagnostic/latest files, so use a separate output
-directory when comparing keyword rules against a published report.
-
-Filter the latest collected signals to only target-technology-related candidates:
+The shared report-input validator can also be run on its own:
 
 ```bash
-node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signals.json --technology-map data/company_technology_map.json --keyword-config config/technology_keywords.json --out-dir outputs --threshold 1
-```
-
-The relevance filter uses broad Korean/English synonyms and excludes these companies from relevance analysis by request: `Prodrive`, `JSR`, `Applied Materials`, `Amkor Technology`, `Heraeus`, `Toray`, `3M`, `Air Liquide`, `Air Products`.
-
-Classify candidates against all five investment-indicator categories:
-
-```bash
-node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true
-```
-
-Generate bilingual AI summaries and semantic support decisions for report evidence
-(deprecated; the monthly report does not use this path):
-
-```bash
-OPENAI_API_KEY=... node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs
-```
-
-This legacy summarizer uses Luna first and Terra for selected retries, with its
-own `outputs/ai_summary_cache.json`, which is no longer tracked in git because
-only this tool reads it. Its `AI_SUMMARY_*` settings and OpenAI API
-credentials do not configure the monthly article-review pipeline. In particular,
-the repository's existing `OPENAI_API_KEY` secret contains an NVIDIA key and
-cannot be used as an OpenAI credential for this legacy tool.
-
-The legacy summarizer fails without complete cached decisions or valid API
-results. The shared validator can also be run independently:
-
-```bash
-node scripts/validate_report_inputs.mjs
+npm run validate:report-inputs
 ```
 
 Manual workflow runs use the previous completed calendar month when `from_date` and `to_date` are blank. Supplying only one date, an invalid date, or a reversed range stops the run.
@@ -233,19 +202,10 @@ Each collected row is normalized to:
 - `official_source_url`
 
 `latest_company_signals.json` is overwritten on each run for dashboard/API consumption.
-
-The `latest_*.csv` files are a side product of these legacy keyword scripts and are no
-longer tracked in git. The monthly report path (`scripts/review_report.mjs`) writes only
-JSON, and the workflow commits only `outputs/latest_*.json`, so a committed CSV froze at
-whatever the last manual legacy run produced while carrying stale `ai_*` approval columns.
-
-The relevance filter also writes:
-
-- `latest_relevant_signals.json`
-- `latest_signal_relevance_classification.json`
-- `latest_relevance_summary.json`
-
-Each relevant row includes `target_technology`, `target_technology_en`, `technology_group`, `matched_terms`, `relevance_score`, `relevance_decision`, and `relevance_reason`.
+The monthly review also writes `latest_relevant_signals.json` (technology-related
+candidates), `latest_investment_signals.json` and their summaries, and stage 2 writes
+`latest_ai_summary_summary.json` (issue number, period, writer and reviewer results).
+Only these JSON files and the two PDFs are committed.
 
 AI-evaluated report rows additionally include `ai_entity_supported`, `ai_target_technology_supported`, `ai_indicator_supported`, `ai_leading_indicator_supported`, `ai_event_stage`, `ai_signal_supported`, `ai_summary_quality`, bilingual summaries, and a decision reason. Older cached rows that lack these fields are invalid report inputs and must be regenerated.
 
@@ -258,7 +218,25 @@ browser is not bundled: a cold start downloads the Chromium pack named in
 match the pinned `@sparticuz/chromium-min`. The report content (view model) comes
 from the separate `api/report-view-model.py` function, which uses root
 `requirements.txt`. Monthly collection/review runs in Actions or locally.
-Changing the pipeline does not require resuming a paused Vercel deployment.
+
+The download needs an issue number and only covers the period of the deployed
+`outputs/latest_*` data; other months are refused with HTTP 400. The deployment
+relies on Vercel Deployment Protection; the API routes have no authentication of their own.
+
+## Versions and tests
+
+Node 22 and Python 3.12 (`.nvmrc`, `.python-version`, `engines`), the same as the
+Actions workflows. Python packages are pinned: `requirements.txt` for the Vercel
+function, `requirements-python.txt` (which includes it) for everything else.
+
+```bash
+npm test
+python -m pip install -r requirements-python.txt
+python -m unittest discover tests
+```
+
+`.github/workflows/test.yml` runs both suites on pushes to `main` and on pull requests.
+Without reportlab some Node tests that call Python are skipped locally; in CI they fail instead.
 
 
 ### Signal review policy (September 2026 correction)
@@ -282,10 +260,12 @@ A local build writes `coverage.json` alongside its PDFs. Missing monthly sources
 2. `publish-report`: 같은 기간으로 실행한다(둘 다 비워 두면 지난달). 끝난 판정을 이어받아 보고서
    문안을 쓰고 한·영 PDF를 만들어 커밋한다. 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
    문안 모델이 할당량으로 멈추면 쓴 문안은 저장되므로 다시 실행하면 이어서 쓴다.
-   문안을 쓴 뒤 검토 모델(`gemini-3.5-flash-lite`, `GEMINI_REVIEWER_MODEL=off`로 끔)이 시제·근거 없는 사실·
+   문안을 쓴 뒤 검토 모델(`gemini-3.5-flash-lite`, 저장소 변수 `GEMINI_REVIEWER_MODEL=off`로 끔)이 시제·근거 없는 사실·
    없는 한국어 용어·한영 불일치를 짚는다. 보고서에 실리는 문안의 시제 지적과 투자 시그널 카드의 근거 지적은
    문안 모델에게 돌려 한 번 다시 쓰게 한다. 다시 쓴 문안은 다시 검토하지 않고, 실행 요약에 다시 확인하지 않은
    카드 수로 적는다(`summary_reviewer.unchecked`). 검토 지적만으로 항목을 빼지는 않으며, 나머지 지적은 기록만 한다.
    지적은 실행 요약과 `outputs/latest_ai_summary_summary.json`의 `summary_reviewer`에 남는다.
 
-두 워크플로는 같은 동시 실행 그룹이라 한쪽이 도는 동안 다른 쪽은 기다린다.
+두 워크플로는 같은 동시 실행 그룹이라 한쪽이 도는 동안 다른 쪽은 기다린다. GitHub 는 그룹마다 대기 실행을
+하나만 두므로, 대시보드는 실행이 대기 중이거나 도는 동안 새 실행을 보내지 않는다.
+수동 실행에서 `auto_publish` 를 켜면 `issue_number` 도 넣어야 한다(기본값 없음).
