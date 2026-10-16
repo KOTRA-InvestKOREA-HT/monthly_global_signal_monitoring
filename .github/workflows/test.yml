@@ -1,0 +1,41 @@
+name: test
+
+# Node 와 Python 테스트를 main 에 올라오는 커밋과 pull request 마다 돌린다.
+# 수집·발행 워크플로와 같은 Node 22 / Python 3.12 이다(.nvmrc, .python-version).
+# reportlab·pdfplumber 가 설치되므로 Python 을 부르는 Node 테스트(approval_parity 등)도 건너뛰지 않고 돈다.
+# 발행 워크플로가 GITHUB_TOKEN 으로 올리는 커밋은 다른 워크플로를 시작하지 않는다.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      # 테스트는 npm 패키지 없이 돈다(next·puppeteer 를 부르는 경로는 가짜로 바꿔 시험한다).
+      - run: python -m pip install -r requirements-python.txt
+      - name: Node tests
+        run: node --test
+      - name: Python tests
+        run: python -m unittest discover tests

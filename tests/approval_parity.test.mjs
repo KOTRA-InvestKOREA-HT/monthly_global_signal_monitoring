@@ -13,6 +13,14 @@ import { APPROVAL_POLICY, validateRows } from '../scripts/validate_report_inputs
 
 const PYTHON = process.env.PYTHON || process.env.PYTHON_PATH || 'python';
 
+// reportlab 이 없는 로컬에서는 발행 쪽을 부를 수 없어 건너뛴다. CI(.github/workflows/test.yml)는
+// 의존성을 설치하므로, 거기서 Python 을 못 부르면 건너뛰지 않고 실패한다. 조용히 통과하면 이 검사가 없는 것과 같다.
+function pythonUnavailable(t, detail) {
+  const message = `Python approval rule unavailable: ${detail}`;
+  if (process.env.CI) assert.fail(message);
+  t.skip(message);
+}
+
 // 두 구현이 같은 질문에 답하도록 입력을 맞춘다. JS 검증은 승인 행에 한·영 문안을 요구하지만
 // Python 의 signal_supported 는 문안을 보지 않는다(그쪽은 signal_publishable 이 따로 본다).
 // 문안은 항상 채워 두고, 근거 판정만 비교한다.
@@ -84,7 +92,7 @@ test('the JavaScript and Python approval rules agree on every input', async t =>
   const result = spawnSync(PYTHON, ['-c', script, inputFile], { encoding: 'utf8' });
   if (result.status !== 0) {
     // reportlab 이 없는 환경에서는 발행 쪽을 부를 수 없다. 조용히 통과시키지 않고 건너뛴 것을 남긴다.
-    t.skip(`Python approval rule unavailable: ${(result.stderr || result.error?.message || '').trim().split('\n').at(-1)}`);
+    pythonUnavailable(t, (result.stderr || result.error?.message || '').trim().split('\n').at(-1));
     return;
   }
 
@@ -144,7 +152,7 @@ test('neither implementation turns a reason phrase into a rejection', async t =>
     'print(json.dumps([bool(pdf.signal_supported(r)) for r in rows]))'].join('\n');
   const result = spawnSync(PYTHON, ['-c', script, inputFile], { encoding: 'utf8' });
   if (result.status !== 0) {
-    t.skip(`Python approval rule unavailable: ${(result.stderr || '').trim().split('\n').at(-1)}`);
+    pythonUnavailable(t, (result.stderr || '').trim().split('\n').at(-1));
     return;
   }
   assert.deepEqual(JSON.parse(result.stdout.trim().split('\n').at(-1)), [true, true]);
