@@ -928,14 +928,11 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         const outcome = !stillPending.length ? 'verified' : stillPending.length < suspects.candidate_ids.length ? 'partial' : 'pending';
         verifications[outcome]++;
         merged.verification.outcome = outcome;
-        if (outcome === 'verified') verifierStop.succeeded = (verifierStop.succeeded || 0) + 1;
-        if (outcome === 'pending') verifierStop.rejected = (verifierStop.rejected || 0) + 1;
+        // 답을 받았으면 검증기는 쓸 수 있는 상태다. 후보가 미완료로 남아도(pending) 검증기 장애로 세지 않는다.
+        verifierStop.succeeded = (verifierStop.succeeded || 0) + 1;
         console.log(`Article ${article.id}: ${outcome === 'verified' ? 'verified' : outcome === 'partial' ? 'partially verified' : 'verification pending'} ` +
           `${suspects.candidate_ids.join(', ')}${stillPending.length ? `; pending ${stillPending.join(', ')}` : ''}` +
           `${merged.verification.changed.length ? `; changed ${merged.verification.changed.join(', ')}` : ''}`);
-        if (outcome === 'pending' && !verifierStop.succeeded && verifierStop.rejected >= 3) {
-          verifierStop.stopped ??= { reason: 'verifier_unavailable', response_code: 'verification_pending' };
-        }
         return merged;
       } catch (error) {
         // 모델 이름·키·요청 형식 오류는 기사마다 반복될 설정 문제다. 모든 의심 후보를 조용히 미완료로 돌리지 않고 실행을 멈춘다.
@@ -982,15 +979,18 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
             ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}) };
           return unverified('verifier_unavailable');
         }
-        // 검증 응답 자체가 검증을 통과하지 못한 경우(인용 불일치 등)는 보통 이 기사만의 문제다. 이 후보만 미완료로 둔다.
-        // 다만 실행 35198796190 처럼 한 건도 통과하지 못하고 연달아 거부되면 검증 방식 자체의 결함이다. 그대로 두면
-        // 의심 후보가 전부 빠진 보고서(사업동향 39건 → 6건)가 발행되므로 검증을 멈추고 실행을 일시정지한다.
-        verifierStop.rejected = (verifierStop.rejected || 0) + 1;
-        if (!verifierStop.succeeded && verifierStop.rejected >= 3) {
-          verifierStop.stopped ??= { reason: 'verifier_unavailable', response_code: error.response_code || 'error' };
-          return unverified('verifier_unavailable');
+        // 검증 응답 자체가 검증을 통과하지 못한 경우(인용 불일치 등)는 이 기사만의 문제다. 이 후보만 미완료로 둔다.
+        // 예전에는 이런 정상 거부도 한 실행에서 성공 없이 3건이 쌓이면 검증기 장애로 보고 실행을 멈췄다. 이미 검증된
+        // 기사는 캐시로 빠지므로 재실행이 검증하는 것은 늘 통과하지 못하는 기사뿐이라, 그런 기사가 3건 이상이면 매 실행이
+        // 같은 곳에서 멈췄다. 검증기 장애로는 HTTP 실패만 센다. 전송 오류와 429·5xx 는 위에서 이미 멈춘다.
+        if (error.status) {
+          verifierStop.failed = (verifierStop.failed || 0) + 1;
+          if (!verifierStop.succeeded && verifierStop.failed >= 3) {
+            verifierStop.stopped ??= { reason: 'verifier_unavailable', http_status: error.status };
+            return unverified('verifier_unavailable');
+          }
         }
-        return unverified(`verifier:${error.response_code || 'error'}`);
+        return unverified(`verifier:${error.response_code || error.status || 'error'}`);
       }
     }
   };

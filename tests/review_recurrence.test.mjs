@@ -530,26 +530,60 @@ test('a verifier that answers only the audited candidate still yields a complete
   }
 });
 
-test('a verifier whose every answer is rejected pauses the run instead of publishing without the suspicious candidates', async t => {
+const nexeonArticles = names => names.map((company, i) => {
+  const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
+    published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
+  return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
+});
+
+// 감사(2026-10-15) 2-1: 정상 거부 응답을 검증기 장애로 세던 때는, 이미 검증된 기사가 캐시로 빠진 재실행에서 늘 통과하지
+// 못하는 기사 3건만 검증하게 되어 매 실행이 같은 곳에서 verifier_unavailable 로 멈췄다. 거부된 기사만 미완료로 둔다.
+test('verifier answers that are rejected leave their candidates pending without stopping the run, on every rerun', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-rejected-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
-  const articles = ['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD'].map((company, i) => {
-    const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
-      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
-    return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
-  });
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const calls = { primary: 0, verifier: 0 };
+  const run = () => reviewArticles({ articles, reviewDir, policy: '', config: { ...verifierConfig, maxRequests: 40 }, sleep: async () => {},
+    fetchImpl: async url => {
+      if (!String(url).includes('generativelanguage')) { calls.primary++; return reply(primary); }
+      calls.verifier++;
+      return geminiReply(primary.map(d => ({ ...d, reason: '' })));
+    } });
+  const state = await run();
+  // 기사마다 한 번 더 물은 뒤 그 기사만 미완료로 둔다.
+  assert.equal(calls.verifier, 8);
+  assert.equal(state.status, 'completed');
+  assert.equal('verifier_stop' in state, false);
+  assert.equal(state.verification.rejected_responses, 8);
+  assert.equal(state.recheck_pending.length, 4);
+  // 재실행: 1차 판정은 캐시로 쓰고, 미완료 후보만 다시 검증한다. 또 거부돼도 같은 곳에서 멈추지 않는다.
+  for (let rerun = 0; rerun < 2; rerun++) {
+    calls.primary = 0; calls.verifier = 0;
+    const again = await run();
+    assert.deepEqual(calls, { primary: 0, verifier: 8 });
+    assert.equal(again.status, 'completed');
+    assert.equal(again.recheck_pending.length, 4);
+  }
+});
+
+test('repeated HTTP failures from the verifier, with no answer received, still stop verification', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-http-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD']);
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
   let verifierCalls = 0;
   const state = await reviewArticles({ articles, reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
     fetchImpl: async url => {
       if (!String(url).includes('generativelanguage')) return reply(primary);
       verifierCalls++;
-      return geminiReply(primary.map(d => ({ ...d, reason: '' })));
+      return new Response('{"error":{"message":"request entity too large"}}', { status: 413 });
     } });
-  // 기사마다 한 번 더 물은 뒤 거부로 센다. 세 기사 연속 거부되면 멈춘다.
-  assert.equal(verifierCalls, 6);
+  // 413 은 재시도하지 않는 HTTP 실패다. 세 기사 연속 실패하면 네 번째 기사는 묻지 않고 멈춘다.
+  assert.equal(verifierCalls, 3);
   assert.equal(state.status, 'paused');
   assert.equal(state.reason, 'verifier_unavailable');
+  assert.equal(state.http_status, 413);
   assert.equal(state.recheck_pending.length, 4);
 });
 
