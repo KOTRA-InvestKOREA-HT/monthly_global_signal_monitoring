@@ -78,7 +78,8 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
     모든 나열에 일관되게 적용한다. (2026-10-12 명확화: 설명 간 통일을 강제해 ⑤가 "Undergoing leadership changes"처럼
     수동적이고 범위가 넓어졌던 일이 있었다.)
   - 라벨이 전치사로 끝나지 않는다.
-- **R6 칸 넘침**: PDF 빌드에서 잘림 경고(`WARNING: N text run(s) were clipped to fit`)가 나거나 줄 수가 늘어 배치가 밀림.
+- **R6 칸 넘침**: 보고서 빌드(`scripts/build_html_report.mjs`)의 `cut_text` 목록에 항목이 생기거나(줄 수 제한·한 줄 칸
+  말줄임·푸터 선 아래로 넘친 쪽), 줄 수가 늘어 배치가 밀림.
 - **R7 시점**: 본문 문구는 보고 달 이름을 쓴다(10월호는 9월을 다룬다). "this month"는 매트릭스 제목에서만 쓴다.
 - **R8 업계 용례**: 해당 업계·IR 문서에서 실제로 쓰는 이름과 다름(근거 출처나 용례를 적는다).
 

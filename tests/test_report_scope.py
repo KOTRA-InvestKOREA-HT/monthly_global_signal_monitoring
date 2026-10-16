@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-import build_pdf_report as pdf
+import report_content as pdf
 import report_view_model as view
 
 
@@ -17,19 +17,19 @@ class BusinessBoxTests(unittest.TestCase):
     def test_a_shown_signal_fills_the_box_only_when_no_separate_summary_exists(self):
         signal = approved("3M", investment_signal_no=3, ai_summary_en="Confirmed financing.")
         self.assertTrue(pdf.signal_supported(signal))
-        self.assertIs(pdf.best_business_row("3M", [], [signal], []), signal)
-        self.assertIs(pdf.best_business_row("3M", [], [signal], [], [signal]), signal)
+        self.assertIs(pdf.best_business_row("3M", [], [signal]), signal)
+        self.assertIs(pdf.best_business_row("3M", [], [signal], [signal]), signal)
         other = approved("3M", investment_signal_no=5)
-        self.assertIs(pdf.best_business_row("3M", [], [signal, other], [], [signal]), other)
+        self.assertIs(pdf.best_business_row("3M", [], [signal, other], [signal]), other)
         business = approved("3M", ai_event_stage="not_applicable")
-        self.assertIs(pdf.best_business_row("3M", [business], [signal], [], [signal]), business)
+        self.assertIs(pdf.best_business_row("3M", [business], [signal], [signal]), business)
 
     def test_the_last_resort_requires_approved_bilingual_prose_for_this_company(self):
         signal = approved("3M", investment_signal_no=3, ai_summary_en="Confirmed financing.")
         for changes in ({"ai_summary_en": ""}, {"ai_summary_ko": ""},
                         {"ai_signal_supported": False}, {"company": "Other"}):
             row = dict(signal, **changes)
-            self.assertIsNone(pdf.best_business_row("3M", [], [], [], [row]))
+            self.assertIsNone(pdf.best_business_row("3M", [], [], [row]))
 
 
 class BusinessNearMissTests(unittest.TestCase):
@@ -52,7 +52,7 @@ class BusinessNearMissTests(unittest.TestCase):
         row = self.near()
         self.assertTrue(pdf.business_near_miss(row))
         self.assertFalse(pdf.signal_supported(row))
-        self.assertIs(pdf.best_business_row("Evonik Industries", [row], [signal], [], [signal]), row)
+        self.assertIs(pdf.best_business_row("Evonik Industries", [row], [signal], [signal]), row)
 
     def test_an_approved_row_always_wins_over_a_near_miss_row(self):
         row = self.near()
@@ -85,6 +85,56 @@ class BusinessNearMissTests(unittest.TestCase):
         self.assertFalse(pdf.signal_publishable(row))
         self.assertEqual(pdf.index_investment_signals([row]), {})
 
+
+
+class PublisherLocalDateTests(unittest.TestCase):
+    """게시일은 게시처 현지 날짜로 읽는다. 보고 기간 필터와 출처 줄이 같은 날을 말해야 한다."""
+
+    def row(self, published_at):
+        return {"published_at": published_at, "published_at_source": "meta", "source": "Newsroom"}
+
+    def test_an_offset_does_not_move_the_day_into_another_month(self):
+        from datetime import date, datetime, timezone
+        start = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        end = datetime(2026, 9, 30, tzinfo=timezone.utc)
+        for value, day in (("2026-09-01T00:30:00+09:00", date(2026, 9, 1)),
+                           ("2026-08-31T23:30:00-05:00", date(2026, 8, 31)),
+                           ("2026-09-01T00:10:00Z", date(2026, 9, 1)),
+                           ("2026-09-01T00:10:00", date(2026, 9, 1)),
+                           ("2026-09-01", date(2026, 9, 1))):
+            self.assertEqual(pdf.date_day(value), day, value)
+            row = self.row(value)
+            self.assertEqual(pdf.row_in_report_period(row, start, end), day.month == 9, value)
+            pdf.set_language("ko")
+            self.assertEqual(pdf.format_row_date(row), day.strftime("%Y.%m.%d"), value)
+
+
+class PeriodLabelTests(unittest.TestCase):
+    """보고 기간 문구는 기간이 걸친 달을 모두 적는다. 예전 국문은 시작 달만 적었다."""
+
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def labels(self, lang, from_date, to_date):
+        pdf.set_language(lang)
+        summary = {"from_date": from_date, "to_date": to_date}
+        return pdf.matrix_period_label(summary), pdf.report_month_label(summary)
+
+    def test_one_calendar_month(self):
+        self.assertEqual(self.labels("ko", "2026-08-01", "2026-08-31"), ("8월(2026.8.1~8.31)", "8월"))
+        self.assertEqual(self.labels("en", "2026-08-01", "2026-08-31"), ("in August 2026", "August"))
+
+    def test_a_range_across_months_names_both(self):
+        self.assertEqual(self.labels("ko", "2026-08-15", "2026-09-14"), ("8~9월(2026.8.15~9.14)", "8~9월"))
+        self.assertEqual(self.labels("en", "2026-08-15", "2026-09-14"),
+                         ("from August 15 to September 14, 2026", "August–September"))
+        self.assertEqual(self.labels("ko", "2025-12-15", "2026-01-14"), ("12~1월(2025.12.15~2026.1.14)", "12~1월"))
+
+    def test_an_impossible_date_falls_back_to_the_previous_month_of_the_run(self):
+        pdf.set_language("ko")
+        start, end = pdf.report_period({"from_date": "2026-02-31", "to_date": "2026-03-10",
+                                        "run_started_at": "2026-03-31T15:30:00Z"})
+        self.assertEqual((start.date().isoformat(), end.date().isoformat()), ("2026-03-01", "2026-03-31"))
 
 
 class CutTextTests(unittest.TestCase):
@@ -194,24 +244,31 @@ class CoverTitleTests(unittest.TestCase):
         self.assertEqual(en, ko)
         self.assertFalse(any("가" <= ch <= "힣" for ch in en))
         # 본문 면의 머리글은 표지와 다른 자리라 그대로 남는다.
-        source = (Path(__file__).resolve().parents[1] / "scripts" / "build_pdf_report.py").read_text(encoding="utf-8")
-        self.assertIn('report.header("C O M P A N Y   S I G N A L S"', source)
+        for lang in ("ko", "en"):
+            previous = pdf.LANG
+            pdf.set_language(lang)
+            try:
+                self.assertEqual(pdf.t("detail_kicker"), "C O M P A N Y   S I G N A L S")
+            finally:
+                pdf.set_language(previous)
 
-    def test_the_cover_kicker_is_not_copied_into_a_renderer(self):
-        """표지 kicker 는 TEXTS 한 곳에서 온다. 렌더러가 사본을 들면 PDF 와 화면이 갈라진다.
+    def test_no_fixed_heading_is_copied_into_a_renderer(self):
+        """표지·면 머리글은 TEXTS 한 곳에서 온다. 렌더러가 사본을 들면 문구를 고칠 때 한쪽이 남는다.
 
-        상세 페이지 kicker 는 같은 문자열이지만 표지와 다른 자리라 여기서 보지 않는다.
         무엇이 어느 자리에 찍히는지는 report_snapshot 이 그려진 쪽으로 고정한다.
         """
-        for name in ("build_pdf_report.py", "report_view_model.py"):
-            source = (Path(__file__).resolve().parents[1] / "scripts" / name).read_text(encoding="utf-8")
-            self.assertNotIn("G L O B A L   I N V E S T M E N T", source, name)
-        view = (Path(__file__).resolve().parents[1] / "scripts" / "report_view_model.py").read_text(encoding="utf-8")
+        scripts = Path(__file__).resolve().parents[1] / "scripts"
+        for name in ("report_view_model.py", "report_html.mjs"):
+            source = (scripts / name).read_text(encoding="utf-8")
+            for heading in ("G L O B A L   I N V E S T M E N T", "S I G N A L   M A T R I X",
+                            "C O M P A N Y   S I G N A L S", "K E Y   D E V E L O P M E N T S"):
+                self.assertNotIn(heading, source, name)
+        view = (scripts / "report_view_model.py").read_text(encoding="utf-8")
         self.assertIn('"kicker": report.cover_kicker()', view)
 
 
 class LayeringTests(unittest.TestCase):
-    """무엇이 실리는가(report_content)와 어디에 그리는가(build_pdf_report)의 경계."""
+    """무엇이 실리는가(report_content)와 글자 폭을 재는 일(report_measure)의 경계."""
 
     def test_the_content_layer_does_not_reach_for_the_page(self):
         source = (Path(__file__).resolve().parents[1] / "scripts" / "report_content.py").read_text(encoding="utf-8")
@@ -226,28 +283,51 @@ class LayeringTests(unittest.TestCase):
         import importlib
         module = importlib.import_module("report_content")
         self.assertTrue(hasattr(module, "signal_supported"))
-        self.assertFalse(hasattr(module, "draw_matrix"))
+        self.assertFalse(hasattr(module, "register_fonts"))
 
-    def test_the_builder_still_answers_to_every_name_its_callers_use(self):
-        """report_view_model.py 와 테스트는 build_pdf_report.<이름> 으로 들어온다."""
-        for name in ("build_profiles", "signal_supported", "summary_parts", "source_line", "t",
-                     "set_language", "item_breaks", "register_fonts", "DEFAULT_ISSUE_NUMBER",
-                     "SIGNAL_DESCRIPTIONS_EN", "PAGE_W", "SIGNAL_BODY_SIZE"):
-            self.assertTrue(hasattr(pdf, name), name)
+    def test_the_reportlab_renderer_is_gone(self):
+        """PDF 는 report_html.mjs 를 Chrome 이 인쇄한다. reportlab 으로 따로 그리던 렌더러는 지웠다.
 
-    def test_the_language_is_one_value_seen_from_both_modules(self):
-        """예전에는 pdf.LANG 이 모듈 전역이라 대입도 통했다. 나눈 뒤에도 그대로여야 한다."""
-        import report_content
+        그 렌더러를 기준으로 한 스냅샷·잘림 경고는 실제 PDF 의 회귀를 하나도 막지 못했다.
+        reportlab 은 report_measure 가 글리프 폭을 읽는 데만 쓴다.
+        """
+        scripts = Path(__file__).resolve().parents[1] / "scripts"
+        self.assertFalse((scripts / "build_pdf_report.py").exists())
+        measure = (scripts / "report_measure.py").read_text(encoding="utf-8")
+        self.assertNotIn("reportlab.pdfgen", measure)
+        self.assertNotIn("canvas", measure)
+
+    def test_a_missing_font_cut_stops_the_measurement(self):
+        """굵기 하나가 없으면 멈춘다. 예전에는 네 굵기를 모두 Regular 로 조용히 재, 굵은 제목 크기를 잘못 골랐다."""
+        import tempfile
+        try:
+            import report_measure
+        except ImportError as error:  # reportlab 이 없는 해석기
+            self.skipTest(str(error))
+        with tempfile.TemporaryDirectory() as folder:
+            regular = Path(folder) / "PretendardJP-Regular.ttf"
+            regular.write_bytes((Path(__file__).resolve().parents[1] / "assets" / "fonts" / regular.name).read_bytes())
+            with self.assertRaisesRegex(FileNotFoundError, "PretendardJP-Medium.ttf"):
+                report_measure.register_fonts(regular)
+
+    def test_the_matrix_legend_names_are_the_card_labels(self):
+        for lang in ("ko", "en"):
+            pdf.set_language(lang)
+            try:
+                names = pdf.matrix_indicators().split(" · ")
+                self.assertEqual(names, [f"{'①②③④⑤'[no - 1]} {pdf.signal_row_label(no)}" for no in range(1, 6)])
+            finally:
+                pdf.set_language("ko")
+
+    def test_the_view_model_reads_the_language_it_set(self):
+        """뷰 모델은 report_content.LANG 을 읽는다. 이름을 복사해 갔다면 언어를 바꿔도 옛 값이 남는다."""
         previous = pdf.LANG
         try:
             pdf.set_language("en")
-            self.assertEqual(pdf.LANG, "en")
-            self.assertEqual(report_content.LANG, "en")
-            self.assertEqual(pdf.cover_titles(), ["Investment Signals"])
-            # 예전에는 모듈 전역이라 대입으로도 바뀌었다. 나눈 뒤에도 같은 값을 가리켜야 한다.
-            pdf.LANG = "ko"
-            self.assertEqual(report_content.LANG, "ko")
-            self.assertEqual(pdf.cover_titles()[0], "타겟기업")
+            self.assertEqual(view.report.LANG, "en")
+            self.assertEqual(view.report.cover_titles(), ["Investment Signals"])
+            pdf.set_language("ko")
+            self.assertEqual(view.report.cover_titles()[0], "타겟기업")
         finally:
             pdf.set_language(previous)
 

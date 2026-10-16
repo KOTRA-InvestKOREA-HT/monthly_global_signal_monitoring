@@ -1,37 +1,35 @@
 """Emit the report's view model as JSON, so a renderer does not re-derive it.
 
-`build_pdf_report.py` mixes two jobs: working out what the report says, and
-placing it on a canvas. The first job is the one that must not be duplicated -
-country names, industry groups, which cells of the matrix are lit, how the
-footnote counts companies. This imports those decisions rather than restating
-them, and writes only the result.
+What the report says - country names, industry groups, which cells of the
+matrix are lit, how the footnote counts companies - is decided in
+`report_content.py`. This imports those decisions rather than restating them,
+adds the few choices that need text measurement (`report_measure.py`), and
+writes the result for `report_html.mjs` to lay out.
 
 Every page of the report is modelled: cover, matrix, per-company detail and
 the item-linked business trend cards.
 """
 
 import argparse
-import io
 import json
+import re
 import sys
-from types import SimpleNamespace
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import build_pdf_report as report
+import report_content as report
+import report_measure
 
 
-# 상태 판정은 build_pdf_report.py 에 둔다. 두 렌더러가 같은 표를 그려야 하므로 규칙의
+# 상태 판정은 report_content.py 에 둔다. 화면과 PDF 가 같은 표를 그려야 하므로 규칙의
 # 복사본을 만들지 않는다.
-covered_companies = report.covered_companies
 company_status = report.company_status
 
 
-def matrix_counts(profiles, signal_index, summary, signal_rows):
+def matrix_counts(profiles, signal_index):
     """각주의 두 묶음. 행마다 붙인 상태를 세는 것이라 표와 숫자가 어긋날 수 없다."""
-    covered = covered_companies(summary, signal_rows)
-    statuses = [company_status(p["company"], signal_index, covered) for p in profiles]
+    statuses = [company_status(p["company"], signal_index) for p in profiles]
     return {
         "detected": statuses.count("detected"),
         "reviewed_off": statuses.count("reviewed"),
@@ -52,37 +50,29 @@ def title_size(titles, measure):
     the decision is made here where the font metrics already live and travels
     with the rest of the view model.
 
-    The HTML cover sets the title as a display headline (2026-10 redesign), so it
-    starts larger than the reportlab cover's 36/30pt. Every title line must fit
-    whole. The English title stays on one line at 44pt: stacked at 64pt
-    ("Investment / Signals") it took over the cover (user feedback, 2026-10-12).
+    The HTML cover sets the title as a display headline (2026-10 redesign).
+    Every title line must fit whole. The English title stays on one line at 44pt:
+    stacked at 64pt ("Investment / Signals") it took over the cover (user
+    feedback, 2026-10-12).
     """
-    fonts = measure.fonts
     size = COVER_TITLE_START.get(report.LANG, COVER_TITLE_START["ko"])
-    while size > 18 and any(measure.canvas.stringWidth(title, fonts["semibold"], size) > COVER_TITLE_WIDTH
-                            for title in titles):
+    while size > 18 and any(measure.width(title, "semibold", size) > COVER_TITLE_WIDTH for title in titles):
         size -= 1
     return size
-
-
-# The signal body column, from the detail page's own geometry.
-SIGNAL_BODY_WIDTH = 378
 
 
 def summary_fits_one_line(parts, measure):
     """Whether the headline and its detail are short enough to share a line.
 
-    The drawn page keeps them on one line when they fit and gives the detail its
-    own line when they do not, because reportlab cannot wrap a run that changes
-    weight mid-sentence. CSS wraps such a run without being asked, but it cannot
-    measure, so the decision is made here and travels with the text.
+    They share a line when they fit, and the detail gets its own line when they
+    do not. CSS cannot measure, so the decision is made here and travels with
+    the text.
     """
     if not parts or not parts.get("detail"):
         return True
-    fonts = measure.fonts
-    size = report.SIGNAL_BODY_SIZE
-    return (measure.canvas.stringWidth(parts["headline"], fonts["semibold"], size)
-            + measure.canvas.stringWidth(f" — {parts['detail']}", fonts["demilight"], size)) <= SIGNAL_BODY_WIDTH
+    size = report_measure.SIGNAL_BODY_SIZE
+    return (measure.width(parts["headline"], "semibold", size)
+            + measure.width(f" — {parts['detail']}", "demilight", size)) <= report_measure.SIGNAL_BODY_WIDTH
 
 
 def summary_cut(row, *pieces):
@@ -121,14 +111,14 @@ def signal_entry(no, rows, measure):
     }
 
 
-def detail_entries(profiles, signal_index, relevant, investment, signals, measure):
+def detail_entries(profiles, signal_index, relevant, investment, measure):
     entries = []
     for profile in profiles:
         rows_by_signal = signal_index.get(profile["company"], {})
         if not any(rows_by_signal.values()):
             continue
         shown = [rows[0] for rows in rows_by_signal.values() if rows]
-        business_row = report.best_business_row(profile["company"], relevant, investment, signals, shown)
+        business_row = report.best_business_row(profile["company"], relevant, investment, shown)
         target_label, target_text = report.target_section_for_profile(profile)
         entries.append({
             "company": profile.get("display_name") or profile["company"],
@@ -141,8 +131,6 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
                 "target_text": target_text,
                 "body": (business_body := report.business_text([business_row] if business_row else [])),
                 "cut": summary_cut(business_row, business_body),
-                # 승인 조건에서 품목 연계만 빠진 행으로 채운 상자인지. 2026-10 부터 상자에 표시하지는 않는다.
-                "near_miss": report.business_near_miss(business_row),
                 "source": report.source_line(business_row) if business_row else report.t("source_empty"),
                 "source_url": report.source_url(business_row),
             },
@@ -154,14 +142,14 @@ def detail_entries(profiles, signal_index, relevant, investment, signals, measur
 ITEM_BODY_WIDTH = 446
 
 
-def item_entries(profiles, signal_index, relevant, summary, measure):
+def item_entries(profiles, signal_index, relevant, summary):
     """The companies with no five-signal profile but a target-item trend."""
     entries = report.build_item_trend_entries(profiles, signal_index, relevant)
     if not entries:
         return None
     month = report.report_month_label(summary)
     return {
-        "kicker": "K E Y   D E V E L O P M E N T S",
+        "kicker": report.t("item_kicker"),
         "title": report.t("item_title"),
         "note": report.t("item_note", month=month),
         "target_label": report.t("item_target_label"),
@@ -190,26 +178,18 @@ def indicator_entries(indicators):
     return entries
 
 
-def description_offset(entries, measure):
-    """How far right of the label column the descriptions start, as the drawn cover places them."""
-    texts = [(entry["label"], entry["description"]) for entry in entries]
-    return round(report.cover_description_x(measure.canvas, measure.fonts, texts) - 67, 2)
-
-
 def build(args):
     report.set_language(args.lang)
-    # One font registration and measurement canvas for the entire report.
-    measure = SimpleNamespace(canvas=report.canvas.Canvas(io.BytesIO()), fonts=report.register_fonts(args.font))
+    # One font registration for the entire report.
+    measure = report_measure.Measure(args.font)
     targets = report.load_json(args.targets, [])
     tech_map = report.load_json(args.technology_map, {"companies": []})
-    signals = report.load_json(args.signals, [])
     summary = report.override_summary_period(report.load_json(args.summary, {}), args.from_date, args.to_date)
     report.set_report_period(summary)
     investment_signals = report.load_json(args.investment_signals, [])
     relevant = report.load_json(args.relevant, [])
     indicators = report.load_json(args.indicator_config, {}).get("indicators", [])
 
-    signals = report.filter_rows_by_report_period(signals, summary)
     relevant = report.filter_rows_by_report_period(relevant, summary)
     investment_signals = report.filter_rows_by_report_period(investment_signals, summary)
     investment_signals = report.filter_ignored_signals(
@@ -217,9 +197,11 @@ def build(args):
 
     profiles = report.build_profiles(targets, tech_map)
     signal_index = report.index_investment_signals(investment_signals)
-    counts = matrix_counts(profiles, signal_index, summary, signals)
-    covered = covered_companies(summary, signals)
-    issue = str(args.issue_number or report.DEFAULT_ISSUE_NUMBER)
+    counts = matrix_counts(profiles, signal_index)
+    # 호수는 호출한 쪽이 반드시 준다. 기본값 "2"로 채우던 때는 호수 없이 만든 보고서가 지난 호수로 나갔다.
+    issue = re.sub(r"\D+", "", str(args.issue_number or ""))
+    if not issue:
+        raise ValueError("An issue number is required (--issue-number N).")
     titles = report.cover_titles()
     cover_lines = [report.t("cover_line_1"), report.t("cover_line_2")]
     cover_indicators = indicator_entries(indicators)
@@ -235,38 +217,34 @@ def build(args):
             "accent": report.cover_title_accent(),
             "title_size": title_size(titles, measure),
             "lines": cover_lines,
-            "line_size": report.cover_line_size(measure.canvas, measure.fonts, cover_lines),
+            "line_size": report_measure.cover_line_size(measure, cover_lines),
             "indicator_heading": report.t("cover_indicator_heading"),
             "indicators": cover_indicators,
-            # 설명을 이름 아래 줄로 내리면 옆 칸 시작점(description_offset)은 쓰지 않는다.
-            "stacked": (stacked := report.cover_descriptions_stacked(
-                measure.canvas, measure.fonts, [(e["label"], e["description"]) for e in cover_indicators])),
-            "description_offset": None if stacked else description_offset(cover_indicators, measure),
         },
         "matrix": {
-            "kicker": "S I G N A L   M A T R I X",
+            "kicker": report.t("matrix_kicker"),
             "title": report.t("matrix_title"),
             "description": report.t("matrix_desc", period=report.matrix_period_label(summary)),
             "company_heading": report.t("matrix_company"),
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
-            "indicators": report.t("matrix_indicators"),
+            "indicators": report.matrix_indicators(),
             "footnote": report.matrix_footnote(counts["detected"], counts["reviewed_off"], counts["total"]),
             "counts": counts,
             "rows": [{
                 "target_no": profile["target_no"],
                 "company": profile.get("display_name") or profile["company"],
-                "status": company_status(profile["company"], signal_index, covered),
+                "status": company_status(profile["company"], signal_index),
                 "signals": [report.signal_cell_state(signal_index, profile["company"], no) for no in range(1, 6)],
             } for profile in profiles],
         },
         "details": {
-            "kicker": "C O M P A N Y   S I G N A L S",
+            "kicker": report.t("detail_kicker"),
             "title": report.t("detail_title"),
-            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, signals, measure),
-            "pill_width": report.signal_pill_column(measure.canvas, measure.fonts),
+            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, measure),
+            "pill_width": report_measure.signal_pill_column(measure),
         },
-        "items": item_entries(profiles, signal_index, relevant, summary, measure),
+        "items": item_entries(profiles, signal_index, relevant, summary),
     }
 
 
@@ -274,13 +252,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--targets", default="data/target_companies.json")
     parser.add_argument("--technology-map", default="data/company_technology_map.json")
-    parser.add_argument("--signals", required=True)
+    # 수집 원본(company_signals)은 보고서 내용에 쓰이지 않는다. 승인 판정이 없는 행이라 사업현황 상자를
+    # 채울 수 없었다. 이 인자를 넘기는 호출부(app/api/report/route.js)가 깨지지 않게 받기만 한다.
+    parser.add_argument("--signals", default="")
     parser.add_argument("--summary", required=True)
     parser.add_argument("--investment-signals", required=True)
     parser.add_argument("--relevant", default="outputs/latest_relevant_signals.json")
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", default="assets/fonts/PretendardJP-Regular.ttf")
-    parser.add_argument("--issue-number", default=report.DEFAULT_ISSUE_NUMBER)
+    parser.add_argument("--issue-number", required=True)
     parser.add_argument("--lang", default="ko", choices=["ko", "en"])
     parser.add_argument("--ignored-signals", default="")
     parser.add_argument("--from-date", default="")

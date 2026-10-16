@@ -64,9 +64,9 @@ test('the current 77 companies still fit on one matrix page', () => {
 });
 
 test('a company list too long for one page is carried onto the next, not dropped', () => {
-  // The reportlab page slices the list at profiles[:39]/[39:]; anything past the
-  // second column is drawn over the legend or off the page, and the build still
-  // reports success. Every company must appear exactly once, on some page.
+  // The old reportlab page sliced the list at profiles[:39]/[39:]; anything past the
+  // second column was drawn over the legend or off the page. Every company must
+  // appear exactly once, on some page.
   const companyCount = MATRIX_ROWS_PER_COLUMN * 2 + 3;
   const html = renderReport(model(companyCount));
   assert.equal(pages(html), 3);
@@ -92,7 +92,7 @@ test('page numbers run on through however many matrix pages there are', () => {
   assert.deepEqual(folios(renderReport(model(MATRIX_ROWS_PER_COLUMN * 4 + 1))), ['02', '03', '04']);
 });
 
-test('the page box is the size the reportlab report uses', () => {
+test('the page box is the report size, 7.5 x 10.83 in', () => {
   const html = renderReport(model(1));
   assert.match(html, new RegExp(`@page \\{ size: ${PAGE_WIDTH_PT}pt ${PAGE_HEIGHT_PT}pt; margin: 0; \\}`));
 });

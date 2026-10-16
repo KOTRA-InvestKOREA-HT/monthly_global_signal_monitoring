@@ -1,71 +1,114 @@
 ===== PAGE 1 =====
+G L O B A L I N V E S T M E N T S I G N A L M O N I T O R
 Issue 3
 September 2026
-G L O B A L I N V E S T M E N T S I G N A L M O N I T O R
 Investment Signals
 Monthly monitoring of investment signals at 77 target companies
 30 major investment promotion projects · 77 target companies selected by MOTIR
 5 leading indicators tracked per company · Pre-decision signals only
 5 Leading Indicators of Investment
-1 Geopolitical Supply Chain Resilience
-Reducing regional dependency, diversifying supply chains, and addressing regulatory risks
-2 Production Expansion & Footprint Diversification
-Evaluating new APAC facility expansions and conducting production site feasibility studies
-3 Debt & Equity Financing
-Large-scale funding through corporate bonds, equity raises, and credit facilities
-4 R&D and Technology Partnerships
-Joint R&D, technology licensing, PoCs, and equity-stake talks
-5 C-Level Executive Moves
-C-suite changes, low-profile visits to Korea, and due diligence coordination
+1 Geopolitical Supply Chain Resilience Reducing regional dependency, diversifying supply chains, and addressing regulatory risks
+2 Production Expansion & Footprint Diversification Evaluating new APAC facility expansions and conducting production site feasibility studies
+3 Debt & Equity Financing Large-scale funding through corporate bonds, equity raises, and credit facilities
+4 R&D and Technology Partnerships Joint R&D, technology licensing, PoCs, and equity-stake talks
+5 C-Level Executive Moves C-suite changes, low-profile visits to Korea, and due diligence coordination
+kotra Invest KOREA
 
 ===== PAGE 2 =====
 S I G N A L M A T R I X
 This Month's Signal Matrix
-Earlyinvestmentsignalsatthe77targetcompaniesinAugust2026.Filledcellsmarkdetectedsignals.Finalinvestmentdecisionsand
-completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.
-Company ① ② ③ ④ ⑤ Company ① ② ③ ④ ⑤
-1 Australian Strategic Materials 40 Evonik Industries
-2 Cognex 41 Heraeus
-3 Corning 42 Jenoptik
-4 Charles River 43 EMM(Umicore)
-5 Cytiva 44 Umicore
-6 Moderna 45 Solvay
-7 West Pharmaceutical 46 Syensqo
-8 DuPont 47 Hexagon AB
-9 Albemarle 48 ABB
-10 TIMET 49 maxon
-11 Air Products 50 Siemens Gamesa
-12 Chemours 51 Renishaw
-13 BorgWarner 52 Nexeon
-14 Dow 53 Rio Tinto
-15 Thermo Fisher 54 HyProMag
-16 Amkor Technology 55 EVG
-17 onsemi 56 Plansee
-18 Qualcomm 57 Texcell
-19 Skyworks 58 Veolia
-20 Eli Lilly and Company 59 Airbus
-21 GE HealthCare 60 Safran
-22 Boeing 61 Air Liquide
-23 3M 62 Arkema
-24 Ouster 63 DNP
-25 Applied Materials 64 Proterial
-26 magniX 65 Toppan Holdings
-27 Prodrive 66 Nabtesco
-28 ASML 67 AGC
-29 BESI 68 JSR
-30 NXP 69 Shin-Etsu Chemical
-31 Norsk Hydro 70 Tokyo Electron
-32 Vestas 71 Tosoh
-33 HEIDENHAIN 72 Mitsubishi Chemical
-34 Infineon 73 Sumitomo Chemical
-35 Schmalz 74 Asahi Kasei
-36 Bayer 75 Toray
-37 Merck 76 Cheng Uei Precision
-38 Schott Pharma 77 Shanghai Electric Wind Power
+Early investment signals at the 77 target companies in August 2026. Filled cells mark detected signals. Final investment decisions and completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.
+Company
+①
+②
+③
+④
+⑤
+1 Australian Strategic Materials
+2 Cognex
+3 Corning
+4 Charles River
+5 Cytiva
+6 Moderna
+7 West Pharmaceutical
+8 DuPont
+9 Albemarle
+10 TIMET
+11 Air Products
+12 Chemours
+13 BorgWarner
+14 Dow
+15 Thermo Fisher
+16 Amkor Technology
+17 onsemi
+18 Qualcomm
+19 Skyworks
+20 Eli Lilly and Company
+21 GE HealthCare
+22 Boeing
+23 3M
+24 Ouster
+25 Applied Materials
+26 magniX
+27 Prodrive
+28 ASML
+29 BESI
+30 NXP
+31 Norsk Hydro
+32 Vestas
+33 HEIDENHAIN
+34 Infineon
+35 Schmalz
+36 Bayer
+37 Merck
+38 Schott Pharma
 39 BASF
+Company
+①
+②
+③
+④
+⑤
+40 Evonik Industries
+41 Heraeus
+42 Jenoptik
+43 EMM(Umicore)
+44 Umicore
+45 Solvay
+46 Syensqo
+47 Hexagon AB
+48 ABB
+49 maxon
+50 Siemens Gamesa
+51 Renishaw
+52 Nexeon
+53 Rio Tinto
+54 HyProMag
+55 EVG
+56 Plansee
+57 Texcell
+58 Veolia
+59 Airbus
+60 Safran
+61 Air Liquide
+62 Arkema
+63 DNP
+64 Proterial
+65 Toppan Holdings
+66 Nabtesco
+67 AGC
+68 JSR
+69 Shin-Etsu Chemical
+70 Tokyo Electron
+71 Tosoh
+72 Mitsubishi Chemical
+73 Sumitomo Chemical
+74 Asahi Kasei
+75 Toray
+76 Cheng Uei Precision
+77 Shanghai Electric Wind Power
 Signal detected No signal
-① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing
-④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves
+① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves
 Signals detected at 6 companies; none detected at 71.
 Invest KOREA · Global Investment Signal Monitor · Issue 3 02
 
@@ -78,18 +121,12 @@ Biologics Safety Testing USA
 2 Production Expansion & Footprint Diversification No signal in August
 3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
-On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics
-Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent
-enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation
-Sequencing.
+On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation Sequencing.
 Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
 5 C-Level Executive Moves No signal in August
 Business Developments
 Target technology Virus validation and master/working cell bank characterization
-On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to
-characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The
-companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate
-high-quality vaccine development and support global regulatory readiness.
+On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness.
 Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 03
 
@@ -103,17 +140,12 @@ Aerospace & E-Propulsion USA
 3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
 Boeing Investment and Technology Collaboration
-Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer
-while taking a stake in Archer and establishing an ongoing technology sharing and collaboration
-arrangement.
+Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer while taking a stake in Archer and establishing an ongoing technology sharing and collaboration arrangement.
 Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
 5 C-Level Executive Moves No signal in August
 Business Developments
 Target technology Electric motors and high-power battery propulsion modules for aircraft
-Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer
-Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and
-technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy
-technologies with Archer's platform to advance the aerospace and defense sector.
+Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.
 Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 04
 
@@ -124,19 +156,14 @@ Ouster
 Lidar & 3D Sensing USA
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification
-Ouster is expanding its LiDAR production capacity to support rising demand, with its production
-run rate expected to increase from approximately 40,000 units annually toward 100,000 units.
+Ouster is expanding its LiDAR production capacity to support rising demand, with its production run rate expected to increase from approximately 40,000 units annually toward 100,000 units.
 Source: Yahoo Finance Aug 17, 2026
 3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships No signal in August
 5 C-Level Executive Moves No signal in August
 Business Developments
 Target technology Lidar sensors for robots
-Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer
-adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's
-largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah
-Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across
-the state.
+Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state.
 Source: Yahoo Finance Aug 17, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 05
 
@@ -150,15 +177,11 @@ Semiconductor Equipment USA
 3 Debt & Equity Financing No signal in August
 4 R&D and Technology Partnerships
 AI Computing Material and Process Innovation Research Collaboration
-Applied Materials announced that University of California, Berkeley will join its EPIC Center in
-Silicon Valley as a research collaborator to pursue research programs accelerating material and
-process innovations.
+Applied Materials announced that University of California, Berkeley will join its EPIC Center in Silicon Valley as a research collaborator to pursue research programs accelerating material and process innovations.
 Source: Press release · Applied Materials Aug 11, 2026
 5 C-Level Executive Moves No signal in August
 Business Developments
-Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company
-unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP,
-and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
+Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
 Source: Press release · Applied Materials Aug 13, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 06
 
@@ -171,20 +194,13 @@ Battery Anode Materials UK
 2 Production Expansion & Footprint Diversification No signal in August
 3 Debt & Equity Financing
 Completion of £100 Million Investment Round.
-The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70
-million) commitment from the National Wealth Fund along with new investors Korea
-Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and
-commercialisation activities.
+The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70 million) commitment from the National Wealth Fund along with new investors Korea Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and commercialisation activities.
 Source: Nexeon - Media / Newsroom Aug 31, 2026
 4 R&D and Technology Partnerships No signal in August
 5 C-Level Executive Moves No signal in August
 Business Developments
 Target technology CVD silicon-carbon (Si-C) anode materials
-Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National
-Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the
-development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing
-technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for
-silicon-carbon materials in Gunsan, South Korea.
+Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for silicon-carbon materials in Gunsan, South Korea.
 Source: Nexeon - Media / Newsroom Aug 31, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 07
 
@@ -196,8 +212,7 @@ Ion-Exchange Membranes France
 1 Geopolitical Supply Chain Resilience No signal in August
 2 Production Expansion & Footprint Diversification No signal in August
 3 Debt & Equity Financing
-Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the
-bond market.
+Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
 Source: Press release · Veolia Aug 26, 2026
 4 R&D and Technology Partnerships No signal in August
 5 C-Level Executive Moves No signal in August
@@ -210,14 +225,11 @@ Invest KOREA · Global Investment Signal Monitor · Issue 3 08
 ===== PAGE 9 =====
 K E Y D E V E L O P M E N T S · 1/1
 Global Business Developments by Company
-ThesecompanieshadnosignalsinAugustbutreporteddevelopmentstieddirectlytotheirtargettechnologies.Allaremonitoredfor
-emerging signals.
+These companies had no signals in August but reported developments tied directly to their target technologies. All are monitored for emerging signals.
 Albemarle
 Lithium & Cathode Materials USA
 Target technology Cathode raw materials (lithium hydroxide, lithium carbonate)
 August Developments
-Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second
-quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due
-to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.
+Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.
 Source: Albemarle - Newsroom / News Aug 5, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 09

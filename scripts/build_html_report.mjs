@@ -11,7 +11,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { ITEM_BAND, renderReport } from './report_html.mjs';
+import { CONTENT_BOTTOM_PT, ITEM_BAND, layoutProbe, renderReport } from './report_html.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const VIEW_MODEL = path.join(ROOT, 'scripts', 'report_view_model.py');
@@ -31,9 +31,10 @@ export function browserCandidates() {
   ].filter(Boolean).filter((value, index, all) => all.indexOf(value) === index);
 }
 
+// 읽지 않을 출력은 파이프로 열지 않는다. 열어 두고 읽지 않으면 버퍼(약 64KB)가 차는 순간 자식이 멈춘다.
 export function run(command, args, { capture = false } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(command, args, { windowsHide: true, stdio: ['ignore', capture ? 'pipe' : 'ignore', 'pipe'] });
     let stdout = '';
     let stderr = '';
     if (capture) child.stdout.on('data', chunk => { stdout += chunk; });
@@ -75,24 +76,25 @@ async function printPdf(htmlPath, pdfPath) {
   throw new Error(`No usable Chrome or Edge found. Set CHROME_PATH.\n${failures.join('\n')}`);
 }
 
-// Ask the browser how tall each trend card came out. The drawn report adds up
-// line counts and padding constants to predict this; the engine that laid the
+// Ask the browser how tall each trend card came out; the engine that laid the
 // cards out already knows, so the sheets are cut from measurement instead.
-// 같은 측정에서 줄 수 제한(line-clamp)에 걸려 화면에서 잘린 문안도 찾는다. 글자 수 상한은 뷰 모델이
-// 표시하고, 렌더링 단계에서 잘린 것은 여기서만 알 수 있다.
+// 같은 측정에서 화면에서 가려진 문안도 찾는다(report_html.mjs 의 layoutProbe): 줄 수 제한에 걸린 문안,
+// 말줄임된 한 줄 칸, 푸터 선 아래로 내려간 쪽. 글자 수 상한은 뷰 모델이 표시하고, 렌더링 단계에서
+// 가려진 것은 여기서만 알 수 있다.
+export const LAYOUT_LIMITS = { contentBottom: CONTENT_BOTTOM_PT };
+// 글꼴이 다 들어온 뒤에 잰다. 본문 끝의 스크립트는 웹폰트가 오기 전에 돌아, 한글이 대체 글꼴 폭으로 재여
+// 지표 알약 다섯 개 중 넷이 말줄임으로 잡혔다. --virtual-time-budget 이 이 대기를 끝까지 기다려 준다.
 const LAYOUT_PROBE = `<script>
-const clipped = [...document.querySelectorAll('.summary, .business-body, .item-body')]
-  .filter(el => el.scrollHeight > el.clientHeight + 1)
-  .map(el => ({ company: el.closest('.detail, .item-card')?.querySelector('h3')?.textContent || '', part: el.className }));
-document.title = 'CARDS' + encodeURIComponent(JSON.stringify({ cards: [...document.querySelectorAll('.item-card')]
-  .map(card => card.getBoundingClientRect().height / (96 / 72)), clipped })) + 'END';
+document.fonts.ready.then(() => {
+  document.title = 'CARDS' + encodeURIComponent(JSON.stringify((${layoutProbe})(${JSON.stringify(LAYOUT_LIMITS)}))) + 'END';
+});
 </script>`;
 
 // 측정용 사본은 보고서 HTML 이름을 따서 짓는다. 한·영을 같은 폴더에서 함께 만들면(local_report.mjs build)
 // 고정 이름 하나를 두 언어가 덮어써 서로의 카드를 잴 수 있다.
 export const probePathFor = htmlPath => path.join(path.dirname(htmlPath), `.${path.basename(htmlPath, '.html')}.card-probe.html`);
 
-async function measureLayout(html, near) {
+export async function measureLayout(html, near) {
   const probePath = probePathFor(near);
   await fs.writeFile(probePath, html.replace('</body>', `${LAYOUT_PROBE}</body>`), 'utf8');
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-cards-'));
@@ -112,7 +114,8 @@ async function measureLayout(html, near) {
   throw new Error('Could not measure the report layout.');
 }
 
-// 보고서에 싣지 못하고 잘린 문안. 뷰 모델이 글자 수 상한으로 자른 것(cut)과 Chrome 이 줄 수 제한으로 가린 것을 합친다.
+// 보고서에 싣지 못하고 잘린 문안. 뷰 모델이 글자 수 상한으로 자른 것(cut)과 Chrome 이 그리며 가린 것
+// (layoutProbe 의 problems: 줄 수 제한, 말줄임, 푸터 아래로 넘친 쪽)을 합친다.
 export function cutTexts(model, clipped = []) {
   const cut = [];
   for (const page of model.details?.pages || []) {
@@ -198,13 +201,13 @@ function parseArgs(argv) {
 }
 
 async function viewModel(args) {
-  if (args['view-model']) return JSON.parse(await fs.readFile(args['view-model'], 'utf8'));
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-vm-'));
   const out = path.join(work, 'view-model.json');
   // report_view_model.py 가 받는 것은 전부 넘긴다. 빠뜨리면 호출부가 명시한 경로가
   // 조용히 무시되고 기본값이 쓰인다. --relevant 가 그렇게 빠져 있었다.
-  const pass = ['signals', 'summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
-    'technology-map', 'font', 'issue-number', 'lang', 'ignored-signals', 'from-date', 'to-date'];
+  // 시그널 무시·기간 변경은 웹 다운로드가 뷰 모델을 직접 불러 한다. 이 빌드를 그렇게 부르는 곳은 없다.
+  const pass = ['summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
+    'technology-map', 'font', 'issue-number', 'lang'];
   try {
     await run(process.env.PYTHON || 'python', ['-X', 'utf8', VIEW_MODEL,
       ...pass.flatMap(name => (args[name] ? [`--${name}`, args[name]] : [])), '--out', out]);
@@ -226,14 +229,19 @@ async function main() {
   const assets = pathToFileURL(path.join(ROOT, 'assets')).href;
   let html = renderReport(model, { assets });
   let breaks = [];
-  const layout = await measureLayout(html, htmlPath);
+  let layout = await measureLayout(html, htmlPath);
   if (model.items?.cards?.length > 1) {
     breaks = itemBreaks(layout.cards);
-    if (breaks.length) html = renderReport(model, { assets, itemBreaks: breaks });
+    // 장을 나눴으면 인쇄할 그 HTML 을 다시 잰다. 나누기 전에는 카드가 한 장에 몰려 넘친다.
+    if (breaks.length) {
+      html = renderReport(model, { assets, itemBreaks: breaks });
+      layout = await measureLayout(html, htmlPath);
+    }
   }
   // 문안 일부가 빠진 보고서는 만들지 않는다. 한·영 중 한쪽에서만 금액·일정이 빠져도 겉으로는 드러나지 않는다.
-  // 급히 발행해야 할 때만 REPORT_ALLOW_CUT_TEXT=true 로 넘기고, 그때도 잘린 곳을 출력에 남긴다.
-  const cut = cutTexts(model, layout.clipped);
+  // 쪽 아래로 넘쳐 푸터에 가려진 것도 같다. 급히 발행해야 할 때만 REPORT_ALLOW_CUT_TEXT=true 로 넘기고,
+  // 그때도 잘린 곳을 출력에 남긴다.
+  const cut = cutTexts(model, layout.problems);
   if (cut.length && process.env.REPORT_ALLOW_CUT_TEXT !== 'true') {
     // 부모 실행(local_report.mjs build)은 어느 언어·회사·칸이 넘쳤는지 이 파일로 받는다. 한·영을 함께 만들므로
     // 부모가 언어마다 다른 파일을 준다.
@@ -255,7 +263,8 @@ async function main() {
   }, null, 2));
 }
 
-// Importable for the layout verifier, which needs the same browser lookup.
+// Importable for the web download (app/lib/report_pdf.mjs), which needs the same
+// browser lookup, card breaks and cut-text rule.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch(error => {
     console.error(error.message);

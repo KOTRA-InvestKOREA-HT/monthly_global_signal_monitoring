@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Local product path: collect/prepare -> agent-authored reviews -> existing PDF renderer.
+// Local product path: collect/prepare -> reviews -> HTML report printed by Chrome (build_html_report.mjs).
 // This script never calls a model API or changes outputs/latest_*.
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
@@ -17,6 +17,7 @@ import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDa
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
 import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
+import { monthPeriod } from "./report_month.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // 기술 그룹별로 무엇이 타겟 품목이고 무엇이 아닌지 적은 범위. 기술 매핑(company_technology_map.json)과 따로 두는 것은
@@ -301,13 +302,8 @@ const hash = (value) => crypto.createHash("sha256").update(JSON.stringify(value)
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const write = async (file, value) => fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 
-export function monthPeriod(month) {
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month || "")) throw new Error("Use --month YYYY-MM");
-  const start = `${month}-01`;
-  const next = new Date(`${start}T00:00:00Z`);
-  next.setUTCMonth(next.getUTCMonth() + 1);
-  return { from_date: start, to_date: new Date(next.getTime() - 86400000).toISOString().slice(0, 10) };
-}
+// 달력 계산은 report_month.mjs 한 곳에 둔다. 테스트와 호출부가 이 이름으로 쓴다.
+export { monthPeriod };
 
 // 보고서 본문에 쓸 수 있는 기사인지 본다. 게시월까지 확정된 기사만 참이다.
 // 검토 대상 여부는 이보다 넓다. reviewCandidate가 그 판단을 맡는다.
@@ -1012,6 +1008,9 @@ export function reportBlockers({ pending, invalid }, reviewFailed = new Set()) {
 
 export async function build(args) {
   const runDir = path.resolve(args.runDir);
+  // 호수를 기본값으로 채우지 않는다. "2"로 채우던 때는 호수 없이 돌린 빌드가 지난 호수의 PDF 를 만들었다.
+  const issueNumber = String(args.issueNumber || "").replace(/[^\d]/g, "");
+  if (!issueNumber) throw new Error("An issue number is required to build the report (--issue-number N).");
   const { snapshot, pending, invalid, results, reviews } = await loadReviews(runDir);
   const reviewFailed = new Set(args.reviewFailed || []);
   const blockers = reportBlockers({ pending, invalid }, reviewFailed);
@@ -1077,29 +1076,26 @@ export async function build(args) {
     const files = {
       "signals.json": snapshot.signals,
       "summary.json": { ...snapshot.summary, review_coverage: coverage, review_failed_articles: reviewFailedArticles, review_scope: reviewScope },
-      "coverage.json": coverage,
       "investment.json": investment, "relevant.json": relevant,
-      "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },
-      "date-pending.json": { investment: datePending(investment), relevant: datePending(relevant),
-        deferred, hints: dateHints(snapshot, reviews) },
       "targets.json": snapshot.targets, "technology.json": snapshot.technology, "indicators.json": snapshot.indicators,
-      "reviews.json": reviews,
-      "decisions.json": results.map(({ row, ...item }) => item),
     };
     for (const [name, value] of Object.entries(files)) await write(path.join(buildDir, name), value);
-    // reportlab 캔버스 대신 HTML 을 헤드리스 Chrome 으로 인쇄한다. collect-company-signals
-    // 워크플로(Vercel 크롤링 버튼이 부르는 것)가 이 경로로 PDF 를 만들므로, 여기가 안 바뀌면
-    // 보고서 대부분은 여전히 reportlab 으로 나온다.
+    // buildDir 은 발행(publish_report.mjs)이 결과를 옮긴 뒤 지우므로, 사람이 볼 진단은 실행 폴더에 남긴다.
+    // outputs/review_work 는 워크플로가 아티팩트로 올린다. 게시일 보류 목록만 남긴다. 커버리지는 summary.json 의
+    // review_coverage 로, 판정은 reviews/ 폴더로 이미 남고, 예전 investment-summary·decisions·reviews 사본은
+    // 읽는 곳이 없었다(2026-10-15 감사 §3-4).
+    await write(path.join(runDir, "date_pending.json"), { investment: datePending(investment), relevant: datePending(relevant),
+      deferred, hints: dateHints(snapshot, reviews) });
     // HTML 은 이 실행 안에서만 쓰는 중간 형식이라 buildDir 에 두고 나가는 것은 PDF 뿐이다.
-    // build_html_report.mjs 는 --investment-summary 를 쓰지 않으므로 넘기지 않는다.
-    // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다.
+    // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다. 수집 원본(signals.json)은 보고서
+    // 내용에 쓰이지 않으므로 넘기지 않는다. 발행이 outputs/latest_company_signals.json 으로 옮길 뿐이다.
     if (args.python) process.env.PYTHON = args.python;
     await buildLanguages(["ko", "en"], { buildDir, argsFor: (lang) => [path.join(ROOT, "scripts/build_html_report.mjs"),
-      "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
+      "--summary", path.join(buildDir, "summary.json"),
       "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
       "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
       "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
-      "--issue-number", args.issueNumber || "2", "--lang", lang,
+      "--issue-number", issueNumber, "--lang", lang,
       "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)] });
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
       reviewed_candidates: results.length,
@@ -1133,7 +1129,7 @@ async function main() {
   if (command === "prepare") await prepare(args);
   else if (command === "status" && args.runDir) { if (!await status(path.resolve(args.runDir))) process.exitCode = 1; }
   else if (command === "build" && args.runDir) await build(args);
-  else throw new Error("Usage: local_report.mjs prepare [--month YYYY-MM] [--collect] | status --run-dir PATH | build --run-dir PATH [--python PATH]");
+  else throw new Error("Usage: local_report.mjs prepare [--month YYYY-MM] [--collect] | status --run-dir PATH | build --run-dir PATH --issue-number N [--python PATH]");
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

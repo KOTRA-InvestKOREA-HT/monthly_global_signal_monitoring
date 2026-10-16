@@ -1,0 +1,1329 @@
+{
+  "lang": "en",
+  "issue": {
+    "label": "Issue 3",
+    "month": "September 2026"
+  },
+  "footer": "Invest KOREA · Global Investment Signal Monitor · Issue 3",
+  "cover": {
+    "kicker": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
+    "titles": [
+      "Investment Signals"
+    ],
+    "subtitle": "Monthly monitoring of investment signals at 77 target companies",
+    "accent": 0,
+    "title_size": 44,
+    "lines": [
+      "30 major investment promotion projects · 77 target companies selected by MOTIR",
+      "5 leading indicators tracked per company · Pre-decision signals only"
+    ],
+    "line_size": 11,
+    "indicator_heading": "5 Leading Indicators of Investment",
+    "indicators": [
+      {
+        "no": 1,
+        "label": "Geopolitical Supply Chain Resilience",
+        "description": "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks"
+      },
+      {
+        "no": 2,
+        "label": "Production Expansion & Footprint Diversification",
+        "description": "Evaluating new APAC facility expansions and conducting production site feasibility studies"
+      },
+      {
+        "no": 3,
+        "label": "Debt & Equity Financing",
+        "description": "Large-scale funding through corporate bonds, equity raises, and credit facilities"
+      },
+      {
+        "no": 4,
+        "label": "R&D and Technology Partnerships",
+        "description": "Joint R&D, technology licensing, PoCs, and equity-stake talks"
+      },
+      {
+        "no": 5,
+        "label": "C-Level Executive Moves",
+        "description": "C-suite changes, low-profile visits to Korea, and due diligence coordination"
+      }
+    ]
+  },
+  "matrix": {
+    "kicker": "S I G N A L   M A T R I X",
+    "title": "This Month's Signal Matrix",
+    "description": "Early investment signals at the 77 target companies in August 2026. Filled cells mark detected signals. Final investment decisions and completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.",
+    "company_heading": "Company",
+    "legend_on": "Signal detected",
+    "legend_off": "No signal",
+    "indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
+    "footnote": "Signals detected at 6 companies; none detected at 71.",
+    "counts": {
+      "detected": 6,
+      "reviewed_off": 71,
+      "total": 77
+    },
+    "rows": [
+      {
+        "target_no": 1,
+        "company": "Australian Strategic Materials",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 2,
+        "company": "Cognex",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 3,
+        "company": "Corning",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 4,
+        "company": "Charles River",
+        "status": "detected",
+        "signals": [
+          "",
+          "",
+          "",
+          "on",
+          ""
+        ]
+      },
+      {
+        "target_no": 5,
+        "company": "Cytiva",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 6,
+        "company": "Moderna",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 7,
+        "company": "West Pharmaceutical",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 8,
+        "company": "DuPont",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 9,
+        "company": "Albemarle",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 10,
+        "company": "TIMET",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 11,
+        "company": "Air Products",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 12,
+        "company": "Chemours",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 13,
+        "company": "BorgWarner",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 14,
+        "company": "Dow",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 15,
+        "company": "Thermo Fisher",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 16,
+        "company": "Amkor Technology",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 17,
+        "company": "onsemi",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 18,
+        "company": "Qualcomm",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 19,
+        "company": "Skyworks",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 20,
+        "company": "Eli Lilly and Company",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 21,
+        "company": "GE HealthCare",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 22,
+        "company": "Boeing",
+        "status": "detected",
+        "signals": [
+          "",
+          "",
+          "",
+          "on",
+          ""
+        ]
+      },
+      {
+        "target_no": 23,
+        "company": "3M",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 24,
+        "company": "Ouster",
+        "status": "detected",
+        "signals": [
+          "",
+          "on",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 25,
+        "company": "Applied Materials",
+        "status": "detected",
+        "signals": [
+          "",
+          "",
+          "",
+          "on",
+          ""
+        ]
+      },
+      {
+        "target_no": 26,
+        "company": "magniX",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 27,
+        "company": "Prodrive",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 28,
+        "company": "ASML",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 29,
+        "company": "BESI",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 30,
+        "company": "NXP",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 31,
+        "company": "Norsk Hydro",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 32,
+        "company": "Vestas",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 33,
+        "company": "HEIDENHAIN",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 34,
+        "company": "Infineon",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 35,
+        "company": "Schmalz",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 36,
+        "company": "Bayer",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 37,
+        "company": "Merck",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 38,
+        "company": "Schott Pharma",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 39,
+        "company": "BASF",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 40,
+        "company": "Evonik Industries",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 41,
+        "company": "Heraeus",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 42,
+        "company": "Jenoptik",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 43,
+        "company": "EMM(Umicore)",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 44,
+        "company": "Umicore",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 45,
+        "company": "Solvay",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 46,
+        "company": "Syensqo",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 47,
+        "company": "Hexagon AB",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 48,
+        "company": "ABB",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 49,
+        "company": "maxon",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 50,
+        "company": "Siemens Gamesa",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 51,
+        "company": "Renishaw",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 52,
+        "company": "Nexeon",
+        "status": "detected",
+        "signals": [
+          "",
+          "",
+          "on",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 53,
+        "company": "Rio Tinto",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 54,
+        "company": "HyProMag",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 55,
+        "company": "EVG",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 56,
+        "company": "Plansee",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 57,
+        "company": "Texcell",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 58,
+        "company": "Veolia",
+        "status": "detected",
+        "signals": [
+          "",
+          "",
+          "on",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 59,
+        "company": "Airbus",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 60,
+        "company": "Safran",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 61,
+        "company": "Air Liquide",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 62,
+        "company": "Arkema",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 63,
+        "company": "DNP",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 64,
+        "company": "Proterial",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 65,
+        "company": "Toppan Holdings",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 66,
+        "company": "Nabtesco",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 67,
+        "company": "AGC",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 68,
+        "company": "JSR",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 69,
+        "company": "Shin-Etsu Chemical",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 70,
+        "company": "Tokyo Electron",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 71,
+        "company": "Tosoh",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 72,
+        "company": "Mitsubishi Chemical",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 73,
+        "company": "Sumitomo Chemical",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 74,
+        "company": "Asahi Kasei",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 75,
+        "company": "Toray",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 76,
+        "company": "Cheng Uei Precision",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "target_no": 77,
+        "company": "Shanghai Electric Wind Power",
+        "status": "reviewed",
+        "signals": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  "details": {
+    "kicker": "C O M P A N Y   S I G N A L S",
+    "title": "Signal Details by Company",
+    "pages": [
+      {
+        "company": "Charles River",
+        "country": "USA",
+        "industry": "Biologics Safety Testing",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": true,
+            "headline": "On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation Sequencing.",
+            "detail": "",
+            "plain": "",
+            "inline": true,
+            "cut": false,
+            "source": "Source:  Press release · Charles River - News Releases / Press Releases Aug 20, 2026",
+            "source_url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "Target technology",
+          "target_text": "Virus validation and master/working cell bank characterization",
+          "body": "On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness.",
+          "cut": false,
+          "source": "Source:  Press release · Charles River - News Releases / Press Releases Aug 20, 2026",
+          "source_url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp"
+        }
+      },
+      {
+        "company": "Boeing",
+        "country": "USA",
+        "industry": "Aerospace & E-Propulsion",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": true,
+            "headline": "Boeing Investment and Technology Collaboration",
+            "detail": "Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer while taking a stake in Archer and establishing an ongoing technology sharing and collaboration arrangement.",
+            "plain": "",
+            "inline": false,
+            "cut": false,
+            "source": "Source:  Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026",
+            "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "Target technology",
+          "target_text": "Electric motors and high-power battery propulsion modules for aircraft",
+          "body": "Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.",
+          "cut": false,
+          "source": "Source:  Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026",
+          "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+        }
+      },
+      {
+        "company": "Ouster",
+        "country": "USA",
+        "industry": "Lidar & 3D Sensing",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": true,
+            "headline": "Ouster is expanding its LiDAR production capacity to support rising demand, with its production run rate expected to increase from approximately 40,000 units annually toward 100,000 units.",
+            "detail": "",
+            "plain": "",
+            "inline": true,
+            "cut": false,
+            "source": "Source:  Yahoo Finance Aug 17, 2026",
+            "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "Target technology",
+          "target_text": "Lidar sensors for robots",
+          "body": "Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state.",
+          "cut": false,
+          "source": "Source:  Yahoo Finance Aug 17, 2026",
+          "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+        }
+      },
+      {
+        "company": "Applied Materials",
+        "country": "USA",
+        "industry": "Semiconductor Equipment",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": true,
+            "headline": "AI Computing Material and Process Innovation Research Collaboration",
+            "detail": "Applied Materials announced that University of California, Berkeley will join its EPIC Center in Silicon Valley as a research collaborator to pursue research programs accelerating material and process innovations.",
+            "plain": "",
+            "inline": false,
+            "cut": false,
+            "source": "Source:  Press release · Applied Materials Aug 11, 2026",
+            "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "",
+          "target_text": "",
+          "body": "Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.",
+          "cut": false,
+          "source": "Source:  Press release · Applied Materials Aug 13, 2026",
+          "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+        }
+      },
+      {
+        "company": "Nexeon",
+        "country": "UK",
+        "industry": "Battery Anode Materials",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": true,
+            "headline": "Completion of £100 Million Investment Round.",
+            "detail": "The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70 million) commitment from the National Wealth Fund along with new investors Korea Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and commercialisation activities.",
+            "plain": "",
+            "inline": false,
+            "cut": false,
+            "source": "Source:  Nexeon - Media / Newsroom Aug 31, 2026",
+            "source_url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "Target technology",
+          "target_text": "CVD silicon-carbon (Si-C) anode materials",
+          "body": "Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for silicon-carbon materials in Gunsan, South Korea.",
+          "cut": false,
+          "source": "Source:  Nexeon - Media / Newsroom Aug 31, 2026",
+          "source_url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round"
+        }
+      },
+      {
+        "company": "Veolia",
+        "country": "France",
+        "industry": "Ion-Exchange Membranes",
+        "signals": [
+          {
+            "no": 1,
+            "label": "Geopolitical Supply Chain Resilience",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 2,
+            "label": "Production Expansion & Footprint Diversification",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 3,
+            "label": "Debt & Equity Financing",
+            "active": true,
+            "headline": "Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.",
+            "detail": "",
+            "plain": "",
+            "inline": true,
+            "cut": false,
+            "source": "Source:  Press release · Veolia Aug 26, 2026",
+            "source_url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market"
+          },
+          {
+            "no": 4,
+            "label": "R&D and Technology Partnerships",
+            "active": false,
+            "empty": "No signal in August"
+          },
+          {
+            "no": 5,
+            "label": "C-Level Executive Moves",
+            "active": false,
+            "empty": "No signal in August"
+          }
+        ],
+        "business": {
+          "heading": "Business Developments",
+          "target_label": "Target technology",
+          "target_text": "Ion-exchange and bipolar membranes",
+          "body": "Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.",
+          "cut": false,
+          "source": "Source:  Press release · Veolia Aug 26, 2026",
+          "source_url": "https://www.veolia.com/en/our-media/press-releases/veolia-successfully-issues-115-bn-eur-bond-market"
+        }
+      }
+    ],
+    "pill_width": 186.12
+  },
+  "items": {
+    "kicker": "K E Y   D E V E L O P M E N T S",
+    "title": "Global Business Developments by Company",
+    "note": "These companies had no signals in August but reported developments tied directly to their target technologies. All are monitored for emerging signals.",
+    "target_label": "Target technology",
+    "trend_label": "August Developments",
+    "cards": [
+      {
+        "company": "Albemarle",
+        "industry": "Lithium & Cathode Materials",
+        "country": "USA",
+        "target_text": "Cathode raw materials (lithium hydroxide, lithium carbonate)",
+        "body": "Albemarle reported $1.3 billion in Energy Storage net sales and 65 kilotons LCE in sales volume for the second quarter of 2026. Increased output from the Wodgina mine partially offset the delay in the Talison CGP3 ramp due to a fire, with full-year sales volumes expected to range between 225 and 235 kilotons LCE.",
+        "cut": false,
+        "source": "Source:  Albemarle - Newsroom / News Aug 5, 2026",
+        "source_url": "https://www.albemarle.com/us/en/news/albemarle-reports-second-quarter-2026-results"
+      }
+    ]
+  }
+}

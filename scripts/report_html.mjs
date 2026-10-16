@@ -1,16 +1,13 @@
 // Report pages as HTML. Pure: a view model in, a document out, no file or
 // browser access, so the same renderer can serve a page and print a PDF.
 //
-// The reportlab path places every run of text at an absolute coordinate and
-// hand-fits it with wrap/clip/max-lines helpers. Here the layout engine does
-// that work, which is the point of the exercise: the matrix below paginates on
-// its own instead of being sliced at a hard-coded 39 rows.
+// This is the only renderer: the PDF is this HTML printed by Chrome
+// (build_html_report.mjs, app/lib/report_pdf.mjs). The layout engine wraps and
+// paginates; the view model brings the few choices that need font metrics.
 
 export const PAGE_WIDTH_PT = 540;
 export const PAGE_HEIGHT_PT = 780;
 
-// Kept in the same order and spelling as build_pdf_report.py so a change on one
-// side is easy to see on the other.
 export const COLORS = {
   navy: '#122844',
   gold: '#DCA72F',
@@ -39,15 +36,73 @@ export const COLORS = {
 };
 
 // Rows per matrix column, from the page geometry: the table starts 145pt down,
-// each row is 12.8pt, and the legend needs the last 92pt. The reportlab page
-// hard-codes profiles[:39]/[39:] instead and silently overruns the legend once
-// the target list passes about 81 companies.
+// each row is 12.8pt, and the legend needs the last 92pt. A longer list is
+// carried onto another matrix page rather than run over the legend.
 export const MATRIX_ROWS_PER_COLUMN = 39;
 const MATRIX_COLUMNS_PER_PAGE = 2;
 
 // Where trend cards may sit: lower on the first sheet, which carries the note,
 // and never past the band the footer keeps.
 export const ITEM_BAND = { firstTop: 158, top: 114, bottom: 724, gap: 14 };
+
+// The footer band at the foot of every inner page. Body content must end above
+// its rule: .page clips overflow, so anything lower is hidden behind the footer
+// or cut off the sheet without an error.
+export const FOOTER_HEIGHT_PT = 38;
+export const CONTENT_BOTTOM_PT = PAGE_HEIGHT_PT - FOOTER_HEIGHT_PT;
+
+// Runs inside the printed page (Chrome's --dump-dom script or puppeteer's
+// evaluate), so it may use nothing from this module's scope: the limits arrive
+// as its argument. It returns the trend-card heights the builder cuts sheets
+// from, and every place the page hides text without saying so:
+//   - a line-clamped summary or body that has more lines than it shows,
+//   - a one-line box that ellipsizes (target name, pills, matrix company, "no signal"),
+//   - an inner page whose content runs below the footer rule.
+// .page{overflow:hidden} keeps all three silent in the PDF, so the build has to ask.
+export function layoutProbe({ contentBottom }) {
+  const pt = px => px * 72 / 96;
+  const round = value => Math.round(value * 10) / 10;
+  const owner = el => el.closest('.detail, .item-card')?.querySelector('h3')?.textContent
+    || el.closest('.page')?.querySelector('.header h2')?.textContent || '';
+  const clipped = [...document.querySelectorAll('.summary, .business-body, .item-body')]
+    .filter(el => el.scrollHeight > el.clientHeight + 1)
+    .map(el => ({ company: owner(el), part: el.className }));
+  // text-overflow only paints the ellipsis; the text keeps its full width, so a
+  // range over it says how wide it wants to be. Table cells report no overflow
+  // through scrollWidth, which is why both are asked.
+  const wider = el => {
+    if (el.scrollWidth > el.clientWidth + 1) return true;
+    const style = getComputedStyle(el);
+    const room = el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return range.getBoundingClientRect().width > room + 1;
+  };
+  const ellipsis = [...document.querySelectorAll('.target-text, .pill, td.company, .empty')]
+    .filter(wider)
+    .map(el => ({ company: owner(el), part: `ellipsis ${el.className}`, text: el.textContent.trim() }));
+  const overflow = [];
+  document.querySelectorAll('.page').forEach((page, index) => {
+    if (page.classList.contains('cover')) return;
+    const top = page.getBoundingClientRect().top;
+    let bottom = top;
+    for (const el of page.querySelectorAll('*')) {
+      // The trend-card column's own box takes in its last card's bottom margin; the cards themselves are measured.
+      if (el.closest('.footer, .header') || el.classList.contains('items')) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width || rect.height) bottom = Math.max(bottom, rect.bottom);
+    }
+    const reach = pt(bottom - top);
+    if (reach > contentBottom + 0.5) {
+      overflow.push({ company: owner(page.querySelector('.detail h3, .item-card h3') || page), part: 'page overflow',
+        page: index + 1, bottom: round(reach), limit: contentBottom });
+    }
+  });
+  return {
+    cards: [...document.querySelectorAll('.item-card')].map(card => pt(card.getBoundingClientRect().height)),
+    problems: [...clipped, ...ellipsis, ...overflow],
+  };
+}
 
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,
   ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -147,6 +202,7 @@ const cellMark = state => (state === true || state === 'on' ? 'on' : 'off');
 
 const matrixTable = (heading, rows) => `
         <table class="matrix">
+          <colgroup><col class="col-no"><col><col span="5" class="col-signal"></colgroup>
           <thead>
             <tr>
               <th class="col-company" colspan="2">${escapeHtml(heading)}</th>
@@ -306,7 +362,7 @@ function styles(assets) {
   return `
 /* The static cuts, not a variable file: Chrome embeds what it is given and a
    variable face lands in the PDF an order of magnitude heavier. These are the
-   same four weights build_pdf_report.py measures with (FONT_FILES). */
+   same four weights report_measure.py measures with (FONT_FILES). */
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Medium.woff2') format('woff2'); font-weight: 500; font-display: block; }
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
@@ -344,7 +400,7 @@ body {
 .footer {
   position: absolute;
   inset: auto 0 0 0;
-  height: 38pt;
+  height: ${FOOTER_HEIGHT_PT}pt;
   /* Same 30pt side margins as the header and the body boxes. */
   padding: 0 30pt;
   display: flex;
@@ -583,10 +639,9 @@ body {
 .item-card .source { margin: 2pt 16.3pt 0; font-size: 7.5pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
-/* The drawn page decides how many lines of each summary to show by trying a
-   ladder of line counts until one fits. Here each row is as tall as its own
-   text and the boxes follow, so there is nothing to search for; the clamps
-   below are the same ceilings that ladder topped out at. */
+/* Each row is as tall as its own text and the boxes follow. The line clamps
+   below are ceilings; text they hide, and a page that runs past the footer,
+   fail the build (layoutProbe). */
 .detail { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .signal-box, .business-box {
   border: 0.9pt solid ${COLORS.boxLine};
@@ -748,7 +803,14 @@ body {
   word-break: keep-all;
 }
 .matrix-columns { display: flex; align-items: flex-start; gap: 14pt; }
-table.matrix { flex: 1; border-collapse: collapse; table-layout: fixed; }
+/* Equal halves whatever the names. With flex: 1 and no width the table fell back
+   to automatic layout, so a name too long for its cell
+   widened its own table and squeezed the other one instead of
+   ellipsizing, so nothing reported it. */
+table.matrix { flex: none; width: calc((100% - 14pt) / 2); border-collapse: collapse; table-layout: fixed; }
+/* A fixed table takes its column widths from these, not from the body cells. */
+table.matrix col.col-no { width: 22pt; }
+table.matrix col.col-signal { width: 18pt; }
 table.matrix th {
   height: 16pt;
   padding: 0 7pt;

@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { previousMonthRange } from './report_month.mjs';
+import { isCalendarDate, previousMonthRange } from './report_month.mjs';
 
 // CLI and Actions must choose the same month even at a UTC/Korea month boundary.
 // 전월이 언제인지는 report_month.mjs 가 정한다. 실행 버튼과 화면도 같은 함수를 쓴다.
@@ -10,11 +10,7 @@ export function resolveReportPeriod(env = process.env, now = new Date()) {
   if (from || to) {
     if (!from || !to) throw new Error('REPORT_FROM_DATE and REPORT_TO_DATE must be supplied together');
     for (const value of [from, to]) {
-      const parsed = new Date(`${value}T00:00:00Z`);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || !Number.isFinite(parsed.getTime()) ||
-          parsed.toISOString().slice(0, 10) !== value) {
-        throw new Error(`Invalid reporting date: ${value}; expected YYYY-MM-DD`);
-      }
+      if (!isCalendarDate(value)) throw new Error(`Invalid reporting date: ${value}; expected YYYY-MM-DD`);
     }
     if (from > to) throw new Error('REPORT_FROM_DATE must not be after REPORT_TO_DATE');
     return { from_date: from, to_date: to };
