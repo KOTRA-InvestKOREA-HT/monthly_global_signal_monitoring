@@ -811,7 +811,9 @@ function buildDateRange(args, collectedAt) {
   };
 }
 
-// 수집 단계는 기간 밖이라고 확인된 기사만 버린다. 날짜 미상·추정·충돌 기사는 그대로 보관해
+// 수집 단계는 periodPlacement 가 out_of_period 로 본 기사만 버린다(filterByDateRange). 확인된 게시일이 기간 밖인
+// 기사, 충돌한 근거가 모두 기간 밖인 기사, 그리고 확정 날짜가 없어도 제목·URL 의 발행 연도로 기간 밖이 분명한
+// 정기 문서·옛 문서가 여기에 든다(date_state.mjs). 그 밖의 날짜 미상·추정·충돌 기사는 그대로 보관해
 // 이후 단계에서 날짜를 보강하거나 검토 후보로 쓸 수 있게 한다.
 function dateRangePeriod(dateRange) {
   return {
@@ -937,14 +939,6 @@ export function buildQuery(company, dateRange) {
   return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
 
-function buildGdeltQuery(company) {
-  const names = relevantAliases(company);
-  let nameClause = names.map((name) => `"${name}"`).join(" OR ");
-  if (names.length > 1) nameClause = `(${nameClause})`;
-  const terms = SIGNAL_TERMS.filter((term) => term !== "Korea").join(" OR ");
-  return `${nameClause} (${terms})`;
-}
-
 export function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
   const rows = [];
   const isOfficialCollector = collector.startsWith("official_");
@@ -954,7 +948,9 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
       : fallbackSourceFields(90);
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
-    const itemUrl = bestRssItemUrl(item, query);
+    // 링크가 없는 항목은 기사 주소가 없는 것이다. 예전에는 질의(피드 주소나 검색어 문자열)를 주소로 채웠다.
+    // 주소가 빈 행은 아래에서 걸러진다.
+    const itemUrl = bestRssItemUrl(item);
     rows.push({
       target_no: company.target_no,
       company: company.company,
@@ -1134,6 +1130,14 @@ export function isUsableTitle(title, company) {
   return true;
 }
 
+// 확장자 목록은 여기 한 곳에 둔다. 웹 문서(PDF 포함)는 받아 읽고, 오피스 문서와 미디어는 받지 않는다(canFetchDetailContent).
+const WEB_DOCUMENT_EXTENSIONS = "pdf|html?|aspx|php";
+const OFFICE_DOCUMENT_EXTENSIONS = "xlsx?|pptx?|docx?";
+const UNREADABLE_FILE = new RegExp(`\\.(${OFFICE_DOCUMENT_EXTENSIONS}|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)`, "i");
+const PARAM_FILE_EXTENSION = new RegExp(`\\.(${WEB_DOCUMENT_EXTENSIONS}|${OFFICE_DOCUMENT_EXTENSIONS})$`, "i");
+// 경로의 파일 이름에서는 웹 문서 확장자만 뗀다. 오피스 확장자까지 떼면 이미 수집된 문서 행의 제목이 바뀐다.
+const PATH_FILE_EXTENSION = new RegExp(`\\.(${WEB_DOCUMENT_EXTENSIONS})$`, "i");
+
 function titleFromUrl(url) {
   try {
     const parsed = new URL(url);
@@ -1142,7 +1146,7 @@ function titleFromUrl(url) {
       const value = parsed.searchParams.get(key);
       if (!value) continue;
       const fromParam = decodeURIComponent(value)
-        .replace(/\.(pdf|xlsx?|pptx?|docx?|html?|aspx|php)$/i, "")
+        .replace(PARAM_FILE_EXTENSION, "")
         .replace(/[-_]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
@@ -1152,7 +1156,7 @@ function titleFromUrl(url) {
     const last = segments.reverse().find((segment) => !/^(default|index|news|press|releases?|details?|en|global|ir)$/i.test(segment));
     if (!last) return "";
     const cleaned = decodeURIComponent(last)
-      .replace(/\.(pdf|html?|aspx|php)$/i, "")
+      .replace(PATH_FILE_EXTENSION, "")
       .replace(/[-_]+/g, " ")
       .replace(/\s+/g, " ")
       .trim();
@@ -1167,15 +1171,18 @@ function officialTitle(anchor) {
   return titleFromUrl(anchor.url);
 }
 
-function discoverFeedLinks(html, baseUrl) {
+// 피드를 가리키는 낱말. 낱말 단위로만 본다. 예전에는 글자 일부로 맞아 "feedback" 링크나 feedback.css 도 피드로 받았다.
+const FEED_WORD = /(?<![a-z])(?:rss|atom|feeds?)(?![a-z])/i;
+
+export function discoverFeedLinks(html, baseUrl) {
   const urls = [];
   const linkRegex = /<link\b([^>]*)>/gi;
   for (const match of html.matchAll(linkRegex)) {
     const attrs = match[1] || "";
-    if (!/(application\/rss\+xml|application\/atom\+xml|rss|atom|feed)/i.test(attrs)) continue;
     const hrefMatch = attrs.match(/\bhref\s*=\s*["']([^"']+)["']/i);
     if (!hrefMatch) continue;
     const href = decodeXml(hrefMatch[1]);
+    if (!/application\/(?:rss|atom)\+xml/i.test(attrs) && !FEED_WORD.test(href)) continue;
     if (/xmlrpc\.php|rsd/i.test(href)) continue;
     try {
       urls.push(stripTracking(new URL(href, baseUrl).toString()));
@@ -1184,7 +1191,7 @@ function discoverFeedLinks(html, baseUrl) {
     }
   }
   for (const anchor of parseAnchors(html, baseUrl)) {
-    if (/(rss|atom|feed)/i.test(`${anchor.title} ${anchor.url}`)) {
+    if (FEED_WORD.test(`${anchor.title} ${anchor.url}`)) {
       urls.push(anchor.url);
     }
   }
@@ -1345,9 +1352,12 @@ export function parseJsonFeed(text, company, collectedAt, query, defaultSource, 
   const include = spec.include ? new RegExp(spec.include, "i") : null;
   const rows = [];
   for (const item of Array.isArray(items) ? items : []) {
+    // 주소가 빈 항목은 건너뛴다. 빈 문자열을 기준 주소로 풀면 피드 주소가 그 기사의 주소가 됐다.
+    const rawUrl = String(item?.[spec.url] ?? "").trim();
+    if (!rawUrl) continue;
     let url;
     try {
-      url = new URL(String(item?.[spec.url] || ""), spec.base || query).href;
+      url = new URL(rawUrl, spec.base || query).href;
     } catch {
       continue;
     }
@@ -1498,7 +1508,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
 }
 
 function canFetchDetailContent(url) {
-  return !/\.(xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
+  return !UNREADABLE_FILE.test(url);
 }
 
 function isGoogle(value) {
@@ -2085,7 +2095,7 @@ export function companyCollectionIdentity({ company, sourceConfig, args, selecte
 // 그룹 키워드에는 그 표현도, 미국식 철자 "aluminum" 도 없었다. 여기 적으면 질의에 먼저 들어가고
 // 사전 필터도 같이 통과시킨다. 없으면 없는 대로 카탈로그만 쓴다.
 export function companySearchTerms(company, searchTerms) {
-  const entry = searchTerms?.companies?.[company?.company] || searchTerms?.[company?.company];
+  const entry = searchTerms?.companies?.[company?.company];
   return (Array.isArray(entry) ? entry : []).map((term) => String(term || "").trim()).filter(Boolean);
 }
 
@@ -2302,35 +2312,6 @@ async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSecond
       .slice(0, maxPerSource),
     requestCount: 1,
   };
-}
-
-async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
-  const query = buildGdeltQuery(company);
-  const params = new URLSearchParams({
-    query,
-    mode: "ArtList",
-    format: "json",
-    maxrecords: String(maxPerSource),
-    sort: "HybridRel",
-    timespan: `${dateRange.lookbackDays}d`,
-  });
-  const payload = await fetchJson(`https://api.gdeltproject.org/api/v2/doc/doc?${params.toString()}`, timeoutSeconds);
-  const rows = (payload.articles || [])
-    .map((article) => ({
-      target_no: company.target_no,
-      company: company.company,
-      title: cleanText(article.title || ""),
-      url: article.url || "",
-      source: `GDELT: ${article.domain || article.sourceCountry || "unknown"}`,
-      ...chooseDateEvidence([dateEvidence(parseDate(article.seendate), "gdelt_seen", "context")]),
-      collected_at: collectedAt,
-      collector: "gdelt_doc_api",
-      query,
-      ...fallbackSourceFields(95),
-      official_source_url: "",
-    }))
-    .filter((row) => row.title && row.url);
-  return { rows: filterByDateRange(rows, dateRange).slice(0, maxPerSource), requestCount: 1 };
 }
 
 // 같은 기사인지 볼 URL 키. 추적 파라미터와 # 만 뗀다(stripTracking). 예전에는 쿼리 전체를 지우고 경로를 소문자로
@@ -2689,8 +2670,6 @@ function collectSource(source, company, sourceConfig, args, dateRange, collected
     return collectOfficialSitemaps(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
   } else if (source === "sec_filings") {
     return collectSecFilings(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-  } else if (source === "gdelt") {
-    return collectGdelt(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
   }
   throw new Error(`Unknown source: ${source}`);
 }
