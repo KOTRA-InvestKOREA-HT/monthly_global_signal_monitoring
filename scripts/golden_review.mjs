@@ -22,7 +22,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { sourceCandidates, groupArticles, importReview, monthPeriod } from './local_report.mjs';
-import { PROVIDER, MODEL, configuration, policySection, reviewPolicy, reviewArticles } from './review_report.mjs';
+import { PROVIDER, MODEL, VERIFIER, configuration, policySection, reviewPolicy, reviewArticles } from './review_report.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
@@ -110,6 +110,14 @@ export async function runGolden({ articles, outDir, policyText, config, fetchImp
     ...(fetchImpl ? { fetchImpl } : {}), ...(sleep ? { sleep } : {}) });
 }
 
+// 계획 단계에서 보여 주는 요청 수. 예전에는 1차 판정만 세어(기사당 1건, 최악 2건) 2차 검증과 재검토 되묻기가 빠졌다.
+// 검증기가 켜져 있으면 1차 판정 뒤 의심 후보가 있는 기사마다 검증 요청이 나간다. 면제가 아닌 기술 연결 승인은 늘 의심
+// 후보라 기사당 1건으로 잡는다. 최악은 기사당 1차 판정과 그 재시도 2건에, 검증과 거부된 검증 응답의 보정 2건이다.
+// 검증기가 꺼져 있으면 재시도 뒤에 재검토 되묻기 1건이 더 붙을 수 있다(3건). 일시 장애 재시도는 세지 않는다.
+export function requestEstimate(articleCount, { verifier = false } = {}) {
+  return { expected_requests: articleCount * (verifier ? 2 : 1), worst_case_requests: articleCount * (verifier ? 4 : 3) };
+}
+
 // 재시도와 검증 실패는 진단 파일에 기사별로 남는다. 요약에서 세어 둔다.
 function attempts(state) {
   const counts = {};
@@ -181,14 +189,16 @@ async function main() {
     catch { /* 옛 판정이 없는 기사는 baseline 없음으로 남는다 */ }
   }
 
+  // 운영(configuration)과 같은 조건으로 검증기가 켜지는지 본다. 키 값은 계획에 남기지 않는다.
+  const verifier = Boolean(VERIFIER) && process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' && Boolean(String(process.env.GEMINI_API_KEY || '').trim());
   const plan = { provider: PROVIDER.id, model: MODEL, set: args.set,
     policy, out_dir: outDir, period,
     golden_articles: selected.length,
     ...(absent.length ? { missing_articles: absent } : {}),
     candidates: selected.reduce((n, a) => n + a.candidates.length, 0),
     with_baseline: baselines.size,
-    expected_requests: selected.length,
-    worst_case_requests: selected.length * 2,
+    verifier_model: verifier ? VERIFIER.model : null,
+    ...requestEstimate(selected.length, { verifier }),
     articles: selected.map(a => ({ id: a.id, company: a.company, url: a.url,
       baseline_article_id: baselines.get(a.id)?.article.id ?? null })) };
   await write(path.join(outDir, 'plan.json'), plan);
