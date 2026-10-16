@@ -110,6 +110,30 @@ export const GEMINI = {
   },
 };
 
+// 문안 단계(summary_writer)와 검토 단계(summary_reviewer)의 Gemini 요청 하나. 두 단계에 거의 같은 코드가 따로 있었다.
+// 실패는 reasonField(writer_reason·reviewer_reason)에 timeout·transport·quota·unavailable·provider_error·invalid_response
+// 로 적는다. 응답 본문은 남기지 않는다. 돌려주는 invalid 로 호출자가 자기 응답 형식 결함을 같은 분류로 던진다.
+export const GEMINI_TRANSIENT_REASONS = new Set(['unavailable', 'timeout', 'transport']);
+export async function requestGeminiJson(client, apiKey, body, fetchImpl, reasonField) {
+  let response;
+  try {
+    response = await fetchImpl(client.url(client.model), {
+      method: 'POST', headers: client.headers(apiKey), body: JSON.stringify(body), signal: AbortSignal.timeout(client.timeoutMs),
+    });
+  } catch (error) {
+    throw Object.assign(new Error(`${client.label} transport error: ${error.name || 'Error'}`),
+      { [reasonField]: error.name === 'TimeoutError' ? 'timeout' : 'transport' });
+  }
+  if (!response.ok) {
+    await response.text().catch(() => '');
+    throw Object.assign(new Error(`${client.label} HTTP ${response.status}`), { status: response.status,
+      [reasonField]: response.status === 429 ? 'quota' : response.status >= 500 ? 'unavailable' : 'provider_error' });
+  }
+  const invalid = code => Object.assign(new Error(`${client.label} invalid response: ${code}`), { [reasonField]: 'invalid_response' });
+  const { text } = client.parse(await response.json(), invalid);
+  try { return { parsed: JSON.parse(text), invalid }; } catch { throw invalid('invalid_json'); }
+}
+
 export const NVIDIA = {
   id: 'nvidia',
   label: 'NVIDIA',

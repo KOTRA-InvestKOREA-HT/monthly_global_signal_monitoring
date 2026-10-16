@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { GEMINI, toGeminiSchema } from './review_providers.mjs';
+import { GEMINI, GEMINI_TRANSIENT_REASONS as TRANSIENT, requestGeminiJson, toGeminiSchema } from './review_providers.mjs';
 import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
 import { writeJsonAtomic } from './atomic_json.mjs';
 import {
@@ -371,24 +371,7 @@ export function summaryStyleProblems(article, decision) {
 }
 
 async function requestWriter(writer, apiKey, body, fetchImpl) {
-  let response;
-  try {
-    response = await fetchImpl(writer.url(writer.model), {
-      method: 'POST', headers: writer.headers(apiKey), body: JSON.stringify(body),
-      signal: AbortSignal.timeout(writer.timeoutMs),
-    });
-  } catch (error) {
-    throw Object.assign(new Error(`${writer.label} transport error: ${error.name || 'Error'}`), { writer_reason: error.name === 'TimeoutError' ? 'timeout' : 'transport' });
-  }
-  if (!response.ok) {
-    await response.text().catch(() => '');
-    throw Object.assign(new Error(`${writer.label} HTTP ${response.status}`), { status: response.status,
-      writer_reason: response.status === 429 ? 'quota' : response.status >= 500 ? 'unavailable' : 'provider_error' });
-  }
-  const invalid = code => Object.assign(new Error(`${writer.label} invalid response: ${code}`), { writer_reason: 'invalid_response' });
-  const { text } = writer.parse(await response.json(), invalid);
-  let parsed;
-  try { parsed = JSON.parse(text); } catch { throw invalid('invalid_json'); }
+  const { parsed, invalid } = await requestGeminiJson(writer, apiKey, body, fetchImpl, 'writer_reason');
   if (!Array.isArray(parsed?.summaries)) throw invalid('missing_summaries');
   return parsed.summaries;
 }
@@ -411,7 +394,6 @@ export function writerTargets(article, review) {
   });
 }
 
-const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
 const withoutSummary = ({ summary_writer, summary_quotes, rewrite_attempt, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
 const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 

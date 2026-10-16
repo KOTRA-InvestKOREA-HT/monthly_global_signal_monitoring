@@ -17,7 +17,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { GEMINI, toGeminiSchema } from './review_providers.mjs';
+import { GEMINI, GEMINI_TRANSIENT_REASONS as TRANSIENT, requestGeminiJson, toGeminiSchema } from './review_providers.mjs';
 import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
 import { writeJsonAtomic } from './atomic_json.mjs';
 import { importReview, normalizeQuote } from './local_report.mjs';
@@ -149,28 +149,10 @@ export function acceptedIssues(decision, issues, extraSources = []) {
 }
 
 async function requestReviewer(reviewer, apiKey, body, fetchImpl) {
-  let response;
-  try {
-    response = await fetchImpl(reviewer.url(reviewer.model), {
-      method: 'POST', headers: reviewer.headers(apiKey), body: JSON.stringify(body), signal: AbortSignal.timeout(reviewer.timeoutMs),
-    });
-  } catch (error) {
-    throw Object.assign(new Error(`${reviewer.label} transport error: ${error.name || 'Error'}`), { reviewer_reason: error.name === 'TimeoutError' ? 'timeout' : 'transport' });
-  }
-  if (!response.ok) {
-    await response.text().catch(() => '');
-    throw Object.assign(new Error(`${reviewer.label} HTTP ${response.status}`), { status: response.status,
-      reviewer_reason: response.status === 429 ? 'quota' : response.status >= 500 ? 'unavailable' : 'provider_error' });
-  }
-  const invalid = code => Object.assign(new Error(`${reviewer.label} invalid response: ${code}`), { reviewer_reason: 'invalid_response' });
-  const { text } = reviewer.parse(await response.json(), invalid);
-  let parsed;
-  try { parsed = JSON.parse(text); } catch { throw invalid('invalid_json'); }
+  const { parsed, invalid } = await requestGeminiJson(reviewer, apiKey, body, fetchImpl, 'reviewer_reason');
   if (!Array.isArray(parsed?.reviews)) throw invalid('missing_reviews');
   return parsed.reviews;
 }
-
-const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
 
 // 문안 단계에 rejected_because 로 넘기는 문장. 왜 틀렸는지(note)를 앞에 두고, 길이는 구절에서만 줄인다.
 // 예전에는 구절 뒤에 둔 설명이 전체 400자에서 잘렸다. Issue 4(10월 1일 실행) Applied Materials 지적은 원문 구절이
