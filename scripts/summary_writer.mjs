@@ -545,7 +545,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       stats.written_by[text.model] = (stats.written_by[text.model] || 0) + 1;
       const { model, ...copy } = text;
       const { rewrite_attempt, ...current } = decision;
-      // 키는 기본 모델 기준이다. 대체 모델이 쓴 문안도 인용이 같으면 다음 실행에서 다시 묻지 않는다. model 은 실제로 쓴 모델이다.
+      // 키가 같으면(같은 인용·지시·모델) 다음 실행에서 다시 묻지 않는다. model 은 이 문안을 쓴 모델이다.
       return { ...current, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
     });
     // 멈춘 기사는 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.

@@ -84,11 +84,16 @@ export function needsFacilityStageReview(article, review) {
 // 같은 실행: Infineon 우주망원경용 전력반도체를 위성통신·레이다 RF 반도체로, Plansee 텅스텐 재활용을
 // 티타늄·탄탈륨 타겟으로, NXP 차량용 UWB 를 우주항공 RF 반도체로 인정해 사업동향이 실렸다. 기술 연결 지시를 넣기 전에 저장된
 // 판정 중 면제가 아닌데 기술 연결로 보고서에 실리는 것만 한 번 다시 묻는다.
+// 면제가 아닌데 기술 연결로 보고서에 실릴 판정. 재검토(needsTechnologyReview·cachedRecheck)와 2차 검증 대상
+// (verificationSuspects)이 같은 기준을 쓴다.
+export function technologyLinkSuspects(article, decisions) {
+  return decisions.filter(d => d.target_technology_supported &&
+    !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
+    publishedDecision(article, decisions, d));
+}
 export function needsTechnologyReview(article, review) {
   if (review.technology_review_version === TECHNOLOGY_REVIEW_VERSION) return false;
-  return review.decisions.some(d => d.target_technology_supported &&
-    !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
-    publishedDecision(article, review.decisions, d));
+  return technologyLinkSuspects(article, review.decisions).length > 0;
 }
 
 // 실행 35175067142: HyproMag S1 이 모회사의 Remloy 인수 완료와 그 인수로 넘어온 원료 345톤을 공급망 전조로 승인했다.
@@ -194,12 +199,8 @@ export function verificationSuspects(article, review) {
   for (const d of fundingSuspects(article, review.decisions)) add(d.candidate_id, 'funding_event');
   for (const d of acquisitionSuspects(article, review.decisions)) add(d.candidate_id, 'acquisition_event');
   for (const d of relevanceConflictSuspects(article, review.decisions)) add(d.candidate_id, 'relevance_conflict');
-  for (const d of review.decisions) {
-    const candidate = article.candidates.find(c => c.id === d.candidate_id);
-    if (d.target_technology_supported && candidate && !candidate.relevance_exempt && publishedDecision(article, review.decisions, d)) {
-      add(d.candidate_id, 'technology_link');
-    }
-  }
+  // 후보 없는 판정은 importReview 가 먼저 거부하므로, 후보가 있는지는 따로 보지 않는다.
+  for (const d of technologyLinkSuspects(article, review.decisions)) add(d.candidate_id, 'technology_link');
   for (const id of review.semantic_recheck_pending?.candidate_ids || []) add(id, 'semantic_recheck_pending');
   if (!reasons.size) return null;
   return { candidate_ids: [...reasons.keys()], flagged_because: Object.fromEntries(reasons) };
@@ -254,9 +255,7 @@ export function cachedRecheck(article, review, { verifierDigest = null } = {}) {
   if (needsFacilityStageReview(article, review)) return { reason: 'facility_stage', candidate_ids: ids(facilityStageSuspects(article, review.decisions)) };
   if (needsAcquisitionReview(article, review)) return { reason: 'acquisition_event', candidate_ids: ids(acquisitionSuspects(article, review.decisions)) };
   if (needsRelevanceReview(article, review)) return { reason: 'relevance_conflict', candidate_ids: ids(relevanceConflictSuspects(article, review.decisions)) };
-  if (needsTechnologyReview(article, review)) return { reason: 'technology_link', candidate_ids: ids(review.decisions.filter(d =>
-    d.target_technology_supported && !article.candidates.find(c => c.id === d.candidate_id)?.relevance_exempt &&
-    publishedDecision(article, review.decisions, d))) };
+  if (needsTechnologyReview(article, review)) return { reason: 'technology_link', candidate_ids: ids(technologyLinkSuspects(article, review.decisions)) };
   // 검증 지시·질문·모델 등이 바뀌었으면 다시 검증한다. 1차 판정은 재사용한다. 여기서 돌려주는 것은 지난번 검증한
   // 후보지만, 검증기가 켜져 있으면 호출자(reviewArticlesSerial)가 지금의 의심 후보(verificationSuspects) 전체를 더해
   // 한 요청으로 보낸다. 검증이 끝나면 모든 재검토 버전이 최신으로 찍히므로, 다른 규칙의 의심 후보를 빼면 그 후보는
@@ -400,21 +399,6 @@ export function policySection(doc) {
   return doc.split('## 판정 기준')[1].split('## Summary wording')[0].split('## 기사별 응답 형식')[0];
 }
 
-// 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
-// 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
-// golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
-//
-// 식별자에는 모델에 보내는 것과, 모델 답을 검증하고 쓰는 방식을 바꾸는 것만 넣는다. 예전에는 기술 매핑
-// 전체와 지표 설정 전체(키워드·label_en·description_ko)도 넣어서, 2026-09 이후 지표 이름·키워드만 고친
-// 커밋 4건이 저장된 판정 약 430건을 매번 무효로 만들었다. 둘 다 모델에 가지 않는다. 모델이 받는 기업별
-// 기술(영문)·범위·면제 여부와 지표 번호(후보 id)는 기사 id 의 재료(groupArticles 의 material)에 이미 있어,
-// 그것이 바뀌면 그 기사만 다시 판정된다.
-//
-// 승인 규칙(approvalRules)은 남긴다. 판정 문안 때문에 넣었던 이유는 사라졌지만(판정 호출은 문안을 쓰지
-// 않는다), 규칙은 여전히 판정 단계에서 쓰인다. 저장된 판정의 가져오기 검증(importReview)과, 같은 실행 안의
-// 재질문·2차 검증 대상 선택(stageSuspects, relevanceConflictSuspects, verificationSuspects)이 이 규칙을
-// 본다. 규칙이 바뀌면 그때 새로 걸리는 후보가 재질문·검증을 거치지 않은 채 승인될 수 있다. 사람이 읽는
-// 설명(description, *_note)만 뺀다.
 // outputs/review_work 는 실행마다 커지기만 했다. 이 디렉터리는 캐시로 복원되고 아티팩트로
 // 30일 보관되므로, 안 지우면 아티팩트와 캐시가 함께 불어난다.
 //
@@ -455,15 +439,32 @@ export function approvalRules(policy = APPROVAL_POLICY) {
   return Object.fromEntries(Object.entries(policy).filter(([key]) => key !== 'description' && !key.endsWith('_note')));
 }
 
-// technology·indicators 는 더 이상 받지 않는다(위 주석). 예전 호출 모양으로 넘겨도 식별자에 들어가지 않는다.
+// 판정 캐시 식별자. 여기 들어가는 값이 하나라도 바뀌면 기사 id 가 바뀌고 앞선 판정은 재사용되지
+// 않는다. 판정 기준을 고치면 옛 판정이 새 기준의 결과로 읽히지 않는다는 뜻이고, 그것이 의도다.
+// golden 평가도 같은 식을 써야 운영과 같은 기사 id 를 얻는다.
+//
+// 식별자에는 모델에 보내는 것과, 모델 답을 검증하고 쓰는 방식을 바꾸는 것만 넣는다. 예전에는 기술 매핑
+// 전체와 지표 설정 전체(키워드·label_en·description_ko)도 넣어서, 2026-09 이후 지표 이름·키워드만 고친
+// 커밋 4건이 저장된 판정 약 430건을 매번 무효로 만들었다. 둘 다 모델에 가지 않는다. 모델이 받는 기업별
+// 기술(영문)·범위·면제 여부와 지표 번호(후보 id)는 기사 id 의 재료(groupArticles 의 material)에 이미 있어,
+// 그것이 바뀌면 그 기사만 다시 판정된다.
+//
+// 승인 규칙(approvalRules)은 남긴다. 판정 문안 때문에 넣었던 이유는 사라졌지만(판정 호출은 문안을 쓰지
+// 않는다), 규칙은 여전히 판정 단계에서 쓰인다. 저장된 판정의 가져오기 검증(importReview)과, 같은 실행 안의
+// 재질문·2차 검증 대상 선택(stageSuspects, relevanceConflictSuspects, verificationSuspects)이 이 규칙을
+// 본다. 규칙이 바뀌면 그때 새로 걸리는 후보가 재질문·검증을 거치지 않은 채 승인될 수 있다. 사람이 읽는
+// 설명(description, *_note)만 뺀다.
+//
+// technology·indicators 는 더 이상 받지 않는다. 예전 호출 모양으로 넘겨도 식별자에 들어가지 않는다.
 export function reviewPolicy({ policyText, approvalPolicy = APPROVAL_POLICY,
   provider = PROVIDER, promptDigest = reviewPromptDigest(policyText, promptContract()) }) {
   // 줄바꿈은 정규화하고 해시한다. Windows 작업트리는 CRLF, 리눅스 러너는 LF 로 같은 문서를 받으므로,
   // 정규화하지 않으면 같은 커밋이 플랫폼마다 다른 기사 id 를 만든다. 그러면 로컬에서 돌린 golden
   // 평가가 운영과 다른 정책을 재고, 체크아웃 설정이 다른 사람이 캐시를 통째로 무효화한다.
   const normalized = String(policyText).split('\r\n').join('\n');
-  // 추론 단계와 실제 프롬프트(재시도·2차 검증 포함)도 판정 결과를 바꾸므로 식별자에 넣는다.
+  // 추론 단계와 실제 프롬프트(시스템 지시·응답 스키마·재시도 지시, promptContract)도 판정 결과를 바꾸므로 식별자에 넣는다.
   // 프롬프트 버전 수동 갱신을 잊어도 내용 digest가 달라져 이전 review 파일을 재사용하지 않는다.
+  // 2차 검증 지시·질문은 여기 넣지 않는다. 검증은 따로 verificationDigest 로 무효화되고, 1차 판정은 그대로 쓴다.
   return `${VERSION}:${digest([provider.id, provider.model, provider.thinkingLevel || '', promptDigest, normalized, approvalRules(approvalPolicy)])}`;
 }
 
@@ -651,10 +652,7 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
   const suggested = value => (typeof value === 'string' ? value : '');
   let review = { article_id: article.id, reviewer: `${provider.model}/${VERSION}`, provider: provider.id, decisions: separated.decisions,
     prompt_version: PROMPT_VERSION, prompt_digest: reviewPromptDigest(policy, promptContract()),
-    date_hint_version: DATE_HINT_VERSION, stage_review_version: STAGE_REVIEW_VERSION,
-    form3_review_version: FORM3_REVIEW_VERSION, funding_review_version: FUNDING_REVIEW_VERSION,
-    facility_stage_review_version: FACILITY_STAGE_REVIEW_VERSION, technology_review_version: TECHNOLOGY_REVIEW_VERSION,
-    acquisition_review_version: ACQUISITION_REVIEW_VERSION, relevance_review_version: RELEVANCE_REVIEW_VERSION,
+    date_hint_version: DATE_HINT_VERSION, ...RECHECK_VERSIONS(),
     published_date: suggested(parsed.published_date), published_date_quote: suggested(parsed.published_date_quote),
     ...(separated.repairs.length ? { quote_repairs: separated.repairs } : {}), usage };
   let problem = null;
@@ -711,15 +709,20 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
 
 const CANDIDATE_EVIDENCE_PROBLEM = /(?:evidence_quotes must be exact|needs an evidence quote)/;
 
+// 인용이 원문 블록 하나에 글자 그대로(정규화 뒤) 들어 있는지. 인용을 빼는 두 경로(strip·salvage)가 같은 기준을 쓴다.
+function quoteVerifier(article) {
+  const evidence = article.evidence.map(normalizeQuote);
+  return quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
+    evidence.some(text => text.includes(normalizeQuote(quote)));
+}
+
 // 맞지 않는 인용을 뺀 판정. 다음 중 하나라도 걸리면 null 이고 호출자는 지금처럼 되묻는다.
 // 인용을 뺄 후보가 승인되거나 근접 후보로 남는다(근접 사업동향은 사업현황 상자에 실린다). 인용을 빼서 어느
 // 후보든 승인·근접 여부가 달라진다(같은 사건 판단 sameEventAsBusiness 는 인용을 본다). 뺀 뒤에도 검증을
 // 통과하지 못한다. 없는 인용을 통과시키지 않고, 뺀 인용은 unverified_quotes_removed 로 남긴다.
 export function stripRejectedCandidateQuotes(article, review) {
   try {
-    const evidence = article.evidence.map(normalizeQuote);
-    const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
-      evidence.some(text => text.includes(normalizeQuote(quote)));
+    const verified = quoteVerifier(article);
     const outcomes = decisions => decisions.map(decision => {
       const { supported, nearMiss } = decisionOutcome(article, decisions, decision);
       return [decision.candidate_id, Boolean(supported), Boolean(nearMiss)];
@@ -745,9 +748,7 @@ export function stripRejectedCandidateQuotes(article, review) {
   }
 }
 export function salvageCandidateEvidence(article, review) {
-  const evidence = article.evidence.map(normalizeQuote);
-  const verified = quote => typeof quote === 'string' && Boolean(normalizeQuote(quote)) &&
-    evidence.some(text => text.includes(normalizeQuote(quote)));
+  const verified = quoteVerifier(article);
   const removed = [];
   const pending = new Set(review.semantic_recheck_pending?.candidate_ids || []);
   const publishable = decision => {
