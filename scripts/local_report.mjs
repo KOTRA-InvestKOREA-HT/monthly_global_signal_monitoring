@@ -16,7 +16,7 @@ import { modelCandidate, technologyTranslationError } from "./model_input.mjs";
 import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate } from "./date_state.mjs";
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
-import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
+import { collectorCommand, extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // 기술 그룹별로 무엇이 타겟 품목이고 무엇이 아닌지 적은 범위. 기술 매핑(company_technology_map.json)과 따로 두는 것은
@@ -741,11 +741,8 @@ export async function buildLanguages(langs, { buildDir, argsFor, run = executeAs
 async function collect(month, outDir) {
   const period = monthPeriod(month);
   const dataDir = await fs.mkdtemp(path.join(outDir, "collection-"));
-  execute(process.execPath, ["scripts/collect_company_signals.mjs", "--companies", "data/target_companies.json",
-    "--source-config", "config/company_sources.json", "--out-dir", dataDir,
-    "--sources", "official_feeds,official_pages,google_news", "--from-date", period.from_date, "--to-date", period.to_date,
-    "--max-per-source", "6", "--max-per-company", "10", "--max-detail-per-company", "10",
-    "--fallback-mode", "missing", "--fallback-min-results", "1", "--rate-limit-seconds", "0.5", "--company-concurrency", "4"]);
+  // 운영 판정과 같은 수집 인자(collection_args.mjs)를 쓴다. 예전에는 사이트맵·SEC 출처와 응답 헤더 한도가 빠졌다.
+  execute(process.execPath, collectorCommand(["--out-dir", dataDir, "--from-date", period.from_date, "--to-date", period.to_date]));
   return dataDir;
 }
 

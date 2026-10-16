@@ -15,13 +15,12 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
+import { COLLECTION_SETTINGS } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 export const CONTENT_COLLECTION_VERSION = 'article-body-v17-36k-body';
-// 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
-// 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
-// 2026-08 보고서에서 탐색 기사 27건 중 5건이 승인됐다(본문 있는 13건 기준 38%, 소스 중 가장 높다).
-// 9월 18일 probe 에서 2건 상한은 47건을 남겼다. 판정 호출 약 20회를 더 쓰고 2건으로 올린다.
-export const TREND_DISCOVERY_PER_COMPANY = 2;
+// 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
+// 읽어 가므로 다시 내보낸다.
+export { TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collection_args.mjs';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -148,97 +147,107 @@ export function summarySamples(samples) {
   return byReason;
 }
 
+// 인자 이름과 args 필드. 모르는 플래그는 오류다. 예전에는 조용히 건너뛰어 철자가 틀린 인자가 기본값으로 돌았다.
+const ARG_KEYS = {
+  "--companies": "companies",
+  "--source-config": "sourceConfig",
+  "--out-dir": "outDir",
+  "--refresh": "refresh",
+  "--sources": "sources",
+  "--days": "days",
+  "--from-date": "fromDate",
+  "--to-date": "toDate",
+  "--max-per-source": "maxPerSource",
+  "--max-per-company": "maxPerCompany",
+  "--fallback-min-results": "fallbackMinResults",
+  "--fallback-mode": "fallbackMode",
+  "--rate-limit-seconds": "rateLimitSeconds",
+  "--timeout-seconds": "timeoutSeconds",
+  "--company-limit": "companyLimit",
+  "--company-concurrency": "companyConcurrency",
+  "--fetch-official-content": "fetchOfficialContent",
+  "--content-char-limit": "contentCharLimit",
+  "--content-excerpt-limit": "contentExcerptLimit",
+  "--max-detail-per-company": "maxDetailPerCompany",
+  "--fetch-retries": "fetchRetries",
+  "--link-policy": "linkPolicy",
+  "--max-verify-per-company": "maxVerifyPerCompany",
+  "--technology-map": "technologyMap",
+  "--keyword-config": "keywordConfig",
+  "--search-terms": "searchTerms",
+  "--max-trend-discovery": "maxTrendDiscovery",
+};
+
+const INTEGER_ARGS = new Set(["days", "maxPerSource", "maxPerCompany", "fallbackMinResults", "timeoutSeconds",
+  "companyLimit", "companyConcurrency", "contentCharLimit", "contentExcerptLimit", "maxDetailPerCompany",
+  "fetchRetries", "maxVerifyPerCompany", "maxTrendDiscovery"]);
+// 0 이면 아무 일도 하지 않는 값. 시간 제한과 동시 처리 수는 1 이상이어야 한다.
+const POSITIVE_ARGS = new Set(["timeoutSeconds", "companyConcurrency", "contentCharLimit"]);
+
+// 기본값은 운영 수집 설정(collection_args.mjs)이다. args 의 키 순서는 기업 체크포인트 식별자에 들어가므로 바꾸지 않는다.
+//
+// maxDetailPerCompany·maxVerifyPerCompany 는 이름과 달리 enrichOfficialRowsWithContent 한 번(호출 한 번)의
+// 상한이다. 한 기업에서 공식 출처, 대체 수집, 사업동향 탐색이 각각 한 번씩 부르므로 기업당 최대 3배까지 받는다.
+// 운영 결과가 이 동작에 맞춰져 있어 동작은 그대로 두고, 식별자에 들어가는 이름도 바꾸지 않는다.
 export function parseArgs(argv) {
   const args = {
-    companies: "data/target_companies.json",
-    sourceConfig: "config/company_sources.json",
+    companies: COLLECTION_SETTINGS.companies,
+    sourceConfig: COLLECTION_SETTINGS.sourceConfig,
     outDir: "outputs",
     refresh: false,
-    sources: "official_feeds,official_pages,official_sitemaps,sec_filings,google_news",
+    sources: COLLECTION_SETTINGS.sources,
     days: 45,
     fromDate: "",
     toDate: "",
-    maxPerSource: 3,
-    maxPerCompany: 6,
-    fallbackMinResults: 1,
-    fallbackMode: "missing",
-    rateLimitSeconds: 1.0,
+    maxPerSource: COLLECTION_SETTINGS.maxPerSource,
+    maxPerCompany: COLLECTION_SETTINGS.maxPerCompany,
+    fallbackMinResults: COLLECTION_SETTINGS.fallbackMinResults,
+    fallbackMode: COLLECTION_SETTINGS.fallbackMode,
+    rateLimitSeconds: COLLECTION_SETTINGS.rateLimitSeconds,
     timeoutSeconds: 20,
     companyLimit: 0,
-    companyConcurrency: 1,
+    companyConcurrency: COLLECTION_SETTINGS.companyConcurrency,
     fetchOfficialContent: true,
     // 2026-08 수집본에서 본문 415건 중 52건이 24000자에 걸렸고, 대부분 시그널이 많이 나오는 실적 발표·공시 PDF였다.
     // 문안 단계(summary_writer.mjs ARTICLE_EVIDENCE_CHARS)도 같은 36000자까지 받는다.
     contentCharLimit: 36000,
     contentExcerptLimit: 800,
-    maxDetailPerCompany: 8,
+    // 상세 페이지 상한(호출당). 위 주석 참고.
+    maxDetailPerCompany: COLLECTION_SETTINGS.maxDetailPerCompany,
     fetchRetries: 2,
     // Keep recovered accept links; uncertain document verification is opt-in.
     linkPolicy: DEFAULT_LINK_POLICY,
+    // 확인 대상(fetch_to_verify) 상한(호출당). 위 주석 참고.
     maxVerifyPerCompany: DEFAULT_MAX_VERIFY_PER_COMPANY,
     // 사업동향 탐색. 공식 자료가 있어도 돌린다(아래 collectTrendDiscovery 주석).
-    technologyMap: "data/company_technology_map.json",
-    keywordConfig: "config/technology_keywords.json",
-    searchTerms: "config/trend_search_terms.json",
-    maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY,
-  };
-  const keyMap = {
-    "--companies": "companies",
-    "--source-config": "sourceConfig",
-    "--out-dir": "outDir",
-    "--refresh": "refresh",
-    "--sources": "sources",
-    "--days": "days",
-    "--from-date": "fromDate",
-    "--to-date": "toDate",
-    "--max-per-source": "maxPerSource",
-    "--max-per-company": "maxPerCompany",
-    "--fallback-min-results": "fallbackMinResults",
-    "--fallback-mode": "fallbackMode",
-    "--rate-limit-seconds": "rateLimitSeconds",
-    "--timeout-seconds": "timeoutSeconds",
-    "--company-limit": "companyLimit",
-    "--company-concurrency": "companyConcurrency",
-    "--fetch-official-content": "fetchOfficialContent",
-    "--content-char-limit": "contentCharLimit",
-    "--content-excerpt-limit": "contentExcerptLimit",
-    "--max-detail-per-company": "maxDetailPerCompany",
-    "--fetch-retries": "fetchRetries",
-    "--link-policy": "linkPolicy",
-    "--max-verify-per-company": "maxVerifyPerCompany",
-    "--technology-map": "technologyMap",
-    "--keyword-config": "keywordConfig",
-    "--search-terms": "searchTerms",
-    "--max-trend-discovery": "maxTrendDiscovery",
+    technologyMap: COLLECTION_SETTINGS.technologyMap,
+    keywordConfig: COLLECTION_SETTINGS.keywordConfig,
+    searchTerms: COLLECTION_SETTINGS.searchTerms,
+    maxTrendDiscovery: COLLECTION_SETTINGS.maxTrendDiscovery,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
-    if (!keyMap[key]) continue;
-    const mapped = keyMap[key];
+    const mapped = ARG_KEYS[key];
+    if (!mapped) throw new Error(`Unknown argument: ${key}`);
+    // 값 자리에 다음 플래그가 오면 값이 빠진 것이다. 워크플로에서 company_limit 을 비우면
+    // "--company-limit --link-policy current" 가 되어 current 가 버려지고 기본 정책으로 돌았다.
     const value = argv[index + 1];
+    if (value === undefined || String(value).startsWith("--")) throw new Error(`Missing value for ${key}`);
     index += 1;
-    if (
-      [
-        "days",
-        "maxPerSource",
-        "maxPerCompany",
-        "fallbackMinResults",
-        "timeoutSeconds",
-        "companyLimit",
-        "companyConcurrency",
-        "contentCharLimit",
-        "contentExcerptLimit",
-        "maxDetailPerCompany",
-        "fetchRetries",
-        "maxVerifyPerCompany",
-        "maxTrendDiscovery",
-      ].includes(mapped)
-    ) {
-      args[mapped] = Number.parseInt(value, 10);
+    if (INTEGER_ARGS.has(mapped)) {
+      const number = /^\d+$/.test(String(value).trim()) ? Number(value) : NaN;
+      if (!Number.isSafeInteger(number) || (POSITIVE_ARGS.has(mapped) && number < 1)) {
+        throw new Error(`Invalid ${key}: ${value}`);
+      }
+      args[mapped] = number;
     } else if (mapped === "rateLimitSeconds") {
-      args[mapped] = Number.parseFloat(value);
+      const number = /^\d+(?:\.\d+)?$/.test(String(value).trim()) ? Number(value) : NaN;
+      if (!Number.isFinite(number)) throw new Error(`Invalid ${key}: ${value}`);
+      args[mapped] = number;
     } else if (mapped === "fetchOfficialContent" || mapped === 'refresh') {
-      args[mapped] = !["0", "false", "no"].includes(String(value).toLowerCase());
+      const text = String(value).toLowerCase();
+      if (!["0", "1", "false", "true", "no", "yes"].includes(text)) throw new Error(`Invalid ${key}: ${value}`);
+      args[mapped] = !["0", "false", "no"].includes(text);
     } else {
       args[mapped] = value;
     }

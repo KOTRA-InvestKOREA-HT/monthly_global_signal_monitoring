@@ -6,8 +6,9 @@ name: link-policy-trial
 # 검토 요청 400건이 같이 나간다. 여기서는 수집기와 감사 도구만 돌리고 결과를 아티팩트로
 # 올린다. AI 는 부르지 않고 outputs/ 도 커밋하지 않는다.
 #
-# 같은 기간으로 link_policy=current 와 proposed 를 한 번씩 돌려 두 아티팩트를 비교하면
-# 회수량과 소음 증가량이 나온다. 판단이 끝나면 collect-company-signals 쪽에 연결한다.
+# 수집 기본값은 link_policy=proposed 다(운영 수집도 이 규칙을 쓴다). current 는 proposed 도입 전 규칙으로,
+# 비교 기준으로만 남아 있다. 같은 기간으로 둘을 한 번씩 돌려 두 아티팩트를 비교하면 회수량과 소음 증가량이 나온다.
+# 수집 인자는 운영 판정과 같은 scripts/collection_args.mjs 를 쓰고, 이 화면에서 고른 값만 덮어쓴다.
 on:
   workflow_dispatch:
     inputs:
@@ -20,7 +21,7 @@ on:
         required: false
         default: ""
       link_policy:
-        description: "Link rule: proposed recovers article links; current is the comparison baseline"
+        description: "Link rule: proposed is the production rule; current is the older comparison baseline"
         type: choice
         options: [current, proposed]
         default: proposed
@@ -63,35 +64,39 @@ jobs:
       # 수집기가 PDF 본문을 뽑을 때 python 을 부른다. 이게 없으면 PDF 기사가 본문 없이
       # 남아 두 정책의 비교가 어긋난다.
       - run: python -m pip install -r requirements-python.txt
-      - name: Resolve reporting period
-        id: report_period
+      # 자유 입력은 run: 에 직접 넣지 않고 환경 변수로만 넘긴다(스크립트 주입 방지). 숫자 입력은 여기서 검사한다.
+      # 비워 두면 0 이다. 예전에는 빈 company_limit 이 다음 플래그(--link-policy)를 값으로 삼켰다.
+      - name: Check trial inputs
+        id: trial_inputs
         shell: bash
         env:
-          INPUT_FROM_DATE: ${{ inputs.from_date }}
-          INPUT_TO_DATE: ${{ inputs.to_date }}
-          TZ: Asia/Seoul
+          INPUT_COMPANY_LIMIT: ${{ inputs.company_limit }}
+          INPUT_MAX_VERIFY: ${{ inputs.max_verify_per_company }}
+          INPUT_LINK_POLICY: ${{ inputs.link_policy }}
         run: |
-          if [[ -n "$INPUT_FROM_DATE" || -n "$INPUT_TO_DATE" ]]; then
-            if [[ -z "$INPUT_FROM_DATE" || -z "$INPUT_TO_DATE" ]]; then
-              echo "from_date and to_date must be supplied together" >&2
-              exit 1
-            fi
-            from_date="$INPUT_FROM_DATE"
-            to_date="$INPUT_TO_DATE"
-          else
-            current_month_start="$(date +%Y-%m-01)"
-            from_date="$(date -d "$current_month_start -1 month" +%F)"
-            to_date="$(date -d "$current_month_start -1 day" +%F)"
-          fi
-          if [[ "$(date -d "$from_date" +%F 2>/dev/null)" != "$from_date" ]] ||
-             [[ "$(date -d "$to_date" +%F 2>/dev/null)" != "$to_date" ]] ||
-             [[ "$from_date" > "$to_date" ]]; then
-            echo "invalid reporting period: $from_date .. $to_date" >&2
+          company_limit="${INPUT_COMPANY_LIMIT:-0}"
+          max_verify="${INPUT_MAX_VERIFY:-0}"
+          if [[ ! "$company_limit" =~ ^[0-9]{1,3}$ ]]; then
+            echo "company_limit must be a whole number (0 means all companies)" >&2
             exit 1
           fi
-          echo "from_date=$from_date" >> "$GITHUB_OUTPUT"
-          echo "to_date=$to_date" >> "$GITHUB_OUTPUT"
-          echo "Reporting period: $from_date .. $to_date (link_policy=${{ inputs.link_policy }})"
+          if [[ ! "$max_verify" =~ ^[0-9]{1,3}$ ]]; then
+            echo "max_verify_per_company must be a whole number" >&2
+            exit 1
+          fi
+          if [[ "$INPUT_LINK_POLICY" != "current" && "$INPUT_LINK_POLICY" != "proposed" ]]; then
+            echo "link_policy must be current or proposed" >&2
+            exit 1
+          fi
+          echo "company_limit=$company_limit" >> "$GITHUB_OUTPUT"
+          echo "max_verify=$max_verify" >> "$GITHUB_OUTPUT"
+      # 다른 워크플로와 같은 기간 계산을 쓴다. 비우면 한국 시간 기준 전월이다.
+      - name: Resolve reporting period
+        id: report_period
+        env:
+          REPORT_FROM_DATE: ${{ inputs.from_date }}
+          REPORT_TO_DATE: ${{ inputs.to_date }}
+        run: node scripts/report_period.mjs --github-output
       - name: Restore company collection progress
         uses: actions/cache/restore@v5
         with:
@@ -100,25 +105,23 @@ jobs:
           restore-keys: |
             company-progress-${{ github.ref_name }}-${{ steps.report_period.outputs.from_date }}-${{ steps.report_period.outputs.to_date }}-
       - name: Collect
+        env:
+          FROM_DATE: ${{ steps.report_period.outputs.from_date }}
+          TO_DATE: ${{ steps.report_period.outputs.to_date }}
+          COMPANY_LIMIT: ${{ steps.trial_inputs.outputs.company_limit }}
+          MAX_VERIFY: ${{ steps.trial_inputs.outputs.max_verify }}
+          LINK_POLICY: ${{ inputs.link_policy }}
+          REFRESH: ${{ inputs.refresh }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: >
-          node scripts/collect_company_signals.mjs
-          --companies data/target_companies.json
-          --source-config config/company_sources.json
+          node scripts/collection_args.mjs
           --out-dir outputs/link_trial
-          --sources official_feeds,official_pages,google_news
-          --from-date ${{ steps.report_period.outputs.from_date }}
-          --to-date ${{ steps.report_period.outputs.to_date }}
-          --max-per-source 6
-          --max-per-company 10
-          --max-detail-per-company 10
-          --fallback-mode missing
-          --fallback-min-results 1
-          --rate-limit-seconds 0.5
-          --company-concurrency 4
-          --company-limit ${{ inputs.company_limit }}
-          --link-policy ${{ inputs.link_policy }}
-          --max-verify-per-company ${{ inputs.max_verify_per_company }}
-          --refresh ${{ inputs.refresh }}
+          --from-date "$FROM_DATE"
+          --to-date "$TO_DATE"
+          --company-limit "$COMPANY_LIMIT"
+          --link-policy "$LINK_POLICY"
+          --max-verify-per-company "$MAX_VERIFY"
+          --refresh "$REFRESH"
       - name: Save company collection progress
         if: always()
         uses: actions/cache/save@v5
@@ -135,11 +138,13 @@ jobs:
       - name: Headline numbers
         if: ${{ always() }}
         shell: bash
+        env:
+          LINK_POLICY: ${{ inputs.link_policy }}
         run: |
           summary=outputs/link_trial/latest_collection_summary.json
           [[ -f "$summary" ]] || exit 0
           {
-            echo "### link_policy=${{ inputs.link_policy }}"
+            echo "### link_policy=$LINK_POLICY"
             echo '```'
             node -e '
               const s = require("./" + process.argv[1]);
