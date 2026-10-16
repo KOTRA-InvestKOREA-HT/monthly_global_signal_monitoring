@@ -5,7 +5,6 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 ## Files
 
 - `data/target_companies.json`: canonical 77-company target list from PDF page 2.
-- `data/target_companies.csv`: spreadsheet-friendly version of the same list.
 - `data/company_technology_map.json`: 77-company target technology mapping from the reference PDF.
 - `data/company_technology_map.csv`: spreadsheet-friendly version of the technology mapping.
 - `config/company_sources.json`: official Newsroom/Press/IR pages, official RSS feeds (or a JSON newsroom feed with `"format": "json"` and a `json` field map, for newsrooms rendered by JavaScript), SEC 8-K filers (confirmed by ticker) and dated news sitemaps by company. SEC collection runs only when `SEC_USER_AGENT` (a User-Agent with a contact address, per SEC fair-access policy) is set; in Actions this comes from the `SEC_USER_AGENT` repository variable.

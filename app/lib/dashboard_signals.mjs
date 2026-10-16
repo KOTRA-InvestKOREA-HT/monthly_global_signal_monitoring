@@ -28,8 +28,12 @@ export function monthOnlyValue(item) {
   return MONTH_ONLY.test(month) ? month : '';
 }
 
+// 오프셋이 붙은 게시 시각은 게시처 현지 날짜(문자열의 앞 10자)를 쓴다. 수집기의 dayOf, 보고서의 date_day 와 같은 기준이다.
+// UTC 로 바꾸면 한국·일본의 1일 오전 발표가 전월로 넘어간다.
 function dateOnly(value) {
   if (!value) return null;
+  const local = /^(\d{4}-\d{2}-\d{2})T/.exec(String(value));
+  if (local) return local[1];
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
   return date.toISOString().slice(0, 10);

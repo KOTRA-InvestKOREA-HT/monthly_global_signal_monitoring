@@ -49,6 +49,7 @@ test('the period filter keeps month-only and undated rows for review', () => {
   const september = { fromDate: '2026-09-01', toDate: '2026-09-30' };
   assert.equal(isWithinPeriod({ published_at: '2026-09-15T10:00:00Z' }, september), true);
   assert.equal(isWithinPeriod({ published_at: '2026-10-01T00:00:00Z' }, september), false);
+  assert.equal(isWithinPeriod({ published_at: '2026-09-01T00:30:00+09:00' }, september), true);
   assert.equal(isWithinPeriod({ published_at: '2026-08-31' }, september), false);
   // 게시월만 확인된 항목은 그 달이 기간과 겹치면 남긴다.
   assert.equal(isWithinPeriod({ published_at: '2026-09' }, september), true);
