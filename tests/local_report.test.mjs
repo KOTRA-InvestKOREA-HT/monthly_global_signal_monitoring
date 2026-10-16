@@ -266,7 +266,11 @@ test("CLI prepares isolated files and refuses incomplete builds without changing
     assert.equal(prepared.status, 0, prepared.stderr);
     const runName = (await fs.readdir(outDir)).find((name) => name.startsWith("2026-08-"));
     const runDir = path.join(outDir, runName);
-    const blocked = cli(["build", "--run-dir", runDir]);
+    // 호수 없이는 빌드하지 않는다. 예전에는 "2"로 채워 지난 호수의 PDF 가 나왔다.
+    const unnumbered = cli(["build", "--run-dir", runDir]);
+    assert.equal(unnumbered.status, 1);
+    assert.match(unnumbered.stderr, /issue number is required/);
+    const blocked = cli(["build", "--run-dir", runDir, "--issue-number", "3"]);
     assert.equal(blocked.status, 1);
     assert.match(blocked.stderr, /1 pending articles/);
     assert.equal((await fs.readdir(runDir)).some((name) => name.startsWith("report-")), false);
@@ -287,13 +291,13 @@ test("CLI prepares isolated files and refuses incomplete builds without changing
     const previous = path.join(runDir, "report-previous");
     await fs.mkdir(previous);
     await fs.writeFile(path.join(previous, "report_ko.pdf"), "previous report bytes");
-    const failed = cli(["build", "--run-dir", runDir, "--python", path.join(temp, "missing-python")]);
+    const failed = cli(["build", "--run-dir", runDir, "--issue-number", "3", "--python", path.join(temp, "missing-python")]);
     assert.equal(failed.status, 1);
     assert.equal(await fs.readFile(path.join(previous, "report_ko.pdf"), "utf8"), "previous report bytes");
     assert.deepEqual((await fs.readdir(runDir)).filter((name) => name.startsWith("report-")), ["report-previous"]);
     snapshot.signals = [];
     await fs.writeFile(path.join(runDir, "snapshot.json"), JSON.stringify(snapshot));
-    const modified = cli(["build", "--run-dir", runDir]);
+    const modified = cli(["build", "--run-dir", runDir, "--issue-number", "3"]);
     assert.equal(modified.status, 1);
     assert.match(modified.stderr, /snapshot was modified/);
     for (const [name, value] of Object.entries(inputs)) assert.equal(await fs.readFile(path.join(dataDir, name), "utf8"), JSON.stringify(value));
