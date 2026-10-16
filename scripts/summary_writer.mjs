@@ -11,11 +11,13 @@
 // 못한 승인 후보는 summary_failed 로 표시해 이번 보고서에서 빼고, 다음 실행이 다시 쓴다. 할당량(429)이나
 // 서비스 장애로 멈추면 보고서를 만들지 않고, 다음 실행이 이미 쓴 문안을 그대로 이어 받는다.
 import crypto from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { GEMINI, toGeminiSchema } from './review_providers.mjs';
+import { GEMINI, GEMINI_TRANSIENT_REASONS as TRANSIENT, requestGeminiJson, toGeminiSchema } from './review_providers.mjs';
 import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
+import { writeJsonAtomic } from './atomic_json.mjs';
 import {
   SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION,
   SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
@@ -35,8 +37,7 @@ export const DEFAULT_WRITER_MODEL = 'gemini-3.5-flash-lite';
 // Issue 3(9월 29일 실행)에서 원문 "will join"을 "영입했음"으로 옮기는 식의 시제 오류가 되풀이됐다.
 // 추론 단계는 요청 수 한도를 더 쓰지 않는다. 늘어나는 응답 시간에 맞춰 시간 제한을 늘린다.
 const DEFAULT_THINKING = 'high';
-// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격으로 요청을 시작하되, 응답은 여러 건을 함께 기다린다.
-const DEFAULT_DELAY_MS = 4500;
+// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격(GEMINI.defaultDelayMs)으로 요청을 시작하되, 응답은 여러 건을 함께 기다린다.
 const DEFAULT_TIMEOUT_MS = 180000;
 // 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 // Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
@@ -54,8 +55,10 @@ export function resolveWriter(env = process.env) {
   if (!['minimal', 'low', 'medium', 'high'].includes(thinkingLevel)) {
     throw new Error(`GEMINI_WRITER_THINKING_LEVEL must be minimal, low, medium or high: ${thinkingLevel}`);
   }
-  const delayMs = Number(env.GEMINI_WRITER_DELAY_MS || DEFAULT_DELAY_MS);
-  if (!Number.isFinite(delayMs) || delayMs < 4000 || delayMs > 60000) throw new Error('GEMINI_WRITER_DELAY_MS must be 4000..60000');
+  const delayMs = Number(env.GEMINI_WRITER_DELAY_MS || GEMINI.defaultDelayMs);
+  if (!Number.isFinite(delayMs) || delayMs < GEMINI.minDelayMs || delayMs > 60000) {
+    throw new Error(`GEMINI_WRITER_DELAY_MS must be ${GEMINI.minDelayMs}..60000`);
+  }
   const timeoutMs = Number(env.GEMINI_WRITER_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 10000 || timeoutMs > 600000) throw new Error('GEMINI_WRITER_TIMEOUT_MS must be 10000..600000');
   return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs, concurrency: resolveConcurrency(env) };
@@ -63,10 +66,16 @@ export function resolveWriter(env = process.env) {
 
 // 정책 문서의 한국어 용어·배치 절만 가져온다. 판정 기준은 넣지 않는다. 이 단계가 판정 기준을 받지 않는
 // 것이 분리의 목적이다. 절 앞부분의 안내와 로컬 판정자용 대상 규칙은 이 단계에 해당하지 않으므로 뺀다.
+// 절 제목이 바뀌면 예전에는 빈 절이나 앞부분 안내까지 넣은 채 그냥 진행했다(fail-open). 판정 쪽(policySection)처럼 멈춘다.
 export function writerPolicySection(doc) {
-  const wording = String(doc).split('## Summary wording')[1]?.split('## 기사별 응답 형식')[0] || '';
+  const parts = String(doc).split('## Summary wording');
+  if (parts.length < 2) throw new Error('Policy document has no "## Summary wording" section for the writer');
+  const wording = parts[1].split('## 기사별 응답 형식')[0];
   const start = wording.indexOf('### Korean terminology');
-  return (start >= 0 ? wording.slice(start) : wording).replace(/\r\n?/g, '\n').trim();
+  if (start < 0) throw new Error('Policy "## Summary wording" section has no "### Korean terminology" subsection for the writer');
+  const section = wording.slice(start).replace(/\r\n?/g, '\n').trim();
+  if (!section.split('\n').slice(1).join('\n').trim()) throw new Error('Policy "### Korean terminology" subsection is empty');
+  return section;
 }
 
 // 규칙 문장만으로는 경량 모델이 문체를 따르지 않았다. 좋은 문안과 나쁜 문안을 짝지어 보여 준다.
@@ -333,8 +342,10 @@ const MISTRANSLATIONS = [
   { ko: /함대/, en: /(?:^|[^a-z])fleet(?:[^a-z]|$)/i },
 ];
 
-// 보고서 시그널 칸의 상세 문안 글자 상한(build_pdf_report.py summary_parts 의 detail_limit). 넘으면 "..."로 잘려 빌드가 실패한다.
-export const SIGNAL_SUMMARY_LIMITS = { en: 440, ko: 230 };
+// 보고서 시그널 칸의 문안 글자 상한. 렌더러(report_content.py summary_parts)와 config/copy_length_limits.json 하나를 함께 읽는다.
+// 상세 문안이 넘으면 "..."로 잘려 빌드가 실패한다. 상세 상한은 문안 지시문에 들어가므로 바꾸면 저장된 문안을 다시 쓴다.
+export const COPY_LENGTH_LIMITS = JSON.parse(readFileSync(new URL('../config/copy_length_limits.json', import.meta.url), 'utf8')).signal_card;
+export const SIGNAL_SUMMARY_LIMITS = { en: COPY_LENGTH_LIMITS.en.detail, ko: COPY_LENGTH_LIMITS.ko.detail };
 
 export function summaryStyleProblems(article, decision) {
   const ko = String(decision.summary_ko || '').trim();
@@ -360,24 +371,7 @@ export function summaryStyleProblems(article, decision) {
 }
 
 async function requestWriter(writer, apiKey, body, fetchImpl) {
-  let response;
-  try {
-    response = await fetchImpl(writer.url(writer.model), {
-      method: 'POST', headers: writer.headers(apiKey), body: JSON.stringify(body),
-      signal: AbortSignal.timeout(writer.timeoutMs),
-    });
-  } catch (error) {
-    throw Object.assign(new Error(`${writer.label} transport error: ${error.name || 'Error'}`), { writer_reason: error.name === 'TimeoutError' ? 'timeout' : 'transport' });
-  }
-  if (!response.ok) {
-    await response.text().catch(() => '');
-    throw Object.assign(new Error(`${writer.label} HTTP ${response.status}`), { status: response.status,
-      writer_reason: response.status === 429 ? 'quota' : response.status >= 500 ? 'unavailable' : 'provider_error' });
-  }
-  const invalid = code => Object.assign(new Error(`${writer.label} invalid response: ${code}`), { writer_reason: 'invalid_response' });
-  const { text } = writer.parse(await response.json(), invalid);
-  let parsed;
-  try { parsed = JSON.parse(text); } catch { throw invalid('invalid_json'); }
+  const { parsed, invalid } = await requestGeminiJson(writer, apiKey, body, fetchImpl, 'writer_reason');
   if (!Array.isArray(parsed?.summaries)) throw invalid('missing_summaries');
   return parsed.summaries;
 }
@@ -400,8 +394,7 @@ export function writerTargets(article, review) {
   });
 }
 
-const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
-const withoutSummary = ({ summary_writer, summary_quotes, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
+const withoutSummary = ({ summary_writer, summary_quotes, rewrite_attempt, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
 const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 
 // 판정이 모두 끝난 뒤 한 번 돈다. 기사당 요청 하나(검사에 걸리면 걸린 후보만 다시)이고, 기사 여러 건을 함께 처리한다
@@ -457,7 +450,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     if (!targets.length) {
       if (review.summary_failed) {
         const { summary_failed, ...rest } = review;
-        await fs.writeFile(file, JSON.stringify(rest, null, 2) + '\n');
+        await writeJsonAtomic(file, rest);
       }
       return;
     }
@@ -476,6 +469,15 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     stats.cached += written.size;
     // 검토 지적으로 다시 쓰는 실행에서는 지적받은 후보만 쓴다. 나머지는 지금 상태 그대로 둔다.
     if (asked) for (const decision of targets) if (!asked[decision.candidate_id]) written.set(decision.candidate_id, null);
+    // 지적받은 문안을 다시 쓰다가 끝내 검사를 통과하지 못하면 원래 문안을 둔다(아래 kept). 그 문안의 검토 결과는 캐시에
+    // 그대로 남아 다음 publish 도 같은 지적을 돌려주므로, 예전에는 같은 카드에 매 실행 요청이 최대 3건씩 다시 나갔다.
+    // 같은 문안·같은 지적·같은 문안 요청이면 한 번 시도한 것으로 보고 다시 묻지 않는다. 문안이나 지적이 바뀌면 다시 쓴다.
+    const attemptKey = decision => crypto.createHash('sha256').update(JSON.stringify([keys[decision.candidate_id],
+      String(decision.summary_en || ''), String(decision.summary_ko || ''), asked?.[decision.candidate_id] || []])).digest('hex').slice(0, 24);
+    const triedBefore = new Set(asked ? targets.filter(decision => asked[decision.candidate_id] &&
+      decision.rewrite_attempt?.key === attemptKey(decision) &&
+      String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim()).map(decision => decision.candidate_id) : []);
+    for (const id of triedBefore) written.set(id, null);
     let todo = targets.filter(decision => !written.has(decision.candidate_id));
     const rejected = Object.fromEntries(Object.entries(asked || {}).map(([id, problems]) => [id, [...problems]]));
     // 걸린 문안. 검토 지적으로 다시 쓰면 판정 파일에 저장된 문안이, 검사에 걸리면 방금 받은 문안이 된다.
@@ -497,9 +499,12 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       }
       todo = todo.filter(decision => !written.has(decision.candidate_id));
     };
-    for (let attempt = 1; attempt <= attempts && todo.length && !stopped; attempt++) {
+    // interrupted: 이 기사의 시도가 실행 중단(stopped)으로 끊겼다. 실행 전체의 stopped 로 판단하면, 다른 기사가 멈춘 뒤
+    // 시도를 다 마친 기사까지 실패 기록과 아래 가져오기 안전장치를 건너뛰었다.
+    let interrupted = false;
+    for (let attempt = 1; attempt <= attempts && todo.length; attempt++) {
       const { answer, blockedNow } = await call(writerRequest(article, todo, rejected, previous), writer);
-      if (blockedNow) break;
+      if (blockedNow) { interrupted = true; break; }
       if (answer) accept(answer, writer);
     }
     const targetIds = new Set(targets.map(decision => decision.candidate_id));
@@ -511,17 +516,22 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     let decisions = review.decisions.map(decision => {
       if (!targetIds.has(decision.candidate_id)) return decision;
       const text = written.get(decision.candidate_id);
-      if (text === null || kept.has(decision.candidate_id)) return decision;
+      if (text === null) return decision;
+      // 끝까지 시도하고도 통과하지 못해 둔 문안은 시도 키를 남긴다. 멈춰서 끝까지 시도하지 못했으면 다음 실행이 다시 쓴다.
+      if (kept.has(decision.candidate_id)) {
+        return interrupted ? decision : { ...decision, rewrite_attempt: { version: WRITER_VERSION, key: attemptKey(decision) } };
+      }
       // 키가 바뀐 옛 문안은 남기지 않는다. 지금 인용과 다른 인용에서 쓴 문안일 수 있다.
       if (!text) return withoutSummary(decision);
       stats.written += 1;
       stats.written_by[text.model] = (stats.written_by[text.model] || 0) + 1;
       const { model, ...copy } = text;
-      // 키는 기본 모델 기준이다. 대체 모델이 쓴 문안도 인용이 같으면 다음 실행에서 다시 묻지 않는다. model 은 실제로 쓴 모델이다.
-      return { ...decision, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
+      const { rewrite_attempt, ...current } = decision;
+      // 키가 같으면(같은 인용·지시·모델) 다음 실행에서 다시 묻지 않는다. model 은 이 문안을 쓴 모델이다.
+      return { ...current, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
     });
-    // 멈춘 실행은 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
-    const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
+    // 멈춘 기사는 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
+    const failed = new Set(interrupted ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
     // 검토 지적으로 다시 쓰는 실행은 지적받지 않은 후보의 실패 표시를 그대로 둔다.
     const carried = asked ? (review.summary_failed?.candidate_ids || []).filter(id => !asked[id]) : [];
     const withFailed = () => {
@@ -533,7 +543,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     };
     let next = withFailed();
     // 마지막 안전장치: 보고서 생성이 쓰는 가져오기 검사를 그대로 통과해야 한다. 걸린 후보는 문안을 비우고 실패로 둔다.
-    for (let round = 0; !stopped && round <= targets.length; round++) {
+    for (let round = 0; !interrupted && round <= targets.length; round++) {
       try { importReview(article, next); break; } catch (error) {
         const id = CANDIDATE_IN_MESSAGE.exec(error.message)?.[1];
         const culprits = id && targetIds.has(id) && !failed.has(id) ? [id] : [...published].filter(item => !failed.has(item));
@@ -559,12 +569,15 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       const item = { article_id: article.id, company: article.company, candidate_id: id };
       if (written.get(id)) stats.rewritten.push(item);
       else if (kept.has(id)) {
-        const reason = stopped ? stopped.reason : 'rewrite_failed';
-        stats.kept.push({ ...item, reason, problems: stopped ? [] : rejected[id] || [] });
+        const reason = interrupted ? stopped.reason : 'rewrite_failed';
+        stats.kept.push({ ...item, reason, problems: interrupted ? [] : rejected[id] || [] });
         log(`Writer kept the previous copy of ${article.company} ${id} (${reason})`);
+      } else if (triedBefore.has(id)) {
+        stats.kept.push({ ...item, reason: 'rewrite_already_tried', problems: asked[id] });
+        log(`Writer kept the previous copy of ${article.company} ${id} (rewrite_already_tried)`);
       }
     }
-    if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
+    if (JSON.stringify(next) !== JSON.stringify(review)) await writeJsonAtomic(file, next);
   };
   await forEachConcurrent(articles, writer.concurrency || 1, writeArticle, () => Boolean(stopped));
   return { ...stats, ...(stopped ? { stopped } : {}) };

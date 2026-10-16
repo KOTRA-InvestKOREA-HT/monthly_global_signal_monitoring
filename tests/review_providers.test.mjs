@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as provider_module from '../scripts/review_providers.mjs';
-const { GEMINI, NVIDIA, PROVIDERS, resolveProvider, toJsonSchema, toGeminiSchema, decisionProperties } = provider_module;
+const { GEMINI, NVIDIA, PROVIDERS, resolveProvider, toJsonSchema, toGeminiSchema } = provider_module;
+// 프롬프트·스키마는 review_prompts.mjs 가 들고 있다. 제공자 모듈은 그것을 다시 내보내지 않는다.
+import * as prompt_module from '../scripts/review_prompts.mjs';
+const { decisionProperties } = prompt_module;
 import { configuration, requestReview } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 
@@ -28,7 +31,7 @@ test('the decision schema converts to a strict JSON Schema without losing enums'
 });
 
 test('the publication date is one article-level pair of required strings, not a per-candidate field', () => {
-  const { articleDateProperties, DATE_INSTRUCTION, SYSTEM_INSTRUCTION, RETRY_INSTRUCTION } = provider_module;
+  const { articleDateProperties, DATE_INSTRUCTION, SYSTEM_INSTRUCTION, RETRY_INSTRUCTION } = prompt_module;
   const schema = toJsonSchema({ type: 'OBJECT', properties: { decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties: decisionProperties } }, ...articleDateProperties } });
   assert.equal(schema.properties.published_date.type, 'string');
   assert.equal(schema.properties.published_date_quote.type, 'string');
@@ -210,7 +213,7 @@ test('the Gemini thinking level is overridable, validated and part of the cache 
 });
 
 test('the S rules name the candidate ids the model actually receives', () => {
-  const { SYSTEM_INSTRUCTION } = provider_module;
+  const { SYSTEM_INSTRUCTION } = prompt_module;
   assert.match(SYSTEM_INSTRUCTION, /S1 to S5 .* mean the candidates investment:1 to investment:5/);
   assert.match(SYSTEM_INSTRUCTION, /supplied report criteria are the sole source/);
   assert.doesNotMatch(SYSTEM_INSTRUCTION, /deferred consideration spend money/);
@@ -236,7 +239,13 @@ test('Gemini needs a human free-tier confirmation that NVIDIA does not', () => {
   assert.throws(() => configuration(env, GEMINI), /GEMINI_FREE_TIER_CONFIRMED=true/);
   // 확인된 Gemini 키가 있으면 2차 검증도 같은 키로 켜진다. REVIEW_VERIFIER=off 로 끌 수 있다.
   assert.deepEqual(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI),
-    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4, verifierApiKey: 'AIzaKey' });
+    { apiKey: 'AIzaKey', maxRequests: 600, delayMs: 4500, concurrency: 4, verifierApiKey: 'AIzaKey', verifierDelayMs: 4500 });
+  // 1차가 Gemini 면 검증도 같은 키·같은 한도라 1차 간격을 따른다. NVIDIA 1차 뒤의 검증은 Gemini 기본 간격을 쓴다.
+  assert.equal(configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '6000' }, GEMINI).verifierDelayMs, 6000);
+  const mixed = { OPENAI_API_KEY: 'k', GEMINI_API_KEY: 'AIzaKey', GEMINI_FREE_TIER_CONFIRMED: 'true' };
+  assert.deepEqual([configuration(mixed, NVIDIA).delayMs, configuration(mixed, NVIDIA).verifierDelayMs], [1600, 4500]);
+  assert.equal(configuration({ ...mixed, GEMINI_VERIFIER_DELAY_MS: '8000' }, NVIDIA).verifierDelayMs, 8000);
+  assert.throws(() => configuration({ ...mixed, GEMINI_VERIFIER_DELAY_MS: '1600' }, NVIDIA), /GEMINI_VERIFIER_DELAY_MS must be 4000\.\.60000/);
   assert.equal('verifierApiKey' in configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', REVIEW_VERIFIER: 'off' }, GEMINI), false);
   assert.throws(() => configuration({ ...env, GEMINI_FREE_TIER_CONFIRMED: 'true', GEMINI_DELAY_MS: '3999' }, GEMINI), /4000\.\.60000/);
   assert.throws(() => configuration({ REPORT_PROVIDER: 'gemini', GEMINI_FREE_TIER_CONFIRMED: 'true' }, GEMINI), /GEMINI_API_KEY is required/);

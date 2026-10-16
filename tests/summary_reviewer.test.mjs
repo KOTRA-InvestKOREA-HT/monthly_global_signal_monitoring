@@ -50,6 +50,10 @@ test('the reviewer runs on flash-lite with high thinking, and can be switched of
   assert.equal(DEFAULT_REVIEWER_MODEL, 'gemini-3.5-flash-lite');
   assert.equal(resolveReviewer({}).thinkingLevel, 'high');
   assert.equal(resolveReviewer({ GEMINI_REVIEWER_MODEL: 'off' }), null);
+  // 간격은 문안 단계처럼 환경변수로 바꾼다. 무료 등급 한도(4000ms) 밑으로는 내리지 못한다.
+  assert.equal(resolveReviewer({}).delayMs, 4500);
+  assert.equal(resolveReviewer({ GEMINI_REVIEWER_DELAY_MS: '6000' }).delayMs, 6000);
+  assert.throws(() => resolveReviewer({ GEMINI_REVIEWER_DELAY_MS: '3999' }), /GEMINI_REVIEWER_DELAY_MS must be 4000\.\.60000/);
 });
 
 test('the reviewer sees the copy and its sources only, and asks the four questions', () => {

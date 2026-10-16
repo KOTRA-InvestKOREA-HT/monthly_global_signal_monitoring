@@ -144,3 +144,43 @@ test("an approved row needs both summaries", () => {
   assert.ok(errors.some((error) => error.includes("ai_summary_ko")));
   assert.ok(errors.some((error) => error.includes("ai_summary_en")));
 });
+
+// 아래는 레거시 요약 스크립트(summarize_signal_evidence.mjs)를 지우면서 그 테스트에서 옮긴 면제 기업 단언이다.
+// 면제 기업은 품목 연결 없이 승인될 수 있지만, 나머지 승인 조건은 그대로 요구한다.
+test("an exempt company may be approved without target-technology evidence", () => {
+  const row = validRow({
+    technology_gate_decision: "relevance_exempt",
+    excluded_from_relevance: true,
+    ai_target_technology_supported: false,
+    ai_summary_reason: "유치필요 기술과의 직접적 연관성은 확인되지 않으나 생산 확대 계획은 구체적으로 제시됨",
+  });
+  assert.deepEqual(validateRows([row], "investment"), []);
+});
+
+test("a company still under the technology gate is not given that latitude", () => {
+  const row = validRow({
+    ai_target_technology_supported: false,
+    ai_summary_reason: "유치필요 기술과의 직접적 연관성은 확인되지 않음",
+  });
+  const errors = validateRows([row], "investment");
+  assert.ok(errors.some((error) => error.includes("lacks target-technology evidence")));
+});
+
+test("an exempt row still needs entity, indicator and leading evidence", () => {
+  const row = validRow({
+    technology_gate_decision: "relevance_exempt",
+    ai_target_technology_supported: false,
+    ai_indicator_supported: false,
+  });
+  const errors = validateRows([row], "investment");
+  assert.ok(errors.some((error) => error.includes("lacks indicator evidence")));
+  assert.ok(!errors.some((error) => error.includes("target-technology")));
+});
+
+test("a business row whose quality was downgraded is withdrawn and still passes validation", () => {
+  const { investment_signal_no, ...business } = validRow({ ai_event_stage: "not_applicable" });
+  assert.deepEqual(validateRows([business], "relevant"), []);
+  const downgraded = { ...business, ai_summary_quality: "needs_review", ai_signal_supported: false,
+    ai_summary_reason: "요약문이 근거 부족을 명시" };
+  assert.deepEqual(validateRows([downgraded], "relevant"), []);
+});

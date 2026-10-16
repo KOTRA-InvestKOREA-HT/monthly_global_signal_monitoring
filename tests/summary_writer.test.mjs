@@ -8,7 +8,7 @@ import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblem
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
-  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES,
+  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES, SIGNAL_SUMMARY_LIMITS,
 } from '../scripts/summary_writer.mjs';
 import { issueNumberFor, judgementFor, summaryApiKey } from '../scripts/publish_report.mjs';
 
@@ -49,6 +49,28 @@ const run = (ws, fetchImpl, articles = [article]) => writeSummaries({ articles, 
   apiKey: 'AIza-test', policyWording: wording, fetchImpl, sleep: async () => {}, log: () => {} });
 
 const bodyText = init => JSON.parse(init.body).contents[0].parts[0].text;
+
+// 감사 2-6: 절 제목이 바뀌면 빈 절로 그냥 진행했다. 지금 문서에서는 예전과 같은 절을 돌려줘야 문안 캐시 키가 그대로다.
+test('the writer policy section fails closed when its headings are missing, and is unchanged for the current document', () => {
+  const previous = text => {
+    const part = String(text).split('## Summary wording')[1]?.split('## 기사별 응답 형식')[0] || '';
+    const start = part.indexOf('### Korean terminology');
+    return (start >= 0 ? part.slice(start) : part).replace(/\r\n?/g, '\n').trim();
+  };
+  assert.equal(wording, previous(doc));
+  assert.throws(() => writerPolicySection(doc.replace('## Summary wording', '## Copy wording')), /no "## Summary wording" section/);
+  assert.throws(() => writerPolicySection(doc.replace('### Korean terminology', '### Korean words')), /no "### Korean terminology" subsection/);
+  assert.throws(() => writerPolicySection('## Summary wording\n### Korean terminology and expression\n\n## 기사별 응답 형식\n'), /is empty/);
+});
+
+// 감사 2-6: 길이 한도는 렌더러와 같은 config/copy_length_limits.json 에서 읽는다. 상세 한도는 문안 지시문에 들어가 문안
+// 캐시 키를 이루므로, 값이 예전 상수(영문 440·국문 230)와 같고 지시문 문장도 그대로여야 한다.
+test('the copy length limits come from the shared config and leave the writer instruction unchanged', () => {
+  const shared = JSON.parse(fs.readFileSync(new URL('../config/copy_length_limits.json', import.meta.url), 'utf8')).signal_card;
+  assert.deepEqual(SIGNAL_SUMMARY_LIMITS, { en: 440, ko: 230 });
+  assert.deepEqual(SIGNAL_SUMMARY_LIMITS, { en: shared.en.detail, ko: shared.ko.detail });
+  assert.match(buildWriterInstruction(wording), /at most 230 characters of Korean after the separator and 440 characters of English/);
+});
 
 test('the fixture is an approved judgement that the report cannot import until it has copy', () => {
   assert.equal(importReview(article, review, { summaries: false })[0].supported, true);
@@ -321,6 +343,69 @@ test('a review rewrite that never passes the checks keeps the previous copy and 
   assert.equal(saved.decisions[0].summary_en, good.summary_en);
   assert.equal('summary_failed' in saved, false);
   assert.equal(importReview(article, saved)[0].supported, true);
+});
+
+// 감사 2-4: 원래 문안을 둔 카드의 검토 지적은 캐시에 남아 다음 publish 도 같은 지적을 돌려준다. 예전에는 그때마다
+// 같은 카드에 요청이 WRITER_ATTEMPTS 건씩 다시 나갔다. 같은 문안·같은 지적이면 한 번만 시도한다.
+test('a card whose rewrite already failed for the same copy and the same flags is not rewritten again', async () => {
+  const ws = await workspace();
+  await run(ws, async () => gemini([good]));
+  const invented = { ...good, summary_en: good.summary_en.replace('500', '900') };
+  await rewriteRun(ws, async () => gemini([invented]));
+  const tried = await ws.read();
+  assert.ok(tried.decisions[0].rewrite_attempt?.key);
+  assert.equal(importReview(article, tried)[0].supported, true);
+  let calls = 0;
+  const again = await rewriteRun(ws, async () => { calls += 1; return gemini([invented]); });
+  assert.equal(calls, 0);
+  assert.deepEqual(again.kept, [{ article_id: article.id, company: 'Acme', candidate_id: 'investment:3',
+    reason: 'rewrite_already_tried', problems: flagged[article.id]['investment:3'] }]);
+  assert.deepEqual(await ws.read(), tried);
+  // 지적이 바뀌면 다시 쓴다. 다시 쓴 문안이 통과하면 시도 기록은 지운다.
+  const better = { ...good, summary_ko: good.summary_ko.replace('마련하기 위해', '조달하기 위해') };
+  const other = await writeSummaries({ articles: [article], reviewDir: ws.reviewDir, writer, apiKey: 'AIza-test', policyWording: wording,
+    sleep: async () => {}, log: () => {}, feedback: { [article.id]: { 'investment:3': ['review_term: Another flag.'] } },
+    fetchImpl: async () => { calls += 1; return gemini([better]); } });
+  assert.equal(calls, 1);
+  assert.equal(other.rewritten.length, 1);
+  const rewritten = (await ws.read()).decisions[0];
+  assert.equal(rewritten.summary_ko, better.summary_ko);
+  assert.equal('rewrite_attempt' in rewritten, false);
+});
+
+// 감사 2-5: 다른 기사가 할당량으로 멈춘 뒤에도, 시도를 다 마친 기사는 실패 기록과 가져오기 안전장치를 그대로 거친다.
+test('a stop caused by another article does not skip the failure record of an article that finished its attempts', async () => {
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'writer-stop-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const [first, second] = groupArticles([0, 1].map(index => ({ ...row, url: `https://example.com/stop-${index}`, title: `Acme notes ${index}` })),
+    [], { from_date: '2026-08-01', to_date: '2026-08-31' });
+  for (const item of [first, second]) {
+    await fsp.writeFile(path.join(reviewDir, `${item.id}.json`), JSON.stringify({ ...review, article_id: item.id }));
+  }
+  const invented = { ...good, summary_en: good.summary_en.replace('500', '900') };
+  let firstCalls = 0, releaseQuota, quotaSent;
+  const lastAttempt = new Promise(resolve => { releaseQuota = resolve; });
+  const quotaDone = new Promise(resolve => { quotaSent = resolve; });
+  const stats = await writeSummaries({ articles: [first, second], reviewDir, writer: { ...writer, concurrency: 2 }, apiKey: 'AIza-test',
+    policyWording: wording, sleep: async () => {}, log: () => {},
+    fetchImpl: async (url, init) => {
+      if (bodyText(init).includes('Acme notes 0')) {
+        // 첫 기사의 마지막 시도가 떠 있는 동안 둘째 기사가 할당량으로 실행을 멈춘다.
+        if (++firstCalls === WRITER_ATTEMPTS) { releaseQuota(); await quotaDone; await new Promise(resolve => setTimeout(resolve, 5)); }
+        return gemini([invented]);
+      }
+      await lastAttempt;
+      quotaSent();
+      return quota();
+    } });
+  assert.equal(stats.stopped.reason, 'quota');
+  assert.equal(firstCalls, WRITER_ATTEMPTS);
+  // 첫 기사는 시도를 다 마쳤으므로 실패로 적힌다. 멈춘 둘째 기사는 실패가 아니라 미완료다.
+  assert.deepEqual(stats.failed.map(item => item.article_id), [first.id]);
+  const saved = id => JSON.parse(fs.readFileSync(path.join(reviewDir, `${id}.json`), 'utf8'));
+  assert.deepEqual(saved(first.id).summary_failed.candidate_ids, ['investment:3']);
+  assert.equal('summary_failed' in saved(second.id), false);
 });
 
 test('a review rewrite that passes replaces the copy and is listed as rewritten', async () => {

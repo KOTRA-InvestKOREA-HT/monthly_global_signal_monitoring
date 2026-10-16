@@ -1,0 +1,7 @@
+{
+  "description": "Character limits of the investment-signal card copy in the report. The writer stage (scripts/summary_writer.mjs) rejects detail copy over these limits, and the renderer (scripts/report_content.py summary_parts) cuts headline and detail at them. Detail values are part of the writer instruction, so changing them invalidates saved copy.",
+  "signal_card": {
+    "en": { "headline": 110, "detail": 440 },
+    "ko": { "headline": 58, "detail": 230 }
+  }
+}

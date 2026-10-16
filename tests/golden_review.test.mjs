@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { groupArticles } from '../scripts/local_report.mjs';
 import { MODEL } from '../scripts/review_report.mjs';
-import { selectGoldenArticles, compareArticle, assertIsolatedOutDir, runGolden } from '../scripts/golden_review.mjs';
+import { selectGoldenArticles, compareArticle, assertIsolatedOutDir, runGolden, requestEstimate } from '../scripts/golden_review.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
 // 본문 없는 기사는 승인되지 않으므로 고정값에도 기사 길이의 본문을 둔다.
@@ -106,6 +106,18 @@ test('the golden out-dir cannot be pointed at the operational review directory',
   assert.throws(() => assertIsolatedOutDir(path.resolve('outputs/review_work/reviews')), /operational/i);
   assert.throws(() => assertIsolatedOutDir(path.resolve('outputs')), /operational/i);
   assert.doesNotThrow(() => assertIsolatedOutDir(path.resolve('outputs/golden_eval')));
+});
+
+// 감사 2-6: 계획 단계의 예상 요청 수에 2차 검증과 재검토 되묻기가 빠져 있었다.
+test('the planned request count includes verification and the recheck', () => {
+  assert.deepEqual(requestEstimate(5, { verifier: true }), { expected_requests: 10, worst_case_requests: 20 });
+  assert.deepEqual(requestEstimate(5), { expected_requests: 5, worst_case_requests: 15 });
+});
+
+test('the golden list carries only the keys the harness reads', async () => {
+  const golden = JSON.parse(await fs.readFile(new URL('../config/golden_articles.json', import.meta.url), 'utf8'));
+  assert.equal('month' in golden, false);
+  for (const entry of golden.articles) assert.equal('baseline_article_id' in entry, false, entry.url);
 });
 
 test('the comparison names what moved per candidate and flags a new approval', () => {

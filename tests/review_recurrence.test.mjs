@@ -6,8 +6,9 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { reviewArticles, requestReview, facilityStageSuspects, fundingSuspects, needsFundingReview, needsFacilityStageReview,
-  needsTechnologyReview, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
-  bilingualFactProblems, nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
+  needsTechnologyReview, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
+  nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
+import { bilingualFactProblems, summaryStyleProblems } from '../scripts/summary_writer.mjs';
 import { groupArticles, importReview, sourceCandidates, ungroundedSummaryNames } from '../scripts/local_report.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };
@@ -530,27 +531,123 @@ test('a verifier that answers only the audited candidate still yields a complete
   }
 });
 
-test('a verifier whose every answer is rejected pauses the run instead of publishing without the suspicious candidates', async t => {
+const nexeonArticles = names => names.map((company, i) => {
+  const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
+    published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
+  return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
+});
+
+// 감사(2026-10-15) 2-1: 정상 거부 응답을 검증기 장애로 세던 때는, 이미 검증된 기사가 캐시로 빠진 재실행에서 늘 통과하지
+// 못하는 기사 3건만 검증하게 되어 매 실행이 같은 곳에서 verifier_unavailable 로 멈췄다. 거부된 기사만 미완료로 둔다.
+test('verifier answers that are rejected leave their candidates pending without stopping the run, on every rerun', async t => {
   const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-rejected-'));
   t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
-  const articles = ['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD'].map((company, i) => {
-    const row = { company, target_no: 52 + i, url: `https://example.com/${company}`, title: `${company} £100m round`,
-      published_at: '2026-08-31T00:00:00Z', target_technology: 'silicon anode', target_technology_en: 'silicon anode', content_text: BODY };
-    return groupArticles([2, 3, 5].map(investment_signal_no => ({ ...row, investment_signal_no })), [row], period)[0];
-  });
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const calls = { primary: 0, verifier: 0 };
+  const run = () => reviewArticles({ articles, reviewDir, policy: '', config: { ...verifierConfig, maxRequests: 40 }, sleep: async () => {},
+    fetchImpl: async url => {
+      if (!String(url).includes('generativelanguage')) { calls.primary++; return reply(primary); }
+      calls.verifier++;
+      return geminiReply(primary.map(d => ({ ...d, reason: '' })));
+    } });
+  const state = await run();
+  // 기사마다 한 번 더 물은 뒤 그 기사만 미완료로 둔다.
+  assert.equal(calls.verifier, 8);
+  assert.equal(state.status, 'completed');
+  assert.equal('verifier_stop' in state, false);
+  assert.equal(state.verification.rejected_responses, 8);
+  assert.equal(state.recheck_pending.length, 4);
+  // 재실행: 1차 판정은 캐시로 쓰고, 미완료 후보만 다시 검증한다. 또 거부돼도 같은 곳에서 멈추지 않는다.
+  for (let rerun = 0; rerun < 2; rerun++) {
+    calls.primary = 0; calls.verifier = 0;
+    const again = await run();
+    assert.deepEqual(calls, { primary: 0, verifier: 8 });
+    assert.equal(again.status, 'completed');
+    assert.equal(again.recheck_pending.length, 4);
+  }
+});
+
+test('repeated HTTP failures from the verifier, with no answer received, still stop verification', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-http-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC', 'NexeonD']);
   const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
   let verifierCalls = 0;
   const state = await reviewArticles({ articles, reviewDir, policy: '', config: verifierConfig, sleep: async () => {},
     fetchImpl: async url => {
       if (!String(url).includes('generativelanguage')) return reply(primary);
       verifierCalls++;
-      return geminiReply(primary.map(d => ({ ...d, reason: '' })));
+      return new Response('{"error":{"message":"request entity too large"}}', { status: 413 });
     } });
-  // 기사마다 한 번 더 물은 뒤 거부로 센다. 세 기사 연속 거부되면 멈춘다.
-  assert.equal(verifierCalls, 6);
+  // 413 은 재시도하지 않는 HTTP 실패다. 세 기사 연속 실패하면 네 번째 기사는 묻지 않고 멈춘다.
+  assert.equal(verifierCalls, 3);
   assert.equal(state.status, 'paused');
   assert.equal(state.reason, 'verifier_unavailable');
+  assert.equal(state.http_status, 413);
   assert.equal(state.recheck_pending.length, 4);
+});
+
+// 감사 2-5: 동시 모드에서 예산이 바닥나 게이트가 검증 요청을 보내지 않으면 verifier_unavailable 로 기록됐다.
+test('with parallel workers an exhausted request budget is reported as the budget, not as a verifier outage', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-budget-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const state = await reviewArticles({ articles, reviewDir, policy: '', sleep: async () => {},
+    config: { ...verifierConfig, concurrency: 2, maxRequests: 3 },
+    fetchImpl: async url => (String(url).includes('generativelanguage') ? geminiReply(primary) : reply(primary)) });
+  // 1차 판정 둘과 검증 하나로 예산을 다 쓴다. 남은 검증 하나는 보내지 못한다.
+  assert.equal(state.requests, 3);
+  assert.equal(state.completed, 2);
+  assert.equal(state.status, 'paused');
+  assert.equal(state.reason, 'request_budget');
+  assert.equal(state.verifier_stop.reason, 'request_budget');
+  assert.deepEqual(state.recheck_pending.map(item => item.reason), ['request_budget']);
+});
+
+// 감사 2-5: 검증 응답에서 뺀 인용이 있으면 1차 판정 때 뺀 인용 기록을 덮어썼다.
+test('merging a verification keeps the quotes removed from the primary answer alongside the verifier\'s', async () => {
+  const { mergeVerification } = await import('../scripts/review_report.mjs');
+  const a = nexeon();
+  const s5 = { ...rejectedS5, evidence_quotes: [] };
+  const fromPrimary = { candidate_id: 'investment:5', removed_quotes: ['Invented appointment.'] };
+  const fromVerifier = { candidate_id: 'investment:3', removed_quotes: ['Invented round.'] };
+  const primary = { article_id: a.id, decisions: [approvedS2, approvedS3, s5, business], unverified_quotes_removed: [fromPrimary] };
+  const checked = { decisions: [approvedS2, approvedS3, s5, business],
+    unverified_quotes_removed: [fromVerifier, { candidate_id: 'investment:2', removed_quotes: ['Outside the audit.'] }] };
+  const suspects = { candidate_ids: ['investment:3'], flagged_because: { 'investment:3': ['q'] } };
+  const merged = mergeVerification(a, primary, checked, suspects, 'model', 'digest');
+  assert.deepEqual(merged.unverified_quotes_removed, [fromPrimary, fromVerifier]);
+  // 다시 검증해도 같은 기록이 겹쳐 쌓이지 않는다.
+  assert.deepEqual(mergeVerification(a, merged, checked, suspects, 'model', 'digest').unverified_quotes_removed, [fromPrimary, fromVerifier]);
+  assert.deepEqual(mergeVerification(a, { ...primary, unverified_quotes_removed: undefined }, { decisions: checked.decisions }, suspects, 'model', 'digest')
+    .unverified_quotes_removed, undefined);
+});
+
+// 감사 2-2: 1차 판정(NVIDIA)과 2차 검증(Gemini)은 한도가 따로다. 검증은 검증 간격을 지키고, 1차 판정은 그 간격에 묶이지 않는다.
+test('with parallel workers verifier requests keep their own spacing and do not hold back judgements', async t => {
+  const reviewDir = await fs.mkdtemp(path.join(os.tmpdir(), 'verifier-lanes-'));
+  t.after(() => fs.rm(reviewDir, { recursive: true, force: true }));
+  const articles = nexeonArticles(['Nexeon', 'NexeonB', 'NexeonC']);
+  const primary = [approvedS2, approvedS3, { ...rejectedS5, evidence_quotes: [] }, business];
+  const starts = { judgement: [], verifier: [] };
+  const sleeps = [];
+  const state = await reviewArticles({ articles, reviewDir, policy: '',
+    sleep: ms => { sleeps.push(ms); return new Promise(resolve => setTimeout(resolve, ms)); },
+    config: { ...verifierConfig, concurrency: 3, maxRequests: 40, delayMs: 5, verifierDelayMs: 80 },
+    fetchImpl: async url => {
+      const verifier = String(url).includes('generativelanguage');
+      starts[verifier ? 'verifier' : 'judgement'].push(performance.now());
+      return verifier ? geminiReply(primary) : reply(primary);
+    } });
+  assert.equal(state.status, 'completed');
+  assert.equal(starts.verifier.length, 3);
+  for (let i = 1; i < starts.verifier.length; i++) assert.ok(starts.verifier[i] - starts.verifier[i - 1] >= 75, 'verifier spacing');
+  // 세 기사의 1차 판정은 검증 간격을 기다리지 않고 모두 먼저 나간다.
+  assert.ok(starts.judgement[2] < starts.verifier[1], 'judgements are not queued behind the verifier');
+  // 게이트가 간격을 지키므로 기사 단위의 기본 간격(5ms·80ms)을 한 번 더 기다리지 않는다.
+  assert.equal(sleeps.filter(ms => ms === 5 || ms === 80).length, 0);
 });
 
 test('a rejected verifier answer is asked once more with the validation message and can then succeed', async t => {

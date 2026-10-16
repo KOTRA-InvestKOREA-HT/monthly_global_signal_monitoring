@@ -4,8 +4,9 @@ import fs from 'node:fs';
 import { policySection, reviewPolicy, requestReview } from '../scripts/review_report.mjs';
 import { buildWriterInstruction, writerPolicySection } from '../scripts/summary_writer.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
-import { GEMINI, NVIDIA, decisionProperties } from '../scripts/review_providers.mjs';
+import { GEMINI, NVIDIA } from '../scripts/review_providers.mjs';
 import * as prompt from '../scripts/review_prompts.mjs';
+const { decisionProperties } = prompt;
 
 const article = { id: 'fixture', evidence: ['Untrusted article text'], candidates: [{ id: 'investment:3', row: { private: true } }] };
 const systemText = (provider, body) => provider.id === 'gemini' ? body.systemInstruction.parts[0].text : body.messages[0].content;

@@ -1,14 +1,8 @@
 // API adapters only: prompt composition lives in review_prompts.mjs.
-// Keep existing exports for callers that import the shared contract here.
+// 판정 스키마·지시문도 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
+// 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
 import { buildSystemInstruction, decisionsEnvelopeFor, retryInstruction } from './review_prompts.mjs';
 import { modelArticle } from './model_input.mjs';
-export {
-  DATE_HINT_VERSION, DATE_INSTRUCTION,
-  SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
-  // 판정 스키마는 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
-  // 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
-  decisionProperties, articleDateProperties, decisionsEnvelopeFor,
-} from './review_prompts.mjs';
 
 const JSON_TYPES = { STRING: 'string', BOOLEAN: 'boolean', ARRAY: 'array', OBJECT: 'object', NUMBER: 'number', INTEGER: 'integer' };
 
@@ -116,6 +110,30 @@ export const GEMINI = {
   },
 };
 
+// 문안 단계(summary_writer)와 검토 단계(summary_reviewer)의 Gemini 요청 하나. 두 단계에 거의 같은 코드가 따로 있었다.
+// 실패는 reasonField(writer_reason·reviewer_reason)에 timeout·transport·quota·unavailable·provider_error·invalid_response
+// 로 적는다. 응답 본문은 남기지 않는다. 돌려주는 invalid 로 호출자가 자기 응답 형식 결함을 같은 분류로 던진다.
+export const GEMINI_TRANSIENT_REASONS = new Set(['unavailable', 'timeout', 'transport']);
+export async function requestGeminiJson(client, apiKey, body, fetchImpl, reasonField) {
+  let response;
+  try {
+    response = await fetchImpl(client.url(client.model), {
+      method: 'POST', headers: client.headers(apiKey), body: JSON.stringify(body), signal: AbortSignal.timeout(client.timeoutMs),
+    });
+  } catch (error) {
+    throw Object.assign(new Error(`${client.label} transport error: ${error.name || 'Error'}`),
+      { [reasonField]: error.name === 'TimeoutError' ? 'timeout' : 'transport' });
+  }
+  if (!response.ok) {
+    await response.text().catch(() => '');
+    throw Object.assign(new Error(`${client.label} HTTP ${response.status}`), { status: response.status,
+      [reasonField]: response.status === 429 ? 'quota' : response.status >= 500 ? 'unavailable' : 'provider_error' });
+  }
+  const invalid = code => Object.assign(new Error(`${client.label} invalid response: ${code}`), { [reasonField]: 'invalid_response' });
+  const { text } = client.parse(await response.json(), invalid);
+  try { return { parsed: JSON.parse(text), invalid }; } catch { throw invalid('invalid_json'); }
+}
+
 export const NVIDIA = {
   id: 'nvidia',
   label: 'NVIDIA',
@@ -123,8 +141,7 @@ export const NVIDIA = {
   // 모델 이름은 판정 캐시 식별자에 들어가므로, 이 줄이 바뀌면 저장된 판정은 재사용되지 않는다.
   model: 'z-ai/glm-5.3-flash',
   // 이 저장소는 서드파티 키 시크릿을 하나만 쓴다. 이름은 OPENAI_API_KEY 지만
-  // 내용은 NVIDIA build 키다. 그래서 같은 시크릿을 읽는 옛 OpenAI 경로
-  // (summarize_signal_evidence.mjs, check_openai_access.mjs)는 더 이상 동작하지 않는다.
+  // 내용은 NVIDIA build 키다. 같은 시크릿을 읽던 옛 OpenAI 경로는 지웠다.
   keyEnv: ['OPENAI_API_KEY'],
   // 40 RPM 관측치. 무료 티어 확인 플래그는 필요 없다. 선불 크레딧이라 조용히 과금되지 않는다.
   requiresFreeTierConfirmation: false,
