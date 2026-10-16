@@ -1,8 +1,8 @@
 // 같은 앵커에 링크 판정 규칙 세 가지를 모두 걸어 결과를 비교한다.
 //
 //   august    2026-08 시점 규칙 (82acb6f)
-//   current   html-report-prototype 이 지금 쓰는 규칙
-//   proposed  link_policy.mjs 의 세 갈래 판정
+//   current   --link-policy current 의 비교 기준 규칙 (proposed 도입 전 수집 규칙)
+//   proposed  link_policy.mjs 의 세 갈래 판정. 수집기 기본값(DEFAULT_LINK_POLICY)이다
 //
 // 규칙을 바꾸기 전에 무엇이 돌아오고 무엇이 새로 들어오는지 숫자로 봐야 한다.
 // 이 도구는 목록 페이지만 받아서 앵커를 판정할 뿐, 기사 본문은 받지 않고 AI도 부르지
@@ -89,6 +89,19 @@ function selectPages(config, args) {
 function cellOf(judgement) {
   const proposed = judgement.proposed.verdict !== "hard_reject";
   return `${judgement.august ? "O" : "X"}${judgement.current ? "O" : "X"}${proposed ? "O" : "X"}`;
+}
+
+// 사람이 실제로 확인해야 하는 두 묶음. 셀 이름을 해독하지 않고 바로 읽을 수 있어야 한다.
+export function reviewSamples(cells) {
+  const pick = (...names) => names.flatMap((name) => cells[name] || []);
+  return {
+    legend: "cell = august/current/proposed 순서, O=통과 X=탈락",
+    // 둘째 자리(current)가 X, 셋째 자리(proposed)가 O 인 셀. 첫째 자리(august)는 어느 쪽이든 된다.
+    recovered_current_false_proposed_true: pick("XXO", "OXO"),
+    // 첫째 자리(august)가 O, 둘째 자리(current)가 X 인 셀.
+    lost_since_august_old_true_current_false: pick("OXX", "OXO"),
+    cells,
+  };
 }
 
 class Samples {
@@ -217,23 +230,11 @@ async function main() {
     ...summarise(records),
   };
 
-  const cells = samples.toJSON();
-  const pick = (...names) => names.flatMap((name) => cells[name] || []);
   await fs.mkdir(args.outDir, { recursive: true });
   await fs.writeFile(path.join(args.outDir, "link_rule_audit.json"), JSON.stringify(report, null, 2), "utf8");
   await fs.writeFile(
     path.join(args.outDir, "link_rule_samples.json"),
-    JSON.stringify(
-      {
-        legend: "cell = august/current/proposed 순서, O=통과 X=탈락",
-        // 사람이 실제로 확인해야 하는 두 묶음. 셀 이름을 해독하지 않고 바로 읽을 수 있어야 한다.
-        recovered_current_false_proposed_true: pick("XXO", "XOO"),
-        lost_since_august_old_true_current_false: pick("OXX", "OXO"),
-        cells,
-      },
-      null,
-      2,
-    ),
+    JSON.stringify(reviewSamples(samples.toJSON()), null, 2),
     "utf8",
   );
   console.log(JSON.stringify(report, null, 2));
