@@ -28,8 +28,7 @@ export const DEFAULT_REVIEWER_MODEL = 'gemini-3.5-flash-lite';
 // flash-lite 는 low 이하에서 추론 토큰을 쓰지 않았다(review_providers.mjs GEMINI 주석). 검토는 판단이 일이므로 high 로 둔다.
 // 추론 단계는 요청 수 한도를 더 쓰지 않는다.
 const DEFAULT_THINKING = 'high';
-// flash-lite 무료 등급 15 RPM.
-const DEFAULT_DELAY_MS = 4500;
+// flash-lite 무료 등급 15 RPM. 판정·문안과 같은 기본 간격(GEMINI.defaultDelayMs)이다. GEMINI_REVIEWER_DELAY_MS 로 바꾼다.
 const DEFAULT_TIMEOUT_MS = 180000;
 
 export const REVIEW_CHECKS = ['certainty', 'unsupported', 'term', 'mismatch'];
@@ -43,7 +42,12 @@ export function resolveReviewer(env = process.env) {
   if (!['minimal', 'low', 'medium', 'high'].includes(thinkingLevel)) {
     throw new Error(`GEMINI_REVIEWER_THINKING_LEVEL must be minimal, low, medium or high: ${thinkingLevel}`);
   }
-  return { ...GEMINI, label: 'Gemini reviewer', model, thinkingLevel, delayMs: DEFAULT_DELAY_MS, timeoutMs: DEFAULT_TIMEOUT_MS,
+  // 판정·문안 단계처럼 간격을 환경변수로 바꿀 수 있게 한다. 예전에는 검토만 4500ms 로 고정이었다.
+  const delayMs = Number(env.GEMINI_REVIEWER_DELAY_MS || GEMINI.defaultDelayMs);
+  if (!Number.isFinite(delayMs) || delayMs < GEMINI.minDelayMs || delayMs > 60000) {
+    throw new Error(`GEMINI_REVIEWER_DELAY_MS must be ${GEMINI.minDelayMs}..60000`);
+  }
+  return { ...GEMINI, label: 'Gemini reviewer', model, thinkingLevel, delayMs, timeoutMs: DEFAULT_TIMEOUT_MS,
     concurrency: resolveConcurrency(env) };
 }
 

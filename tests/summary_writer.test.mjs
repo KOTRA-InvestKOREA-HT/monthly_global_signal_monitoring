@@ -8,7 +8,7 @@ import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblem
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
-  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES,
+  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES, SIGNAL_SUMMARY_LIMITS,
 } from '../scripts/summary_writer.mjs';
 import { issueNumberFor, judgementFor, summaryApiKey } from '../scripts/publish_report.mjs';
 
@@ -49,6 +49,28 @@ const run = (ws, fetchImpl, articles = [article]) => writeSummaries({ articles, 
   apiKey: 'AIza-test', policyWording: wording, fetchImpl, sleep: async () => {}, log: () => {} });
 
 const bodyText = init => JSON.parse(init.body).contents[0].parts[0].text;
+
+// 감사 2-6: 절 제목이 바뀌면 빈 절로 그냥 진행했다. 지금 문서에서는 예전과 같은 절을 돌려줘야 문안 캐시 키가 그대로다.
+test('the writer policy section fails closed when its headings are missing, and is unchanged for the current document', () => {
+  const previous = text => {
+    const part = String(text).split('## Summary wording')[1]?.split('## 기사별 응답 형식')[0] || '';
+    const start = part.indexOf('### Korean terminology');
+    return (start >= 0 ? part.slice(start) : part).replace(/\r\n?/g, '\n').trim();
+  };
+  assert.equal(wording, previous(doc));
+  assert.throws(() => writerPolicySection(doc.replace('## Summary wording', '## Copy wording')), /no "## Summary wording" section/);
+  assert.throws(() => writerPolicySection(doc.replace('### Korean terminology', '### Korean words')), /no "### Korean terminology" subsection/);
+  assert.throws(() => writerPolicySection('## Summary wording\n### Korean terminology and expression\n\n## 기사별 응답 형식\n'), /is empty/);
+});
+
+// 감사 2-6: 길이 한도는 렌더러와 같은 config/copy_length_limits.json 에서 읽는다. 상세 한도는 문안 지시문에 들어가 문안
+// 캐시 키를 이루므로, 값이 예전 상수(영문 440·국문 230)와 같고 지시문 문장도 그대로여야 한다.
+test('the copy length limits come from the shared config and leave the writer instruction unchanged', () => {
+  const shared = JSON.parse(fs.readFileSync(new URL('../config/copy_length_limits.json', import.meta.url), 'utf8')).signal_card;
+  assert.deepEqual(SIGNAL_SUMMARY_LIMITS, { en: 440, ko: 230 });
+  assert.deepEqual(SIGNAL_SUMMARY_LIMITS, { en: shared.en.detail, ko: shared.ko.detail });
+  assert.match(buildWriterInstruction(wording), /at most 230 characters of Korean after the separator and 440 characters of English/);
+});
 
 test('the fixture is an approved judgement that the report cannot import until it has copy', () => {
   assert.equal(importReview(article, review, { summaries: false })[0].supported, true);

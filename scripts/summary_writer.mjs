@@ -11,6 +11,7 @@
 // 못한 승인 후보는 summary_failed 로 표시해 이번 보고서에서 빼고, 다음 실행이 다시 쓴다. 할당량(429)이나
 // 서비스 장애로 멈추면 보고서를 만들지 않고, 다음 실행이 이미 쓴 문안을 그대로 이어 받는다.
 import crypto from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -36,8 +37,7 @@ export const DEFAULT_WRITER_MODEL = 'gemini-3.5-flash-lite';
 // Issue 3(9월 29일 실행)에서 원문 "will join"을 "영입했음"으로 옮기는 식의 시제 오류가 되풀이됐다.
 // 추론 단계는 요청 수 한도를 더 쓰지 않는다. 늘어나는 응답 시간에 맞춰 시간 제한을 늘린다.
 const DEFAULT_THINKING = 'high';
-// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격으로 요청을 시작하되, 응답은 여러 건을 함께 기다린다.
-const DEFAULT_DELAY_MS = 4500;
+// flash-lite 무료 등급은 15 RPM 이다. 판정 호출과 같은 간격(GEMINI.defaultDelayMs)으로 요청을 시작하되, 응답은 여러 건을 함께 기다린다.
 const DEFAULT_TIMEOUT_MS = 180000;
 // 기사 본문을 함께 보낸다. 무료 등급 입력 토큰 한도를 넘지 않게 자른다.
 // Issue 3 에서 투자 시그널 문안은 판정이 고른 인용(중앙값 229자)만 받아, Bayer·Jenoptik 처럼 인용이 제목 한 줄이면
@@ -55,8 +55,10 @@ export function resolveWriter(env = process.env) {
   if (!['minimal', 'low', 'medium', 'high'].includes(thinkingLevel)) {
     throw new Error(`GEMINI_WRITER_THINKING_LEVEL must be minimal, low, medium or high: ${thinkingLevel}`);
   }
-  const delayMs = Number(env.GEMINI_WRITER_DELAY_MS || DEFAULT_DELAY_MS);
-  if (!Number.isFinite(delayMs) || delayMs < 4000 || delayMs > 60000) throw new Error('GEMINI_WRITER_DELAY_MS must be 4000..60000');
+  const delayMs = Number(env.GEMINI_WRITER_DELAY_MS || GEMINI.defaultDelayMs);
+  if (!Number.isFinite(delayMs) || delayMs < GEMINI.minDelayMs || delayMs > 60000) {
+    throw new Error(`GEMINI_WRITER_DELAY_MS must be ${GEMINI.minDelayMs}..60000`);
+  }
   const timeoutMs = Number(env.GEMINI_WRITER_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 10000 || timeoutMs > 600000) throw new Error('GEMINI_WRITER_TIMEOUT_MS must be 10000..600000');
   return { ...GEMINI, label: 'Gemini writer', model, thinkingLevel, delayMs, timeoutMs, concurrency: resolveConcurrency(env) };
@@ -64,10 +66,16 @@ export function resolveWriter(env = process.env) {
 
 // 정책 문서의 한국어 용어·배치 절만 가져온다. 판정 기준은 넣지 않는다. 이 단계가 판정 기준을 받지 않는
 // 것이 분리의 목적이다. 절 앞부분의 안내와 로컬 판정자용 대상 규칙은 이 단계에 해당하지 않으므로 뺀다.
+// 절 제목이 바뀌면 예전에는 빈 절이나 앞부분 안내까지 넣은 채 그냥 진행했다(fail-open). 판정 쪽(policySection)처럼 멈춘다.
 export function writerPolicySection(doc) {
-  const wording = String(doc).split('## Summary wording')[1]?.split('## 기사별 응답 형식')[0] || '';
+  const parts = String(doc).split('## Summary wording');
+  if (parts.length < 2) throw new Error('Policy document has no "## Summary wording" section for the writer');
+  const wording = parts[1].split('## 기사별 응답 형식')[0];
   const start = wording.indexOf('### Korean terminology');
-  return (start >= 0 ? wording.slice(start) : wording).replace(/\r\n?/g, '\n').trim();
+  if (start < 0) throw new Error('Policy "## Summary wording" section has no "### Korean terminology" subsection for the writer');
+  const section = wording.slice(start).replace(/\r\n?/g, '\n').trim();
+  if (!section.split('\n').slice(1).join('\n').trim()) throw new Error('Policy "### Korean terminology" subsection is empty');
+  return section;
 }
 
 // 규칙 문장만으로는 경량 모델이 문체를 따르지 않았다. 좋은 문안과 나쁜 문안을 짝지어 보여 준다.
@@ -334,8 +342,10 @@ const MISTRANSLATIONS = [
   { ko: /함대/, en: /(?:^|[^a-z])fleet(?:[^a-z]|$)/i },
 ];
 
-// 보고서 시그널 칸의 상세 문안 글자 상한(build_pdf_report.py summary_parts 의 detail_limit). 넘으면 "..."로 잘려 빌드가 실패한다.
-export const SIGNAL_SUMMARY_LIMITS = { en: 440, ko: 230 };
+// 보고서 시그널 칸의 문안 글자 상한. 렌더러(report_content.py summary_parts)와 config/copy_length_limits.json 하나를 함께 읽는다.
+// 상세 문안이 넘으면 "..."로 잘려 빌드가 실패한다. 상세 상한은 문안 지시문에 들어가므로 바꾸면 저장된 문안을 다시 쓴다.
+export const COPY_LENGTH_LIMITS = JSON.parse(readFileSync(new URL('../config/copy_length_limits.json', import.meta.url), 'utf8')).signal_card;
+export const SIGNAL_SUMMARY_LIMITS = { en: COPY_LENGTH_LIMITS.en.detail, ko: COPY_LENGTH_LIMITS.ko.detail };
 
 export function summaryStyleProblems(article, decision) {
   const ko = String(decision.summary_ko || '').trim();
