@@ -231,7 +231,7 @@ class LayeringTests(unittest.TestCase):
     def test_the_builder_still_answers_to_every_name_its_callers_use(self):
         """report_view_model.py 와 테스트는 build_pdf_report.<이름> 으로 들어온다."""
         for name in ("build_profiles", "signal_supported", "summary_parts", "source_line", "t",
-                     "set_language", "item_breaks", "register_fonts", "DEFAULT_ISSUE_NUMBER",
+                     "set_language", "item_breaks", "register_fonts",
                      "SIGNAL_DESCRIPTIONS_EN", "PAGE_W", "SIGNAL_BODY_SIZE"):
             self.assertTrue(hasattr(pdf, name), name)
 

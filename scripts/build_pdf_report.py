@@ -1187,7 +1187,9 @@ def build_report(args):
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fonts = register_fonts(args.font)
-    issue_number = re.sub(r"\D+", "", str(args.issue_number or DEFAULT_ISSUE_NUMBER)) or DEFAULT_ISSUE_NUMBER
+    issue_number = re.sub(r"\D+", "", str(args.issue_number or ""))
+    if not issue_number:
+        raise ValueError("An issue number is required (--issue-number N).")
     report = SlideReport(out_path, fonts, issue_number)
 
     draw_cover(report, summary, indicators)
@@ -1231,7 +1233,7 @@ def main():
     parser.add_argument("--investment-summary", required=True)
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", required=True)
-    parser.add_argument("--issue-number", default=DEFAULT_ISSUE_NUMBER)
+    parser.add_argument("--issue-number", required=True)
     parser.add_argument("--lang", default="ko", choices=["ko", "en"])
     parser.add_argument("--ignored-signals", default="")
     parser.add_argument("--from-date", default="")

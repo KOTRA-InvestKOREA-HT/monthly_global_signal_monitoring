@@ -377,7 +377,9 @@ test('publish takes over only a finished judgement for the same dates', () => {
   // 호수는 이 단계의 입력이 우선이고, 비어 있으면 판정 단계에서 받은 값을 쓴다.
   assert.equal(issueNumberFor('4', judged), '4');
   assert.equal(issueNumberFor('', judged), '3');
-  assert.equal(issueNumberFor('', {}), '2');
+  // 둘 다 없으면 예전처럼 "2"로 채우지 않고 멈춘다.
+  assert.throws(() => issueNumberFor('', {}), /No issue number/);
+  assert.throws(() => issueNumberFor(' # ', null), /No issue number/);
 });
 
 // ---- Issue 3(9월 28일 실행) 검토에서 나온 세 가지 ----

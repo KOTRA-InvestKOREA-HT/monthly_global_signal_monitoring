@@ -47,9 +47,14 @@ export function judgementFor(status, period) {
 }
 
 // 보고서 호수. 워크플로 입력이 비어 있으면 판정 단계에서 받은 호수를 쓴다(대시보드 버튼이 거기에 넘긴다).
+// 둘 다 없으면 멈춘다. 예전에는 "2"로 채워, 호수 없이 돌린 발행이 "Issue 2" PDF 를 main 에 커밋할 수 있었다(4호 시점).
 export function issueNumberFor(input, judged) {
   const pick = [input, judged?.issue_number].map(value => String(value || '').replace(/[^\d]/g, '')).find(Boolean);
-  return pick || '2';
+  if (!pick) {
+    throw Object.assign(new Error('No issue number: set the issue_number input (REPORT_ISSUE_NUMBER) or run the judgement with one.'),
+      { publish_reason: 'issue_number_missing' });
+  }
+  return pick;
 }
 
 // 문안 단계 전용 키. 판정 단계와 다른 키(다른 프로젝트)를 쓰면 무료 한도를 서로 나눠 쓰지 않는다.
@@ -97,6 +102,8 @@ async function main() {
   let stage = 'setup';
   try {
     const judged = judgementFor(await read(path.join(ROOT, 'status.json')).catch(() => null), period);
+    // 문안을 쓰기 전에 확인한다. 다 쓰고 나서 호수 때문에 멈추면 그 호출이 헛돈다.
+    const issueNumber = issueNumberFor(process.env.REPORT_ISSUE_NUMBER, judged);
     const writer = resolveWriter();
     const apiKey = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? summaryApiKey() : '';
     if (!apiKey) {
@@ -141,7 +148,6 @@ async function main() {
     stage = 'build';
     process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
     const reviewFailed = publishableReviewFailures(judged);
-    const issueNumber = issueNumberFor(process.env.REPORT_ISSUE_NUMBER, judged);
     const reportDir = await build({ runDir, issueNumber, reviewFailed });
 
     stage = 'publish';

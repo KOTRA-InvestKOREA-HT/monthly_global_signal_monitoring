@@ -1012,6 +1012,9 @@ export function reportBlockers({ pending, invalid }, reviewFailed = new Set()) {
 
 export async function build(args) {
   const runDir = path.resolve(args.runDir);
+  // 호수를 기본값으로 채우지 않는다. "2"로 채우던 때는 호수 없이 돌린 빌드가 지난 호수의 PDF 를 만들었다.
+  const issueNumber = String(args.issueNumber || "").replace(/[^\d]/g, "");
+  if (!issueNumber) throw new Error("An issue number is required to build the report (--issue-number N).");
   const { snapshot, pending, invalid, results, reviews } = await loadReviews(runDir);
   const reviewFailed = new Set(args.reviewFailed || []);
   const blockers = reportBlockers({ pending, invalid }, reviewFailed);
@@ -1099,7 +1102,7 @@ export async function build(args) {
       "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
       "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
       "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
-      "--issue-number", args.issueNumber || "2", "--lang", lang,
+      "--issue-number", issueNumber, "--lang", lang,
       "--html", path.join(buildDir, `report_${lang}.html`), "--out", path.join(buildDir, `report_${lang}.pdf`)] });
     console.log(JSON.stringify({ status: "completed", report_dir: buildDir, reviewed_articles: reviews.length,
       reviewed_candidates: results.length,
@@ -1133,7 +1136,7 @@ async function main() {
   if (command === "prepare") await prepare(args);
   else if (command === "status" && args.runDir) { if (!await status(path.resolve(args.runDir))) process.exitCode = 1; }
   else if (command === "build" && args.runDir) await build(args);
-  else throw new Error("Usage: local_report.mjs prepare [--month YYYY-MM] [--collect] | status --run-dir PATH | build --run-dir PATH [--python PATH]");
+  else throw new Error("Usage: local_report.mjs prepare [--month YYYY-MM] [--collect] | status --run-dir PATH | build --run-dir PATH --issue-number N [--python PATH]");
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

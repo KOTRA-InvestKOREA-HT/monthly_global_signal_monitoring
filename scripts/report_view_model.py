@@ -13,6 +13,7 @@ the item-linked business trend cards.
 import argparse
 import io
 import json
+import re
 import sys
 from types import SimpleNamespace
 from pathlib import Path
@@ -219,7 +220,10 @@ def build(args):
     signal_index = report.index_investment_signals(investment_signals)
     counts = matrix_counts(profiles, signal_index, summary, signals)
     covered = covered_companies(summary, signals)
-    issue = str(args.issue_number or report.DEFAULT_ISSUE_NUMBER)
+    # 호수는 호출한 쪽이 반드시 준다. 기본값 "2"로 채우던 때는 호수 없이 만든 보고서가 지난 호수로 나갔다.
+    issue = re.sub(r"\D+", "", str(args.issue_number or ""))
+    if not issue:
+        raise ValueError("An issue number is required (--issue-number N).")
     titles = report.cover_titles()
     cover_lines = [report.t("cover_line_1"), report.t("cover_line_2")]
     cover_indicators = indicator_entries(indicators)
@@ -280,7 +284,7 @@ def main():
     parser.add_argument("--relevant", default="outputs/latest_relevant_signals.json")
     parser.add_argument("--indicator-config", required=True)
     parser.add_argument("--font", default="assets/fonts/PretendardJP-Regular.ttf")
-    parser.add_argument("--issue-number", default=report.DEFAULT_ISSUE_NUMBER)
+    parser.add_argument("--issue-number", required=True)
     parser.add_argument("--lang", default="ko", choices=["ko", "en"])
     parser.add_argument("--ignored-signals", default="")
     parser.add_argument("--from-date", default="")
