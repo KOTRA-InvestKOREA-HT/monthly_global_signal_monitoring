@@ -151,6 +151,35 @@ def extract_pdf_rows(pdf_path):
     return rows
 
 
+def load_previous_companies(path):
+    try:
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle).get("companies", [])
+    except FileNotFoundError:
+        return []
+
+
+# 손으로 넣은 기업별 값(Prodrive 의 target_identity 등)은 PDF 에서 나오지 않는다. 다시 만들 때 기존 파일에서
+# 같은 기업(target_no·company)의 생성되지 않는 키를 가져와 company 바로 뒤에 둔다. 예전에는 통째로 덮어써서
+# local_report.mjs 가 읽는 target_identity 가 사라졌다. 생성되는 키는 언제나 새 값이 이긴다.
+def preserve_manual_fields(companies, previous_companies):
+    previous = {(row.get("target_no"), row.get("company")): row for row in previous_companies}
+    merged = []
+    for row in companies:
+        old = previous.get((row["target_no"], row["company"]), {})
+        manual = {key: value for key, value in old.items() if key not in row}
+        if not manual:
+            merged.append(row)
+            continue
+        combined = {}
+        for key, value in row.items():
+            combined[key] = value
+            if key == "company":
+                combined.update(manual)
+        merged.append(combined)
+    return merged
+
+
 def write_csv(path, rows):
     fieldnames = [
         "target_no",
@@ -225,6 +254,8 @@ def main():
                 "pdf_sequence": pdf_row["pdf_sequence"],
             }
         )
+
+    companies = preserve_manual_fields(companies, load_previous_companies(args.out_json))
 
     output = {
         "description": "Company-to-target-technology mapping extracted from the reference PDF and normalized for relevance filtering.",
