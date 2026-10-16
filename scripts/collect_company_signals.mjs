@@ -1832,8 +1832,8 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       continue;
     }
 
-    // 상세 페이지 한 건이 한 단계다. Google 확인 멈춤만 남은 기업을 이어 받을 때는 앞선 실행이 받아 둔 결과를
-    // 그대로 쓰고, 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
+    // 상세 페이지 한 건이 한 단계다. 재시도할 까닭이 상세 페이지 단계에만 남은 기업을 이어 받을 때는 앞선 실행이
+    // 받아 둔 결과를 그대로 쓰고, 실패했거나 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
     const { value: outcome, replayed } = await log.run(stepKey("detail", row),
       () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }));
     if (!replayed) requestCount += outcome.requestCount;
@@ -2850,7 +2850,7 @@ async function main() {
     collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args)),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
-    // Google 확인 멈춤만 남아, 받아 둔 단계는 다시 쓰고 멈춘 기사만 다시 받은 기업.
+    // 재시도할 까닭이 상세 페이지 단계에만 남아, 받아 둔 단계는 다시 쓰고 실패·멈춘 기사만 다시 받은 기업.
     resumed_company_count: companyResults.filter(result => result.resumed).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,
     collection_coverage: companies.map((company, index) => ({ company: company.company,
