@@ -656,22 +656,6 @@ td a {
   font-weight: 400;
 }
 
-.keywordList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.keywordPill {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #175cd3;
-  border-radius: 999px;
-  padding: 3px 8px;
-  font-size: 12px;
-  line-height: 1;
-}
-
 .sourceBadge {
   width: fit-content;
   border-radius: 999px;

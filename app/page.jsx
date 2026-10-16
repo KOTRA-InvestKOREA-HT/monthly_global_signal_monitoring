@@ -7,7 +7,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import dateEvidenceSources from "../config/date_evidence_sources.json";
 // 전월이 언제인지도 실행 버튼·자동 실행과 같은 함수로 정한다. 화면만 브라우저 시간을
 // 쓰면 해외에서 연 사람과 자동 실행이 서로 다른 달을 본다.
-import { monthRange as seoulMonthRange, previousMonthRange } from "../scripts/report_month.mjs";
+import { currentMonthInSeoul, monthRange as seoulMonthRange, previousMonthRange } from "../scripts/report_month.mjs";
+import { isWithinPeriod, monthOnlyValue, signalKey } from "./lib/dashboard_signals.mjs";
+import { dataRangeProblem } from "./lib/date_range.mjs";
 import { suggestedIssue } from "./lib/issue_number.mjs";
 import { NOT_STARTED_LABEL, followRequest, requestedStatus, runRequest } from "./lib/run_request.mjs";
 
@@ -28,19 +30,9 @@ function formatDate(value) {
   }).format(date);
 }
 
-function shortList(values, limit = 6) {
-  if (!Array.isArray(values)) return [];
-  return values.filter(Boolean).slice(0, limit);
-}
-
 function sourceUrl(item) {
   const candidates = [
-    item?.direct_source_url,
     item?.source_direct_url,
-    item?.detail_url,
-    item?.article_url,
-    item?.canonical_url,
-    item?.document_url,
     item?.url,
     item?.official_source_url,
   ];
@@ -56,16 +48,6 @@ function isPressRelease(item) {
   if (item?.is_press_release === true) return true;
   if (item?.source_kind) return item.source_kind === "press_release";
   return PRESS_RELEASE_PATTERN.test([item?.source, item?.official_source_url, item?.url].filter(Boolean).join(" "));
-}
-
-const MONTH_ONLY = /^(20\d{2})-(0[1-9]|1[0-2])$/;
-
-// 게시월만 확인된 항목의 월. 일자가 있는 항목은 그 일자가 우선이다.
-function monthOnlyValue(item) {
-  const published = String(item?.published_at || "").trim();
-  if (published) return MONTH_ONLY.test(published) ? published : "";
-  const month = String(item?.published_month || "").trim();
-  return MONTH_ONLY.test(month) ? month : "";
 }
 
 // 게시일 상태. 수집 단계가 남긴 근거 등급을 그대로 읽는다.
@@ -134,6 +116,26 @@ function sourceBadgeLabel(item) {
 function sourceBadgeClass(item) {
   if (item?.source_type !== "official") return "fallback";
   return isPressRelease(item) ? "press" : "official";
+}
+
+// 세 표가 같이 쓰는 출처·게시일·링크 칸.
+function SourceCells({ item, linkLabel }) {
+  return (
+    <>
+      <td>
+        <div className="sourceStack">
+          <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
+          <span>{item.source}</span>
+        </div>
+      </td>
+      <td><PublishedDate item={item} /></td>
+      <td>
+        <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} ${linkLabel}`}>
+          <ExternalLink size={17} />
+        </a>
+      </td>
+    </>
+  );
 }
 
 // 공식 보도자료를 목록 상단으로 올리고, 나머지는 기존 순서를 유지한다.
@@ -285,12 +287,6 @@ function compactSummaryDetail(value, limit = 120) {
 }
 
 function summaryParts(item) {
-  const headline = compactSummaryPhrase(item?.ai_summary_headline_ko, 58, item);
-  const detail = compactSummaryDetail(item?.ai_summary_detail_ko);
-  if (headline || detail) {
-    return { headline: headline || compactSummaryPhrase(item?.ai_summary_ko, 58, item), detail };
-  }
-
   const text = normalizeSummaryText(item?.ai_summary_ko);
   const dashed = text.split(/\s[-–—]\s/);
   if (dashed.length >= 2) {
@@ -346,6 +342,11 @@ function defaultMonthValue() {
   return previousMonthRange().month_value;
 }
 
+// 아직 오지 않은 달은 수집할 기사도, 받을 보고서도 없다. 한국 시간 이번 달까지만 고를 수 있다.
+function isFutureMonth(year, month, now = currentMonthInSeoul()) {
+  return Number(year) * 12 + Number(month) > now.year * 12 + now.month;
+}
+
 // 화면이 쓰는 모양으로 옮기기만 한다. 달의 범위 자체는 공용 함수가 정한다.
 function monthRange(monthValue) {
   const [yearText, monthText] = String(monthValue || defaultMonthValue()).split("-");
@@ -357,42 +358,6 @@ function monthRange(monthValue) {
     toDate: range.to_date,
     label: `${range.year}년 ${range.month}월`,
   };
-}
-
-function dateOnly(value) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toISOString().slice(0, 10);
-}
-
-function isWithinPeriod(item, period) {
-  // 게시월만 확인된 항목은 그 달이 조회 기간과 겹치면 남긴다.
-  const month = monthOnlyValue(item);
-  if (month) return month >= period.fromDate.slice(0, 7) && month <= period.toDate.slice(0, 7);
-  const published = dateOnly(item?.published_at);
-  if (!published) return true;
-  return published >= period.fromDate && published <= period.toDate;
-}
-
-function signalFingerprint(item) {
-  return [
-    item.target_no,
-    item.company,
-    item.investment_signal_no,
-  ]
-    .filter((value) => value !== undefined && value !== null && value !== "")
-    .join("|");
-}
-
-function signalKey(item) {
-  const bytes = new TextEncoder().encode(signalFingerprint(item));
-  let hash = 0x811c9dc5;
-  for (const byte of bytes) {
-    hash ^= byte;
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-  return hash.toString(16).padStart(8, "0");
 }
 
 function investmentSortKey(item, mode) {
@@ -434,8 +399,6 @@ export default function HomePage() {
   const [relevantSignals, setRelevantSignals] = useState([]);
   const [investmentSignals, setInvestmentSignals] = useState([]);
   const [summary, setSummary] = useState(null);
-  const [relevanceSummary, setRelevanceSummary] = useState(null);
-  const [investmentSummary, setInvestmentSummary] = useState(null);
   const [investmentSortMode, setInvestmentSortMode] = useState("signal");
   const [ignoredSignalKeys, setIgnoredSignalKeys] = useState([]);
   const [crawlStatus, setCrawlStatus] = useState(null);
@@ -445,6 +408,8 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const selectedPeriod = useMemo(() => monthRange(monthValue), [monthValue]);
+  // 웹 보고서는 최신 수집 데이터(한 달 치)로만 만든다. 다른 달은 서버도 400 으로 거절한다.
+  const reportPeriodProblem = dataRangeProblem(selectedPeriod.fromDate, selectedPeriod.toDate, summary?.from_date, summary?.to_date);
   const wasActive = useRef(false);
   // 버튼으로 보낸 실행. GitHub 목록에 오르기 전에는 지난 실행이 보여도 대기로 두고 계속 확인한다.
   const pendingRun = useRef(null);
@@ -458,8 +423,12 @@ export default function HomePage() {
 
   function applyMonthPicker() {
     const year = Number(pickerYear);
-    if (!Number.isFinite(year) || year < 2000 || year > 2100) {
-      setError("조회 연도를 2000년부터 2100년 사이로 입력해 주세요.");
+    if (!Number.isFinite(year) || year < 2000 || year > currentMonthInSeoul().year) {
+      setError(`조회 연도를 2000년부터 ${currentMonthInSeoul().year}년 사이로 입력해 주세요.`);
+      return;
+    }
+    if (isFutureMonth(year, pickerMonth)) {
+      setError("아직 오지 않은 달은 고를 수 없습니다.");
       return;
     }
     setMonthValue(`${year}-${pad2(pickerMonth)}`);
@@ -473,11 +442,14 @@ export default function HomePage() {
       setError("Issue 번호를 입력해 주세요.");
       return;
     }
+    if (reportPeriodProblem) {
+      setError(reportPeriodProblem);
+      return;
+    }
     setIssueNumber(safeIssue);
     const params = new URLSearchParams({
       issue: safeIssue,
       lang: reportLang,
-      month: monthValue,
       from: selectedPeriod.fromDate,
       to: selectedPeriod.toDate,
     });
@@ -490,12 +462,13 @@ export default function HomePage() {
     try {
       const response = await fetch(`/api/report?${params.toString()}`, { cache: "no-store" });
       if (!response.ok) {
-        let errorMessage = "보고서를 생성하지 못했습니다.";
+        // 본문은 한 번만 읽을 수 있다. json() 이 실패한 뒤 text() 를 부르면 "body already read" 오류가 났다.
+        const body = await response.text();
+        let errorMessage = body.trim() || "보고서를 생성하지 못했습니다.";
         try {
-          const payload = await response.json();
-          errorMessage = payload.error || errorMessage;
+          errorMessage = JSON.parse(body).error || errorMessage;
         } catch {
-          errorMessage = await response.text();
+          // JSON 이 아니면 본문을 그대로 보인다.
         }
         throw new Error(errorMessage);
       }
@@ -508,11 +481,6 @@ export default function HomePage() {
       anchor.click();
       anchor.remove();
       window.URL.revokeObjectURL(objectUrl);
-
-      const fallbackReason = response.headers.get("X-Report-Fallback");
-      if (fallbackReason) {
-        setMessage("선택 조건 반영 보고서 생성이 제한되어 최신 보고서 양식으로 다운로드했습니다.");
-      }
       setReportDialogOpen(false);
     } catch (err) {
       setError(err.message || "보고서 다운로드에 실패했습니다.");
@@ -541,8 +509,6 @@ export default function HomePage() {
       setRelevantSignals(payload.relevantSignals || []);
       setInvestmentSignals(payload.investmentSignals || []);
       setSummary(payload.summary || null);
-      setRelevanceSummary(payload.relevanceSummary || null);
-      setInvestmentSummary(payload.investmentSummary || null);
       setPublished(payload.published || null);
     } catch (err) {
       setError(err.message);
@@ -741,7 +707,7 @@ export default function HomePage() {
                 value={pickerYear}
                 onChange={(event) => setPickerYear(event.target.value)}
                 min="2000"
-                max="2100"
+                max={currentMonthInSeoul().year}
               />
             </label>
             <div className="monthGrid" role="list" aria-label="월 선택">
@@ -750,6 +716,7 @@ export default function HomePage() {
                   className={`monthOption ${Number(pickerMonth) === month ? "selected" : ""}`}
                   key={month}
                   type="button"
+                  disabled={isFutureMonth(pickerYear, month)}
                   onClick={() => setPickerMonth(month)}
                 >
                   {month}월
@@ -807,7 +774,11 @@ export default function HomePage() {
             <div className="modalHeader">
               <h2 id="report-dialog-title">보고서 다운로드</h2>
               <p>표지에 표시할 Issue 번호와 보고서 언어를 선택합니다.</p>
+              {summary?.from_date && summary?.to_date ? (
+                <p>받을 수 있는 기간: {summary.from_date} ~ {summary.to_date} (최신 수집 데이터)</p>
+              ) : null}
             </div>
+            {reportPeriodProblem ? <div className="notice error">{reportPeriodProblem} 조회 기간을 바꿔 주세요.</div> : null}
             <label className="modalField">
               <span>Issue 번호</span>
               <input
@@ -828,7 +799,7 @@ export default function HomePage() {
               <button className="secondary" type="button" onClick={() => setReportDialogOpen(false)}>
                 취소
               </button>
-              <button className="primary" type="button" onClick={downloadReport} disabled={downloadingReport}>
+              <button className="primary" type="button" onClick={downloadReport} disabled={downloadingReport || Boolean(reportPeriodProblem)}>
                 {downloadingReport ? "생성 중" : "다운로드"}
               </button>
             </div>
@@ -937,7 +908,8 @@ export default function HomePage() {
         </div>
         <div>
           <span>기술 관련 후보</span>
-          <strong>{relevanceSummary?.relevant_signal_count ?? relevantSignals.length}</strong>
+          {/* 다른 칸처럼 조회 기간 안의 수다. 요약 파일의 전체 수를 쓰면 표의 건수와 달랐다. */}
+          <strong>{displayedRelevantSignals.length}</strong>
         </div>
         <div>
           <span>투자 시그널</span>
@@ -1025,48 +997,15 @@ export default function HomePage() {
                   <td>
                     <div className="titleStack">
                       <strong>{item.target_technology}</strong>
-                      {shortList(item.technology_matched_terms, 4).length ? (
-                        <p className="reasonText">기술 매칭: {shortList(item.technology_matched_terms, 4).join(", ")}</p>
-                      ) : null}
                     </div>
                   </td>
                   <td>
                     <div className="titleStack">
                       <strong>{item.title}</strong>
-                      {item.investment_signal_reason ? <p className="reasonText">{item.investment_signal_reason}</p> : null}
-                      {item.ai_summary_ko ? (
-                        <AiSummaryText item={item} />
-                      ) : (
-                        shortList(item.evidence_snippets, 1).map((snippet) => (
-                          <p className="evidenceText" key={snippet}>
-                            {snippet}
-                          </p>
-                        ))
-                      )}
-                      {item.ai_summary_tier ? <p className="reasonText">AI 요약: {item.ai_summary_tier === "terra" ? "Terra 재요약" : "Luna 1차 요약"}</p> : null}
-                      {shortList(item.matched_terms).length ? (
-                        <div className="keywordList">
-                          {shortList(item.matched_terms).map((term) => (
-                            <span className="keywordPill" key={term}>
-                              {term}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
+                      <AiSummaryText item={item} />
                     </div>
                   </td>
-                  <td>
-                    <div className="sourceStack">
-                      <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
-                      <span>{item.source}</span>
-                    </div>
-                  </td>
-                  <td><PublishedDate item={item} /></td>
-                  <td>
-                    <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 투자 시그널 열기`}>
-                      <ExternalLink size={17} />
-                    </a>
-                  </td>
+                  <SourceCells item={item} linkLabel="투자 시그널 열기" />
                   <td>
                     <button className="ignoreButton" type="button" onClick={() => ignoreSignal(item)}>
                       <EyeOff size={15} />
@@ -1112,40 +1051,10 @@ export default function HomePage() {
                   <td>
                     <div className="titleStack">
                       <strong>{item.title}</strong>
-                      {item.relevance_reason ? <p className="reasonText">{item.relevance_reason}</p> : null}
-                      {item.ai_summary_ko ? (
-                        <BusinessSummaryText item={item} />
-                      ) : (
-                        shortList(item.evidence_snippets, 1).map((snippet) => (
-                          <p className="evidenceText" key={snippet}>
-                            {snippet}
-                          </p>
-                        ))
-                      )}
-                      {item.ai_summary_tier ? <p className="reasonText">AI 요약: {item.ai_summary_tier === "terra" ? "Terra 재요약" : "Luna 1차 요약"}</p> : null}
-                      {shortList(item.matched_terms).length ? (
-                        <div className="keywordList">
-                          {shortList(item.matched_terms).map((term) => (
-                            <span className="keywordPill" key={term}>
-                              {term}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
+                      <BusinessSummaryText item={item} />
                     </div>
                   </td>
-                  <td>
-                    <div className="sourceStack">
-                      <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
-                      <span>{item.source}</span>
-                    </div>
-                  </td>
-                  <td><PublishedDate item={item} /></td>
-                  <td>
-                    <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 관련 후보 열기`}>
-                      <ExternalLink size={17} />
-                    </a>
-                  </td>
+                  <SourceCells item={item} linkLabel="관련 후보 열기" />
                 </tr>
               ))}
               {!loading && displayedRelevantSignals.length === 0 ? (
@@ -1187,18 +1096,7 @@ export default function HomePage() {
                         {item.content_excerpt ? <p className="reasonText">{item.content_excerpt}</p> : null}
                       </div>
                     </td>
-                    <td>
-                      <div className="sourceStack">
-                        <span className={`sourceBadge ${sourceBadgeClass(item)}`}>{sourceBadgeLabel(item)}</span>
-                        <span>{item.source}</span>
-                      </div>
-                    </td>
-                    <td><PublishedDate item={item} /></td>
-                    <td>
-                      <a href={sourceUrl(item)} target="_blank" rel="noreferrer" aria-label={`${item.company} 기사 열기`}>
-                        <ExternalLink size={17} />
-                      </a>
-                    </td>
+                    <SourceCells item={item} linkLabel="기사 열기" />
                   </tr>
                 ))}
                 {!loading && displayedSignals.length === 0 ? (

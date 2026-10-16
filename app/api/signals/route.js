@@ -71,20 +71,19 @@ async function readOptionalGitHubJson(filePath, fallbackValue) {
 
 export async function GET() {
   try {
-    const [signals, summary, relevantSignals, relevanceSummary, investmentSignals, investmentSummary, aiSummary] = await Promise.all([
+    // 화면이 쓰는 파일만 읽는다. 관련성·투자 시그널 요약 파일은 화면이 쓰지 않아 GitHub 호출만 늘렸다.
+    const [signals, summary, relevantSignals, investmentSignals, aiSummary] = await Promise.all([
       readGitHubJson("outputs/latest_company_signals.json"),
       readGitHubJson("outputs/latest_collection_summary.json"),
       readOptionalGitHubJson("outputs/latest_relevant_signals.json", []),
-      readOptionalGitHubJson("outputs/latest_relevance_summary.json", null),
       readOptionalGitHubJson("outputs/latest_investment_signals.json", []),
-      readOptionalGitHubJson("outputs/latest_investment_signal_summary.json", null),
       readOptionalGitHubJson("outputs/latest_ai_summary_summary.json", null),
     ]);
-    // 마지막으로 발행한 호수와 기간. 화면이 고른 달의 호수를 여기서 짐작한다(report_pipeline.mjs suggestedIssue).
+    // 마지막으로 발행한 호수와 기간. 화면이 고른 달의 호수를 여기서 짐작한다(app/lib/issue_number.mjs suggestedIssue).
     const published = aiSummary?.issue_number ? { issue_number: aiSummary.issue_number, period: aiSummary.period || null } : null;
     return Response.json({ signals: dashboardSignals(signals), summary,
-      relevantSignals: dashboardSignals(relevantSignals), relevanceSummary,
-      investmentSignals: dashboardSignals(investmentSignals), investmentSummary, published });
+      relevantSignals: dashboardSignals(relevantSignals),
+      investmentSignals: dashboardSignals(investmentSignals), published });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
