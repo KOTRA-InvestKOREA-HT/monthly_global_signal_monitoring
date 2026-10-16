@@ -7,12 +7,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { browserCandidates, itemBreaks } from '../../scripts/build_html_report.mjs';
-import { renderReport } from '../../scripts/report_html.mjs';
-
-// build_html_report.mjs 의 cardHeights 와 같은 측정이다. CSS px 를 pt 로 바꾼다.
-const measureCards = () => [...document.querySelectorAll('.item-card')]
-  .map(card => card.getBoundingClientRect().height / (96 / 72));
+import { LAYOUT_LIMITS, browserCandidates, cutTexts, itemBreaks } from '../../scripts/build_html_report.mjs';
+import { layoutProbe, renderReport } from '../../scripts/report_html.mjs';
 
 // 브라우저는 함수 번들에 싣지 않는다. @sparticuz/chromium 은 chromium.br 64MB 를 실어 /api/report 가
 // 2.4MB 에서 94MB 가 됐다. -min 은 콜드 스타트 때 이 팩을 받아 /tmp 에 풀고, 따뜻한 동안은 다시 받지 않는다.
@@ -38,7 +34,8 @@ export async function browserLaunchOptions(puppeteer, env = process.env) {
   throw new Error('보고서를 인쇄할 Chrome 또는 Edge 를 찾지 못했습니다. CHROME_PATH 를 지정하세요.');
 }
 
-export async function printReportPdf(model, { puppeteer, launch, assetsDir }) {
+// allowCut: Actions 빌드의 REPORT_ALLOW_CUT_TEXT=true 와 같다. 급히 내려받아야 할 때만 쓴다.
+export async function printReportPdf(model, { puppeteer, launch, assetsDir, allowCut = process.env.REPORT_ALLOW_CUT_TEXT === 'true' }) {
   // 글꼴·이미지를 file:// 로 읽으므로 문서도 file:// 로 연다.
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-web-'));
   const htmlPath = path.join(work, 'report.html');
@@ -51,10 +48,21 @@ export async function printReportPdf(model, { puppeteer, launch, assetsDir }) {
       await page.goto(pathToFileURL(htmlPath).href, { waitUntil: 'load' });
       await page.evaluate(async () => { await document.fonts.ready; });
     };
+    // build_html_report.mjs 와 같은 측정(layoutProbe)으로 품목 카드를 나누고, 인쇄할 HTML 에서 가려진 글자를 찾는다.
+    // 예전 웹 다운로드는 카드 높이만 재서, 줄 수 제한에 걸리거나 푸터 아래로 넘친 문안이 오류 없이 인쇄됐다.
     await open(renderReport(model, { assets }));
+    let layout = await page.evaluate(layoutProbe, LAYOUT_LIMITS);
     if (model.items?.cards?.length > 1) {
-      const breaks = itemBreaks(await page.evaluate(measureCards));
-      if (breaks.length) await open(renderReport(model, { assets, itemBreaks: breaks }));
+      const breaks = itemBreaks(layout.cards);
+      if (breaks.length) {
+        await open(renderReport(model, { assets, itemBreaks: breaks }));
+        layout = await page.evaluate(layoutProbe, LAYOUT_LIMITS);
+      }
+    }
+    const cut = cutTexts(model, layout.problems);
+    if (cut.length && allowCut !== true) {
+      throw Object.assign(new Error(`보고서 문안 일부가 잘리거나 쪽을 넘칩니다(${model.lang}): ${JSON.stringify(cut).slice(0, 500)}`),
+        { code: 'cut_text', cut_text: cut });
     }
     return Buffer.from(await page.pdf({ printBackground: true, preferCSSPageSize: true }));
   } finally {

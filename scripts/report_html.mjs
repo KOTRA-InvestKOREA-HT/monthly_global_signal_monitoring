@@ -49,6 +49,65 @@ const MATRIX_COLUMNS_PER_PAGE = 2;
 // and never past the band the footer keeps.
 export const ITEM_BAND = { firstTop: 158, top: 114, bottom: 724, gap: 14 };
 
+// The footer band at the foot of every inner page. Body content must end above
+// its rule: .page clips overflow, so anything lower is hidden behind the footer
+// or cut off the sheet without an error.
+export const FOOTER_HEIGHT_PT = 38;
+export const CONTENT_BOTTOM_PT = PAGE_HEIGHT_PT - FOOTER_HEIGHT_PT;
+
+// Runs inside the printed page (Chrome's --dump-dom script or puppeteer's
+// evaluate), so it may use nothing from this module's scope: the limits arrive
+// as its argument. It returns the trend-card heights the builder cuts sheets
+// from, and every place the page hides text without saying so:
+//   - a line-clamped summary or body that has more lines than it shows,
+//   - a one-line box that ellipsizes (target name, pills, matrix company, "no signal"),
+//   - an inner page whose content runs below the footer rule.
+// .page{overflow:hidden} keeps all three silent in the PDF, so the build has to ask.
+export function layoutProbe({ contentBottom }) {
+  const pt = px => px * 72 / 96;
+  const round = value => Math.round(value * 10) / 10;
+  const owner = el => el.closest('.detail, .item-card')?.querySelector('h3')?.textContent
+    || el.closest('.page')?.querySelector('.header h2')?.textContent || '';
+  const clipped = [...document.querySelectorAll('.summary, .business-body, .item-body')]
+    .filter(el => el.scrollHeight > el.clientHeight + 1)
+    .map(el => ({ company: owner(el), part: el.className }));
+  // text-overflow only paints the ellipsis; the text keeps its full width, so a
+  // range over it says how wide it wants to be. Table cells report no overflow
+  // through scrollWidth, which is why both are asked.
+  const wider = el => {
+    if (el.scrollWidth > el.clientWidth + 1) return true;
+    const style = getComputedStyle(el);
+    const room = el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return range.getBoundingClientRect().width > room + 1;
+  };
+  const ellipsis = [...document.querySelectorAll('.target-text, .pill, td.company, .empty')]
+    .filter(wider)
+    .map(el => ({ company: owner(el), part: `ellipsis ${el.className}`, text: el.textContent.trim() }));
+  const overflow = [];
+  document.querySelectorAll('.page').forEach((page, index) => {
+    if (page.classList.contains('cover')) return;
+    const top = page.getBoundingClientRect().top;
+    let bottom = top;
+    for (const el of page.querySelectorAll('*')) {
+      // The trend-card column's own box takes in its last card's bottom margin; the cards themselves are measured.
+      if (el.closest('.footer, .header') || el.classList.contains('items')) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width || rect.height) bottom = Math.max(bottom, rect.bottom);
+    }
+    const reach = pt(bottom - top);
+    if (reach > contentBottom + 0.5) {
+      overflow.push({ company: owner(page.querySelector('.detail h3, .item-card h3') || page), part: 'page overflow',
+        page: index + 1, bottom: round(reach), limit: contentBottom });
+    }
+  });
+  return {
+    cards: [...document.querySelectorAll('.item-card')].map(card => pt(card.getBoundingClientRect().height)),
+    problems: [...clipped, ...ellipsis, ...overflow],
+  };
+}
+
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,
   ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
@@ -147,6 +206,7 @@ const cellMark = state => (state === true || state === 'on' ? 'on' : 'off');
 
 const matrixTable = (heading, rows) => `
         <table class="matrix">
+          <colgroup><col class="col-no"><col><col span="5" class="col-signal"></colgroup>
           <thead>
             <tr>
               <th class="col-company" colspan="2">${escapeHtml(heading)}</th>
@@ -344,7 +404,7 @@ body {
 .footer {
   position: absolute;
   inset: auto 0 0 0;
-  height: 38pt;
+  height: ${FOOTER_HEIGHT_PT}pt;
   /* Same 30pt side margins as the header and the body boxes. */
   padding: 0 30pt;
   display: flex;
@@ -748,7 +808,14 @@ body {
   word-break: keep-all;
 }
 .matrix-columns { display: flex; align-items: flex-start; gap: 14pt; }
-table.matrix { flex: 1; border-collapse: collapse; table-layout: fixed; }
+/* Equal halves whatever the names. With flex: 1 and no width the table fell back
+   to automatic layout, so a name too long for its cell
+   widened its own table and squeezed the other one instead of
+   ellipsizing, so nothing reported it. */
+table.matrix { flex: none; width: calc((100% - 14pt) / 2); border-collapse: collapse; table-layout: fixed; }
+/* A fixed table takes its column widths from these, not from the body cells. */
+table.matrix col.col-no { width: 22pt; }
+table.matrix col.col-signal { width: 18pt; }
 table.matrix th {
   height: 16pt;
   padding: 0 7pt;

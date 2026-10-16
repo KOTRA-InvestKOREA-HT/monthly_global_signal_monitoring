@@ -28,7 +28,7 @@ test('the web download prints the report HTML, re-cut at the item-card breaks th
   const page = {
     goto: async url => { opened.push(await fs.readFile(new URL(url), 'utf8')); },
     // 카드 셋이 한 장에 들어가지 않는 높이를 돌려준다. 글꼴 대기는 값이 없다.
-    evaluate: async fn => (String(fn).includes('item-card') ? [300, 300, 300] : undefined),
+    evaluate: async (fn, limits) => (String(fn).includes('item-card') ? { cards: [300, 300, 300], problems: [], limits } : undefined),
     pdf: async options => { printed.push(options); return new Uint8Array([37, 80, 68, 70]); },
   };
   const puppeteer = { launch: async options => {
@@ -45,6 +45,28 @@ test('the web download prints the report HTML, re-cut at the item-card breaks th
   assert.deepEqual(printed, [{ printBackground: true, preferCSSPageSize: true }]);
   assert.equal(output.toString(), '%PDF');
   assert.equal(closed, true);
+});
+
+// 웹 다운로드도 Actions 빌드와 같은 검사로 멈춘다. 예전에는 잘리거나 푸터 아래로 넘친 문안이 그대로 인쇄됐다.
+test('the web download refuses a report the browser had to cut, like the Actions build', async () => {
+  const problems = [{ company: 'Boeing', part: 'page overflow', page: 3, bottom: 752, limit: 742 }];
+  const seen = [];
+  const page = {
+    goto: async () => {},
+    evaluate: async (fn, limits) => {
+      if (!String(fn).includes('item-card')) return undefined;
+      seen.push(limits);
+      return { cards: [100, 100, 100], problems };
+    },
+    pdf: async () => new Uint8Array([37, 80, 68, 70]),
+  };
+  const puppeteer = { launch: async () => ({ newPage: async () => page, close: async () => {} }) };
+  await assert.rejects(printReportPdf(model, { puppeteer, launch: {}, assetsDir: 'assets', allowCut: false }),
+    error => error.code === 'cut_text' && error.cut_text[0].part === 'page overflow' && error.cut_text[0].rendered);
+  assert.deepEqual(seen[0], { contentBottom: 742 });
+  // 급히 내려받을 때만 넘긴다. Actions 의 REPORT_ALLOW_CUT_TEXT 와 같다.
+  const output = await printReportPdf(model, { puppeteer, launch: {}, assetsDir: 'assets', allowCut: true });
+  assert.equal(output.toString(), '%PDF');
 });
 
 test('outside Vercel the download prints with the browser CHROME_PATH names', async () => {
