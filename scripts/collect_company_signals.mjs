@@ -341,12 +341,36 @@ function stripTimeZoneName(value) {
   return value ? String(value).replace(/\[[^\]]+\]\s*$/, "") : value;
 }
 
+// 시간대 표기를 분 단위 오프셋으로 읽는다. 표기가 없으면 null 이다. 약어는 Date 가 읽는 미국 약어와 GMT·UTC 뿐이다.
+const ZONE_ABBREVIATION_OFFSETS = { GMT: 0, UTC: 0, EST: -300, EDT: -240, CST: -360, CDT: -300,
+  MST: -420, MDT: -360, PST: -480, PDT: -420 };
+
+function zoneOffsetMinutes(text) {
+  const numeric = text.match(/([+-])(\d{2}):?(\d{2})$/);
+  if (numeric) return (numeric[1] === "-" ? -1 : 1) * (Number(numeric[2]) * 60 + Number(numeric[3]));
+  const named = text.match(/\b(GMT|UTC|[ECMP][SD]T)$/i);
+  if (named) return ZONE_ABBREVIATION_OFFSETS[named[1].toUpperCase()];
+  return /\dZ$/i.test(text) ? 0 : null;
+}
+
+// 게시처 현지 시각과 그 오프셋. UTC 로 바꿔 적으면 9월 1일 오전 0시 30분(+09:00)에 낸 발표가 8월 31일이 되어
+// 8월 보고서에 들어간다. 한국·일본 기업의 1일 오전 발표, 유럽의 자정 직후 발표가 그렇다. 오프셋을 남겨 두면
+// 시각은 그대로 같은 순간이고, 날짜는 앞 열 글자(게시처 현지 날짜)로 읽는다(date_state.mjs dayOf).
+function formatWithOffset(ms, offsetMinutes) {
+  const local = new Date(ms + offsetMinutes * 60000).toISOString().slice(0, 19);
+  if (!offsetMinutes) return `${local}Z`;
+  const minutes = Math.abs(offsetMinutes);
+  return `${local}${offsetMinutes < 0 ? "-" : "+"}${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+}
+
+// 없는 날짜(2026-02-31)를 Date 는 다음 달로 넘겨 읽는다(3월 3일). 적힌 연·월·일이 실제로 있는 날인지 본다.
+function isRealCalendarDay(year, month, day) {
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day;
+}
+
 function parseDate(value) {
   if (!value) return null;
-  const gdelt = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
-  if (gdelt) {
-    return `${gdelt[1]}-${gdelt[2]}-${gdelt[3]}T${gdelt[4]}:${gdelt[5]}:${gdelt[6]}Z`;
-  }
   // Date parses a zone-less English calendar date at local midnight. In KST
   // that becomes the previous UTC day, so "October 20" was stored as the 19th.
   // Calendar-only values have no timezone; preserve the printed day as UTC.
@@ -359,20 +383,22 @@ function parseDate(value) {
     : dayNamed ? [dayNamed[3], monthNumberFromName(dayNamed[2]), dayNamed[1]] : null;
   if (calendar) {
     const [year, month, day] = calendar.map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return value;
-    return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    if (!isRealCalendarDay(year, month, day)) return null;
+    return new Date(Date.UTC(year, month - 1, day)).toISOString().replace(/\.\d{3}Z$/, 'Z');
   }
+  const text = String(value).trim();
+  const isoDay = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/);
+  if (isoDay && !isRealCalendarDay(Number(isoDay[1]), Number(isoDay[2]), Number(isoDay[3]))) return null;
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
+  if (Number.isNaN(parsed.getTime())) return null;
   // 시간대 표기가 없는 값(08/05/26, 2026-08-05T00:00:00)을 Date 는 실행 기기의 현지 시각으로 읽는다.
   // Actions(UTC)에서는 8월 5일이던 Albemarle JSON-LD "08/05/26" 가 한국 시간 PC에서는 8월 4일 15시가 되어
   // 메타 태그의 8월 5일과 충돌했다. 표기가 없으면 적힌 시각을 UTC 로 읽는다. 날짜만 있는 ISO 값은
   // Date 가 이미 UTC 로 읽으므로 그대로 둔다. RSS 의 "16:00:00 EST" 같은 미국 시간대 약어도 Date 가
-  // 제대로 읽는 시간대 표기다.
-  const text = String(value).trim();
-  const zoned = /(?:Z|[+-]\d{2}:?\d{2}|\b(?:GMT|UTC|[ECMP][SD]T)\b)$/i.test(text) || /^\d{4}-\d{2}-\d{2}$/.test(text);
-  const utc = zoned ? parsed : new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
+  // 제대로 읽는 시간대 표기다. 표기가 있으면 게시처 현지 시각을 오프셋과 함께 남긴다(formatWithOffset).
+  const offset = /^\d{4}-\d{2}-\d{2}$/.test(text) ? 0 : zoneOffsetMinutes(text);
+  if (offset !== null) return formatWithOffset(parsed.getTime(), offset);
+  const utc = new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
     parsed.getHours(), parsed.getMinutes(), parsed.getSeconds()));
   return utc.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
@@ -386,6 +412,8 @@ function monthNumberFromName(name) {
 }
 
 const MONTH_NAME_PATTERN = "January|February|March|April|May|June|July|August|September|October|November|December|Jan\\.?|Feb\\.?|Mar\\.?|Apr\\.?|Jun\\.?|Jul\\.?|Aug\\.?|Sept?\\.?|Oct\\.?|Nov\\.?|Dec\\.?";
+const MONTH_DAY_YEAR = new RegExp(`\\b(${MONTH_NAME_PATTERN})\\s+([0-3]?\\d),?\\s+((?:19|20)\\d{2})\\b`, "i");
+const DAY_MONTH_YEAR = new RegExp(`\\b([0-3]?\\d)\\s+(${MONTH_NAME_PATTERN})\\s+((?:19|20)\\d{2})\\b`, "i");
 
 function isoMonth(year, month) {
   return `${year}-${String(month).padStart(2, "0")}`;
@@ -427,7 +455,8 @@ export function extractMonthFromText(value = "") {
   return namedNumber ? isoMonth(named[2], namedNumber) : "";
 }
 
-// parseDate는 해석에 실패하면 입력 문자열을 그대로 돌려준다. 날짜로 확신할 수 있을 때만 받고 싶은 곳에서 쓴다.
+// 날짜로 확신할 수 있을 때만 받는다. parseDate 는 해석에 실패하면 null 이다. 예전에는 입력 문자열을 그대로
+// 돌려줘서, 없는 날짜 "2026-02-31T10:00:00Z" 가 ISO 모양이라는 이유로 날짜로 통과했다.
 function parseStrictDate(value) {
   // Date는 "2026"을 1월 1일로 읽는다. 연도만 적힌 값은 게시일 근거가 아니다.
   if (/^\s*(?:19|20)\d{2}\s*$/.test(String(value || "")) || parseMonthOnly(value)) return null;
@@ -459,7 +488,7 @@ export function extractDateFromText(value = "") {
   }
   const numeric = text.match(/\b((?:19|20)\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
   if (numeric) {
-    return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
+    return isoDate(numeric[1], numeric[2], numeric[3]);
   }
   // 유럽식 점 표기(31.12.2026). 앞자리가 12를 넘으면 일-월 순서가 확정된다.
   const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.((?:19|20)\d{2})\b/);
@@ -478,16 +507,12 @@ export function extractDateFromText(value = "") {
   if (monthFirst) {
     return isoDate(monthFirst[3], monthFirst[1], monthFirst[2]);
   }
-  const monthName = text.match(
-    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+((?:19|20)\d{2})\b/i,
-  );
+  const monthName = text.match(MONTH_DAY_YEAR);
   if (monthName) {
     // 월 이름 표기를 Date에 그대로 넘기면 현지 시간대로 읽혀 하루가 밀린다.
     return isoDate(monthName[3], monthNumberFromName(monthName[1]), monthName[2]);
   }
-  const dayMonth = text.match(
-    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+((?:19|20)\d{2})\b/i,
-  );
+  const dayMonth = text.match(DAY_MONTH_YEAR);
   if (dayMonth) {
     return isoDate(dayMonth[3], monthNumberFromName(dayMonth[2]), dayMonth[1]);
   }

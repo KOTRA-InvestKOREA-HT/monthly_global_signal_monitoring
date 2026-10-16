@@ -19,12 +19,20 @@ export const DATE_STATUS_LABEL_KO = {
 
 const MONTH_PATTERN = /^((?:19|20)\d{2})-(0[1-9]|1[0-2])$/;
 
-// 오프셋이 없는 값은 PDF 생성기와 같게 UTC로 읽는다. 기간 비교는 하루 단위 문자열로만 한다.
+// ISO 모양의 값은 적힌 날짜(앞 열 글자)가 그날이다. 오프셋이 붙은 값(2026-09-01T00:30:00+09:00)은 게시처
+// 현지 날짜를 쓴다. UTC 로 바꾸면 9월 1일 오전 발표가 8월 31일이 되어 8월 보고서에 들어간다.
+// 오프셋이 없는 값은 수집기가 UTC 로 적어 둔 것이라 앞 열 글자가 곧 UTC 날짜다. 없는 날짜(2026-02-31)는 날짜가 아니다.
+// 그 밖의 모양만 Date 로 읽어 UTC 날짜를 쓴다. 기간 비교는 하루 단위 문자열로만 한다.
 export function dayOf(value) {
-  let text = String(value || "").trim();
+  const text = String(value || "").trim();
   if (!text || MONTH_PATTERN.test(text)) return "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
-  if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(text)) text += "Z";
+  const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/);
+  if (iso) {
+    const [year, month, day] = iso.slice(1).map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    const real = date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day;
+    return real ? text.slice(0, 10) : "";
+  }
   const time = Date.parse(text);
   return Number.isFinite(time) ? new Date(time).toISOString().slice(0, 10) : "";
 }
