@@ -8,7 +8,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { collectWithCheckpoint, createStepLog, onlyDetailStepsRetryable, retryableCollection } from '../scripts/collection_resilience.mjs';
-import { collectCompany, parseArgs } from '../scripts/collect_company_signals.mjs';
+import { collectCompany, createTally, mergeTally, parseArgs } from '../scripts/collect_company_signals.mjs';
 
 const company = { target_no: 1, company: 'Acme Widgets', query_aliases: [] };
 const sourceConfig = { official_feeds: { 'Acme Widgets': [{ url: 'https://acme.example/rss', source: 'Acme newsroom' }] } };
@@ -161,6 +161,30 @@ test('a company whose only transient failure is one detail page resumes just tha
   assert.deepEqual(network.requested, [flakyPage]);
   assert.deepEqual(resumed.rows, full.rows);
   assert.deepEqual(resumed.errors, []);
+});
+
+// 링크 판정·제외 집계는 기업 결과에 실려 체크포인트에 남는다. 예전에는 모듈 전역 카운터라 다시 쓴 기업이 빠졌다.
+test('link verdict and exclusion counts travel with the company result through the checkpoint', async t => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'company-tally-'));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const pageConfig = { official_pages: { 'Acme Widgets': [{ url: 'https://acme.example/newsroom', source: 'Acme newsroom' }] } };
+  const page = `<ul><li>September 4, 2026 <a href="https://acme.example/news/a1">Acme Widgets opens production line number 1 in Ohio</a></li>
+    <li><a href="https://acme.example/news/">News</a></li><li><a href="https://acme.example/news/page/2">Older news</a></li></ul>`;
+  const network = fakeNetwork();
+  const fetch = async (url, init) => (String(url) === 'https://acme.example/newsroom' ? new Response(page) : network.fetch(url, init));
+  const run = () => collectWithCheckpoint({ directory, identity: { company: company.company }, toDate: '2026-09-30',
+    collect: log => collectCompany(company, pageConfig, ['official_pages'], args, dateRange, collectedAt, { probe: always, log, trend }) });
+  const first = await withNetwork({ fetch }, run);
+  assert.ok(first.stats.link_verdict_counts.accept >= 1);
+  assert.ok(first.stats.excluded_non_article_count >= 1);
+  assert.equal(first.stats.excluded_non_article_count,
+    Object.values(first.stats.excluded_non_article_reasons).reduce((sum, count) => sum + count, 0));
+  const cached = await withNetwork({ fetch }, run);
+  assert.equal(cached.cached, true);
+  assert.deepEqual(cached.stats, first.stats);
+  // 실행 요약은 기업 결과의 집계를 합친다.
+  const total = [first, cached].reduce((sum, result) => mergeTally(sum, result.stats), createTally());
+  assert.equal(total.excluded_non_article_count, first.stats.excluded_non_article_count * 2);
 });
 
 // 본문 단계에서 뺀 대체 기사는 결과에 다시 들어오지 않는다. 예전에는 rows.map 이 빠진 행 자리에 원래 행을 넣었다.

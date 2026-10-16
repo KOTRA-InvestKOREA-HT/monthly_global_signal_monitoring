@@ -89,38 +89,63 @@ let linkPolicy = DEFAULT_LINK_POLICY;
 let trendTechnology = null;
 let trendKeywordConfig = null;
 let trendSearchTerms = null;
-const linkVerdictCounts = new Map();
-
-function countLinkVerdict(verdict) {
-  linkVerdictCounts.set(verdict, (linkVerdictCounts.get(verdict) || 0) + 1);
-}
-
+// 링크 판정 집계와 제외 기록은 기업별로 센다(createTally). 기업 결과의 stats 에 실려 체크포인트에 함께 남고,
+// main 이 합친다. 예전에는 모듈 전역 카운터라서 체크포인트를 다시 쓰거나 이어 받은 기업의 몫이 빠졌고,
+// link-policy-trial 이 캐시를 복원한 뒤 이 숫자를 비교 지표로 쓰면 두 실행의 숫자가 서로 다른 기업 묶음을 셌다.
+//
 // 기사가 아니라고 판단해 제외한 링크. 필터가 과했는지 사후에 검증할 수 있어야 한다.
 // 집계는 전량을 세고, 샘플만 상한을 둔다. 예전에는 둘 다 상한에 걸려 총 제외 건수를 알 수 없었다.
 //
 // 샘플은 사유별로 따로 담는다. 한 통에 담으면 압도적으로 많은 사유 하나가 표본을 다 먹는다.
 // 실제로 9,998건 제외 중 9,782건이 index_or_category_page 라서, 120건 표본이 전부 그 사유로
 // 채워지고 no_article_title 22건은 한 건도 눈에 띄지 않았다. 확인이 필요한 쪽은 늘 소수 사유다.
-const excludedByReason = new Map();
-const excludedCounts = new Map();
-let excludedTotal = 0;
 const EXCLUDED_SAMPLE_PER_REASON = 24;
 const EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON = 2;
 
-function recordExclusion(company, title, url, reason) {
-  excludedTotal += 1;
-  excludedCounts.set(reason, (excludedCounts.get(reason) || 0) + 1);
-  if (!excludedByReason.has(reason)) excludedByReason.set(reason, []);
-  const bucket = excludedByReason.get(reason);
-  if (bucket.length >= EXCLUDED_SAMPLE_PER_REASON) return;
-  // 한 회사가 사유별 표본을 다 차지하면 다른 회사의 오제외를 못 본다.
-  const seenForCompany = bucket.filter((row) => row.company === company).length;
-  if (seenForCompany >= EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON) return;
-  bucket.push({ company, title: cleanText(title).slice(0, 120), url, reason });
+export function createTally() {
+  return { link_verdict_counts: {}, excluded_non_article_count: 0, excluded_non_article_reasons: {},
+    excluded_non_article_samples: [] };
 }
 
-function excludedSamples() {
-  return [...excludedByReason.values()].flat();
+function countLinkVerdict(tally, verdict) {
+  tally.link_verdict_counts[verdict] = (tally.link_verdict_counts[verdict] || 0) + 1;
+}
+
+// 한 회사가 사유별 표본을 다 차지하면 다른 회사의 오제외를 못 본다. 기업별 표본은 사유당 2건까지 둔다.
+function addExclusionSample(samples, sample) {
+  const same = samples.filter((row) => row.reason === sample.reason && row.company === sample.company).length;
+  if (same < EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON) samples.push(sample);
+}
+
+function recordExclusion(tally, company, title, url, reason) {
+  tally.excluded_non_article_count += 1;
+  tally.excluded_non_article_reasons[reason] = (tally.excluded_non_article_reasons[reason] || 0) + 1;
+  addExclusionSample(tally.excluded_non_article_samples, { company, title: cleanText(title).slice(0, 120), url, reason });
+}
+
+// 단계별·기업별 집계를 합친다. 체크포인트에서 온 옛 결과처럼 집계가 없으면 그 몫은 0이다.
+export function mergeTally(target, source) {
+  if (!source) return target;
+  for (const [verdict, count] of Object.entries(source.link_verdict_counts || {})) {
+    target.link_verdict_counts[verdict] = (target.link_verdict_counts[verdict] || 0) + count;
+  }
+  target.excluded_non_article_count += source.excluded_non_article_count || 0;
+  for (const [reason, count] of Object.entries(source.excluded_non_article_reasons || {})) {
+    target.excluded_non_article_reasons[reason] = (target.excluded_non_article_reasons[reason] || 0) + count;
+  }
+  for (const sample of source.excluded_non_article_samples || []) addExclusionSample(target.excluded_non_article_samples, sample);
+  return target;
+}
+
+// 실행 요약의 제외 표본. 기업 순서대로 사유마다 24건까지 담는다.
+export function summarySamples(samples) {
+  const byReason = new Map();
+  for (const sample of samples) {
+    if (!byReason.has(sample.reason)) byReason.set(sample.reason, []);
+    const bucket = byReason.get(sample.reason);
+    if (bucket.length < EXCLUDED_SAMPLE_PER_REASON) bucket.push(sample);
+  }
+  return byReason;
 }
 
 export function parseArgs(argv) {
@@ -1388,6 +1413,8 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
   const rows = [];
   const recoveryCandidates = [];
   const errors = [];
+  // 이 출처 단계의 링크 판정·제외 집계. 단계 결과에 실려 체크포인트에 남는다(collectCompany 가 합친다).
+  const tally = createTally();
   let requestCount = 0;
   for (const page of pages) {
     try {
@@ -1397,8 +1424,17 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
         try {
           requestCount += 1;
           const feedXml = await fetchText(feedUrl, timeoutSeconds);
+          // 목록 페이지에서 찾은 피드의 항목도 링크 단계의 구조적 거부는 거친다. 설정한 피드처럼 인물·애널리스트
+          // 소개 페이지를 빼고, 목록·깨진 주소도 뺀다. 예전에는 아무 판정 없이 들어왔다.
           const feedRows = filterByDateRange(
-            parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
+            parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind)
+              .filter((row) => {
+                const reason = isPersonOrCoveragePage(row.url) ? "person_or_coverage_page"
+                  : looksLikeSourceIndexUrl(row.url) ? "index_or_category_page"
+                    : looksLikeBrokenUrl(row.url) ? "broken_url" : "";
+                if (reason) recordExclusion(tally, company.company, row.title, row.url, reason);
+                return !reason;
+              }),
             dateRange,
           );
           rows.push(...feedRows.slice(0, maxPerSource));
@@ -1417,9 +1453,9 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
             url: anchor.url, source_page_url: page.url });
         }
         const judged = judgeAnchor(anchor, page.url, linkPolicy);
-        countLinkVerdict(judged.verdict);
+        countLinkVerdict(tally, judged.verdict);
         if (judged.verdict === "hard_reject") {
-          if (judged.reason) recordExclusion(company.company, anchor.title, anchor.url, judged.reason);
+          if (judged.reason) recordExclusion(tally, company.company, anchor.title, anchor.url, judged.reason);
           continue;
         }
         kept.push({ anchor, verdict: judged.verdict, reason: judged.reason, rank: judged.rank ?? 0 });
@@ -1449,7 +1485,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       errors.push({ source_url: page.url, source_name: page.source, kind: page.kind, error: error.message });
     }
   }
-  return { rows, requestCount, errors, recoveryCandidates };
+  return { rows, requestCount, errors, recoveryCandidates, tally };
 }
 
 function canFetchDetailContent(url) {
@@ -1769,8 +1805,9 @@ export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
 
 // yieldSlot: Google 차례를 기다리는 동안 기업 작업 자리를 내놓는다(mapWithConcurrency 참고).
 // probe: Google 확인 차례(createPublisherProbe). log: 기업 수집의 단계 기록(createStepLog).
+// tally: 이 기업의 제외 집계(createTally). 다시 쓴 상세 단계의 제외도 센다. 이어 받은 기업의 집계가 전체 재수집과 같아야 한다.
 export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company,
-  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog() } = {}) {
+  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog(), tally = createTally() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
     return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
@@ -1791,7 +1828,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
     // 이 상한에 걸리는 것은 언제나 그다음으로 가능성이 낮은 링크다.
     if (row.link_verdict === "fetch_to_verify") {
       if (verifyCount >= args.maxVerifyPerCompany) {
-        recordExclusion(row.company, row.title, row.url, "verify_budget_exhausted");
+        recordExclusion(tally, row.company, row.title, row.url, "verify_budget_exhausted");
         continue;
       }
       verifyCount += 1;
@@ -1803,12 +1840,12 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       const skipStatus = detailCount >= args.maxDetailPerCompany ? "skipped_detail_limit" : "skipped_non_html";
       const skipTitle = isUsableTitle(row.title, company) ? row.title : titleFromUrl(row.url);
       if (!isUsableTitle(skipTitle, company)) {
-        recordExclusion(row.company, row.title, row.url, "no_article_title");
+        recordExclusion(tally, row.company, row.title, row.url, "no_article_title");
         continue;
       }
       // 확인 대상은 문서를 봐야 판정이 끝난다. 못 받아봤으면 링크만 보고 들일 수 없다.
       if (row.link_verdict === "fetch_to_verify") {
-        recordExclusion(row.company, skipTitle, row.url, "unverified_no_fetch");
+        recordExclusion(tally, row.company, skipTitle, row.url, "unverified_no_fetch");
         continue;
       }
       // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다. 다만 URL 날짜는 정황 근거다.
@@ -1820,7 +1857,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       // 열 수 없는 파일(XLS 등)에 날짜 근거도 없으면 검토도 날짜 확인도 영영 할 수 없다. 남겨 두면 매달
       // 수집 보완 대상으로만 쌓인다. 2026-08 실행의 Merck 지역 매출표, ABB 2021년 3분기 재무표가 그랬다.
       if (skipStatus === "skipped_non_html" && !skipDates.published_at && !skipDates.published_month) {
-        recordExclusion(row.company, skipTitle, row.url, "unreadable_undated_file");
+        recordExclusion(tally, row.company, skipTitle, row.url, "unreadable_undated_file");
         continue;
       }
       enriched.push({
@@ -1839,7 +1876,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
     if (!replayed) requestCount += outcome.requestCount;
     detailCount += outcome.detailCount;
     errors.push(...outcome.errors);
-    if (outcome.exclusion && !replayed) recordExclusion(row.company, ...outcome.exclusion);
+    if (outcome.exclusion) recordExclusion(tally, row.company, ...outcome.exclusion);
     if (outcome.row) enriched.push(outcome.row);
     if (outcome.paced && !replayed && args.rateLimitSeconds > 0) {
       await sleep(args.rateLimitSeconds * 1000);
@@ -2357,16 +2394,9 @@ export function trimByRank(rows, limit) {
 // 대체 수집, 상세 페이지를 받아 보니 기간 밖이던 자체 출처. 목록에 날짜가 없어 자리를 받은 기사가
 // 받아 보면 기간 밖인 경우가 많다. 2026-08 실행(34921453566)에서 538행 중 161행이 그랬고, BASF·Shin-Etsu·Maxon 은
 // 이번 달 기사가 없어 Google News 를 찾고도 기간 밖 공식 기사 10건 뒤에 서서 남은 대체 기사가 없었다.
-// 상세 페이지를 받기 전, 목록 날짜나 제목 연도만으로 이미 기간 밖인 행은 남는 자리만 채운다.
-// trimByRank 는 링크 순위로만 자르므로, 순위가 같거나 앞선 기간 밖 문서가 이번 달 후보를 밀어냈다.
-// 2026-08 수집에서 20개사가 기업 상한에 걸렸고, Air Liquide 는 받은 11건 중 10건, BASF·Shin-Etsu 는 8건이 기간 밖이었다.
-export function capCompanyRows(rows, dateRange, limit) {
-  const period = dateRangePeriod(dateRange);
-  const outside = row => periodPlacement(row, period).placement === 'out_of_period';
-  const kept = trimByRank(rows.filter(row => !outside(row)), limit);
-  return [...kept, ...trimByRank(rows.filter(outside), Math.max(0, limit - kept.length))];
-}
-
+// 상세 페이지를 받기 전의 첫 상한은 링크 순위로만 자른다(trimByRank). 목록 날짜나 제목 연도만으로 기간 밖인 행은
+// 출처 수집기가 이미 걸러 두었기 때문이다(filterByDateRange). 예전의 capCompanyRows 는 그런 행을 뒤로 미뤘지만
+// 그 분기에 닿는 행이 없었다.
 export function rankCompanyRows({ usable, rows, fallbackRows, dateRange, limit }) {
   const period = dateRangePeriod(dateRange);
   const outside = row => periodPlacement(row, period).placement === 'out_of_period';
@@ -2659,11 +2689,13 @@ function collectSource(source, company, sourceConfig, args, dateRange, collected
 // options: yieldSlot·probe·log 는 상세 페이지 받기로 넘긴다(enrichOfficialRowsWithContent).
 // log 의 단계는 출처 하나, 대체 수집 검색, 사업동향 검색, 상세 페이지 한 건이다. 이어 받을 때 다시 쓴 단계의
 // 요청은 이번 실행의 요청 수에 더하지 않는다(collectWithCheckpoint 의 cached 기업과 같다).
-// 대체 수집과 GDELT 질의의 when:Nd 는 실행 날짜에 따라 달라지지만, 이어 받을 때는 처음 받은 검색 결과를 쓴다.
+// 기간 없이 돌린 조회의 검색 창(when:Nd)은 실행 날짜에 따라 달라지지만, 이어 받을 때는 처음 받은 검색 결과를 쓴다.
 // 처음부터 다시 받는 기업은 지금처럼 새로 검색한다. trend: 시험용으로 사업동향 탐색 입력을 바꿔 넣는다.
+// 링크 판정·제외 집계(tally)는 다시 쓴 단계까지 세어 stats 에 싣는다. 그래야 체크포인트·이어 받기와 무관하게 같다.
 export async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, options = {}) {
   const { log = createStepLog(), trend = {} } = options;
-  const slot = { ...options, log };
+  const tally = createTally();
+  const slot = { ...options, log, tally };
   const { technologyMap = trendTechnology, keywordConfig = trendKeywordConfig, searchTerms = trendSearchTerms } = trend;
   const companyRows = [];
   const publisherCandidates = [];
@@ -2686,6 +2718,7 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       replayed = step.replayed;
       if (step.value.failed !== undefined) throw new Error(step.value.failed);
       result = step.value;
+      mergeTally(tally, result.tally);
       companyRows.push(...result.rows);
       publisherCandidates.push(...(result.recoveryCandidates || result.rows || []));
       if (!replayed) requestCount += result.requestCount;
@@ -2711,8 +2744,16 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
   }
 
   // Drop disabled probes before the company cap; keep priority through fetching.
-  const candidateRows = selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany);
-  const selectedCompanyRows = capCompanyRows(candidateRows, dateRange, args.maxPerCompany);
+  // 확인 대상을 받아 보지 않기로 했으면(maxVerifyPerCompany=0) 여기서 빠지는 링크도 제외로 센다. 예전에는 기록 없이 사라졌다.
+  const dedupedRows = sortRows(dedupeRows(companyRows));
+  const candidateRows = selectDetailRows(dedupedRows, args.maxVerifyPerCompany);
+  if (candidateRows.length < dedupedRows.length) {
+    for (const row of dedupedRows.filter(item => !candidateRows.includes(item))) {
+      recordExclusion(tally, row.company, row.title, row.url, "verify_budget_exhausted");
+    }
+  }
+  // 출처 수집기가 이미 기간 밖 행을 걸러 두었으므로(filterByDateRange) 남은 행은 링크 순위로만 자른다.
+  const selectedCompanyRows = trimByRank(candidateRows, args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company, slot);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
@@ -2787,7 +2828,7 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news_trend", error: error.message });
     }
   }
-  return { rows, requestCount, errors, stats };
+  return { rows, requestCount, errors, stats: { ...stats, ...tally } };
 }
 
 async function main() {
@@ -2845,6 +2886,8 @@ async function main() {
   }
 
   const finalRows = sortRows(dedupeRows(rows));
+  const tally = companyResults.reduce((total, result) => mergeTally(total, result.stats), createTally());
+  const samplesByReason = summarySamples(tally.excluded_non_article_samples);
   const countsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
   const officialCountsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
   for (const row of finalRows) {
@@ -2869,7 +2912,11 @@ async function main() {
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
     // 체크포인트에서 온 옛 결과에는 stats 가 없어 기업 이름만 남는다.
-    company_collection_stats: companies.map((company, index) => ({ company: company.company, ...(companyResults[index].stats || {}) })),
+    // 제외 표본은 아래 excluded_non_article_samples 에 모으므로 기업별 줄에서는 뺀다.
+    company_collection_stats: companies.map((company, index) => {
+      const { excluded_non_article_samples, ...stats } = companyResults[index].stats || {};
+      return { company: company.company, ...stats };
+    }),
     companies_cut_by_company_cap: companyResults.filter(result => result.stats?.cut_by_company_cap > 0).length,
     fallback_skipped_company_count: companyResults.filter(result => result.stats?.fallback === 'skipped_has_monthly_source').length,
     // 사업동향 탐색이 실제로 몇 건을 보탰는지. 이 숫자가 곧 늘어난 LLM 호출 수다.
@@ -2928,14 +2975,16 @@ async function main() {
     date_conflict_result_count: finalRows.filter((row) => row.date_conflict === true).length,
     undated_with_body_count: finalRows.filter((row) => resolveDateState(row).status === "unknown" && hasArticleBody(row)).length,
     link_policy: linkPolicy,
-    link_verdict_counts: Object.fromEntries(linkVerdictCounts),
+    // 링크 판정·제외 집계는 체크포인트에서 다시 쓴 기업과 이어 받은 기업까지 모든 기업의 합이다(createTally).
+    // request_count·retry_count 는 이번 실행이 실제로 보낸 요청과 재시도만 센다.
+    link_verdict_counts: tally.link_verdict_counts,
     max_verify_per_company: args.maxVerifyPerCompany,
-    excluded_non_article_count: excludedTotal,
-    excluded_non_article_reasons: Object.fromEntries(excludedCounts),
-    excluded_non_article_sample_count: excludedSamples().length,
-    excluded_non_article_samples: excludedSamples(),
+    excluded_non_article_count: tally.excluded_non_article_count,
+    excluded_non_article_reasons: tally.excluded_non_article_reasons,
+    excluded_non_article_sample_count: [...samplesByReason.values()].flat().length,
+    excluded_non_article_samples: [...samplesByReason.values()].flat(),
     excluded_non_article_sample_reasons: Object.fromEntries(
-      [...excludedByReason].map(([reason, rows]) => [reason, rows.length]),
+      [...samplesByReason].map(([reason, rows]) => [reason, rows.length]),
     ),
     published_at_source_counts: finalRows.reduce((counts, row) => {
       const key = row.published_at_source || "none";

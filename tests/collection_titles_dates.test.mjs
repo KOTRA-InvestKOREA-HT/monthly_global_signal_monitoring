@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { capCompanyRows, chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText, parseJsonFeed,
+import { chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText, parseJsonFeed,
   isUsableTitle, parseAnchors, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { chooseDateEvidence, latestTitleYear, periodPlacement } from '../scripts/date_state.mjs';
 
@@ -150,19 +150,6 @@ test('a title naming only years two or more before the period is out of period u
   assert.equal(placement('Company opens plant'), 'date_pending');
   const confirmed = { title: 'Annual Shareholders Meeting 2024 replay', ...chooseDateEvidence([dateEvidence('2026-08-12', 'listing', 'published')]) };
   assert.equal(periodPlacement(confirmed, august).placement, 'in_period');
-});
-
-test('the company cap fills with rows not known to be out of period before stale ones', () => {
-  const dateRange = { from_date: '2026-08-01', to_date: '2026-08-31' };
-  const rows = [
-    { url: 'https://example.com/agm-2023', title: 'Archive AGM 2023', link_rank: 0 },
-    { url: 'https://example.com/ref-2018', title: '2018 Reference document', link_rank: 0 },
-    { url: 'https://example.com/plant', title: 'Company opens plant', link_rank: 1 },
-    { url: 'https://example.com/deal', title: 'Company signs supply deal', link_rank: 1 },
-  ];
-  assert.deepEqual(capCompanyRows(rows, dateRange, 3).map(row => row.url),
-    ['https://example.com/plant', 'https://example.com/deal', 'https://example.com/agm-2023']);
-  assert.equal(capCompanyRows(rows, dateRange, 10).length, 4);
 });
 
 // magniX 뉴스룸은 목록과 상세 페이지를 모두 data/news.json 으로 그린다. HTML 에는 링크도 본문도 없어
