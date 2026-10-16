@@ -1,16 +1,13 @@
 // Report pages as HTML. Pure: a view model in, a document out, no file or
 // browser access, so the same renderer can serve a page and print a PDF.
 //
-// The reportlab path places every run of text at an absolute coordinate and
-// hand-fits it with wrap/clip/max-lines helpers. Here the layout engine does
-// that work, which is the point of the exercise: the matrix below paginates on
-// its own instead of being sliced at a hard-coded 39 rows.
+// This is the only renderer: the PDF is this HTML printed by Chrome
+// (build_html_report.mjs, app/lib/report_pdf.mjs). The layout engine wraps and
+// paginates; the view model brings the few choices that need font metrics.
 
 export const PAGE_WIDTH_PT = 540;
 export const PAGE_HEIGHT_PT = 780;
 
-// Kept in the same order and spelling as build_pdf_report.py so a change on one
-// side is easy to see on the other.
 export const COLORS = {
   navy: '#122844',
   gold: '#DCA72F',
@@ -39,9 +36,8 @@ export const COLORS = {
 };
 
 // Rows per matrix column, from the page geometry: the table starts 145pt down,
-// each row is 12.8pt, and the legend needs the last 92pt. The reportlab page
-// hard-codes profiles[:39]/[39:] instead and silently overruns the legend once
-// the target list passes about 81 companies.
+// each row is 12.8pt, and the legend needs the last 92pt. A longer list is
+// carried onto another matrix page rather than run over the legend.
 export const MATRIX_ROWS_PER_COLUMN = 39;
 const MATRIX_COLUMNS_PER_PAGE = 2;
 
@@ -366,7 +362,7 @@ function styles(assets) {
   return `
 /* The static cuts, not a variable file: Chrome embeds what it is given and a
    variable face lands in the PDF an order of magnitude heavier. These are the
-   same four weights build_pdf_report.py measures with (FONT_FILES). */
+   same four weights report_measure.py measures with (FONT_FILES). */
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-Medium.woff2') format('woff2'); font-weight: 500; font-display: block; }
 @font-face { font-family: 'Pretendard JP'; src: url('${assets}/fonts/PretendardJP-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
@@ -643,10 +639,9 @@ body {
 .item-card .source { margin: 2pt 16.3pt 0; font-size: 7.5pt; color: ${COLORS.muted}; }
 
 /* ---- company detail ---- */
-/* The drawn page decides how many lines of each summary to show by trying a
-   ladder of line counts until one fits. Here each row is as tall as its own
-   text and the boxes follow, so there is nothing to search for; the clamps
-   below are the same ceilings that ladder topped out at. */
+/* Each row is as tall as its own text and the boxes follow. The line clamps
+   below are ceilings; text they hide, and a page that runs past the footer,
+   fail the build (layoutProbe). */
 .detail { position: absolute; top: 114pt; left: 30pt; right: 30pt; }
 .signal-box, .business-box {
   border: 0.9pt solid ${COLORS.boxLine};

@@ -324,12 +324,12 @@ TEXTS = {
         "matrix_company": "기업",
         "matrix_legend_on": "시그널 포착",
         "matrix_legend_off": "미탐지",
-        "matrix_indicators": "① 공급망·지정학 리스크 대응 · ② 생산 확대 및 거점 다변화 · ③ 자금 조달 및 유동성 확보 · ④ 기술생태계 협력(R&D) · ⑤ 핵심경영진 행보",
         "matrix_footnote": "시그널 포착 {on}개사 · 미탐지 {off}개사",
         "detail_title": "기업별 시그널 상세",
         "no_signal": "이번 달 해당 신호 없음",
         "business_heading": "글로벌 사업현황",
-        "business_empty": "해당 기간 공식 출처에서 요약할 수 있는 글로벌 사업현황 신호가 확인되지 않음.",
+        # 출처를 공식 채널로 한정하지 않는다. 상자에는 제3자 뉴스도 실린다(영문 문구와 같다).
+        "business_empty": "해당 기간 요약할 수 있는 글로벌 사업현황이 확인되지 않음.",
         "source_prefix": "출처",
         "source_fallback": "수집 출처",
         "source_empty": "출처  —",
@@ -364,7 +364,6 @@ TEXTS = {
         "matrix_company": "Company",
         "matrix_legend_on": "Signal detected",
         "matrix_legend_off": "No signal",
-        "matrix_indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
         # 단수·0개사·전체 문장은 matrix_footnote() 가 고른다.
         "matrix_footnote": "Signals detected at {on} {companies}; none detected at {off}.",
         "matrix_footnote_none": "No signals detected at any of the {total} companies.",
@@ -1247,6 +1246,11 @@ def cover_indicator_texts(item):
     return INDICATOR_LABEL_KO.get(item["no"], item["label_ko"]), item["description_ko"]
 
 
+def matrix_indicators():
+    """매트릭스 아래 지표 이름 줄. 카드 라벨(signal_row_label)과 같은 이름이라 따로 적어 두지 않는다."""
+    return " · ".join(f"{'①②③④⑤'[no - 1]} {signal_row_label(no)}" for no in range(1, 6))
+
+
 def signal_row_label(no):
     """기업 카드 행의 지표 라벨. 국·영문 모두 이름만 싣는다.
 
@@ -1408,7 +1412,7 @@ def build_item_trend_entries(profiles, signal_index, relevant_rows):
 
 
 def item_trend_text(row):
-    """품목동향 카드에 실을 문안 전체. HTML 보고서는 자르지 않고, reportlab 판은 item_trend_body 가 줄 수에 맞춘다."""
+    """품목동향 카드에 실을 문안 전체. 자르지 않는다. 카드는 문안만큼 커지고 장 나눔은 빌더가 잰 높이로 한다."""
     return business_prose(normalize_summary_text(summary_field(row, "ai_summary"))) or normalize_summary_text(detail_text(row, 400))
 
 

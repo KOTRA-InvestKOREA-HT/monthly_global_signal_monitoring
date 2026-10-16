@@ -31,9 +31,10 @@ export function browserCandidates() {
   ].filter(Boolean).filter((value, index, all) => all.indexOf(value) === index);
 }
 
+// 읽지 않을 출력은 파이프로 열지 않는다. 열어 두고 읽지 않으면 버퍼(약 64KB)가 차는 순간 자식이 멈춘다.
 export function run(command, args, { capture = false } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(command, args, { windowsHide: true, stdio: ['ignore', capture ? 'pipe' : 'ignore', 'pipe'] });
     let stdout = '';
     let stderr = '';
     if (capture) child.stdout.on('data', chunk => { stdout += chunk; });
@@ -200,13 +201,13 @@ function parseArgs(argv) {
 }
 
 async function viewModel(args) {
-  if (args['view-model']) return JSON.parse(await fs.readFile(args['view-model'], 'utf8'));
   const work = await fs.mkdtemp(path.join(os.tmpdir(), 'report-vm-'));
   const out = path.join(work, 'view-model.json');
   // report_view_model.py 가 받는 것은 전부 넘긴다. 빠뜨리면 호출부가 명시한 경로가
   // 조용히 무시되고 기본값이 쓰인다. --relevant 가 그렇게 빠져 있었다.
-  const pass = ['signals', 'summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
-    'technology-map', 'font', 'issue-number', 'lang', 'ignored-signals', 'from-date', 'to-date'];
+  // 시그널 무시·기간 변경은 웹 다운로드가 뷰 모델을 직접 불러 한다. 이 빌드를 그렇게 부르는 곳은 없다.
+  const pass = ['summary', 'relevant', 'investment-signals', 'indicator-config', 'targets',
+    'technology-map', 'font', 'issue-number', 'lang'];
   try {
     await run(process.env.PYTHON || 'python', ['-X', 'utf8', VIEW_MODEL,
       ...pass.flatMap(name => (args[name] ? [`--${name}`, args[name]] : [])), '--out', out]);

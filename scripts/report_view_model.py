@@ -228,7 +228,7 @@ def build(args):
             "company_heading": report.t("matrix_company"),
             "legend_on": report.t("matrix_legend_on"),
             "legend_off": report.t("matrix_legend_off"),
-            "indicators": report.t("matrix_indicators"),
+            "indicators": report.matrix_indicators(),
             "footnote": report.matrix_footnote(counts["detected"], counts["reviewed_off"], counts["total"]),
             "counts": counts,
             "rows": [{

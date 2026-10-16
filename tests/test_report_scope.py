@@ -297,6 +297,28 @@ class LayeringTests(unittest.TestCase):
         self.assertNotIn("reportlab.pdfgen", measure)
         self.assertNotIn("canvas", measure)
 
+    def test_a_missing_font_cut_stops_the_measurement(self):
+        """굵기 하나가 없으면 멈춘다. 예전에는 네 굵기를 모두 Regular 로 조용히 재, 굵은 제목 크기를 잘못 골랐다."""
+        import tempfile
+        try:
+            import report_measure
+        except ImportError as error:  # reportlab 이 없는 해석기
+            self.skipTest(str(error))
+        with tempfile.TemporaryDirectory() as folder:
+            regular = Path(folder) / "PretendardJP-Regular.ttf"
+            regular.write_bytes((Path(__file__).resolve().parents[1] / "assets" / "fonts" / regular.name).read_bytes())
+            with self.assertRaisesRegex(FileNotFoundError, "PretendardJP-Medium.ttf"):
+                report_measure.register_fonts(regular)
+
+    def test_the_matrix_legend_names_are_the_card_labels(self):
+        for lang in ("ko", "en"):
+            pdf.set_language(lang)
+            try:
+                names = pdf.matrix_indicators().split(" · ")
+                self.assertEqual(names, [f"{'①②③④⑤'[no - 1]} {pdf.signal_row_label(no)}" for no in range(1, 6)])
+            finally:
+                pdf.set_language("ko")
+
     def test_the_view_model_reads_the_language_it_set(self):
         """뷰 모델은 report_content.LANG 을 읽는다. 이름을 복사해 갔다면 언어를 바꿔도 옛 값이 남는다."""
         previous = pdf.LANG
