@@ -84,6 +84,11 @@ jobs:
           # 비워 두면 gemini-3.5-flash-lite. 문안 검사에 걸리면 걸린 이유를 알려 주며 최대 세 번까지 다시 쓰게 한다.
           GEMINI_WRITER_MODEL: ${{ vars.GEMINI_WRITER_MODEL }}
           GEMINI_WRITER_THINKING_LEVEL: ${{ vars.GEMINI_WRITER_THINKING_LEVEL }}
+          # 비워 두면 코드 기본값. 문안 요청 하나를 기다리는 시간(10000..600000ms).
+          GEMINI_WRITER_TIMEOUT_MS: ${{ vars.GEMINI_WRITER_TIMEOUT_MS }}
+          # 문안 검토 모델. 비워 두면 gemini-3.5-flash-lite, off 로 끈다(README 안내).
+          GEMINI_REVIEWER_MODEL: ${{ vars.GEMINI_REVIEWER_MODEL }}
+          GEMINI_REVIEWER_THINKING_LEVEL: ${{ vars.GEMINI_REVIEWER_THINKING_LEVEL }}
           # 문안·검토 단계가 함께 기다리는 요청 수. 판정 단계와 같은 변수이고, 비워 두면 4.
           REPORT_CONCURRENCY: ${{ vars.REPORT_CONCURRENCY || '4' }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}

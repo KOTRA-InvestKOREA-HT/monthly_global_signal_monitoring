@@ -122,8 +122,13 @@ jobs:
           GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
           # 비워 두면 코드 기본값(high)을 쓴다. minimal, low, medium, high 중 하나.
           GEMINI_THINKING_LEVEL: ${{ vars.GEMINI_THINKING_LEVEL }}
+          # 1차 판정 모델. 비워 두면 제공자별 코드 기본값(scripts/review_providers.mjs). README 가 안내하는 변수다.
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          NVIDIA_MODEL: ${{ vars.NVIDIA_MODEL }}
           # 2차 검증: 규칙이 고른 의심 후보만 이 모델로 다시 판정한다. 비워 두면 gemini-3.5-flash-lite(1차와 같은 모델, 검증 질문 방식만 다름). off 로 끈다.
           GEMINI_VERIFIER_MODEL: ${{ vars.GEMINI_VERIFIER_MODEL }}
+          # 비워 두면 high. minimal, low, medium, high 중 하나.
+          GEMINI_VERIFIER_THINKING_LEVEL: ${{ vars.GEMINI_VERIFIER_THINKING_LEVEL }}
           REVIEW_VERIFIER: ${{ vars.REVIEW_VERIFIER }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

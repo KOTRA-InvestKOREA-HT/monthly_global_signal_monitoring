@@ -193,6 +193,21 @@ test('no workflow fills in an issue number, and the hand-off stops early without
   assert.match(collect.slice(check), /^- name: [^\n]+\n\s+if: \$\{\{ inputs\.auto_publish \}\}\n/);
 });
 
+// README 가 GEMINI_REVIEWER_MODEL=off 로 검토를 끈다고 안내했지만 워크플로가 그 변수를 넘기지 않았다.
+// 스크립트가 읽는 모델 설정은 저장소 변수로 바꿀 수 있어야 한다.
+test('each workflow passes the model settings its scripts read', async () => {
+  const settings = {
+    'collect-company-signals.yml': ['GEMINI_MODEL', 'NVIDIA_MODEL', 'GEMINI_THINKING_LEVEL', 'GEMINI_VERIFIER_MODEL',
+      'GEMINI_VERIFIER_THINKING_LEVEL', 'REVIEW_VERIFIER'],
+    'publish-report.yml': ['GEMINI_WRITER_MODEL', 'GEMINI_WRITER_THINKING_LEVEL', 'GEMINI_WRITER_TIMEOUT_MS',
+      'GEMINI_REVIEWER_MODEL', 'GEMINI_REVIEWER_THINKING_LEVEL'],
+  };
+  for (const [file, names] of Object.entries(settings)) {
+    const text = await fs.readFile(`.github/workflows/${file}`, 'utf8');
+    for (const name of names) assert.match(text, new RegExp(`\\n {10}${name}: \\$\\{\\{ vars\\.${name} \\}\\}\\r?\\n`), `${file} ${name}`);
+  }
+});
+
 // 제한 시간이 없으면 멈춘 실행이 두 워크플로가 같이 쓰는 동시 실행 그룹을 6시간 막는다.
 // 긴 단계가 작업보다 먼저 끊겨야 진행 저장이 작업 제한 시간 안에서 돈다. 저장은 실패·취소에도 돈다.
 test('both stages stop well before six hours and still save progress', async () => {
