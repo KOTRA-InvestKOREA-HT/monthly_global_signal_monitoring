@@ -17,6 +17,7 @@ import { dateLabelKo, hasArticleBody, periodPlacement, reportEligible, resolveDa
 // 수집기의 날짜 파서를 그대로 쓴다. 검토 단계가 자기 날짜 문법을 갖게 되면, 수집기가 날짜로
 // 읽지 못한 표기를 검토 단계가 받아들여 두 단계의 게시일 판정이 갈린다.
 import { extractDateFromText, extractMonthFromText } from "./collect_company_signals.mjs";
+import { monthPeriod } from "./report_month.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // 기술 그룹별로 무엇이 타겟 품목이고 무엇이 아닌지 적은 범위. 기술 매핑(company_technology_map.json)과 따로 두는 것은
@@ -301,13 +302,8 @@ const hash = (value) => crypto.createHash("sha256").update(JSON.stringify(value)
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const write = async (file, value) => fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 
-export function monthPeriod(month) {
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month || "")) throw new Error("Use --month YYYY-MM");
-  const start = `${month}-01`;
-  const next = new Date(`${start}T00:00:00Z`);
-  next.setUTCMonth(next.getUTCMonth() + 1);
-  return { from_date: start, to_date: new Date(next.getTime() - 86400000).toISOString().slice(0, 10) };
-}
+// 달력 계산은 report_month.mjs 한 곳에 둔다. 테스트와 호출부가 이 이름으로 쓴다.
+export { monthPeriod };
 
 // 보고서 본문에 쓸 수 있는 기사인지 본다. 게시월까지 확정된 기사만 참이다.
 // 검토 대상 여부는 이보다 넓다. reviewCandidate가 그 판단을 맡는다.

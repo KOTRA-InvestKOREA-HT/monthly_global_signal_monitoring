@@ -109,6 +109,34 @@ class PublisherLocalDateTests(unittest.TestCase):
             self.assertEqual(pdf.format_row_date(row), day.strftime("%Y.%m.%d"), value)
 
 
+class PeriodLabelTests(unittest.TestCase):
+    """보고 기간 문구는 기간이 걸친 달을 모두 적는다. 예전 국문은 시작 달만 적었다."""
+
+    def tearDown(self):
+        pdf.set_language("ko")
+
+    def labels(self, lang, from_date, to_date):
+        pdf.set_language(lang)
+        summary = {"from_date": from_date, "to_date": to_date}
+        return pdf.matrix_period_label(summary), pdf.report_month_label(summary)
+
+    def test_one_calendar_month(self):
+        self.assertEqual(self.labels("ko", "2026-08-01", "2026-08-31"), ("8월(2026.8.1~8.31)", "8월"))
+        self.assertEqual(self.labels("en", "2026-08-01", "2026-08-31"), ("in August 2026", "August"))
+
+    def test_a_range_across_months_names_both(self):
+        self.assertEqual(self.labels("ko", "2026-08-15", "2026-09-14"), ("8~9월(2026.8.15~9.14)", "8~9월"))
+        self.assertEqual(self.labels("en", "2026-08-15", "2026-09-14"),
+                         ("from August 15 to September 14, 2026", "August–September"))
+        self.assertEqual(self.labels("ko", "2025-12-15", "2026-01-14"), ("12~1월(2025.12.15~2026.1.14)", "12~1월"))
+
+    def test_an_impossible_date_falls_back_to_the_previous_month_of_the_run(self):
+        pdf.set_language("ko")
+        start, end = pdf.report_period({"from_date": "2026-02-31", "to_date": "2026-03-10",
+                                        "run_started_at": "2026-03-31T15:30:00Z"})
+        self.assertEqual((start.date().isoformat(), end.date().isoformat()), ("2026-03-01", "2026-03-31"))
+
+
 class CutTextTests(unittest.TestCase):
     def test_a_summary_cut_by_a_character_limit_is_flagged(self):
         row = {"ai_summary_en": "Mkango completed the acquisition for EUR 8 million. " * 40}

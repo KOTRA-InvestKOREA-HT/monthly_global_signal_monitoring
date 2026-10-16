@@ -11,7 +11,7 @@
 import json
 import re
 from collections import defaultdict
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -444,13 +444,24 @@ def parse_datetime(value):
         return None
 
 
-def parse_date_only(value):
-    if not value:
+# 보고서의 기준 시간대(한국 시간). 일광절약시간이 없어 고정 오프셋으로 둔다.
+REPORT_TIME_ZONE = timezone(timedelta(hours=9))
+
+
+def calendar_date(value):
+    """실제로 있는 YYYY-MM-DD 날짜면 date, 아니면 None. report_month.mjs 의 isCalendarDate 와 같은 규칙이다."""
+    text = str(value or "").strip()
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
         return None
     try:
-        return datetime.strptime(str(value)[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    except Exception:
+        return date.fromisoformat(text)
+    except ValueError:
         return None
+
+
+def parse_date_only(value):
+    day = calendar_date(str(value or "")[:10])
+    return datetime.combine(day, time(), timezone.utc) if day else None
 
 
 def format_date(value):
@@ -530,10 +541,22 @@ def date_state(row):
     return {"status": status, "precision": "day" if day else "month", "day": day, "month": month}
 
 
+# 달력 계산은 JS 의 scripts/report_month.mjs 와 같은 규칙이다(monthRange, previousMonthRange).
+# tests/month_parity.test.mjs 가 두 구현을 같은 입력으로 대조한다.
 def month_bounds(month):
     start = date(int(month[:4]), int(month[5:7]), 1)
     end = date(start.year + (1 if start.month == 12 else 0), 1 if start.month == 12 else start.month + 1, 1)
     return start, end - timedelta(days=1)
+
+
+def previous_month_range(now=None):
+    """한국 시간으로 본 전월의 첫날과 말일. 오프셋 없는 시각은 UTC 로 읽는다."""
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    local = now.astimezone(REPORT_TIME_ZONE)
+    year, month = (local.year - 1, 12) if local.month == 1 else (local.year, local.month - 1)
+    return month_bounds(f"{year:04d}-{month:02d}")
 
 
 # 월간 보고서 본문에 쓸 수 있는 행인지 본다. 게시월까지 확정된 행만 통과한다.
@@ -578,12 +601,9 @@ def report_period(summary):
     if from_date and to_date:
         return from_date, to_date
 
-    dt = parse_datetime(summary.get("run_started_at")) or datetime.now(timezone.utc)
-    local = dt.astimezone(timezone(timedelta(hours=9)))
-    first_this_month = local.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    last_prev_month = first_this_month - timedelta(days=1)
-    first_prev_month = last_prev_month.replace(day=1)
-    return first_prev_month, last_prev_month
+    # 기간이 없으면 실행 시각의 전월(한국 시간). 수집·발행이 쓰는 report_period.mjs 와 같은 달이다.
+    start, end = previous_month_range(parse_datetime(summary.get("run_started_at")))
+    return datetime.combine(start, time(), timezone.utc), datetime.combine(end, time(), timezone.utc)
 
 
 def compact_date(dt, include_year=True):
@@ -612,14 +632,23 @@ def matrix_period_label(summary):
             return f"in {first} {end.year}"
         return f"from {first} {start.day} to {end.day}, {end.year}"
     end_text = compact_date(end, include_year=start.year != end.year)
-    return f"{start.month}월({compact_date(start)}~{end_text})"
+    return f"{month_span_label(start, end)}({compact_date(start)}~{end_text})"
+
+
+def month_span_label(start, end):
+    """보고 기간이 걸친 달. 한 달이면 "8월"/"August", 달을 넘으면 "8~9월"/"August–September".
+
+    예전에는 시작 달만 적어, 8월 15일~9월 14일 보고서가 "8월(2026.8.15~9.14)", "8월 글로벌 사업동향"으로 나갔다.
+    """
+    same = (start.year, start.month) == (end.year, end.month)
+    if LANG == "en":
+        first, last = MONTH_NAMES_EN[start.month - 1], MONTH_NAMES_EN[end.month - 1]
+        return first if same else f"{first}–{last}"
+    return f"{start.month}월" if same else f"{start.month}~{end.month}월"
 
 
 def report_month_label(summary):
-    start, _ = report_period(summary)
-    if LANG == "en":
-        return MONTH_NAMES_EN[start.month - 1]
-    return f"{start.month}월"
+    return month_span_label(*report_period(summary))
 
 
 def filter_rows_by_report_period(rows, summary):

@@ -1,4 +1,6 @@
-// 이 보고서에서 "전월"이 언제인지 정하는 한 곳.
+// 이 보고서의 달력 계산(전월, 한 달의 범위, 있는 날짜인지)을 두는 한 곳.
+// Python 쪽(report_content.py 의 previous_month_range·month_bounds·calendar_date)은 같은 규칙을 따르고,
+// tests/month_parity.test.mjs 가 두 구현을 같은 입력으로 대조한다.
 //
 // 예전에는 세 곳이 각자 계산했고 기준 시간대가 서로 달랐다.
 //   scripts/report_period.mjs      한국 시간
@@ -40,4 +42,21 @@ export function monthRange(year, month) {
 export function previousMonthRange(now = new Date()) {
   const { year, month } = currentMonthInSeoul(now);
   return month === 1 ? monthRange(year - 1, 12) : monthRange(year, month - 1);
+}
+
+// "YYYY-MM" 한 달의 범위. 로컬 보고서(--month)가 쓴다.
+export function monthPeriod(month) {
+  const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(String(month || ""));
+  if (!match) throw new Error("Use --month YYYY-MM");
+  const { from_date, to_date } = monthRange(Number(match[1]), Number(match[2]));
+  return { from_date, to_date };
+}
+
+// 실제로 있는 날인지. 모양만 보면 2026-02-31 이 통과하고, Date 에 넣으면 조용히 3월 3일로 밀린다.
+// 되돌려 찍어 같은 글자가 나오는지까지 본다.
+export function isCalendarDate(value) {
+  const text = String(value ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+  const date = new Date(`${text}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === text;
 }
