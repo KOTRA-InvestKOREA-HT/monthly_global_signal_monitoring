@@ -1,31 +1,15 @@
-import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
-import { tmpdir } from "node:os";
 import path from "node:path";
-import { dateParam } from "../../lib/date_range.mjs";
-import { internalRequestHeaders, protectionError } from "../../lib/internal_request.mjs";
+import { dataRangeProblem } from "../../lib/date_range.mjs";
+import { internalRequestHeaders, protectionError, viewModelOrigin } from "../../lib/internal_request.mjs";
+import { publicError, viewModelFromPython } from "../../lib/python_view_model.mjs";
+import { reportOptions } from "../../lib/report_request.mjs";
 import { browserLaunchOptions, printReportPdf } from "../../lib/report_pdf.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 // Chromium 을 띄워 품목 카드를 한 번 재고 다시 그려 인쇄한다. 콜드 스타트에는 기본 제한 시간이 빠듯하다.
 export const maxDuration = 60;
-
-function issueNumber(value) {
-  return String(value || "2").replace(/[^\d]/g, "") || "2";
-}
-
-function ignoredSignalKeys(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function langParam(value) {
-  return String(value || "").trim().toLowerCase() === "en" ? "en" : "ko";
-}
 
 function pdfResponse(output, issue, lang) {
   return new Response(output, { headers: {
@@ -35,96 +19,8 @@ function pdfResponse(output, issue, lang) {
   } });
 }
 
-function pythonCandidates() {
-  const localCodexPython = process.env.USERPROFILE
-    ? path.join(process.env.USERPROFILE, ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", "python.exe")
-    : "";
-  return [
-    process.env.PYTHON_PATH,
-    process.env.PYTHON,
-    localCodexPython,
-    "/usr/local/bin/python3",
-    "/usr/bin/python3",
-    "python3",
-    "py",
-    "python",
-  ]
-    .filter(Boolean)
-    .filter((value, index, values) => values.indexOf(value) === index);
-}
-
-function runPython(command, args) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd: process.cwd(),
-      stdio: ["ignore", "pipe", "pipe"],
-      windowsHide: true,
-    });
-    let stdout = "";
-    let stderr = "";
-    const timer = setTimeout(() => {
-      child.kill("SIGKILL");
-      reject(new Error("보고서 내용 계산 시간이 초과되었습니다."));
-    }, 45000);
-
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk.toString();
-    });
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
-    });
-    child.on("error", (error) => {
-      clearTimeout(timer);
-      reject(new Error(`${command}: ${error.message}`));
-    });
-    child.on("close", (code) => {
-      clearTimeout(timer);
-      if (code === 0) {
-        resolve(stdout);
-        return;
-      }
-      reject(new Error(`${command}: ${(stderr || stdout || `Python exited with code ${code}`).trim()}`));
-    });
-  });
-}
-
-// 보고서에 무엇을 싣는지(기간·무시한 시그널·기업 상태·문안)는 Python 이 계산한다. 글자 폭 측정이
-// reportlab 에 있어서다. Vercel 에서는 api/report-view-model.py 가, 로컬에서는 같은 스크립트가 맡는다.
-async function viewModelFromPython({ issue, ignored, fromDate, toDate, lang }) {
-  const outPath = path.join(tmpdir(), `global-signal-view-model-${randomUUID()}.json`);
-  const args = [
-    "-X", "utf8", "scripts/report_view_model.py",
-    "--signals", "outputs/latest_company_signals.json",
-    "--summary", "outputs/latest_collection_summary.json",
-    "--relevant", "outputs/latest_relevant_signals.json",
-    "--investment-signals", "outputs/latest_investment_signals.json",
-    "--indicator-config", "config/investment_signal_indicators.json",
-    "--font", "assets/fonts/PretendardJP-Regular.ttf",
-    "--issue-number", issue,
-    "--lang", lang,
-    "--ignored-signals", ignored.join(","),
-    ...(fromDate ? ["--from-date", fromDate] : []),
-    ...(toDate ? ["--to-date", toDate] : []),
-    "--out", outPath,
-  ];
-  const errors = [];
-  try {
-    for (const command of pythonCandidates()) {
-      try {
-        await runPython(command, args);
-        return JSON.parse(await fs.readFile(outPath, "utf8"));
-      } catch (error) {
-        errors.push(error.message);
-      }
-    }
-  } finally {
-    await fs.rm(outPath, { force: true });
-  }
-  throw new Error(`보고서 내용을 계산하지 못했습니다. ${errors.join(" | ")}`.trim());
-}
-
 async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toDate, lang }, incomingHeaders) {
-  const endpoint = new URL("/api/report-view-model", requestUrl.origin);
+  const endpoint = new URL("/api/report-view-model", viewModelOrigin(requestUrl));
   endpoint.searchParams.set("issue", issue);
   endpoint.searchParams.set("lang", lang);
   if (ignored.length) endpoint.searchParams.set("ignored", ignored.join(","));
@@ -138,11 +34,16 @@ async function viewModelFromFunction(requestUrl, { issue, ignored, fromDate, toD
   try {
     payload = JSON.parse(body);
   } catch {
-    // JSON 이 아니면 아래에서 본문을 오류로 돌려준다.
+    // JSON 이 아니면 아래에서 오류로 돌려준다.
   }
+  // Python 함수의 400(호수·기간·데이터 범위)은 그대로 사용자에게 돌려준다.
+  if (response.status === 400 && payload?.error) throw publicError(payload.error, 400);
   if (!response.ok || !payload) {
-    throw new Error(payload?.error || protectionError(response.status, body) || body.slice(0, 500)
-      || "Vercel Python 보고서 함수 호출에 실패했습니다.");
+    const blocked = protectionError(response.status, body);
+    if (blocked) throw publicError(blocked);
+    // Python 함수는 자세한 내용을 자기 로그에 남기고 일반 문구만 돌려준다.
+    if (payload?.error) throw publicError(payload.error);
+    throw new Error(`Vercel Python 보고서 함수 호출 실패 (HTTP ${response.status}): ${body.slice(0, 500)}`);
   }
   return payload;
 }
@@ -154,7 +55,7 @@ async function reportViewModel(requestUrl, options, incomingHeaders) {
     return await viewModelFromPython(options);
   } catch (error) {
     // vercel dev 처럼 로컬 Python 이 없고 Python 함수는 떠 있는 경우.
-    if (!/ENOENT/i.test(error.message || "")) throw error;
+    if (!error.noInterpreter) throw error;
     try {
       return await viewModelFromFunction(requestUrl, options, incomingHeaders);
     } catch (functionError) {
@@ -163,16 +64,25 @@ async function reportViewModel(requestUrl, options, incomingHeaders) {
   }
 }
 
+// 로컬·자체 호스팅에서만 쓴다. Vercel 의 Node 함수에는 outputs 가 실리지 않으므로 Python 함수가 같은 검사를 한다.
+async function localDataRangeProblem({ fromDate, toDate }) {
+  if (process.env.VERCEL === "1" || !fromDate) return null;
+  let summary;
+  try {
+    summary = JSON.parse(await fs.readFile(path.join(process.cwd(), "outputs", "latest_collection_summary.json"), "utf8"));
+  } catch {
+    return null;
+  }
+  return dataRangeProblem(fromDate, toDate, summary?.from_date, summary?.to_date);
+}
+
 export async function GET(request) {
   try {
     const url = new URL(request.url);
-    const options = {
-      issue: issueNumber(url.searchParams.get("issue")),
-      ignored: ignoredSignalKeys(url.searchParams.get("ignored")),
-      fromDate: dateParam(url.searchParams.get("from")),
-      toDate: dateParam(url.searchParams.get("to")),
-      lang: langParam(url.searchParams.get("lang")),
-    };
+    const { options, error: invalid } = reportOptions(url.searchParams);
+    if (invalid) return Response.json({ error: invalid }, { status: 400 });
+    const outside = await localDataRangeProblem(options);
+    if (outside) return Response.json({ error: outside }, { status: 400 });
     const model = await reportViewModel(url, options, request.headers);
     const { default: puppeteer } = await import("puppeteer-core");
     const output = await printReportPdf(model, {
@@ -182,6 +92,9 @@ export async function GET(request) {
     });
     return pdfResponse(output, options.issue, options.lang);
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    if (error.expose) return Response.json({ error: error.message }, { status: error.status || 500 });
+    // stderr 와 파일 경로가 들어 있을 수 있다. 화면에는 일반 문구만 보낸다.
+    console.error("[api/report]", error);
+    return Response.json({ error: "보고서를 만들지 못했습니다. 서버 로그를 확인해 주세요." }, { status: 500 });
   }
 }

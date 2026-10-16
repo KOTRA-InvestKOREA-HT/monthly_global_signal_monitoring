@@ -13,6 +13,16 @@ export function internalRequestHeaders(incoming, env = process.env) {
   return headers;
 }
 
+// 내부 호출을 보낼 주소. 요청 주소는 Host 헤더에서 오므로, 자체 호스팅에서 그대로 쓰면 아무 Host 나 넣은
+// 요청이 사용자 쿠키를 그 호스트로 보내게 만든다. Vercel 은 자기 배포의 도메인으로 온 요청만 이 함수에 넘기므로
+// 요청 주소가 곧 이 배포다. 그 밖에서는 REPORT_VIEW_MODEL_ORIGIN 이나 이 서버 자신(localhost)으로 보낸다.
+export function viewModelOrigin(requestUrl, env = process.env) {
+  const configured = String(env.REPORT_VIEW_MODEL_ORIGIN || "").trim();
+  if (configured) return new URL(configured).origin;
+  if (env.VERCEL === "1") return new URL(requestUrl).origin;
+  return `http://localhost:${String(env.PORT || "").trim() || "3000"}`;
+}
+
 // 보호에 막힌 응답이면 그 사실을 알리는 문구, 아니면 null. 리디렉션을 따라가지 않으므로 막히면 3xx 나 401 이 온다.
 // 본문(로그인 화면 HTML)을 그대로 오류로 내보내면 화면에 페이지 소스가 찍힌다.
 export function protectionError(status, body = "") {

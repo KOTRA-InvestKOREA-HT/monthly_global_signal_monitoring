@@ -24,3 +24,13 @@ export function rangeProblem(fromDate, toDate) {
   if (fromDate > toDate) return `시작일이 종료일보다 늦습니다: ${fromDate} ~ ${toDate}`;
   return null;
 }
+
+// 웹 보고서는 배포에 실린 outputs/latest_* 한 달 치만 읽는다. 그 밖의 달을 고르면 오류 없이
+// "0개사" 보고서가 나왔다. 요청 기간이 데이터 기간 안에 있지 않으면 무엇을 받을 수 있는지 알려 준다.
+// 데이터 기간을 모르면(요약에 기간이 없으면) 막지 않는다. api/report-view-model.py 가 같은 규칙을 쓴다.
+export function dataRangeProblem(fromDate, toDate, dataFrom, dataTo) {
+  if (!isCalendarDate(fromDate) || !isCalendarDate(toDate)) return null;
+  if (!isCalendarDate(dataFrom) || !isCalendarDate(dataTo)) return null;
+  if (fromDate >= dataFrom && toDate <= dataTo) return null;
+  return `${fromDate} ~ ${toDate} 기간의 수집 데이터가 없습니다. 지금 보고서로 받을 수 있는 기간은 ${dataFrom} ~ ${dataTo}입니다.`;
+}
