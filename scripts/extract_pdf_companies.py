@@ -9,6 +9,9 @@ from typing import Any
 
 import pdfplumber
 
+# 대상 기업 번호 1~77. 예전 패턴 [1-9]\d?|7[0-7] 은 앞쪽이 이미 1~99 를 받아 뒤쪽이 쓸모없었고 78~99 도 번호로 읽었다.
+TARGET_NO_PATTERN = re.compile(r"(?<![\d.])([1-9]|[1-6]\d|7[0-7])\s+")
+
 
 def parse_company_table(text: str) -> list[dict[str, Any]]:
     text = "\n" + text
@@ -21,8 +24,7 @@ def parse_company_table(text: str) -> list[dict[str, Any]]:
     if end:
         table = table[: end.start()]
 
-    number_pattern = re.compile(r"(?<![\d.])([1-9]\d?|7[0-7])\s+")
-    matches = list(number_pattern.finditer(table))
+    matches = list(TARGET_NO_PATTERN.finditer(table))
     parsed: dict[int, str] = {}
 
     for index, match in enumerate(matches):

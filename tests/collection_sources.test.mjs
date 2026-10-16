@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { buildQuery, judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
+import { articleUrlKey, buildQuery, dedupeRows, discoverFeedLinks, isDuplicateTrendRow, judgeAnchor, parseJsonFeed, parseRssOrAtom, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { isBoilerplateLink, isPersonOrCoveragePage, looksLikeSourceIndexUrl } from '../scripts/link_policy.mjs';
 import { collectionBlockingErrors, enrichOfficialRowsWithContent } from '../scripts/collect_company_signals.mjs';
 
@@ -122,8 +122,56 @@ test('an undated file the collector cannot open is dropped, a dated one stays', 
 test('a company with declared search names is searched by those names only, not its short display name', () => {
   const targets = JSON.parse(fs.readFileSync('data/target_companies.json', 'utf8'));
   const prodrive = targets.find(company => company.company === 'Prodrive');
-  const query = buildQuery(prodrive, 31);
+  const query = buildQuery(prodrive, { mode: 'lookback', lookbackDays: 31 });
   assert.match(query, /^"Prodrive Technologies" \(/);
   assert.doesNotMatch(query, /"Prodrive"/);
-  assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, 31), /^\("Ouster" OR "Ouster Inc"\)/);
+  assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, { mode: 'lookback', lookbackDays: 31 }),
+    /^\("Ouster" OR "Ouster Inc"\) .* when:31d$/);
+});
+
+// 쿼리로 기사를 가르는 보도자료(?releaseid=1, ?releaseid=2)는 서로 다른 기사다. 추적 파라미터만 떼고 본다.
+test('duplicate removal keeps articles that differ only by query and drops tracking copies', () => {
+  const row = (url, title) => ({ company: 'Acme', url, title });
+  const kept = dedupeRows([
+    row('https://ir.acme.example/news?releaseid=1', 'Acme opens a battery plant in Ohio'),
+    row('https://ir.acme.example/news?releaseid=2', 'Acme signs a supply deal with Volvo'),
+    row('https://ir.acme.example/news?releaseid=1&utm_source=rss#top', 'Acme opens plant'),
+    row('https://ir.acme.example/News/Story', 'Acme names a new chief financial officer'),
+    row('https://ir.acme.example/news/story', 'Acme reports third quarter results'),
+  ]);
+  assert.deepEqual(kept.map(item => item.url), ['https://ir.acme.example/news?releaseid=1',
+    'https://ir.acme.example/news?releaseid=2', 'https://ir.acme.example/News/Story', 'https://ir.acme.example/news/story']);
+  assert.equal(isDuplicateTrendRow(row('https://ir.acme.example/news?releaseid=3', 'Another headline here'), kept), false);
+  assert.equal(isDuplicateTrendRow(row('https://ir.acme.example/news?releaseid=2&utm_medium=x', 'Different'), kept), true);
+  assert.equal(articleUrlKey('https://IR.acme.example/a?fbclid=1#x'), 'https://ir.acme.example/a');
+});
+
+// 주소 없는 피드 항목이 피드 주소나 검색어 문자열을 기사 주소로 달고 들어왔다.
+test('feed items without their own link are dropped instead of taking the feed address', () => {
+  const company = { target_no: 1, company: 'Acme', query_aliases: [] };
+  const rss = '<rss><channel><item><title>Acme opens a plant in Ohio</title><pubDate>Tue, 01 Sep 2026 09:00:00 GMT</pubDate></item>'
+    + '<item><title>Acme signs a supply deal</title><link>https://acme.example/news/deal</link></item></channel></rss>';
+  for (const [collector, query] of [['official_feed', 'https://acme.example/rss'], ['google_news_rss', '"Acme" (earnings) when:45d']]) {
+    const rows = parseRssOrAtom(rss, company, '2026-10-01T00:00:00Z', collector, query, 'Acme feed');
+    assert.deepEqual(rows.map(row => row.url), ['https://acme.example/news/deal'], collector);
+  }
+  const json = JSON.stringify({ items: [{ title: 'Acme opens a plant in Ohio', url: '' }, { title: 'Acme signs a supply deal', url: '/news/deal' }] });
+  const rows = parseJsonFeed(json, company, '2026-10-01T00:00:00Z', 'https://acme.example/data/news.json', 'Acme news', '',
+    { items: 'items', title: 'title', url: 'url', base: 'https://acme.example/' });
+  assert.deepEqual(rows.map(row => row.url), ['https://acme.example/news/deal']);
+});
+
+test('only feed words, not words that merely contain them, mark a discovered feed', () => {
+  const html = '<link rel="stylesheet" href="/css/feedback.css"><link rel="alternate" type="application/rss+xml" href="/press.xml">'
+    + '<a href="/contact/feedback">Send feedback</a><a href="/anatomy-of-a-launch">Anatomy</a><a href="/news/rss">RSS</a>';
+  assert.deepEqual(discoverFeedLinks(html, 'https://acme.example/news'),
+    ['https://acme.example/press.xml', 'https://acme.example/news/rss']);
+});
+
+// 늦게 돌린 수집에서 when:Nd 창은 기간 밖 새 기사로 6건 자리를 채웠다. 기간을 정한 실행은 after/before 를 쓴다.
+test('the fallback news query searches the reporting period, not a window back from today', () => {
+  const query = buildQuery({ company: 'Ouster', query_aliases: [] },
+    { mode: 'explicit', fromDate: '2026-09-01', toDate: '2026-09-30', lookbackDays: 45 });
+  assert.match(query, / after:2026-09-01 before:2026-10-01$/);
+  assert.doesNotMatch(query, /when:/);
 });

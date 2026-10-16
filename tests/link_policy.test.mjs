@@ -13,7 +13,7 @@ import {
   judgeAnchor,
   parseAnchors,
 } from '../scripts/collect_company_signals.mjs';
-import { summarise } from '../scripts/audit_link_rules.mjs';
+import { reviewSamples, summarise } from '../scripts/audit_link_rules.mjs';
 
 // 실제 수집 경로가 쓰는 조합. 판정을 링크 텍스트와 날짜 없이 시험하면 아무 의미가 없다.
 const DEPS = {
@@ -203,6 +203,14 @@ test('감사 도구는 프로덕션 판정을 읽기만 하고 바꾸지 않는�
     first.counts.current_pass,
     anchors.filter((item) => currentRule(item, page, DEPS)).length,
   );
+});
+
+test('the recovered-sample bundle holds exactly the cells current rejects and proposed passes', () => {
+  // 셀 이름은 august/current/proposed 순서다. XOO 는 current 가 받은 링크라 회수가 아니다.
+  const cells = Object.fromEntries(['XXO', 'OXO', 'XOO', 'OOO', 'OXX'].map((cell) => [cell, [cell]]));
+  const bundle = reviewSamples(cells);
+  assert.deepEqual(bundle.recovered_current_false_proposed_true, ['XXO', 'OXO']);
+  assert.deepEqual(bundle.lost_since_august_old_true_current_false, ['OXX', 'OXO']);
 });
 
 test('section and archive titles fail verification even without link density, real headlines pass', () => {

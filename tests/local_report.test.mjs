@@ -42,11 +42,13 @@ test('English reasons reach report rows and legacy files remain readable', () =>
   assert.throws(() => importReview(a, review(a, [{ ...legacy, reason: '' }])), /reason is required/);
 });
 
-test("month filtering matches UTC boundaries, leap years, and unknown dates", () => {
+test("month filtering reads the publisher's local day, leap years, and unknown dates", () => {
   assert.equal(monthPeriod("2024-02").to_date, "2024-02-29");
   assert.throws(() => monthPeriod("2026-13"));
-  assert.equal(inPeriod({ published_at: "2026-09-01T08:59:59+09:00" }, period), true);
-  assert.equal(inPeriod({ published_at: "2026-09-01T09:00:00+09:00" }, period), false);
+  // 오프셋이 붙은 게시일은 게시처 현지 날짜로 본다(date_state.mjs dayOf). UTC 로는 8월 31일이어도 9월 1일 발표다.
+  assert.equal(inPeriod({ published_at: "2026-09-01T08:59:59+09:00" }, period), false);
+  assert.equal(inPeriod({ published_at: "2026-08-31T23:30:00-05:00" }, period), true);
+  assert.equal(inPeriod({ published_at: "2026-08-31T23:30:00Z" }, period), true);
   assert.equal(inPeriod({ published_at: "2026-08-01T00:00:00" }, period), true);
   assert.equal(inPeriod({ published_at: null }, period), false);
   assert.equal(inPeriod({ published_at: "invalid" }, period), false);

@@ -42,7 +42,10 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       stats.skipped++;
       throw Object.assign(new Error(`domain_cooldown: ${host}`), { noRetry: true });
     }
-    if (state.failures >= threshold) state.probing = true;
+    // 쉬는 시간이 지난 뒤 첫 요청 하나만 탐침으로 보낸다. 탐침이 끝날 때만 표시를 푼다. 예전에는 탐침이 아닌
+    // 요청이 끝날 때도 풀어서, 탐침이 진행 중인데 다른 요청이 그 호스트로 함께 나갔다.
+    const probe = state.failures >= threshold;
+    if (probe) state.probing = true;
     const start = now();
     stats.attempts++;
     try {
@@ -51,12 +54,16 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       return result;
     } catch (error) {
       // A reachable server rejecting one URL is different from an unavailable host.
-      if (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500) {
+      // noRetry 오류(크기 초과, Google 중계 주소 등)는 응답을 받은 뒤의 판단이라 호스트 장애가 아니다.
+      if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
         state.failures++;
         if (state.failures >= threshold) state.until = now() + cooldownMs;
       } else state.failures = 0;
       throw error;
-    } finally { state.probing = false; stats.elapsed_ms += now() - start; }
+    } finally {
+      if (probe) state.probing = false;
+      stats.elapsed_ms += now() - start;
+    }
   } };
 }
 
@@ -73,11 +80,16 @@ export function retryableCollection(result) {
   return result.errors.some(retryableError);
 }
 
-// 재시도할 까닭이 Google 확인 멈춤뿐인 기업. 9월 실행(10월 1일)에서 재시도 대상 28개 기업 가운데 26개가 그랬다.
-// 공식 출처·검색·상세 페이지는 이미 다 받았으므로 멈춘 기사만 다시 받으면 된다.
-export function onlyProbePaused(result) {
+// 상세 페이지 한 건 단계(collect_company_signals.mjs fetchDetailOutcome)가 남기는 오류의 출처.
+const DETAIL_STEP_SOURCES = new Set(['official_detail', 'official_model']);
+
+// 재시도할 까닭이 상세 페이지 단계에만 있는 기업. 출처·검색 단계는 실패 없이 받았으므로 받아 둔 단계를 다시 쓰고,
+// 실패하거나 멈춘 기사만 다시 받으면 된다. 9월 실행(10월 1일)에서 재시도 대상 28개 기업 가운데 26개가 Google 확인
+// 멈춤뿐이었다. 예전에는 그 경우만 이어 받아서, 상세 페이지 하나가 타임아웃 나도 그 기업을 매번 처음부터 다시 받았다.
+// 실패한 단계는 기록되지 않으므로(reusableStep) 이어 받을 때 반드시 다시 요청된다.
+export function onlyDetailStepsRetryable(result) {
   const retryable = result.errors.filter(retryableError);
-  return retryable.length > 0 && !retryable.some(error => TRANSIENT_ERROR.test(error.error || ''));
+  return retryable.length > 0 && retryable.every(error => DETAIL_STEP_SOURCES.has(error.source));
 }
 
 // 다시 써도 되는 단계 결과. 일시 오류나 Google 확인 멈춤이 든 결과는 다음에 다시 시도해야 하므로 남기지 않는다.
@@ -122,7 +134,8 @@ export function createStepLog(previous = null) {
 
 // toDate: 수집 기간의 끝날. 체크포인트를 얼마나 오래 쓸지 정한다(collectionMaxAgeMs).
 // collect 는 단계 기록(createStepLog)을 받는다. 체크포인트에 결과와 함께 단계 결과를 남겨, 재시도할 까닭이
-// Google 확인 멈춤뿐인 기업은 다음 실행에서 멈춘 기사만 다시 받는다. 다른 일시 오류가 있으면 처음부터 받는다.
+// 상세 페이지 단계에만 있는 기업은 다음 실행에서 실패하거나 멈춘 기사만 다시 받는다. 출처·검색 단계에 일시 오류가
+// 있으면 처음부터 받는다.
 // 이어 받은 체크포인트는 처음 받은 시각을 그대로 지닌다. 재사용한 단계가 그때 받은 것이기 때문이다.
 export async function collectWithCheckpoint({ directory, identity, collect, now = Date.now, refresh = false, toDate = '' }) {
   const key = crypto.createHash('sha256').update(JSON.stringify(identity)).digest('hex');
@@ -134,7 +147,7 @@ export async function collectWithCheckpoint({ directory, identity, collect, now 
       const age = now() - saved.saved_at;
       if (saved.version === 1 && Number.isFinite(age) && age >= 0 && age < collectionMaxAgeMs(toDate, saved.saved_at)) {
         if (!retryableCollection(saved.result)) return { ...saved.result, requestCount: 0, cached: true };
-        if (onlyProbePaused(saved.result) && Array.isArray(saved.steps)) {
+        if (onlyDetailStepsRetryable(saved.result) && Array.isArray(saved.steps)) {
           replay = createStepLog(saved.steps);
           savedAt = saved.saved_at;
         }

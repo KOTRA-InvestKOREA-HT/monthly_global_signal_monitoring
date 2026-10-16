@@ -288,7 +288,8 @@ function augustIndexUrl(value) {
   }
 }
 
-// html-report-prototype 브랜치가 지금 쓰는 규칙. 비교 기준으로 얼려둔다.
+// proposed 규칙 이전의 수집 규칙. --link-policy current 와 감사 도구의 비교 기준으로 얼려둔다.
+// 기본 정책(proposed)도 이 규칙이 받는 링크는 그대로 받는다(collect_company_signals.mjs judgeAnchor).
 export function currentRule(anchor, pageUrl, deps) {
   const title = deps.officialTitle(anchor);
   const direct = `${title} ${anchor.url}`.toLowerCase();
@@ -368,10 +369,6 @@ export function classifyOfficialLink(anchor, pageUrl, deps) {
   if (title.length < 8) return verify("generic_link_text");
   if (!detectedDate) return verify("no_listing_date");
   return verify("unfamiliar_path");
-}
-
-export function proposedRule(anchor, pageUrl, deps) {
-  return classifyOfficialLink(anchor, pageUrl, deps).verdict !== "hard_reject";
 }
 
 // fetch 이후 판정. 링크 단계에서 확인 대상으로 넘긴 문서가 실제로 기사였는지 본다.

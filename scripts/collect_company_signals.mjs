@@ -15,13 +15,12 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
+import { COLLECTION_SETTINGS } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 export const CONTENT_COLLECTION_VERSION = 'article-body-v17-36k-body';
-// 기업당 사업동향 탐색 후보 상한. 판정 파이프라인(review_report.mjs)이 같은 값을 넘겨야
-// 수집 식별자가 맞는다. 상한을 올리면 기업당 LLM 호출도 그만큼 늘어난다.
-// 2026-08 보고서에서 탐색 기사 27건 중 5건이 승인됐다(본문 있는 13건 기준 38%, 소스 중 가장 높다).
-// 9월 18일 probe 에서 2건 상한은 47건을 남겼다. 판정 호출 약 20회를 더 쓰고 2건으로 올린다.
-export const TREND_DISCOVERY_PER_COMPANY = 2;
+// 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
+// 읽어 가므로 다시 내보낸다.
+export { TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collection_args.mjs';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -89,131 +88,166 @@ let linkPolicy = DEFAULT_LINK_POLICY;
 let trendTechnology = null;
 let trendKeywordConfig = null;
 let trendSearchTerms = null;
-const linkVerdictCounts = new Map();
-
-function countLinkVerdict(verdict) {
-  linkVerdictCounts.set(verdict, (linkVerdictCounts.get(verdict) || 0) + 1);
-}
-
+// 링크 판정 집계와 제외 기록은 기업별로 센다(createTally). 기업 결과의 stats 에 실려 체크포인트에 함께 남고,
+// main 이 합친다. 예전에는 모듈 전역 카운터라서 체크포인트를 다시 쓰거나 이어 받은 기업의 몫이 빠졌고,
+// link-policy-trial 이 캐시를 복원한 뒤 이 숫자를 비교 지표로 쓰면 두 실행의 숫자가 서로 다른 기업 묶음을 셌다.
+//
 // 기사가 아니라고 판단해 제외한 링크. 필터가 과했는지 사후에 검증할 수 있어야 한다.
 // 집계는 전량을 세고, 샘플만 상한을 둔다. 예전에는 둘 다 상한에 걸려 총 제외 건수를 알 수 없었다.
 //
 // 샘플은 사유별로 따로 담는다. 한 통에 담으면 압도적으로 많은 사유 하나가 표본을 다 먹는다.
 // 실제로 9,998건 제외 중 9,782건이 index_or_category_page 라서, 120건 표본이 전부 그 사유로
 // 채워지고 no_article_title 22건은 한 건도 눈에 띄지 않았다. 확인이 필요한 쪽은 늘 소수 사유다.
-const excludedByReason = new Map();
-const excludedCounts = new Map();
-let excludedTotal = 0;
 const EXCLUDED_SAMPLE_PER_REASON = 24;
 const EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON = 2;
 
-function recordExclusion(company, title, url, reason) {
-  excludedTotal += 1;
-  excludedCounts.set(reason, (excludedCounts.get(reason) || 0) + 1);
-  if (!excludedByReason.has(reason)) excludedByReason.set(reason, []);
-  const bucket = excludedByReason.get(reason);
-  if (bucket.length >= EXCLUDED_SAMPLE_PER_REASON) return;
-  // 한 회사가 사유별 표본을 다 차지하면 다른 회사의 오제외를 못 본다.
-  const seenForCompany = bucket.filter((row) => row.company === company).length;
-  if (seenForCompany >= EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON) return;
-  bucket.push({ company, title: cleanText(title).slice(0, 120), url, reason });
+export function createTally() {
+  return { link_verdict_counts: {}, excluded_non_article_count: 0, excluded_non_article_reasons: {},
+    excluded_non_article_samples: [] };
 }
 
-function excludedSamples() {
-  return [...excludedByReason.values()].flat();
+function countLinkVerdict(tally, verdict) {
+  tally.link_verdict_counts[verdict] = (tally.link_verdict_counts[verdict] || 0) + 1;
 }
 
+// 한 회사가 사유별 표본을 다 차지하면 다른 회사의 오제외를 못 본다. 기업별 표본은 사유당 2건까지 둔다.
+function addExclusionSample(samples, sample) {
+  const same = samples.filter((row) => row.reason === sample.reason && row.company === sample.company).length;
+  if (same < EXCLUDED_SAMPLE_PER_COMPANY_PER_REASON) samples.push(sample);
+}
+
+function recordExclusion(tally, company, title, url, reason) {
+  tally.excluded_non_article_count += 1;
+  tally.excluded_non_article_reasons[reason] = (tally.excluded_non_article_reasons[reason] || 0) + 1;
+  addExclusionSample(tally.excluded_non_article_samples, { company, title: cleanText(title).slice(0, 120), url, reason });
+}
+
+// 단계별·기업별 집계를 합친다. 체크포인트에서 온 옛 결과처럼 집계가 없으면 그 몫은 0이다.
+export function mergeTally(target, source) {
+  if (!source) return target;
+  for (const [verdict, count] of Object.entries(source.link_verdict_counts || {})) {
+    target.link_verdict_counts[verdict] = (target.link_verdict_counts[verdict] || 0) + count;
+  }
+  target.excluded_non_article_count += source.excluded_non_article_count || 0;
+  for (const [reason, count] of Object.entries(source.excluded_non_article_reasons || {})) {
+    target.excluded_non_article_reasons[reason] = (target.excluded_non_article_reasons[reason] || 0) + count;
+  }
+  for (const sample of source.excluded_non_article_samples || []) addExclusionSample(target.excluded_non_article_samples, sample);
+  return target;
+}
+
+// 실행 요약의 제외 표본. 기업 순서대로 사유마다 24건까지 담는다.
+export function summarySamples(samples) {
+  const byReason = new Map();
+  for (const sample of samples) {
+    if (!byReason.has(sample.reason)) byReason.set(sample.reason, []);
+    const bucket = byReason.get(sample.reason);
+    if (bucket.length < EXCLUDED_SAMPLE_PER_REASON) bucket.push(sample);
+  }
+  return byReason;
+}
+
+// 인자 이름과 args 필드. 모르는 플래그는 오류다. 예전에는 조용히 건너뛰어 철자가 틀린 인자가 기본값으로 돌았다.
+const ARG_KEYS = {
+  "--companies": "companies",
+  "--source-config": "sourceConfig",
+  "--out-dir": "outDir",
+  "--refresh": "refresh",
+  "--sources": "sources",
+  "--days": "days",
+  "--from-date": "fromDate",
+  "--to-date": "toDate",
+  "--max-per-source": "maxPerSource",
+  "--max-per-company": "maxPerCompany",
+  "--fallback-min-results": "fallbackMinResults",
+  "--fallback-mode": "fallbackMode",
+  "--rate-limit-seconds": "rateLimitSeconds",
+  "--timeout-seconds": "timeoutSeconds",
+  "--company-limit": "companyLimit",
+  "--company-concurrency": "companyConcurrency",
+  "--fetch-official-content": "fetchOfficialContent",
+  "--content-char-limit": "contentCharLimit",
+  "--content-excerpt-limit": "contentExcerptLimit",
+  "--max-detail-per-company": "maxDetailPerCompany",
+  "--fetch-retries": "fetchRetries",
+  "--link-policy": "linkPolicy",
+  "--max-verify-per-company": "maxVerifyPerCompany",
+  "--technology-map": "technologyMap",
+  "--keyword-config": "keywordConfig",
+  "--search-terms": "searchTerms",
+  "--max-trend-discovery": "maxTrendDiscovery",
+};
+
+const INTEGER_ARGS = new Set(["days", "maxPerSource", "maxPerCompany", "fallbackMinResults", "timeoutSeconds",
+  "companyLimit", "companyConcurrency", "contentCharLimit", "contentExcerptLimit", "maxDetailPerCompany",
+  "fetchRetries", "maxVerifyPerCompany", "maxTrendDiscovery"]);
+// 0 이면 아무 일도 하지 않는 값. 시간 제한과 동시 처리 수는 1 이상이어야 한다.
+const POSITIVE_ARGS = new Set(["timeoutSeconds", "companyConcurrency", "contentCharLimit"]);
+
+// 기본값은 운영 수집 설정(collection_args.mjs)이다. args 의 키 순서는 기업 체크포인트 식별자에 들어가므로 바꾸지 않는다.
+//
+// maxDetailPerCompany·maxVerifyPerCompany 는 이름과 달리 enrichOfficialRowsWithContent 한 번(호출 한 번)의
+// 상한이다. 한 기업에서 공식 출처, 대체 수집, 사업동향 탐색이 각각 한 번씩 부르므로 기업당 최대 3배까지 받는다.
+// 운영 결과가 이 동작에 맞춰져 있어 동작은 그대로 두고, 식별자에 들어가는 이름도 바꾸지 않는다.
 export function parseArgs(argv) {
   const args = {
-    companies: "data/target_companies.json",
-    sourceConfig: "config/company_sources.json",
+    companies: COLLECTION_SETTINGS.companies,
+    sourceConfig: COLLECTION_SETTINGS.sourceConfig,
     outDir: "outputs",
     refresh: false,
-    sources: "official_feeds,official_pages,official_sitemaps,sec_filings,google_news",
+    sources: COLLECTION_SETTINGS.sources,
     days: 45,
     fromDate: "",
     toDate: "",
-    maxPerSource: 3,
-    maxPerCompany: 6,
-    fallbackMinResults: 1,
-    fallbackMode: "missing",
-    rateLimitSeconds: 1.0,
+    maxPerSource: COLLECTION_SETTINGS.maxPerSource,
+    maxPerCompany: COLLECTION_SETTINGS.maxPerCompany,
+    fallbackMinResults: COLLECTION_SETTINGS.fallbackMinResults,
+    fallbackMode: COLLECTION_SETTINGS.fallbackMode,
+    rateLimitSeconds: COLLECTION_SETTINGS.rateLimitSeconds,
     timeoutSeconds: 20,
     companyLimit: 0,
-    companyConcurrency: 1,
+    companyConcurrency: COLLECTION_SETTINGS.companyConcurrency,
     fetchOfficialContent: true,
     // 2026-08 수집본에서 본문 415건 중 52건이 24000자에 걸렸고, 대부분 시그널이 많이 나오는 실적 발표·공시 PDF였다.
     // 문안 단계(summary_writer.mjs ARTICLE_EVIDENCE_CHARS)도 같은 36000자까지 받는다.
     contentCharLimit: 36000,
     contentExcerptLimit: 800,
-    maxDetailPerCompany: 8,
+    // 상세 페이지 상한(호출당). 위 주석 참고.
+    maxDetailPerCompany: COLLECTION_SETTINGS.maxDetailPerCompany,
     fetchRetries: 2,
     // Keep recovered accept links; uncertain document verification is opt-in.
     linkPolicy: DEFAULT_LINK_POLICY,
+    // 확인 대상(fetch_to_verify) 상한(호출당). 위 주석 참고.
     maxVerifyPerCompany: DEFAULT_MAX_VERIFY_PER_COMPANY,
     // 사업동향 탐색. 공식 자료가 있어도 돌린다(아래 collectTrendDiscovery 주석).
-    technologyMap: "data/company_technology_map.json",
-    keywordConfig: "config/technology_keywords.json",
-    searchTerms: "config/trend_search_terms.json",
-    maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY,
-  };
-  const keyMap = {
-    "--companies": "companies",
-    "--source-config": "sourceConfig",
-    "--out-dir": "outDir",
-    "--refresh": "refresh",
-    "--sources": "sources",
-    "--days": "days",
-    "--from-date": "fromDate",
-    "--to-date": "toDate",
-    "--max-per-source": "maxPerSource",
-    "--max-per-company": "maxPerCompany",
-    "--fallback-min-results": "fallbackMinResults",
-    "--fallback-mode": "fallbackMode",
-    "--rate-limit-seconds": "rateLimitSeconds",
-    "--timeout-seconds": "timeoutSeconds",
-    "--company-limit": "companyLimit",
-    "--company-concurrency": "companyConcurrency",
-    "--fetch-official-content": "fetchOfficialContent",
-    "--content-char-limit": "contentCharLimit",
-    "--content-excerpt-limit": "contentExcerptLimit",
-    "--max-detail-per-company": "maxDetailPerCompany",
-    "--fetch-retries": "fetchRetries",
-    "--link-policy": "linkPolicy",
-    "--max-verify-per-company": "maxVerifyPerCompany",
-    "--technology-map": "technologyMap",
-    "--keyword-config": "keywordConfig",
-    "--search-terms": "searchTerms",
-    "--max-trend-discovery": "maxTrendDiscovery",
+    technologyMap: COLLECTION_SETTINGS.technologyMap,
+    keywordConfig: COLLECTION_SETTINGS.keywordConfig,
+    searchTerms: COLLECTION_SETTINGS.searchTerms,
+    maxTrendDiscovery: COLLECTION_SETTINGS.maxTrendDiscovery,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
-    if (!keyMap[key]) continue;
-    const mapped = keyMap[key];
+    const mapped = ARG_KEYS[key];
+    if (!mapped) throw new Error(`Unknown argument: ${key}`);
+    // 값 자리에 다음 플래그가 오면 값이 빠진 것이다. 워크플로에서 company_limit 을 비우면
+    // "--company-limit --link-policy current" 가 되어 current 가 버려지고 기본 정책으로 돌았다.
     const value = argv[index + 1];
+    if (value === undefined || String(value).startsWith("--")) throw new Error(`Missing value for ${key}`);
     index += 1;
-    if (
-      [
-        "days",
-        "maxPerSource",
-        "maxPerCompany",
-        "fallbackMinResults",
-        "timeoutSeconds",
-        "companyLimit",
-        "companyConcurrency",
-        "contentCharLimit",
-        "contentExcerptLimit",
-        "maxDetailPerCompany",
-        "fetchRetries",
-        "maxVerifyPerCompany",
-        "maxTrendDiscovery",
-      ].includes(mapped)
-    ) {
-      args[mapped] = Number.parseInt(value, 10);
+    if (INTEGER_ARGS.has(mapped)) {
+      const number = /^\d+$/.test(String(value).trim()) ? Number(value) : NaN;
+      if (!Number.isSafeInteger(number) || (POSITIVE_ARGS.has(mapped) && number < 1)) {
+        throw new Error(`Invalid ${key}: ${value}`);
+      }
+      args[mapped] = number;
     } else if (mapped === "rateLimitSeconds") {
-      args[mapped] = Number.parseFloat(value);
+      const number = /^\d+(?:\.\d+)?$/.test(String(value).trim()) ? Number(value) : NaN;
+      if (!Number.isFinite(number)) throw new Error(`Invalid ${key}: ${value}`);
+      args[mapped] = number;
     } else if (mapped === "fetchOfficialContent" || mapped === 'refresh') {
-      args[mapped] = !["0", "false", "no"].includes(String(value).toLowerCase());
+      const text = String(value).toLowerCase();
+      if (!["0", "1", "false", "true", "no", "yes"].includes(text)) throw new Error(`Invalid ${key}: ${value}`);
+      args[mapped] = !["0", "false", "no"].includes(text);
     } else {
       args[mapped] = value;
     }
@@ -341,12 +375,36 @@ function stripTimeZoneName(value) {
   return value ? String(value).replace(/\[[^\]]+\]\s*$/, "") : value;
 }
 
+// 시간대 표기를 분 단위 오프셋으로 읽는다. 표기가 없으면 null 이다. 약어는 Date 가 읽는 미국 약어와 GMT·UTC 뿐이다.
+const ZONE_ABBREVIATION_OFFSETS = { GMT: 0, UTC: 0, EST: -300, EDT: -240, CST: -360, CDT: -300,
+  MST: -420, MDT: -360, PST: -480, PDT: -420 };
+
+function zoneOffsetMinutes(text) {
+  const numeric = text.match(/([+-])(\d{2}):?(\d{2})$/);
+  if (numeric) return (numeric[1] === "-" ? -1 : 1) * (Number(numeric[2]) * 60 + Number(numeric[3]));
+  const named = text.match(/\b(GMT|UTC|[ECMP][SD]T)$/i);
+  if (named) return ZONE_ABBREVIATION_OFFSETS[named[1].toUpperCase()];
+  return /\dZ$/i.test(text) ? 0 : null;
+}
+
+// 게시처 현지 시각과 그 오프셋. UTC 로 바꿔 적으면 9월 1일 오전 0시 30분(+09:00)에 낸 발표가 8월 31일이 되어
+// 8월 보고서에 들어간다. 한국·일본 기업의 1일 오전 발표, 유럽의 자정 직후 발표가 그렇다. 오프셋을 남겨 두면
+// 시각은 그대로 같은 순간이고, 날짜는 앞 열 글자(게시처 현지 날짜)로 읽는다(date_state.mjs dayOf).
+function formatWithOffset(ms, offsetMinutes) {
+  const local = new Date(ms + offsetMinutes * 60000).toISOString().slice(0, 19);
+  if (!offsetMinutes) return `${local}Z`;
+  const minutes = Math.abs(offsetMinutes);
+  return `${local}${offsetMinutes < 0 ? "-" : "+"}${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+}
+
+// 없는 날짜(2026-02-31)를 Date 는 다음 달로 넘겨 읽는다(3월 3일). 적힌 연·월·일이 실제로 있는 날인지 본다.
+function isRealCalendarDay(year, month, day) {
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day;
+}
+
 function parseDate(value) {
   if (!value) return null;
-  const gdelt = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/);
-  if (gdelt) {
-    return `${gdelt[1]}-${gdelt[2]}-${gdelt[3]}T${gdelt[4]}:${gdelt[5]}:${gdelt[6]}Z`;
-  }
   // Date parses a zone-less English calendar date at local midnight. In KST
   // that becomes the previous UTC day, so "October 20" was stored as the 19th.
   // Calendar-only values have no timezone; preserve the printed day as UTC.
@@ -359,20 +417,22 @@ function parseDate(value) {
     : dayNamed ? [dayNamed[3], monthNumberFromName(dayNamed[2]), dayNamed[1]] : null;
   if (calendar) {
     const [year, month, day] = calendar.map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return value;
-    return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    if (!isRealCalendarDay(year, month, day)) return null;
+    return new Date(Date.UTC(year, month - 1, day)).toISOString().replace(/\.\d{3}Z$/, 'Z');
   }
+  const text = String(value).trim();
+  const isoDay = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/);
+  if (isoDay && !isRealCalendarDay(Number(isoDay[1]), Number(isoDay[2]), Number(isoDay[3]))) return null;
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
+  if (Number.isNaN(parsed.getTime())) return null;
   // 시간대 표기가 없는 값(08/05/26, 2026-08-05T00:00:00)을 Date 는 실행 기기의 현지 시각으로 읽는다.
   // Actions(UTC)에서는 8월 5일이던 Albemarle JSON-LD "08/05/26" 가 한국 시간 PC에서는 8월 4일 15시가 되어
   // 메타 태그의 8월 5일과 충돌했다. 표기가 없으면 적힌 시각을 UTC 로 읽는다. 날짜만 있는 ISO 값은
   // Date 가 이미 UTC 로 읽으므로 그대로 둔다. RSS 의 "16:00:00 EST" 같은 미국 시간대 약어도 Date 가
-  // 제대로 읽는 시간대 표기다.
-  const text = String(value).trim();
-  const zoned = /(?:Z|[+-]\d{2}:?\d{2}|\b(?:GMT|UTC|[ECMP][SD]T)\b)$/i.test(text) || /^\d{4}-\d{2}-\d{2}$/.test(text);
-  const utc = zoned ? parsed : new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
+  // 제대로 읽는 시간대 표기다. 표기가 있으면 게시처 현지 시각을 오프셋과 함께 남긴다(formatWithOffset).
+  const offset = /^\d{4}-\d{2}-\d{2}$/.test(text) ? 0 : zoneOffsetMinutes(text);
+  if (offset !== null) return formatWithOffset(parsed.getTime(), offset);
+  const utc = new Date(Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
     parsed.getHours(), parsed.getMinutes(), parsed.getSeconds()));
   return utc.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
@@ -386,6 +446,8 @@ function monthNumberFromName(name) {
 }
 
 const MONTH_NAME_PATTERN = "January|February|March|April|May|June|July|August|September|October|November|December|Jan\\.?|Feb\\.?|Mar\\.?|Apr\\.?|Jun\\.?|Jul\\.?|Aug\\.?|Sept?\\.?|Oct\\.?|Nov\\.?|Dec\\.?";
+const MONTH_DAY_YEAR = new RegExp(`\\b(${MONTH_NAME_PATTERN})\\s+([0-3]?\\d),?\\s+((?:19|20)\\d{2})\\b`, "i");
+const DAY_MONTH_YEAR = new RegExp(`\\b([0-3]?\\d)\\s+(${MONTH_NAME_PATTERN})\\s+((?:19|20)\\d{2})\\b`, "i");
 
 function isoMonth(year, month) {
   return `${year}-${String(month).padStart(2, "0")}`;
@@ -427,7 +489,8 @@ export function extractMonthFromText(value = "") {
   return namedNumber ? isoMonth(named[2], namedNumber) : "";
 }
 
-// parseDate는 해석에 실패하면 입력 문자열을 그대로 돌려준다. 날짜로 확신할 수 있을 때만 받고 싶은 곳에서 쓴다.
+// 날짜로 확신할 수 있을 때만 받는다. parseDate 는 해석에 실패하면 null 이다. 예전에는 입력 문자열을 그대로
+// 돌려줘서, 없는 날짜 "2026-02-31T10:00:00Z" 가 ISO 모양이라는 이유로 날짜로 통과했다.
 function parseStrictDate(value) {
   // Date는 "2026"을 1월 1일로 읽는다. 연도만 적힌 값은 게시일 근거가 아니다.
   if (/^\s*(?:19|20)\d{2}\s*$/.test(String(value || "")) || parseMonthOnly(value)) return null;
@@ -459,7 +522,7 @@ export function extractDateFromText(value = "") {
   }
   const numeric = text.match(/\b((?:19|20)\d{2})[./-](0?[1-9]|1[0-2])[./-](0?[1-9]|[12]\d|3[01])\b/);
   if (numeric) {
-    return parseDate(`${numeric[1]}-${numeric[2].padStart(2, "0")}-${numeric[3].padStart(2, "0")}`);
+    return isoDate(numeric[1], numeric[2], numeric[3]);
   }
   // 유럽식 점 표기(31.12.2026). 앞자리가 12를 넘으면 일-월 순서가 확정된다.
   const dayFirst = text.match(/\b(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.((?:19|20)\d{2})\b/);
@@ -478,16 +541,12 @@ export function extractDateFromText(value = "") {
   if (monthFirst) {
     return isoDate(monthFirst[3], monthFirst[1], monthFirst[2]);
   }
-  const monthName = text.match(
-    /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+([0-3]?\d),?\s+((?:19|20)\d{2})\b/i,
-  );
+  const monthName = text.match(MONTH_DAY_YEAR);
   if (monthName) {
     // 월 이름 표기를 Date에 그대로 넘기면 현지 시간대로 읽혀 하루가 밀린다.
     return isoDate(monthName[3], monthNumberFromName(monthName[1]), monthName[2]);
   }
-  const dayMonth = text.match(
-    /\b([0-3]?\d)\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.?|Feb\.?|Mar\.?|Apr\.?|Jun\.?|Jul\.?|Aug\.?|Sept?\.?|Oct\.?|Nov\.?|Dec\.?)\s+((?:19|20)\d{2})\b/i,
-  );
+  const dayMonth = text.match(DAY_MONTH_YEAR);
   if (dayMonth) {
     return isoDate(dayMonth[3], monthNumberFromName(dayMonth[2]), dayMonth[1]);
   }
@@ -752,7 +811,9 @@ function buildDateRange(args, collectedAt) {
   };
 }
 
-// 수집 단계는 기간 밖이라고 확인된 기사만 버린다. 날짜 미상·추정·충돌 기사는 그대로 보관해
+// 수집 단계는 periodPlacement 가 out_of_period 로 본 기사만 버린다(filterByDateRange). 확인된 게시일이 기간 밖인
+// 기사, 충돌한 근거가 모두 기간 밖인 기사, 그리고 확정 날짜가 없어도 제목·URL 의 발행 연도로 기간 밖이 분명한
+// 정기 문서·옛 문서가 여기에 든다(date_state.mjs). 그 밖의 날짜 미상·추정·충돌 기사는 그대로 보관해
 // 이후 단계에서 날짜를 보강하거나 검토 후보로 쓸 수 있게 한다.
 function dateRangePeriod(dateRange) {
   return {
@@ -806,16 +867,18 @@ async function fetchTextOnce(url, timeoutSeconds) {
       redirect: "follow",
       headers: requestHeaders(url),
     });
-    if (!response.ok) {
-      const error = new Error(`HTTP ${response.status} ${response.statusText}`);
-      error.status = response.status;
-      error.retryAfterSeconds = Number.parseInt(response.headers.get("retry-after") || "", 10) || 0;
-      throw error;
-    }
+    if (!response.ok) throw httpError(response);
     return await response.text();
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function httpError(response) {
+  const error = new Error(`HTTP ${response.status} ${response.statusText || ""}`.trim());
+  error.status = response.status;
+  error.retryAfterSeconds = Number.parseInt(response.headers.get("retry-after") || "", 10) || 0;
+  return error;
 }
 
 function isRetryableFetchError(error) {
@@ -824,24 +887,30 @@ function isRetryableFetchError(error) {
   return error.status === undefined ? true : RETRYABLE_STATUS.has(error.status);
 }
 
-export async function fetchText(url, timeoutSeconds) {
+// 요청 한 번(attempt)에 일시 오류 재시도와 domainGuard 를 씌운다. 목록·피드 요청(fetchText)과 상세 페이지·문서
+// 받기(fetchPublisherDocument)가 같은 규칙을 쓴다. 예전에는 공식 .pdf 링크와 대체 출처 다운로드가 이 둘을 거치지 않았다.
+async function fetchWithRetries(url, attempt) {
   let lastError;
-  for (let attempt = 0; attempt <= fetchRetries; attempt += 1) {
-    if (attempt > 0) {
+  for (let tried = 0; tried <= fetchRetries; tried += 1) {
+    if (tried > 0) {
       retryCount += 1;
       // 서버가 Retry-After로 대기 시간을 지정했으면 그 값을 따른다.
-      const backoffMs = 700 * 2 ** (attempt - 1) + Math.floor(Math.random() * 400);
+      const backoffMs = 700 * 2 ** (tried - 1) + Math.floor(Math.random() * 400);
       const retryAfterMs = (lastError?.retryAfterSeconds || 0) * 1000;
       await sleep(Math.min(Math.max(backoffMs, retryAfterMs), 30000));
     }
     try {
-      return await domainGuard.run(url, () => fetchTextOnce(url, timeoutSeconds));
+      return await domainGuard.run(url, attempt);
     } catch (error) {
       lastError = error;
       if (!isRetryableFetchError(error)) throw error;
     }
   }
   throw lastError;
+}
+
+export async function fetchText(url, timeoutSeconds) {
+  return fetchWithRetries(url, () => fetchTextOnce(url, timeoutSeconds));
 }
 
 async function fetchJson(url, timeoutSeconds) {
@@ -852,6 +921,8 @@ function relevantAliases(company) {
   // 동명 기업이 있는 경우 검색에는 명시된 정식명만 쓴다. 표시명은 유지한다.
   if (company.search_names?.length) return [...new Set(company.search_names)];
   const names = [company.company];
+  // 일반어와 겹치는 짧은 별칭은 검색어로 쓰지 않는다. Norsk Hydro 의 "Hydro", Evonik Industries 의 "Evonik" 이
+  // 여기 걸린다(이 두 기업에는 search_names 가 없다). "maxon" 은 지금 별칭이 "maxon group" 이라 걸리지 않는다.
   for (const alias of company.query_aliases || []) {
     const key = alias.toLowerCase();
     if (alias.length >= 5 && !["hydro", "maxon", "evonik"].includes(key)) {
@@ -861,19 +932,13 @@ function relevantAliases(company) {
   return [...new Map(names.map((name) => [name.toLowerCase(), name])).values()].slice(0, 3);
 }
 
-export function buildQuery(company, days) {
+// 대체 수집 질의도 사업동향 질의처럼 기간으로 검색 창을 정한다(trendSearchWindow). when:Nd 는 요청 시점에서
+// N일 전이라, 마감 한참 뒤에 돌리면 기간 밖 새 기사가 maxPerSource 자리를 채우고 그 달 기사가 밀려난다.
+export function buildQuery(company, dateRange) {
   const names = relevantAliases(company);
   let nameClause = names.map((name) => `"${name}"`).join(" OR ");
   if (names.length > 1) nameClause = `(${nameClause})`;
-  return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) when:${days}d`;
-}
-
-function buildGdeltQuery(company) {
-  const names = relevantAliases(company);
-  let nameClause = names.map((name) => `"${name}"`).join(" OR ");
-  if (names.length > 1) nameClause = `(${nameClause})`;
-  const terms = SIGNAL_TERMS.filter((term) => term !== "Korea").join(" OR ");
-  return `${nameClause} (${terms})`;
+  return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
 
 export function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
@@ -885,7 +950,9 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
       : fallbackSourceFields(90);
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
-    const itemUrl = bestRssItemUrl(item, query);
+    // 링크가 없는 항목은 기사 주소가 없는 것이다. 예전에는 질의(피드 주소나 검색어 문자열)를 주소로 채웠다.
+    // 주소가 빈 행은 아래에서 걸러진다.
+    const itemUrl = bestRssItemUrl(item);
     rows.push({
       target_no: company.target_no,
       company: company.company,
@@ -1065,6 +1132,14 @@ export function isUsableTitle(title, company) {
   return true;
 }
 
+// 확장자 목록은 여기 한 곳에 둔다. 웹 문서(PDF 포함)는 받아 읽고, 오피스 문서와 미디어는 받지 않는다(canFetchDetailContent).
+const WEB_DOCUMENT_EXTENSIONS = "pdf|html?|aspx|php";
+const OFFICE_DOCUMENT_EXTENSIONS = "xlsx?|pptx?|docx?";
+const UNREADABLE_FILE = new RegExp(`\\.(${OFFICE_DOCUMENT_EXTENSIONS}|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)`, "i");
+const PARAM_FILE_EXTENSION = new RegExp(`\\.(${WEB_DOCUMENT_EXTENSIONS}|${OFFICE_DOCUMENT_EXTENSIONS})$`, "i");
+// 경로의 파일 이름에서는 웹 문서 확장자만 뗀다. 오피스 확장자까지 떼면 이미 수집된 문서 행의 제목이 바뀐다.
+const PATH_FILE_EXTENSION = new RegExp(`\\.(${WEB_DOCUMENT_EXTENSIONS})$`, "i");
+
 function titleFromUrl(url) {
   try {
     const parsed = new URL(url);
@@ -1073,7 +1148,7 @@ function titleFromUrl(url) {
       const value = parsed.searchParams.get(key);
       if (!value) continue;
       const fromParam = decodeURIComponent(value)
-        .replace(/\.(pdf|xlsx?|pptx?|docx?|html?|aspx|php)$/i, "")
+        .replace(PARAM_FILE_EXTENSION, "")
         .replace(/[-_]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
@@ -1083,7 +1158,7 @@ function titleFromUrl(url) {
     const last = segments.reverse().find((segment) => !/^(default|index|news|press|releases?|details?|en|global|ir)$/i.test(segment));
     if (!last) return "";
     const cleaned = decodeURIComponent(last)
-      .replace(/\.(pdf|html?|aspx|php)$/i, "")
+      .replace(PATH_FILE_EXTENSION, "")
       .replace(/[-_]+/g, " ")
       .replace(/\s+/g, " ")
       .trim();
@@ -1098,15 +1173,18 @@ function officialTitle(anchor) {
   return titleFromUrl(anchor.url);
 }
 
-function discoverFeedLinks(html, baseUrl) {
+// 피드를 가리키는 낱말. 낱말 단위로만 본다. 예전에는 글자 일부로 맞아 "feedback" 링크나 feedback.css 도 피드로 받았다.
+const FEED_WORD = /(?<![a-z])(?:rss|atom|feeds?)(?![a-z])/i;
+
+export function discoverFeedLinks(html, baseUrl) {
   const urls = [];
   const linkRegex = /<link\b([^>]*)>/gi;
   for (const match of html.matchAll(linkRegex)) {
     const attrs = match[1] || "";
-    if (!/(application\/rss\+xml|application\/atom\+xml|rss|atom|feed)/i.test(attrs)) continue;
     const hrefMatch = attrs.match(/\bhref\s*=\s*["']([^"']+)["']/i);
     if (!hrefMatch) continue;
     const href = decodeXml(hrefMatch[1]);
+    if (!/application\/(?:rss|atom)\+xml/i.test(attrs) && !FEED_WORD.test(href)) continue;
     if (/xmlrpc\.php|rsd/i.test(href)) continue;
     try {
       urls.push(stripTracking(new URL(href, baseUrl).toString()));
@@ -1115,7 +1193,7 @@ function discoverFeedLinks(html, baseUrl) {
     }
   }
   for (const anchor of parseAnchors(html, baseUrl)) {
-    if (/(rss|atom|feed)/i.test(`${anchor.title} ${anchor.url}`)) {
+    if (FEED_WORD.test(`${anchor.title} ${anchor.url}`)) {
       urls.push(anchor.url);
     }
   }
@@ -1276,9 +1354,12 @@ export function parseJsonFeed(text, company, collectedAt, query, defaultSource, 
   const include = spec.include ? new RegExp(spec.include, "i") : null;
   const rows = [];
   for (const item of Array.isArray(items) ? items : []) {
+    // 주소가 빈 항목은 건너뛴다. 빈 문자열을 기준 주소로 풀면 피드 주소가 그 기사의 주소가 됐다.
+    const rawUrl = String(item?.[spec.url] ?? "").trim();
+    if (!rawUrl) continue;
     let url;
     try {
-      url = new URL(String(item?.[spec.url] || ""), spec.base || query).href;
+      url = new URL(rawUrl, spec.base || query).href;
     } catch {
       continue;
     }
@@ -1327,8 +1408,9 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
     if (!feedUrl) continue;
     // 피드 하나가 실패해도 같은 기업의 다른 피드는 계속 읽는다.
     try {
-      const xml = await fetchText(feedUrl, timeoutSeconds);
+      // 실패한 요청도 요청이다. 받은 뒤에 세면 실패한 요청이 요청 수에서 빠진다. 재시도는 retry_count 가 센다.
       requestCount += 1;
+      const xml = await fetchText(feedUrl, timeoutSeconds);
       const parsed = feed.format === "json"
         ? parseJsonFeed(xml, company, collectedAt, feedUrl, sourceName, feedKind, feed.json, contentCharLimit)
         : parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind);
@@ -1352,17 +1434,28 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
   const rows = [];
   const recoveryCandidates = [];
   const errors = [];
+  // 이 출처 단계의 링크 판정·제외 집계. 단계 결과에 실려 체크포인트에 남는다(collectCompany 가 합친다).
+  const tally = createTally();
   let requestCount = 0;
   for (const page of pages) {
     try {
-      const html = await fetchText(page.url, timeoutSeconds);
       requestCount += 1;
+      const html = await fetchText(page.url, timeoutSeconds);
       for (const feedUrl of discoverFeedLinks(html, page.url)) {
         try {
-          const feedXml = await fetchText(feedUrl, timeoutSeconds);
           requestCount += 1;
+          const feedXml = await fetchText(feedUrl, timeoutSeconds);
+          // 목록 페이지에서 찾은 피드의 항목도 링크 단계의 구조적 거부는 거친다. 설정한 피드처럼 인물·애널리스트
+          // 소개 페이지를 빼고, 목록·깨진 주소도 뺀다. 예전에는 아무 판정 없이 들어왔다.
           const feedRows = filterByDateRange(
-            parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind),
+            parseRssOrAtom(feedXml, company, collectedAt, "official_feed_discovered", feedUrl, `${page.source} RSS`, page.kind)
+              .filter((row) => {
+                const reason = isPersonOrCoveragePage(row.url) ? "person_or_coverage_page"
+                  : looksLikeSourceIndexUrl(row.url) ? "index_or_category_page"
+                    : looksLikeBrokenUrl(row.url) ? "broken_url" : "";
+                if (reason) recordExclusion(tally, company.company, row.title, row.url, reason);
+                return !reason;
+              }),
             dateRange,
           );
           rows.push(...feedRows.slice(0, maxPerSource));
@@ -1381,9 +1474,9 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
             url: anchor.url, source_page_url: page.url });
         }
         const judged = judgeAnchor(anchor, page.url, linkPolicy);
-        countLinkVerdict(judged.verdict);
+        countLinkVerdict(tally, judged.verdict);
         if (judged.verdict === "hard_reject") {
-          if (judged.reason) recordExclusion(company.company, anchor.title, anchor.url, judged.reason);
+          if (judged.reason) recordExclusion(tally, company.company, anchor.title, anchor.url, judged.reason);
           continue;
         }
         kept.push({ anchor, verdict: judged.verdict, reason: judged.reason, rank: judged.rank ?? 0 });
@@ -1413,11 +1506,11 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       errors.push({ source_url: page.url, source_name: page.source, kind: page.kind, error: error.message });
     }
   }
-  return { rows, requestCount, errors, recoveryCandidates };
+  return { rows, requestCount, errors, recoveryCandidates, tally };
 }
 
 function canFetchDetailContent(url) {
-  return !/\.(xlsx?|pptx?|docx?|zip|jpg|jpeg|png|gif|svg|webp|mp4|mov)(?:[?#]|$)/i.test(url);
+  return !UNREADABLE_FILE.test(url);
 }
 
 function isGoogle(value) {
@@ -1454,13 +1547,23 @@ export function createPublisherProbe(limit = 3, { pauseMs = 60000, maxPauses = 3
         failures = 0;
         return document;
       } catch (error) {
-        failures = error.message === 'publisher_url_unresolved' ? failures + 1 : 0;
+        failures = googleBlocked(error) ? failures + 1 : 0;
         throw error;
       }
     });
     queue = result.catch(() => {});
     return result;
   };
+}
+
+// Google 이 막고 있다는 신호. 중계 주소가 발행사로 풀리지 않은 것만 세던 탓에, 429·5xx·타임아웃이 나면 오히려
+// 연속 실패가 0으로 돌아가 쉬어 가는 장치가 걸리지 않았다. 404 처럼 서버가 내린 결정은 막힘이 아니다.
+const GOOGLE_BLOCK_MESSAGE = /publisher_url_unresolved|timeout|aborted|fetch failed|^HTTP (?:429|5\d\d)\b/i;
+
+export function googleBlocked(error) {
+  if (error?.status === 429 || error?.status >= 500) return true;
+  if (error?.name === 'TimeoutError' || error?.name === 'AbortError') return true;
+  return GOOGLE_BLOCK_MESSAGE.test(String(error?.message || ''));
 }
 // 기업 수집을 미완료로 만드는 오류. 목록·피드·사이트맵·검색 단계의 실패만 센다.
 // 상세 페이지 실패는 그 기사가 본문 없는 기사로 남아 검토 커버리지에서 따로 드러난다. 여기서도 세면
@@ -1480,10 +1583,13 @@ const probePublisher = createPublisherProbe();
 
 // 응답 본문을 바이트로, 상한을 두고 읽는다. PDF 만 이렇게 읽다가 이제 모든 응답을 이렇게 받는다.
 // 종류를 바이트로 판별해야 하고, 덤으로 HTML 응답에도 상한이 생긴다.
+// 크기 초과는 서버의 일시 장애가 아니다. 다시 받아도 같고, domainGuard 가 호스트 실패로 세지도 않는다.
+const tooLarge = () => Object.assign(new Error('document_too_large'), { noRetry: true });
+
 export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
   if (Number(response.headers.get('content-length')) > limit) {
     await response.body?.cancel();
-    throw new Error('document_too_large');
+    throw tooLarge();
   }
   const reader = response.body.getReader();
   const chunks = [];
@@ -1495,7 +1601,7 @@ export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
       size += value.byteLength;
       if (size > limit) {
         await reader.cancel();
-        throw new Error('document_too_large');
+        throw tooLarge();
       }
       chunks.push(Buffer.from(value));
     }
@@ -1508,12 +1614,23 @@ export async function readLimitedResponse(response, limit = 20 * 1024 * 1024) {
 // extract_pdf_text.py 가 단을 먼저 나누고 읽는다.
 const PDF_EXTRACTOR = fileURLToPath(new URL('extract_pdf_text.py', import.meta.url));
 
+// 추출기를 돌릴 파이썬. pdfplumber 가 깔린 가상환경을 쓰려면 PDF_EXTRACTOR_PYTHON 에 그 실행 파일을 적는다.
+// Actions 는 setup-python 이 PATH 에 둔 python 을 쓴다.
+export function pdfExtractorPython(env = process.env) {
+  return String(env.PDF_EXTRACTOR_PYTHON || '').trim() || 'python';
+}
+
+// 추출기를 돌릴 수 없는 환경. 파이썬이 없으면 ENOENT, pdfplumber 가 없으면 이 코드다. 문서 탓인 실패와 구분한다.
+export function pdfExtractorUnavailable(error) {
+  return error?.code === 'ENOENT' || error?.code === 'PDF_EXTRACTOR_UNAVAILABLE';
+}
+
 export function extractPdfText(bytes) {
   return new Promise((resolve, reject) => {
-    const child = spawn('python', ['-X', 'utf8', PDF_EXTRACTOR],
-      { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });
+    const child = spawn(pdfExtractorPython(), ['-X', 'utf8', PDF_EXTRACTOR],
+      { windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
     const chunks = [];
-    let size = 0, failure = null;
+    let size = 0, failure = null, stderr = '';
     const timer = setTimeout(() => { failure = new Error('pdf_extraction_timeout'); child.kill(); }, 30000);
     child.on('error', error => { clearTimeout(timer); reject(error); });
     child.stdout.on('data', chunk => {
@@ -1521,9 +1638,14 @@ export function extractPdfText(bytes) {
       if (size > 4 * 1024 * 1024) { failure = new Error('pdf_text_too_large'); child.kill(); }
       else chunks.push(chunk);
     });
+    // 오류 출력은 끝부분만 남긴다. 모듈이 없어서 실패했는지만 가리면 된다.
+    child.stderr.on('data', chunk => { stderr = (stderr + chunk.toString('utf8')).slice(-4000); });
     child.stdin.on('error', () => {}); // close/error determines the extraction result
     child.on('close', code => {
       clearTimeout(timer);
+      if (!failure && code !== 0 && /No module named ['"]?pdfplumber/.test(stderr)) {
+        failure = Object.assign(new Error('pdf_extractor_unavailable'), { code: 'PDF_EXTRACTOR_UNAVAILABLE' });
+      }
       if (failure || code !== 0) reject(failure || new Error('pdf_extraction_failed'));
       else resolve(Buffer.concat(chunks).toString('utf8').trim());
     });
@@ -1642,18 +1764,39 @@ export function sniffDocumentType(bytes) {
   return DOCUMENT_MAGIC.find(([, magic]) => head.startsWith(magic))?.[0] || 'text';
 }
 
-export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
+// 요청 한 번. 응답 바이트까지만 받는다. 재시도·domainGuard 는 이 단계만 감싼다. PDF 추출 실패는 서버 탓이
+// 아니므로 다시 받지 않고 호스트 실패로도 세지 않는다.
+async function requestDocument(target, timeoutSeconds, fetchImpl) {
   const response = await fetchImpl(target, { signal: AbortSignal.timeout(timeoutSeconds * 1000),
     redirect: 'follow', headers: requestHeaders(target) });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  if (!response.ok) {
+    await response.body?.cancel();
+    throw httpError(response);
+  }
   const resolvedUrl = response.url || target;
   // Google consent/RSS wrapper text is not publisher evidence.
-  if (/(^|\.)google\.com$/.test(new URL(resolvedUrl).hostname)) {
+  // 메시지는 그대로 둔다. createPublisherProbe 가 메시지로 연속 실패를 센다.
+  if (isGoogle(resolvedUrl)) {
     await response.body?.cancel();
-    throw new Error('publisher_url_unresolved');
+    throw Object.assign(new Error('publisher_url_unresolved'), { noRetry: true });
   }
   const declaredPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
-  const bytes = await readLimitedResponse(response);
+  return { bytes: await readLimitedResponse(response), resolvedUrl, declaredPdf };
+}
+
+export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
+  return documentFromBytes(await requestDocument(target, timeoutSeconds, fetchImpl));
+}
+
+// 상세 페이지와 발행사 문서를 받는 수집 경로의 입구. 공식 상세 페이지도 이 길로 받는다. 예전에는 주소가 .pdf 로
+// 끝나지 않는 공식 행이 fetchText → response.text() 로 내려가 바이트 판별을 타지 않았고, 10월 13일 실행에서도
+// Nabtesco 5건, Renishaw 3건, Bayer·Merck 각 1건이 unextractable_binary_document 로 남았다.
+// 반대로 공식 .pdf 링크와 대체 출처 다운로드는 재시도와 domainGuard 를 거치지 않았다. 이제 둘 다 거친다.
+export async function fetchPublisherDocument(target, timeoutSeconds, fetchImpl = fetch) {
+  return documentFromBytes(await fetchWithRetries(target, () => requestDocument(target, timeoutSeconds, fetchImpl)));
+}
+
+async function documentFromBytes({ bytes, resolvedUrl, declaredPdf }) {
   // 머리글도 주소도 PDF 라고 말하지 않는 PDF 가 있다. Nabtesco 보도자료 5건(주소가 .pdf 가 아니다)과
   // Renishaw 실적 자료 2건이 그래서 추출기를 타지 못하고 response.text() 로 내려가, 본문 자리에
   // "%PDF-1.6" 바이트가 그대로 실렸다. 바이트로 판별하면 그 7건이 제 추출기로 돌아온다.
@@ -1683,8 +1826,9 @@ export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
 
 // yieldSlot: Google 차례를 기다리는 동안 기업 작업 자리를 내놓는다(mapWithConcurrency 참고).
 // probe: Google 확인 차례(createPublisherProbe). log: 기업 수집의 단계 기록(createStepLog).
+// tally: 이 기업의 제외 집계(createTally). 다시 쓴 상세 단계의 제외도 센다. 이어 받은 기업의 집계가 전체 재수집과 같아야 한다.
 export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company,
-  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog() } = {}) {
+  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog(), tally = createTally() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
     return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
@@ -1705,7 +1849,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
     // 이 상한에 걸리는 것은 언제나 그다음으로 가능성이 낮은 링크다.
     if (row.link_verdict === "fetch_to_verify") {
       if (verifyCount >= args.maxVerifyPerCompany) {
-        recordExclusion(row.company, row.title, row.url, "verify_budget_exhausted");
+        recordExclusion(tally, row.company, row.title, row.url, "verify_budget_exhausted");
         continue;
       }
       verifyCount += 1;
@@ -1717,12 +1861,12 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       const skipStatus = detailCount >= args.maxDetailPerCompany ? "skipped_detail_limit" : "skipped_non_html";
       const skipTitle = isUsableTitle(row.title, company) ? row.title : titleFromUrl(row.url);
       if (!isUsableTitle(skipTitle, company)) {
-        recordExclusion(row.company, row.title, row.url, "no_article_title");
+        recordExclusion(tally, row.company, row.title, row.url, "no_article_title");
         continue;
       }
       // 확인 대상은 문서를 봐야 판정이 끝난다. 못 받아봤으면 링크만 보고 들일 수 없다.
       if (row.link_verdict === "fetch_to_verify") {
-        recordExclusion(row.company, skipTitle, row.url, "unverified_no_fetch");
+        recordExclusion(tally, row.company, skipTitle, row.url, "unverified_no_fetch");
         continue;
       }
       // PDF·XLS 링크는 본문을 열 수 없으니 파일명에 남은 날짜라도 살린다. 다만 URL 날짜는 정황 근거다.
@@ -1734,7 +1878,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       // 열 수 없는 파일(XLS 등)에 날짜 근거도 없으면 검토도 날짜 확인도 영영 할 수 없다. 남겨 두면 매달
       // 수집 보완 대상으로만 쌓인다. 2026-08 실행의 Merck 지역 매출표, ABB 2021년 3분기 재무표가 그랬다.
       if (skipStatus === "skipped_non_html" && !skipDates.published_at && !skipDates.published_month) {
-        recordExclusion(row.company, skipTitle, row.url, "unreadable_undated_file");
+        recordExclusion(tally, row.company, skipTitle, row.url, "unreadable_undated_file");
         continue;
       }
       enriched.push({
@@ -1746,14 +1890,14 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
       continue;
     }
 
-    // 상세 페이지 한 건이 한 단계다. Google 확인 멈춤만 남은 기업을 이어 받을 때는 앞선 실행이 받아 둔 결과를
-    // 그대로 쓰고, 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
+    // 상세 페이지 한 건이 한 단계다. 재시도할 까닭이 상세 페이지 단계에만 남은 기업을 이어 받을 때는 앞선 실행이
+    // 받아 둔 결과를 그대로 쓰고, 실패했거나 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
     const { value: outcome, replayed } = await log.run(stepKey("detail", row),
       () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }));
     if (!replayed) requestCount += outcome.requestCount;
     detailCount += outcome.detailCount;
     errors.push(...outcome.errors);
-    if (outcome.exclusion && !replayed) recordExclusion(row.company, ...outcome.exclusion);
+    if (outcome.exclusion) recordExclusion(tally, row.company, ...outcome.exclusion);
     if (outcome.row) enriched.push(outcome.row);
     if (outcome.paced && !replayed && args.rateLimitSeconds > 0) {
       await sleep(args.rateLimitSeconds * 1000);
@@ -1772,18 +1916,18 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
   const exclude = (title, url, reason) => ({ ...outcome, exclusion: [title, url, reason] });
   try {
     let document;
-    if (row.source_type === 'official' && !/\.pdf(?:[?#]|$)/i.test(detailUrl)) {
+    // 공식 상세 페이지와 발행사 주소는 같은 길로 받는다: 바이트로 문서 종류를 판별하고, 재시도와 domainGuard 를 거친다.
+    if (!isGoogle(detailUrl)) {
       outcome.requestCount += 1;
       outcome.detailCount += 1;
-      document = { html: await fetchText(detailUrl, args.timeoutSeconds), resolvedUrl: detailUrl };
+      document = await fetchPublisherDocument(detailUrl, args.timeoutSeconds);
     } else {
-      const resolve = () => probe(detailUrl, async () => {
+      const source = await yieldSlot(() => probe(detailUrl, async () => {
         outcome.requestCount += 1;
         outcome.detailCount += 1;
         return resolveArticleSource(detailUrl, args.timeoutSeconds);
-      });
-      const source = isGoogle(detailUrl) ? await yieldSlot(resolve) : await resolve();
-      document = source && (source.document || await downloadArticleDocument(source.target, args.timeoutSeconds));
+      }));
+      document = source && (source.document || await fetchPublisherDocument(source.target, args.timeoutSeconds));
     }
     // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
     // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
@@ -1953,7 +2097,7 @@ export function companyCollectionIdentity({ company, sourceConfig, args, selecte
 // 그룹 키워드에는 그 표현도, 미국식 철자 "aluminum" 도 없었다. 여기 적으면 질의에 먼저 들어가고
 // 사전 필터도 같이 통과시킨다. 없으면 없는 대로 카탈로그만 쓴다.
 export function companySearchTerms(company, searchTerms) {
-  const entry = searchTerms?.companies?.[company?.company] || searchTerms?.[company?.company];
+  const entry = searchTerms?.companies?.[company?.company];
   return (Array.isArray(entry) ? entry : []).map((term) => String(term || "").trim()).filter(Boolean);
 }
 
@@ -2064,7 +2208,7 @@ export function buildTrendQuery(company, technology, keywordConfig, dateRange, s
 // 사전 필터. 제목과 발췌에 타겟 기술 키워드가 실제로 있는 기사만 남긴다. Google 질의는 OR 를
 // 느슨하게 해석해 회사명만 맞는 기사도 돌려주므로, 여기서 결정적으로 한 번 더 거른다.
 // 이 판단은 후보 선택일 뿐 판정이 아니다. 걸러 남은 기사도 최종 판정은 LLM 이 한다.
-const normalizeForMatch = (value) => String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+const normalizeForMatch = (value) => articleTitleKey(value);
 
 export function matchedTrendKeywords(row, keywords) {
   const haystack = normalizeForMatch(`${row.title || ""} ${row.discovery_snippet || ""}`);
@@ -2082,16 +2226,14 @@ export function matchedTrendKeywords(row, keywords) {
   });
 }
 
-// 이미 수집된 기사와 겹치는지. 질의문 뒤의 추적 파라미터를 뗀 URL 과 공백을 정리한 제목으로 본다.
+// 이미 수집된 기사와 겹치는지. 추적 파라미터를 뗀 URL(articleUrlKey) 과 공백을 정리한 제목으로 본다.
 // dedupeRows 와 같은 기준이라 뒤에서 한 번 더 걸러도 결과가 달라지지 않는다.
 export function isDuplicateTrendRow(row, existingRows) {
-  const urlKey = (value) => String(value || "").replace(/[?#].*$/, "").toLowerCase();
-  const titleKey = (value) => normalizeForMatch(value);
-  const urls = new Set(existingRows.map((item) => urlKey(item.url)).filter(Boolean));
-  const titles = new Set(existingRows.map((item) => titleKey(item.title)).filter(Boolean));
-  const rowUrl = urlKey(row.url);
+  const urls = new Set(existingRows.map((item) => articleUrlKey(item.url)).filter(Boolean));
+  const titles = new Set(existingRows.map((item) => articleTitleKey(item.title)).filter(Boolean));
+  const rowUrl = articleUrlKey(row.url);
   if (rowUrl && urls.has(rowUrl)) return true;
-  const rowTitle = titleKey(row.title);
+  const rowTitle = articleTitleKey(row.title);
   return Boolean(rowTitle) && rowTitle.length > 15 && titles.has(rowTitle);
 }
 
@@ -2121,11 +2263,20 @@ export function selectTrendRows(rows, existingRows, keywords, limit) {
   return selected;
 }
 
+// Google News 검색 한 번. 실패해도 요청 한 건을 보냈으므로, 오류에 요청 수를 실어 collectCompany 가 세게 한다.
+async function searchGoogleNews(params, timeoutSeconds) {
+  try {
+    return await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  } catch (error) {
+    throw Object.assign(error, { requestCount: 1 });
+  }
+}
+
 async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt, searchTerms = null) {
   const query = buildTrendQuery(company, technology, keywordConfig, dateRange, searchTerms);
   if (!query) return { rows: [], requestCount: 0, query: "" };
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
-  const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  const xml = await searchGoogleNews(params, timeoutSeconds);
   // RSS 의 <description> 은 사전 필터가 보는 snippet 이다. parseRssOrAtom 은 공식 피드와 공용이라
   // 필드를 늘리지 않고, 여기서 제목으로 맞춰 붙인다. 본문을 받아오기 전이라 이것이 가진 전부다.
   const snippets = new Map();
@@ -2142,14 +2293,14 @@ async function collectTrendDiscovery(company, technology, keywordConfig, dateRan
 }
 
 async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
-  const query = buildQuery(company, dateRange.lookbackDays);
+  const query = buildQuery(company, dateRange);
   const params = new URLSearchParams({
     q: query,
     hl: "en-US",
     gl: "US",
     ceid: "US:en",
   });
-  const xml = await fetchText(`https://news.google.com/rss/search?${params.toString()}`, timeoutSeconds);
+  const xml = await searchGoogleNews(params, timeoutSeconds);
   return {
     rows: filterByDateRange(
       parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
@@ -2165,43 +2316,26 @@ async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSecond
   };
 }
 
-async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
-  const query = buildGdeltQuery(company);
-  const params = new URLSearchParams({
-    query,
-    mode: "ArtList",
-    format: "json",
-    maxrecords: String(maxPerSource),
-    sort: "HybridRel",
-    timespan: `${dateRange.lookbackDays}d`,
-  });
-  const payload = await fetchJson(`https://api.gdeltproject.org/api/v2/doc/doc?${params.toString()}`, timeoutSeconds);
-  const rows = (payload.articles || [])
-    .map((article) => ({
-      target_no: company.target_no,
-      company: company.company,
-      title: cleanText(article.title || ""),
-      url: article.url || "",
-      source: `GDELT: ${article.domain || article.sourceCountry || "unknown"}`,
-      ...chooseDateEvidence([dateEvidence(parseDate(article.seendate), "gdelt_seen", "context")]),
-      collected_at: collectedAt,
-      collector: "gdelt_doc_api",
-      query,
-      ...fallbackSourceFields(95),
-      official_source_url: "",
-    }))
-    .filter((row) => row.title && row.url);
-  return { rows: filterByDateRange(rows, dateRange).slice(0, maxPerSource), requestCount: 1 };
+// 같은 기사인지 볼 URL 키. 추적 파라미터와 # 만 뗀다(stripTracking). 예전에는 쿼리 전체를 지우고 경로를 소문자로
+// 바꿔서, ?releaseid=1 과 ?releaseid=2 처럼 쿼리로 기사를 가르는 보도자료가 한 건으로 합쳐졌다.
+export function articleUrlKey(url) {
+  const text = String(url || "").trim();
+  return text ? stripTracking(text) : "";
 }
 
-function dedupeRows(rows) {
+// 같은 기사인지 볼 제목 키. 대소문자와 공백만 맞춘다. 사업동향 사전 필터(normalizeForMatch)도 같은 정규화다.
+export function articleTitleKey(title) {
+  return String(title || "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+export function dedupeRows(rows) {
   const seen = new Set();
   const seenTitles = new Set();
   const deduped = [];
   for (const row of rows) {
-    const urlKey = row.url.replace(/[?#].*$/, "").toLowerCase();
+    const urlKey = articleUrlKey(row.url);
     const key = `${row.company.toLowerCase()}|${urlKey || row.title.toLowerCase()}`;
-    const titleKey = `${row.company.toLowerCase()}|${row.title.toLowerCase().replace(/\s+/g, " ").trim()}`;
+    const titleKey = `${row.company.toLowerCase()}|${articleTitleKey(row.title)}`;
     if (seen.has(key)) continue;
     if (row.title.length > 15 && seenTitles.has(titleKey)) continue;
     seen.add(key);
@@ -2252,16 +2386,9 @@ export function trimByRank(rows, limit) {
 // 대체 수집, 상세 페이지를 받아 보니 기간 밖이던 자체 출처. 목록에 날짜가 없어 자리를 받은 기사가
 // 받아 보면 기간 밖인 경우가 많다. 2026-08 실행(34921453566)에서 538행 중 161행이 그랬고, BASF·Shin-Etsu·Maxon 은
 // 이번 달 기사가 없어 Google News 를 찾고도 기간 밖 공식 기사 10건 뒤에 서서 남은 대체 기사가 없었다.
-// 상세 페이지를 받기 전, 목록 날짜나 제목 연도만으로 이미 기간 밖인 행은 남는 자리만 채운다.
-// trimByRank 는 링크 순위로만 자르므로, 순위가 같거나 앞선 기간 밖 문서가 이번 달 후보를 밀어냈다.
-// 2026-08 수집에서 20개사가 기업 상한에 걸렸고, Air Liquide 는 받은 11건 중 10건, BASF·Shin-Etsu 는 8건이 기간 밖이었다.
-export function capCompanyRows(rows, dateRange, limit) {
-  const period = dateRangePeriod(dateRange);
-  const outside = row => periodPlacement(row, period).placement === 'out_of_period';
-  const kept = trimByRank(rows.filter(row => !outside(row)), limit);
-  return [...kept, ...trimByRank(rows.filter(outside), Math.max(0, limit - kept.length))];
-}
-
+// 상세 페이지를 받기 전의 첫 상한은 링크 순위로만 자른다(trimByRank). 목록 날짜나 제목 연도만으로 기간 밖인 행은
+// 출처 수집기가 이미 걸러 두었기 때문이다(filterByDateRange). 예전의 capCompanyRows 는 그런 행을 뒤로 미뤘지만
+// 그 분기에 닿는 행이 없었다.
 export function rankCompanyRows({ usable, rows, fallbackRows, dateRange, limit }) {
   const period = dateRangePeriod(dateRange);
   const outside = row => periodPlacement(row, period).placement === 'out_of_period';
@@ -2526,8 +2653,8 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
   let requestCount = 0;
   for (const entry of entries) {
     try {
-      const xml = await fetchText(entry.url, timeoutSeconds);
       requestCount += 1;
+      const xml = await fetchText(entry.url, timeoutSeconds);
       rows.push(...sitemapRows(xml, company, entry, dateRange, collectedAt).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", kind: "sitemap", error: error.message });
@@ -2545,8 +2672,6 @@ function collectSource(source, company, sourceConfig, args, dateRange, collected
     return collectOfficialSitemaps(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
   } else if (source === "sec_filings") {
     return collectSecFilings(company, sourceConfig, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
-  } else if (source === "gdelt") {
-    return collectGdelt(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt);
   }
   throw new Error(`Unknown source: ${source}`);
 }
@@ -2554,11 +2679,13 @@ function collectSource(source, company, sourceConfig, args, dateRange, collected
 // options: yieldSlot·probe·log 는 상세 페이지 받기로 넘긴다(enrichOfficialRowsWithContent).
 // log 의 단계는 출처 하나, 대체 수집 검색, 사업동향 검색, 상세 페이지 한 건이다. 이어 받을 때 다시 쓴 단계의
 // 요청은 이번 실행의 요청 수에 더하지 않는다(collectWithCheckpoint 의 cached 기업과 같다).
-// 대체 수집과 GDELT 질의의 when:Nd 는 실행 날짜에 따라 달라지지만, 이어 받을 때는 처음 받은 검색 결과를 쓴다.
+// 기간 없이 돌린 조회의 검색 창(when:Nd)은 실행 날짜에 따라 달라지지만, 이어 받을 때는 처음 받은 검색 결과를 쓴다.
 // 처음부터 다시 받는 기업은 지금처럼 새로 검색한다. trend: 시험용으로 사업동향 탐색 입력을 바꿔 넣는다.
+// 링크 판정·제외 집계(tally)는 다시 쓴 단계까지 세어 stats 에 싣는다. 그래야 체크포인트·이어 받기와 무관하게 같다.
 export async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, options = {}) {
   const { log = createStepLog(), trend = {} } = options;
-  const slot = { ...options, log };
+  const tally = createTally();
+  const slot = { ...options, log, tally };
   const { technologyMap = trendTechnology, keywordConfig = trendKeywordConfig, searchTerms = trendSearchTerms } = trend;
   const companyRows = [];
   const publisherCandidates = [];
@@ -2581,6 +2708,7 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       replayed = step.replayed;
       if (step.value.failed !== undefined) throw new Error(step.value.failed);
       result = step.value;
+      mergeTally(tally, result.tally);
       companyRows.push(...result.rows);
       publisherCandidates.push(...(result.recoveryCandidates || result.rows || []));
       if (!replayed) requestCount += result.requestCount;
@@ -2606,8 +2734,16 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
   }
 
   // Drop disabled probes before the company cap; keep priority through fetching.
-  const candidateRows = selectDetailRows(sortRows(dedupeRows(companyRows)), args.maxVerifyPerCompany);
-  const selectedCompanyRows = capCompanyRows(candidateRows, dateRange, args.maxPerCompany);
+  // 확인 대상을 받아 보지 않기로 했으면(maxVerifyPerCompany=0) 여기서 빠지는 링크도 제외로 센다. 예전에는 기록 없이 사라졌다.
+  const dedupedRows = sortRows(dedupeRows(companyRows));
+  const candidateRows = selectDetailRows(dedupedRows, args.maxVerifyPerCompany);
+  if (candidateRows.length < dedupedRows.length) {
+    for (const row of dedupedRows.filter(item => !candidateRows.includes(item))) {
+      recordExclusion(tally, row.company, row.title, row.url, "verify_budget_exhausted");
+    }
+  }
+  // 출처 수집기가 이미 기간 밖 행을 걸러 두었으므로(filterByDateRange) 남은 행은 링크 순위로만 자른다.
+  const selectedCompanyRows = trimByRank(candidateRows, args.maxPerCompany);
   const enriched = await enrichOfficialRowsWithContent(selectedCompanyRows, args, collectedAt, company, slot);
   requestCount += enriched.requestCount;
   errors.push(...enriched.errors);
@@ -2642,10 +2778,13 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company, slot);
       requestCount += detailedFallback.requestCount;
       errors.push(...detailedFallback.errors);
+      // 보강 결과를 그대로 쓴다. 본문 단계에서 뺀 대체 기사(no_article_title, verified_index_page 등)는 돌아오지
+      // 않는다. 예전에는 빠진 행 자리에 원래 행을 다시 넣어, 제외로 집계된 기사가 결과에 남았다. 공식·사업동향 경로와 같다.
       const byUrl = new Map(detailedFallback.rows.map(row => [row.url, row]));
-      rows = rows.map(row => byUrl.get(row.url) || row);
+      rows = rows.flatMap(row => (row.source_type === 'official' ? [row] : byUrl.has(row.url) ? [byUrl.get(row.url)] : []));
     } catch (error) {
       stats.fallback = "error";
+      requestCount += error.requestCount || 0;
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news", error: error.message });
     }
   }
@@ -2675,10 +2814,11 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       }
     } catch (error) {
       stats.trend_discovery = "error";
+      requestCount += error.requestCount || 0;
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news_trend", error: error.message });
     }
   }
-  return { rows, requestCount, errors, stats };
+  return { rows, requestCount, errors, stats: { ...stats, ...tally } };
 }
 
 async function main() {
@@ -2736,6 +2876,8 @@ async function main() {
   }
 
   const finalRows = sortRows(dedupeRows(rows));
+  const tally = companyResults.reduce((total, result) => mergeTally(total, result.stats), createTally());
+  const samplesByReason = summarySamples(tally.excluded_non_article_samples);
   const countsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
   const officialCountsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
   for (const row of finalRows) {
@@ -2751,7 +2893,7 @@ async function main() {
     collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args)),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
-    // Google 확인 멈춤만 남아, 받아 둔 단계는 다시 쓰고 멈춘 기사만 다시 받은 기업.
+    // 재시도할 까닭이 상세 페이지 단계에만 남아, 받아 둔 단계는 다시 쓰고 실패·멈춘 기사만 다시 받은 기업.
     resumed_company_count: companyResults.filter(result => result.resumed).length,
     retryable_company_count: companyResults.filter(retryableCollection).length,
     collection_coverage: companies.map((company, index) => ({ company: company.company,
@@ -2760,7 +2902,11 @@ async function main() {
     run_finished_at: utcNow(),
     company_timings: companyResults.map(result => result.timing),
     // 체크포인트에서 온 옛 결과에는 stats 가 없어 기업 이름만 남는다.
-    company_collection_stats: companies.map((company, index) => ({ company: company.company, ...(companyResults[index].stats || {}) })),
+    // 제외 표본은 아래 excluded_non_article_samples 에 모으므로 기업별 줄에서는 뺀다.
+    company_collection_stats: companies.map((company, index) => {
+      const { excluded_non_article_samples, ...stats } = companyResults[index].stats || {};
+      return { company: company.company, ...stats };
+    }),
     companies_cut_by_company_cap: companyResults.filter(result => result.stats?.cut_by_company_cap > 0).length,
     fallback_skipped_company_count: companyResults.filter(result => result.stats?.fallback === 'skipped_has_monthly_source').length,
     // 사업동향 탐색이 실제로 몇 건을 보탰는지. 이 숫자가 곧 늘어난 LLM 호출 수다.
@@ -2819,14 +2965,16 @@ async function main() {
     date_conflict_result_count: finalRows.filter((row) => row.date_conflict === true).length,
     undated_with_body_count: finalRows.filter((row) => resolveDateState(row).status === "unknown" && hasArticleBody(row)).length,
     link_policy: linkPolicy,
-    link_verdict_counts: Object.fromEntries(linkVerdictCounts),
+    // 링크 판정·제외 집계는 체크포인트에서 다시 쓴 기업과 이어 받은 기업까지 모든 기업의 합이다(createTally).
+    // request_count·retry_count 는 이번 실행이 실제로 보낸 요청과 재시도만 센다.
+    link_verdict_counts: tally.link_verdict_counts,
     max_verify_per_company: args.maxVerifyPerCompany,
-    excluded_non_article_count: excludedTotal,
-    excluded_non_article_reasons: Object.fromEntries(excludedCounts),
-    excluded_non_article_sample_count: excludedSamples().length,
-    excluded_non_article_samples: excludedSamples(),
+    excluded_non_article_count: tally.excluded_non_article_count,
+    excluded_non_article_reasons: tally.excluded_non_article_reasons,
+    excluded_non_article_sample_count: [...samplesByReason.values()].flat().length,
+    excluded_non_article_samples: [...samplesByReason.values()].flat(),
     excluded_non_article_sample_reasons: Object.fromEntries(
-      [...excludedByReason].map(([reason, rows]) => [reason, rows.length]),
+      [...samplesByReason].map(([reason, rows]) => [reason, rows.length]),
     ),
     published_at_source_counts: finalRows.reduce((counts, row) => {
       const key = row.published_at_source || "none";

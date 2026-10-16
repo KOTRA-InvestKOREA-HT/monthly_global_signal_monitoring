@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { capCompanyRows, chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText, parseJsonFeed,
-  isUsableTitle, parseAnchors } from '../scripts/collect_company_signals.mjs';
+import { chooseBetterTitle, collectHtmlDateEvidence, dateEvidence, extractDateFromText, extractMonthFromText, parseJsonFeed,
+  isUsableTitle, parseAnchors, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { chooseDateEvidence, latestTitleYear, periodPlacement } from '../scripts/date_state.mjs';
 
 const company = { company: 'Umicore', query_aliases: [] };
@@ -39,13 +39,47 @@ test('zone-less dates are read as written in UTC, whatever the machine time zone
   assert.equal(dateEvidence('08/05/26', 'jsonld').date, '2026-08-05T00:00:00Z');
   assert.equal(dateEvidence('2026-08-05T12:15:00', 'meta').date, '2026-08-05T12:15:00Z');
   assert.equal(dateEvidence('2026-08-05', 'meta').date, '2026-08-05T00:00:00Z');
-  assert.equal(dateEvidence('2026-08-05T12:15:00-04:00', 'meta').date, '2026-08-05T16:15:00Z');
+  // 오프셋이 붙은 값은 게시처 현지 시각과 오프셋을 그대로 남긴다. 같은 순간이고, 날짜는 현지 날짜다.
+  assert.equal(dateEvidence('2026-08-05T12:15:00-04:00', 'meta').date, '2026-08-05T12:15:00-04:00');
+  assert.equal(dateEvidence('2026-08-05T12:15:00+00:00', 'meta').date, '2026-08-05T12:15:00Z');
   assert.equal(dateEvidence('Wed, 05 Aug 2026 16:00:00 GMT', 'feed').date, '2026-08-05T16:00:00Z');
 });
 
 test('US zone abbreviations in feed dates keep their zone', () => {
-  assert.equal(dateEvidence('Wed, 05 Aug 2026 16:00:00 EST', 'feed').date, '2026-08-05T21:00:00Z');
-  assert.equal(dateEvidence('Wed, 05 Aug 2026 22:30:00 PDT', 'feed').date, '2026-08-06T05:30:00Z');
+  assert.equal(dateEvidence('Wed, 05 Aug 2026 16:00:00 EST', 'feed').date, '2026-08-05T16:00:00-05:00');
+  // 미국 서부 저녁 발표는 UTC 로는 다음 날이지만 게시일은 8월 5일이다.
+  const evening = dateEvidence('Wed, 05 Aug 2026 22:30:00 PDT', 'feed');
+  assert.equal(evening.date, '2026-08-05T22:30:00-07:00');
+  assert.equal(Date.parse(evening.date), Date.parse('2026-08-06T05:30:00Z'));
+});
+
+// 2026-09-01T00:30:00+09:00 이 2026-08-31 로 저장되어 8월 보고서에 들어갔다.
+test('a release published just after midnight in Asia keeps its local day and month', () => {
+  for (const value of ['2026-09-01T00:30:00+09:00', 'Tue, 01 Sep 2026 00:30:00 +0900']) {
+    const evidence = dateEvidence(value, 'meta');
+    assert.equal(evidence.date, '2026-09-01T00:30:00+09:00', value);
+    assert.equal(evidence.month, '2026-09', value);
+    const row = chooseDateEvidence([evidence]);
+    assert.equal(periodPlacement(row, { from_date: '2026-08-01', to_date: '2026-08-31' }).placement, 'out_of_period', value);
+    assert.equal(periodPlacement(row, { from_date: '2026-09-01', to_date: '2026-09-30' }).placement, 'in_period', value);
+  }
+  // 유럽의 자정 직후 발표도 같다.
+  assert.equal(dateEvidence('2026-10-01T00:05:00+02:00', 'meta').month, '2026-10');
+});
+
+// new Date("2026-02-31") 은 3월 3일이 된다. 없는 날짜는 다음 달 날짜가 아니라 근거가 없는 것이다.
+test('a date that does not exist is not rolled into the next month', () => {
+  assert.equal(dateEvidence('2026-02-31', 'meta'), null);
+  assert.equal(dateEvidence('2026-02-31T10:00:00Z', 'meta'), null);
+  assert.equal(dateEvidence('February 30, 2026', 'meta'), null);
+  assert.equal(extractDateFromText('Published February 30, 2026'), null);
+  assert.equal(extractDateFromText('Published 2026-02-31'), null);
+  assert.equal(extractDateFromText('Published 31 April 2026'), null);
+  // 일자가 없는 날이면 URL 의 연·월만 남는다.
+  assert.equal(sitemapUrlDate('https://example.com/news/2026/02/30/plant-opening'), '2026-02');
+  assert.equal(sitemapUrlDate('https://example.com/2026/ze260230-plant'), null);
+  // 윤년의 2월 29일은 있는 날이다.
+  assert.equal(dateEvidence('2028-02-29', 'meta').date, '2028-02-29T00:00:00Z');
 });
 
 // 목록 항목 하나를 Boeing 보도자료 목록과 같은 모양으로 재현한다: 날짜 칸과 제목 링크 사이에
@@ -116,19 +150,6 @@ test('a title naming only years two or more before the period is out of period u
   assert.equal(placement('Company opens plant'), 'date_pending');
   const confirmed = { title: 'Annual Shareholders Meeting 2024 replay', ...chooseDateEvidence([dateEvidence('2026-08-12', 'listing', 'published')]) };
   assert.equal(periodPlacement(confirmed, august).placement, 'in_period');
-});
-
-test('the company cap fills with rows not known to be out of period before stale ones', () => {
-  const dateRange = { from_date: '2026-08-01', to_date: '2026-08-31' };
-  const rows = [
-    { url: 'https://example.com/agm-2023', title: 'Archive AGM 2023', link_rank: 0 },
-    { url: 'https://example.com/ref-2018', title: '2018 Reference document', link_rank: 0 },
-    { url: 'https://example.com/plant', title: 'Company opens plant', link_rank: 1 },
-    { url: 'https://example.com/deal', title: 'Company signs supply deal', link_rank: 1 },
-  ];
-  assert.deepEqual(capCompanyRows(rows, dateRange, 3).map(row => row.url),
-    ['https://example.com/plant', 'https://example.com/deal', 'https://example.com/agm-2023']);
-  assert.equal(capCompanyRows(rows, dateRange, 10).length, 4);
 });
 
 // magniX 뉴스룸은 목록과 상세 페이지를 모두 data/news.json 으로 그린다. HTML 에는 링크도 본문도 없어

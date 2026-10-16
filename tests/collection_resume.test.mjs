@@ -1,13 +1,14 @@
 // Google 확인 멈춤만 남은 기업을 이어 받기. 10월 1일 실행(9월 기간)에서 재시도 대상 28개 기업 가운데 26개가
 // 이 까닭뿐이었는데, 다시 돌리면 공식 출처·상세 페이지·사업동향 검색을 처음부터 다시 받았다.
 // 이제 받아 둔 단계는 다시 쓰고 멈춘 기사만 받는다. 결과는 같은 응답을 받은 전체 재수집과 같아야 한다.
+// 상세 페이지 하나의 타임아웃처럼 상세 단계에만 남은 일시 오류도 같은 방법으로 이어 받는다.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { collectWithCheckpoint, createStepLog, onlyProbePaused, retryableCollection } from '../scripts/collection_resilience.mjs';
-import { collectCompany, parseArgs } from '../scripts/collect_company_signals.mjs';
+import { collectWithCheckpoint, createStepLog, onlyDetailStepsRetryable, retryableCollection } from '../scripts/collection_resilience.mjs';
+import { collectCompany, createTally, mergeTally, parseArgs } from '../scripts/collect_company_signals.mjs';
 
 const company = { target_no: 1, company: 'Acme Widgets', query_aliases: [] };
 const sourceConfig = { official_feeds: { 'Acme Widgets': [{ url: 'https://acme.example/rss', source: 'Acme newsroom' }] } };
@@ -48,7 +49,8 @@ function fakeNetwork() {
     const own = official.find(([, link]) => link === url);
     if (own) return new Response(body(own[0], own[2]));
     if (url.startsWith('https://news.google.com/rss/search')) {
-      return new Response(rss(decodeURIComponent(url).includes('after:2026-09-01') ? trendItems : fallback));
+      // 대체 수집 질의는 신호 낱말("investor relations" 등)을 싣고, 사업동향 질의는 기술 키워드를 싣는다.
+      return new Response(rss(decodeURIComponent(url).includes('investor') ? fallback : trendItems));
     }
     if (/\/articles\/CBMi\w+$/.test(url)) return new Response('<div data-n-a-sg="SIG" data-n-a-ts="1759000000"></div>');
     if (url.endsWith('/batchexecute')) {
@@ -94,7 +96,7 @@ test('a company left only with paused Google rows resumes them and matches a ful
     now: () => now, collect: log => collect(probe, log) });
   const paused = await withNetwork(fakeNetwork(), () => checkpoint(pausingProbe()));
   assert.equal(paused.rows.filter(row => row.content_fetch_status === 'google_probe_paused').length, 5);
-  assert.ok(retryableCollection(paused) && onlyProbePaused(paused));
+  assert.ok(retryableCollection(paused) && onlyDetailStepsRetryable(paused));
 
   now += 3600000;
   const network = fakeNetwork();
@@ -129,13 +131,79 @@ test('a company with a real transient failure is still collected from scratch', 
     collect: log => collectCompany(company, flaky, ['official_feeds', 'google_news'], args, dateRange, collectedAt,
       { probe, log, trend }) });
   const failed = await withNetwork(fakeNetwork(), () => checkpoint(pausingProbe()));
-  assert.ok(retryableCollection(failed) && !onlyProbePaused(failed));
+  assert.ok(retryableCollection(failed) && !onlyDetailStepsRetryable(failed));
   const network = fakeNetwork();
   const retried = await withNetwork(network, () => checkpoint(always));
   assert.notEqual(retried.resumed, true);
   assert.ok(network.requested.includes('https://acme.example/rss'));
   assert.ok(network.requested.includes('https://acme.example/news/a1'));
   assert.equal(network.requested.filter(url => url.startsWith('https://news.google.com/rss/search')).length, 2);
+});
+
+// 상세 페이지 한 건이 일시 오류였던 기업은 그 기사만 다시 받는다. 예전에는 매번 처음부터 다시 받았다.
+// 425 를 쓰는 까닭: 재시도 대상 일시 오류이면서 domainGuard 가 호스트 장애로 세지 않아, 테스트 사이에 이 호스트가
+// 쉬는 상태로 남지 않는다(가드는 모듈 하나에 하나다).
+test('a company whose only transient failure is one detail page resumes just that page', async t => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'company-resume-'));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const full = await withNetwork(fakeNetwork(), () => collect(always, createStepLog()));
+  const flakyPage = 'https://acme.example/news/a2';
+  const failing = fakeNetwork();
+  const down = { fetch: async (url, init) => (String(url) === flakyPage
+    ? new Response('busy', { status: 425 }) : failing.fetch(url, init)) };
+  const checkpoint = () => collectWithCheckpoint({ directory, identity: { company: company.company },
+    toDate: '2026-09-30', collect: log => collect(always, log) });
+  const failed = await withNetwork(down, () => checkpoint());
+  assert.ok(retryableCollection(failed) && onlyDetailStepsRetryable(failed));
+  const network = fakeNetwork();
+  const resumed = await withNetwork(network, () => checkpoint());
+  assert.equal(resumed.resumed, true);
+  assert.deepEqual(network.requested, [flakyPage]);
+  assert.deepEqual(resumed.rows, full.rows);
+  assert.deepEqual(resumed.errors, []);
+});
+
+// 링크 판정·제외 집계는 기업 결과에 실려 체크포인트에 남는다. 예전에는 모듈 전역 카운터라 다시 쓴 기업이 빠졌다.
+test('link verdict and exclusion counts travel with the company result through the checkpoint', async t => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'company-tally-'));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const pageConfig = { official_pages: { 'Acme Widgets': [{ url: 'https://acme.example/newsroom', source: 'Acme newsroom' }] } };
+  const page = `<ul><li>September 4, 2026 <a href="https://acme.example/news/a1">Acme Widgets opens production line number 1 in Ohio</a></li>
+    <li><a href="https://acme.example/news/">News</a></li><li><a href="https://acme.example/news/page/2">Older news</a></li></ul>`;
+  const network = fakeNetwork();
+  const fetch = async (url, init) => (String(url) === 'https://acme.example/newsroom' ? new Response(page) : network.fetch(url, init));
+  const run = () => collectWithCheckpoint({ directory, identity: { company: company.company }, toDate: '2026-09-30',
+    collect: log => collectCompany(company, pageConfig, ['official_pages'], args, dateRange, collectedAt, { probe: always, log, trend }) });
+  const first = await withNetwork({ fetch }, run);
+  assert.ok(first.stats.link_verdict_counts.accept >= 1);
+  assert.ok(first.stats.excluded_non_article_count >= 1);
+  assert.equal(first.stats.excluded_non_article_count,
+    Object.values(first.stats.excluded_non_article_reasons).reduce((sum, count) => sum + count, 0));
+  const cached = await withNetwork({ fetch }, run);
+  assert.equal(cached.cached, true);
+  assert.deepEqual(cached.stats, first.stats);
+  // 실행 요약은 기업 결과의 집계를 합친다.
+  const total = [first, cached].reduce((sum, result) => mergeTally(sum, result.stats), createTally());
+  assert.equal(total.excluded_non_article_count, first.stats.excluded_non_article_count * 2);
+});
+
+// 본문 단계에서 뺀 대체 기사는 결과에 다시 들어오지 않는다. 예전에는 rows.map 이 빠진 행 자리에 원래 행을 넣었다.
+test('a fallback article excluded at the detail stage stays excluded', async () => {
+  const network = fakeNetwork();
+  // 검색 결과의 짧은 제목은 받아 본 페이지 제목으로 바뀌고, 그 제목이 목록 페이지라 기사에서 빠진다.
+  const shortTitled = fallback.map((item, index) => (index === 0 ? ['Acme update', ...item.slice(1)] : item));
+  const fetch = async (url, init) => {
+    url = String(url);
+    if (url === publisher('G1')) return new Response(body('News archive', 11));
+    if (url.startsWith('https://news.google.com/rss/search') && decodeURIComponent(url).includes('investor')) {
+      return new Response(rss(shortTitled));
+    }
+    return network.fetch(url, init);
+  };
+  const result = await withNetwork({ fetch }, () => collect(always, createStepLog()));
+  const fallbackUrls = result.rows.filter(row => row.collector === 'google_news_rss').map(row => row.url);
+  assert.equal(fallbackUrls.includes('https://news.google.com/rss/articles/CBMiG1'), false);
+  assert.equal(fallbackUrls.length, 3);
 });
 
 test('steps that failed transiently or were paused are never replayed', async () => {

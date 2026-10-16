@@ -8,7 +8,7 @@ import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, 
   articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI } from './review_providers.mjs';
 import { DATE_HINT_VERSION, decisionProperties, PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
-import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
+import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
@@ -1281,14 +1281,9 @@ async function main() {
         { maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY, technology, keywordConfig, searchTerms }) })) throw new Error('Refresh stale or incomplete collection');
   }
   catch {
-    // 응답 헤더가 Node 기본 한도(16KB)를 넘는 사이트가 있다. Cytiva 뉴스룸과 Yahoo Finance 는 이 한도에서
-    // UND_ERR_HEADERS_OVERFLOW 로 실패한다.
-    const result = spawnSync(process.execPath, ['--max-http-header-size=131072', 'scripts/collect_company_signals.mjs', '--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json', '--out-dir', inputDir,
-      '--sources', 'official_feeds,official_pages,official_sitemaps,sec_filings,google_news', '--from-date', from, '--to-date', to,
-      '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'missing', '--fallback-min-results', '1', '--rate-limit-seconds', '0.5', '--company-concurrency', '4',
-      '--technology-map', 'data/company_technology_map.json', '--keyword-config', 'config/technology_keywords.json',
-      '--search-terms', 'config/trend_search_terms.json',
-      '--max-trend-discovery', String(TREND_DISCOVERY_PER_COMPANY)], { stdio: 'inherit' });
+    // 운영 수집 인자(응답 헤더 한도 포함)는 collection_args.mjs 한 곳에 있다. 다른 진입점도 같은 값을 쓴다.
+    const result = spawnSync(process.execPath, collectorCommand(['--out-dir', inputDir, '--from-date', from, '--to-date', to]),
+      { stdio: 'inherit' });
     if (result.error || result.status !== 0) throw new Error('Collection failed');
   }
   const [signals, summary] = await Promise.all([read(sourceFile), read(path.join(inputDir, 'latest_collection_summary.json'))]);

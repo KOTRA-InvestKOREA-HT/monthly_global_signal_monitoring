@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createPublisherProbe, detailSourceUrl, enrichOfficialRowsWithContent, mapWithConcurrency, rankCompanyRows, readLimitedResponse } from '../scripts/collect_company_signals.mjs';
+import { createPublisherProbe, detailSourceUrl, googleBlocked, enrichOfficialRowsWithContent, mapWithConcurrency, rankCompanyRows, readLimitedResponse } from '../scripts/collect_company_signals.mjs';
 
 test('Google rows are probed unless a publisher URL is already known', () => {
   const row = { url: 'https://news.google.com/rss/articles/opaque', title: 'Original RSS title' };
@@ -38,13 +38,30 @@ test('successful redirects and unrelated errors break the unresolved failure str
   const probe = createPublisherProbe();
   const url = 'https://news.google.com/rss/articles/sample';
   const fail = () => probe(url, async () => { throw new Error('publisher_url_unresolved'); });
-  for (const outcome of ['success', 'HTTP 503']) {
+  for (const outcome of ['success', 'HTTP 404 Not Found']) {
     await assert.rejects(fail());
     await assert.rejects(fail());
     if (outcome === 'success') assert.equal(await probe(url, async () => 'publisher body'), 'publisher body');
-    else await assert.rejects(probe(url, async () => { throw new Error(outcome); }), /HTTP 503/);
+    else await assert.rejects(probe(url, async () => { throw new Error(outcome); }), /HTTP 404/);
   }
   assert.equal(await probe(url, async () => 'still probing'), 'still probing');
+});
+
+// 429·5xx·타임아웃도 Google 이 막고 있다는 신호다. 예전에는 이런 오류가 연속 실패를 0으로 돌려 쉬지 않았다.
+test('rate limits, server errors and timeouts count toward the Google pause', async () => {
+  const blocks = [Object.assign(new Error('HTTP 429 Too Many Requests'), { status: 429 }), new Error('HTTP 503'),
+    Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' })];
+  const pauses = [];
+  const probe = createPublisherProbe(3, { pauseMs: 5, maxPauses: 1, sleepFn: async ms => { pauses.push(ms); } });
+  const url = 'https://news.google.com/rss/articles/sample';
+  for (const error of blocks) await assert.rejects(probe(url, async () => { throw error; }));
+  assert.deepEqual(pauses, []);
+  // 세 번 연속 막혔으니 다음 요청 앞에서 한 번 쉰다. 쉬고 나서도 세 번 막히면 이번 실행의 확인을 멈춘다.
+  for (const error of blocks) await assert.rejects(probe(url, async () => { throw error; }));
+  assert.deepEqual(pauses, [5]);
+  assert.equal(await probe(url, async () => 'not requested'), null);
+  assert.equal(googleBlocked(new Error('HTTP 404 Not Found')), false);
+  assert.equal(googleBlocked(Object.assign(new Error('HTTP 502'), { status: 502 })), true);
 });
 
 test('oversized PDF headers cancel the body before downloading it', async () => {

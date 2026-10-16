@@ -24,6 +24,40 @@ test('unavailable host pauses, another host proceeds, and cooldown allows one pr
   assert.equal(guard.stats.skipped, 2);
 });
 
+// 쉬기 전에 나간 느린 요청이 탐침 도중에 끝나도 탐침 표시는 그대로다. 예전에는 그 요청의 finally 가 표시를 풀어
+// 탐침이 끝나기 전에 둘째 요청이 같은 호스트로 나갔다.
+test('a slow request that started before the cooldown does not end the probe', async () => {
+  let now = 0;
+  const guard = createDomainGuard({ now: () => now, cooldownMs: 100 });
+  let failSlow;
+  const slow = guard.run('https://down.example/slow', () => new Promise((resolve, reject) => { failSlow = reject; }));
+  for (let i = 0; i < 3; i++) {
+    await assert.rejects(guard.run('https://down.example/news', async () => { throw new Error('fetch failed'); }));
+  }
+  now = 100;
+  let finishProbe;
+  const probe = guard.run('https://down.example/', () => new Promise(resolve => { finishProbe = resolve; }));
+  failSlow(new Error('fetch failed'));
+  await assert.rejects(slow, /fetch failed/);
+  // 느린 요청의 실패로 쉬는 시간이 다시 잡혔다가 지나도, 첫 탐침이 끝나기 전에는 둘째 탐침을 보내지 않는다.
+  now = 200;
+  await assert.rejects(guard.run('https://down.example/other', async () => 'second probe'), /domain_cooldown/);
+  finishProbe('recovered');
+  await probe;
+  assert.equal(await guard.run('https://down.example/other', async () => 'ok'), 'ok');
+});
+
+// 응답을 받은 뒤의 판단(크기 초과 등)은 호스트 장애가 아니다.
+test('errors decided after a response never cool the host down', async () => {
+  const guard = createDomainGuard();
+  for (let i = 0; i < 4; i++) {
+    await assert.rejects(guard.run('https://site.example/big.pdf', async () => {
+      throw Object.assign(new Error('document_too_large'), { noRetry: true });
+    }), /document_too_large/);
+  }
+  assert.equal(await guard.run('https://site.example/news', async () => 'ok'), 'ok');
+});
+
 test('access-denied URLs never trigger transport cooldown for unrelated pages', async () => {
   const guard = createDomainGuard();
   for (let i = 0; i < 4; i++) await assert.rejects(guard.run('https://site.example/private', async () => {

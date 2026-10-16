@@ -1,5 +1,5 @@
 {
-  "description": "Official company source catalog generated from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx. The collector reads these official pages first and uses fallback search only when official results are missing. official_feeds: official RSS/Atom feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates.",
+  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates.",
   "official_feeds": {
     "Australian Strategic Metals": [
       {

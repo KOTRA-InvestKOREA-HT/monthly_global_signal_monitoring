@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState, reviewCandidate, unextractableBody } from "../scripts/date_state.mjs";
+import { chooseDateEvidence, dayOf, hasArticleBody, monthOf, periodPlacement, reportEligible, resolveDateState, reviewCandidate, unextractableBody } from "../scripts/date_state.mjs";
 import { collectHtmlDateEvidence, dateEvidence, usableMonthlySource } from "../scripts/collect_company_signals.mjs";
 
 const period = { from_date: "2026-08-01", to_date: "2026-08-31" };
@@ -109,4 +109,22 @@ test("ordinary article bodies keep counting as evidence", () => {
   // 빈 본문은 추출 실패가 아니라 그냥 본문 없음이다. 그 판정은 길이 검사가 맡는다.
   assert.equal(unextractableBody(""), "");
   assert.equal(hasArticleBody({ content_text: "   " }), false);
+});
+
+// 오프셋이 붙은 게시일은 게시처 현지 날짜로 본다. UTC 로 바꾸면 9월 1일 오전 발표가 8월 31일이 된다.
+test("an offset publication time belongs to the publisher's local day", () => {
+  assert.equal(dayOf("2026-09-01T00:30:00+09:00"), "2026-09-01");
+  assert.equal(monthOf("2026-09-01T00:30:00+09:00"), "2026-09");
+  assert.equal(dayOf("2026-08-31T22:30:00-07:00"), "2026-08-31");
+  assert.equal(dayOf("2026-08-31T23:30:00Z"), "2026-08-31");
+  assert.equal(dayOf("2026-08-31T23:30:00"), "2026-08-31");
+  assert.equal(dayOf("2026-08-05"), "2026-08-05");
+  // 없는 날짜는 다음 달로 넘기지 않고 날짜 없음으로 본다.
+  assert.equal(dayOf("2026-02-31"), "");
+  assert.equal(dayOf("2026-02-31T10:00:00Z"), "");
+  assert.equal(dayOf("2028-02-29T10:00:00Z"), "2028-02-29");
+  // ISO 가 아닌 값은 예전처럼 UTC 날짜다.
+  assert.equal(dayOf("Wed, 05 Aug 2026 16:00:00 GMT"), "2026-08-05");
+  assert.equal(dayOf("2026-08"), "");
+  assert.equal(reportEligible({ published_at: "2026-09-01T00:30:00+09:00", published_at_source: "meta" }, period), false);
 });
