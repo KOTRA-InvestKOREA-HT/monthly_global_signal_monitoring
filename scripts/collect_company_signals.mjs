@@ -921,6 +921,8 @@ function relevantAliases(company) {
   // 동명 기업이 있는 경우 검색에는 명시된 정식명만 쓴다. 표시명은 유지한다.
   if (company.search_names?.length) return [...new Set(company.search_names)];
   const names = [company.company];
+  // 일반어와 겹치는 짧은 별칭은 검색어로 쓰지 않는다. Norsk Hydro 의 "Hydro", Evonik Industries 의 "Evonik" 이
+  // 여기 걸린다(이 두 기업에는 search_names 가 없다). "maxon" 은 지금 별칭이 "maxon group" 이라 걸리지 않는다.
   for (const alias of company.query_aliases || []) {
     const key = alias.toLowerCase();
     if (alias.length >= 5 && !["hydro", "maxon", "evonik"].includes(key)) {
