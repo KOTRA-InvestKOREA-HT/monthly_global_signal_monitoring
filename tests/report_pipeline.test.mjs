@@ -180,6 +180,19 @@ test('manual collection judges only; the publish hand-off waits for a finished j
   assert.ok(publish.indexOf(`- name: ${PAUSED_STEP}`) < publish.indexOf('git-auto-commit-action'));
 });
 
+// 수동 실행 폼의 호수 기본값이 "2"였다. 그대로 돌리면 status.json 에 2호가 기록되고 발행이 Issue 2 PDF 를 커밋했다.
+test('no workflow fills in an issue number, and the hand-off stops early without one', async () => {
+  const collect = (await fs.readFile('.github/workflows/collect-company-signals.yml', 'utf8')).replace(/\r\n/g, '\n');
+  const publish = (await fs.readFile('.github/workflows/publish-report.yml', 'utf8')).replace(/\r\n/g, '\n');
+  for (const text of [collect, publish]) {
+    assert.match(text, /\n {6}issue_number:\n(?: {8}[^\n]*\n)*? {8}default: ""\n/);
+  }
+  // 판정 전에 검사한다. 한 시간 판정한 뒤 발행에서 실패하지 않게 한다.
+  const check = collect.indexOf('- name: Check the issue number for the publish hand-off');
+  assert.ok(check > 0 && check < collect.indexOf('- name: Collect and judge articles'));
+  assert.match(collect.slice(check), /^- name: [^\n]+\n\s+if: \$\{\{ inputs\.auto_publish \}\}\n/);
+});
+
 // 제한 시간이 없으면 멈춘 실행이 두 워크플로가 같이 쓰는 동시 실행 그룹을 6시간 막는다.
 // 긴 단계가 작업보다 먼저 끊겨야 진행 저장이 작업 제한 시간 안에서 돈다. 저장은 실패·취소에도 돈다.
 test('both stages stop well before six hours and still save progress', async () => {

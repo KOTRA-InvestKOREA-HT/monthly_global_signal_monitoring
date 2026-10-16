@@ -25,10 +25,11 @@ on:
         description: "Collection end date (YYYY-MM-DD); leave empty for previous calendar month"
         required: false
         default: ""
+      # 기본값을 두지 않는다. "2"가 기본값이던 때 수동 실행이 2호로 기록돼 발행이 Issue 2 PDF 를 커밋할 뻔했다.
       issue_number:
-        description: "Report issue number, recorded for publish-report (it can also be set there)"
+        description: "Report issue number, recorded for publish-report (it can also be set there). Required when auto_publish is on"
         required: false
-        default: "2"
+        default: ""
 
       provider:
         description: "Review provider"
@@ -78,6 +79,16 @@ jobs:
       # auto_publish 일 때 publish-report 를 실행한다.
       actions: write
     steps:
+      # 이어지는 발행은 호수가 없으면 실패한다. 한 시간 판정한 뒤에 알게 되지 않도록 먼저 멈춘다.
+      - name: Check the issue number for the publish hand-off
+        if: ${{ inputs.auto_publish }}
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]{1,4}$ ]]; then
+            echo "::error::auto_publish needs issue_number (the issue printed on the report cover)."
+            exit 1
+          fi
       # 기록은 쓰지 않는다(스크립트에 git 호출이 없고 이 단계는 커밋도 안 한다). 마지막 커밋만 받는다.
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
