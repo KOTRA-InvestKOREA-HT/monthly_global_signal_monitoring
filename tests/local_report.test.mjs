@@ -295,6 +295,9 @@ test("CLI prepares isolated files and refuses incomplete builds without changing
     assert.equal(failed.status, 1);
     assert.equal(await fs.readFile(path.join(previous, "report_ko.pdf"), "utf8"), "previous report bytes");
     assert.deepEqual((await fs.readdir(runDir)).filter((name) => name.startsWith("report-")), ["report-previous"]);
+    // 빌드 폴더는 실패하면 지워진다. 게시일 보류 진단은 아티팩트로 올라가는 실행 폴더에 남는다.
+    const pendingDiagnostics = JSON.parse(await fs.readFile(path.join(runDir, "date_pending.json"), "utf8"));
+    assert.deepEqual(Object.keys(pendingDiagnostics), ["investment", "relevant", "deferred", "hints"]);
     snapshot.signals = [];
     await fs.writeFile(path.join(runDir, "snapshot.json"), JSON.stringify(snapshot));
     const modified = cli(["build", "--run-dir", runDir, "--issue-number", "3"]);

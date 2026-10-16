@@ -46,6 +46,13 @@ export function judgementFor(status, period) {
   return status;
 }
 
+// local_report.mjs build 가 실행 폴더 안에 만드는 report-* 빌드 폴더를 지운다.
+export async function removeBuildDirs(runDir) {
+  const names = await fs.readdir(runDir).catch(() => []);
+  await Promise.all(names.filter(name => name.startsWith('report-'))
+    .map(name => fs.rm(path.join(runDir, name), { recursive: true, force: true })));
+}
+
 // 보고서 호수. 워크플로 입력이 비어 있으면 판정 단계에서 받은 호수를 쓴다(대시보드 버튼이 거기에 넘긴다).
 // 둘 다 없으면 멈춘다. 예전에는 "2"로 채워, 호수 없이 돌린 발행이 "Issue 2" PDF 를 main 에 커밋할 수 있었다(4호 시점).
 export function issueNumberFor(input, judged) {
@@ -100,6 +107,7 @@ async function main() {
   await write(STATUS_FILE, { status: 'running', stage: 'setup', period, ...runIdentity() });
   await fs.rm(BUILD_FAILURE_FILE, { force: true });
   let stage = 'setup';
+  let reportDir = null;
   try {
     const judged = judgementFor(await read(path.join(ROOT, 'status.json')).catch(() => null), period);
     // 문안을 쓰기 전에 확인한다. 다 쓰고 나서 호수 때문에 멈추면 그 호출이 헛돈다.
@@ -148,7 +156,9 @@ async function main() {
     stage = 'build';
     process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
     const reviewFailed = publishableReviewFailures(judged);
-    const reportDir = await build({ runDir, issueNumber, reviewFailed });
+    // 지난 실행이 남긴 빌드 폴더를 치운다. 실패한 발행의 report-* 폴더가 캐시된 실행 폴더에 쌓였다.
+    await removeBuildDirs(runDir);
+    reportDir = await build({ runDir, issueNumber, reviewFailed });
 
     stage = 'publish';
     const investment = await read(path.join(reportDir, 'investment.json'));
@@ -172,7 +182,6 @@ async function main() {
     await fs.mkdir('public/reports', { recursive: true });
     await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
     await fs.copyFile(path.join(reportDir, 'report_en.pdf'), 'public/reports/latest_report_en.pdf');
-    await fs.rm(reportDir, { recursive: true, force: true });
     await write(STATUS_FILE, { status: 'completed', stage, issue_number: issueNumber, summary_writer: stats,
       review_failures: reviewFailed.length, period, ...runIdentity() });
   } catch (error) {
@@ -181,6 +190,10 @@ async function main() {
       error_message: String(error.message || '').slice(0, 500), ...(buildFailure ? { build_failure: buildFailure } : {}),
       period, ...runIdentity() }).catch(() => {});
     throw error;
+  } finally {
+    // 성공해도 실패해도 빌드 폴더는 남기지 않는다. 결과는 outputs/·public/reports 로 옮겼고, 진단은
+    // build_failure.json 과 실행 폴더의 date_pending.json 에 있다. 예전에는 성공할 때만 지워 실패한 폴더가 쌓였다.
+    if (reportDir) await fs.rm(reportDir, { recursive: true, force: true }).catch(() => {});
   }
 }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Local product path: collect/prepare -> agent-authored reviews -> existing PDF renderer.
+// Local product path: collect/prepare -> reviews -> HTML report printed by Chrome (build_html_report.mjs).
 // This script never calls a model API or changes outputs/latest_*.
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
@@ -1076,25 +1076,22 @@ export async function build(args) {
     const files = {
       "signals.json": snapshot.signals,
       "summary.json": { ...snapshot.summary, review_coverage: coverage, review_failed_articles: reviewFailedArticles, review_scope: reviewScope },
-      "coverage.json": coverage,
       "investment.json": investment, "relevant.json": relevant,
-      "investment-summary.json": { investment_signal_count: investment.length - datePending(investment).length },
-      "date-pending.json": { investment: datePending(investment), relevant: datePending(relevant),
-        deferred, hints: dateHints(snapshot, reviews) },
       "targets.json": snapshot.targets, "technology.json": snapshot.technology, "indicators.json": snapshot.indicators,
-      "reviews.json": reviews,
-      "decisions.json": results.map(({ row, ...item }) => item),
     };
     for (const [name, value] of Object.entries(files)) await write(path.join(buildDir, name), value);
-    // reportlab 캔버스 대신 HTML 을 헤드리스 Chrome 으로 인쇄한다. collect-company-signals
-    // 워크플로(Vercel 크롤링 버튼이 부르는 것)가 이 경로로 PDF 를 만들므로, 여기가 안 바뀌면
-    // 보고서 대부분은 여전히 reportlab 으로 나온다.
+    // buildDir 은 발행(publish_report.mjs)이 결과를 옮긴 뒤 지우므로, 사람이 볼 진단은 실행 폴더에 남긴다.
+    // outputs/review_work 는 워크플로가 아티팩트로 올린다. 게시일 보류 목록만 남긴다. 커버리지는 summary.json 의
+    // review_coverage 로, 판정은 reviews/ 폴더로 이미 남고, 예전 investment-summary·decisions·reviews 사본은
+    // 읽는 곳이 없었다(2026-10-15 감사 §3-4).
+    await write(path.join(runDir, "date_pending.json"), { investment: datePending(investment), relevant: datePending(relevant),
+      deferred, hints: dateHints(snapshot, reviews) });
     // HTML 은 이 실행 안에서만 쓰는 중간 형식이라 buildDir 에 두고 나가는 것은 PDF 뿐이다.
-    // build_html_report.mjs 는 --investment-summary 를 쓰지 않으므로 넘기지 않는다.
-    // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다.
+    // 뷰 모델은 파이썬이라 --python 으로 준 해석기를 그대로 물려준다. 수집 원본(signals.json)은 보고서
+    // 내용에 쓰이지 않으므로 넘기지 않는다. 발행이 outputs/latest_company_signals.json 으로 옮길 뿐이다.
     if (args.python) process.env.PYTHON = args.python;
     await buildLanguages(["ko", "en"], { buildDir, argsFor: (lang) => [path.join(ROOT, "scripts/build_html_report.mjs"),
-      "--signals", path.join(buildDir, "signals.json"), "--summary", path.join(buildDir, "summary.json"),
+      "--summary", path.join(buildDir, "summary.json"),
       "--relevant", path.join(buildDir, "relevant.json"), "--investment-signals", path.join(buildDir, "investment.json"),
       "--targets", path.join(buildDir, "targets.json"), "--technology-map", path.join(buildDir, "technology.json"),
       "--indicator-config", path.join(buildDir, "indicators.json"), "--font", path.join(ROOT, "assets/fonts/PretendardJP-Regular.ttf"),
