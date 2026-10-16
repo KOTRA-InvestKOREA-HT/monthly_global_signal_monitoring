@@ -402,7 +402,7 @@ export function writerTargets(article, review) {
 }
 
 const TRANSIENT = new Set(['unavailable', 'timeout', 'transport']);
-const withoutSummary = ({ summary_writer, summary_quotes, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
+const withoutSummary = ({ summary_writer, summary_quotes, rewrite_attempt, ...decision }) => ({ ...decision, summary_en: '', summary_ko: '' });
 const CANDIDATE_IN_MESSAGE = /(investment:\d+|relevant):/;
 
 // 판정이 모두 끝난 뒤 한 번 돈다. 기사당 요청 하나(검사에 걸리면 걸린 후보만 다시)이고, 기사 여러 건을 함께 처리한다
@@ -477,6 +477,15 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     stats.cached += written.size;
     // 검토 지적으로 다시 쓰는 실행에서는 지적받은 후보만 쓴다. 나머지는 지금 상태 그대로 둔다.
     if (asked) for (const decision of targets) if (!asked[decision.candidate_id]) written.set(decision.candidate_id, null);
+    // 지적받은 문안을 다시 쓰다가 끝내 검사를 통과하지 못하면 원래 문안을 둔다(아래 kept). 그 문안의 검토 결과는 캐시에
+    // 그대로 남아 다음 publish 도 같은 지적을 돌려주므로, 예전에는 같은 카드에 매 실행 요청이 최대 3건씩 다시 나갔다.
+    // 같은 문안·같은 지적·같은 문안 요청이면 한 번 시도한 것으로 보고 다시 묻지 않는다. 문안이나 지적이 바뀌면 다시 쓴다.
+    const attemptKey = decision => crypto.createHash('sha256').update(JSON.stringify([keys[decision.candidate_id],
+      String(decision.summary_en || ''), String(decision.summary_ko || ''), asked?.[decision.candidate_id] || []])).digest('hex').slice(0, 24);
+    const triedBefore = new Set(asked ? targets.filter(decision => asked[decision.candidate_id] &&
+      decision.rewrite_attempt?.key === attemptKey(decision) &&
+      String(decision.summary_en || '').trim() && String(decision.summary_ko || '').trim()).map(decision => decision.candidate_id) : []);
+    for (const id of triedBefore) written.set(id, null);
     let todo = targets.filter(decision => !written.has(decision.candidate_id));
     const rejected = Object.fromEntries(Object.entries(asked || {}).map(([id, problems]) => [id, [...problems]]));
     // 걸린 문안. 검토 지적으로 다시 쓰면 판정 파일에 저장된 문안이, 검사에 걸리면 방금 받은 문안이 된다.
@@ -498,9 +507,12 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       }
       todo = todo.filter(decision => !written.has(decision.candidate_id));
     };
-    for (let attempt = 1; attempt <= attempts && todo.length && !stopped; attempt++) {
+    // interrupted: 이 기사의 시도가 실행 중단(stopped)으로 끊겼다. 실행 전체의 stopped 로 판단하면, 다른 기사가 멈춘 뒤
+    // 시도를 다 마친 기사까지 실패 기록과 아래 가져오기 안전장치를 건너뛰었다.
+    let interrupted = false;
+    for (let attempt = 1; attempt <= attempts && todo.length; attempt++) {
       const { answer, blockedNow } = await call(writerRequest(article, todo, rejected, previous), writer);
-      if (blockedNow) break;
+      if (blockedNow) { interrupted = true; break; }
       if (answer) accept(answer, writer);
     }
     const targetIds = new Set(targets.map(decision => decision.candidate_id));
@@ -512,17 +524,22 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     let decisions = review.decisions.map(decision => {
       if (!targetIds.has(decision.candidate_id)) return decision;
       const text = written.get(decision.candidate_id);
-      if (text === null || kept.has(decision.candidate_id)) return decision;
+      if (text === null) return decision;
+      // 끝까지 시도하고도 통과하지 못해 둔 문안은 시도 키를 남긴다. 멈춰서 끝까지 시도하지 못했으면 다음 실행이 다시 쓴다.
+      if (kept.has(decision.candidate_id)) {
+        return interrupted ? decision : { ...decision, rewrite_attempt: { version: WRITER_VERSION, key: attemptKey(decision) } };
+      }
       // 키가 바뀐 옛 문안은 남기지 않는다. 지금 인용과 다른 인용에서 쓴 문안일 수 있다.
       if (!text) return withoutSummary(decision);
       stats.written += 1;
       stats.written_by[text.model] = (stats.written_by[text.model] || 0) + 1;
       const { model, ...copy } = text;
+      const { rewrite_attempt, ...current } = decision;
       // 키는 기본 모델 기준이다. 대체 모델이 쓴 문안도 인용이 같으면 다음 실행에서 다시 묻지 않는다. model 은 실제로 쓴 모델이다.
-      return { ...decision, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
+      return { ...current, ...copy, summary_writer: { version: WRITER_VERSION, model, key: keys[decision.candidate_id] } };
     });
-    // 멈춘 실행은 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
-    const failed = new Set(stopped ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
+    // 멈춘 기사는 실패를 적지 않는다. 다 쓰지 못한 후보는 다음 실행이 이어서 쓴다.
+    const failed = new Set(interrupted ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
     // 검토 지적으로 다시 쓰는 실행은 지적받지 않은 후보의 실패 표시를 그대로 둔다.
     const carried = asked ? (review.summary_failed?.candidate_ids || []).filter(id => !asked[id]) : [];
     const withFailed = () => {
@@ -534,7 +551,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     };
     let next = withFailed();
     // 마지막 안전장치: 보고서 생성이 쓰는 가져오기 검사를 그대로 통과해야 한다. 걸린 후보는 문안을 비우고 실패로 둔다.
-    for (let round = 0; !stopped && round <= targets.length; round++) {
+    for (let round = 0; !interrupted && round <= targets.length; round++) {
       try { importReview(article, next); break; } catch (error) {
         const id = CANDIDATE_IN_MESSAGE.exec(error.message)?.[1];
         const culprits = id && targetIds.has(id) && !failed.has(id) ? [id] : [...published].filter(item => !failed.has(item));
@@ -560,9 +577,12 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       const item = { article_id: article.id, company: article.company, candidate_id: id };
       if (written.get(id)) stats.rewritten.push(item);
       else if (kept.has(id)) {
-        const reason = stopped ? stopped.reason : 'rewrite_failed';
-        stats.kept.push({ ...item, reason, problems: stopped ? [] : rejected[id] || [] });
+        const reason = interrupted ? stopped.reason : 'rewrite_failed';
+        stats.kept.push({ ...item, reason, problems: interrupted ? [] : rejected[id] || [] });
         log(`Writer kept the previous copy of ${article.company} ${id} (${reason})`);
+      } else if (triedBefore.has(id)) {
+        stats.kept.push({ ...item, reason: 'rewrite_already_tried', problems: asked[id] });
+        log(`Writer kept the previous copy of ${article.company} ${id} (rewrite_already_tried)`);
       }
     }
     if (JSON.stringify(next) !== JSON.stringify(review)) await writeJsonAtomic(file, next);

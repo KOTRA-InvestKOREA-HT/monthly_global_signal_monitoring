@@ -323,6 +323,69 @@ test('a review rewrite that never passes the checks keeps the previous copy and 
   assert.equal(importReview(article, saved)[0].supported, true);
 });
 
+// 감사 2-4: 원래 문안을 둔 카드의 검토 지적은 캐시에 남아 다음 publish 도 같은 지적을 돌려준다. 예전에는 그때마다
+// 같은 카드에 요청이 WRITER_ATTEMPTS 건씩 다시 나갔다. 같은 문안·같은 지적이면 한 번만 시도한다.
+test('a card whose rewrite already failed for the same copy and the same flags is not rewritten again', async () => {
+  const ws = await workspace();
+  await run(ws, async () => gemini([good]));
+  const invented = { ...good, summary_en: good.summary_en.replace('500', '900') };
+  await rewriteRun(ws, async () => gemini([invented]));
+  const tried = await ws.read();
+  assert.ok(tried.decisions[0].rewrite_attempt?.key);
+  assert.equal(importReview(article, tried)[0].supported, true);
+  let calls = 0;
+  const again = await rewriteRun(ws, async () => { calls += 1; return gemini([invented]); });
+  assert.equal(calls, 0);
+  assert.deepEqual(again.kept, [{ article_id: article.id, company: 'Acme', candidate_id: 'investment:3',
+    reason: 'rewrite_already_tried', problems: flagged[article.id]['investment:3'] }]);
+  assert.deepEqual(await ws.read(), tried);
+  // 지적이 바뀌면 다시 쓴다. 다시 쓴 문안이 통과하면 시도 기록은 지운다.
+  const better = { ...good, summary_ko: good.summary_ko.replace('마련하기 위해', '조달하기 위해') };
+  const other = await writeSummaries({ articles: [article], reviewDir: ws.reviewDir, writer, apiKey: 'AIza-test', policyWording: wording,
+    sleep: async () => {}, log: () => {}, feedback: { [article.id]: { 'investment:3': ['review_term: Another flag.'] } },
+    fetchImpl: async () => { calls += 1; return gemini([better]); } });
+  assert.equal(calls, 1);
+  assert.equal(other.rewritten.length, 1);
+  const rewritten = (await ws.read()).decisions[0];
+  assert.equal(rewritten.summary_ko, better.summary_ko);
+  assert.equal('rewrite_attempt' in rewritten, false);
+});
+
+// 감사 2-5: 다른 기사가 할당량으로 멈춘 뒤에도, 시도를 다 마친 기사는 실패 기록과 가져오기 안전장치를 그대로 거친다.
+test('a stop caused by another article does not skip the failure record of an article that finished its attempts', async () => {
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'writer-stop-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const [first, second] = groupArticles([0, 1].map(index => ({ ...row, url: `https://example.com/stop-${index}`, title: `Acme notes ${index}` })),
+    [], { from_date: '2026-08-01', to_date: '2026-08-31' });
+  for (const item of [first, second]) {
+    await fsp.writeFile(path.join(reviewDir, `${item.id}.json`), JSON.stringify({ ...review, article_id: item.id }));
+  }
+  const invented = { ...good, summary_en: good.summary_en.replace('500', '900') };
+  let firstCalls = 0, releaseQuota, quotaSent;
+  const lastAttempt = new Promise(resolve => { releaseQuota = resolve; });
+  const quotaDone = new Promise(resolve => { quotaSent = resolve; });
+  const stats = await writeSummaries({ articles: [first, second], reviewDir, writer: { ...writer, concurrency: 2 }, apiKey: 'AIza-test',
+    policyWording: wording, sleep: async () => {}, log: () => {},
+    fetchImpl: async (url, init) => {
+      if (bodyText(init).includes('Acme notes 0')) {
+        // 첫 기사의 마지막 시도가 떠 있는 동안 둘째 기사가 할당량으로 실행을 멈춘다.
+        if (++firstCalls === WRITER_ATTEMPTS) { releaseQuota(); await quotaDone; await new Promise(resolve => setTimeout(resolve, 5)); }
+        return gemini([invented]);
+      }
+      await lastAttempt;
+      quotaSent();
+      return quota();
+    } });
+  assert.equal(stats.stopped.reason, 'quota');
+  assert.equal(firstCalls, WRITER_ATTEMPTS);
+  // 첫 기사는 시도를 다 마쳤으므로 실패로 적힌다. 멈춘 둘째 기사는 실패가 아니라 미완료다.
+  assert.deepEqual(stats.failed.map(item => item.article_id), [first.id]);
+  const saved = id => JSON.parse(fs.readFileSync(path.join(reviewDir, `${id}.json`), 'utf8'));
+  assert.deepEqual(saved(first.id).summary_failed.candidate_ids, ['investment:3']);
+  assert.equal('summary_failed' in saved(second.id), false);
+});
+
 test('a review rewrite that passes replaces the copy and is listed as rewritten', async () => {
   const ws = await workspace();
   await run(ws, async () => gemini([good]));
