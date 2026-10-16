@@ -2150,7 +2150,7 @@ export function buildTrendQuery(company, technology, keywordConfig, dateRange, s
 // 사전 필터. 제목과 발췌에 타겟 기술 키워드가 실제로 있는 기사만 남긴다. Google 질의는 OR 를
 // 느슨하게 해석해 회사명만 맞는 기사도 돌려주므로, 여기서 결정적으로 한 번 더 거른다.
 // 이 판단은 후보 선택일 뿐 판정이 아니다. 걸러 남은 기사도 최종 판정은 LLM 이 한다.
-const normalizeForMatch = (value) => String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+const normalizeForMatch = (value) => articleTitleKey(value);
 
 export function matchedTrendKeywords(row, keywords) {
   const haystack = normalizeForMatch(`${row.title || ""} ${row.discovery_snippet || ""}`);
@@ -2168,16 +2168,14 @@ export function matchedTrendKeywords(row, keywords) {
   });
 }
 
-// 이미 수집된 기사와 겹치는지. 질의문 뒤의 추적 파라미터를 뗀 URL 과 공백을 정리한 제목으로 본다.
+// 이미 수집된 기사와 겹치는지. 추적 파라미터를 뗀 URL(articleUrlKey) 과 공백을 정리한 제목으로 본다.
 // dedupeRows 와 같은 기준이라 뒤에서 한 번 더 걸러도 결과가 달라지지 않는다.
 export function isDuplicateTrendRow(row, existingRows) {
-  const urlKey = (value) => String(value || "").replace(/[?#].*$/, "").toLowerCase();
-  const titleKey = (value) => normalizeForMatch(value);
-  const urls = new Set(existingRows.map((item) => urlKey(item.url)).filter(Boolean));
-  const titles = new Set(existingRows.map((item) => titleKey(item.title)).filter(Boolean));
-  const rowUrl = urlKey(row.url);
+  const urls = new Set(existingRows.map((item) => articleUrlKey(item.url)).filter(Boolean));
+  const titles = new Set(existingRows.map((item) => articleTitleKey(item.title)).filter(Boolean));
+  const rowUrl = articleUrlKey(row.url);
   if (rowUrl && urls.has(rowUrl)) return true;
-  const rowTitle = titleKey(row.title);
+  const rowTitle = articleTitleKey(row.title);
   return Boolean(rowTitle) && rowTitle.length > 15 && titles.has(rowTitle);
 }
 
@@ -2289,14 +2287,26 @@ async function collectGdelt(company, dateRange, maxPerSource, timeoutSeconds, co
   return { rows: filterByDateRange(rows, dateRange).slice(0, maxPerSource), requestCount: 1 };
 }
 
-function dedupeRows(rows) {
+// 같은 기사인지 볼 URL 키. 추적 파라미터와 # 만 뗀다(stripTracking). 예전에는 쿼리 전체를 지우고 경로를 소문자로
+// 바꿔서, ?releaseid=1 과 ?releaseid=2 처럼 쿼리로 기사를 가르는 보도자료가 한 건으로 합쳐졌다.
+export function articleUrlKey(url) {
+  const text = String(url || "").trim();
+  return text ? stripTracking(text) : "";
+}
+
+// 같은 기사인지 볼 제목 키. 대소문자와 공백만 맞춘다. 사업동향 사전 필터(normalizeForMatch)도 같은 정규화다.
+export function articleTitleKey(title) {
+  return String(title || "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+export function dedupeRows(rows) {
   const seen = new Set();
   const seenTitles = new Set();
   const deduped = [];
   for (const row of rows) {
-    const urlKey = row.url.replace(/[?#].*$/, "").toLowerCase();
+    const urlKey = articleUrlKey(row.url);
     const key = `${row.company.toLowerCase()}|${urlKey || row.title.toLowerCase()}`;
-    const titleKey = `${row.company.toLowerCase()}|${row.title.toLowerCase().replace(/\s+/g, " ").trim()}`;
+    const titleKey = `${row.company.toLowerCase()}|${articleTitleKey(row.title)}`;
     if (seen.has(key)) continue;
     if (row.title.length > 15 && seenTitles.has(titleKey)) continue;
     seen.add(key);

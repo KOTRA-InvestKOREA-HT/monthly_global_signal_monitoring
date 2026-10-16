@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { buildQuery, judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
+import { articleUrlKey, buildQuery, dedupeRows, isDuplicateTrendRow, judgeAnchor, orderPageRows, resolveSources, secFilingRows, sitemapRows, sitemapUrlDate } from '../scripts/collect_company_signals.mjs';
 import { isBoilerplateLink, isPersonOrCoveragePage, looksLikeSourceIndexUrl } from '../scripts/link_policy.mjs';
 import { collectionBlockingErrors, enrichOfficialRowsWithContent } from '../scripts/collect_company_signals.mjs';
 
@@ -127,6 +127,23 @@ test('a company with declared search names is searched by those names only, not 
   assert.doesNotMatch(query, /"Prodrive"/);
   assert.match(buildQuery({ company: 'Ouster', query_aliases: ['Ouster Inc'] }, { mode: 'lookback', lookbackDays: 31 }),
     /^\("Ouster" OR "Ouster Inc"\) .* when:31d$/);
+});
+
+// 쿼리로 기사를 가르는 보도자료(?releaseid=1, ?releaseid=2)는 서로 다른 기사다. 추적 파라미터만 떼고 본다.
+test('duplicate removal keeps articles that differ only by query and drops tracking copies', () => {
+  const row = (url, title) => ({ company: 'Acme', url, title });
+  const kept = dedupeRows([
+    row('https://ir.acme.example/news?releaseid=1', 'Acme opens a battery plant in Ohio'),
+    row('https://ir.acme.example/news?releaseid=2', 'Acme signs a supply deal with Volvo'),
+    row('https://ir.acme.example/news?releaseid=1&utm_source=rss#top', 'Acme opens plant'),
+    row('https://ir.acme.example/News/Story', 'Acme names a new chief financial officer'),
+    row('https://ir.acme.example/news/story', 'Acme reports third quarter results'),
+  ]);
+  assert.deepEqual(kept.map(item => item.url), ['https://ir.acme.example/news?releaseid=1',
+    'https://ir.acme.example/news?releaseid=2', 'https://ir.acme.example/News/Story', 'https://ir.acme.example/news/story']);
+  assert.equal(isDuplicateTrendRow(row('https://ir.acme.example/news?releaseid=3', 'Another headline here'), kept), false);
+  assert.equal(isDuplicateTrendRow(row('https://ir.acme.example/news?releaseid=2&utm_medium=x', 'Different'), kept), true);
+  assert.equal(articleUrlKey('https://IR.acme.example/a?fbclid=1#x'), 'https://ir.acme.example/a');
 });
 
 // 늦게 돌린 수집에서 when:Nd 창은 기간 밖 새 기사로 6건 자리를 채웠다. 기간을 정한 실행은 after/before 를 쓴다.
