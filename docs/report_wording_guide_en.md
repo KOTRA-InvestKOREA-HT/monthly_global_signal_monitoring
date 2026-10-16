@@ -14,11 +14,11 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | 묶음 | 위치 | 비고 |
 |---|---|---|
 | A. 표지·면 제목·라벨·안내문 | `scripts/report_content.py` `TEXTS["en"]` | `{month}`, `{period}`, `{on}` 등 자리표시자는 그대로 둔다 |
-| B. 지표 이름 | `SIGNAL_DESCRIPTIONS_EN` | 표지, 기업 카드 라벨, 매트릭스 범례(`TEXTS["en"]["matrix_indicators"]`)에 같은 문자열이 나온다. 바꾸면 세 곳을 같이 바꾼다 |
+| B. 지표 이름 | `SIGNAL_DESCRIPTIONS_EN` | 표지, 기업 카드 라벨, 매트릭스 범례에 같은 문자열이 나온다. 매트릭스 범례(`matrix_indicators()`)는 카드 라벨에서 만들므로 이 사전 하나만 바꾸면 된다 |
 | C. 지표 설명 | `INDICATOR_DESCRIPTION_EN` | 표지에만 나온다 |
 | D. 산업 태그 | `DETAILED_INDUSTRY_EN`, `EXEMPT_INDUSTRY`의 영문 값 | 기업 카드 머리의 알약 |
 | E. 품목명 | `TARGET_TECHNOLOGY_DISPLAY_EN` | `data/company_technology_map.json`의 `target_technology_en`은 판정 캐시 키라 **건드리지 않는다** |
-| F. 면 머리글(kicker) | `scripts/build_pdf_report.py`의 `report.header("S I G N A L   M A T R I X", ...)` 등과 `scripts/report_view_model.py`의 `"kicker"` | PDF와 화면이 각자 문자열을 갖고 있다. 바꾸면 두 파일을 같이 바꾼다. 국·영문 공통이다 |
+| F. 면 머리글(kicker) | `TEXTS`의 `matrix_kicker`, `detail_kicker`, `item_kicker` | 뷰 모델을 거쳐 `scripts/report_html.mjs`가 그린다. 국·영문 공통이다 |
 | G. 날짜·기간 문구 | `report_content.py`의 `format_date`, `format_row_date`, `matrix_period_label`, `report_month_label` 의 영문 분기 | "in August 2026", "from ... to ...", "Aug 20, 2026" |
 
 범위 밖: `COUNTRY_EN`(국가명), 기업명(`display_name`), 로고 글자("Invest KOREA", "Promotion Agency"),
@@ -173,5 +173,6 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 3. 반려된 항목만 고쳐 쓰기로 한 번 더 돌린다. 두 번째에도 반려되면 바꾸지 않고 사람에게 올린다.
    2차 검수는 바뀐 낱말만 보지 않고 **문구 전체를 처음 보는 것처럼** 다시 읽는다(2026-10-12: 2차 안에서 Korea, discreetly만
    보고 넘어가 "Changing C-level executives"의 어색함을 놓쳤다).
-4. 사람이 승인한 항목만 코드에 반영하고, `python tests/test_report_snapshot.py --update`로 기대값을 다시 만든 뒤
+4. 사람이 승인한 항목만 코드에 반영하고, `python tests/test_report_snapshot.py --update`와
+   `UPDATE_REPORT_SNAPSHOT=1 node --test tests/report_snapshot.test.mjs`로 기대값을 다시 만든 뒤
    `node --test`와 `python -m unittest discover tests`를 돌리고, §6에 기록한다.

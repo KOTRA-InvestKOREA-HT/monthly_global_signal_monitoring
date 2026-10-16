@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 // 승인 규칙의 상수는 config/approval_policy.json 하나에서 온다. 같은 파일을
-// scripts/build_pdf_report.py 도 읽는다. 두 곳이 각자 값을 들고 있던 동안, 지표 3·5 의
+// scripts/report_content.py 도 읽는다. 두 곳이 각자 값을 들고 있던 동안, 지표 3·5 의
 // 품목 연결 해제처럼 규칙이 바뀌면 양쪽을 함께 고쳐야 했고 한쪽을 놓치면 검증을 통과한
 // 행이 발행 단계에서 조용히 사라졌다. 경로는 실행 위치가 아니라 이 파일 기준으로 찾는다.
 export const APPROVAL_POLICY = JSON.parse(

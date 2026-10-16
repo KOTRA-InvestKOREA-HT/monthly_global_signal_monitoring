@@ -41,6 +41,8 @@ const viewModelFiles = [
   "./config/date_evidence_sources.json",
   // report_content 가 승인 규칙 상수를 여기서 읽는다.
   "./config/approval_policy.json",
+  // report_content 가 카드 문안 글자 수 한도를 여기서 읽는다.
+  "./config/copy_length_limits.json",
 ];
 // The route opens assets/ through a runtime path, so the tracer ships the whole
 // directory. Chromium reads only the WOFF2 cuts; the TTFs are for Python. Named

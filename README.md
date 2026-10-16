@@ -11,7 +11,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `config/company_sources.json`: official Newsroom/Press/IR pages, official RSS feeds (or a JSON newsroom feed with `"format": "json"` and a `json` field map, for newsrooms rendered by JavaScript), SEC 8-K filers (confirmed by ticker) and dated news sitemaps by company. SEC collection runs only when `SEC_USER_AGENT` (a User-Agent with a contact address, per SEC fair-access policy) is set; in Actions this comes from the `SEC_USER_AGENT` repository variable.
 - `config/technology_keywords.json`: broad Korean/English synonym keyword catalog for relevance filtering.
 - `config/date_evidence_sources.json`: publication-date evidence grades shared by the collector, the review path, the PDF builder, and the dashboard.
-- `config/approval_policy.json`: the investment-signal approval constants shared by `scripts/validate_report_inputs.mjs` (judging/validation) and `scripts/build_pdf_report.py` (publishing). The human-readable criteria, and the text sent to the model, stay in `docs/local_report_review.md`.
+- `config/approval_policy.json`: the investment-signal approval constants shared by `scripts/validate_report_inputs.mjs` (judging/validation) and `scripts/report_content.py` (publishing). The human-readable criteria, and the text sent to the model, stay in `docs/local_report_review.md`.
 - `scripts/report_month.mjs`: the single definition of which month "the previous month" is (Asia/Seoul), shared by the Actions run, the crawl button and the dashboard.
 - `.github/workflows/collect-company-signals.yml`: stage 1 — collect, judge and verify (no report copy, no PDF). The dashboard button runs this with `auto_publish=true`, so a finished judgement starts stage 2; manual runs judge only unless that box is ticked.
 - `.github/workflows/publish-report.yml`: stage 2 — write the report copy for the finished judgement and build both PDFs. Also the dashboard's `발행만 실행` button.
@@ -26,7 +26,7 @@ Collect public news, press releases, and IR material for 77 target companies, cl
 - `scripts/validate_report_inputs.mjs`: rejects incomplete or contradictory AI decisions before report publication.
 - `scripts/date_state.mjs`: the single definition of publication-date state (confirmed/estimated/unknown/conflicting) and what each state means for review and for the report.
 - `scripts/report_content.py`: decides what goes into the report — approval, date reading, selection and prose shaping. No reportlab, no page coordinates.
-- `scripts/report_view_model.py`: turns those decisions into the report's view model (JSON). It measures text with reportlab through `scripts/build_pdf_report.py`; reportlab no longer draws the PDFs.
+- `scripts/report_view_model.py`: turns those decisions into the report's view model (JSON). It measures text with reportlab's font tables through `scripts/report_measure.py`; reportlab does not draw the PDFs.
 - `scripts/report_html.mjs` and `scripts/build_html_report.mjs`: render the view model as HTML and print the Korean/English PDFs with Chrome. The web download prints the same HTML.
 - `outputs/`: generated JSON results.
 
@@ -245,7 +245,7 @@ Local preparation now includes **every dated source article in the requested mon
 
 `ai_event_stage=precursor` denotes a verified enabling activity under indicators 1, 3, 4 or 5 (supply-chain action, investment financing, specific R&D collaboration or strategic personnel activity). Its announcement may be complete while a final investment remains unconfirmed. Final committed/completed investment projects remain excluded, and production expansion (indicator 2) cannot use `precursor`. Entity and technology requirements remain in force. The investment API prompt version is bumped to invalidate old decisions; local policy fingerprints also change.
 
-A local build writes `coverage.json` alongside its PDFs. Missing monthly sources and `needs_review` evidence are distinguished from reviewed negative results in the matrix counts. Google News fallback now checks usable monthly evidence **after** official detail/date enrichment. Live collection success still depends on the source sites.
+A local build keeps the dated-but-unconfirmed rows in `date_pending.json` in the run folder. Missing monthly sources and `needs_review` evidence are distinguished from reviewed negative results in the matrix counts. Google News fallback now checks usable monthly evidence **after** official detail/date enrichment. Live collection success still depends on the source sites.
 
 ### GitHub Actions로 월간 보고서 실행
 

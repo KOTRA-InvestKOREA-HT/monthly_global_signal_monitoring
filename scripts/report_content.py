@@ -828,11 +828,17 @@ def summary_detail_text(value, limit=230):
     return short_text(clean_text(value), limit)
 
 
+# 카드 문안 글자 수 한도는 config/copy_length_limits.json 에서 문안 단계(summary_writer.mjs)와 공유한다.
+with open(PROJECT_ROOT / "config" / "copy_length_limits.json", encoding="utf-8") as _handle:
+    COPY_LENGTH_LIMITS = json.load(_handle)["signal_card"]
+
+
 def summary_parts(row):
-    headline_limit = 110 if LANG == "en" else 58
+    limits = COPY_LENGTH_LIMITS["en" if LANG == "en" else "ko"]
+    headline_limit = limits["headline"]
     # 본문이 최대 6줄까지 늘어날 수 있으므로 글자 수 상한이 먼저 걸리지 않게 잡는다.
-    # 실제로 몇 줄을 싣을지는 draw_summary_text가 폭으로 판단한다.
-    detail_limit = 440 if LANG == "en" else 230
+    # 실제로 몇 줄을 싣을지는 HTML 렌더러의 줄 수 제한이 폭으로 정한다.
+    detail_limit = limits["detail"]
     headline = compact_summary_phrase(summary_field(row, "ai_summary_headline"), headline_limit, row)
     detail = summary_detail_text(summary_field(row, "ai_summary_detail"), detail_limit)
     if headline or detail:
