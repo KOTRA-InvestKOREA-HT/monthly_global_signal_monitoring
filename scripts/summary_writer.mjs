@@ -16,6 +16,7 @@ import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
 import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
+import { writeJsonAtomic } from './atomic_json.mjs';
 import {
   SUMMARY_GROUNDING_INSTRUCTION, SUMMARY_FACT_BASIS_INSTRUCTION, SUMMARY_ENGLISH_FIRST_INSTRUCTION,
   SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
@@ -457,7 +458,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     if (!targets.length) {
       if (review.summary_failed) {
         const { summary_failed, ...rest } = review;
-        await fs.writeFile(file, JSON.stringify(rest, null, 2) + '\n');
+        await writeJsonAtomic(file, rest);
       }
       return;
     }
@@ -564,7 +565,7 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
         log(`Writer kept the previous copy of ${article.company} ${id} (${reason})`);
       }
     }
-    if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
+    if (JSON.stringify(next) !== JSON.stringify(review)) await writeJsonAtomic(file, next);
   };
   await forEachConcurrent(articles, writer.concurrency || 1, writeArticle, () => Boolean(stopped));
   return { ...stats, ...(stopped ? { stopped } : {}) };

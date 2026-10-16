@@ -19,6 +19,7 @@ import path from 'node:path';
 
 import { GEMINI, toGeminiSchema } from './review_providers.mjs';
 import { createPacer, forEachConcurrent, resolveConcurrency } from './request_pool.mjs';
+import { writeJsonAtomic } from './atomic_json.mjs';
 import { importReview, normalizeQuote } from './local_report.mjs';
 import { ARTICLE_EVIDENCE_CHARS, publishedDecisions, writerTargets } from './summary_writer.mjs';
 
@@ -248,7 +249,7 @@ export async function reviewSummaries({ articles, reviewDir, reviewer, apiKey,
     const decisions = review.decisions.map(decision => (results.has(decision.candidate_id)
       ? { ...decision, copy_review: results.get(decision.candidate_id) } : decision));
     const next = { ...review, decisions };
-    if (JSON.stringify(next) !== JSON.stringify(review)) await fs.writeFile(file, JSON.stringify(next, null, 2) + '\n');
+    if (JSON.stringify(next) !== JSON.stringify(review)) await writeJsonAtomic(file, next);
   };
   await forEachConcurrent(articles, reviewer.concurrency || 1, reviewArticle, () => Boolean(stats.stopped));
   return stats;

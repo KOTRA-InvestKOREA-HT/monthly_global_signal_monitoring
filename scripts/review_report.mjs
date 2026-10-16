@@ -13,6 +13,7 @@ import { collectionInputDigest, collectionNeedsRefresh } from './collection_resi
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
+import { TEMP_SUFFIX, writeJsonAtomic } from './atomic_json.mjs';
 // 문안 검사는 문안 단계(summary_writer.mjs)로 옮겼다. 예전 import 경로를 쓰는 호출자를 위해 다시 내보낸다.
 export { bilingualFactProblems, summaryStyleProblems, SIGNAL_SUMMARY_LIMITS } from './summary_writer.mjs';
 
@@ -335,11 +336,7 @@ function publishedDecision(article, decisions, decision) {
 
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 24);
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
-const write = async (file, value) => {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(`${file}.tmp`, JSON.stringify(value, null, 2) + '\n');
-  await fs.rename(`${file}.tmp`, file);
-};
+const write = writeJsonAtomic;
 
 export function configuration(env = process.env, provider = resolveProvider(env)) {
   const prefix = provider.id.toUpperCase();
@@ -443,7 +440,8 @@ export async function pruneReviewWork(root, runDir, articles) {
   }
   const reviewDir = path.join(root, 'reviews');
   for (const name of await fs.readdir(reviewDir).catch(() => [])) {
-    if (!name.endsWith('.json') || keep.has(name)) continue;
+    // 쓰는 도중 끊긴 실행이 남긴 임시 파일(atomic_json.mjs)도 이번 실행이 쓸 수 없다.
+    if (!(name.endsWith('.json') || name.endsWith(TEMP_SUFFIX)) || keep.has(name)) continue;
     await fs.rm(path.join(reviewDir, name), { force: true });
     removed.reviews += 1;
   }
