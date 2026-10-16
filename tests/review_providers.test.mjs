@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as provider_module from '../scripts/review_providers.mjs';
-const { GEMINI, NVIDIA, PROVIDERS, resolveProvider, toJsonSchema, toGeminiSchema, decisionProperties } = provider_module;
+const { GEMINI, NVIDIA, PROVIDERS, resolveProvider, toJsonSchema, toGeminiSchema } = provider_module;
+// 프롬프트·스키마는 review_prompts.mjs 가 들고 있다. 제공자 모듈은 그것을 다시 내보내지 않는다.
+import * as prompt_module from '../scripts/review_prompts.mjs';
+const { decisionProperties } = prompt_module;
 import { configuration, requestReview } from '../scripts/review_report.mjs';
 import { groupArticles } from '../scripts/local_report.mjs';
 
@@ -28,7 +31,7 @@ test('the decision schema converts to a strict JSON Schema without losing enums'
 });
 
 test('the publication date is one article-level pair of required strings, not a per-candidate field', () => {
-  const { articleDateProperties, DATE_INSTRUCTION, SYSTEM_INSTRUCTION, RETRY_INSTRUCTION } = provider_module;
+  const { articleDateProperties, DATE_INSTRUCTION, SYSTEM_INSTRUCTION, RETRY_INSTRUCTION } = prompt_module;
   const schema = toJsonSchema({ type: 'OBJECT', properties: { decisions: { type: 'ARRAY', items: { type: 'OBJECT', properties: decisionProperties } }, ...articleDateProperties } });
   assert.equal(schema.properties.published_date.type, 'string');
   assert.equal(schema.properties.published_date_quote.type, 'string');
@@ -210,7 +213,7 @@ test('the Gemini thinking level is overridable, validated and part of the cache 
 });
 
 test('the S rules name the candidate ids the model actually receives', () => {
-  const { SYSTEM_INSTRUCTION } = provider_module;
+  const { SYSTEM_INSTRUCTION } = prompt_module;
   assert.match(SYSTEM_INSTRUCTION, /S1 to S5 .* mean the candidates investment:1 to investment:5/);
   assert.match(SYSTEM_INSTRUCTION, /supplied report criteria are the sole source/);
   assert.doesNotMatch(SYSTEM_INSTRUCTION, /deferred consideration spend money/);

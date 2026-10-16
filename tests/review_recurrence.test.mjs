@@ -6,8 +6,9 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { reviewArticles, requestReview, facilityStageSuspects, fundingSuspects, needsFundingReview, needsFacilityStageReview,
-  needsTechnologyReview, summaryStyleProblems, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
-  bilingualFactProblems, nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
+  needsTechnologyReview, salvageCandidateEvidence, acquisitionSuspects, cachedRecheck,
+  nearestEvidence, pruneReviewWork } from '../scripts/review_report.mjs';
+import { bilingualFactProblems, summaryStyleProblems } from '../scripts/summary_writer.mjs';
 import { groupArticles, importReview, sourceCandidates, ungroundedSummaryNames } from '../scripts/local_report.mjs';
 
 const period = { from_date: '2026-08-01', to_date: '2026-08-31' };

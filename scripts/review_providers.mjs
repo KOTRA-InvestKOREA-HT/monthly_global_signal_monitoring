@@ -1,14 +1,8 @@
 // API adapters only: prompt composition lives in review_prompts.mjs.
-// Keep existing exports for callers that import the shared contract here.
+// 판정 스키마·지시문도 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
+// 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
 import { buildSystemInstruction, decisionsEnvelopeFor, retryInstruction } from './review_prompts.mjs';
 import { modelArticle } from './model_input.mjs';
-export {
-  DATE_HINT_VERSION, DATE_INSTRUCTION,
-  SYSTEM_INSTRUCTION, RETRY_INSTRUCTION, VERIFY_INSTRUCTION,
-  // 판정 스키마는 review_prompts.mjs 가 들고 있다. promptContract 가 그 모양을 해싱해야 스키마만
-  // 고친 변경도 저장된 판정을 무효화하기 때문이다. 이 파일은 그것을 transport 방언으로 옮기는 일만 한다.
-  decisionProperties, articleDateProperties, decisionsEnvelopeFor,
-} from './review_prompts.mjs';
 
 const JSON_TYPES = { STRING: 'string', BOOLEAN: 'boolean', ARRAY: 'array', OBJECT: 'object', NUMBER: 'number', INTEGER: 'integer' };
 

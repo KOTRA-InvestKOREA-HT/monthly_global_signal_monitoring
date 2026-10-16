@@ -6,7 +6,7 @@ import path from 'node:path';
 import { configuration, requestReview, reviewArticles, separateVerifiedQuotes, providerMessage, rateLimitHeaders, runIdentity, MODEL,
   publishableReviewFailures, stripRejectedCandidateQuotes } from '../scripts/review_report.mjs';
 import { groupArticles, importReview, articlesWithoutCompanyBody, companyCoverageGaps, coverageReasons, coverageStatus } from '../scripts/local_report.mjs';
-import { DATE_HINT_VERSION } from '../scripts/review_providers.mjs';
+import { DATE_HINT_VERSION } from '../scripts/review_prompts.mjs';
 
 // 수집한 본문이 기사인지 목록·오류 페이지인지는 길이로도 갈린다. 고정값도 실제 기사 길이를 쓴다.
 const TAIL = "The company said the site would support qualification volumes first, "

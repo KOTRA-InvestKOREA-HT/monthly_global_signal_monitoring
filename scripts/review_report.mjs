@@ -6,16 +6,14 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, decisionReason, importReview, normalizeQuote, sameEventAsBusiness,
   articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
-import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI, DATE_HINT_VERSION, decisionProperties } from './review_providers.mjs';
-import { PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
+import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI } from './review_providers.mjs';
+import { DATE_HINT_VERSION, decisionProperties, PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
 import { TEMP_SUFFIX, writeJsonAtomic } from './atomic_json.mjs';
-// 문안 검사는 문안 단계(summary_writer.mjs)로 옮겼다. 예전 import 경로를 쓰는 호출자를 위해 다시 내보낸다.
-export { bilingualFactProblems, summaryStyleProblems, SIGNAL_SUMMARY_LIMITS } from './summary_writer.mjs';
 
 // REPORT_PROVIDER로 제공자를 선택한다. CLI와 Actions는 같은 기사 검토 경로를 쓴다.
 // 모델 이름은 정책 다이제스트에 들어가므로, 바꾸면 앞선 판정은 재사용되지 않는다.
