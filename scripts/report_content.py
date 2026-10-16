@@ -498,9 +498,10 @@ def date_day(value):
     dt = parse_datetime(text)
     if not dt:
         return None
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc).date()
+    # 게시처가 적은 날짜를 그대로 쓴다. 오프셋이 있어도 UTC 로 옮기지 않는다. 옮기던 때는
+    # 2026-09-01T00:30:00+09:00 이 8월 31일이 되어 8월 보고서에 실렸고(한국·일본 기업의 1일 오전 발표),
+    # 출처 줄(format_date)은 같은 행을 9월 1일로 찍었다. 수집 쪽 dayOf(date_state.mjs)도 같은 기준이다.
+    return dt.date()
 
 
 def date_month(row):

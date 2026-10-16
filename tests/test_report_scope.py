@@ -87,6 +87,28 @@ class BusinessNearMissTests(unittest.TestCase):
 
 
 
+class PublisherLocalDateTests(unittest.TestCase):
+    """게시일은 게시처 현지 날짜로 읽는다. 보고 기간 필터와 출처 줄이 같은 날을 말해야 한다."""
+
+    def row(self, published_at):
+        return {"published_at": published_at, "published_at_source": "meta", "source": "Newsroom"}
+
+    def test_an_offset_does_not_move_the_day_into_another_month(self):
+        from datetime import date, datetime, timezone
+        start = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        end = datetime(2026, 9, 30, tzinfo=timezone.utc)
+        for value, day in (("2026-09-01T00:30:00+09:00", date(2026, 9, 1)),
+                           ("2026-08-31T23:30:00-05:00", date(2026, 8, 31)),
+                           ("2026-09-01T00:10:00Z", date(2026, 9, 1)),
+                           ("2026-09-01T00:10:00", date(2026, 9, 1)),
+                           ("2026-09-01", date(2026, 9, 1))):
+            self.assertEqual(pdf.date_day(value), day, value)
+            row = self.row(value)
+            self.assertEqual(pdf.row_in_report_period(row, start, end), day.month == 9, value)
+            pdf.set_language("ko")
+            self.assertEqual(pdf.format_row_date(row), day.strftime("%Y.%m.%d"), value)
+
+
 class CutTextTests(unittest.TestCase):
     def test_a_summary_cut_by_a_character_limit_is_flagged(self):
         row = {"ai_summary_en": "Mkango completed the acquisition for EUR 8 million. " * 40}
