@@ -1,3 +1,10 @@
-pdfplumber>=0.11
-reportlab>=4.2
-fonttools>=4.53
+# Installed by Actions (collect, publish, tests) and for local report builds: the Vercel
+# function's packages plus PDF extraction.
+-r requirements.txt
+pdfplumber==0.11.10
+# pulled in by pdfplumber
+pdfminer.six==20260107
+pypdfium2==5.14.0
+cryptography==50.0.2
+cffi==2.1.1
+pycparser==3.11

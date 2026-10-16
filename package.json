@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "report:review": "node scripts/review_report.mjs",
     "report:publish": "node scripts/publish_report.mjs",
@@ -12,21 +15,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "validate:pdf": "python scripts/extract_pdf_companies.py --page 2 --expected data/target_companies.json --out-dir outputs",
-    "build:technology-map": "python scripts/build_company_technology_map.py --pdf \"C:/Users/buy4u/Downloads/전체 기업 정보_참고용_최종.pdf\" --targets data/target_companies.json --keywords config/technology_keywords.json --out-json data/company_technology_map.json --out-csv data/company_technology_map.csv",
+    "validate:pdf": "python scripts/extract_pdf_companies.py --pdf \"docs/Invest KOREA_기업글로벌시그널_2호 (참고본).pdf\" --page 2 --expected data/target_companies.json --out-dir outputs/pdf_verify",
+    "build:technology-map": "python scripts/build_company_technology_map.py --targets data/target_companies.json --keywords config/technology_keywords.json --out-json data/company_technology_map.json --out-csv data/company_technology_map.csv",
     "collect": "node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,google_news --days 45 --max-per-source 6 --max-per-company 10 --max-detail-per-company 10 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5 --company-concurrency 4",
-    "filter:relevant": "node scripts/filter_relevant_signals.mjs --signals outputs/latest_company_signals.json --technology-map data/company_technology_map.json --keyword-config config/technology_keywords.json --out-dir outputs --threshold 1",
-    "filter:investment": "node scripts/classify_investment_signals.mjs --signals outputs/latest_company_signals.json --technology-classification outputs/latest_signal_relevance_classification.json --indicator-config config/investment_signal_indicators.json --out-dir outputs --threshold 4 --require-technology-relevance true",
-    "summarize:ai": "node scripts/summarize_signal_evidence.mjs --investment-signals outputs/latest_investment_signals.json --relevant-signals outputs/latest_relevant_signals.json --out-dir outputs",
-    "validate:report-inputs": "node scripts/validate_report_inputs.mjs",
-    "report:pdf": "node scripts/build_html_report.mjs --signals outputs/latest_company_signals.json --summary outputs/latest_collection_summary.json --relevant outputs/latest_relevant_signals.json --investment-signals outputs/latest_investment_signals.json --indicator-config config/investment_signal_indicators.json --font assets/fonts/PretendardJP-Regular.ttf --html outputs/latest_report.html --out public/reports/latest_report.pdf",
-    "collect:all": "node scripts/review_report.mjs"
+    "validate:report-inputs": "node scripts/validate_report_inputs.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium-min": "153.0.0",
     "lucide-react": "^0.468.0",
     "next": "^15.5.0",
-    "puppeteer-core": "^25.11.0",
+    "puppeteer-core": "25.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   }

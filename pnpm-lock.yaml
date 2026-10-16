@@ -18,7 +18,7 @@ importers:
         specifier: ^15.5.0
         version: 15.5.23(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       puppeteer-core:
-        specifier: ^25.11.0
+        specifier: 25.11.0
         version: 25.11.0
       react:
         specifier: ^19.0.0

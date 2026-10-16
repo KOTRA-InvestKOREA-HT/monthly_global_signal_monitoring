@@ -55,7 +55,7 @@ jobs:
           python-version: "3.12"
           # 받은 패키지를 실행 사이에 재사용한다. 설치하는 파일이 바뀌면 캐시 열쇠도 바뀐다.
           cache: pip
-          cache-dependency-path: requirements-python.txt
+          cache-dependency-path: requirements*.txt
       - run: python -m pip install -r requirements-python.txt
       - name: Resolve reporting period
         id: report_period

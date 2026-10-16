@@ -1,2 +1,9 @@
-reportlab>=4.2
-fonttools>=4.53
+# Installed by the Vercel Python function (api/report-view-model.py), which only measures text
+# with reportlab and fonttools. PDF extraction (pdfplumber) stays out to keep the function small;
+# Actions and local builds install requirements-python.txt, which includes this file.
+# Exact pins: change them only to versions the CI test workflow (Python 3.12) has passed.
+reportlab==5.0.1
+fonttools==4.67.0
+# pulled in by reportlab
+pillow==12.3.0
+charset-normalizer==3.5.2

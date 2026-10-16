@@ -48,11 +48,12 @@ test('Actions output and CLI use the same validated period; invalid input writes
 test('monthly CLI aliases and Actions retain one article-review entrypoint', async () => {
   const pkg = JSON.parse(await fs.readFile('package.json', 'utf8'));
   const workflow = await fs.readFile('.github/workflows/collect-company-signals.yml', 'utf8');
-  assert.equal(pkg.scripts['collect:all'], pkg.scripts['report:review']);
+  // 같은 명령의 두 이름(collect:all, report:review)을 하나로 합쳤다.
+  assert.equal(pkg.scripts['collect:all'], undefined);
   // 종료 코드 75(일시정지)를 가르는 감싸기 안에서 부른다.
-  assert.match(workflow, new RegExp(String.raw`^\s+${pkg.scripts['collect:all']} \|\| code=\$\?`, 'm'));
+  assert.match(workflow, new RegExp(String.raw`^\s+${pkg.scripts['report:review']} \|\| code=\$\?`, 'm'));
   assert.match(workflow, /run: node scripts\/report_period\.mjs --github-output/);
-  const entry = await fs.readFile(pkg.scripts['collect:all'].split(' ').at(-1), 'utf8');
+  const entry = await fs.readFile(pkg.scripts['report:review'].split(' ').at(-1), 'utf8');
   assert.match(entry, /sourceCandidates\(signals, technology, indicators, period\)/);
   assert.doesNotMatch(entry, /filter_relevant_signals|classify_investment_signals|summarize_signal_evidence/);
 });
