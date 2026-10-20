@@ -99,7 +99,7 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | `matrix_title` | This Month's Signal Matrix | 3905c25: 국문 "이번 달 시그널 매트릭스"에 맞춤(2026-10 결정) |
 | `item_target_label` | Target technology | e749a7c |
 | `cover_line_1`의 MOTIR | MOTIR | 산업통상부 공식 영문 약칭 |
-| `cover_subtitle` | Monthly monitoring of investment signals at 77 target companies | 2026-10-12 사용자 승인. 뜻은 "매달 77개 타겟기업의 투자 시그널 모니터링"으로 고정한다. 이 뜻을 바꾸는 재해석(결정 전 조짐, 기업이 하는 일 등)은 제안하지 않는다 |
+| `cover_subtitle` | Monthly monitoring of investment signals across 77 target companies | 2026-10-12 사용자 승인, 2026-10-20 at → across 사용자 승인. 뜻은 "매달 77개 타겟기업의 투자 시그널 모니터링"으로 고정한다. 이 뜻을 바꾸는 재해석(결정 전 조짐, 기업이 하는 일 등)은 제안하지 않는다 |
 
 ## 5. 다시 제안하지 않는 문구
 
@@ -159,6 +159,7 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | 2026-10-12 | `item_note` (국·영문), `item_exempt_note` 삭제 | 기술 관련성 확인 면제 기업 카드 설명 문장 삭제: 영문 "Cards without a target technology cover all of a company's businesses." | — | 사용자 결정: 타겟기술을 매칭하지 않은 면제 기업은 품목 면에 싣지 않음 (`build_item_trend_entries`) |
 | 2026-10-12 | `cover_line_2`, `cover_indicator_heading` | (변경 안 함) 5 leading indicators → 5 leading investment indicators, 5 Leading Indicators of Investment → 5 Leading Investment Indicators | R1 | 원어민 3명 모두 반려: "leading"이 "top"으로, "investment indicators"가 투자자용 지표(P/E·ROI)나 LEI 같은 계량 지수로 읽힘 |
 | 2026-10-12 | `INDICATOR_DESCRIPTION_EN[5]` | C-suite shifts → C-suite changes (low-profile visits to Korea 는 유지) | R2 | 사용자 승인. 사전 정보 없는 원어민 3명 모두 "shifts"가 전략·우선순위 변화로도 읽혀 모호하다고 봄. changes 는 국문 "C-Level 이동"의 선임·이동·퇴임을 모두 덮음. low-profile 은 2명 유지, 1명 unpublicized 제안(다른 1명은 unpublicized 가 더 감시처럼 읽힌다고 반대) |
+| 2026-10-20 | `cover_subtitle` | …investment signals at 77 target companies → …investment signals across 77 target companies | R8 | 사용자 승인(검수 에이전트를 거치지 않음). 부제는 77개사 전체를 살피는 범위를 말하는 자리라 across 가 보고서 부제의 흔한 용례에 맞음. 시그널이 잡힌 기업을 말하는 매트릭스 문구(`matrix_desc`, `matrix_footnote`)는 at 유지. 한 줄 폭 411pt / 454pt |
 
 ## 7. 진행 절차
 
