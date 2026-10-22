@@ -1971,6 +1971,15 @@
         "page_title": "Investors",
         "source_type_label": "Investor Relations",
         "domain": "investors.hexagon.com"
+      },
+      {
+        "source": "Hexagon AB - Leica Geosystems News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://leica-geosystems.com/about-us/news-room/news-overview",
+        "crawl_priority": "Primary",
+        "page_title": "News overview",
+        "source_type_label": "Newsroom / News",
+        "domain": "leica-geosystems.com"
       }
     ],
     "ABB": [
@@ -2550,6 +2559,15 @@
         "page_title": "Regulated Information",
         "source_type_label": "Regulatory Disclosures",
         "domain": "www.arkema.com"
+      },
+      {
+        "source": "Arkema - High Performance Polymers News / Newsroom / News",
+        "kind": "newsroom",
+        "url": "https://hpp.arkema.com/en/",
+        "crawl_priority": "Primary",
+        "page_title": "High Performance Polymers",
+        "source_type_label": "Newsroom / News",
+        "domain": "hpp.arkema.com"
       }
     ],
     "DNP": [
