@@ -7,7 +7,9 @@ import {
   TREND_DISCOVERY_PER_COMPANY, TREND_QUERY_KEYWORD_LIMIT, buildTrendQuery, trendKeywords,
   matchedTrendKeywords, isDuplicateTrendRow, selectTrendRows, trendDigestInputs, trendSearchWindow,
   rankTrendQueryTerms, trendTermRank, selectTrendQueryTerms, companySearchTerms,
+  companySearchNames, companyTrendInputs,
 } from '../scripts/collect_company_signals.mjs';
+import { readFileSync } from 'node:fs';
 
 const company = { target_no: 31, company: 'Norsk Hydro', query_aliases: ['Hydro'] };
 const technology = { target_no: 31, company: 'Norsk Hydro', technology_group: 'nonferrous_scrap_recycling',
@@ -218,4 +220,104 @@ test('the collection identity also covers the per-company search terms', () => {
   const edited = trendDigestInputs({ maxTrendDiscovery: 2 }, technology, keywordConfig,
     { companies: { 'Norsk Hydro': ['CIRCAL'] } });
   assert.notEqual(JSON.stringify(base), JSON.stringify(edited));
+});
+
+// 사업동향 질의에만 쓰는 회사명. 별칭(query_aliases)은 판정 모델에 가는 기업 식별 정보라 고치면 그 기업의
+// 저장된 판정이 모두 무효가 된다. 그래서 기사에서 부르는 이름은 검색어 설정에 따로 둔다.
+test('a search name replaces the listed names in the trend query only', () => {
+  const umicore = { target_no: 43, company: 'EMM(Umicore)', query_aliases: ['EMM Umicore', 'Umicore EMM'] };
+  const searchTerms = { company_names: { 'EMM(Umicore)': ['Umicore'] }, companies: {} };
+  const query = buildTrendQuery(umicore, technology, keywordConfig, august, searchTerms);
+  assert.match(query, /^"Umicore" \(/);
+  assert.equal(query.includes('EMM'), false);
+  // 이름을 적지 않은 기업은 예전 그대로다.
+  assert.deepEqual(companySearchNames(company, searchTerms), []);
+  assert.match(buildTrendQuery(company, technology, keywordConfig, august, searchTerms), /^"Norsk Hydro" \(/);
+  assert.deepEqual(companySearchNames(umicore, null), []);
+});
+
+test('a search name enters the collection identity only for the company that has one', () => {
+  const args = { maxTrendDiscovery: 2 };
+  const umicore = { target_no: 43, company: 'EMM(Umicore)' };
+  const technologyMap = { companies: [technology] };
+  const without = companyTrendInputs(args, company, technologyMap, keywordConfig, { companies: {} });
+  const withNames = { company_names: { 'EMM(Umicore)': ['Umicore'] }, companies: {} };
+  // 이름이 없는 기업은 키 자체가 없다. 빈 값을 넣으면 그것만으로 모든 기업의 식별자가 바뀐다.
+  assert.equal('searchNames' in without, false);
+  assert.deepEqual(companyTrendInputs(args, company, technologyMap, keywordConfig, withNames), without);
+  assert.deepEqual(companyTrendInputs(args, umicore, technologyMap, keywordConfig, withNames).searchNames, ['Umicore']);
+});
+
+// 실제 설정으로 만든 질의. 2026-09(4호)에 29개사가 0건, 14개사가 사전 필터에서 전부 걸러졌다.
+// 카탈로그의 두 낱말 이상 구가 여섯 자리를 모두 차지해 EUV·radar·GaN 같은 그 기업의 대표 표현이
+// 질의에 들어가지 못한 것이 주된 원인이었다. 같은 기간 Google News RSS 로 확인한 결과를 함께 적는다.
+const readJson = (file) => JSON.parse(readFileSync(new URL(`../${file}`, import.meta.url), 'utf8'));
+const realCompanies = readJson('data/target_companies.json');
+const realTechnology = readJson('data/company_technology_map.json');
+const realKeywords = readJson('config/technology_keywords.json');
+const realSearchTerms = readJson('config/trend_search_terms.json');
+const september = { mode: 'explicit', fromDate: '2026-09-01', toDate: '2026-09-30' };
+const realCompany = (name) => realCompanies.find((item) => item.company === name);
+const realTech = (name) => realTechnology.companies.find((item) => item.company === name);
+const realQuery = (name) => buildTrendQuery(realCompany(name), realTech(name), realKeywords, september, realSearchTerms);
+const realTerms = (name) => trendKeywords(realTech(name), realKeywords, realCompany(name), realSearchTerms);
+
+test('representative companies search with the terms their articles actually use', () => {
+  const window = 'after:2026-09-01 before:2026-10-01';
+  // 전: ("blank mask" OR "mask blank" OR "EUV mask" OR ...) 로 0건. EUV·photomask 는 한 낱말이라 밀려났다.
+  assert.equal(realQuery('Corning'), '("Corning" OR "Corning Incorporated") ("EUV" OR "photomask" OR '
+    + `"mask blank" OR "mask blanks" OR "ULE glass" OR "fused silica") ${window}`);
+  // 전: "satellite communication"·"low noise amplifier" 같은 구만으로 0건. 후: 11건, 그 가운데
+  // "NXP brings Level 2/2+ ADAS Processing onto a Single Radar Chip" 이 사전 필터를 통과했다.
+  assert.equal(realQuery('NXP'), '("NXP" OR "NXP Semiconductors") ("radar" OR "imaging radar" OR "GaN" OR '
+    + `"RF power" OR "mmWave" OR "satellite") ${window}`);
+  // 전: "EMM(Umicore)" 이름으로 0건. 후: "HS Hyosung, Umicore to Invest ... Silicon Anode Plant" 등 3건 통과.
+  assert.match(realQuery('EMM(Umicore)'), /^"Umicore" \("silicon anode" OR "anode" OR /);
+  assert.match(realQuery('Toppan Holdings'), /^"Toppan" \(/);
+  // 수동 검색어가 생기면 짧은 별칭 AGC 도 복원된다. 기사는 Asahi Glass 보다 AGC 라고 쓴다.
+  assert.match(realQuery('Asahi Glass'), /^\("Asahi Glass" OR "AGC Inc" OR "AGC"\) \("glass substrate" OR /);
+  // 여섯 자리 상한은 그대로다. 여섯 개를 넘게 적은 말은 사전 필터에만 쓰인다.
+  for (const name of ['Corning', 'NXP', 'Magnix', 'Safran']) {
+    const termClause = realQuery(name).match(/\(([^()]*)\) after:/)[1];
+    assert.equal((termClause.match(/ OR /g) || []).length, TREND_QUERY_KEYWORD_LIMIT - 1, name);
+  }
+  assert.equal(realQuery('Magnix').includes('"all-electric"'), false);
+  assert.ok(realTerms('Magnix').includes('all-electric'));
+});
+
+test('the titles that the September pre-filter dropped now pass it', () => {
+  // 2026-09 표본에서 제목에 이 말만 있어 걸러졌던 실제 타겟 품목 기사들이다.
+  const passes = (name, title) => matchedTrendKeywords({ title, discovery_snippet: '' }, realTerms(name));
+  // 대소문자는 가리지 않는다. 회사 표기는 ENGINeUS, 기사 표기는 EngineUS 다.
+  assert.deepEqual(passes('Safran', 'Safran Gears Up For Automated EngineUS Electric Motor Production'),
+    ['ENGINeUS', 'electric motor']);
+  assert.deepEqual(passes('West Pharmaceutical', 'West Pharma to cut 98 jobs as SmartDose production winds down in Arizona'),
+    ['SmartDose']);
+  assert.deepEqual(passes('Renishaw', 'Broker upgrades Renishaw to buy as chip demand powers encoder sales'), ['encoder']);
+  assert.deepEqual(passes('Magnix', 'magniX Samson Batteries power first flight of Bye Aerospace eFlyer 2'),
+    ['Samson', 'eFlyer']);
+  // 한 낱말은 낱말 단위로 맞춘다. encoder 는 encoders 나 다른 낱말의 일부를 통과시키지 않으므로
+  // 복수형은 따로 적었다.
+  assert.deepEqual(matchedTrendKeywords({ title: 'Renishaw ships new encoders' }, ['encoder']), []);
+  assert.deepEqual(passes('Renishaw', 'Renishaw ships new encoders'), ['encoders']);
+  assert.deepEqual(matchedTrendKeywords({ title: 'An encoderless motor drive' }, ['encoder']), []);
+  // 회사명만 맞는 기사는 여전히 걸러진다.
+  assert.deepEqual(passes('Renishaw', 'Renishaw stock reports 14 percent revenue growth in FY2026'), []);
+});
+
+test('every per-company search term and name points at a listed company and can open the pre-filter', () => {
+  const listed = new Set(realCompanies.map((item) => item.company));
+  for (const [name, terms] of Object.entries(realSearchTerms.companies)) {
+    assert.ok(listed.has(name), `unknown company in trend_search_terms: ${name}`);
+    for (const term of terms) {
+      // 사전 필터는 세 글자 미만을 무시하고, 질의는 영문만 쓴다.
+      assert.ok(term.trim().length >= 3, `${name}: ${term}`);
+      assert.match(term, /^[\x20-\x7e]+$/, `${name}: ${term}`);
+    }
+    assert.equal(new Set(terms.map((term) => term.toLowerCase())).size, terms.length, `${name} has duplicates`);
+  }
+  for (const [name, names] of Object.entries(realSearchTerms.company_names || {})) {
+    assert.ok(listed.has(name), `unknown company in company_names: ${name}`);
+    assert.ok(Array.isArray(names) && names.length > 0, name);
+  }
 });
