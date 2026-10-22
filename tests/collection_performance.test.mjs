@@ -11,18 +11,28 @@ test('Google rows are probed unless a publisher URL is already known', () => {
   assert.equal(row.title, 'Original RSS title');
 });
 
-test('parallel Google work pauses after three unresolved probes, stops after repeated pauses, and resets next run', async () => {
-  const pauses = [];
-  const probe = createPublisherProbe(3, { pauseMs: 60000, maxPauses: 3, sleepFn: async (ms) => { pauses.push(ms); } });
+// 실제로 기다리지 않는 시계. sleep 은 시각만 앞으로 옮긴다.
+function fakeClock() {
+  const clock = { t: 0, sleeps: [] };
+  clock.now = () => clock.t;
+  clock.sleepFn = async ms => { clock.sleeps.push(ms); clock.t += ms; };
+  return clock;
+}
+
+test('parallel Google work cools down after three unresolved probes, doubles the wait, and skips once the budget is spent', async () => {
+  const clock = fakeClock();
+  const probe = createPublisherProbe(3, { pauseMs: 60000, budgetMs: 180000, sleepFn: clock.sleepFn, now: clock.now });
   let calls = 0;
   const fail = async () => { calls++; throw new Error('publisher_url_unresolved'); };
   const results = await Promise.allSettled(Array.from({ length: 115 }, (_, i) =>
     probe(`https://news.google.com/rss/articles/${i}`, fail)));
-  // Three failures, then three pause-and-retry rounds of three failures each, then stop.
-  assert.deepEqual(pauses, [60000, 60000, 60000]);
-  assert.equal(calls, 12);
-  assert.equal(results.filter(r => r.status === 'rejected').length, 12);
-  assert.equal(results.filter(r => r.status === 'fulfilled' && r.value === null).length, 103);
+  // 세 번 실패하면 60초, 다시 세 번이면 120초를 쉰다. 그다음 240초는 예산(180초)을 넘으므로 기다리지 않고 요청 없이 넘긴다.
+  assert.deepEqual(clock.sleeps, [60000, 120000]);
+  assert.equal(calls, 9);
+  assert.equal(results.filter(r => r.status === 'rejected').length, 9);
+  assert.equal(results.filter(r => r.status === 'fulfilled' && r.value === null).length, 106);
+  assert.deepEqual({ ...probe.stats, requests: undefined }, { requests: undefined, rate_limited: 0, cooldowns: 3,
+    cooldown_ms: 180000, retried: 0, paused: 106 });
   assert.equal(await probe('https://publisher.example/story', async () => 'body'), 'body');
   assert.equal(await createPublisherProbe()('https://news.google.com/new', async () => 'body'), 'body');
 });
@@ -48,17 +58,17 @@ test('successful redirects and unrelated errors break the unresolved failure str
 });
 
 // 429·5xx·타임아웃도 Google 이 막고 있다는 신호다. 예전에는 이런 오류가 연속 실패를 0으로 돌려 쉬지 않았다.
-test('rate limits, server errors and timeouts count toward the Google pause', async () => {
-  const blocks = [Object.assign(new Error('HTTP 429 Too Many Requests'), { status: 429 }), new Error('HTTP 503'),
+test('server errors and timeouts count toward the Google pause', async () => {
+  const blocks = [new Error('HTTP 503'), new Error('publisher_url_unresolved'),
     Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' })];
-  const pauses = [];
-  const probe = createPublisherProbe(3, { pauseMs: 5, maxPauses: 1, sleepFn: async ms => { pauses.push(ms); } });
+  const clock = fakeClock();
+  const probe = createPublisherProbe(3, { pauseMs: 5, budgetMs: 5, sleepFn: clock.sleepFn, now: clock.now });
   const url = 'https://news.google.com/rss/articles/sample';
   for (const error of blocks) await assert.rejects(probe(url, async () => { throw error; }));
-  assert.deepEqual(pauses, []);
-  // 세 번 연속 막혔으니 다음 요청 앞에서 한 번 쉰다. 쉬고 나서도 세 번 막히면 이번 실행의 확인을 멈춘다.
+  assert.deepEqual(clock.sleeps, []);
+  // 세 번 연속 막혔으니 다음 요청 앞에서 한 번 쉰다. 쉬고 나서도 세 번 막히면 다음 쉼(10ms)은 예산을 넘는다.
   for (const error of blocks) await assert.rejects(probe(url, async () => { throw error; }));
-  assert.deepEqual(pauses, [5]);
+  assert.deepEqual(clock.sleeps, [5]);
   assert.equal(await probe(url, async () => 'not requested'), null);
   assert.equal(googleBlocked(new Error('HTTP 404 Not Found')), false);
   assert.equal(googleBlocked(Object.assign(new Error('HTTP 502'), { status: 502 })), true);
@@ -108,11 +118,13 @@ test('the Google lane only decodes; a slow publisher download does not hold the 
     contentCharLimit: 20000, contentExcerptLimit: 800, rateLimitSeconds: 0 };
   const row = (company, id) => ({ company, target_no: 1, source_type: 'news', link_verdict: 'accept', date_candidates: [],
     title: `${company} expands its production plant`, url: `https://news.google.com/rss/articles/${id}` });
+  // 두 기업이 같은 차례를 쓴다. 요청 간격은 이 시험의 관심사가 아니므로 0으로 둔다(실제 대기 없이).
+  const probe = createPublisherProbe(3, { intervalMs: 0 });
   try {
     let aDone = false;
-    const a = enrichOfficialRowsWithContent([row('Alpha', 'CBMiAAA')], args, '2026-09-15T00:00:00Z', { company: 'Alpha' })
-      .then(() => { aDone = true; });
-    await enrichOfficialRowsWithContent([row('Beta', 'CBMiBBB')], args, '2026-09-15T00:00:00Z', { company: 'Beta' });
+    const a = enrichOfficialRowsWithContent([row('Alpha', 'CBMiAAA')], args, '2026-09-15T00:00:00Z', { company: 'Alpha' },
+      { probe }).then(() => { aDone = true; });
+    await enrichOfficialRowsWithContent([row('Beta', 'CBMiBBB')], args, '2026-09-15T00:00:00Z', { company: 'Beta' }, { probe });
     assert.equal(bFetched, true);
     assert.equal(aDone, false);
     await a;
