@@ -15,35 +15,35 @@
     "title_size": 44,
     "lines": [
       "30 major investment promotion projects · 77 target companies selected by MOTIR",
-      "5 leading indicators tracked per company · Pre-decision signals only"
+      "5 key investment signals tracked per company · Pre-decision signals only"
     ],
     "line_size": 11,
-    "indicator_heading": "5 Leading Indicators of Investment",
+    "indicator_heading": "The 5 Key Investment Signals",
     "indicators": [
       {
         "no": 1,
-        "label": "Geopolitical Supply Chain Resilience",
+        "label": "Supply Chain & Political Risk Management",
         "description": "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks"
       },
       {
         "no": 2,
-        "label": "Production Expansion & Footprint Diversification",
-        "description": "Evaluating new APAC facility expansions and conducting production site feasibility studies"
+        "label": "Factory Expansion & Diversification of Production Bases",
+        "description": "New factory opening or facility construction in the Asia-Pacific (APAC) region"
       },
       {
         "no": 3,
-        "label": "Debt & Equity Financing",
-        "description": "Large-scale funding through corporate bonds, equity raises, and credit facilities"
+        "label": "Capital Raising & Securing Liquidity",
+        "description": "Getting extra cash by issuing corporate bonds, new share issuance, or bank loans"
       },
       {
         "no": 4,
-        "label": "R&D and Technology Partnerships",
-        "description": "Joint R&D, technology licensing, PoCs, and equity-stake talks"
+        "label": "Tech Partnerships & Joint Research",
+        "description": "Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies"
       },
       {
         "no": 5,
-        "label": "C-Level Executive Moves",
-        "description": "C-suite changes, low-profile visits to Korea, and due diligence coordination"
+        "label": "Top Executive Actions",
+        "description": "C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites"
       }
     ]
   },
@@ -54,7 +54,7 @@
     "company_heading": "Company",
     "legend_on": "Signal detected",
     "legend_off": "No signal",
-    "indicators": "① Geopolitical Supply Chain Resilience · ② Production Expansion & Footprint Diversification · ③ Debt & Equity Financing · ④ R&D and Technology Partnerships · ⑤ C-Level Executive Moves",
+    "indicators": "① Supply Chain & Political Risk Management · ② Factory Expansion & Diversification of Production Bases · ③ Capital Raising & Securing Liquidity · ④ Tech Partnerships & Joint Research · ⑤ Top Executive Actions",
     "footnote": "Signals detected at 6 companies; none detected at 71.",
     "counts": {
       "detected": 6,
@@ -999,25 +999,25 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": true,
             "headline": "On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation Sequencing.",
             "detail": "",
@@ -1029,7 +1029,7 @@
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1051,25 +1051,25 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": true,
             "headline": "Boeing Investment and Technology Collaboration",
             "detail": "Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer while taking a stake in Archer and establishing an ongoing technology sharing and collaboration arrangement.",
@@ -1081,7 +1081,7 @@
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1103,13 +1103,13 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": true,
             "headline": "Ouster is expanding its LiDAR production capacity to support rising demand, with its production run rate expected to increase from approximately 40,000 units annually toward 100,000 units.",
             "detail": "",
@@ -1121,19 +1121,19 @@
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1155,25 +1155,25 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": true,
             "headline": "AI Computing Material and Process Innovation Research Collaboration",
             "detail": "Applied Materials announced that University of California, Berkeley will join its EPIC Center in Silicon Valley as a research collaborator to pursue research programs accelerating material and process innovations.",
@@ -1185,7 +1185,7 @@
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1207,19 +1207,19 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": true,
             "headline": "Completion of £100 Million Investment Round.",
             "detail": "The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70 million) commitment from the National Wealth Fund along with new investors Korea Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and commercialisation activities.",
@@ -1231,13 +1231,13 @@
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1259,19 +1259,19 @@
         "signals": [
           {
             "no": 1,
-            "label": "Geopolitical Supply Chain Resilience",
+            "label": "Supply Chain & Political Risk Management",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 2,
-            "label": "Production Expansion & Footprint Diversification",
+            "label": "Factory Expansion & Diversification of Production Bases",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 3,
-            "label": "Debt & Equity Financing",
+            "label": "Capital Raising & Securing Liquidity",
             "active": true,
             "headline": "Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.",
             "detail": "",
@@ -1283,13 +1283,13 @@
           },
           {
             "no": 4,
-            "label": "R&D and Technology Partnerships",
+            "label": "Tech Partnerships & Joint Research",
             "active": false,
             "empty": "No signal in August"
           },
           {
             "no": 5,
-            "label": "C-Level Executive Moves",
+            "label": "Top Executive Actions",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1305,7 +1305,7 @@
         }
       }
     ],
-    "pill_width": 186.12
+    "pill_width": 212.69
   },
   "items": {
     "kicker": "K E Y   D E V E L O P M E N T S",

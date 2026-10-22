@@ -171,32 +171,25 @@ INDICATOR_LABEL_KO = {no: text.split(" · ", 1)[0] for no, text in SIGNAL_DESCRI
 
 # 국문 라벨 폭에 맞춰 짜인 알약·한 줄 슬롯에 그대로 들어가야 하므로 영문은 같은 뜻을 더 짧게 적는다.
 # 지표 이름은 국문을 옮기지 않고 영어 독자가 무엇이 일어났는지 바로 알 이름으로 짓는다.
-# "Supply Chain Risk Management"는 회사 내부 부서 업무처럼 읽혀 사건 이름이 되지 못했다.
 SIGNAL_DESCRIPTIONS_EN = {
     # 카드 라벨에는 이름만 싣는다. 이름이 길어 " · 설명"까지 붙이면 라벨과 "No signal this month"가 잘린다.
     # 설명은 표지(INDICATOR_DESCRIPTION_EN)에 있다.
-    # 2026-09 개정: 직역 느낌이 나거나 국문보다 뜻이 좁던 이름을 고쳤다. "Geographical Diversification"은 길고
-    # 번역투였고, "C-Suite Actions"는 무엇을 하는지 드러나지 않았다.
-    # 2026-10 개정: 이름과 설명을 국문 표지(지표 이름, config 의 description_ko)의 항목을 그대로 따르도록 새로 정했다.
-    # ③ "Capital Raising & Liquidity Securing"은 명사 뒤에 동명사를 붙인 번역투라 IR 표준어로 바꿨다(2026-10-12).
-    # 회사채·신용공여(debt)와 유상증자(equity)를 모두 덮는다. 문구 기준은 docs/report_wording_guide_en.md.
-    1: "Geopolitical Supply Chain Resilience",
-    2: "Production Expansion & Footprint Diversification",
-    3: "Debt & Equity Financing",
-    4: "R&D and Technology Partnerships",
-    5: "C-Level Executive Moves",
+    # 2026-10-22 개정: 이름과 설명을 사용자 표지 수정안("표지 수정 1020")대로 쉬운 말로 바꿨다.
+    # 이전 이름과 바꾼 이유는 docs/report_wording_guide_en.md §5·§6 에 있다.
+    1: "Supply Chain & Political Risk Management",
+    2: "Factory Expansion & Diversification of Production Bases",
+    3: "Capital Raising & Securing Liquidity",
+    4: "Tech Partnerships & Joint Research",
+    5: "Top Executive Actions",
 }
 
 INDICATOR_DESCRIPTION_EN = {
     1: "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks",
     # 국문 표지에 APAC 이 있어 영문에도 둔다.
-    2: "Evaluating new APAC facility expansions and conducting production site feasibility studies",
-    # 국문 표지 "회사채·증자·신용공여 등 대규모 자금 조달"처럼 대규모가 조달 전체에 걸린다.
-    3: "Large-scale funding through corporate bonds, equity raises, and credit facilities",
-    4: "Joint R&D, technology licensing, PoCs, and equity-stake talks",
-    # "unannounced site visits"는 현장 점검처럼 읽히고 국문 "극비 방한"의 방한을 전하지 못했다.
-    # "C-suite shifts"는 전략·우선순위의 변화로 읽혀, 선임·이동·퇴임을 모두 덮는 "changes"로 바꿨다.
-    5: "C-suite changes, low-profile visits to Korea, and due diligence coordination",
+    2: "New factory opening or facility construction in the Asia-Pacific (APAC) region",
+    3: "Getting extra cash by issuing corporate bonds, new share issuance, or bank loans",
+    4: "Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies",
+    5: "C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites",
 }
 
 COUNTRY_EN = {
@@ -356,8 +349,9 @@ TEXTS = {
         "cover_title_accent": 0,
         # MOTIR 는 산업통상부의 공식 영문 약칭이다(Ministry of Trade, Industry and Resources).
         "cover_line_1": "30 major investment promotion projects · 77 target companies selected by MOTIR",
-        "cover_line_2": "5 leading indicators tracked per company · Pre-decision signals only",
-        "cover_indicator_heading": "5 Leading Indicators of Investment",
+        # 지표 총칭은 표지 머리글과 같은 "key investment signals"로 부른다(2026-10-22).
+        "cover_line_2": "5 key investment signals tracked per company · Pre-decision signals only",
+        "cover_indicator_heading": "The 5 Key Investment Signals",
         # 보고 달({month}, {period})은 set_report_period 가 채운다. 10월호는 9월을 다루므로 본문 문구는 달 이름을 쓴다.
         # 매트릭스 제목만은 국문 "이번 달 시그널 매트릭스"에 맞춰 this month 로 둔다(2026-10 결정).
         "matrix_title": "This Month's Signal Matrix",

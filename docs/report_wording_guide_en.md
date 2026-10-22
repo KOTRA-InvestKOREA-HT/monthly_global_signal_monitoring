@@ -30,7 +30,7 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 
 | 개념 | 쓰는 말 | 쓰지 않는 말 |
 |---|---|---|
-| 5개 분류(①~⑤) | leading indicators (표지 제목은 "5 Leading Indicators of Investment") | early investment indicators, pre-decision indicators, signal categories |
+| 5개 분류(①~⑤) | key investment signals (표지 머리글은 "The 5 Key Investment Signals", 2026-10-22부터) | leading indicators (2026-10-22 교체), early investment indicators, pre-decision indicators, signal categories |
 | 분류에 걸려 포착된 개별 건 | signal(s) | detection, AI detection, hit |
 | 보고 범위(최종 결정 전 단계) | pre-decision (표지 범위 문구에서만) | — |
 | 77개 기업 | target companies | targeted companies, focus companies |
@@ -94,8 +94,9 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 |---|---|---|
 | `cover_titles` | Investment Signals | 828adb5, 31bcce6: 국문 제목을 낱말마다 옮긴 이전 제목이 영어로 읽히지 않음 |
 | `cover_kicker` | GLOBAL INVESTMENT SIGNAL MONITOR | f9dd324: 국·영문 표지 공통 보고서 이름 |
-| `cover_line_2` 후반 | Pre-decision signals only | c87062d: 보고 범위를 말하며 "leading indicators"(분류)와 충돌하지 않음 |
-| `cover_indicator_heading` | 5 Leading Indicators of Investment | 818ae68 |
+| `cover_line_2` 후반 | Pre-decision signals only | c87062d: 보고 범위를 말함 |
+| `cover_indicator_heading` | The 5 Key Investment Signals | 2026-10-22 사용자 표지 수정안("표지 수정 1020") |
+| `SIGNAL_DESCRIPTIONS_EN`, `INDICATOR_DESCRIPTION_EN` | 2026-10-22 사용자 표지 수정안의 지표 이름·설명 5개 | 2026-10-22 사용자 표지 수정안 |
 | `matrix_title` | This Month's Signal Matrix | 3905c25: 국문 "이번 달 시그널 매트릭스"에 맞춤(2026-10 결정) |
 | `item_target_label` | Target technology | e749a7c |
 | `cover_line_1`의 MOTIR | MOTIR | 산업통상부 공식 영문 약칭 |
@@ -139,6 +140,8 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | PRODUCT TRENDS | 품목 면 머리글 | 카드가 기업별이고 내용이 개별 사건이라 product, trends 모두 맞지 않음(§2 용어 근거) |
 | C-suite shifts | 지표 ⑤ 설명 | 원어민 3명: shifts 가 전략·우선순위 변화로 읽혀 사람의 이동이 드러나지 않음 |
 | 5 Leading Investment Indicators / 5 leading investment indicators tracked per company | 표지 5대 지표 머리글·정보 줄 | 원어민 3명 반려: leading 이 "top"으로, investment indicators 가 투자자용 지표나 LEI 같은 계량 지수로 읽힘. leading indicators 는 붙여 쓰고 of investment 로 대상을 밝힌다 |
+| 5 Leading Indicators of Investment / 5 leading indicators tracked per company | 표지 5대 지표 머리글·정보 줄 | 2026-10-22 사용자 표지 수정안으로 교체 |
+| Geopolitical Supply Chain Resilience, Production Expansion & Footprint Diversification, Debt & Equity Financing, R&D and Technology Partnerships, C-Level Executive Moves | 지표 ①~⑤ | 2026-10-22 사용자 표지 수정안으로 교체 |
 
 ## 6. 결정 기록
 
@@ -160,6 +163,9 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | 2026-10-12 | `cover_line_2`, `cover_indicator_heading` | (변경 안 함) 5 leading indicators → 5 leading investment indicators, 5 Leading Indicators of Investment → 5 Leading Investment Indicators | R1 | 원어민 3명 모두 반려: "leading"이 "top"으로, "investment indicators"가 투자자용 지표(P/E·ROI)나 LEI 같은 계량 지수로 읽힘 |
 | 2026-10-12 | `INDICATOR_DESCRIPTION_EN[5]` | C-suite shifts → C-suite changes (low-profile visits to Korea 는 유지) | R2 | 사용자 승인. 사전 정보 없는 원어민 3명 모두 "shifts"가 전략·우선순위 변화로도 읽혀 모호하다고 봄. changes 는 국문 "C-Level 이동"의 선임·이동·퇴임을 모두 덮음. low-profile 은 2명 유지, 1명 unpublicized 제안(다른 1명은 unpublicized 가 더 감시처럼 읽힌다고 반대) |
 | 2026-10-20 | `cover_subtitle` | …investment signals at 77 target companies → …investment signals across 77 target companies | R8 | 사용자 승인(검수 에이전트를 거치지 않음). 부제는 77개사 전체를 살피는 범위를 말하는 자리라 across 가 보고서 부제의 흔한 용례에 맞음. 시그널이 잡힌 기업을 말하는 매트릭스 문구(`matrix_desc`, `matrix_footnote`)는 at 유지. 한 줄 폭 411pt / 454pt |
+| 2026-10-22 | `cover_indicator_heading`, `cover_line_2` | 5 Leading Indicators of Investment → The 5 Key Investment Signals, 5 leading indicators tracked per company → 5 key investment signals tracked per company | R3 | 사용자 표지 수정안(검수 에이전트를 거치지 않음). 정보 줄은 머리글과 총칭을 맞추려고 함께 바꿈 |
+| 2026-10-22 | `SIGNAL_DESCRIPTIONS_EN` ①~⑤ (표지, 매트릭스 범례, 기업 카드 라벨) | Geopolitical Supply Chain Resilience → Supply Chain & Political Risk Management, Production Expansion & Footprint Diversification → Factory Expansion & Diversification of Production Bases, Debt & Equity Financing → Capital Raising & Securing Liquidity, R&D and Technology Partnerships → Tech Partnerships & Joint Research, C-Level Executive Moves → Top Executive Actions | — | 사용자 표지 수정안(검수 에이전트를 거치지 않음). §5의 "Supply Chain Risk Management" 반려와 겹치지만 사용자 결정으로 반영. 수정안의 ②③ 소문자는 R5 Title Case로 맞춤. 영문 PDF 잘림 없음, 카드 라벨 ②가 가장 김 |
+| 2026-10-22 | `INDICATOR_DESCRIPTION_EN` ②~⑤ | ② Evaluating new APAC facility expansions… → New factory opening or facility construction in the Asia-Pacific (APAC) region, ③ Large-scale funding through… → Getting extra cash by issuing corporate bonds, new share issuance, or bank loans, ④ Joint R&D, technology licensing, PoCs, and equity-stake talks → Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies, ⑤ C-suite changes… → C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites | — | 사용자 표지 수정안(검수 에이전트를 거치지 않음). ①은 그대로. ② 끝 마침표는 다른 설명에 맞춰 뺐고, ⑤ "business site"는 "sites"로 고침. 표지 설명 모두 한 줄 |
 
 ## 7. 진행 절차
 
