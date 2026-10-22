@@ -68,7 +68,27 @@ export function issueNumberFor(input, judged) {
 // 문안 단계 전용 키. 판정 단계와 다른 키(다른 프로젝트)를 쓰면 무료 한도를 서로 나눠 쓰지 않는다.
 // 비어 있으면 판정 단계와 같은 GEMINI_API_KEY 를 쓴다.
 export function summaryApiKey(env = process.env) {
-  return [env.GEMINI_FOR_SUMMARY, env.GEMINI_API_KEY].map(value => String(value || '').trim()).find(Boolean) || '';
+  return summaryApiKeys(env)[0] || '';
+}
+
+// 문안 단계의 키 순서. 문안 키가 할당량(429)에 걸리면 판정 키로 이어 쓴다. 판정 단계는 반대 순서로 순환한다
+// (review_report.mjs judgementKeys). 문안은 판정 파일에 저장되므로 다음 키로 다시 부르면 쓴 문안은 그대로 둔다.
+export function summaryApiKeys(env = process.env) {
+  return [...new Set([env.GEMINI_FOR_SUMMARY, env.GEMINI_API_KEY].map(value => String(value || '').trim()).filter(Boolean))];
+}
+
+// 할당량으로 멈추면 다음 키로 같은 일을 다시 부른다. 마지막으로 쓴 키를 돌려줘 뒤 단계(검토·상자 문안)가 이어 쓴다.
+export async function writeWithKeyRotation(keys, write, log = console.log) {
+  const runs = [];
+  let stats = null, index = 0;
+  for (; index < keys.length; index++) {
+    stats = await write(keys[index]);
+    runs.push({ key: index + 1, requests: stats.requests, ...(stats.stopped ? { stopped: stats.stopped.reason } : {}) });
+    if (stats.stopped?.reason !== 'quota' || index === keys.length - 1) break;
+    log(`Copy key ${index + 1} hit its quota; continuing with key ${index + 2}`);
+  }
+  return { stats: { ...stats, requests: runs.reduce((sum, run) => sum + (run.requests || 0), 0), key_runs: runs },
+    apiKey: keys[Math.min(index, keys.length - 1)] };
 }
 
 function writerSummary(stats) {
@@ -114,8 +134,8 @@ async function main() {
     // 문안을 쓰기 전에 확인한다. 다 쓰고 나서 호수 때문에 멈추면 그 호출이 헛돈다.
     const issueNumber = issueNumberFor(process.env.REPORT_ISSUE_NUMBER, judged);
     const writer = resolveWriter();
-    const apiKey = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? summaryApiKey() : '';
-    if (!apiKey) {
+    const apiKeys = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? summaryApiKeys() : [];
+    if (!apiKeys.length) {
       throw new Error('GEMINI_FOR_SUMMARY (or GEMINI_API_KEY) with GEMINI_FREE_TIER_CONFIRMED=true is required to write the report copy. ' +
         'Set GEMINI_FREE_TIER_CONFIRMED only after confirming the key belongs to a project with no paid billing.');
     }
@@ -124,8 +144,8 @@ async function main() {
     const policyDoc = await fs.readFile('docs/local_report_review.md', 'utf8');
 
     stage = 'write';
-    const stats = await writeSummaries({ articles: snapshot.articles, reviewDir: path.join(ROOT, 'reviews'), writer, apiKey,
-      policyWording: writerPolicySection(policyDoc) });
+    const { stats, apiKey } = await writeWithKeyRotation(apiKeys, key => writeSummaries({ articles: snapshot.articles,
+      reviewDir: path.join(ROOT, 'reviews'), writer, apiKey: key, policyWording: writerPolicySection(policyDoc) }));
     console.log(JSON.stringify({ summary_writer: stats }));
     if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, writerSummary(stats));
     if (stats.stopped) {

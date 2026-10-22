@@ -365,7 +365,40 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   if (verifierApiKey && (!Number.isFinite(verifierDelayMs) || verifierDelayMs < GEMINI.minDelayMs || verifierDelayMs > 60000)) {
     throw new Error(`GEMINI_VERIFIER_DELAY_MS must be ${GEMINI.minDelayMs}..60000`);
   }
-  return { apiKey: String(env[keyEnv]).trim(), maxRequests, delayMs, concurrency, ...(verifierApiKey ? { verifierApiKey, verifierDelayMs } : {}) };
+  return { apiKey: String(env[keyEnv]).trim(), apiKeys: judgementKeys(env, provider), maxRequests, delayMs, concurrency,
+    ...(verifierApiKey ? { verifierApiKey, verifierDelayMs } : {}) };
+}
+
+// 판정에 쓸 키 순서. 첫 키가 하루 한도(429)나 실행 상한(maxRequests)에 걸려 멈추면 같은 실행 안에서 다음 키로
+// 이어 간다(main 의 키 순환). 예전에는 멈춘 판정을 사람이 다음 날 다시 눌러 이어 갔다. 두 번째 키는 문안 단계 키
+// (GEMINI_FOR_SUMMARY)다. 판정이 그 키를 쓰면 같은 날 문안 단계의 한도가 줄어든다. 문안 단계도 반대 순서로
+// 두 키를 순환한다(publish_report.mjs summaryApiKeys). 두 키 모두 결제가 없는 프로젝트여야 한다(FREE_TIER_CONFIRMED).
+export function judgementKeys(env = process.env, provider = PROVIDER) {
+  const primary = provider.keyEnv.map(name => env[name]).find(Boolean);
+  const extra = provider.id === GEMINI.id ? [env.GEMINI_FOR_SUMMARY] : [];
+  return [...new Set([primary, ...extra].map(value => String(value || '').trim()).filter(Boolean))];
+}
+
+// 다음 키로 넘길 멈춤. 할당량(429)과 실행 상한만이다. 인증 오류·서비스 장애·응답 결함은 키를 바꿔도 같다.
+export function rotatesKey(state) {
+  return state?.status === 'paused' && ['quota', 'request_budget'].includes(state.reason);
+}
+
+// 키 순환. 판정은 기사마다 저장되므로, 다음 키로 다시 부르면 저장된 판정을 그대로 쓰고 남은 기사만 묻는다.
+// 요청 상한은 키마다 따로 센다. key_runs 에 키별 결과를 남긴다(키 자체는 남기지 않는다).
+export async function reviewWithKeyRotation(options, review = reviewArticles, log = console.log) {
+  const keys = options.config.apiKeys?.length ? options.config.apiKeys : [options.config.apiKey];
+  const runs = [];
+  let state = null;
+  for (const [index, apiKey] of keys.entries()) {
+    const config = { ...options.config, apiKey, ...(options.config.verifierApiKey ? { verifierApiKey: apiKey } : {}) };
+    state = await review({ ...options, config });
+    runs.push({ key: index + 1, status: state.status, ...(state.reason ? { reason: state.reason } : {}),
+      requests: state.requests, completed: state.completed });
+    if (!rotatesKey(state) || index === keys.length - 1) break;
+    log(`Key ${index + 1} stopped (${state.reason}); continuing the same judgement with key ${index + 2}`);
+  }
+  return { ...state, requests: runs.reduce((sum, run) => sum + (run.requests || 0), 0), key_runs: runs };
 }
 
 // 아티팩트만 보고 어느 실행·어느 커밋의 결과인지 알 수 있어야 한다. 로컬 실행에서는 비어 있다.
@@ -1295,7 +1328,7 @@ async function main() {
   await write(path.join(runDir, 'snapshot.json'), snapshot);
   await pruneReviewWork(root, runDir, articles);
   failedStage = 'review';
-  const state = await reviewArticles({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config,
+  const state = await reviewWithKeyRotation({ articles, reviewDir: path.join(root, 'reviews'), policy: policyText, config,
     noBodyArticleIds: articlesWithoutCompanyBody(articles) });
   const reviewFailed = publishableReviewFailures(state);
   // 판정 완료: 모든 기사를 판정했거나, 남은 것이 재시도까지 인용 검증에 실패한 기사뿐이다. 문안·발행 단계
@@ -1311,6 +1344,8 @@ async function main() {
     `### ${PROVIDER.label} judgement\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
     `${state.no_body_skipped ? `; ${state.no_body_skipped} not sent (every article of the company lacks a body)` : ''}` +
     `${state.date_hints ? `; ${state.date_hints} date hints` : ''}.\n` +
+    (state.key_runs?.length > 1 ? `Keys used: ${state.key_runs.map(run => `key ${run.key} ${run.status}` +
+      `${run.reason ? ` (${run.reason})` : ''} after ${run.requests} requests`).join('; ')}.\n` : '') +
     (reviewFailed.length ? `${reviewFailed.length} article(s) failed evidence validation twice; the report will be built without them ` +
       'and their companies are marked as incomplete evidence.\n' : '') +
     (state.status === 'paused' && !reviewFailed.length ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +

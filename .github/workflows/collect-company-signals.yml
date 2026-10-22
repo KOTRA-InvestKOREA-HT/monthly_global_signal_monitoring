@@ -118,7 +118,9 @@ jobs:
         env:
           REPORT_PROVIDER: ${{ inputs.provider || vars.REPORT_PROVIDER || 'gemini' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다.
+          # 두 번째 판정 키. GEMINI_API_KEY 가 하루 한도나 실행 상한에 걸리면 같은 판정을 이 키로 이어 간다(review_report.mjs judgementKeys).
+          GEMINI_FOR_SUMMARY: ${{ secrets.GEMINI_FOR_SUMMARY }}
+          # API 가 무료 티어를 강제하지 못한다. 저장소 변수로 사람이 확인했다는 표시를 남긴다. 두 키 모두에 해당해야 한다.
           GEMINI_FREE_TIER_CONFIRMED: ${{ vars.GEMINI_FREE_TIER_CONFIRMED }}
           # 비워 두면 코드 기본값(high)을 쓴다. minimal, low, medium, high 중 하나.
           GEMINI_THINKING_LEVEL: ${{ vars.GEMINI_THINKING_LEVEL }}

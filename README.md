@@ -61,7 +61,10 @@ The judge call writes no report copy. The writer (`gemini-3.5-flash-lite`, `GEMI
 gets the evidence quotes, the article body and the wording rules, and uses the `GEMINI_FOR_SUMMARY` key
 (falling back to `GEMINI_API_KEY`). The writer and the copy reviewer handle up to
 `REPORT_CONCURRENCY` (default 4) articles at a time while keeping the per-request start interval.
-If the writer hits its quota or stays unavailable, the run stops and the next run continues.
+The two keys rotate: the judgement starts on `GEMINI_API_KEY` and, when that key hits its quota or the
+per-run request cap, continues the same run on `GEMINI_FOR_SUMMARY`; the writer does the reverse on a
+quota stop. Both keys must belong to projects with no paid billing (`GEMINI_FREE_TIER_CONFIRMED`).
+If the writer hits the quota on both keys or stays unavailable, the run stops and the next run continues.
 Each summary records the model that wrote it. Copy that fails a grounding,
 number, format or style check is written again with the failed checks named, up to three
 times; a signal whose copy never passes is left out of that report, kept on the dashboard,

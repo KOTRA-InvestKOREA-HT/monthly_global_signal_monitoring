@@ -33,8 +33,10 @@ want the PDFs. Stage 1 judges and saves progress in the Actions cache; stage 2 r
 that cache, writes the report copy and commits the PDFs. Splitting them keeps the judge
 call free of the wording rules. The copy writer uses `GEMINI_FOR_SUMMARY` when set; if that
 key belongs to a different Google project from `GEMINI_API_KEY`, both stages fit in the
-free tier on the same day. Otherwise an automatic publish may pause on quota and should be
-resumed the next day with "발행만 실행". The automated CLI and Actions
+free tier on the same day. The two keys also rotate: a judgement that hits the quota or the
+per-run request cap on `GEMINI_API_KEY` continues on `GEMINI_FOR_SUMMARY` in the same run, and the
+writer falls back to `GEMINI_API_KEY` the same way. Only when both keys are spent does a run
+pause, to be resumed the next day with "발행만 실행". The automated CLI and Actions
 use the same collection options, candidate builder, review validation, cache, and bilingual
 PDF builder. Keyword matching does not remove articles from the monthly review queue.
 Provider/model selection remains configuration; set the same values when comparing local
