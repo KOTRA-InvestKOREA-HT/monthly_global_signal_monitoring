@@ -854,6 +854,16 @@ async function loadSnapshot(runDir) {
   return unpackSnapshot(stored);
 }
 
+// box_writer.mjs 가 쓴 상자 문안. 쓸 내용이 없다고 답한 기사(nothing_new)와 한쪽 언어가 빈 문안은 뺀다.
+export async function loadBoxCopy(boxDir, results) {
+  const copies = new Map();
+  for (const id of new Set(results.map((item) => item.article_id))) {
+    const saved = await read(path.join(boxDir, `${id}.json`)).catch(() => null);
+    if (saved && !saved.nothing_new && clean(saved.summary_en) && clean(saved.summary_ko)) copies.set(id, saved);
+  }
+  return copies;
+}
+
 async function loadReviews(runDir) {
   const snapshot = await loadSnapshot(runDir);
   const pending = [], invalid = [], results = [], reviews = [];
@@ -1026,6 +1036,15 @@ export async function build(args) {
   // 근접 행을 버려서, 상자가 빈 기업이 왜 비었는지 출력만 보고는 알 수 없었다.
   const withNearMiss = (kind) => results.filter((item) => item.kind === kind && (item.supported || item.near_miss))
     .map((item) => item.row);
+  // 사업현황 상자 문안(box_writer.mjs)을 그 기사의 승인 시그널 행에 붙인다. 보고서는 그 기업에 다른 사업동향
+  // 문안이 없을 때만 이 문안을 상자에 싣는다(report_content.best_business_row). 파일이 없으면 붙이지 않는다.
+  const boxCopy = await loadBoxCopy(path.join(path.dirname(runDir), "box_copy"), results);
+  for (const item of results) {
+    const copy = item.kind === "investment" && item.supported && boxCopy.get(item.article_id);
+    if (copy && (copy.candidate_ids || []).includes(item.candidate_id)) {
+      item.row = { ...item.row, ai_box_summary_en: clean(copy.summary_en), ai_box_summary_ko: clean(copy.summary_ko) };
+    }
+  }
   const investment = withNearMiss("investment");
   const relevant = withNearMiss("relevant");
   const datePending = (rows) => rows.filter((row) => !reportEligible(row, snapshot.period));

@@ -57,6 +57,19 @@ class BusinessBoxTests(unittest.TestCase):
         twin = dict(same, ai_summary_en="Phase 2.", ai_summary_ko="2단계")
         self.assertIs(pdf.best_business_row("Amkor Technology", [twin], [signal], [signal], exempt_company=True), signal)
 
+    def test_box_copy_from_the_signal_article_beats_a_repeat(self):
+        # box_writer.mjs 가 지표 기사 본문에서 위 문안에 없는 내용으로 따로 쓴 상자 문안.
+        signal = approved("NXP", investment_signal_no=3, ai_summary_en="EIB loan.", url="https://nxp.com/a",
+                          ai_box_summary_en="The loan funds the Kuala Lumpur test site.",
+                          ai_box_summary_ko="대출금은 쿠알라룸푸르 테스트 공장에 쓰임.")
+        row = pdf.best_business_row("NXP", [], [signal], [signal])
+        self.assertEqual(row["ai_summary_en"], "The loan funds the Kuala Lumpur test site.")
+        self.assertEqual(row["url"], signal["url"])
+        self.assertEqual(signal["ai_summary_en"], "EIB loan.", "지표 칸 행은 그대로 둔다")
+        # 다른 기사가 있으면 그것이 먼저다.
+        near = self.near("NXP", url="https://nxp.com/b")
+        self.assertIs(pdf.best_business_row("NXP", [near], [signal], [signal]), near)
+
     def test_the_box_is_never_left_empty_while_a_signal_is_shown(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")
         self.assertIs(pdf.best_business_row("Corning", [], [signal], [signal]), signal)

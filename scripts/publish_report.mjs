@@ -17,6 +17,7 @@ import { publishableReviewFailures, publishedSignalCounts, runIdentity } from '.
 import { resolveReportPeriod } from './report_period.mjs';
 import { resolveWriter, writeSummaries, writerPolicySection } from './summary_writer.mjs';
 import { resolveReviewer, reviewAndRewrite } from './summary_reviewer.mjs';
+import { writeBoxCopy } from './box_writer.mjs';
 
 const ROOT = path.resolve('outputs/review_work');
 const STATUS_FILE = path.join(ROOT, 'publish_status.json');
@@ -153,6 +154,18 @@ async function main() {
     console.log(JSON.stringify({ summary_reviewer: reviewStats }));
     if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, reviewerSummary(reviewStats));
 
+    // 사업현황 상자 문안. 위 지표 칸 말고는 실을 사업동향 문안이 없는 기업만 쓴다(box_writer.mjs).
+    // 실패하거나 할당량으로 멈춰도 보고서는 만든다. 그 상자는 지금처럼 지표 칸 문안을 다시 싣는다.
+    stage = 'box_copy';
+    let boxStats = null;
+    try {
+      boxStats = await writeBoxCopy({ articles: snapshot.articles, reviewDir: path.join(ROOT, 'reviews'),
+        boxDir: path.join(ROOT, 'box_copy'), writer, apiKey, policyWording: writerPolicySection(policyDoc) });
+    } catch (error) {
+      boxStats = { error: String(error.message || error).slice(0, 300) };
+    }
+    console.log(JSON.stringify({ box_writer: boxStats }));
+
     stage = 'build';
     process.env.REPORT_BUILD_FAILURE_FILE = BUILD_FAILURE_FILE;
     const reviewFailed = publishableReviewFailures(judged);
@@ -177,7 +190,7 @@ async function main() {
     const { stage: _stage, judged: _judged, run_dir: _runDir, run, ...judgement } = judged;
     await write('outputs/latest_ai_summary_summary.json', {
       ...judgement, status: reviewFailed.length ? 'completed_with_review_failures' : judgement.status,
-      judgement_run: run || null, summary_writer: stats, summary_reviewer: reviewStats, issue_number: issueNumber, period, provider,
+      judgement_run: run || null, summary_writer: stats, summary_reviewer: reviewStats, box_writer: boxStats, issue_number: issueNumber, period, provider,
       model: judged.model });
     await fs.mkdir('public/reports', { recursive: true });
     await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
