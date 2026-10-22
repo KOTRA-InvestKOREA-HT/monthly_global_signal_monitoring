@@ -17,7 +17,8 @@ import {
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
 import { COLLECTION_SETTINGS } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
-export const CONTENT_COLLECTION_VERSION = 'article-body-v17-36k-body';
+// v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
+export const CONTENT_COLLECTION_VERSION = 'article-body-v18-feed-summary';
 // 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
 // 읽어 가므로 다시 내보낸다.
 export { TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collection_args.mjs';
@@ -52,6 +53,7 @@ const FIELDNAMES = [
   "publisher_discovery_url",
   "content_excerpt",
   "content_word_count",
+  "content_source",
   "content_fetch_status",
   "content_fetched_at",
 ];
@@ -368,6 +370,60 @@ function tagText(block, tag) {
 function tagAttribute(block, tag, name) {
   const match = block.match(new RegExp(`<${tag}\\b([^>]*)>`, "i"));
   return match ? extractAttribute(match[1], name) : "";
+}
+
+// 피드 요약이 담기는 자리. RSS 의 content:encoded·description, Atom 의 content·summary.
+// tagText 의 `<tag\b` 는 "content" 로 "content:encoded" 까지 잡으므로 여기서는 태그 이름 뒤에 공백이나 > 만 허용한다.
+// 비어 있는 <description/> 은 이 정규식에 걸리지 않는다(Veolia 피드의 최근 항목이 그렇다).
+const FEED_SUMMARY_TAGS = ["content:encoded", "description", "content", "summary"];
+
+// 요약 안의 HTML 엔티티. decodeXml 은 XML 다섯 개와 숫자 엔티티만 푼다. 피드 요약은 HTML 을 한 번 더 이스케이프해
+// 싣는 일이 많아 &nbsp;·&rsquo; 같은 이름 있는 엔티티가 남는다. 모르는 이름은 그대로 둔다. 인용 대조는
+// normalizeQuote(local_report.mjs)가 Latin-1 엔티티까지 풀어서 하므로, 남아도 근거 확인은 깨지지 않는다.
+const FEED_HTML_ENTITIES = {
+  nbsp: " ", ensp: " ", emsp: " ", thinsp: " ", lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”", sbquo: "‚",
+  bdquo: "„", laquo: "«", raquo: "»", ndash: "–", mdash: "—", hellip: "…", bull: "•", middot: "·", trade: "™",
+  reg: "®", copy: "©", euro: "€", pound: "£", yen: "¥", deg: "°", times: "×", plusmn: "±", sect: "§",
+  eacute: "é", egrave: "è", ecirc: "ê", aacute: "á", agrave: "à", acirc: "â", iacute: "í", oacute: "ó",
+  uacute: "ú", auml: "ä", ouml: "ö", uuml: "ü", Auml: "Ä", Ouml: "Ö", Uuml: "Ü", szlig: "ß", ccedil: "ç",
+  ntilde: "ñ", Eacute: "É",
+};
+
+// 피드 항목의 요약을 본문 후보 글로 바꾼다. CDATA 를 벗기고, XML 이스케이프를 한 번 풀어 HTML 로 만든 뒤
+// cleanHtmlText 로 태그를 지운다(이때 이중 이스케이프가 한 번 더 풀린다). 상세 페이지 본문 추출(cleanHtmlText·
+// extractArticleText)은 건드리지 않는다. 바꾸면 이미 본문이 있던 기사의 근거 글자가 달라져 기사 ID 가 바뀐다.
+export function feedSummaryText(raw = "") {
+  const unwrapped = String(raw || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
+  return cleanHtmlText(decodeXml(unwrapped))
+    .replace(/&([a-z]+);/gi, (match, name) => FEED_HTML_ENTITIES[name] ?? match)
+    // 워드프레스 피드가 덧붙이는 꼬리말이다. 기사 내용이 아니다.
+    .replace(/\s*The post .{1,400}? appeared first on .{1,200}?\.?\s*$/s, "")
+    .replace(/[ \t]+/g, " ")
+    .replace(/[ \t]*\n\s*/g, "\n")
+    .trim();
+}
+
+// 항목에 실린 요약 중 가장 긴 것. content:encoded 가 전문이고 description 이 앞부분 발췌인 피드가 많다.
+function feedItemSummary(block) {
+  let best = "";
+  for (const tag of FEED_SUMMARY_TAGS) {
+    const match = block.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`, "i"));
+    const text = match ? feedSummaryText(match[1]) : "";
+    if (text.length > best.length) best = text;
+  }
+  return best;
+}
+
+// 상세 페이지 대신 쓸 수 있는 피드 요약. 본문 기준(ARTICLE_BODY_MIN_CHARS)에 못 미치면 쓰지 않는다.
+// 한두 문장짜리 요약은 제목을 다시 말할 뿐이라 판정 근거가 되지 못한다.
+function feedSummaryBody(summary, contentCharLimit) {
+  const text = String(summary || "").slice(0, contentCharLimit);
+  return hasArticleBody({ content_text: text }) ? text : "";
+}
+
+function withoutFeedSummary(row) {
+  const { feed_summary, ...rest } = row;
+  return rest;
 }
 
 // CoreMedia 는 "2025-07-15T08:13:26Z[GMT]" 처럼 시간대 이름을 대괄호로 덧붙인다. Date 는 못 읽는다.
@@ -971,6 +1027,15 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
     isOfficialCollector
       ? officialSourceFields(feedKind, defaultSource, query, itemUrl)
       : fallbackSourceFields(90);
+  // 공식 피드 항목의 요약. 상세 페이지를 못 받았을 때 본문 대신 쓴다(fetchDetailOutcome). 예전에는 읽지 않아서
+  // 2026-09 수집의 Syensqo 5건처럼 피드는 받았는데 원문이 막힌 기사가 제목만 남아 규칙으로 버려졌다.
+  // Google News 의 description 은 관련 기사 링크 목록이라 본문이 아니다. 공식 수집기에만 싣는다.
+  // 결과 행에는 남지 않는다(enrichOfficialRowsWithContent 가 떼어 낸다).
+  const summaryFieldsFor = (block) => {
+    if (!isOfficialCollector) return {};
+    const summary = feedItemSummary(block);
+    return summary ? { feed_summary: summary } : {};
+  };
   for (const item of blocks(xml, "item")) {
     const sourceText = tagText(item, "source");
     // 링크가 없는 항목은 기사 주소가 없는 것이다. 예전에는 질의(피드 주소나 검색어 문자열)를 주소로 채웠다.
@@ -997,6 +1062,7 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
       ...sourceFieldsFor(itemUrl),
       official_source_url: isOfficialCollector ? query : "",
       source_direct_url: directUrlCandidate(itemUrl),
+      ...summaryFieldsFor(item),
     });
   }
   for (const entry of blocks(xml, "entry")) {
@@ -1018,6 +1084,7 @@ export function parseRssOrAtom(xml, company, collectedAt, collector, query, defa
       ...sourceFieldsFor(entryUrl),
       official_source_url: isOfficialCollector ? query : "",
       source_direct_url: directUrlCandidate(entryUrl),
+      ...summaryFieldsFor(entry),
     });
   }
   return rows.filter((row) => row.title && row.url);
@@ -1910,7 +1977,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
   { yieldSlot = task => task(), probe = probePublisher, log = createStepLog(), tally = createTally() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
-    return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify'), requestCount: 0, errors: [] };
+    return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify').map(withoutFeedSummary), requestCount: 0, errors: [] };
   }
 
   const enriched = [];
@@ -1919,7 +1986,12 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
   let detailCount = 0;
   let verifyCount = 0;
 
-  for (const row of rows) {
+  for (const listed of rows) {
+    // 피드 요약은 이 단계에서만 쓰고 결과 행에는 남기지 않는다. 본문 자리에 들어가면 그 사본이고, 안 쓰이면
+    // 결과 파일만 키운다. 상세 단계 기록의 키(stepKey)는 요약까지 든 원래 행으로 만든다. 결과가 요약에 달려 있다.
+    // 요약이 없는 행은 두 행이 같으므로 키도 예전과 같다.
+    const feedSummary = listed.feed_summary || "";
+    const row = withoutFeedSummary(listed);
     if (row.content_text && row.link_verdict !== 'fetch_to_verify') {
       enriched.push(row);
       continue;
@@ -1971,8 +2043,8 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
 
     // 상세 페이지 한 건이 한 단계다. 재시도할 까닭이 상세 페이지 단계에만 남은 기업을 이어 받을 때는 앞선 실행이
     // 받아 둔 결과를 그대로 쓰고, 실패했거나 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
-    const { value: outcome, replayed } = await log.run(stepKey("detail", row),
-      () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }));
+    const { value: outcome, replayed } = await log.run(stepKey("detail", listed),
+      () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe, feedSummary }));
     if (!replayed) requestCount += outcome.requestCount;
     detailCount += outcome.detailCount;
     errors.push(...outcome.errors);
@@ -1989,10 +2061,23 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
 // 상세 페이지 한 건을 받아 판정한 결과. 체크포인트에 그대로 남으므로 데이터만 담는다.
 // row: 남길 행, exclusion: 버린 까닭([제목, URL, 사유]), detailCount: 상세 페이지 상한에 세는 요청 수,
 // paced: 요청 간격을 둘지. 본문을 받았거나 오류 행을 남긴 경우에만 둔다. 버리거나 멈춘 기사 뒤에는 두지 않는다.
-async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe }) {
+async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe, feedSummary = "" }) {
   const outcome = { requestCount: 0, detailCount: 0, errors: [], row: null, exclusion: null, paced: false };
   const errors = outcome.errors;
   const exclude = (title, url, reason) => ({ ...outcome, exclusion: [title, url, reason] });
+  // 상세 페이지 본문을 못 얻었을 때(요청 오류·차단, 추출 실패, 기준 미달) 본문 대신 쓸 피드 요약. 기준에 못 미치면 빈 값이다.
+  // 상세 본문이 기준을 넘으면 요약은 쓰지 않는다. 그래야 이미 본문이 있던 기사의 근거와 기사 ID 가 그대로다.
+  // 판정은 이 글을 본문과 똑같이 근거로 받고, 인용 확인(importReview)도 이 글에 대해 한다.
+  const summaryBody = feedSummaryBody(feedSummary, args.contentCharLimit);
+  const summaryFields = summaryBody ? {
+    content_text: summaryBody,
+    content_excerpt: contentExcerpt(summaryBody, args.contentExcerptLimit),
+    content_word_count: summaryBody.split(/\s+/).filter(Boolean).length,
+    // 본문 출처 표시. 상세 페이지 본문인 행에는 붙이지 않는다(없으면 상세 페이지·JSON 피드 본문이다).
+    // content_fetch_status 는 상세 페이지 요청의 결과(error·empty·unextractable_* 등)를 그대로 둔다.
+    // 근거가 원문 전체가 아니라 피드 요약이고 원문은 읽지 못했다는 사실을 지우지 않는다.
+    content_source: "feed_summary",
+  } : {};
   try {
     let document;
     // 공식 상세 페이지와 발행사 주소는 같은 길로 받는다: 바이트로 문서 종류를 판별하고, 재시도와 domainGuard 를 거친다.
@@ -2056,6 +2141,10 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
       contentFetchStatus = `unextractable_${unextractable}`;
       limitedContent = "";
     }
+    // 페이지는 받았지만 본문이 기준에 못 미치면(빈 껍데기, 추출 실패) 피드 요약을 본문 자리에 쓴다.
+    // 날짜 단서(bodyHead)도 실제로 근거가 되는 글에서 찾는다.
+    const fromFeedSummary = Boolean(summaryBody) && !hasArticleBody({ content_text: limitedContent });
+    if (fromFeedSummary) limitedContent = summaryBody;
     // 목록에 날짜가 있어도 기사 페이지를 다시 읽는다. 더 강한 근거가 있는지, 두 날짜가 어긋나는지는
     // 상세 페이지를 보고 나서야 알 수 있다.
     const bodyHead = limitedContent.slice(0, 4000);
@@ -2083,6 +2172,7 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
       content_source_url: document.resolvedUrl,
       content_excerpt: contentExcerpt(limitedContent, args.contentExcerptLimit),
       content_word_count: limitedContent.split(/\s+/).filter(Boolean).length,
+      ...(fromFeedSummary ? { content_source: "feed_summary" } : {}),
       content_fetch_status: contentFetchStatus,
       content_fetched_at: collectedAt,
     } };
@@ -2106,6 +2196,9 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
         dateEvidence(extractDateFromText(row.title) || extractMonthFromText(row.title), "text", "context"),
         dateEvidence(sitemapUrlDate(row.url), "url", "context"),
       ]),
+      // 원문이 막혀도(403·500 등) 피드가 준 요약이 기준을 넘으면 그것을 근거로 남긴다. 받은 주소가 없으므로
+      // content_source_url 은 비워 둔다. 보고서 출처 링크(report_content.py source_url)가 피드 XML 을 가리키면 안 된다.
+      ...summaryFields,
       content_fetch_status: "error",
       content_fetched_at: collectedAt,
     } };
@@ -3042,6 +3135,8 @@ async function main() {
     // Google 차례의 이번 실행 기록: 보낸 요청, 429 수, 쉰 횟수와 시간, 429 뒤 다시 보낸 기사, 막혀서 요청 없이 넘긴 기사.
     // 9월 15일 점검에서 이런 기록이 없어 막힘이 시간을 얼마나 먹었는지 가를 수 없었다. 이어 받은 단계는 세지 않는다.
     google_probe_stats: { ...probePublisher.stats },
+    // 원문을 못 읽어 피드 요약을 본문으로 쓴 행. 판정은 요약만 보고 한 것이다.
+    feed_summary_body_count: finalRows.filter(row => row.content_source === 'feed_summary').length,
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,
