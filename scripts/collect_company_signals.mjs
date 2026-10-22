@@ -1355,7 +1355,30 @@ export function orderPageRows(rows) {
   const undated = (row) => (row.published_at || row.published_month ? 0 : 1);
   return rows
     .map((row, index) => ({ row, index }))
-    .sort((a, b) => acceptFirst(a.row) - acceptFirst(b.row) || undated(a.row) - undated(b.row) || a.index - b.index)
+    .sort((a, b) => acceptFirst(a.row) - acceptFirst(b.row) || correctionLast(a.row) - correctionLast(b.row)
+      || undated(a.row) - undated(b.row) || a.index - b.index)
+    .map(({ row }) => row);
+}
+
+// 정정·수정 공시. 같은 날 여러 건이 한꺼번에 올라와 출처당 상한(maxPerSource)을 먼저 차지한다.
+// 2026-09 Nabtesco 피드 맨 위를 9/30 정정·수정보고서 10여 건이 채워, 9/15 정밀 감속기 RV 보도자료가 자리를 받지 못했다.
+// 버리지는 않고 같은 출처 안에서 뒤로만 보낸다. 내용은 대개 이미 낸 숫자를 고친 것이라 시그널 근거가 되는 일이 드물다.
+const CORRECTION_NOTICE_PATTERN = new RegExp([
+  String.raw`^\W*(?:correction|corrected|amendment|amended)\b`,
+  String.raw`\bnotice\s+(?:regarding|of)\s+(?:the\s+)?(?:submission|filing)\s+(?:of\s+)?(?:the\s+)?(?:amend|correct)`,
+  String.raw`\bpartial\s+(?:correction|amendment)\b`,
+  "訂正", "一部変更のお知らせ", "정정",
+].join("|"), "i");
+
+function correctionLast(row) {
+  return CORRECTION_NOTICE_PATTERN.test(String(row?.title || "")) ? 1 : 0;
+}
+
+// 출처 순서는 지키고 정정·수정 공시만 뒤로 보낸다(안정 정렬).
+export function correctionsLast(rows) {
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => correctionLast(a.row) - correctionLast(b.row) || a.index - b.index)
     .map(({ row }) => row);
 }
 
@@ -1505,12 +1528,12 @@ async function collectOfficialFeeds(company, sourceConfig, dateRange, maxPerSour
         ? parseJsonFeed(xml, company, collectedAt, feedUrl, sourceName, feedKind, feed.json, contentCharLimit)
         : parseRssOrAtom(xml, company, collectedAt, "official_feed", feedUrl, sourceName, feedKind);
       rows.push(
-        ...filterByDateRange(
+        ...correctionsLast(filterByDateRange(
           parsed
             // IR 피드는 이사·애널리스트 소개 페이지도 새 항목으로 싣는다. 기사가 아니다.
             .filter((row) => !isPersonOrCoveragePage(row.url)),
           dateRange,
-        ).slice(0, maxPerSource),
+        )).slice(0, maxPerSource),
       );
     } catch (error) {
       errors.push({ source_url: feedUrl, source_name: sourceName, kind: "feed", error: error.message });
@@ -1550,7 +1573,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
               }),
             dateRange,
           );
-          rows.push(...feedRows.slice(0, maxPerSource));
+          rows.push(...correctionsLast(feedRows).slice(0, maxPerSource));
           recoveryCandidates.push(...feedRows.map(row => ({ ...row, source_page_url: feedUrl })));
         } catch (error) {
           errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, kind: "discovered_feed", error: error.message });
@@ -2573,7 +2596,9 @@ export function mergePublisherDuplicateDates(officialRows, fallbackRows) {
 // 1=새로 받아들인 기사, 2=받아봐야 아는 후보다. 표시 순서가 아니라 잘라내는 순서라서,
 // 자른 뒤에 sortRows 로 다시 정렬한다. 기본 정책에서는 모든 행이 0이라 아무것도 달라지지 않는다.
 export function trimByRank(rows, limit) {
-  return [...rows].sort((a, b) => (a.link_rank ?? 0) - (b.link_rank ?? 0)).slice(0, limit);
+  // 같은 링크 순위 안에서는 정정·수정 공시를 뒤로 보낸다(correctionsLast 와 같은 이유).
+  return [...rows].sort((a, b) => (a.link_rank ?? 0) - (b.link_rank ?? 0) || correctionLast(a) - correctionLast(b))
+    .slice(0, limit);
 }
 
 // 대체 수집 뒤 기업 자리(maxPerCompany)를 채우는 순서: 이번 달로 쓸 수 있는 기사, 나머지 자체 출처,
@@ -2857,7 +2882,7 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
     try {
       requestCount += 1;
       const xml = await fetchText(entry.url, timeoutSeconds);
-      rows.push(...sitemapRows(xml, company, entry, dateRange, collectedAt).slice(0, maxPerSource));
+      rows.push(...correctionsLast(sitemapRows(xml, company, entry, dateRange, collectedAt)).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", kind: "sitemap", error: error.message });
     }
