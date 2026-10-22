@@ -11,7 +11,7 @@ The 5 Key Investment Signals
 2 Factory Expansion & Diversification of Production Bases New factory opening or facility construction in the Asia-Pacific (APAC) region
 3 Capital Raising & Securing Liquidity Getting extra cash by issuing corporate bonds, new share issuance, or bank loans
 4 Tech Partnerships & Joint Research Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies
-5 Top Executive Actions C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites
+5 Top Executives' Activities C-level executives moving to new positions, business trips to Korea, or checking out local business sites
 kotra Invest KOREA
 
 ===== PAGE 2 =====
@@ -108,7 +108,7 @@ Company
 76 Cheng Uei Precision
 77 Shanghai Electric Wind Power
 Signal detected No signal
-① Supply Chain & Political Risk Management · ② Factory Expansion & Diversification of Production Bases · ③ Capital Raising & Securing Liquidity · ④ Tech Partnerships & Joint Research · ⑤ Top Executive Actions
+① Supply Chain & Political Risk Management · ② Factory Expansion & Diversification of Production Bases · ③ Capital Raising & Securing Liquidity · ④ Tech Partnerships & Joint Research · ⑤ Top Executives' Activities
 Signals detected at 6 companies; none detected at 71.
 Invest KOREA · Global Investment Signal Monitor · Issue 3 02
 
@@ -123,7 +123,7 @@ Biologics Safety Testing USA
 4 Tech Partnerships & Joint Research
 On August 20, 2026, Charles River Laboratories collaborated with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine by leveraging advanced analytical platforms including Next-Generation Sequencing.
 Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Virus validation and master/working cell bank characterization
 On August 20, 2026, Charles River Laboratories partnered with Medigen Vaccine Biologics Corp. to characterize and validate the virus seed bank for MVC's next-generation multivalent enterovirus vaccine. The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness.
@@ -142,7 +142,7 @@ Aerospace & E-Propulsion USA
 Boeing Investment and Technology Collaboration
 Boeing signed definitive agreements to transfer Wisk Aero and other subsidiaries to Archer while taking a stake in Archer and establishing an ongoing technology sharing and collaboration arrangement.
 Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Electric motors and high-power battery propulsion modules for aircraft
 Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.
@@ -160,7 +160,7 @@ Ouster is expanding its LiDAR production capacity to support rising demand, with
 Source: Yahoo Finance Aug 17, 2026
 3 Capital Raising & Securing Liquidity No signal in August
 4 Tech Partnerships & Joint Research No signal in August
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Lidar sensors for robots
 Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state.
@@ -179,7 +179,7 @@ Semiconductor Equipment USA
 AI Computing Material and Process Innovation Research Collaboration
 Applied Materials announced that University of California, Berkeley will join its EPIC Center in Silicon Valley as a research collaborator to pursue research programs accelerating material and process innovations.
 Source: Press release · Applied Materials Aug 11, 2026
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
 Source: Press release · Applied Materials Aug 13, 2026
@@ -197,7 +197,7 @@ Completion of £100 Million Investment Round.
 The completion of the £100 million ($133 million) investment round includes a £52.6 million ($70 million) commitment from the National Wealth Fund along with new investors Korea Development Bank and Honda Xcelerator Ventures, supporting continued scale-up and commercialisation activities.
 Source: Nexeon - Media / Newsroom Aug 31, 2026
 4 Tech Partnerships & Joint Research No signal in August
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Target technology CVD silicon-carbon (Si-C) anode materials
 Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit. Additionally, Nexeon recently brought online the world's first volume production facility for silicon-carbon materials in Gunsan, South Korea.
@@ -215,7 +215,7 @@ Ion-Exchange Membranes France
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.
 Source: Press release · Veolia Aug 26, 2026
 4 Tech Partnerships & Joint Research No signal in August
-5 Top Executive Actions No signal in August
+5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Ion-exchange and bipolar membranes
 Veolia completed a EUR 1.15 billion bond issue on 26 August 2026, securing financing on the bond market.

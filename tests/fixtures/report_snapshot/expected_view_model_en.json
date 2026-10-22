@@ -42,8 +42,8 @@
       },
       {
         "no": 5,
-        "label": "Top Executive Actions",
-        "description": "C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites"
+        "label": "Top Executives' Activities",
+        "description": "C-level executives moving to new positions, business trips to Korea, or checking out local business sites"
       }
     ]
   },
@@ -54,7 +54,7 @@
     "company_heading": "Company",
     "legend_on": "Signal detected",
     "legend_off": "No signal",
-    "indicators": "① Supply Chain & Political Risk Management · ② Factory Expansion & Diversification of Production Bases · ③ Capital Raising & Securing Liquidity · ④ Tech Partnerships & Joint Research · ⑤ Top Executive Actions",
+    "indicators": "① Supply Chain & Political Risk Management · ② Factory Expansion & Diversification of Production Bases · ③ Capital Raising & Securing Liquidity · ④ Tech Partnerships & Joint Research · ⑤ Top Executives' Activities",
     "footnote": "Signals detected at 6 companies; none detected at 71.",
     "counts": {
       "detected": 6,
@@ -1029,7 +1029,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1081,7 +1081,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1133,7 +1133,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1185,7 +1185,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1237,7 +1237,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }
@@ -1289,7 +1289,7 @@
           },
           {
             "no": 5,
-            "label": "Top Executive Actions",
+            "label": "Top Executives' Activities",
             "active": false,
             "empty": "No signal in August"
           }

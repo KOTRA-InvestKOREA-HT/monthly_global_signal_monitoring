@@ -180,7 +180,7 @@ SIGNAL_DESCRIPTIONS_EN = {
     2: "Factory Expansion & Diversification of Production Bases",
     3: "Capital Raising & Securing Liquidity",
     4: "Tech Partnerships & Joint Research",
-    5: "Top Executive Actions",
+    5: "Top Executives' Activities",
 }
 
 INDICATOR_DESCRIPTION_EN = {
@@ -189,7 +189,7 @@ INDICATOR_DESCRIPTION_EN = {
     2: "New factory opening or facility construction in the Asia-Pacific (APAC) region",
     3: "Getting extra cash by issuing corporate bonds, new share issuance, or bank loans",
     4: "Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies",
-    5: "C-level bosses moving to new positions, making quiet trips to Korea, or checking out local business sites",
+    5: "C-level executives moving to new positions, business trips to Korea, or checking out local business sites",
 }
 
 COUNTRY_EN = {
