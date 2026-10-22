@@ -3,9 +3,18 @@
   "guidance": [
     "그 기업 기사에만 나오는 말을 적는다. 제품·브랜드명(Hydro CIRCAL), 업계 약칭, 흔한 철자 변형이 대상이다.",
     "미국식·영국식 철자를 함께 적는다(aluminium/aluminum). 사전 필터는 문자열 일치라 둘을 따로 본다.",
+    "한 낱말은 사전 필터가 낱말 단위로 맞춘다. encoder 는 encoders 를 통과시키지 않으므로 복수형도 따로 적는다.",
     "세 글자 미만은 사전 필터가 무시한다. 너무 일반적인 낱말은 그 기업의 아무 기사나 통과시키므로 적지 않는다.",
+    "타겟 기술과 실제로 관련된 말만 적는다. 그 기업의 주력 사업이라도 타겟 품목과 무관하면(예: Arkema 의 battery 일반) 넣지 않는다. 판정 모델이 거르긴 하지만 후보 두 자리를 잡아먹는다.",
+    "카탈로그의 두 낱말 이상 구가 여섯 자리를 먼저 차지해서 EUV·PVDF·FMM·radar·GaN 같은 강한 한 낱말·약어는 질의에 들어가지 못한다. 그런 말이 그 기업 기사의 대표 표현이면 여기 적는다. 여기 적은 말은 순서대로 질의 앞자리를 차지한다.",
+    "여섯 개를 넘게 적으면 앞의 여섯만 질의에 들어가고 나머지는 사전 필터에만 쓰인다. 질의로 찾을 말을 앞에, 제목에서 알아볼 말을 뒤에 둔다.",
+    "company_names 는 사업동향 질의에만 쓰는 회사명이다. 기사에서 부르는 이름이 기업 목록의 표시명·별칭과 다를 때만 적는다. 적으면 기본 이름 대신 이것만 쓴다. 판정 모델에는 가지 않으므로 판정 캐시를 건드리지 않는다.",
     "이 파일을 고치면 수집 식별자가 바뀌어 캐시된 수집을 다시 돈다. 다음 달 실행 전에 고치는 것이 좋다."
   ],
+  "company_names": {
+    "EMM(Umicore)": ["Umicore"],
+    "Toppan Holdings": ["Toppan"]
+  },
   "companies": {
     "Norsk Hydro": [
       "Hydro CIRCAL",
@@ -14,6 +23,34 @@
       "recycled alu",
       "recycled alloy",
       "recycled content aluminum"
-    ]
+    ],
+    "Corning": ["EUV", "photomask", "mask blank", "mask blanks", "ULE glass", "fused silica"],
+    "NXP": ["radar", "imaging radar", "GaN", "RF power", "mmWave", "satellite"],
+    "Infineon": ["radar", "GaN", "RF power", "mmWave", "satellite", "60 GHz"],
+    "Skyworks": ["RF front-end", "front-end module", "automotive", "V2X", "connected car", "automotive RF"],
+    "Chemours": ["Nafion", "proton exchange membrane", "PEM", "electrolyzer", "electrolyzers", "hydrogen"],
+    "Veolia": ["ion exchange", "electrodialysis", "bipolar membrane", "ion exchange membrane", "electrodeionization"],
+    "Syensqo": ["PVDF", "Solef", "fluoropolymer", "fluoropolymers", "battery binder", "battery materials"],
+    "Arkema": ["PVDF", "Kynar", "fluoropolymer", "fluoropolymers", "battery binder", "battery materials"],
+    "Sumitomo Chemical": ["PVDF", "battery separator", "separators", "fluoropolymer", "battery materials"],
+    "EMM(Umicore)": ["silicon anode", "anode", "anodes", "anode material", "anode materials", "battery materials"],
+    "Mitsubishi Chemical": ["anode", "anodes", "anode material", "anode materials", "silicon anode", "battery materials"],
+    "Nexeon": ["anode", "anodes", "silicon anode", "silicon battery", "battery technology", "battery tech"],
+    "DNP": ["metal mask", "metal masks", "FMM", "OLED", "fine metal mask", "deposition mask"],
+    "Hitachi Metals": ["Invar", "metal mask", "metal masks", "FMM", "OLED", "fine metal mask"],
+    "Toppan Holdings": ["metal mask", "metal masks", "FMM", "OLED", "fine metal mask", "deposition mask"],
+    "Asahi Glass": ["glass substrate", "glass substrates", "glass core", "TGV", "through glass via", "glass interposer"],
+    "Tosoh": ["sputtering target", "sputtering targets", "sputtering", "Tosoh SMD", "tantalum", "PVD"],
+    "Plansee": ["sputtering target", "sputtering targets", "sputtering", "tantalum", "PVD", "thin film"],
+    "Heidenhain": ["encoder", "encoders", "linear encoders", "angle encoder", "length gauge", "linear scale"],
+    "Renishaw": ["encoder", "encoders", "linear encoders", "optical encoder", "absolute encoder", "RESOLUTE"],
+    "Magnix": ["electric aircraft", "electric propulsion", "Samson", "eFlyer", "electric motor", "hybrid-electric", "all-electric", "aviation battery"],
+    "Boeing": ["eVTOL", "Wisk", "electric aircraft", "electric propulsion", "hybrid-electric", "hybrid electric"],
+    "Safran": ["ENGINeUS", "electric motor", "electric motors", "electric propulsion", "hybrid-electric", "eFlyer", "eVTOL"],
+    "Schott Pharma": ["syriQ", "prefillable syringe", "prefillable syringes", "glass syringe", "polymer syringe", "syringes"],
+    "West Pharmaceutical": ["SmartDose", "autoinjector", "syringe", "syringes", "NovaPure", "Crystal Zenith"],
+    "Nabtesco": ["reduction gear", "reduction gears", "RV reducer", "precision reduction gear", "robot", "robots"],
+    "Maxon": ["actuator", "actuators", "gearhead", "gearheads", "robot joint", "joint actuator", "drive systems"],
+    "ABB": ["gearbox", "gearboxes", "actuator", "actuators", "robot joint", "servo motor"]
   }
 }

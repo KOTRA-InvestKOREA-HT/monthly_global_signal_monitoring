@@ -2075,9 +2075,12 @@ export function companyTrendInputs(args, company, technology = trendTechnology, 
   if (!(args.maxTrendDiscovery > 0)) return null;
   const entry = companyTechnology(company, technology);
   const { groups, ...keywordSettings } = keywordConfig || {};
+  // 질의용 회사명은 적은 기업에만 키를 넣는다. 빈 값을 모든 기업에 넣으면 그것만으로 77개 기업의 식별자가
+  // 바뀌어 캐시된 수집을 통째로 다시 돈다.
+  const searchNames = companySearchNames(company, searchTerms);
   return { maxTrendDiscovery: args.maxTrendDiscovery, technology: entry, keywordSettings,
     keywordGroup: entry ? groups?.[entry.technology_group] ?? null : null,
-    searchTerms: companySearchTerms(company, searchTerms) };
+    searchTerms: companySearchTerms(company, searchTerms), ...(searchNames.length ? { searchNames } : {}) };
 }
 
 function companyTechnology(company, technology) {
@@ -2099,6 +2102,18 @@ export function companyCollectionIdentity({ company, sourceConfig, args, selecte
 export function companySearchTerms(company, searchTerms) {
   const entry = searchTerms?.companies?.[company?.company];
   return (Array.isArray(entry) ? entry : []).map((term) => String(term || "").trim()).filter(Boolean);
+}
+
+// 사업동향 질의에만 쓰는 회사명. 기사에서 실제로 부르는 이름이 기업 목록의 표시명·별칭과 다른 기업이 있다.
+// 2026-09 에는 EMM(Umicore) 가 "EMM(Umicore)"·"EMM Umicore"·"Umicore EMM" 으로만 검색돼 0건이었는데,
+// 같은 기간 "Umicore" 로 찾으면 HS Hyosung 과 울산 실리콘 음극재 공장에 투자한다는 기사가 나왔다.
+// Toppan Holdings 도 "TOPPAN Holdings" 로만 찾았다. 기사는 대개 "Toppan" 이라 쓴다.
+// 별칭(target_companies.json 의 query_aliases)을 고치지 않고 여기 두는 것은, 별칭이 판정 모델에 가는
+// 기업 식별 정보(target_identity)라 고치면 그 기업의 저장된 판정이 모두 무효가 되기 때문이다.
+// 여기 적은 이름은 질의에만 쓰고 판정에는 가지 않는다. 적으면 기본 이름 대신 이것만 쓴다.
+export function companySearchNames(company, searchTerms) {
+  const entry = searchTerms?.company_names?.[company?.company];
+  return (Array.isArray(entry) ? entry : []).map((name) => String(name || "").trim()).filter(Boolean);
 }
 
 export function trendKeywords(technology, keywordConfig, company = null, searchTerms = null) {
@@ -2174,7 +2189,12 @@ export function selectTrendQueryTerms(keywords, overrides = [], limit = TREND_QU
   return rankTrendQueryTerms(keywords, overrides, generated).slice(0, limit);
 }
 
-function trendCompanyNames(company, overrides) {
+export function trendCompanyNames(company, overrides, searchNames = []) {
+  // 사람이 질의용으로 적은 이름이 있으면 그것만 쓴다. 표시명이 기사에 나오지 않는 이름이라
+  // 기본 이름과 섞으면 세 자리 가운데 쓸모없는 자리만 늘어난다.
+  if (searchNames.length) {
+    return [...new Map(searchNames.map((name) => [name.toLowerCase(), name])).values()].slice(0, 3);
+  }
   const names = relevantAliases(company);
   // 일반 Google 검색에서는 Hydro 같은 짧고 흔한 별칭을 빼야 하지만, 기업별 제품명·시장 표현과
   // 함께 찾을 때는 오탐 범위가 충분히 좁다. Norsk Hydro 정식명만 쓰면 제목이 "Hydro brings ..."
@@ -2200,7 +2220,7 @@ export function buildTrendQuery(company, technology, keywordConfig, dateRange, s
   const terms = selectTrendQueryTerms(keywords, overrides, TREND_QUERY_KEYWORD_LIMIT,
     generatedOnly);
   if (!terms.length) return "";
-  const names = trendCompanyNames(company, overrides);
+  const names = trendCompanyNames(company, overrides, companySearchNames(company, searchTerms));
   const nameClause = names.length > 1 ? `(${names.map((name) => `"${name}"`).join(" OR ")})` : `"${names[0]}"`;
   return `${nameClause} (${terms.map((term) => `"${term}"`).join(" OR ")}) ${trendSearchWindow(dateRange)}`;
 }
