@@ -5,12 +5,13 @@ import { COLLECTION_ARGS, COLLECTOR_NODE_FLAGS, collectorCommand } from '../scri
 import { parseArgs } from '../scripts/collect_company_signals.mjs';
 
 // 운영 판정(review_report.mjs)이 2026-10 까지 손으로 넘기던 인자. 공용 인자는 이것과 같아야 한다.
+// 사업동향 탐색 상한만 2026-10 에 2건에서 4건으로 올렸다(collection_args.mjs 의 근거).
 const PRODUCTION = ['--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json',
   '--sources', 'official_feeds,official_pages,official_sitemaps,sec_filings,google_news',
   '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'missing',
   '--fallback-min-results', '1', '--rate-limit-seconds', '0.5', '--company-concurrency', '4',
   '--technology-map', 'data/company_technology_map.json', '--keyword-config', 'config/technology_keywords.json',
-  '--search-terms', 'config/trend_search_terms.json', '--max-trend-discovery', '2'];
+  '--search-terms', 'config/trend_search_terms.json', '--max-trend-discovery', '4'];
 const pairs = args => Object.fromEntries(args.reduce((list, value, index) => (index % 2 ? list : [...list, [value, args[index + 1]]]), []));
 
 test('the shared collection arguments are the production arguments', () => {

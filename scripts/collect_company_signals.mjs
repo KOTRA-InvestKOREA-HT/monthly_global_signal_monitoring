@@ -2238,7 +2238,7 @@ export function isDuplicateTrendRow(row, existingRows) {
 }
 
 // 키워드 목록은 일부러 넓다("scrap", "recycling" 같은 항목이 있다). 그래서 통과한 기사 가운데
-// 자리 두 개를 어디에 줄지는 얼마나 구체적으로 맞았는지로 정한다. 맞은 키워드가 많을수록,
+// 상한만큼의 자리를 어디에 줄지는 얼마나 구체적으로 맞았는지로 정한다. 맞은 키워드가 많을수록,
 // 가장 긴 키워드가 길수록 앞에 둔다. 거르는 기준은 그대로이고 순서만 정하는 것이다.
 function trendSpecificity(matched) {
   return [matched.length, Math.max(...matched.map((term) => term.length))];
