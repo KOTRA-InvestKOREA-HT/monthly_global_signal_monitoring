@@ -56,6 +56,8 @@ function crowdedDetail(signalCount) {
   const model = fixture('en');
   const page = model.details.pages[0];
   page.signals = page.signals.map((signal, index) => (index < signalCount ? longSignal(signal, sentence) : signal));
+  // 첫 카드는 별도 기사가 없어 상자가 빠져 있다. 가장 붐비는 경우를 재려고 다른 카드의 상자를 빌려 온다.
+  page.business = { ...(page.business || model.details.pages.find(entry => entry.business).business) };
   page.business.body = (sentence.repeat(5)).trim().slice(0, 420);
   return { model, company: page.company };
 }

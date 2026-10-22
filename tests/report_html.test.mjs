@@ -309,6 +309,15 @@ test('the business box puts its target on its own line and marks no near-miss ro
   assert.equal(occurrences(html, '품목 연계 미확인'), 0);
 });
 
+test('a card with no separate business article draws no business box at all', () => {
+  // 위 지표 칸을 되풀이하거나 빈 문구를 싣지 않는다(report_content.best_business_row 가 None 을 준다).
+  const m = withDetails(['Corning', 'Amkor']);
+  m.details.pages[0].business = null;
+  const html = renderReport(m);
+  assert.equal(occurrences(html, 'class="business-box"'), 1);
+  assert.deepEqual(cutTexts(m), []);
+});
+
 test('a business box without a target keeps the heading line alone', () => {
   const m = withDetails(['Amkor']);
   m.details.pages[0].business.target_text = '';

@@ -66,8 +66,10 @@ for (const lang of ['ko', 'en']) {
       const page = 2 + index;
       printed(page, vm.footer);
       printed(page, entry.company);
-      printed(page, entry.business.body);
-      printed(page, entry.business.source);
+      if (entry.business) {
+        printed(page, entry.business.body);
+        printed(page, entry.business.source);
+      }
       for (const signal of entry.signals) {
         printed(page, signal.label);
         printed(page, signal.active ? (signal.headline || signal.plain) : signal.empty);

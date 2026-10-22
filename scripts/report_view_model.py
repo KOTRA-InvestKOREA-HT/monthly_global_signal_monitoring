@@ -118,22 +118,28 @@ def detail_entries(profiles, signal_index, relevant, investment, measure):
         if not any(rows_by_signal.values()):
             continue
         shown = [rows[0] for rows in rows_by_signal.values() if rows]
-        business_row = report.best_business_row(profile["company"], relevant, investment, shown)
+        business_row = report.best_business_row(profile["company"], relevant, investment, shown,
+                                                exempt_company=bool(profile.get("exempt_from_relevance")))
         target_label, target_text = report.target_section_for_profile(profile)
+        # 실을 별도 기사가 없으면 상자를 뺀다(None). 위 지표 칸을 되풀이하거나 빈 문구를 싣지 않는다.
+        business = None
+        if business_row:
+            business_body = report.business_text([business_row])
+            business = {
+                "heading": report.t("business_heading"),
+                "target_label": target_label,
+                "target_text": target_text,
+                "body": business_body,
+                "cut": summary_cut(business_row, business_body),
+                "source": report.source_line(business_row),
+                "source_url": report.source_url(business_row),
+            }
         entries.append({
             "company": profile.get("display_name") or profile["company"],
             "country": profile.get("country", ""),
             "industry": profile.get("detailed_industry", ""),
             "signals": [signal_entry(no, rows_by_signal.get(no, []), measure) for no in range(1, 6)],
-            "business": {
-                "heading": report.t("business_heading"),
-                "target_label": target_label,
-                "target_text": target_text,
-                "body": (business_body := report.business_text([business_row] if business_row else [])),
-                "cut": summary_cut(business_row, business_body),
-                "source": report.source_line(business_row) if business_row else report.t("source_empty"),
-                "source_url": report.source_url(business_row),
-            },
+            "business": business,
         })
     return entries
 

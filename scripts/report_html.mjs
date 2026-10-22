@@ -285,7 +285,7 @@ function detailPages(state, model, assets) {
             <span class="country">${escapeHtml(entry.country)}</span>
           </div>
           <ol class="signals">${entry.signals.map(signalRow).join('')}</ol>
-        </section>
+        </section>${entry.business ? `
         <section class="business-box">
           <p class="business-head">
             <span class="business-heading">${escapeHtml(entry.business.heading)}</span>
@@ -297,7 +297,7 @@ function detailPages(state, model, assets) {
           </p>` : ''}
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
           ${sourceLine(entry.business.source, entry.business.source_url)}
-        </section>
+        </section>` : ''}
       </div>`)).join('');
 }
 

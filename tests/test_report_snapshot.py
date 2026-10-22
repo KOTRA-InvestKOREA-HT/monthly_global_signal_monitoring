@@ -82,8 +82,7 @@ class ReportSnapshotTests(unittest.TestCase):
         self.assertGreaterEqual(sum("on" in row["signals"] for row in rows), 5, "승인된 시그널이 여러 기업에 있어야 한다")
         self.assertIn("reviewed", {row["status"] for row in rows}, "시그널 없는 기업도 있어야 한다")
         pages = ko["details"]["pages"]
-        empty = report_content.TEXTS["ko"]["business_empty"]
-        self.assertTrue([page for page in pages if page["business"]["body"] != empty],
+        self.assertTrue([page for page in pages if page["business"]],
                         "사업현황 상자가 채워진 기업이 있어야 한다")
         self.assertTrue(ko["items"] and ko["items"]["cards"], "품목별 사업동향 카드가 있어야 한다")
         self.assertTrue([signal for page in pages for signal in page["signals"] if not signal["active"]],
