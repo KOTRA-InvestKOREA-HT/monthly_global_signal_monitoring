@@ -881,6 +881,15 @@ function httpError(response) {
   return error;
 }
 
+// Retry-After 는 초 수이거나 HTTP 날짜다. 읽을 수 없으면 0(지정 없음)이다.
+export function parseRetryAfter(value, nowMs = Date.now()) {
+  const text = String(value ?? '').trim();
+  if (!text) return 0;
+  if (/^\d+$/.test(text)) return Number(text);
+  const at = Date.parse(text);
+  return Number.isFinite(at) ? Math.max(0, Math.ceil((at - nowMs) / 1000)) : 0;
+}
+
 function isRetryableFetchError(error) {
   if (error.noRetry) return false;
   // 상태 코드가 없으면 네트워크 오류나 타임아웃이므로 재시도한다.
@@ -1524,36 +1533,81 @@ export function detailSourceUrl(row) {
   return row.url;
 }
 
-// 연속 실패가 limit 에 닿으면 멈추는 대신 pauseMs 만큼 쉬고 다시 시도한다. 쉬고 나서도 다시 막히기를
-// maxPauses 번 되풀이하면 그때 이번 실행의 Google 확인을 멈춘다.
+// Google 확인 차례. 기업이 달라도 Google 링크 풀기는 이 차례 하나를 지난다. Google 한도는 실행 전체가 함께 쓰기 때문이다.
 // 2026-08 보고서(9월 14일 실행)에서는 Schott Pharma 에서 세 번 연속 실패한 뒤 Google 확인을 통째로 껐다.
 // 그 뒤 순서의 기사 51건이 본문 없이 남았는데, 같은 링크를 로컬에서 다시 풀면 전부 1초 안에 풀렸다.
-// 일시적인 차단이었다.
-export function createPublisherProbe(limit = 3, { pauseMs = 60000, maxPauses = 3, sleepFn = sleep } = {}) {
-  let failures = 0, pauses = 0, queue = Promise.resolve();
-  return async (url, request) => {
-    if (!isGoogle(url)) return request();
-    // Serialize Google probes across company workers so the failure threshold
-    // cannot be exceeded by already queued requests. Other publishers run freely.
-    const result = queue.then(async () => {
-      if (failures >= limit) {
-        if (pauses >= maxPauses) return null;
-        pauses += 1;
-        failures = 0;
-        await sleepFn(pauseMs);
+// 일시적인 차단이었다. 그래서 연속 실패가 limit 에 닿으면 쉬고 다시 시도하게 했는데, 9월분(10월 13일 실행)에서는
+// 35건을 풀고 난 뒤 기사 페이지가 429 를 내기 시작해 60초씩 세 번 쉬고도 풀리지 않았고, 남은 79건을 요청 없이 버렸다.
+// 그때 요청 사이에 간격이 없었다(4개 기업이 한 차례에 기사를 몰아넣는다). 429 를 받은 기사도 2초·4초 뒤 같은 요청을
+// 되풀이하고 리다이렉트까지 따라가, 막힌 동안에도 기사 하나에 Google 요청이 네 번 갔다.
+// 지금은 이렇게 한다.
+// - Google 요청 사이에 intervalMs 를 둔다(앞 요청이 끝난 뒤부터 잰다). 몰아 보내지 않아 애초에 덜 막히게 한다.
+// - 429 는 Google 이 직접 "잠시 멈추라"고 한 것이므로 한 번에 쉰다. 다른 막힘 신호(풀리지 않은 중계 주소·타임아웃·5xx)는
+//   기사 탓일 수도 있어 limit 번 연속일 때만 쉰다. 쉬는 시간은 pauseMs 에서 시작해 쉴 때마다 두 배로 늘리고
+//   (maxCooldownMs 까지), Retry-After 가 더 길면 그 값을 따른다. 쉬는 동안에는 아무 요청도 보내지 않는다.
+// - 429 를 받은 기사는 쉬고 나서 retries 번까지 다시 보낸다. 그 기사 탓이 아니므로 그냥 버리면 손해다.
+// - 한 실행에서 쉬는 데 쓰는 시간은 budgetMs 까지다. 다음 쉼이 예산을 넘으면 기다리지 않고, 막힌 동안 온 기사는
+//   요청 없이 null(google_probe_paused)로 돌려준다. 막힘이 끝날 시각이 지나면 다음 기사로 한 번 시험해 보고, 풀렸으면
+//   그대로 이어 간다. 예전처럼 이번 실행의 확인을 통째로 끄지 않는다. 그래도 남은 기사는 다음 실행이 이어 받는다.
+// request 는 (fetchImpl, attempt) 를 받는다. fetchImpl 은 간격을 지키는 fetch 다. 쓰지 않으면 간격 없이 나간다.
+// sleepFn·now·fetchImpl 은 시험에서 바꿔 넣는다. stats 는 이번 실행의 기록이다(수집 요약 google_probe_stats).
+export function createPublisherProbe(limit = 3, { intervalMs = 1000, pauseMs = 60000, maxCooldownMs = 600000,
+  budgetMs = 180000, retries = 1, sleepFn = sleep, now = Date.now,
+  fetchImpl = (...request) => globalThis.fetch(...request) } = {}) {
+  let failures = 0, cooldowns = 0, spentMs = 0, blockedUntil = 0, lastRequestAt = -Infinity, queue = Promise.resolve();
+  const stats = { requests: 0, rate_limited: 0, cooldowns: 0, cooldown_ms: 0, retried: 0, paused: 0 };
+  const pacedFetch = async (target, init) => {
+    const waitMs = lastRequestAt + intervalMs - now();
+    if (waitMs > 0) await sleepFn(waitMs);
+    stats.requests += 1;
+    try { return await fetchImpl(target, init); } finally { lastRequestAt = now(); }
+  };
+  const run = async (request) => {
+    for (let attempt = 0; ; attempt += 1) {
+      const waitMs = blockedUntil - now();
+      if (waitMs > 0) {
+        if (spentMs + waitMs > budgetMs) {
+          stats.paused += 1;
+          return null;
+        }
+        spentMs += waitMs;
+        stats.cooldown_ms += waitMs;
+        await sleepFn(waitMs);
       }
       try {
-        const document = await request();
+        const document = await request(pacedFetch, attempt);
         failures = 0;
+        cooldowns = 0;
         return document;
       } catch (error) {
-        failures = googleBlocked(error) ? failures + 1 : 0;
-        throw error;
+        if (!googleBlocked(error)) {
+          failures = 0;
+          throw error;
+        }
+        failures += 1;
+        const rateLimited = error.status === 429;
+        if (rateLimited) stats.rate_limited += 1;
+        if (!rateLimited && failures < limit) throw error;
+        const cooldown = Math.min(maxCooldownMs, Math.max((error.retryAfterSeconds || 0) * 1000, pauseMs * 2 ** cooldowns));
+        cooldowns += 1;
+        failures = 0;
+        stats.cooldowns += 1;
+        blockedUntil = now() + cooldown;
+        // 예산 안에서 쉴 수 있을 때만 같은 기사를 다시 보낸다. 넘으면 이 기사는 오류로 남기고, 뒤 기사는 위에서 멈춘다.
+        if (!rateLimited || attempt >= retries || spentMs + cooldown > budgetMs) throw error;
+        stats.retried += 1;
       }
-    });
+    }
+  };
+  const probe = async (url, request) => {
+    if (!isGoogle(url)) return request();
+    // 차례를 기업 사이에 하나로 묶어야 이미 줄 선 요청이 쉬는 판단을 건너뛰지 못한다. 다른 발행사는 차례 없이 받는다.
+    const result = queue.then(() => run(request));
     queue = result.catch(() => {});
     return result;
   };
+  probe.stats = stats;
+  return probe;
 }
 
 // Google 이 막고 있다는 신호. 중계 주소가 발행사로 풀리지 않은 것만 세던 탓에, 429·5xx·타임아웃이 나면 오히려
@@ -1681,20 +1735,25 @@ async function decodeGoogleNewsSteps(url, timeoutSeconds, fetchImpl) {
     return { reason: 'not_google_news' };
   }
   if (!id) return { reason: 'not_google_news' };
-  // 429·5xx 는 잠깐 쉬고 두 번까지 다시 보낸다. 해독 요청이 몰리면 Google 이 잠시 거절한다.
+  // 5xx 는 잠깐 쉬고 두 번까지 다시 보낸다. 429 는 여기서 다시 보내지 않고 곧바로 돌려준다. 10월 13일 실행에서 2초·4초 뒤
+  // 다시 보낸 429 가 36번 모두 또 429 였다. 막힌 동안 요청을 더 보내면 막힘만 길어진다. 쉬고 다시 보내는 일은
+  // 모든 기업이 함께 쓰는 Google 차례(createPublisherProbe)가 맡는다.
   const send = async (target, init) => {
     for (let attempt = 0; ; attempt += 1) {
       const response = await fetchImpl(target, { ...init, signal: AbortSignal.timeout(timeoutSeconds * 1000) });
-      if ((response.status !== 429 && response.status < 500) || attempt >= 2) return response;
+      if (response.status < 500 || attempt >= 2) return response;
       await response.body?.cancel();
       await sleep(2000 * 2 ** attempt);
     }
   };
+  const failed = async (response, step) => {
+    await response.body?.cancel();
+    const reason = `${step}_http_${response.status}`;
+    if (response.status !== 429) return { reason };
+    return { reason, rateLimited: true, retryAfterSeconds: parseRetryAfter(response.headers?.get('retry-after')) };
+  };
   const page = await send(`https://news.google.com/articles/${id}`, { headers: { 'User-Agent': USER_AGENT } });
-  if (!page.ok) {
-    await page.body?.cancel();
-    return { reason: `article_page_http_${page.status}` };
-  }
+  if (!page.ok) return failed(page, 'article_page');
   const html = await page.text();
   const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
   const timestamp = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
@@ -1711,10 +1770,7 @@ async function decodeGoogleNewsSteps(url, timeoutSeconds, fetchImpl) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT },
     body: `f.req=${encodeURIComponent(JSON.stringify([[['Fbv4je', JSON.stringify(request), null, 'generic']]]))}`,
   });
-  if (!response.ok) {
-    await response.body?.cancel();
-    return { reason: `batchexecute_http_${response.status}` };
-  }
+  if (!response.ok) return failed(response, 'batchexecute');
   let decoded;
   try {
     const payload = (await response.text()).split('\n\n')[1];
@@ -1733,6 +1789,13 @@ export async function resolveArticleSource(url, timeoutSeconds, fetchImpl = fetc
   if (!isGoogle(url)) return { target: url };
   const decoded = await decodeGoogleNewsLink(url, timeoutSeconds, fetchImpl);
   if (decoded.url) return { target: decoded.url };
+  // Google 이 429 로 막고 있으면 중계 주소를 따라가 보지 않는다. 같은 Google 에 또 요청하는 일이고, 10월 13일 실행의
+  // 12건은 따라가도 모두 동의 페이지에서 멈췄다. 상태와 Retry-After 를 실어 Google 차례가 쉬고 다시 보내게 한다.
+  // 메시지는 예전과 같다(google_news_unresolved_count 가 메시지로 센다).
+  if (decoded.rateLimited) {
+    throw Object.assign(new Error('publisher_url_unresolved'), { status: 429,
+      retryAfterSeconds: decoded.retryAfterSeconds || 0, decodeFailure: decoded.reason, noRetry: true });
+  }
   try {
     return { document: await downloadArticleDocument(url, timeoutSeconds, fetchImpl) };
   } catch (error) {
@@ -1922,14 +1985,16 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
       outcome.detailCount += 1;
       document = await fetchPublisherDocument(detailUrl, args.timeoutSeconds);
     } else {
-      const source = await yieldSlot(() => probe(detailUrl, async () => {
+      // googleFetch 는 Google 요청 간격을 지키는 fetch 다. 429 뒤 다시 보낸 시도도 요청 수로 세지만, 상세 페이지 상한은
+      // 기사 한 건으로 한 번만 센다. 다시 보냈다고 이 기업의 다른 기사가 상한에 밀려서는 안 된다.
+      const source = await yieldSlot(() => probe(detailUrl, async (googleFetch, attempt = 0) => {
         outcome.requestCount += 1;
-        outcome.detailCount += 1;
-        return resolveArticleSource(detailUrl, args.timeoutSeconds);
+        if (attempt === 0) outcome.detailCount += 1;
+        return resolveArticleSource(detailUrl, args.timeoutSeconds, googleFetch);
       }));
       document = source && (source.document || await fetchPublisherDocument(source.target, args.timeoutSeconds));
     }
-    // 문서가 없는 경우는 하나다. createPublisherProbe 가 이번 실행의 Google 확인을 멈춰 요청을 보내지 않았다.
+    // 문서가 없는 경우는 하나다. createPublisherProbe 가 쉬는 시간 예산을 다 써서, Google 이 막고 있는 동안 요청을 보내지 않았다.
     // 오류로 남겨야 retryableCollection 이 이 기업을 재시도 대상으로 본다. 남기지 않으면 체크포인트가
     // 완료로 저장돼, 9월 28일 실행처럼 78건이 다시 돌려도 시도되지 않은 채 남는다.
     if (!document) {
@@ -2930,6 +2995,9 @@ async function main() {
     }, {}),
     // Google 확인이 멈춰 요청을 보내지 않은 행. 0보다 크면 그 기업들은 재시도 대상이다.
     google_probe_paused_count: finalRows.filter(row => row.content_fetch_status === 'google_probe_paused').length,
+    // Google 차례의 이번 실행 기록: 보낸 요청, 429 수, 쉰 횟수와 시간, 429 뒤 다시 보낸 기사, 막혀서 요청 없이 넘긴 기사.
+    // 9월 15일 점검에서 이런 기록이 없어 막힘이 시간을 얼마나 먹었는지 가를 수 없었다. 이어 받은 단계는 세지 않는다.
+    google_probe_stats: { ...probePublisher.stats },
     company_count: companies.length,
     canonical_company_count: 77,
     sources: selectedSources,
