@@ -2576,6 +2576,14 @@ export function usableMonthlySource(row, dateRange) {
   return reportEligible(row, dateRangePeriod(dateRange));
 }
 
+// 대체 수집을 돌릴지. 그달 기사가 하나도 없거나, 있어도 본문을 하나도 못 받았으면 돌린다.
+// 본문 없는 기사는 판정에서 규칙으로 버려져, 그 기업은 그달 근거가 사실상 0건이 된다(2026-09: ASML, Syensqo,
+// Safran, DNP). 위에서 걱정한 공식 보도자료 밀어내기는 rankCompanyRows 가 대체 기사를 맨 뒤에 두어 막으므로,
+// 대체 기사는 남는 자리만 채우고 본문 없는 공식 기사도 그대로 남는다.
+export function needsFallback(usableRows, minResults) {
+  return usableRows.length < minResults || !usableRows.some(row => hasArticleBody(row));
+}
+
 // ---------------------------------------------------------------- SEC EDGAR 8-K
 // 미국 상장 타겟기업의 수시공시. 뉴스룸이 수집을 막아도(403) 게시일과 원문이 확실하다.
 // 대상은 설정의 sec_filers 에 티커로 확정한 CIK 만 쓴다. 이름 매칭은 Merck KGaA 를 미국
@@ -2839,7 +2847,7 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
     out_of_period_after_fetch: rows.filter(row => periodPlacement(row, dateRangePeriod(dateRange)).placement === 'out_of_period').length,
     usable_monthly: usable.length, fallback: selectedSources.includes("google_news") ? "skipped_has_monthly_source" : "not_selected" };
   if (selectedSources.includes("google_news") &&
-      (args.fallbackMode !== "missing" || usable.length < args.fallbackMinResults)) {
+      (args.fallbackMode !== "missing" || needsFallback(usable, args.fallbackMinResults))) {
     stats.fallback = "run";
     try {
       const { value: fallback, replayed } = await log.run("google_news",

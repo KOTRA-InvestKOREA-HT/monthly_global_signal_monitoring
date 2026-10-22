@@ -1,6 +1,18 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mergePublisherDuplicateDates, usableMonthlySource } from '../scripts/collect_company_signals.mjs';
+import { mergePublisherDuplicateDates, needsFallback, usableMonthlySource } from '../scripts/collect_company_signals.mjs';
+
+test('fallback also runs when no dated monthly row has a body', () => {
+  const body = 'Actual article body '.repeat(20);
+  const withBody = { content_fetch_status: 'fetched', content_text: body };
+  const pdfOnly = { content_fetch_status: 'unextractable_binary_document', content_text: '' };
+  assert.equal(needsFallback([], 1), true);
+  assert.equal(needsFallback([withBody], 1), false);
+  assert.equal(needsFallback([pdfOnly, withBody], 1), false);
+  // 날짜는 그달이지만 본문이 하나도 없으면 판정할 근거가 없다.
+  assert.equal(needsFallback([pdfOnly], 1), true);
+  assert.equal(needsFallback([pdfOnly, { content_fetch_status: 'error' }], 1), true);
+});
 
 test('fallback requires dated monthly evidence after official detail enrichment', () => {
   const range = {fromMs: Date.parse('2026-08-01'), toMs: Date.parse('2026-09-01') - 1};
