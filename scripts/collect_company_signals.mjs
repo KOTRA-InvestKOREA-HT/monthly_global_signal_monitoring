@@ -858,7 +858,8 @@ function requestHeaders(url) {
   return headers;
 }
 
-async function fetchTextOnce(url, timeoutSeconds) {
+// 본문과 함께 리디렉트를 다 따라간 뒤의 최종 주소를 돌려준다. 목록 페이지의 상대 링크는 이 주소를 기준으로 풀어야 한다.
+async function fetchPageOnce(url, timeoutSeconds) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
   try {
@@ -868,10 +869,19 @@ async function fetchTextOnce(url, timeoutSeconds) {
       headers: requestHeaders(url),
     });
     if (!response.ok) throw httpError(response);
-    return await response.text();
+    return { text: await response.text(), url: pageBaseUrl(url, response.url) };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// 페이지 안의 상대 링크를 풀 기준 주소. 브라우저처럼 리디렉트 뒤 실제로 받은 주소를 쓴다.
+// 예전에는 설정에 적힌 주소를 기준으로 풀었다. 2026-09 수집에서 www.asml.com/en/news 가
+// investor.asml.com/news(Q4 IR 플랫폼)로 넘어가자, 그 페이지의 "/news-releases/news-release-details/..."
+// 링크가 www.asml.com 위로 붙어 ASML 공식 기사 10건이 모두 404 였다.
+// 응답에 주소가 없으면(직접 만든 Response 등) 요청한 주소를 그대로 쓴다.
+export function pageBaseUrl(requestedUrl, responseUrl) {
+  return isHttpUrl(responseUrl) ? String(responseUrl) : requestedUrl;
 }
 
 function httpError(response) {
@@ -918,8 +928,12 @@ async function fetchWithRetries(url, attempt) {
   throw lastError;
 }
 
+export async function fetchPage(url, timeoutSeconds) {
+  return fetchWithRetries(url, () => fetchPageOnce(url, timeoutSeconds));
+}
+
 export async function fetchText(url, timeoutSeconds) {
-  return fetchWithRetries(url, () => fetchTextOnce(url, timeoutSeconds));
+  return (await fetchPage(url, timeoutSeconds)).text;
 }
 
 async function fetchJson(url, timeoutSeconds) {
@@ -1449,8 +1463,10 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
   for (const page of pages) {
     try {
       requestCount += 1;
-      const html = await fetchText(page.url, timeoutSeconds);
-      for (const feedUrl of discoverFeedLinks(html, page.url)) {
+      // 링크는 리디렉트 뒤 실제로 받은 주소(baseUrl) 기준으로 풀고 판정한다. 같은 호스트 판정(sameHostNewsPath)도
+      // 실제 페이지 호스트와 비교해야 맞다. 행의 query·official_source_url 은 설정 주소 그대로 둔다.
+      const { text: html, url: baseUrl } = await fetchPage(page.url, timeoutSeconds);
+      for (const feedUrl of discoverFeedLinks(html, baseUrl)) {
         try {
           requestCount += 1;
           const feedXml = await fetchText(feedUrl, timeoutSeconds);
@@ -1474,7 +1490,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
         }
       }
       const kept = [];
-      for (const anchor of parseAnchors(html, page.url)) {
+      for (const anchor of parseAnchors(html, baseUrl)) {
         // Keep raw configured-newsroom anchors only for exact-title recovery of
         // an opaque Google discovery URL. They do not enter collection unless
         // the ordinary link policy accepts them.
@@ -1482,7 +1498,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           recoveryCandidates.push({ company: company.company, title: officialTitle(anchor),
             url: anchor.url, source_page_url: page.url });
         }
-        const judged = judgeAnchor(anchor, page.url, linkPolicy);
+        const judged = judgeAnchor(anchor, baseUrl, linkPolicy);
         countLinkVerdict(tally, judged.verdict);
         if (judged.verdict === "hard_reject") {
           if (judged.reason) recordExclusion(tally, company.company, anchor.title, anchor.url, judged.reason);

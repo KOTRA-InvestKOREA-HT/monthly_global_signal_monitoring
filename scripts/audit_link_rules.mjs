@@ -16,7 +16,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { pathToFileURL } from "node:url";
-import { fetchText, judgeLink, parseAnchors } from "./collect_company_signals.mjs";
+import { fetchPage, judgeLink, parseAnchors } from "./collect_company_signals.mjs";
 
 const SAMPLE_PER_CELL = 40;
 const SAMPLE_PER_COMPANY = 3;
@@ -59,17 +59,22 @@ function cacheName(url) {
 }
 
 // 캐시가 있으면 네트워크를 타지 않는다. 규칙을 고치며 여러 번 돌리는 도구라 이게 기본이다.
+// 리디렉트 뒤 최종 주소(baseUrl)도 옆 파일에 남긴다. 수집기와 같은 기준으로 상대 링크를 풀어야
+// 감사 결과가 수집 결과와 맞는다. 옆 파일이 없는 예전 캐시는 요청 주소를 기준으로 쓴다.
 async function loadPage(url, args) {
   const file = path.join(args.cacheDir, cacheName(url));
   try {
-    return { html: await fs.readFile(file, "utf8"), fromCache: true };
+    const html = await fs.readFile(file, "utf8");
+    const baseUrl = (await fs.readFile(`${file}.url`, "utf8").catch(() => "")).trim() || url;
+    return { html, baseUrl, fromCache: true };
   } catch {
     if (args.offline) return null;
   }
-  const html = await fetchText(url, args.timeoutSeconds);
+  const { text: html, url: baseUrl } = await fetchPage(url, args.timeoutSeconds);
   await fs.mkdir(args.cacheDir, { recursive: true });
   await fs.writeFile(file, html, "utf8");
-  return { html, fromCache: false };
+  await fs.writeFile(`${file}.url`, baseUrl, "utf8");
+  return { html, baseUrl, fromCache: false };
 }
 
 function selectPages(config, args) {
@@ -202,13 +207,13 @@ async function main() {
       pageStatus.push({ ...page, anchors: 0, error: error || "not_cached" });
       continue;
     }
-    const anchors = parseAnchors(loaded.html, page.url);
+    const anchors = parseAnchors(loaded.html, loaded.baseUrl);
     for (const anchor of anchors) {
       // 같은 URL이 한 페이지에 여러 번 걸리면 판정이 아니라 그 사이트의 메뉴를 세게 된다.
       const key = `${page.company} -> ${anchor.url}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      const judgement = judgeLink(anchor, page.url);
+      const judgement = judgeLink(anchor, loaded.baseUrl);
       const record = { company: page.company, page: page.url, anchor, judgement };
       records.push(record);
       samples.add(cellOf(judgement), {
