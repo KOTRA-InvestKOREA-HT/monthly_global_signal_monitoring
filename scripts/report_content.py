@@ -1149,13 +1149,16 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
 
     4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다. 기사 하나를 지표와 사업동향으로
     한꺼번에 판정해 같은 보도자료가 두 곳에서 승인되고, 다른 문안이 없으면 지표 칸 문안을 다시 실었기 때문이다.
-    그렇다고 상자를 비우거나 빼지도 않는다. 고르는 순서:
+    고르는 순서:
 
     1. 위 지표 칸과 다른 기사로, 타겟 품목과 이어진 행(면제 기업은 회사 전반)
     2. 위 지표 칸과 다른 기사의 다른 사업동향(품목 연계만 빠진 근접 행, 회사 단위 시그널 행 포함)
     3. 위 지표 칸과 같은 기사라도, 사업동향 쪽으로 따로 쓴 문안이 있는 행
     4. 지표 기사 본문에서 위 문안이 다루지 않은 내용으로 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)
-    5. 그래도 없으면 지표 칸 문안을 다시 쓴다. 보고서에 빈 상자를 내지 않기 위한 마지막 자리다.
+
+    모두 없으면 None 이다. 상자는 빼지 않고 "확인되지 않음" 문구(business_empty)를 싣는다. 예전에는 마지막 자리로
+    지표 칸 문안을 다시 실었으나, 4호 재발행에서 Corning·Chemours 상자가 위 칸을 글자 그대로 되풀이해
+    되풀이 대신 없음으로 표시하기로 했다(2026-10-23 사용자 결정).
     """
     shown_ids = {id(row) for row in shown_rows}
     shown_keys = set().union(*(article_keys(row) for row in shown_rows)) if shown_rows else set()
@@ -1179,13 +1182,12 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
         + [row for row in investment_rows if separate(row) and signal_publishable(row)],
         [row for row in relevant_rows if mine(row) and usable(row)
          and clean_text(summary_field(row, "ai_summary")) not in shown_texts],
-        [row for row in shown_rows if row.get("company") == company and signal_publishable(row)],
     ]
     boxed = [row for row in shown_rows if row.get("company") == company and signal_publishable(row)
              and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
     if boxed:
-        # 4단계는 3단계와 5단계 사이에 들어간다. 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
-        tiers.insert(3, [{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
+        # 마지막(4단계) 자리다. 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
+        tiers.append([{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
                          for row in boxed])
     for candidates in tiers:
         if candidates:

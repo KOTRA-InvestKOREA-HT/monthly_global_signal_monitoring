@@ -121,19 +121,17 @@ def detail_entries(profiles, signal_index, relevant, investment, measure):
         business_row = report.best_business_row(profile["company"], relevant, investment, shown,
                                                 exempt_company=bool(profile.get("exempt_from_relevance")))
         target_label, target_text = report.target_section_for_profile(profile)
-        # 실을 별도 기사가 없으면 상자를 뺀다(None). 위 지표 칸을 되풀이하거나 빈 문구를 싣지 않는다.
-        business = None
-        if business_row:
-            business_body = report.business_text([business_row])
-            business = {
-                "heading": report.t("business_heading"),
-                "target_label": target_label,
-                "target_text": target_text,
-                "body": business_body,
-                "cut": summary_cut(business_row, business_body),
-                "source": report.source_line(business_row),
-                "source_url": report.source_url(business_row),
-            }
+        # 위 지표 칸과 다른 문안이 없으면(None) 되풀이하지 않고 "확인되지 않음" 문구를 싣는다. 출처 줄은 없다.
+        business_body = report.business_text([business_row] if business_row else [])
+        business = {
+            "heading": report.t("business_heading"),
+            "target_label": target_label,
+            "target_text": target_text,
+            "body": business_body,
+            "cut": summary_cut(business_row, business_body),
+            "source": report.source_line(business_row) if business_row else "",
+            "source_url": report.source_url(business_row) if business_row else "",
+        }
         entries.append({
             "company": profile.get("display_name") or profile["company"],
             "country": profile.get("country", ""),

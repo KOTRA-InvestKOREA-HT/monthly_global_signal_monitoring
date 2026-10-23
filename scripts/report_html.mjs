@@ -296,7 +296,7 @@ function detailPages(state, model, assets) {
             <span class="target-text">${escapeHtml(entry.business.target_text)}</span>
           </p>` : ''}
           <p class="business-body">${escapeHtml(entry.business.body)}</p>
-          ${sourceLine(entry.business.source, entry.business.source_url)}
+          ${entry.business.source ? sourceLine(entry.business.source, entry.business.source_url) : ''}
         </section>` : ''}
       </div>`)).join('');
 }

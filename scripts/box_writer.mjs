@@ -6,8 +6,8 @@
 // 이 단계는 그 지표 기사의 본문에서 위 문안이 다루지 않은 사업 내용을 골라 상자 문안을 쓴다.
 //
 // 판정 파일과 문안 캐시를 건드리지 않도록 결과는 따로 둔다(review_work/box_copy/<article_id>.json).
-// 보고서 빌드(local_report.build)가 그 기사의 투자 시그널 행에 ai_box_summary_* 로 붙이고, 보고서가 마지막 자리
-// (지표 칸 문안 재사용) 바로 앞에서 쓴다. 이 단계가 실패하거나 할당량으로 멈춰도 보고서는 지금처럼 만들어진다.
+// 보고서 빌드(local_report.build)가 그 기사의 투자 시그널 행에 ai_box_summary_* 로 붙이고, 보고서가 다른 문안이
+// 없을 때 마지막으로 쓴다. 이 단계가 실패하거나 할당량으로 멈추면 그 상자는 "확인되지 않음" 문구로 나간다.
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -33,8 +33,8 @@ const has = text => Boolean(String(text || '').trim());
 
 // 보고서가 사업현황 상자에 실을 수 있는 사업동향 문안인지. report_content.best_business_row 가 받는 행
 // (게시월이 확정된 승인 행, 또는 business_near_miss 를 통과하는 근접 행)과 같은 기준이어야 한다.
-// 기준이 보고서보다 넓으면 보고서가 쓰지 못할 행 때문에 그 기업이 상자 문안을 받지 못하고, 상자는 위 지표 칸을
-// 되풀이한다. 4호 재발행에서 Corning 이 그랬다. Verizon·AT&T 공급 계약 기사는 게시월이 URL 추정뿐이라 날짜 보류로
+// 기준이 보고서보다 넓으면 보고서가 쓰지 못할 행 때문에 그 기업이 상자 문안을 받지 못한다. 4호 재발행에서
+// Corning 이 그래서 상자가 위 지표 칸을 되풀이했다. Verizon·AT&T 공급 계약 기사는 게시월이 URL 추정뿐이라 날짜 보류로
 // 보고서에서 빠졌는데, 여기서는 문안이 있다고 세어 대상에서 뺐다.
 function reportableBusiness(item, period) {
   const row = item.row;

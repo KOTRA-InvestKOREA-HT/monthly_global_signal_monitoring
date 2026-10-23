@@ -14,9 +14,10 @@ def approved(company, **extra):
 
 
 class BusinessBoxTests(unittest.TestCase):
-    """사업현황 상자는 위 지표 칸을 되풀이하지 않는 것을 순서대로 고르고, 비우거나 빼지 않는다.
+    """사업현황 상자는 위 지표 칸을 되풀이하지 않는 것을 순서대로 고르고, 없으면 되풀이 대신 없음으로 적는다.
 
     4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다(2026-10-22 사용자 지적).
+    재발행에서도 Corning·Chemours 가 되풀이해, 다른 문안이 없으면 "확인되지 않음"을 싣기로 했다(2026-10-23).
     """
 
     @staticmethod
@@ -53,9 +54,9 @@ class BusinessBoxTests(unittest.TestCase):
         same = approved("Amkor Technology", ai_event_stage="not_applicable", ai_summary_en="Arizona campus grows.",
                         ai_summary_ko="애리조나 캠퍼스 확장", url="https://amkor.com/a")
         self.assertIs(pdf.best_business_row("Amkor Technology", [same], [signal], [signal], exempt_company=True), same)
-        # 문안까지 같으면 되풀이일 뿐이다.
+        # 문안까지 같으면 되풀이일 뿐이라 고르지 않는다.
         twin = dict(same, ai_summary_en="Phase 2.", ai_summary_ko="2단계")
-        self.assertIs(pdf.best_business_row("Amkor Technology", [twin], [signal], [signal], exempt_company=True), signal)
+        self.assertIsNone(pdf.best_business_row("Amkor Technology", [twin], [signal], [signal], exempt_company=True))
 
     def test_box_copy_from_the_signal_article_beats_a_repeat(self):
         # box_writer.mjs 가 지표 기사 본문에서 위 문안에 없는 내용으로 따로 쓴 상자 문안.
@@ -70,9 +71,17 @@ class BusinessBoxTests(unittest.TestCase):
         near = self.near("NXP", url="https://nxp.com/b")
         self.assertIs(pdf.best_business_row("NXP", [near], [signal], [signal]), near)
 
-    def test_the_box_is_never_left_empty_while_a_signal_is_shown(self):
+    def test_the_signal_card_is_never_repeated_in_the_box(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")
-        self.assertIs(pdf.best_business_row("Corning", [], [signal], [signal]), signal)
+        self.assertIsNone(pdf.best_business_row("Corning", [], [signal], [signal]))
+        # 상자는 빼지 않고 "확인되지 않음" 문구를 싣는다.
+        for lang in ("ko", "en"):
+            pdf.set_language(lang)
+            try:
+                self.assertEqual(pdf.business_text([]), pdf.t("business_empty"))
+                self.assertNotIn("Equity program", pdf.business_text([]))
+            finally:
+                pdf.set_language("ko")
 
     def test_rows_need_bilingual_prose_and_this_company(self):
         signal = approved("3M", investment_signal_no=3, url="https://3m.com/a", ai_summary_en="Financing.")

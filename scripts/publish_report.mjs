@@ -175,7 +175,7 @@ async function main() {
     if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, reviewerSummary(reviewStats));
 
     // 사업현황 상자 문안. 위 지표 칸 말고는 실을 사업동향 문안이 없는 기업만 쓴다(box_writer.mjs).
-    // 실패하거나 할당량으로 멈춰도 보고서는 만든다. 그 상자는 지금처럼 지표 칸 문안을 다시 싣는다.
+    // 실패하거나 할당량으로 멈춰도 보고서는 만든다. 그 상자는 "확인되지 않음" 문구로 나간다.
     stage = 'box_copy';
     let boxStats = null;
     try {
