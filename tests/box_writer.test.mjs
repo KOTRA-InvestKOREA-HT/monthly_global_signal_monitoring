@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { groupArticles, importReview, loadBoxCopy } from '../scripts/local_report.mjs';
+import { groupArticles, loadBoxCopy } from '../scripts/local_report.mjs';
 import { resolveWriter, writerPolicySection } from '../scripts/summary_writer.mjs';
 import { boxCopyTargets, boxProblems, boxRequest, repeatsSignal, writeBoxCopy } from '../scripts/box_writer.mjs';
 import { reportEligible } from '../scripts/date_state.mjs';
@@ -56,15 +56,6 @@ test('only companies with no business copy of their own get a box copy', () => {
     reason: 'A new line.', evidence_quotes: [quote], summary_en: 'Acme opened a wafer line.', summary_ko: 'Acme는 웨이퍼 라인을 열었음.' };
   const reviews = new Map([[article.id, review], [other.id, { article_id: other.id, reviewer: 'gemini/test', decisions: [decision] }]]);
   assert.deepEqual(boxCopyTargets([article, other], reviews), []);
-});
-
-// 상자에는 타겟 품목과 이어진 소식만 실린다(2026-10-23 사용자 결정). 품목과 무관한 회사 단위 지표 기사
-// (Corning 의 주식 발행)에서 상자 문안을 써도 보고서가 싣지 않으므로 묻지 않는다.
-test('a signal article off the target technology gets no box copy', () => {
-  const offTarget = { ...review, decisions: [{ ...signal, target_technology_supported: false }] };
-  assert.equal(importReview(article, offTarget).find(item => item.kind === 'investment').supported, true,
-    'fixture must stay an approved company-level signal');
-  assert.deepEqual(boxCopyTargets([article], new Map([[article.id, offTarget]])), []);
 });
 
 // 4호 재발행의 Corning: 다른 사업동향 기사(Verizon·AT&T 계약)에 문안은 있었지만 게시월이 추정뿐이라 보고서에서

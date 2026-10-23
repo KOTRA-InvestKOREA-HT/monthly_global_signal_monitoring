@@ -115,9 +115,9 @@
         "en": "Business Developments"
       },
       "business_empty": {
-        "ko": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
-        "en": "No business developments tied to the target technology were found {period}.",
-        "note": "상자에 실을 내용이 없을 때 쓴다. 상자에는 타겟 품목·기술과 이어진 소식만 싣고, 위 지표 칸을 되풀이하지도 않는다(2026-10-23 사용자 결정). 그래서 \"관련\"을 넣었다. 출처를 공식 채널로 한정하지 않는다(제3자 뉴스 포함)."
+        "ko": "해당 기간 요약할 수 있는 글로벌 사업현황이 확인되지 않음.",
+        "en": "No business developments found {period}.",
+        "note": "출처를 공식 채널로 한정하지 않는다. 상자에는 제3자 뉴스도 실린다."
       },
       "source_prefix": {
         "ko": "출처",

@@ -1,5 +1,4 @@
 // 사업현황 상자 문안을 따로 쓰는 단계. 위 지표 칸 말고는 실을 사업동향 문안이 하나도 없는 기업만 다룬다.
-// 상자에는 타겟 품목과 이어진 소식만 실리므로(2026-10-23 사용자 결정), 품목과 이어진 지표 기사만 대상으로 삼는다.
 //
 // 4호에서 기업 카드 12장 중 8장의 사업현황 상자가 위 지표 칸 문안을 되풀이했다. report_content.best_business_row 가
 // 다른 기사·다른 동향·같은 기사의 사업동향 문안 순으로 고르게 했지만, Corning·Moderna·Applied Materials·NXP·
@@ -32,30 +31,22 @@ const REPEAT_OVERLAP = 0.6;
 
 const has = text => Boolean(String(text || '').trim());
 
-// 타겟 품목과 이어진 행인지(report_content.business_row_on_target). 품목 판정에서 빠진 기업은 회사 전반이 대상이다.
-// 회사채 발행·정부 지원금처럼 품목과 무관한 지표 기사는 상자 문안을 써도 보고서가 싣지 않는다.
-function onTarget(row) {
-  return row?.excluded_from_relevance === true || row?.technology_gate_decision === 'relevance_exempt'
-    || row?.ai_target_technology_supported === true;
-}
-
 // 보고서가 사업현황 상자에 실을 수 있는 사업동향 문안인지. report_content.best_business_row 가 받는 행
-// (게시월이 확정되고 타겟 품목과 이어진 승인 행, 또는 business_near_miss 를 통과하는 면제 기업의 근접 행)과
-// 같은 기준이어야 한다.
+// (게시월이 확정된 승인 행, 또는 business_near_miss 를 통과하는 근접 행)과 같은 기준이어야 한다.
 // 기준이 보고서보다 넓으면 보고서가 쓰지 못할 행 때문에 그 기업이 상자 문안을 받지 못한다. 4호 재발행에서
 // Corning 이 그래서 상자가 위 지표 칸을 되풀이했다. Verizon·AT&T 공급 계약 기사는 게시월이 URL 추정뿐이라 날짜 보류로
 // 보고서에서 빠졌는데, 여기서는 문안이 있다고 세어 대상에서 뺐다.
 function reportableBusiness(item, period) {
   const row = item.row;
   if (item.kind !== 'relevant' || !row || !has(row.ai_summary_ko) || !has(row.ai_summary_en)) return false;
-  if (!reportEligible(row, period) || !onTarget(row)) return false;
+  if (!reportEligible(row, period)) return false;
   if (item.supported) return true;
   return item.near_miss && row.ai_event_stage === APPROVAL_POLICY.business_stage && row.ai_summary_quality === 'pass'
     && row.ai_entity_supported === true && row.ai_indicator_supported === true && row.ai_leading_indicator_supported === true;
 }
 
 // 상자 문안이 필요한 기사. 기업 단위로 보아, 보고서에 실릴 사업동향 문안이 하나도 없는 기업의
-// 타겟 품목과 이어진 승인 투자 시그널 기사만 고른다. 사업동향 문안이 있으면 보고서가 그 문안을 쓴다(best_business_row 1~3단계).
+// 승인된 투자 시그널 기사만 고른다. 사업동향 문안이 있으면 보고서가 그 문안을 쓴다(best_business_row 1~3단계).
 // 여기서 넉넉히 골라도 해는 없다. 보고서는 앞 단계가 채워지면 이 문안을 쓰지 않는다.
 export function boxCopyTargets(articles, reviews) {
   const byCompany = new Map();
@@ -68,8 +59,7 @@ export function boxCopyTargets(articles, reviews) {
     if (results.some(item => reportableBusiness(item, article.reporting_period))) {
       entry.business = true;
     }
-    const approved = results.filter(item => item.kind === 'investment' && item.supported && has(item.row?.ai_summary_en)
-      && onTarget(item.row));
+    const approved = results.filter(item => item.kind === 'investment' && item.supported && has(item.row?.ai_summary_en));
     if (approved.length) {
       const decisions = review.decisions.filter(decision => approved.some(item => item.candidate_id === decision.candidate_id));
       entry.signals.push({ article, decisions });

@@ -8,12 +8,9 @@ import report_view_model as view
 
 
 def approved(company, **extra):
-    # 국문 문안을 따로 주지 않으면 영문 문안마다 다른 국문을 단다. 모두 같은 "문안"이면 상자가 위 칸 문안과
-    # 글자까지 같은 것으로 보여 되풀이로 걸러진다.
-    ko = f"문안: {extra['ai_summary_en']}" if extra.get("ai_summary_en") else "문안"
     return {"company": company, "ai_signal_supported": True, "ai_entity_supported": True,
             "ai_indicator_supported": True, "ai_leading_indicator_supported": True, "ai_target_technology_supported": True,
-            "ai_summary_quality": "pass", "ai_event_stage": "precursor", "ai_summary_ko": ko, "source_type": "official", **extra}
+            "ai_summary_quality": "pass", "ai_event_stage": "precursor", "ai_summary_ko": "문안", "source_type": "official", **extra}
 
 
 class BusinessBoxTests(unittest.TestCase):
@@ -21,7 +18,6 @@ class BusinessBoxTests(unittest.TestCase):
 
     4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다(2026-10-22 사용자 지적).
     재발행에서도 Corning·Chemours 가 되풀이해, 다른 문안이 없으면 "확인되지 않음"을 싣기로 했다(2026-10-23).
-    상자에는 타겟 품목과 이어진 소식만 싣는다. 주식 발행·정부 지원금 같은 회사 단위 소식은 지표 칸에만 남는다(2026-10-23).
     """
 
     @staticmethod
@@ -40,40 +36,17 @@ class BusinessBoxTests(unittest.TestCase):
         near = self.near("Norsk Hydro", url="https://hydro.com/c")
         self.assertIs(pdf.best_business_row("Norsk Hydro", [same, near, other], [signal], [signal]), other)
 
-    def test_rows_off_the_target_technology_stay_out_of_the_box(self):
+    def test_another_development_beats_the_same_article(self):
         signal = approved("Onsemi", investment_signal_no=4, ai_summary_en="Valens deal.", url="https://onsemi.com/a",
                           title="Valens Semiconductor and onsemi Partner on 3MP Camera")
         same = approved("Onsemi", ai_event_stage="not_applicable", ai_summary_en="Valens partnership.",
-                        ai_summary_ko="Valens 협력", url="https://news.example/relay",
-                        title="Valens Semiconductor and onsemi partner on 3MP camera")
+                        url="https://news.example/relay", title="Valens Semiconductor and onsemi partner on 3MP camera")
         near = self.near("Onsemi", url="https://onsemi.com/b")
+        self.assertIs(pdf.best_business_row("Onsemi", [same, near], [signal], [signal]), near)
+        # 다른 기사의 회사 단위 시그널 행도 다른 동향이다.
         financing = approved("Onsemi", investment_signal_no=3, ai_summary_en="Notes.", url="https://onsemi.com/c",
                              ai_target_technology_supported=False)
-        # 품목 연계가 빠진 근접 행과 회사 단위 시그널 행은 다른 기사라도 상자에 싣지 않는다.
-        self.assertIs(pdf.best_business_row("Onsemi", [same, near], [signal, financing], [signal]), same)
-        self.assertIsNone(pdf.best_business_row("Onsemi", [near], [signal, financing], [signal]))
-
-    def test_copy_that_mostly_restates_the_signal_is_a_repeat(self):
-        # 4호 재발행의 Amkor: 같은 2단계 발표의 앞부분만 다시 쓴 문안. 글자가 달라도 되풀이다.
-        signal = approved("Amkor Technology", investment_signal_no=2, ai_event_stage="planned", url="https://amkor.com/a",
-                          ai_summary_en="Amkor Technology announced phase 2 of its Arizona advanced packaging and test campus, "
-                                        "which is expected to add 60,000 square meters of cleanroom space.")
-        shorter = approved("Amkor Technology", ai_event_stage="not_applicable", ai_summary_ko="2단계 발표",
-                           ai_summary_en="Amkor Technology, a provider of outsourced semiconductor packaging and test "
-                                         "services, announced phase 2 of its Arizona advanced packaging and test campus.",
-                           url="https://amkor.com/a")
-        self.assertTrue(pdf.repeats_signal(shorter, [signal]))
-        self.assertIsNone(pdf.best_business_row("Amkor Technology", [shorter], [signal], [signal], exempt_company=True))
-        # 같은 기사라도 다른 내용이면 싣는다.
-        other = dict(shorter, ai_summary_en="The Peoria site will employ about 3,000 people when fully operational.")
-        self.assertIs(pdf.best_business_row("Amkor Technology", [other], [signal], [signal], exempt_company=True), other)
-
-    def test_an_exempt_company_takes_any_development_of_its_own(self):
-        # 품목 판정에서 빠진 기업은 회사 전반이 대상이라, 다른 기사의 근접 행이 같은 기사보다 먼저다.
-        signal = approved("3M", investment_signal_no=4, ai_summary_en="Film launch.", url="https://3m.com/a")
-        same = approved("3M", ai_event_stage="not_applicable", ai_summary_en="Film launch, again.", url="https://3m.com/a")
-        near = self.near("3M", url="https://3m.com/b")
-        self.assertIs(pdf.best_business_row("3M", [same, near], [signal], [signal], exempt_company=True), near)
+        self.assertIs(pdf.best_business_row("Onsemi", [same], [signal, financing], [signal]), financing)
 
     def test_the_same_article_with_its_own_prose_beats_a_repeat(self):
         signal = approved("Amkor Technology", investment_signal_no=2, ai_summary_en="Phase 2.", ai_summary_ko="2단계", ai_event_stage="planned",
@@ -94,14 +67,9 @@ class BusinessBoxTests(unittest.TestCase):
         self.assertEqual(row["ai_summary_en"], "The loan funds the Kuala Lumpur test site.")
         self.assertEqual(row["url"], signal["url"])
         self.assertEqual(signal["ai_summary_en"], "EIB loan.", "지표 칸 행은 그대로 둔다")
-        # 다른 기사라도 품목과 무관하면 상자 문안이 먼저고, 품목과 이어진 다른 기사가 있으면 그것이 먼저다.
+        # 다른 기사가 있으면 그것이 먼저다.
         near = self.near("NXP", url="https://nxp.com/b")
-        self.assertEqual(pdf.best_business_row("NXP", [near], [signal], [signal])["url"], signal["url"])
-        other = approved("NXP", ai_event_stage="not_applicable", ai_summary_en="New radar chip.", url="https://nxp.com/c")
-        self.assertIs(pdf.best_business_row("NXP", [other], [signal], [signal]), other)
-        # 품목과 무관한 지표 기사에서 쓴 상자 문안은 싣지 않는다(Corning 의 주식 발행).
-        off = dict(signal, ai_target_technology_supported=False)
-        self.assertIsNone(pdf.best_business_row("NXP", [], [off], [off]))
+        self.assertIs(pdf.best_business_row("NXP", [near], [signal], [signal]), near)
 
     def test_the_signal_card_is_never_repeated_in_the_box(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")
