@@ -45,6 +45,8 @@ const viewModelFiles = [
   "./config/copy_length_limits.json",
   // report_content 가 보고서 고정문구를 여기서 읽는다.
   "./config/report_text.json",
+  // report_content 가 사람이 비워 둔 사업현황 상자 목록을 여기서 읽는다.
+  "./config/business_box_overrides.json",
 ];
 // The route opens assets/ through a runtime path, so the tracer ships the whole
 // directory. Chromium reads only the WOFF2 cuts; the TTFs are for Python. Named

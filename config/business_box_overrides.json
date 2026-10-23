@@ -1,0 +1,14 @@
+{
+  "description": "사업현황 상자를 사람이 직접 비우는 기업. 보고 달(YYYY-MM)마다 기업 이름을 적으면 그 달 보고서에서 그 기업의 사업현황 상자에 실을 문안이 있어도 싣지 않고 business_empty 문구(config/report_text.json)를 싣는다. 위 지표 칸은 그대로다. scripts/report_content.py 가 읽는다.",
+  "how_to_edit": [
+    "기업 이름은 data/target_companies.json 의 company 값 그대로 적는다(예: \"Onsemi\", \"Eli Lilly and Company\"). 보고서에 찍히는 표시 이름과 다를 수 있다.",
+    "달은 보고서가 다루는 달이다. 10월에 내는 9월호는 \"2026-09\"다.",
+    "고친 뒤 python -m unittest tests.test_business_box_overrides 로 이름과 형식을 확인한다."
+  ],
+  "empty_box_companies": {
+    "2026-09": ["Corning", "Chemours"]
+  },
+  "notes": {
+    "2026-09": "Corning(주식 발행)·Chemours(광물 분리 지원금)는 시그널 기사 말고 실을 내용이 없어 상자가 위 지표 칸을 되풀이했다. 품목과도 무관해 비운다(2026-10-23 사용자 결정)."
+  }
+}

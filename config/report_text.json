@@ -115,9 +115,9 @@
         "en": "Business Developments"
       },
       "business_empty": {
-        "ko": "해당 기간 요약할 수 있는 글로벌 사업현황이 확인되지 않음.",
-        "en": "No business developments found {period}.",
-        "note": "출처를 공식 채널로 한정하지 않는다. 상자에는 제3자 뉴스도 실린다."
+        "ko": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
+        "en": "No related business developments found {period}.",
+        "note": "상자에 실을 내용이 없거나 config/business_box_overrides.json 에서 비워 둔 기업에 쓴다. 출처를 공식 채널로 한정하지 않는다. 상자에는 제3자 뉴스도 실린다."
       },
       "source_prefix": {
         "ko": "출처",

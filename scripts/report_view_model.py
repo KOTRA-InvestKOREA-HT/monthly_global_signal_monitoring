@@ -111,7 +111,7 @@ def signal_entry(no, rows, measure):
     }
 
 
-def detail_entries(profiles, signal_index, relevant, investment, measure):
+def detail_entries(profiles, signal_index, relevant, investment, measure, summary=None):
     entries = []
     for profile in profiles:
         rows_by_signal = signal_index.get(profile["company"], {})
@@ -120,6 +120,9 @@ def detail_entries(profiles, signal_index, relevant, investment, measure):
         shown = [rows[0] for rows in rows_by_signal.values() if rows]
         business_row = report.best_business_row(profile["company"], relevant, investment, shown,
                                                 exempt_company=bool(profile.get("exempt_from_relevance")))
+        # 사람이 그 달 상자를 비워 둔 기업(config/business_box_overrides.json)은 "확인되지 않음" 문구를 싣는다.
+        if summary is not None and report.business_box_cleared(profile["company"], summary):
+            business_row = None
         target_label, target_text = report.target_section_for_profile(profile)
         # 위 지표 칸과 다른 문안이 없으면(None) 되풀이하지 않고 "확인되지 않음" 문구를 싣는다. 출처 줄은 없다.
         business_body = report.business_text([business_row] if business_row else [])
@@ -245,7 +248,7 @@ def build(args):
         "details": {
             "kicker": report.t("detail_kicker"),
             "title": report.t("detail_title"),
-            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, measure),
+            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, measure, summary),
             "pill_width": report_measure.signal_pill_column(measure),
         },
         "items": item_entries(profiles, signal_index, relevant, summary),

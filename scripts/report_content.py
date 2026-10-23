@@ -1195,6 +1195,36 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
     return None
 
 
+# 사업현황 상자를 사람이 직접 비우는 기업(보고 달별). 규칙으로 가를 수 없는 카드를 그 달에만 비운다.
+# 4호(2026-09) 재발행의 Corning·Chemours 처럼 품목과 무관한 시그널 기사 하나뿐인 기업을 비우려 했으나,
+# 같은 규칙이 NXP·Tokyo Electron 등 다른 카드까지 비워서 사람이 고르기로 했다(2026-10-23 사용자 결정).
+try:
+    with open(PROJECT_ROOT / "config" / "business_box_overrides.json", encoding="utf-8") as _handle:
+        BUSINESS_BOX_OVERRIDES = json.load(_handle)
+except OSError as error:
+    raise RuntimeError(f"config/business_box_overrides.json is required for the business boxes: {error}") from error
+except json.JSONDecodeError as error:
+    raise RuntimeError(
+        f"config/business_box_overrides.json is not valid JSON (line {error.lineno}, column {error.colno}): {error.msg}"
+    ) from error
+
+
+def report_months(summary):
+    """보고 기간이 걸친 달(YYYY-MM)."""
+    start, end = report_period(summary)
+    months, year, month = [], start.year, start.month
+    while (year, month) <= (end.year, end.month):
+        months.append(f"{year}-{month:02d}")
+        year, month = (year + 1, 1) if month == 12 else (year, month + 1)
+    return months
+
+
+def business_box_cleared(company, summary):
+    """이 보고서에서 그 기업의 사업현황 상자를 사람이 비워 두었는지."""
+    listed = BUSINESS_BOX_OVERRIDES.get("empty_box_companies", {})
+    return any(company in listed.get(month, []) for month in report_months(summary))
+
+
 def target_section_for_profile(profile):
     if profile.get("exempt_from_relevance"):
         return "", ""
