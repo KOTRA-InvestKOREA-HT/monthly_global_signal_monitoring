@@ -1905,7 +1905,11 @@ async function decodeGoogleNewsSteps(url, timeoutSeconds, fetchImpl) {
     if (response.status !== 429) return { reason };
     return { reason, rateLimited: true, retryAfterSeconds: parseRetryAfter(response.headers?.get('retry-after')) };
   };
-  const page = await send(`https://news.google.com/articles/${id}`, { headers: { 'User-Agent': USER_AGENT } });
+  // 서명은 RSS 쪽 중계 페이지(/rss/articles/)에서 받는다. 웹 쪽(/articles/)은 요청 제한이 따로 빡빡하다. 2026-09 수집
+  // (10월 23일 실행 146)은 웹 쪽에서 약 48건을 푼 뒤 429 로 막혀 Google 기사 491건 중 440건을 본문 없이 넘겼다.
+  // 같은 날 로컬에서 웹 쪽이 10분 넘게 429 인 동안에도 RSS 쪽은 200 에 서명이 그대로 있었고, 1초 간격으로 330건을
+  // 연달아 풀었다(429 없음). 해독 요청(batchexecute)은 그대로다.
+  const page = await send(`https://news.google.com/rss/articles/${id}`, { headers: { 'User-Agent': USER_AGENT } });
   if (!page.ok) return failed(page, 'article_page');
   const html = await page.text();
   const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];

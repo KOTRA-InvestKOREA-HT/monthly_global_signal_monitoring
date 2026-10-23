@@ -18,13 +18,13 @@ function fakeClock() {
   return clock;
 }
 
-// blocked() 가 참인 동안 Google 기사 페이지가 429 를 낸다. 요청마다 [시각, 주소]를 남긴다.
+// blocked() 가 참인 동안 Google 기사 페이지(RSS 쪽 중계 페이지)가 429 를 낸다. 요청마다 [시각, 주소]를 남긴다.
 function fakeGoogle(clock, { blocked = () => false, retryAfter } = {}) {
   const requested = [];
   const fetchImpl = async (url, init = {}) => {
     url = String(url);
     requested.push([clock.t, url]);
-    if (url.startsWith('https://news.google.com/articles/')) {
+    if (url.startsWith('https://news.google.com/rss/articles/')) {
       if (blocked()) return new Response('rate limited', { status: 429, headers: retryAfter ? { 'Retry-After': retryAfter } : {} });
       return new Response(PAGE);
     }
@@ -32,7 +32,6 @@ function fakeGoogle(clock, { blocked = () => false, retryAfter } = {}) {
       const id = decodeURIComponent(init.body).match(/CBMi(\w+)/)[1];
       return new Response(")]}'\n\n" + JSON.stringify([['wrb.fr', 'Fbv4je', JSON.stringify(['garturlres', publisher(id), 1])]]));
     }
-    if (url.startsWith('https://news.google.com/rss/articles/')) return new Response('Consent page');
     if (url.startsWith('https://publisher.example/')) return new Response(articleHtml(url));
     throw new Error(`unexpected ${url}`);
   };
@@ -66,7 +65,7 @@ test('a 429 decode is returned at once with its Retry-After and never follows th
   assert.equal(error.status, 429);
   assert.equal(error.retryAfterSeconds, 90);
   assert.equal(network.requested.length, 2);
-  assert.ok(network.requested.every(([, url]) => url.startsWith('https://news.google.com/articles/')));
+  assert.ok(network.requested.every(([, url]) => url.startsWith('https://news.google.com/rss/articles/')));
 });
 
 test('429 then a cooldown that honours Retry-After then a retry that succeeds', async () => {
@@ -78,8 +77,8 @@ test('429 then a cooldown that honours Retry-After then a retry that succeeds', 
   // Retry-After(90초)가 기본 쉼(60초)보다 길어 그 값을 따른다. 다시 보낸 기사 페이지와 해독 요청 사이에는 1초 간격을 둔다.
   assert.deepEqual(clock.sleeps, [90000, 1000]);
   assert.deepEqual(network.requested.map(([t, url]) => [t, url.replace(/\?.*/, '')]), [
-    [0, 'https://news.google.com/articles/CBMiA'],
-    [90000, 'https://news.google.com/articles/CBMiA'],
+    [0, 'https://news.google.com/rss/articles/CBMiA'],
+    [90000, 'https://news.google.com/rss/articles/CBMiA'],
     [91000, 'https://news.google.com/_/DotsSplashUi/data/batchexecute'],
   ]);
   assert.deepEqual(probe.stats, { requests: 3, rate_limited: 1, cooldowns: 1, cooldown_ms: 90000, retried: 1, paused: 0 });
@@ -101,9 +100,9 @@ test('a lasting 429 is retried a limited number of times, then later rows are sk
   assert.deepEqual(results.slice(2).map(r => r.value), [null, null]);
   assert.deepEqual(clock.sleeps, [60000, 120000]);
   assert.deepEqual(network.requested.map(([t, url]) => [t, url.replace(/\?.*/, '')]), [
-    [0, 'https://news.google.com/articles/CBMiA'],
-    [60000, 'https://news.google.com/articles/CBMiA'],
-    [180000, 'https://news.google.com/articles/CBMiB'],
+    [0, 'https://news.google.com/rss/articles/CBMiA'],
+    [60000, 'https://news.google.com/rss/articles/CBMiA'],
+    [180000, 'https://news.google.com/rss/articles/CBMiB'],
   ]);
   assert.deepEqual(probe.stats, { requests: 3, rate_limited: 3, cooldowns: 3, cooldown_ms: 180000, retried: 1, paused: 2 });
 });

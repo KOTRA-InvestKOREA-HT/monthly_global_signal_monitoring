@@ -110,8 +110,8 @@ test('a company left only with paused Google rows resumes them and matches a ful
   // 다시 보낸 요청은 멈췄던 기사뿐이다. 공식 피드·공식 기사·두 검색은 다시 받지 않는다. 멈췄던 대체 기사 셋 가운데
   // 셋째는 이제 상한에 걸려 요청하지 않는다(전체 재수집도 그렇다).
   assert.deepEqual(network.requested.filter(url => !url.endsWith('/batchexecute')).sort(), [
-    'https://news.google.com/articles/CBMiG2', 'https://news.google.com/articles/CBMiG3',
-    'https://news.google.com/articles/CBMiT1', 'https://news.google.com/articles/CBMiT2',
+    'https://news.google.com/rss/articles/CBMiG2', 'https://news.google.com/rss/articles/CBMiG3',
+    'https://news.google.com/rss/articles/CBMiT1', 'https://news.google.com/rss/articles/CBMiT2',
     publisher('G2'), publisher('G3'), publisher('T1'), publisher('T2')].sort());
   assert.equal(resumed.requestCount, 4);
 

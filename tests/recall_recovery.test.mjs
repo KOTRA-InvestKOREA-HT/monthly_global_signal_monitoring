@@ -24,7 +24,7 @@ test('Google News relay URLs are decoded to the publisher before fetching', asyn
   const calls = [];
   const fetchImpl = async (url, init = {}) => {
     calls.push(url);
-    if (url === 'https://news.google.com/articles/CBMiABC') {
+    if (url === 'https://news.google.com/rss/articles/CBMiABC') {
       return new Response('<c-wiz><div data-n-a-sg="SIG" data-n-a-ts="1757000000"></div></c-wiz>');
     }
     if (url.includes('/batchexecute')) {
@@ -65,7 +65,8 @@ test('a failed Google News decode reports which step failed and why', async () =
     assert.deepEqual(await decodeGoogleNewsLink(url, 1, fetchImpl), { reason });
   }
   // 해독도 리다이렉트도 실패하면 오류 메시지는 그대로 두고(연속 실패를 메시지로 센다) 해독 사유를 덧붙인다.
-  const error = await fetchArticleDocument(url, 1, async target => (target.startsWith('https://news.google.com/articles/')
+  // 해독은 쿼리 없는 RSS 쪽 중계 페이지를 열고, 리다이렉트는 수집한 주소(?oc=5)를 그대로 따라간다.
+  const error = await fetchArticleDocument(url, 1, async target => (target === 'https://news.google.com/rss/articles/CBMiABC'
     ? new Response('denied', { status: 403 }) : landed('https://consent.google.com/', 'Consent page'))).catch(e => e);
   assert.equal(error.message, 'publisher_url_unresolved');
   assert.equal(error.decodeFailure, 'article_page_http_403');
