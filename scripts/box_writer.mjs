@@ -19,6 +19,8 @@ import {
   SUMMARY_ENGLISH_FIRST_INSTRUCTION, SUMMARY_ENGLISH_STYLE_INSTRUCTION, SUMMARY_STYLE_INSTRUCTION,
 } from './review_prompts.mjs';
 import { importReview } from './local_report.mjs';
+import { reportEligible } from './date_state.mjs';
+import { APPROVAL_POLICY } from './validate_report_inputs.mjs';
 import { ARTICLE_EVIDENCE_CHARS, WRITER_ATTEMPTS, writtenProblems } from './summary_writer.mjs';
 
 export const BOX_WRITER_VERSION = 'box-writer-v1';
@@ -29,7 +31,21 @@ const REPEAT_OVERLAP = 0.6;
 
 const has = text => Boolean(String(text || '').trim());
 
-// 상자 문안이 필요한 기사. 기업 단위로 보아, 사업동향 문안(승인 또는 근접 행)이 하나도 없는 기업의
+// 보고서가 사업현황 상자에 실을 수 있는 사업동향 문안인지. report_content.best_business_row 가 받는 행
+// (게시월이 확정된 승인 행, 또는 business_near_miss 를 통과하는 근접 행)과 같은 기준이어야 한다.
+// 기준이 보고서보다 넓으면 보고서가 쓰지 못할 행 때문에 그 기업이 상자 문안을 받지 못하고, 상자는 위 지표 칸을
+// 되풀이한다. 4호 재발행에서 Corning 이 그랬다. Verizon·AT&T 공급 계약 기사는 게시월이 URL 추정뿐이라 날짜 보류로
+// 보고서에서 빠졌는데, 여기서는 문안이 있다고 세어 대상에서 뺐다.
+function reportableBusiness(item, period) {
+  const row = item.row;
+  if (item.kind !== 'relevant' || !row || !has(row.ai_summary_ko) || !has(row.ai_summary_en)) return false;
+  if (!reportEligible(row, period)) return false;
+  if (item.supported) return true;
+  return item.near_miss && row.ai_event_stage === APPROVAL_POLICY.business_stage && row.ai_summary_quality === 'pass'
+    && row.ai_entity_supported === true && row.ai_indicator_supported === true && row.ai_leading_indicator_supported === true;
+}
+
+// 상자 문안이 필요한 기사. 기업 단위로 보아, 보고서에 실릴 사업동향 문안이 하나도 없는 기업의
 // 승인된 투자 시그널 기사만 고른다. 사업동향 문안이 있으면 보고서가 그 문안을 쓴다(best_business_row 1~3단계).
 // 여기서 넉넉히 골라도 해는 없다. 보고서는 앞 단계가 채워지면 이 문안을 쓰지 않는다.
 export function boxCopyTargets(articles, reviews) {
@@ -40,7 +56,7 @@ export function boxCopyTargets(articles, reviews) {
     let results;
     try { results = importReview(article, review); } catch { continue; }
     const entry = byCompany.get(article.company) || { business: false, signals: [] };
-    if (results.some(item => item.kind === 'relevant' && item.row && has(item.row.ai_summary_ko) && has(item.row.ai_summary_en))) {
+    if (results.some(item => reportableBusiness(item, article.reporting_period))) {
       entry.business = true;
     }
     const approved = results.filter(item => item.kind === 'investment' && item.supported && has(item.row?.ai_summary_en));

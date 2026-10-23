@@ -7,6 +7,7 @@ import path from 'node:path';
 import { groupArticles, loadBoxCopy } from '../scripts/local_report.mjs';
 import { resolveWriter, writerPolicySection } from '../scripts/summary_writer.mjs';
 import { boxCopyTargets, boxProblems, boxRequest, repeatsSignal, writeBoxCopy } from '../scripts/box_writer.mjs';
+import { reportEligible } from '../scripts/date_state.mjs';
 
 // 위 지표 칸 말고는 실을 사업동향 문안이 없는 기업의 상자 문안(2026-10-22 사용자 요청).
 const doc = fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8');
@@ -55,6 +56,21 @@ test('only companies with no business copy of their own get a box copy', () => {
     reason: 'A new line.', evidence_quotes: [quote], summary_en: 'Acme opened a wafer line.', summary_ko: 'Acme는 웨이퍼 라인을 열었음.' };
   const reviews = new Map([[article.id, review], [other.id, { article_id: other.id, reviewer: 'gemini/test', decisions: [decision] }]]);
   assert.deepEqual(boxCopyTargets([article, other], reviews), []);
+});
+
+// 4호 재발행의 Corning: 다른 사업동향 기사(Verizon·AT&T 계약)에 문안은 있었지만 게시월이 추정뿐이라 보고서에서
+// 빠졌다. 그 기사를 문안이 있는 것으로 세면 상자 문안을 받지 못하고 위 지표 칸을 되풀이한다.
+test('a business article the report holds back for its date does not count as business copy', () => {
+  const business = { ...row, url: 'https://example.com/2026/08/plant', title: 'Acme opens a wafer line' };
+  delete business.investment_signal_no;
+  delete business.published_at;
+  const other = groupArticles([], [business], period)[0];
+  assert.equal(reportEligible(other.candidates[0].row, period), false, 'fixture must be held back for its date');
+  const decision = { candidate_id: other.candidates[0].id, entity_supported: true, target_technology_supported: true,
+    indicator_supported: true, leading_indicator_supported: true, event_stage: 'not_applicable', quality: 'pass',
+    reason: 'A new line.', evidence_quotes: [quote], summary_en: 'Acme opened a wafer line.', summary_ko: 'Acme는 웨이퍼 라인을 열었음.' };
+  const reviews = new Map([[article.id, review], [other.id, { article_id: other.id, reviewer: 'gemini/test', decisions: [decision] }]]);
+  assert.deepEqual(boxCopyTargets([article, other], reviews).map(target => target.article.id), [article.id]);
 });
 
 test('the request shows what the signal card already says and asks for the rest of the article', () => {
