@@ -1144,6 +1144,73 @@ def business_near_miss(row):
     return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
 
 
+# 위 지표 칸과 같은 사건인지 가르는 규칙(2026-10-23 사용자 결정). 외부 기사를 늘 받게 되면서, 지표 칸의 공식
+# 보도자료와 같은 사건을 다룬 다른 매체 기사가 주소·제목이 달라 상자에 들어올 수 있다. 영문 문안으로 잰다
+# (국문은 낱말 경계가 조사에 붙는다). 다음 가운데 하나면 같은 사건이다.
+#   1. 상자 문안 낱말의 60% 넘게 위 칸 문안에 있다(box_writer.mjs repeatsSignal 과 같은 잣대).
+#      4호의 Amkor(같은 2단계 발표, 61%)·onsemi(같은 Valens 협력, 96%)가 여기 걸린다.
+#   2. 위 칸에 나온 고유명사(사람·상대 기업·장소)를 함께 쓰면서 50% 넘게 겹치거나, 고유명사 둘 이상을 함께 쓰면서
+#      40% 넘게 겹친다. 4호 Albemarle 의 SEC 공시(같은 CEO 선임, 46%, Ragnar·Udd)가 여기 걸린다.
+#   3. 위 칸과 같은 금액·수량을 쓰고 고유명사도 하나 이상 같다. 같은 투자를 다른 말로 쓴 기사가 여기 걸린다.
+# 제품 이름만 같고 사건이 다른 기사(Ouster 의 Rev8 OS1 Max 고객 확대, 26%)는 같은 사건이 아니다.
+SAME_EVENT_OVERLAP = 0.6
+SAME_EVENT_NAMED_OVERLAP = 0.5
+SAME_EVENT_PARTIAL_OVERLAP = 0.4
+SAME_EVENT_WORD = re.compile(r"[a-z0-9][a-z0-9.,$%-]*")
+SAME_EVENT_NAME = re.compile(r"\b[A-Z][A-Za-z0-9&*-]+")
+SAME_EVENT_AMOUNT = re.compile(
+    r"(?<![\w.])((?:us)?[$€£¥]?\d[\d,]*(?:\.\d+)?)\s*(%|percent|billion|million|trillion|bn|mn|won|yen|euros?|dollars?|"
+    r"square (?:meters|metres|feet)|gw|mw|gwh|nm|jobs|employees|units|aircraft|tons|tonnes)?(?![\w])", re.I)
+SAME_EVENT_SKIP_NAMES = {
+    "the", "a", "an", "in", "on", "at", "for", "and", "as", "to", "its", "it", "this", "that", "under", "with", "by",
+    "from", "after", "through", "also", "following", "january", "february", "march", "april", "may", "june", "july",
+    "august", "september", "october", "november", "december", "president", "chief", "executive", "officer", "vice",
+    "director", "chairman", "senior", "company", "inc", "ltd", "co", "corp", "corporation", "group", "holdings",
+}
+
+
+def _same_event_words(text):
+    return set(SAME_EVENT_WORD.findall(text.lower()))
+
+
+def _same_event_names(text, own):
+    return {word.lower().strip(".,") for word in SAME_EVENT_NAME.findall(text)} - SAME_EVENT_SKIP_NAMES - own
+
+
+def _same_event_amounts(text):
+    amounts = set()
+    for number, unit in SAME_EVENT_AMOUNT.findall(text):
+        digits = re.sub(r"[^\d.]", "", number)
+        money = bool(re.search(r"[$€£¥]", number))
+        if not digits or (not unit and not money and (float(digits.rstrip(".") or 0) < 1000 or re.fullmatch(r"(19|20)\d\d", digits))):
+            continue
+        amounts.add(f"{digits}{(unit or '').lower().split()[0] if unit else ''}")
+    return amounts
+
+
+def same_event_as_signal(row, shown_rows, company=""):
+    """row 의 문안이 위 지표 칸과 같은 사건을 다루는지. 규칙은 위 주석."""
+    text = clean_text(row.get("ai_summary_en"))
+    mine = _same_event_words(text)
+    if not mine:
+        return False
+    own = {word.lower() for word in re.findall(r"[A-Za-z0-9&-]+", f"{company} {row.get('company', '')}")}
+    names, amounts = _same_event_names(text, own), _same_event_amounts(text)
+    for shown in shown_rows:
+        theirs_text = clean_text(shown.get("ai_summary_en"))
+        overlap = len(mine & _same_event_words(theirs_text)) / len(mine)
+        shared_names = names & _same_event_names(theirs_text, own)
+        if overlap > SAME_EVENT_OVERLAP:
+            return True
+        if overlap > SAME_EVENT_NAMED_OVERLAP and shared_names:
+            return True
+        if overlap > SAME_EVENT_PARTIAL_OVERLAP and len(shared_names) >= 2:
+            return True
+        if amounts & _same_event_amounts(theirs_text) and shared_names:
+            return True
+    return False
+
+
 def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False):
     """사업현황 상자에 쓸 행. 위 지표 칸을 그대로 되풀이하지 않는 것을 순서대로 고른다(2026-10-22 사용자 결정).
 
@@ -1156,6 +1223,7 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
     3. 위 지표 칸과 같은 기사라도, 사업동향 쪽으로 따로 쓴 문안이 있는 행
     4. 지표 기사 본문에서 위 문안이 다루지 않은 내용으로 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)
 
+    어느 단계든 위 지표 칸과 같은 사건(same_event_as_signal)이면 고르지 않고 다음 후보로 넘어간다.
     모두 없으면 None 이다. 상자는 빼지 않고 "확인되지 않음" 문구(business_empty)를 싣는다. 예전에는 마지막 자리로
     지표 칸 문안을 다시 실었으나, 4호 재발행에서 Corning·Chemours 상자가 위 칸을 글자 그대로 되풀이해
     되풀이 대신 없음으로 표시하기로 했다(2026-10-23 사용자 결정).
@@ -1165,7 +1233,8 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
     shown_texts = {clean_text(summary_field(row, "ai_summary")) for row in shown_rows}
 
     def mine(row):
-        return row.get("company") == company and id(row) not in shown_ids
+        return (row.get("company") == company and id(row) not in shown_ids
+                and not same_event_as_signal(row, shown_rows, company))
 
     def separate(row):
         return mine(row) and not (article_keys(row) & shown_keys)
@@ -1184,7 +1253,8 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
          and clean_text(summary_field(row, "ai_summary")) not in shown_texts],
     ]
     boxed = [row for row in shown_rows if row.get("company") == company and signal_publishable(row)
-             and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
+             and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))
+             and not same_event_as_signal({**row, "ai_summary_en": row["ai_box_summary_en"]}, shown_rows, company)]
     if boxed:
         # 마지막(4단계) 자리다. 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
         tiers.append([{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
