@@ -1,11 +1,11 @@
 {
-  "investment_signal_count": 35,
-  "companies_with_investment_signals": 24,
-  "approved_count": 18,
+  "investment_signal_count": 42,
+  "companies_with_investment_signals": 27,
+  "approved_count": 25,
   "near_miss_count": 17,
-  "report_signal_count": 15,
-  "date_pending_count": 3,
+  "report_signal_count": 21,
+  "date_pending_count": 4,
   "out_of_period_count": 0,
-  "companies_in_report": 12,
+  "companies_in_report": 14,
   "provider": "gemini"
 }
