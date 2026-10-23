@@ -137,7 +137,8 @@ test('a company with a real transient failure is still collected from scratch', 
   assert.notEqual(retried.resumed, true);
   assert.ok(network.requested.includes('https://acme.example/rss'));
   assert.ok(network.requested.includes('https://acme.example/news/a1'));
-  assert.equal(network.requested.filter(url => url.startsWith('https://news.google.com/rss/search')).length, 2);
+  // 검색은 셋이다: 외부 기사, 사업동향 탐색, 한국 관련 검색.
+  assert.equal(network.requested.filter(url => url.startsWith('https://news.google.com/rss/search')).length, 3);
 });
 
 // 상세 페이지 한 건이 일시 오류였던 기업은 그 기사만 다시 받는다. 예전에는 매번 처음부터 다시 받았다.

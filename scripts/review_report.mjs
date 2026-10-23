@@ -8,7 +8,7 @@ import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, 
   articlesWithoutCompanyBody, companyWithoutBodyReview } from './local_report.mjs';
 import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI } from './review_providers.mjs';
 import { DATE_HINT_VERSION, decisionProperties, PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
-import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collect_company_signals.mjs';
+import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collect_company_signals.mjs';
 import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
@@ -335,6 +335,9 @@ const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)
 const read = async file => JSON.parse(await fs.readFile(file, 'utf8'));
 const write = writeJsonAtomic;
 
+// 실행 한 번에 보내는 판정 요청(재시도 포함)의 기본값이자 상한. 워크플로 입력 설명과 같은 값이다.
+export const MAX_JUDGE_REQUESTS = 800;
+
 export function configuration(env = process.env, provider = resolveProvider(env)) {
   const prefix = provider.id.toUpperCase();
   // Gemini 는 API 가 무료 티어를 강제하지 못하므로 사람이 확인했다는 표시를 요구한다.
@@ -344,7 +347,7 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   }
   const keyEnv = provider.keyEnv.find(name => env[name]);
   if (!keyEnv) throw new Error(`${provider.keyEnv.join(' or ')} is required`);
-  const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || 600);
+  const maxRequests = Number(env[`${prefix}_MAX_REQUESTS`] || env.REPORT_MAX_REQUESTS || MAX_JUDGE_REQUESTS);
   const delayMs = Number(env[`${prefix}_DELAY_MS`] || env.REPORT_DELAY_MS || provider.defaultDelayMs);
   // 무료 티어의 분당 요청 한도는 동시 실행 수와 무관하게 공유된다. 8 이면 한도에 먼저
   // 부딪혀 429 재시도로 되돌아오는 낭비가 커서 4 로 낮춘다. REPORT_CONCURRENCY 로 올릴 수 있다.
@@ -352,8 +355,11 @@ export function configuration(env = process.env, provider = resolveProvider(env)
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 12) throw new Error('REPORT_CONCURRENCY must be 1..12');
   // 대기 하한은 프로바이더의 관측 RPM 에서 온다(60000 / RPM). 429 가 나도 저장 후 멈추고
   // 다음 실행이 이어간다. 2026-08 첫 판정(34939670823)은 기사 372건에 재시도·보강이 붙어 400건에서
-  // 358건만 끝냈다. 600 이면 한 회차가 한 번에 끝난다.
-  if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > 600) throw new Error(`${prefix}_MAX_REQUESTS must be 1..600`);
+  // 358건만 끝냈다. 600 이면 한 회차가 한 번에 끝났다. 공식 기사가 있는 기업에도 외부 뉴스·한국 관련 검색을 돌리면서
+  // 기사가 늘어 800 으로 올렸다(2026-10-23).
+  if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > MAX_JUDGE_REQUESTS) {
+    throw new Error(`${prefix}_MAX_REQUESTS must be 1..${MAX_JUDGE_REQUESTS}`);
+  }
   if (!Number.isFinite(delayMs) || delayMs < provider.minDelayMs || delayMs > 60000) {
     throw new Error(`${prefix}_DELAY_MS must be ${provider.minDelayMs}..60000`);
   }
@@ -1311,7 +1317,8 @@ async function main() {
     const searchTerms = await read('config/trend_search_terms.json').catch(() => ({}));
     if (collectionNeedsRefresh(previous, { version: CONTENT_COLLECTION_VERSION,
       inputDigest: collectionInputDigest(targets, sourceConfig,
-        { maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY, technology, keywordConfig, searchTerms }) })) throw new Error('Refresh stale or incomplete collection');
+        { maxTrendDiscovery: TREND_DISCOVERY_PER_COMPANY, technology, keywordConfig, searchTerms },
+        newsDigestInputs()) })) throw new Error('Refresh stale or incomplete collection');
   }
   catch {
     // 운영 수집 인자(응답 헤더 한도 포함)는 collection_args.mjs 한 곳에 있다. 다른 진입점도 같은 값을 쓴다.

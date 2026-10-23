@@ -170,7 +170,7 @@ Run a full 77-company collection test with Node.js and no package install:
 node --use-system-ca scripts/collect_company_signals.mjs --companies data/target_companies.json --source-config config/company_sources.json --out-dir outputs --sources official_feeds,official_pages,official_sitemaps,sec_filings,google_news --days 45 --max-per-source 3 --max-per-company 4 --fallback-mode missing --fallback-min-results 1 --rate-limit-seconds 0.5
 ```
 
-Official RSS/Atom feeds and official Newsroom/Press/IR pages are read first. Google News is used only when a company has no official result in the run.
+Official RSS/Atom feeds and official Newsroom/Press/IR pages are read first. With `--fallback-mode missing` (the example above) Google News is used only when a company has no official result in the run. Production uses `--fallback-mode always` (`scripts/collection_args.mjs`): the general Google News search runs for every company, up to `--max-external-news` external articles are kept even when official articles fill the company quota, and a Korea search (`--max-korea-news`) adds a few more. Stock-commentary titles and outlets are dropped before they take a slot.
 
 Build the company-to-technology mapping from the reference company-information PDF
 (not in the repository; pass its path):

@@ -33,9 +33,9 @@ on:
         options: [gemini, nvidia]
         default: gemini
       max_requests:
-        description: "Maximum API requests including retries (1-600)"
+        description: "Maximum API requests including retries (1-800)"
         type: string
-        default: "600"
+        default: "800"
       delay_ms:
         description: "Delay between requests in ms. Leave empty for the provider default (gemini 4500, nvidia 1600)"
         type: string
@@ -66,9 +66,9 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     # 기본값 360분이면 응답 없는 제공자 하나가 publish-report 와 같이 쓰는 동시 실행 그룹을 6시간 막는다.
-    # 판정은 요청 최대 600건을 4.5초 간격으로 시작해 약 45분, 수집이 6~10분, 준비가 몇 분이라 한 시간 남짓이다.
+    # 판정은 요청 최대 800건을 4.5초 간격으로 시작해 약 60분, 수집이 10~15분, 준비가 몇 분이라 한 시간 반 남짓이다.
     # 판정 단계에 그 두 배인 120분을 주고, 진행 저장·업로드·발행 시작이 돌 시간을 더해 140분에서 끊는다.
-    # delay_ms 를 크게 주는 수동 실행(예: 10초면 600건에 100분)은 이 값들도 함께 올린다.
+    # delay_ms 를 크게 주는 수동 실행(예: 10초면 800건에 130분)은 이 값들도 함께 올린다.
     timeout-minutes: 140
     permissions:
       contents: read
@@ -134,7 +134,7 @@ jobs:
           REVIEW_VERIFIER: ${{ vars.REVIEW_VERIFIER }}
           # 이름은 OPENAI_API_KEY 지만 내용은 NVIDIA build 키다.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '600' }}
+          REPORT_MAX_REQUESTS: ${{ inputs.max_requests || vars.REPORT_MAX_REQUESTS || '800' }}
           REPORT_DELAY_MS: ${{ inputs.delay_ms || vars.REPORT_DELAY_MS || '' }}
           REPORT_CONCURRENCY: ${{ inputs.concurrency || vars.REPORT_CONCURRENCY || '4' }}
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}

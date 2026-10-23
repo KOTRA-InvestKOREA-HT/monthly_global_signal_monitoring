@@ -6,12 +6,14 @@ import { parseArgs } from '../scripts/collect_company_signals.mjs';
 
 // 운영 판정(review_report.mjs)이 2026-10 까지 손으로 넘기던 인자. 공용 인자는 이것과 같아야 한다.
 // 사업동향 탐색 상한만 2026-10 에 2건에서 4건으로 올렸다(collection_args.mjs 의 근거).
+// 2026-10-23 에 외부 기사를 늘 보도록 바꿨다: fallback-mode always, 외부 기사 3건, 한국 관련 검색 2건.
 const PRODUCTION = ['--companies', 'data/target_companies.json', '--source-config', 'config/company_sources.json',
   '--sources', 'official_feeds,official_pages,official_sitemaps,sec_filings,google_news',
-  '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'missing',
+  '--max-per-source', '6', '--max-per-company', '10', '--max-detail-per-company', '10', '--fallback-mode', 'always',
   '--fallback-min-results', '1', '--rate-limit-seconds', '0.5', '--company-concurrency', '4',
   '--technology-map', 'data/company_technology_map.json', '--keyword-config', 'config/technology_keywords.json',
-  '--search-terms', 'config/trend_search_terms.json', '--max-trend-discovery', '4'];
+  '--search-terms', 'config/trend_search_terms.json', '--max-trend-discovery', '4',
+  '--max-external-news', '3', '--max-korea-news', '2'];
 const pairs = args => Object.fromEntries(args.reduce((list, value, index) => (index % 2 ? list : [...list, [value, args[index + 1]]]), []));
 
 test('the shared collection arguments are the production arguments', () => {
@@ -31,7 +33,7 @@ test('the shared collection arguments are the production arguments', () => {
     'toDate', 'maxPerSource', 'maxPerCompany', 'fallbackMinResults', 'fallbackMode', 'rateLimitSeconds', 'timeoutSeconds',
     'companyLimit', 'companyConcurrency', 'fetchOfficialContent', 'contentCharLimit', 'contentExcerptLimit',
     'maxDetailPerCompany', 'fetchRetries', 'linkPolicy', 'maxVerifyPerCompany', 'technologyMap', 'keywordConfig',
-    'searchTerms', 'maxTrendDiscovery']);
+    'searchTerms', 'maxTrendDiscovery', 'maxExternalNews', 'maxKoreaNews']);
 });
 
 test('every collection entry point goes through the shared arguments', () => {
@@ -55,6 +57,7 @@ test('the argument parser rejects missing values, unknown flags and non-numbers'
   assert.throws(() => parseArgs(['--rate-limit-seconds', 'fast']), /Invalid --rate-limit-seconds/);
   assert.throws(() => parseArgs(['--company-concurrency', '0']), /Invalid --company-concurrency/);
   assert.throws(() => parseArgs(['--refresh', 'maybe']), /Invalid --refresh/);
+  assert.throws(() => parseArgs(['--fallback-mode', 'sometimes']), /Invalid --fallback-mode/);
   const args = parseArgs(['--company-limit', '0', '--link-policy', 'current', '--refresh', 'false', '--rate-limit-seconds', '1.5',
     '--max-verify-per-company', '2']);
   assert.equal(args.companyLimit, 0);

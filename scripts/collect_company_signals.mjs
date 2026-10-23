@@ -15,13 +15,13 @@ import {
   verifyFetchedArticle,
 } from "./link_policy.mjs";
 import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
-import { COLLECTION_SETTINGS } from './collection_args.mjs';
+import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 // v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
 export const CONTENT_COLLECTION_VERSION = 'article-body-v18-feed-summary';
 // 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
 // 읽어 가므로 다시 내보낸다.
-export { TREND_DISCOVERY_PER_COMPANY, collectorCommand } from './collection_args.mjs';
+export { TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collection_args.mjs';
 export const DEFAULT_LINK_POLICY = 'proposed';
 export const DEFAULT_MAX_VERIFY_PER_COMPANY = 0;
 
@@ -178,11 +178,13 @@ const ARG_KEYS = {
   "--keyword-config": "keywordConfig",
   "--search-terms": "searchTerms",
   "--max-trend-discovery": "maxTrendDiscovery",
+  "--max-external-news": "maxExternalNews",
+  "--max-korea-news": "maxKoreaNews",
 };
 
 const INTEGER_ARGS = new Set(["days", "maxPerSource", "maxPerCompany", "fallbackMinResults", "timeoutSeconds",
   "companyLimit", "companyConcurrency", "contentCharLimit", "contentExcerptLimit", "maxDetailPerCompany",
-  "fetchRetries", "maxVerifyPerCompany", "maxTrendDiscovery"]);
+  "fetchRetries", "maxVerifyPerCompany", "maxTrendDiscovery", "maxExternalNews", "maxKoreaNews"]);
 // 0 이면 아무 일도 하지 않는 값. 시간 제한과 동시 처리 수는 1 이상이어야 한다.
 const POSITIVE_ARGS = new Set(["timeoutSeconds", "companyConcurrency", "contentCharLimit"]);
 
@@ -226,6 +228,9 @@ export function parseArgs(argv) {
     keywordConfig: COLLECTION_SETTINGS.keywordConfig,
     searchTerms: COLLECTION_SETTINGS.searchTerms,
     maxTrendDiscovery: COLLECTION_SETTINGS.maxTrendDiscovery,
+    // 외부 기사 자리와 한국 관련 검색(collection_args.mjs 의 근거). 키 순서 때문에 맨 뒤에 둔다.
+    maxExternalNews: COLLECTION_SETTINGS.maxExternalNews,
+    maxKoreaNews: COLLECTION_SETTINGS.maxKoreaNews,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
@@ -255,6 +260,7 @@ export function parseArgs(argv) {
     }
   }
   if (!['current', 'proposed'].includes(args.linkPolicy)) throw new Error('Invalid --link-policy');
+  if (!['missing', 'always'].includes(args.fallbackMode)) throw new Error('Invalid --fallback-mode');
   if (!Number.isInteger(args.maxVerifyPerCompany) || args.maxVerifyPerCompany < 0) throw new Error('Invalid --max-verify-per-company');
   return args;
 }
@@ -1018,6 +1024,47 @@ export function buildQuery(company, dateRange) {
   let nameClause = names.map((name) => `"${name}"`).join(" OR ");
   if (names.length > 1) nameClause = `(${nameClause})`;
   return `${nameClause} (${SIGNAL_TERMS.join(" OR ")}) ${trendSearchWindow(dateRange)}`;
+}
+
+// 한국 관련 검색. 대체 수집 질의는 "press release"·"earnings" 같은 신호 낱말로 찾아서, 한국 투자 기사가 검색 결과
+// 뒷순위로 밀린다. 9월 Amkor 의 광주 공장 증설 검토(Herald 영문판 9/20)가 대체 질의로는 32건 중 22번째라
+// 6건 상한에 잘렸고, 이 질의로는 2번째였다. 영문판 한국 매체도 같은 Google News(영어) 색인에 있다.
+const KOREA_TERMS = ["Korea", "Korean"];
+
+export function buildKoreaQuery(company, dateRange) {
+  const names = relevantAliases(company);
+  let nameClause = names.map((name) => `"${name}"`).join(" OR ");
+  if (names.length > 1) nameClause = `(${nameClause})`;
+  return `${nameClause} (${KOREA_TERMS.join(" OR ")}) ${trendSearchWindow(dateRange)}`;
+}
+
+// 주가 해설. 외부 기사를 늘리면 시세·목표주가·지분 변동 기사가 먼저 자리를 채운다. 9월 수집의 외부 기사에서
+// 이런 기사는 한 건도 승인되지 않았다. 판정 전에 빼서 자리와 판정 요청을 아낀다.
+// 매체는 주가 해설만 싣는 곳만 적는다. Yahoo Finance·TradingView·Investing.com 은 보도자료와 사업 기사도 실어
+// (9월에 Yahoo Finance 2건 승인) 매체로 막지 않고 제목으로만 본다. 제목은 종목 기호와 주가 낱말이 함께 있을 때만
+// 뺀다. "Aeluma Shares Rise 7% After Sumitomo ... Agreement" 처럼 종목 기호 없는 사업 기사는 남는다.
+const STOCK_COMMENTARY_PUBLISHERS = /\b(?:marketbeat|simply wall st(?:reet)?|gurufocus|zacks|insider monkey|ad-hoc-news|defense world|etf daily news|stocktitan|kalkine)\b/i;
+const TITLE_TICKER = /\((?:[A-Z]{2,8}:)?\$?[A-Z]{2,6}(?:\.[A-Z]{1,2})?\)|\$[A-Z]{2,5}\b|\b(?:NYSE|NASDAQ|Nasdaq)\s*:\s*[A-Z]{1,5}\b/;
+const TITLE_STOCK_WORDS = /\b(?:stocks?|shares?|investors?|buy|sell|hold|price target|valuation|undervalued|overvalued|pricey|dividends?|outperform|underperform|analysts?|rating|rall(?:y|ies|ied)|bull(?:ish)?|bear(?:ish)?|momentum|roundup|plunges?|surges?|soars?|jumps?|tumbles?|gains?|up \d|down \d|since last earnings)\b/i;
+
+export function stockCommentary(row) {
+  if (STOCK_COMMENTARY_PUBLISHERS.test(`${row.publisher || ""} ${row.source || ""}`)) return true;
+  // 매체 이름("- Yahoo Finance")은 떼고 본다.
+  const title = String(row.title || "").replace(/\s+-\s+[^-]+$/, "");
+  if (!TITLE_TICKER.test(title)) return false;
+  // 종목 기호를 단 의문문 제목("Is Amkor Technology (AMKR) Arizona Expansion A Turning Point ...?")은 주가 해설 매체의
+  // 서식이다. 같은 사건의 보도 기사는 따로 잡힌다.
+  return TITLE_STOCK_WORDS.test(title) || /\?\s*$/.test(title);
+}
+
+// 제목에 기업 이름이 있는지. 한국 관련 검색은 이름이 본문에만 있는 기사까지 돌려준다. 이름이 흔한 낱말인 기업
+// (Maxon·Dupont·DOW)은 9월에 부고·정치 기사가 들어왔다. 제목에 이름이 없으면 그 기업 기사로 보지 않는다.
+export function titleNamesCompany(title, names) {
+  const text = String(title || "");
+  return names.some((name) => {
+    const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, "i").test(text);
+  });
 }
 
 export function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
@@ -2505,7 +2552,8 @@ async function collectTrendDiscovery(company, technology, keywordConfig, dateRan
     parseRssOrAtom(xml, company, collectedAt, "google_news_trend", query, "Google News"),
     dateRange,
   ).map((row) => ({ ...row, ...fallbackSourceFields(90), official_source_url: "",
-    discovery_snippet: snippets.get(row.title) || "" }));
+    discovery_snippet: snippets.get(row.title) || "" }))
+    .filter((row) => !stockCommentary(row));
   return { rows, requestCount: 1, query };
 }
 
@@ -2528,9 +2576,23 @@ async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSecond
         ...fallbackSourceFields(90),
         official_source_url: "",
       }))
+      // 상한보다 먼저 거른다. 뒤에서 거르면 주가 해설이 차지한 자리가 빈 채로 남는다.
+      .filter((row) => !stockCommentary(row))
       .slice(0, maxPerSource),
     requestCount: 1,
   };
+}
+
+async function collectKoreaNews(company, dateRange, timeoutSeconds, collectedAt) {
+  const query = buildKoreaQuery(company, dateRange);
+  const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
+  const xml = await searchGoogleNews(params, timeoutSeconds);
+  const rows = filterByDateRange(
+    parseRssOrAtom(xml, company, collectedAt, "google_news_korea", query, "Google News"),
+    dateRange,
+  ).map((row) => ({ ...row, ...fallbackSourceFields(90), official_source_url: "" }))
+    .filter((row) => !stockCommentary(row) && titleNamesCompany(row.title, relevantAliases(company)));
+  return { rows, requestCount: 1, query };
 }
 
 // 같은 기사인지 볼 URL 키. 추적 파라미터와 # 만 뗀다(stripTracking). 예전에는 쿼리 전체를 지우고 경로를 소문자로
@@ -3000,6 +3062,19 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       // 2026-08 run while fallback rows grew from 37 to 142.
       // Official rows the detail page dated outside the period go last (rankCompanyRows).
       rows = rankCompanyRows({ usable, rows, fallbackRows: split.fallbackRows, dateRange, limit: args.maxPerCompany });
+      // 'always' 에서는 공식 기사가 기업 자리를 다 채워도 외부 기사 maxExternalNews 건까지는 상한 밖에 덧붙인다.
+      // 순위로만 두면 공식 기사가 8건 이상인 기업(9월 77개사 중 28개사)은 외부 기사가 거의 들어오지 못한다.
+      const keptFallback = rows.filter(row => row.source_type !== 'official').length;
+      const reserved = args.fallbackMode === 'always' ? Math.max(0, args.maxExternalNews - keptFallback) : 0;
+      if (reserved) {
+        const extra = [];
+        for (const row of split.fallbackRows) {
+          if (extra.length >= reserved) break;
+          if (!isDuplicateTrendRow(row, [...rows, ...extra])) extra.push(row);
+        }
+        rows = [...rows, ...extra];
+        stats.fallback_reserved = extra.length;
+      }
       const fallbackRows = rows.filter(row => row.source_type !== 'official');
       stats.fallback_kept = fallbackRows.length;
       const detailedFallback = await enrichOfficialRowsWithContent(fallbackRows, args, collectedAt, company, slot);
@@ -3043,6 +3118,36 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       stats.trend_discovery = "error";
       requestCount += error.requestCount || 0;
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news_trend", error: error.message });
+    }
+  }
+
+  // 한국 관련 검색. 사업동향 탐색처럼 기업 자리를 다투지 않고 맨 뒤에 최대 maxKoreaNews 건을 덧붙인다.
+  stats.korea_news = "not_selected";
+  if (selectedSources.includes("google_news") && args.maxKoreaNews > 0) {
+    stats.korea_news = "run";
+    try {
+      const { value: found, replayed } = await log.run("google_news_korea",
+        () => collectKoreaNews(company, dateRange, args.timeoutSeconds, collectedAt));
+      if (!replayed) requestCount += found.requestCount;
+      if (!replayed && found.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
+      stats.korea_news_found = found.rows.length;
+      const selected = [];
+      for (const row of found.rows) {
+        if (selected.length >= args.maxKoreaNews) break;
+        if (!isDuplicateTrendRow(row, [...rows, ...selected])) selected.push({ ...row, korea_discovery: true });
+      }
+      stats.korea_news_kept = selected.length;
+      if (selected.length) {
+        const recovered = selected.map(row => recoverPublisherRow(row, publisherCandidates, sourceConfig));
+        const detailed = await enrichOfficialRowsWithContent(recovered, args, collectedAt, company, slot);
+        requestCount += detailed.requestCount;
+        errors.push(...detailed.errors);
+        rows = [...rows, ...detailed.rows];
+      }
+    } catch (error) {
+      stats.korea_news = "error";
+      requestCount += error.requestCount || 0;
+      errors.push({ target_no: company.target_no, company: company.company, source: "google_news_korea", error: error.message });
     }
   }
   return { rows, requestCount, errors, stats: { ...stats, ...tally } };
@@ -3117,7 +3222,7 @@ async function main() {
   const summary = {
     run_started_at: collectedAt,
     collection_resume_version: 1,
-    collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args)),
+    collection_input_digest: collectionInputDigest(companies, sourceConfig, trendDigestInputs(args), newsDigestInputs(args)),
     html_network: domainGuard.stats,
     cached_company_count: companyResults.filter(result => result.cached).length,
     // 재시도할 까닭이 상세 페이지 단계에만 남아, 받아 둔 단계는 다시 쓰고 실패·멈춘 기사만 다시 받은 기업.
@@ -3141,6 +3246,12 @@ async function main() {
     trend_discovery_found: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_found || 0), 0),
     trend_discovery_kept: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_kept || 0), 0),
     trend_discovery_per_company: args.maxTrendDiscovery,
+    // 공식 기사가 자리를 채워도 상한 밖에 덧붙인 외부 기사(fallbackMode always), 한국 관련 검색이 보탠 기사.
+    external_news_reserved: companyResults.reduce((total, result) => total + (result.stats?.fallback_reserved || 0), 0),
+    external_news_per_company: args.maxExternalNews,
+    korea_news_found: companyResults.reduce((total, result) => total + (result.stats?.korea_news_found || 0), 0),
+    korea_news_kept: companyResults.reduce((total, result) => total + (result.stats?.korea_news_kept || 0), 0),
+    korea_news_per_company: args.maxKoreaNews,
     // Google News 기사가 발행사 본문에 닿은 두 경로를 따로 센다. 예전 publisher_resolution_count 는 제목 대조만
     // 세서, 해독으로 50건을 받은 9월 28일 실행에서도 0이라 해독이 안 되는 것처럼 읽혔다.
     google_news_rows: finalRows.filter(row => isGoogle(row.url)).length,
