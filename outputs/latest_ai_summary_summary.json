@@ -174,48 +174,28 @@
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 86,
-    "requests": 97,
-    "cached": 0,
-    "written": 96,
+    "requests": 5,
+    "cached": 96,
+    "written": 3,
     "written_by": {
-      "gemini-3.5-flash-lite": 96
+      "gemini-3.5-flash-lite": 3
     },
-    "failed": [
-      {
-        "article_id": "75f0a4a1ff61b45a761734e2",
-        "company": "3M",
-        "candidate_id": "investment:4",
-        "problems": [
-          "source_quote_not_in_article"
-        ]
-      },
-      {
-        "article_id": "1aac886c2c781ef065b3751c",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "problems": [
-          "mistranslated_term"
-        ]
-      }
-    ],
+    "failed": [],
     "errors": {},
-    "rejected": {
-      "source_quote_not_in_article": 1,
-      "mistranslated_term": 1
-    },
+    "rejected": {},
     "key_runs": [
       {
         "key": 1,
-        "requests": 97
+        "requests": 5
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 83,
-    "requests": 83,
-    "cached": 0,
-    "reviewed": 96,
+    "articles": 86,
+    "requests": 16,
+    "cached": 82,
+    "reviewed": 99,
     "flagged": [
       {
         "article_id": "afd0b42563ac9fc82052f698",
@@ -234,15 +214,6 @@
         "copy_phrase": "established by",
         "source_phrase": "",
         "note": "The English copy describes the framework as established, whereas the Korean copy describes it as being built."
-      },
-      {
-        "article_id": "dc6fe9762aaa51b2fb81b482",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "고급 단계",
-        "source_phrase": "",
-        "note": "The Korean term '고급 단계' is an unnatural literal translation of 'advanced stages' rather than an established business term."
       },
       {
         "article_id": "9de24507c17f74e82b9e357d",
@@ -270,6 +241,15 @@
         "copy_phrase": "감원을 단행하여",
         "source_phrase": "3,200 jobs will be cut worldwide",
         "note": "The copy states as done what the sources state as future."
+      },
+      {
+        "article_id": "dc6fe9762aaa51b2fb81b482",
+        "company": "BASF",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "고급 단계",
+        "source_phrase": "",
+        "note": "The Korean term '고급 단계' is an unnatural literal translation of 'advanced stages' rather than an established business term."
       },
       {
         "article_id": "8e63ebcf75cecf1a54b94d6d",
@@ -371,13 +351,13 @@
         "note": "The Korean summary states that the investment was executed, whereas the English summary states that 3M is investing to acquire the shares."
       },
       {
-        "article_id": "0e8839bf980c461b590f8527",
-        "company": "Cognex",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "피지컬 AI",
+        "article_id": "79837aaadb5003f9d62ddd75",
+        "company": "Schmalz",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "Dr. Kurt Schmalz 등",
         "source_phrase": "",
-        "note": "The term '피지컬 AI' is a Hangul transliteration of the English phrase 'Physical AI' rather than an established Korean translation."
+        "note": "The Korean summary omits Dr. Johannes Schmalz and Andreas Beutel, who are included in the English summary."
       },
       {
         "article_id": "4aa57e026b4b8bad69dc7dd8",
@@ -387,6 +367,15 @@
         "copy_phrase": "깊이 카메라",
         "source_phrase": "",
         "note": "The term depth camera is literally translated as 깊이 카메라 rather than using the established Korean term 심도 카메라."
+      },
+      {
+        "article_id": "0e8839bf980c461b590f8527",
+        "company": "Cognex",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "피지컬 AI",
+        "source_phrase": "",
+        "note": "The term '피지컬 AI' is a Hangul transliteration of the English phrase 'Physical AI' rather than an established Korean translation."
       },
       {
         "article_id": "b7441c0b9511f76d12475e08",
@@ -434,6 +423,15 @@
         "note": "The copy states as present what the sources state as future."
       },
       {
+        "article_id": "b6d84748dddf16bd5f6821e8",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "Minister Tan See Leng noted that the expansion will increase the lab's infrastructure, equipment, and headcount.",
+        "source_phrase": "",
+        "note": "Minister Tan See Leng appears in the English summary as a reporting party but is entirely omitted in the Korean summary."
+      },
+      {
         "article_id": "8dfb5f3d548e6b27dea08a89",
         "company": "Australian Strategic Metals",
         "candidate_id": "relevant",
@@ -441,10 +439,19 @@
         "copy_phrase": "in Australia",
         "source_phrase": "",
         "note": "The country location of the Dubbo project appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "1aac886c2c781ef065b3751c",
+        "company": "Moderna",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "원격 전이 없는 생존율",
+        "source_phrase": "",
+        "note": "The phrase 원격 전이 없는 생존율 is a literal translation rather than the established Korean medical term 무원격전이 생존율."
       }
     ],
     "enforce": [],
-    "discarded": 1,
+    "discarded": 0,
     "errors": {},
     "unchecked": [
       {
@@ -453,74 +460,19 @@
         "candidate_id": "investment:4"
       },
       {
-        "article_id": "58965b3ed0f1a1b47083fbc5",
-        "company": "Applied Materials",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "d8244f1700be990dc9306efa",
-        "company": "Prodrive",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "f86bdb478a8314c2d1c09013",
-        "company": "Amkor Technology",
-        "candidate_id": "investment:2"
-      },
-      {
-        "article_id": "16bc398ff392b3ff771bb3e0",
-        "company": "Ouster",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "595b80c220d3f7a517895d7b",
-        "company": "Jenoptik",
-        "candidate_id": "investment:5"
-      },
-      {
-        "article_id": "79837aaadb5003f9d62ddd75",
-        "company": "Schmalz",
-        "candidate_id": "investment:5"
-      },
-      {
-        "article_id": "64ec2de6b51b31c6bbabafb8",
-        "company": "Tokyo Electron",
-        "candidate_id": "investment:5"
-      },
-      {
         "article_id": "82f3b491db90337154e4e469",
         "company": "Norsk Hydro",
         "candidate_id": "investment:4"
       },
       {
-        "article_id": "be19ffe03a94f6aa3a634986",
-        "company": "Moderna",
-        "candidate_id": "investment:5"
-      },
-      {
         "article_id": "26b7f75f688a173f6faab401",
         "company": "Albemarle",
         "candidate_id": "investment:5"
-      },
-      {
-        "article_id": "5ba81d3f8289709308cbe3f1",
-        "company": "Applied Materials",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "54514d8fbc106216b0f3280e",
-        "company": "Ouster",
-        "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "b6d84748dddf16bd5f6821e8",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4"
       }
     ],
     "kept": [],
-    "first_flagged": 45,
-    "first_enforce": 14,
+    "first_flagged": 32,
+    "first_enforce": 3,
     "rounds": [
       {
         "round": 1,
@@ -529,119 +481,38 @@
             "company": "Applied Materials",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states as done what the sources state as future. Copy: \"has joined\" Source: \"will join\""
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states as ongoing what the sources state as future. Copy: \"are collaborating\" Source: \"will collaborate\""
-            ]
-          },
-          {
-            "company": "Prodrive",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states the shipment as planned whereas the source states it as started on the publication date. Copy: \"고객 선적을 개시할 예정임\" Source: \"Prodrive Technologies begins shipping Runix-MX105 high-performance machine vision camera\""
-            ]
-          },
-          {
-            "company": "Ouster",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states as present or ongoing what the sources state as a future event. Copy: \"are showcasing\" Source: \"will showcase\""
-            ]
-          },
-          {
-            "company": "Jenoptik",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: The copy states the appointment as done, whereas the source states it as a future event. Copy: \"Jenoptik appointed\" Source: \"to become\"",
-              "review_certainty: The copy states the appointment as done, whereas the source states it as a future event. Copy: \"선임해\" Source: \"to become\""
-            ]
-          },
-          {
-            "company": "Amkor Technology",
-            "candidate_id": "investment:2",
-            "problems": [
-              "review_certainty: The sources state that the cleanroom space expansion is expected, whereas the copy presents it as a definite action. Copy: \"6만 제곱미터를 추가해 총 클린룸 면적을 약 9만 3,000 제곱미터로 넓히고\" Source: \"expected to add 60,000 square meters and bring the campus to approximately 93,000 square meters of cleanroom space.\""
-            ]
-          },
-          {
-            "company": "Schmalz",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: The copy states as planned an event dated on the published date, which is considered done. Copy: \"활동할 예정임\" Source: \"Effective October 1, 2026, Martina Gartner will join the Managing Director team at Schmalz.\""
-            ]
-          },
-          {
-            "company": "Tokyo Electron",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: The copy states the appointments as completed, whereas the source indicates they take effect on a future date. Copy: \"선임했음\" Source: \"effective on October 1, 2026\""
+              "review_certainty: The copy states the partnership as signed or concluded, whereas the sources state it as a future joining. Copy: \"파트너십 체결\" Source: \"will join Applied's EPIC Center in Silicon Valley as an innovation partner\""
             ]
           },
           {
             "company": "Norsk Hydro",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states the processing of aluminum into extrusion billets as a completed fact, whereas the source states it as a future event. Copy: \"가공됨\" Source: \"the aluminium will be processed into extrusion billets\""
-            ]
-          },
-          {
-            "company": "Moderna",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: The copy states the appointment as done, whereas the sources state it as future. Copy: \"appointed Juan Andres to the position\" Source: \"Juan Andres will return to Moderna as Chief Operating Officer\"",
-              "review_certainty: The copy states the appointment as done, whereas the sources state it as future. Copy: \"Juan Andres를 COO로 선임했으며\" Source: \"Juan Andres will return to Moderna as Chief Operating Officer\""
+              "review_certainty: The copy states the project participation as already done, but the sources state it as a future plan. Copy: \"Hydro joined\" Source: \"Hydro will recycle\""
             ]
           },
           {
             "company": "Albemarle",
             "candidate_id": "investment:5",
             "problems": [
-              "review_certainty: The copy states the board joining as effective/done whereas the sources state it as future. Copy: \"member of the Board of Directors, effective February 1, 2027\" Source: \"Udd will also join the Albemarle Board of Directors.\""
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states the expansion as current, whereas the sources state it as future. Copy: \"is expanding\" Source: \"will expand its advanced packaging joint lab with A*STAR\"",
-              "review_certainty: The copy states the increase as current, whereas the sources state it as future. Copy: \"increases\" Source: \"would significantly increase the lab's infrastructure, equipment and headcount\"",
-              "review_certainty: The copy states the expansion as current, whereas the sources state it as future. Copy: \"확장을 추진하고 있음\" Source: \"will expand its advanced packaging joint lab with A*STAR\""
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_unsupported: The sources do not state that the fourth phase is an expansion. Copy: \"확장\""
-            ]
-          },
-          {
-            "company": "Ouster",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_unsupported: The copy joins the integration and flight testing with a sequential relationship that is not stated in the sources. Copy: \"following joint flight testing and firmware tuning in Huntsville, Alabama\" Source: \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\"",
-              "review_certainty: The copy states as decided what the sources state as future. Copy: \"통합하기로 했으며\" Source: \"The two companies will integrate Ouster's Rev8 OS1 Max digital lidar into GeoCue's TrueView product line.\""
+              "review_certainty: The source states that Kent Masters will transition in the future, but the copy states it in the present tense. Copy: \"transitions to Executive Chairman\" Source: \"will transition to the role of Executive Chairman of the Board\"",
+              "review_certainty: The source states that Udd will join in the future, but the copy states it without future marking. Copy: \"합류하고\" Source: \"Udd will also join the Albemarle Board of Directors.\""
             ]
           }
         ],
-        "written": 14,
+        "written": 3,
         "failed": 0,
         "kept": 0,
-        "requests": 14
+        "requests": 3
       }
     ]
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 4,
-    "cached": 0,
-    "requests": 7,
-    "written": 3,
+    "targets": 6,
+    "cached": 3,
+    "requests": 6,
+    "written": 2,
     "nothing_new": 0,
     "failed": [
       {

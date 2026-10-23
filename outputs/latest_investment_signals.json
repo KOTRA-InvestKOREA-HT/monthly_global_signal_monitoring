@@ -111,7 +111,9 @@
     "ai_summary_cache_key": "6b3d177ae620d65483f667aa",
     "ai_evidence_quotes": [
       "Air Liquide plans industrial investment decisions for approximately €24 billion over the BEYOND period ."
-    ]
+    ],
+    "ai_box_summary_en": "Under its strategic plan, Air Liquide targets a compound annual growth rate of +10% in recurring net earnings per share and a recurring ROCE above 11% in 2030. The company also establishes a capital allocation of over €40 billion, featuring a 4 billion euros share buyback program over the 2027-2028 period.",
+    "ai_box_summary_ko": "Air Liquide는 BEYOND 플랜을 통해 주당 순이익 연평균 성장률 10%와 2030년 11%를 상회하는 ROCE 달성을 목표로 함. 또한 400억 유로가 넘는 자본 배분을 추진하며, 2027년부터 2028년까지 40억 유로 규모의 자사주 매입 프로그램을 실행할 예정임."
   },
   {
     "target_no": 61,
@@ -311,8 +313,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "Applied Materials announced a partnership with KIOXIA Corporation at the EPIC Center to collaborate on advanced memory structures, chip stacking, and materials engineering innovations, qualifying as an S4 technology ecosystem engagement precursor.",
-    "ai_summary_ko": "차세대 메모리 기술 공동 개발 파트너십 체결 - KIOXIA Corporation은 실리콘밸리 소재 Applied Materials의 EPIC Center에 혁신 파트너로 합류하여, AI 메모리 성능 향상을 위한 차세대 메모리 구조와 칩 적층 기술 등을 공동 개발할 예정임.",
-    "ai_summary_en": "KIOXIA Corporation will join Applied Materials' EPIC Center in Silicon Valley as an innovation partner to advance next-generation memory technologies by collaborating on advanced memory structures, chip stacking technologies, and materials engineering innovations to increase AI memory performance.",
+    "ai_summary_ko": "차세대 메모리 기술 공동 개발 참여 계획 - KIOXIA Corporation은 실리콘밸리 소재 Applied Materials의 EPIC Center에 혁신 파트너로 합류해 AI 메모리 성능 향상을 위한 차세대 메모리 구조와 칩 적층 기술 등을 공동 개발할 예정임.",
+    "ai_summary_en": "KIOXIA Corporation will join Applied Materials' EPIC Center in Silicon Valley as an innovation partner to advance next-generation memory technologies. The companies will collaborate to develop advanced memory structures, chip stacking technologies, and materials engineering innovations to increase AI memory performance.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "58965b3ed0f1a1b47083fbc5",
@@ -1751,8 +1753,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "Norsk Hydro joins the Siemens Mobility-led Train2Train pilot project working alongside Siemens Mobility, TSR Group, and Voestalpine to recycle aluminium from decommissioned trains into new rail components, fulfilling S4 technology ecosystem engagement as a collaborative demonstration project.",
-    "ai_summary_ko": "퇴역 열차 알루미늄 재활용 프로젝트 참여 - Hydro는 Siemens Mobility 주도 프로젝트에 참여해 TSR Group 등과 퇴역 열차 알루미늄을 벨기에 Ghlin 시설에서 재활용하며, 이후 빌렛으로 가공해 Lichtervelde 시설에서 사용할 예정임.",
-    "ai_summary_en": "Hydro joined a Siemens Mobility-led project alongside TSR Group and Voestalpine to recycle aluminum from decommissioned trains to produce new rail components. In this pilot study, Hydro will recycle the aluminum at its Ghlin facility in Belgium, and the material will be processed into extrusion billets for use at its Lichtervelde facility.",
+    "ai_summary_ko": "퇴역 열차 알루미늄 재활용 프로젝트 참여 예정 - Hydro는 Siemens Mobility가 주도하는 프로젝트에 참여해 TSR Group 등과 함께 퇴역 열차 알루미늄을 벨기에 Ghlin 시설에서 재활용하고, 빌렛으로 가공해 Lichtervelde 시설에서 사용할 예정임.",
+    "ai_summary_en": "Hydro will join a Siemens Mobility-led project alongside TSR Group and Voestalpine to recycle aluminum from decommissioned trains to produce new rail components. In this pilot study, Hydro will recycle the aluminum at its recycling facility in Ghlin, Belgium, and the material will be processed into extrusion billets for use at its Lichtervelde facility.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "82f3b491db90337154e4e469",
@@ -2095,7 +2097,7 @@
     "investment_signal_label": "기술 생태계 밀착(R&D)",
     "investment_signal_label_en": "Technology & R&D Partnerships",
     "investment_signal_description": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
-    "ai_signal_supported": false,
+    "ai_signal_supported": true,
     "ai_entity_supported": true,
     "ai_target_technology_supported": false,
     "ai_indicator_supported": true,
@@ -2103,8 +2105,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "The earnings presentation describes technology development and commercial ecosystem engagement for optical connectors and EBO ferrules.",
-    "ai_summary_ko": "",
-    "ai_summary_en": "",
+    "ai_summary_ko": "비접촉식 광섬유 페럴 및 커넥터 제품군 출시 - 3M은 특허받은 비접촉식 방진 광 커넥터를 탑재한 12섬 및 16섬 광섬유 페럴을 출시했으며 관련 제품 파이프라인을 확대 중임.",
+    "ai_summary_en": "3M launched 12 and 16 fiber ferrules featuring patented, contactless, and dust-resistant optical connectors, and the company is expanding its product pipeline.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "75f0a4a1ff61b45a761734e2",
@@ -2442,7 +2444,9 @@
     "ai_summary_cache_key": "a236a078485b974783d4bdb6",
     "ai_evidence_quotes": [
       "On September 11, 2026, Corning Incorporated (the “Company”) entered into an Equity Distribution Agreement (the “Equity Distribution Agreement”) with Goldman Sachs & Co. LLC (“Goldman Sachs”) to sell shares of the Company’s common stock, par value $0.50 per share (the “Common Stock”), having an aggregate offering price of up to $2,000,000,000, from time to time, through an “at the market” equity offering program under which Goldman Sachs will act as sales agent."
-    ]
+    ],
+    "ai_box_summary_en": "Corning intends to use the net proceeds from the offering for general corporate purposes. Under the agreement, the company will pay Goldman Sachs a commission equal to 1.0% of the gross proceeds from any sold shares. Shares may be sold through various market venues or directly as principal under a separate terms agreement, utilizing a shelf registration statement filed with the Securities and Exchange Commission.",
+    "ai_box_summary_ko": "Corning은 보통주 발행으로 조달된 순수익금을 일반 기업 목적으로 사용할 예정임. Goldman Sachs에 지급하는 수수료는 총매각대금의 1.0%이며, 주식은 다양한 시장 거래 방식이나 별도의 조건 약정을 통한 직접 매각 방식으로 발행됨. 관련 주식 판매는 Form S-3 일괄신고서에 따라 진행됨."
   },
   {
     "target_no": 12,
@@ -2724,8 +2728,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "Albemarle Corporation announced a CEO succession plan appointing Ragnar Udd as President and Chief Executive Officer, constituting a key strategic personnel movement.",
-    "ai_summary_ko": "신임 최고경영자 선임 및 이사회 개편 - Albemarle은 Ragnar Udd를 2027년 2월 1일 자로 사장 겸 최고경영자(CEO)로 선임했으며, Udd는 이사회에 합류하고 Kent Masters는 이사회 의장으로 전환할 예정임.",
-    "ai_summary_en": "Albemarle appointed Ragnar Udd as President and Chief Executive Officer, effective February 1, 2027, and noted that Udd will join the Board of Directors while Kent Masters transitions to Executive Chairman upon Udd joining the company.",
+    "ai_summary_ko": "신임 최고경영자 선임 및 이사회 개편 계획 - Albemarle은 Ragnar Udd를 2027년 2월 1일 자로 사장 겸 최고경영자(CEO)로 선임했으며, Udd는 이사회에 합류할 예정이고 Kent Masters는 이사회 의장으로 전환할 예정임.",
+    "ai_summary_en": "Albemarle appointed Ragnar Udd as President and Chief Executive Officer, effective February 1, 2027. Udd will also join the Board of Directors, and Kent Masters will transition to Executive Chairman of the Board upon Udd joining the company.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "26b7f75f688a173f6faab401",

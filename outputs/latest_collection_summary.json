@@ -7772,12 +7772,20 @@
     {
       "company": "3M",
       "monthly_articles": 7,
-      "needs_review_articles": 0,
+      "needs_review_articles": 1,
       "date_pending_articles": 2,
       "deferred_articles": 0,
-      "status": "reviewed",
-      "reasons": [],
-      "follow_up": [],
+      "status": "incomplete_evidence",
+      "reasons": [
+        "date_pending"
+      ],
+      "follow_up": [
+        {
+          "title": "3Q+2026+Earnings+Presentation+ +vFinal",
+          "url": "https://d1io3yog0oux5.cloudfront.net/_3e85f57b9e49c727bbc89524dde1e694/3m/db/3222/31021/presentation/3Q+2026+Earnings+Presentation+-+vFinal.pdf",
+          "publishers": []
+        }
+      ],
       "date_follow_up": [
         {
           "url": "https://d1io3yog0oux5.cloudfront.net/_3e85f57b9e49c727bbc89524dde1e694/3m/db/3222/31021/financial_statement/Q3+2026+-+Supplemental+Financial+Schedules.pdf",
