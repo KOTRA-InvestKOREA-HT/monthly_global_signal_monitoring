@@ -1144,51 +1144,66 @@ def business_near_miss(row):
     return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
 
 
+# 상자 문안이 위 지표 칸을 다시 쓴 것인지 보는 기준. 상자 문안의 영어 낱말 가운데 이만큼이 위 칸 문안에 있으면
+# 되풀이로 본다. scripts/box_writer.mjs 의 REPEAT_OVERLAP·repeatsSignal 과 같은 잣대다. 글자까지 같을 때만 걸러서는
+# 4호 재발행의 onsemi(같은 Valens 협력 기사, 낱말 96% 겹침)·Amkor(같은 2단계 발표의 앞부분, 61%)가 빠져나갔다.
+REPEAT_OVERLAP = 0.6
+REPEAT_WORD = re.compile(r"[a-z0-9][a-z0-9.,$%-]*")
+
+
+def repeats_signal(row, shown_rows):
+    """row 의 문안이 위 지표 칸 문안을 되풀이하는지. 영문 문안으로 잰다(국문은 낱말 경계가 조사에 붙는다)."""
+    mine = set(REPEAT_WORD.findall(clean_text(row.get("ai_summary_en")).lower()))
+    if not mine:
+        return False
+    for shown in shown_rows:
+        theirs = set(REPEAT_WORD.findall(clean_text(shown.get("ai_summary_en")).lower()))
+        if len(mine & theirs) / len(mine) > REPEAT_OVERLAP:
+            return True
+    return False
+
+
 def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False):
-    """사업현황 상자에 쓸 행. 위 지표 칸을 그대로 되풀이하지 않는 것을 순서대로 고른다(2026-10-22 사용자 결정).
+    """사업현황 상자에 쓸 행. 타겟 품목과 이어진 것 가운데 위 지표 칸을 되풀이하지 않는 것을 순서대로 고른다.
 
-    4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다. 기사 하나를 지표와 사업동향으로
-    한꺼번에 판정해 같은 보도자료가 두 곳에서 승인되고, 다른 문안이 없으면 지표 칸 문안을 다시 실었기 때문이다.
-    고르는 순서:
+    4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다(2026-10-22 사용자 지적). 기사 하나를
+    지표와 사업동향으로 한꺼번에 판정해 같은 보도자료가 두 곳에서 승인되고, 다른 문안이 없으면 지표 칸 문안을
+    다시 실었기 때문이다. 상자는 투자유치 필요 품목·기술 바로 아래에 있으므로 그 품목과 이어진 내용만 싣는다
+    (면제 기업은 회사 전반이 대상이다). 회사채 발행·정부 지원금·임원 인사처럼 품목과 무관한 회사 단위 소식은
+    위 지표 칸에만 남는다(2026-10-23 사용자 결정: Corning 주식 발행, Chemours 광물 분리 지원금). 고르는 순서:
 
-    1. 위 지표 칸과 다른 기사로, 타겟 품목과 이어진 행(면제 기업은 회사 전반)
-    2. 위 지표 칸과 다른 기사의 다른 사업동향(품목 연계만 빠진 근접 행, 회사 단위 시그널 행 포함)
+    1. 위 지표 칸과 다른 기사로, 승인된 행
+    2. 위 지표 칸과 다른 기사로, 품목 연계만 빠진 근접 행(면제 기업만 해당한다)
     3. 위 지표 칸과 같은 기사라도, 사업동향 쪽으로 따로 쓴 문안이 있는 행
     4. 지표 기사 본문에서 위 문안이 다루지 않은 내용으로 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)
 
-    모두 없으면 None 이다. 상자는 빼지 않고 "확인되지 않음" 문구(business_empty)를 싣는다. 예전에는 마지막 자리로
-    지표 칸 문안을 다시 실었으나, 4호 재발행에서 Corning·Chemours 상자가 위 칸을 글자 그대로 되풀이해
-    되풀이 대신 없음으로 표시하기로 했다(2026-10-23 사용자 결정).
+    어느 단계든 문안이 위 지표 칸을 되풀이하면(repeats_signal) 고르지 않는다. 모두 없으면 None 이다. 상자는 빼지 않고 "확인되지 않음" 문구(business_empty)를 싣는다. 예전에는 마지막 자리로
+    지표 칸 문안을 다시 실었으나, 4호 재발행에서 Corning·Chemours 상자가 위 칸을 글자 그대로 되풀이했다.
     """
     shown_ids = {id(row) for row in shown_rows}
     shown_keys = set().union(*(article_keys(row) for row in shown_rows)) if shown_rows else set()
     shown_texts = {clean_text(summary_field(row, "ai_summary")) for row in shown_rows}
 
     def mine(row):
-        return row.get("company") == company and id(row) not in shown_ids
+        return (row.get("company") == company and id(row) not in shown_ids
+                and business_row_on_target(row, exempt_company)
+                and clean_text(summary_field(row, "ai_summary")) not in shown_texts
+                and not repeats_signal(row, shown_rows))
 
     def separate(row):
         return mine(row) and not (article_keys(row) & shown_keys)
 
-    def usable(row):
-        return signal_supported(row) or business_near_miss(row)
-
     tiers = [
-        [row for row in relevant_rows if separate(row) and signal_supported(row)
-         and business_row_on_target(row, exempt_company)]
-        + [row for row in investment_rows if separate(row) and signal_publishable(row)
-           and business_row_on_target(row, exempt_company)],
-        [row for row in relevant_rows if separate(row) and usable(row)]
+        [row for row in relevant_rows if separate(row) and signal_supported(row)]
         + [row for row in investment_rows if separate(row) and signal_publishable(row)],
-        [row for row in relevant_rows if mine(row) and usable(row)
-         and clean_text(summary_field(row, "ai_summary")) not in shown_texts],
+        [row for row in relevant_rows if separate(row) and business_near_miss(row)],
+        [row for row in relevant_rows if mine(row) and (signal_supported(row) or business_near_miss(row))],
+        # 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
+        [{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
+         for row in shown_rows if row.get("company") == company and signal_publishable(row)
+         and business_row_on_target(row, exempt_company)
+         and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))],
     ]
-    boxed = [row for row in shown_rows if row.get("company") == company and signal_publishable(row)
-             and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
-    if boxed:
-        # 마지막(4단계) 자리다. 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
-        tiers.append([{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
-                         for row in boxed])
     for candidates in tiers:
         if candidates:
             return sort_signal_rows(candidates)[0]
