@@ -174,27 +174,25 @@
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 86,
-    "requests": 5,
-    "cached": 96,
-    "written": 3,
-    "written_by": {
-      "gemini-3.5-flash-lite": 3
-    },
+    "requests": 0,
+    "cached": 99,
+    "written": 0,
+    "written_by": {},
     "failed": [],
     "errors": {},
     "rejected": {},
     "key_runs": [
       {
         "key": 1,
-        "requests": 5
+        "requests": 0
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 86,
-    "requests": 16,
-    "cached": 82,
+    "requests": 3,
+    "cached": 96,
     "reviewed": 99,
     "flagged": [
       {
@@ -324,6 +322,15 @@
         "note": "Solid-state in this technological context is standardly translated as 반도체 rather than literally as 고체, making 고체 차단기 an unestablished literal compound."
       },
       {
+        "article_id": "79837aaadb5003f9d62ddd75",
+        "company": "Schmalz",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "Dr. Kurt Schmalz 등",
+        "source_phrase": "",
+        "note": "The Korean summary omits Dr. Johannes Schmalz and Andreas Beutel, who are included in the English summary."
+      },
+      {
         "article_id": "343bcfbeb2b268b2b7fee570",
         "company": "Maxon",
         "candidate_id": "relevant",
@@ -351,13 +358,13 @@
         "note": "The Korean summary states that the investment was executed, whereas the English summary states that 3M is investing to acquire the shares."
       },
       {
-        "article_id": "79837aaadb5003f9d62ddd75",
-        "company": "Schmalz",
-        "candidate_id": "investment:5",
+        "article_id": "b6d84748dddf16bd5f6821e8",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
         "check": "mismatch",
-        "copy_phrase": "Dr. Kurt Schmalz 등",
+        "copy_phrase": "Minister Tan See Leng noted that the expansion will increase the lab's infrastructure, equipment, and headcount.",
         "source_phrase": "",
-        "note": "The Korean summary omits Dr. Johannes Schmalz and Andreas Beutel, who are included in the English summary."
+        "note": "Minister Tan See Leng appears in the English summary as a reporting party but is entirely omitted in the Korean summary."
       },
       {
         "article_id": "4aa57e026b4b8bad69dc7dd8",
@@ -423,13 +430,13 @@
         "note": "The copy states as present what the sources state as future."
       },
       {
-        "article_id": "b6d84748dddf16bd5f6821e8",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "Minister Tan See Leng noted that the expansion will increase the lab's infrastructure, equipment, and headcount.",
+        "article_id": "1aac886c2c781ef065b3751c",
+        "company": "Moderna",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "원격 전이 없는 생존율",
         "source_phrase": "",
-        "note": "Minister Tan See Leng appears in the English summary as a reporting party but is entirely omitted in the Korean summary."
+        "note": "The phrase 원격 전이 없는 생존율 is a literal translation rather than the established Korean medical term 무원격전이 생존율."
       },
       {
         "article_id": "8dfb5f3d548e6b27dea08a89",
@@ -439,15 +446,6 @@
         "copy_phrase": "in Australia",
         "source_phrase": "",
         "note": "The country location of the Dubbo project appears in the English summary but is missing in the Korean summary."
-      },
-      {
-        "article_id": "1aac886c2c781ef065b3751c",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "원격 전이 없는 생존율",
-        "source_phrase": "",
-        "note": "The phrase 원격 전이 없는 생존율 is a literal translation rather than the established Korean medical term 무원격전이 생존율."
       }
     ],
     "enforce": [],
@@ -455,74 +453,56 @@
     "errors": {},
     "unchecked": [
       {
-        "article_id": "58965b3ed0f1a1b47083fbc5",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4"
+        "article_id": "26b7f75f688a173f6faab401",
+        "company": "Albemarle",
+        "candidate_id": "investment:5"
       },
       {
         "article_id": "82f3b491db90337154e4e469",
         "company": "Norsk Hydro",
         "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "26b7f75f688a173f6faab401",
-        "company": "Albemarle",
-        "candidate_id": "investment:5"
       }
     ],
     "kept": [],
-    "first_flagged": 32,
-    "first_enforce": 3,
+    "first_flagged": 34,
+    "first_enforce": 2,
     "rounds": [
       {
         "round": 1,
         "asked": [
           {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: The copy states the partnership as signed or concluded, whereas the sources state it as a future joining. Copy: \"파트너십 체결\" Source: \"will join Applied's EPIC Center in Silicon Valley as an innovation partner\""
-            ]
-          },
-          {
             "company": "Norsk Hydro",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states the project participation as already done, but the sources state it as a future plan. Copy: \"Hydro joined\" Source: \"Hydro will recycle\""
+              "review_certainty: The copy states as planned what the source states as done. Copy: \"will join\" Source: \"Hydro joins\"",
+              "review_certainty: The copy states as planned what the source states as done. Copy: \"참여 예정\" Source: \"Hydro joins\""
             ]
           },
           {
             "company": "Albemarle",
             "candidate_id": "investment:5",
             "problems": [
-              "review_certainty: The source states that Kent Masters will transition in the future, but the copy states it in the present tense. Copy: \"transitions to Executive Chairman\" Source: \"will transition to the role of Executive Chairman of the Board\"",
-              "review_certainty: The source states that Udd will join in the future, but the copy states it without future marking. Copy: \"합류하고\" Source: \"Udd will also join the Albemarle Board of Directors.\""
+              "review_unsupported: The sources do not state that Udd will join the Board of Directors. Copy: \"Udd will also join the Board of Directors\"",
+              "review_unsupported: The sources do not state the condition that Kent Masters' transition occurs upon Udd joining the company. Copy: \"upon Udd joining the company\"",
+              "review_unsupported: The sources do not state that Udd will join the Board of Directors. Copy: \"Udd는 이사회에 합류할 예정\""
             ]
           }
         ],
-        "written": 3,
+        "written": 2,
         "failed": 0,
         "kept": 0,
-        "requests": 3
+        "requests": 2
       }
     ]
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 6,
-    "cached": 3,
-    "requests": 6,
-    "written": 2,
+    "targets": 1,
+    "cached": 1,
+    "requests": 0,
+    "written": 0,
     "nothing_new": 0,
-    "failed": [
-      {
-        "company": "Chemours",
-        "article_id": "6866369c2c3eebd62a6be7cc",
-        "problems": [
-          "source_quote_not_in_article"
-        ]
-      }
-    ],
+    "failed": [],
     "errors": {}
   }
 }
