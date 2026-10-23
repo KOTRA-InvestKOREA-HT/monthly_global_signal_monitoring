@@ -1043,7 +1043,7 @@ export function buildKoreaQuery(company, dateRange) {
 // 매체는 주가 해설만 싣는 곳만 적는다. Yahoo Finance·TradingView·Investing.com 은 보도자료와 사업 기사도 실어
 // (9월에 Yahoo Finance 2건 승인) 매체로 막지 않고 제목으로만 본다. 제목은 종목 기호와 주가 낱말이 함께 있을 때만
 // 뺀다. "Aeluma Shares Rise 7% After Sumitomo ... Agreement" 처럼 종목 기호 없는 사업 기사는 남는다.
-const STOCK_COMMENTARY_PUBLISHERS = /\b(?:marketbeat|simply wall st(?:reet)?|gurufocus|zacks|insider monkey|ad-hoc-news|defense world|etf daily news|stocktitan|kalkine)\b/i;
+const STOCK_COMMENTARY_PUBLISHERS = /\b(?:marketbeat|simply wall st(?:reet)?|gurufocus|zacks|insider monkey|ad[- ]?hoc[- ]news|defense world|etf daily news|stocktitan|kalkine)\b/i;
 const TITLE_TICKER = /\((?:[A-Z]{2,8}:)?\$?[A-Z]{2,6}(?:\.[A-Z]{1,2})?\)|\$[A-Z]{2,5}\b|\b(?:NYSE|NASDAQ|Nasdaq)\s*:\s*[A-Z]{1,5}\b/;
 const TITLE_STOCK_WORDS = /\b(?:stocks?|shares?|investors?|buy|sell|hold|price target|valuation|undervalued|overvalued|pricey|dividends?|outperform|underperform|analysts?|rating|rall(?:y|ies|ied)|bull(?:ish)?|bear(?:ish)?|momentum|roundup|plunges?|surges?|soars?|jumps?|tumbles?|gains?|up \d|down \d|since last earnings)\b/i;
 
@@ -1051,6 +1051,9 @@ export function stockCommentary(row) {
   if (STOCK_COMMENTARY_PUBLISHERS.test(`${row.publisher || ""} ${row.source || ""}`)) return true;
   // 매체 이름("- Yahoo Finance")은 떼고 본다.
   const title = String(row.title || "").replace(/\s+-\s+[^-]+$/, "");
+  // 종목 기호가 없어도 주가 낱말을 단 의문문("Albemarle vs. Rio Tinto: Which Lithium Stock Holds More Promise?")은
+  // 종목 비교 해설이다. 9월 수집에서 이 기사가 사업현황 상자 후보로 승인됐다.
+  if (/\?\s*$/.test(title) && /\b(?:stocks?|shares|buy|investors?)\b/i.test(title)) return true;
   if (!TITLE_TICKER.test(title)) return false;
   // 종목 기호를 단 의문문 제목("Is Amkor Technology (AMKR) Arizona Expansion A Turning Point ...?")은 주가 해설 매체의
   // 서식이다. 같은 사건의 보도 기사는 따로 잡힌다.
@@ -3211,7 +3214,10 @@ async function main() {
     errors.push(...result.errors);
   }
 
-  const finalRows = sortRows(dedupeRows(rows));
+  // 주가 해설은 검색 단계에서 이미 빼지만, 기준을 고치기 전에 받아 둔 기업 체크포인트에는 남아 있다. 내보내기 전에
+  // 한 번 더 걸러 같은 기준이 받아 둔 수집에도 닿게 한다. 공식 출처 행은 보지 않는다.
+  const exportedRows = rows.filter(row => row.source_type === 'official' || !stockCommentary(row));
+  const finalRows = sortRows(dedupeRows(exportedRows));
   const tally = companyResults.reduce((total, result) => mergeTally(total, result.stats), createTally());
   const samplesByReason = summarySamples(tally.excluded_non_article_samples);
   const countsByCompany = Object.fromEntries(companies.map((company) => [company.company, 0]));
@@ -3251,6 +3257,7 @@ async function main() {
     trend_discovery_kept: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_kept || 0), 0),
     trend_discovery_per_company: args.maxTrendDiscovery,
     // 공식 기사가 자리를 채워도 상한 밖에 덧붙인 외부 기사(fallbackMode always), 한국 관련 검색이 보탠 기사.
+    stock_commentary_dropped: rows.length - exportedRows.length,
     external_news_reserved: companyResults.reduce((total, result) => total + (result.stats?.fallback_reserved || 0), 0),
     external_news_per_company: args.maxExternalNews,
     korea_news_found: companyResults.reduce((total, result) => total + (result.stats?.korea_news_found || 0), 0),

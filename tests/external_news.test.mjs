@@ -14,6 +14,9 @@ test('stock commentary is dropped, business news from the same outlets is kept',
     { title: 'BE Semiconductor Industries (ENXTAM:BESI) Stock Looks Pricey Even With Strong Cash Flow Hopes', publisher: 'Yahoo Finance' },
     { title: 'Is Umicore (ENXTBR:UMI) Still Undervalued After A 61% Gain?', publisher: 'Yahoo Finance' },
     { title: 'Why Is Merck (MRK) Up 18.2% Since Last Earnings Report?', publisher: 'Yahoo Finance' },
+    // 9월 수집(실행 147)에서 승인까지 갔던 두 건
+    { title: 'Infineon Trims Memory Unit and Adds Radar, Server Power in Twin Bet on Growth', publisher: 'AD HOC NEWS' },
+    { title: 'Albemarle vs. Rio Tinto: Which Lithium Stock Holds More Promise? - The Globe and Mail', publisher: 'The Globe and Mail' },
   ];
   const kept = [
     { title: 'Valens Semiconductor and onsemi Partner to Develop Integrated 3MP Automotive Camera Sensor', publisher: 'Yahoo Finance' },
