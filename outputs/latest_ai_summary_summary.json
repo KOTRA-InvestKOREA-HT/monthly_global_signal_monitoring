@@ -191,8 +191,8 @@
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 86,
-    "requests": 3,
-    "cached": 96,
+    "requests": 2,
+    "cached": 97,
     "reviewed": 99,
     "flagged": [
       {
@@ -453,18 +453,18 @@
     "errors": {},
     "unchecked": [
       {
-        "article_id": "26b7f75f688a173f6faab401",
-        "company": "Albemarle",
-        "candidate_id": "investment:5"
-      },
-      {
         "article_id": "82f3b491db90337154e4e469",
         "company": "Norsk Hydro",
         "candidate_id": "investment:4"
+      },
+      {
+        "article_id": "26b7f75f688a173f6faab401",
+        "company": "Albemarle",
+        "candidate_id": "investment:5"
       }
     ],
     "kept": [],
-    "first_flagged": 34,
+    "first_flagged": 32,
     "first_enforce": 2,
     "rounds": [
       {
@@ -474,17 +474,15 @@
             "company": "Norsk Hydro",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states as planned what the source states as done. Copy: \"will join\" Source: \"Hydro joins\"",
-              "review_certainty: The copy states as planned what the source states as done. Copy: \"참여 예정\" Source: \"Hydro joins\""
+              "review_certainty: The copy states the recycling as an ongoing action, whereas the sources state it as a future action. Copy: \"재활용하며\" Source: \"Hydro will recycle aluminium\""
             ]
           },
           {
             "company": "Albemarle",
             "candidate_id": "investment:5",
             "problems": [
-              "review_unsupported: The sources do not state that Udd will join the Board of Directors. Copy: \"Udd will also join the Board of Directors\"",
-              "review_unsupported: The sources do not state the condition that Kent Masters' transition occurs upon Udd joining the company. Copy: \"upon Udd joining the company\"",
-              "review_unsupported: The sources do not state that Udd will join the Board of Directors. Copy: \"Udd는 이사회에 합류할 예정\""
+              "review_certainty: The copy states the appointment as done, but its effective date is in the future relative to the publication date. Copy: \"Albemarle appointed Ragnar Udd as President and Chief Executive Officer, effective February 1, 2027.\" Source: \"Ragnar Udd Appointed President and CEO, Effective February 1, 2027\"",
+              "review_certainty: The copy states the appointment as done, but its effective date is in the future relative to the publication date. Copy: \"Albemarle은 Ragnar Udd를 2027년 2월 1일 자로 사장 겸 최고경영자(CEO)로 선임했으며\" Source: \"Ragnar Udd Appointed President and CEO, Effective February 1, 2027\""
             ]
           }
         ],
@@ -497,10 +495,10 @@
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 1,
-    "cached": 1,
-    "requests": 0,
-    "written": 0,
+    "targets": 6,
+    "cached": 5,
+    "requests": 3,
+    "written": 1,
     "nothing_new": 0,
     "failed": [],
     "errors": {}

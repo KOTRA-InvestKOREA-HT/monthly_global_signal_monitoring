@@ -1753,8 +1753,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "Norsk Hydro joins the Siemens Mobility-led Train2Train pilot project working alongside Siemens Mobility, TSR Group, and Voestalpine to recycle aluminium from decommissioned trains into new rail components, fulfilling S4 technology ecosystem engagement as a collaborative demonstration project.",
-    "ai_summary_ko": "퇴역 열차 알루미늄 재활용 프로젝트 합류 - Hydro는 Siemens Mobility가 주도하는 프로젝트에 TSR Group, Voestalpine과 함께 합류해 퇴역 열차 알루미늄을 벨기에 Ghlin 시설에서 재활용하며, Lichtervelde 시설에서 압출 빌렛으로 가공할 예정임.",
-    "ai_summary_en": "Hydro joins a Siemens Mobility-led project alongside TSR Group and Voestalpine to recycle aluminum from decommissioned trains to produce new rail components. Hydro will recycle the aluminum at its recycling facility in Ghlin, Belgium, and process it into extrusion billets at its Lichtervelde facility.",
+    "ai_summary_ko": "퇴역 열차 알루미늄 재활용 프로젝트 참여 - Hydro는 Siemens Mobility가 주도하는 퇴역 열차 알루미늄 재활용 프로젝트에 TSR Group, Voestalpine과 함께 참여해 벨기에 Ghlin 시설에서 재활용하고 Lichtervelde 시설에서 압출 빌렛으로 가공할 예정임.",
+    "ai_summary_en": "Hydro will join a Siemens Mobility-led project alongside TSR Group and Voestalpine to recycle aluminum from decommissioned trains to produce new rail components. Hydro will recycle the aluminum at its facility in Ghlin, Belgium, and process it into extrusion billets at its facility in Lichtervelde, Belgium.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "82f3b491db90337154e4e469",
@@ -2638,7 +2638,9 @@
     "ai_summary_cache_key": "6866369c2c3eebd62a6be7cc",
     "ai_evidence_quotes": [
       "~$10M of approved U.S. Government grant funding for advanced mineral separation R&D, with room to expand on further support"
-    ]
+    ],
+    "ai_box_summary_en": "Samsung Electronics and 2CRSi successfully qualified Chemours' two-phase immersion cooling fluid. Additionally, the company maintains a multi-decade joint venture with Chemours-Mitsui Fluoroproducts Co., Ltd. and a strategic partnership with SRF Limited to support its performance solutions applications.",
+    "ai_box_summary_ko": "Samsung Electronics와 2CRSi가 Chemours의 2상 액침 냉각 유체 적격성 평가를 성공적으로 마쳤음. 또한 이 회사는 Performance Solutions 응용 분야를 지원하기 위한 다년간의 Chemours-Mitsui Fluoroproducts Co., Ltd. 합작 투자 파트너십과 SRF Limited와의 전략적 파트너십을 유지하고 있음."
   },
   {
     "target_no": 9,
@@ -2728,8 +2730,8 @@
     "ai_event_stage": "precursor",
     "ai_summary_quality": "pass",
     "ai_summary_reason": "Albemarle Corporation announced a CEO succession plan appointing Ragnar Udd as President and Chief Executive Officer, constituting a key strategic personnel movement.",
-    "ai_summary_ko": "신임 최고경영자 선임 및 이사회 개편 계획 - Albemarle은 Ragnar Udd를 2027년 2월 1일 자로 사장 겸 최고경영자(CEO)로 선임했으며, Udd는 Albemarle 이사회에 합류하고 Kent Masters는 Udd의 회사 합류에 맞춰 이사회 의장으로 전환할 예정임.",
-    "ai_summary_en": "Albemarle appointed Ragnar Udd as President and Chief Executive Officer, effective February 1, 2027. Udd will also join the Albemarle Board of Directors, and Kent Masters will transition to Executive Chairman of the Board upon Udd joining the company.",
+    "ai_summary_ko": "차기 최고경영자 선임 및 이사회 개편 발표 - Albemarle은 Ragnar Udd를 2027년 2월 1일 자로 사장 겸 최고경영자(CEO)로 선임할 예정이며, Kent Masters는 Udd의 합류에 맞춰 이사회 의장으로 전환할 예정임.",
+    "ai_summary_en": "Albemarle announced that Ragnar Udd will become President and Chief Executive Officer, effective February 1, 2027, and that Kent Masters will transition to Executive Chairman upon Udd taking office.",
     "ai_summary_source": "gemini_article_review",
     "ai_summary_reviewer": "gemini-3.5-flash-lite/article-review-v1",
     "ai_summary_cache_key": "26b7f75f688a173f6faab401",
