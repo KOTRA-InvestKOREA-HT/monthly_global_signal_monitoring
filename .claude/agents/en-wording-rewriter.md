@@ -9,10 +9,10 @@ tools: Read, Grep, Glob
 ## 먼저 읽을 것
 
 1. `docs/report_wording_guide_en.md` 전체. 이 문서가 유일한 기준이다.
-2. 기준 §1 표의 위치에 있는 현재 영문 문자열. 뜻을 맞출 국문은 같은 파일의 `TEXTS["ko"]`, `SIGNAL_DESCRIPTIONS`,
-   `DETAILED_INDUSTRY_BY_GROUP`, `config/investment_signal_indicators.json` 의 `description_ko` 에서 읽는다.
+2. 기준 §1 표의 위치(`config/report_text.json`)에 있는 현재 영문 문자열. 뜻을 맞출 국문은 같은 항목의 `ko`,
+   `ko_name`, `ko_description` 칸에서 읽는다.
 3. 그려진 모습은 `tests/fixtures/report_snapshot/expected_pages_en.txt` 에서 본다(양쪽 정렬 줄은 공백이 빠져 보일 수 있다).
-4. 문자열 옆 코드 주석. 과거에 왜 그 문구가 되었는지 적혀 있다.
+4. 문자열 옆 `note` 칸과 각 묶음의 `note`. 과거에 왜 그 문구가 되었는지 적혀 있다.
 
 ## 할 일
 

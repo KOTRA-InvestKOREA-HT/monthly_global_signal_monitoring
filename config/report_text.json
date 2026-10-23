@@ -1,0 +1,418 @@
+{
+  "description": "보고서(국·영문 PDF와 웹 화면)에 고정으로 찍히는 문구. scripts/report_content.py 가 이 파일을 읽는다. 기사마다 AI가 쓰는 요약·사유는 여기 없다.",
+  "how_to_edit": [
+    "따옴표 안의 문구만 고친다. 키 이름(\"footer\", \"ko\", \"en\" 등)은 바꾸지 않는다.",
+    "{month}, {period}, {issue}, {on}, {off}, {total}, {companies} 같은 중괄호 자리표시자는 그대로 둔다. 보고서를 만들 때 값이 채워진다.",
+    "\"note\"는 고친 까닭과 주의점을 적어 두는 칸이라 보고서에 실리지 않는다.",
+    "영문 문구는 docs/report_wording_guide_en.md 의 용어집·문체 규칙을 따른다. 그 문서 §4·§6에 확정·결정 기록이 있다.",
+    "문구가 길어지면 PDF에서 잘리거나 줄이 늘 수 있다. 고친 뒤 보고서를 다시 만들어 확인한다.",
+    "고친 뒤 python -m unittest tests.test_report_text 로 파일 형식을 확인한다. 보고서 출력 고정 테스트는 python tests/test_report_snapshot.py --update 와 UPDATE_REPORT_SNAPSHOT=1 node --test tests/report_snapshot.test.mjs 로 기대값을 다시 만들어 함께 커밋한다."
+  ],
+  "texts": {
+    "note": "표지·면 제목·라벨·안내문. 항목마다 ko는 국문판, en은 영문판 문구다. en이 없는 항목은 영문판에도 ko 값을 쓴다.",
+    "items": {
+      "footer": {
+        "ko": "Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · {issue}",
+        "en": "Invest KOREA · Global Investment Signal Monitor · {issue}",
+        "note": "모든 면 맨 아래 꼬리말. {issue}에 호수가 들어간다. 영문도 국문과 같은 구조로 발행처와 호수를 싣는다."
+      },
+      "cover_kicker": {
+        "ko": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
+        "en": "G L O B A L   I N V E S T M E N T   S I G N A L   M O N I T O R",
+        "note": "표지 제목 위 금색 한 줄(보고서 이름). 자간은 글자 사이 공백으로 낸다. 이 값만은 영문을 비우면 국문으로 대체하지 않고 영문 표지에서 빠진다."
+      },
+      "cover_titles": {
+        "ko": [
+          "타겟기업",
+          "글로벌 투자시그널",
+          "모니터링"
+        ],
+        "en": [
+          "Investment Signals"
+        ],
+        "note": "표지 제목 줄 목록. 줄 수는 언어마다 다르다(국문 3줄, 영문 1줄). 예전 영문 제목 \"Target-Company Global Investment Signal Monitor\"는 국문을 낱말마다 옮겨 붙여 영어로 읽히지 않았다."
+      },
+      "cover_subtitle": {
+        "en": "Monthly monitoring of investment signals across 77 target companies",
+        "note": "제목 아래 흰색 한 줄. 국문 표지에는 없다. 제목 줄로 넣으면 모든 제목 줄이 같은 크기로 줄어 금색 제목까지 작아진다. 뜻은 \"매달 77개 타겟기업의 투자 시그널 모니터링\"이다. monthly는 monitoring에 붙인다(signals 앞에 두면 월 구독형 매매 신호로 읽힌다). 77개사 전체를 살피는 범위라 across를 쓴다. from은 기업의 공식 발표로 읽혀 쓰지 않는다."
+      },
+      "cover_title_accent": {
+        "ko": 1,
+        "en": 0,
+        "note": "금색으로 칠할 제목 줄의 순번(0이 첫 줄). 국문은 가운데 줄, 영문은 한 줄뿐이라 그 줄이다."
+      },
+      "cover_line_1": {
+        "ko": "산업부 선정 30대 투자유치 프로젝트 · 77개 타겟기업",
+        "en": "30 major investment promotion projects · 77 target companies selected by MOTIR",
+        "note": "MOTIR는 산업통상부의 공식 영문 약칭이다(Ministry of Trade, Industry and Resources)."
+      },
+      "cover_line_2": {
+        "ko": "기업별 5대 시그널(전조현상) 포착 · 투자 검토·전조 활동 근거 기반",
+        "en": "5 key investment signals tracked per company · Pre-decision signals only",
+        "note": "영문 지표 총칭은 표지 머리글과 같은 \"key investment signals\"로 부른다(2026-10-22)."
+      },
+      "cover_indicator_heading": {
+        "ko": "5대 투자동향 지표",
+        "en": "The 5 Key Investment Signals"
+      },
+      "matrix_kicker": {
+        "ko": "S I G N A L   M A T R I X",
+        "note": "본문 면 제목 위 금색 한 줄. 영문이 없으면 국문 값을 쓴다."
+      },
+      "detail_kicker": {
+        "ko": "C O M P A N Y   S I G N A L S",
+        "note": "본문 면 제목 위 금색 한 줄. 영문이 없으면 국문 값을 쓴다."
+      },
+      "item_kicker": {
+        "ko": "K E Y   D E V E L O P M E N T S",
+        "note": "본문 면 제목 위 금색 한 줄. 영문이 없으면 국문 값을 쓴다."
+      },
+      "matrix_title": {
+        "ko": "이번 달 시그널 매트릭스",
+        "en": "This Month's Signal Matrix",
+        "note": "10월호는 9월을 다루므로 본문 문구는 달 이름({month})을 쓰지만, 매트릭스 제목만은 국문 \"이번 달 시그널 매트릭스\"에 맞춰 this month로 둔다(2026-10 결정)."
+      },
+      "matrix_desc": {
+        "ko": "77개 타겟기업의 {period} 글로벌 투자 시그널(전조현상). 활성화된 셀 = 당월 포착된 시그널 (최종 투자 확정·완료 제외, 조달·연구협업 등 전조 활동 포함).",
+        "en": "Early investment signals at the 77 target companies {period}. Filled cells mark detected signals. Final investment decisions and completed projects are excluded; preparatory steps such as financing (even if completed) and R&D partnerships count.",
+        "note": "{period}에 보고 기간이 들어간다."
+      },
+      "matrix_company": {
+        "ko": "기업",
+        "en": "Company"
+      },
+      "matrix_legend_on": {
+        "ko": "시그널 포착",
+        "en": "Signal detected"
+      },
+      "matrix_legend_off": {
+        "ko": "미탐지",
+        "en": "No signal"
+      },
+      "matrix_footnote": {
+        "ko": "시그널 포착 {on}개사 · 미탐지 {off}개사",
+        "en": "Signals detected at {on} {companies}; none detected at {off}.",
+        "note": "{on}·{off}에 기업 수가 들어간다. 영문의 {companies}는 1개사면 company, 아니면 companies가 된다."
+      },
+      "matrix_footnote_none": {
+        "en": "No signals detected at any of the {total} companies.",
+        "note": "영문만. 시그널이 잡힌 기업이 하나도 없을 때 matrix_footnote 대신 쓴다."
+      },
+      "matrix_footnote_all": {
+        "en": "Signals detected at all {total} companies.",
+        "note": "영문만. 모든 기업에 시그널이 잡혔을 때 matrix_footnote 대신 쓴다."
+      },
+      "detail_title": {
+        "ko": "기업별 시그널 상세",
+        "en": "Signal Details by Company"
+      },
+      "no_signal": {
+        "ko": "이번 달 해당 신호 없음",
+        "en": "No signal in {month}"
+      },
+      "business_heading": {
+        "ko": "글로벌 사업현황",
+        "en": "Business Developments"
+      },
+      "business_empty": {
+        "ko": "해당 기간 요약할 수 있는 글로벌 사업현황이 확인되지 않음.",
+        "en": "No business developments found {period}.",
+        "note": "출처를 공식 채널로 한정하지 않는다. 상자에는 제3자 뉴스도 실린다."
+      },
+      "source_prefix": {
+        "ko": "출처",
+        "en": "Source:"
+      },
+      "source_fallback": {
+        "ko": "수집 출처",
+        "en": "Online source"
+      },
+      "source_empty": {
+        "ko": "출처  —",
+        "en": "Source: —"
+      },
+      "source_press_release": {
+        "ko": "공식보도자료",
+        "en": "Press release"
+      },
+      "item_title": {
+        "ko": "품목별 글로벌 사업동향",
+        "en": "Global Business Developments by Company",
+        "note": "카드는 품목별로 묶이지 않고 기업마다 한 장이다(영문 제목이 by Company 인 까닭)."
+      },
+      "item_target_label": {
+        "ko": "투자유치 필요 품목·기술",
+        "en": "Target technology",
+        "note": "예전 영문 \"Korea seeks investment in\"은 in으로 끝나 라벨로 읽히지 않았고, 한국이 투자하는 쪽으로도 읽혔다. 굵은 품목명 바로 앞에 붙고 보고서가 Invest KOREA 발행이라 누구의 대상인지는 맥락으로 읽힌다."
+      },
+      "item_trend_label": {
+        "ko": "{month} 글로벌 사업동향",
+        "en": "{month} Developments"
+      },
+      "item_note": {
+        "ko": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함.",
+        "en": "These companies had no signals in {month} but reported developments tied directly to their target technologies. All are monitored for emerging signals.",
+        "note": "{month}에 보고 달이 들어간다."
+      }
+    }
+  },
+  "indicators": {
+    "note": "①~⑤ 다섯 가지 투자 시그널. *_name은 표지, 매트릭스 범례, 기업 카드 라벨에 같은 문자열로 나간다. *_description은 표지에만 나온다. 이름은 카드의 한 줄 칸에 들어가야 해 짧게 짓는다(카드에 설명까지 붙이면 \"No signal this month\"가 잘린다). config/investment_signal_indicators.json 의 label_ko·description_ko는 AI 판정 입력이라 표지 문구는 그 파일이 아니라 여기서 고친다.",
+    "items": {
+      "1": {
+        "ko_name": "공급망·지정학 리스크 대응",
+        "ko_description": "특정지역 의존도 축소·공급망 다변화·규제 리스크 대응 등",
+        "en_name": "Supply Chain & Political Risk Management",
+        "en_description": "Reducing regional dependency, diversifying supply chains, and addressing regulatory risks"
+      },
+      "2": {
+        "ko_name": "생산 확대 및 거점 다변화",
+        "ko_description": "APAC 신규 시설 확장 검토·생산기지 타당성 조사 등",
+        "en_name": "Factory Expansion & Diversification of Production Bases",
+        "en_description": "New factory opening or facility construction in the Asia-Pacific (APAC) region",
+        "note": "국문 표지에 APAC이 있어 영문 설명에도 둔다."
+      },
+      "3": {
+        "ko_name": "자금 조달 및 유동성 확보",
+        "ko_description": "대규모 회사채 발행·유상증자·신용공여 조달 등",
+        "en_name": "Capital Raising & Securing Liquidity",
+        "en_description": "Getting extra cash by issuing corporate bonds, new share issuance, or bank loans"
+      },
+      "4": {
+        "ko_name": "기술생태계 협력(R&D)",
+        "ko_description": "공동연구·기술 라이선싱·PoC 매칭·지분투자 등",
+        "en_name": "Tech Partnerships & Joint Research",
+        "en_description": "Joint R&D, sharing tech licenses, testing new ideas, or buying shares in partner companies"
+      },
+      "5": {
+        "ko_name": "핵심경영진 행보",
+        "ko_description": "C-Level 이동·극비 방한 및 실사 조율 등",
+        "en_name": "Top Executives' Activities",
+        "en_description": "C-level executives moving to new positions, business trips to Korea, or checking out local business sites"
+      }
+    }
+  },
+  "industries": {
+    "note": "기술 그룹별 문구. ko·en은 기업 카드 머리의 산업 태그(알약, 영문은 약 36자까지 한 줄)다. en_target_technology는 영문판 투자유치 대상 품목·기술 이름이다. 국문 품목명은 data/company_technology_map.json 에서 온다. 그 파일의 target_technology_en은 AI 판정 입력이라 바꾸면 그 기업 기사의 판정 기록이 모두 무효가 되므로, 독자용 영문 이름은 여기 둔다.",
+    "items": {
+      "rare_earth_magnet_recycling": {
+        "ko": "희토류 자석 재활용",
+        "en": "Rare Earths & Magnet Recycling",
+        "en_target_technology": "High-purity rare-earth recovery from end-of-life permanent magnets"
+      },
+      "3d_vision_sensor": {
+        "ko": "머신비전·센서",
+        "en": "Machine Vision & Sensors",
+        "en_target_technology": "3D vision sensors"
+      },
+      "euv_blank_mask": {
+        "ko": "반도체 마스크 소재",
+        "en": "EUV Mask Substrates",
+        "en_target_technology": "EUV mask blanks",
+        "note": "Corning은 블랭크가 아니라 EUV 마스크 블랭크용 유리 기판을 공급한다(영문 태그)."
+      },
+      "virus_validation_mcb_wcb": {
+        "ko": "바이오 분석·안전성 시험",
+        "en": "Biologics Safety Testing",
+        "en_target_technology": "Virus validation and master/working cell bank characterization"
+      },
+      "bioprocess_culture_purification": {
+        "ko": "바이오공정 장비·소재",
+        "en": "Bioprocessing Technology",
+        "en_target_technology": "Cell-culture and purification systems for biologics production"
+      },
+      "gene_cell_therapy_delivery_gmp": {
+        "ko": "세포·유전자 치료제",
+        "en": "Cell & Gene Therapy",
+        "en_target_technology": "Delivery systems and GMP raw materials for gene and cell therapies",
+        "note": "\"delivery vehicles\"는 운송 차량으로 읽힌다."
+      },
+      "autoinjector_pfs_fill_finish": {
+        "ko": "의약품 전달·충전",
+        "en": "Drug Delivery & Fill-Finish",
+        "en_target_technology": "Autoinjector and prefilled-syringe (PFS) manufacturing and fill-finish"
+      },
+      "ag_al_paste": {
+        "ko": "태양전지 전극소재",
+        "en": "Solar Metallization Pastes",
+        "en_target_technology": "Silver and aluminum (Ag/Al) pastes for solar cells"
+      },
+      "lithium_cathode_materials": {
+        "ko": "이차전지 핵심소재",
+        "en": "Lithium & Cathode Materials",
+        "en_target_technology": "Cathode raw materials (lithium hydroxide, lithium carbonate)"
+      },
+      "nonferrous_scrap_recycling": {
+        "ko": "비철금속 재활용",
+        "en": "Non-Ferrous Metals & Recycling",
+        "en_target_technology": "Maximizing recycled (scrap) content in non-ferrous metal production"
+      },
+      "hexamethylenediamine_hmd": {
+        "ko": "화학 플랫폼 원료",
+        "en": "Nylon Intermediates",
+        "en_target_technology": "Hexamethylenediamine (HMD) production technology for nylon"
+      },
+      "ion_exchange_membrane": {
+        "ko": "첨단막 소재",
+        "en": "Ion-Exchange Membranes",
+        "en_target_technology": "Ion-exchange and bipolar membranes"
+      },
+      "autonomous_imu_rf_baseband": {
+        "ko": "자율주행 반도체",
+        "en": "Automotive Semiconductors",
+        "en_target_technology": "IMU, RF, and baseband chips for autonomous vehicles"
+      },
+      "semiconductor_thermal_material": {
+        "ko": "반도체 패키징",
+        "en": "Chip Packaging Materials",
+        "en_target_technology": "High-performance thermal materials for semiconductor packaging"
+      },
+      "autonomous_camera_isp": {
+        "ko": "자율주행 센싱",
+        "en": "Automotive Vision & Imaging",
+        "en_target_technology": "Cameras and image signal processors (ISPs) for autonomous vehicles",
+        "note": "onsemi는 카메라가 아니라 이미지 센서를 만든다. 영문 태그는 센서와 모듈을 함께 담는 이름으로 둔다."
+      },
+      "aerospace_electric_propulsion": {
+        "ko": "항공기·친환경 추진체계",
+        "en": "Aerospace & E-Propulsion",
+        "en_target_technology": "Electric motors and high-power battery propulsion modules for aircraft"
+      },
+      "robot_lidar": {
+        "ko": "로봇용 라이다",
+        "en": "Lidar & 3D Sensing",
+        "en_target_technology": "Lidar sensors for robots"
+      },
+      "hybrid_bonding_w2w": {
+        "ko": "첨단 패키징 장비",
+        "en": "Advanced Packaging Equipment",
+        "en_target_technology": "High-precision wafer-to-wafer (W2W) hybrid bonding equipment",
+        "note": "국문 \"nm급\"은 장비 크기가 아니라 정렬 정밀도다."
+      },
+      "euv_lithography": {
+        "ko": "반도체 노광장비",
+        "en": "Lithography Equipment",
+        "en_target_technology": "EUV lithography systems"
+      },
+      "satellite_radar_rf_semiconductor": {
+        "ko": "우주항공 RF 반도체",
+        "en": "RF & Radar Semiconductors",
+        "en_target_technology": "RF chips for satellite communications and radar"
+      },
+      "offshore_wind_turbine": {
+        "ko": "해상풍력 터빈",
+        "en": "Offshore Wind Turbines",
+        "en_target_technology": "Offshore wind turbines"
+      },
+      "linear_scale": {
+        "ko": "정밀 위치계측",
+        "en": "Precision Position Measurement",
+        "en_target_technology": "Linear scales (linear encoders)"
+      },
+      "robot_reducer": {
+        "ko": "로봇 정밀구동",
+        "en": "Robot Drives & Motion Control",
+        "en_target_technology": "Precision speed reducers for robots"
+      },
+      "pharma_excipient": {
+        "ko": "의약품 소재",
+        "en": "Pharmaceutical Excipients",
+        "en_target_technology": "Pharmaceutical excipients"
+      },
+      "precipitated_silica_tire": {
+        "ko": "친환경 실리카",
+        "en": "Precipitated Silica for Tires",
+        "en_target_technology": "Highly dispersible silica (HDS) for low-rolling-resistance tires"
+      },
+      "silicon_anode_sic": {
+        "ko": "이차전지 음극재",
+        "en": "Battery Anode Materials",
+        "en_target_technology": "CVD silicon-carbon (Si-C) anode materials",
+        "note": "국문 \"증착형\"을 업계는 CVD라고 부른다."
+      },
+      "pvdf": {
+        "ko": "이차전지 바인더 소재",
+        "en": "Battery Binders (PVDF)",
+        "en_target_technology": "Polyvinylidene fluoride (PVDF)"
+      },
+      "metal_target_ti_ta": {
+        "ko": "반도체 금속타겟",
+        "en": "Sputtering Targets",
+        "en_target_technology": "Titanium and tantalum sputtering targets"
+      },
+      "fine_metal_mask": {
+        "ko": "디스플레이 소재",
+        "en": "OLED Fine Metal Masks",
+        "en_target_technology": "Fine metal masks (FMMs) for OLED displays",
+        "note": "업계에서 \"OLED materials\"는 발광·호스트 유기재료를 뜻해 태그에 FMM을 밝힌다."
+      },
+      "tgv_glass_substrate": {
+        "ko": "반도체 유리기판",
+        "en": "Semiconductor Glass Substrates",
+        "en_target_technology": "Glass substrates and through-glass via (TGV) processing"
+      }
+    }
+  },
+  "exempt_company_industries": {
+    "note": "품목 판정에서 빠진 기업의 산업 태그. 데이터에 남은 기술 그룹으로 태그를 만들면 숨긴 품목이 다시 찍혀(Air Products가 \"Nylon intermediates\"로 나왔다) 회사 자체 업종을 쓴다. 기업 이름(키)은 scripts/report_content.py 의 EXEMPT_COMPANIES 와 같아야 한다.",
+    "items": {
+      "Prodrive": {
+        "ko": "전력·제어 전자",
+        "en": "Power & Control Electronics"
+      },
+      "JSR": {
+        "ko": "반도체 소재",
+        "en": "Semiconductor Materials"
+      },
+      "Applied Materials": {
+        "ko": "반도체 장비",
+        "en": "Semiconductor Equipment"
+      },
+      "Amkor Technology": {
+        "ko": "반도체 패키징·테스트",
+        "en": "Semiconductor Packaging & Test"
+      },
+      "Heraeus": {
+        "ko": "귀금속·특수소재",
+        "en": "Precious Metals & Materials"
+      },
+      "Toray": {
+        "ko": "첨단 소재",
+        "en": "Advanced Materials"
+      },
+      "3M": {
+        "ko": "다각화 소재·제조",
+        "en": "Diversified Industrials"
+      },
+      "Air Liquide": {
+        "ko": "산업용 가스",
+        "en": "Industrial Gases"
+      },
+      "Air Products": {
+        "ko": "산업용 가스",
+        "en": "Industrial Gases"
+      }
+    }
+  },
+  "countries_en": {
+    "note": "영문판 국가명. 키는 국문 국가명이다. 기업마다 어느 나라인지는 scripts/report_content.py 의 COUNTRY_BY_COMPANY 에 있다.",
+    "items": {
+      "호주": "Australia",
+      "미국": "USA",
+      "네덜란드": "Netherlands",
+      "노르웨이": "Norway",
+      "덴마크": "Denmark",
+      "독일": "Germany",
+      "벨기에": "Belgium",
+      "스웨덴": "Sweden",
+      "스위스": "Switzerland",
+      "스페인": "Spain",
+      "영국": "UK",
+      "오스트리아": "Austria",
+      "프랑스": "France",
+      "일본": "Japan",
+      "대만": "Taiwan",
+      "중국": "China"
+    }
+  }
+}

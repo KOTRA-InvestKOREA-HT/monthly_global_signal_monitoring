@@ -13,15 +13,23 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 
 | 묶음 | 위치 | 비고 |
 |---|---|---|
-| A. 표지·면 제목·라벨·안내문 | `scripts/report_content.py` `TEXTS["en"]` | `{month}`, `{period}`, `{on}` 등 자리표시자는 그대로 둔다 |
-| B. 지표 이름 | `SIGNAL_DESCRIPTIONS_EN` | 표지, 기업 카드 라벨, 매트릭스 범례에 같은 문자열이 나온다. 매트릭스 범례(`matrix_indicators()`)는 카드 라벨에서 만들므로 이 사전 하나만 바꾸면 된다 |
-| C. 지표 설명 | `INDICATOR_DESCRIPTION_EN` | 표지에만 나온다 |
-| D. 산업 태그 | `DETAILED_INDUSTRY_EN`, `EXEMPT_INDUSTRY`의 영문 값 | 기업 카드 머리의 알약 |
-| E. 품목명 | `TARGET_TECHNOLOGY_DISPLAY_EN` | `data/company_technology_map.json`의 `target_technology_en`은 판정 캐시 키라 **건드리지 않는다** |
-| F. 면 머리글(kicker) | `TEXTS`의 `matrix_kicker`, `detail_kicker`, `item_kicker` | 뷰 모델을 거쳐 `scripts/report_html.mjs`가 그린다. 국·영문 공통이다 |
-| G. 날짜·기간 문구 | `report_content.py`의 `format_date`, `format_row_date`, `matrix_period_label`, `report_month_label` 의 영문 분기 | "in August 2026", "from ... to ...", "Aug 20, 2026" |
+A~F는 모두 `config/report_text.json` 한 파일에 있다(2026-10-23 코드에서 꺼냄). 항목마다 국문(`ko`)과 영문(`en`)이
+나란히 있고, `note`는 보고서에 실리지 않는 주석 칸이다. `scripts/report_content.py`는 이 파일을 읽어 예전 이름의
+사전(`TEXTS`, `SIGNAL_DESCRIPTIONS_EN` 등)으로 펴 쓴다. §6 결정 기록의 옛 사전 이름은 아래 표의 칸을 가리킨다.
 
-범위 밖: `COUNTRY_EN`(국가명), 기업명(`display_name`), 로고 글자("Invest KOREA", "Promotion Agency"),
+| 묶음 | 위치 (`config/report_text.json`) | 비고 |
+|---|---|---|
+| A. 표지·면 제목·라벨·안내문 | `texts.items.*.en` | `{month}`, `{period}`, `{on}` 등 자리표시자는 그대로 둔다 |
+| B. 지표 이름 | `indicators.items.*.en_name` (옛 `SIGNAL_DESCRIPTIONS_EN`) | 표지, 기업 카드 라벨, 매트릭스 범례에 같은 문자열이 나온다. 매트릭스 범례(`matrix_indicators()`)는 카드 라벨에서 만들므로 이 칸 하나만 바꾸면 된다 |
+| C. 지표 설명 | `indicators.items.*.en_description` (옛 `INDICATOR_DESCRIPTION_EN`) | 표지에만 나온다 |
+| D. 산업 태그 | `industries.items.*.en` (옛 `DETAILED_INDUSTRY_EN`), `exempt_company_industries.items.*.en` (옛 `EXEMPT_INDUSTRY`) | 기업 카드 머리의 알약 |
+| E. 품목명 | `industries.items.*.en_target_technology` (옛 `TARGET_TECHNOLOGY_DISPLAY_EN`) | `data/company_technology_map.json`의 `target_technology_en`은 판정 캐시 키라 **건드리지 않는다** |
+| F. 면 머리글(kicker) | `texts.items`의 `matrix_kicker`, `detail_kicker`, `item_kicker` | 뷰 모델을 거쳐 `scripts/report_html.mjs`가 그린다. 국·영문 공통이다 |
+| G. 날짜·기간 문구 | `scripts/report_content.py`의 `format_date`, `format_row_date`, `matrix_period_label`, `report_month_label` 의 영문 분기 | "in August 2026", "from ... to ...", "Aug 20, 2026". 코드 안에 있다 |
+
+뜻을 맞출 국문은 같은 파일의 `ko`, `ko_name`, `ko_description` 칸이다.
+
+범위 밖: `countries_en`(국가명), 기업명(`display_name`), 로고 글자("Invest KOREA", "Promotion Agency"),
 `config/investment_signal_indicators.json`(판정 캐시 키).
 
 ## 2. 용어집
@@ -96,7 +104,7 @@ Global Business Developments by Company 로 바뀌었다). 이 문서에 없는 
 | `cover_kicker` | GLOBAL INVESTMENT SIGNAL MONITOR | f9dd324: 국·영문 표지 공통 보고서 이름 |
 | `cover_line_2` 후반 | Pre-decision signals only | c87062d: 보고 범위를 말함 |
 | `cover_indicator_heading` | The 5 Key Investment Signals | 2026-10-22 사용자 표지 수정안("표지 수정 1020") |
-| `SIGNAL_DESCRIPTIONS_EN`, `INDICATOR_DESCRIPTION_EN` | 2026-10-22 사용자 표지 수정안의 지표 이름·설명 5개 | 2026-10-22 사용자 표지 수정안 |
+| `indicators`의 `en_name`, `en_description` | 2026-10-22 사용자 표지 수정안의 지표 이름·설명 5개 | 2026-10-22 사용자 표지 수정안 |
 | `matrix_title` | This Month's Signal Matrix | 3905c25: 국문 "이번 달 시그널 매트릭스"에 맞춤(2026-10 결정) |
 | `item_target_label` | Target technology | e749a7c |
 | `cover_line_1`의 MOTIR | MOTIR | 산업통상부 공식 영문 약칭 |
