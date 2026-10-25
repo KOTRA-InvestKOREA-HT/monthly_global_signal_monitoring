@@ -2883,7 +2883,7 @@ async function collectSecFilings(company, sourceConfig, dateRange, maxPerSource,
 
 // ---------------------------------------------------------------- dated news sitemaps
 // 사이트맵의 lastmod 는 게시일이 아니다(2026-08 조사: 8월 lastmod 874건 중 제품·옛 페이지가 대부분).
-// URL 에 박힌 게시 시점만 쓴다. /2026/08/, infxx202607-113, ze260803 세 모양을 읽는다.
+// URL 에 박힌 게시 시점만 쓴다. /2026/08/, infxx202607-113, ze260803, /2026-09-제목 네 모양을 읽는다.
 export function sitemapUrlDate(url) {
   const direct = extractDateFromUrl(url);
   if (direct) return direct;
@@ -2895,6 +2895,10 @@ export function sitemapUrlDate(url) {
   }
   const yearMonth = pathname.match(/\/((?:19|20)\d{2})\/(0[1-9]|1[0-2])\//);
   if (yearMonth) return `${yearMonth[1]}-${yearMonth[2]}`;
+  // Airbus 보도자료 주소는 마지막 조각이 연-월로 시작한다(/press-releases/2026-09-aircairo-places-order-...).
+  // 연-월 바로 뒤가 글자여야 한다. 숫자면 일자까지 있는 날짜이므로 위 extractDateFromUrl 몫이다.
+  const slugMonth = pathname.match(/\/((?:19|20)\d{2})-(0[1-9]|1[0-2])-[a-z]/i);
+  if (slugMonth) return `${slugMonth[1]}-${slugMonth[2]}`;
   const folder = pathname.match(/\/((?:19|20)\d{2})\/[a-z]*(\d{6,8})(?:[-_.]|$)/i);
   if (!folder) return null;
   const [, year, digits] = folder;

@@ -40,6 +40,9 @@ test('sitemap URLs yield a date only when the path carries one', () => {
   // A digit run that does not match its year folder is not a date.
   assert.equal(sitemapUrlDate('https://www.asahi-kasei.com/news/2026/e280826'), null);
   assert.equal(sitemapUrlDate('https://www.abb.com/global/en/areas/electrification/wire-terminals'), null);
+  // Airbus: the last segment starts with year-month, then the title.
+  assert.equal(sitemapUrlDate('https://www.airbus.com/en/newsroom/press-releases/2026-09-aircairo-places-order-for-15-airbus-a320neo-aircraft'), '2026-09');
+  assert.equal(sitemapUrlDate('https://www.airbus.com/en/newsroom/press-releases/2026-13-not-a-month'), null);
 });
 
 test('sitemap rows keep only included, in-period URLs', () => {

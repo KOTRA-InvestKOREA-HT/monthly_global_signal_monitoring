@@ -10,9 +10,18 @@
     ],
     "Cognex": [
       {
-        "source": "Cognex - Official RSS",
+        "source": "Cognex - Press release JSON feed",
         "kind": "press_release",
-        "url": "https://investor.cognex.com/rss/pressrelease.aspx"
+        "url": "https://investor.cognex.com/feed/PressRelease.svc/GetPressReleaseList?LanguageId=1&bodyType=1&pressReleaseDateFilter=3&pageSize=25&pageNumber=0",
+        "format": "json",
+        "json": {
+          "items": "GetPressReleaseListResult",
+          "title": "Headline",
+          "url": "LinkToDetailPage",
+          "date": "PressReleaseDate",
+          "body": "Body",
+          "base": "https://investor.cognex.com/"
+        }
       }
     ],
     "Cytiva": [
@@ -59,9 +68,18 @@
     ],
     "Qualcomm": [
       {
-        "source": "Qualcomm - Official RSS",
+        "source": "Qualcomm - Press release JSON feed",
         "kind": "press_release",
-        "url": "https://investor.qualcomm.com/rss/pressrelease.aspx"
+        "url": "https://investor.qualcomm.com/feed/PressRelease.svc/GetPressReleaseList?LanguageId=1&bodyType=1&pressReleaseDateFilter=3&pageSize=25&pageNumber=0",
+        "format": "json",
+        "json": {
+          "items": "GetPressReleaseListResult",
+          "title": "Headline",
+          "url": "LinkToDetailPage",
+          "date": "PressReleaseDate",
+          "body": "Body",
+          "base": "https://investor.qualcomm.com/"
+        }
       }
     ],
     "Skyworks": [
@@ -209,6 +227,38 @@
           "body": "news_description",
           "base": "https://www.magnix.aero/",
           "include": "/detail/"
+        }
+      }
+    ],
+    "Thermo Fisher": [
+      {
+        "source": "Thermo Fisher - Press release JSON feed",
+        "kind": "press_release",
+        "url": "https://ir.thermofisher.com/feed/PressRelease.svc/GetPressReleaseList?LanguageId=1&bodyType=1&pressReleaseDateFilter=3&pageSize=25&pageNumber=0",
+        "format": "json",
+        "json": {
+          "items": "GetPressReleaseListResult",
+          "title": "Headline",
+          "url": "LinkToDetailPage",
+          "date": "PressReleaseDate",
+          "body": "Body",
+          "base": "https://ir.thermofisher.com/"
+        }
+      }
+    ],
+    "Dupont": [
+      {
+        "source": "Dupont - Press release JSON feed",
+        "kind": "press_release",
+        "url": "https://www.investors.dupont.com/feed/PressRelease.svc/GetPressReleaseList?LanguageId=1&bodyType=1&pressReleaseDateFilter=3&pageSize=25&pageNumber=0",
+        "format": "json",
+        "json": {
+          "items": "GetPressReleaseListResult",
+          "title": "Headline",
+          "url": "LinkToDetailPage",
+          "date": "PressReleaseDate",
+          "body": "Body",
+          "base": "https://www.investors.dupont.com/"
         }
       }
     ]
@@ -3352,6 +3402,26 @@
         "kind": "press_release",
         "url": "https://www.asahi-kasei.com/sitemap-en.xml",
         "include": "/news/\\d{4}/[a-z]+\\d{6}"
+      }
+    ],
+    "Airbus": [
+      {
+        "source": "Airbus - Press release sitemap",
+        "kind": "press_release",
+        "url": "https://www.airbus.com/sitemap.xml?page=1",
+        "include": "^https://www\\.airbus\\.com/en/newsroom/press-releases/\\d{4}-\\d{2}-"
+      },
+      {
+        "source": "Airbus - Press release sitemap",
+        "kind": "press_release",
+        "url": "https://www.airbus.com/sitemap.xml?page=2",
+        "include": "^https://www\\.airbus\\.com/en/newsroom/press-releases/\\d{4}-\\d{2}-"
+      },
+      {
+        "source": "Airbus - Press release sitemap",
+        "kind": "press_release",
+        "url": "https://www.airbus.com/sitemap.xml?page=3",
+        "include": "^https://www\\.airbus\\.com/en/newsroom/press-releases/\\d{4}-\\d{2}-"
       }
     ]
   }
