@@ -128,6 +128,29 @@ class PublisherLocalDateTests(unittest.TestCase):
             self.assertEqual(pdf.format_row_date(row), day.strftime("%Y.%m.%d"), value)
 
 
+class ConflictingDateTests(unittest.TestCase):
+    """확정 근거끼리 어긋나도 모두 보고 기간 안이면 본문에 넣는다(2026-10-25). date_state.mjs 와 같은 규칙이다."""
+
+    @staticmethod
+    def evidence(value, source):
+        return {"date": value, "month": value[:7], "source": source, "kind": "published", "precision": "day"}
+
+    def row(self, *candidates):
+        return {"published_at": candidates[0]["date"], "published_at_source": candidates[0]["source"],
+                "date_conflict": True, "date_candidates": list(candidates)}
+
+    def test_all_confirmed_dates_inside_the_period_are_kept(self):
+        from datetime import datetime, timezone
+        start = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        end = datetime(2026, 9, 30, tzinfo=timezone.utc)
+        airbus = self.row(self.evidence("2026-09-10", "meta"), self.evidence("2026-09-08T12:43:30Z", "jsonld"))
+        self.assertTrue(pdf.row_in_report_period(airbus, start, end))
+        a220 = self.row(self.evidence("2026-09-03", "meta"), self.evidence("2026-08-31T11:39:39Z", "jsonld"))
+        self.assertFalse(pdf.row_in_report_period(a220, start, end))
+        self.assertFalse(pdf.row_in_report_period(airbus, datetime(2026, 9, 9, tzinfo=timezone.utc), end))
+        self.assertFalse(pdf.row_in_report_period({**airbus, "date_candidates": []}, start, end))
+
+
 class PeriodLabelTests(unittest.TestCase):
     """보고 기간 문구는 기간이 걸친 달을 모두 적는다. 예전 국문은 시작 달만 적었다."""
 

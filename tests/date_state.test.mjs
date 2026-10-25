@@ -42,6 +42,23 @@ test("conflicting confirmed evidence is held instead of silently picking one dat
   assert.equal(agreeing.published_at_status, "confirmed");
 });
 
+// Airbus 보도자료: 메타 9/10, JSON-LD 9/8, 표시 날짜 9/10. 어긋나도 모두 9월이면 9월 보고서 기사다(2026-10-25 결정).
+test("conflicting confirmed dates that all fall inside the period are placed in it", () => {
+  const september = { from_date: "2026-09-01", to_date: "2026-09-30" };
+  const airbus = chooseDateEvidence([dateEvidence("2026-09-10", "meta"), dateEvidence("2026-09-08T12:43:30Z", "jsonld"),
+    dateEvidence("2026-09-10T13:00:00Z", "time_tag")]);
+  assert.equal(airbus.published_at_status, "conflicting");
+  assert.equal(periodPlacement(airbus, september).placement, "in_period");
+  assert.equal(reportEligible(airbus, september), true);
+  // 근거 하나가 기간 밖(8/31)이면 이전처럼 보류한다.
+  const a220 = chooseDateEvidence([dateEvidence("2026-09-03", "meta"), dateEvidence("2026-08-31T11:39:39Z", "jsonld")]);
+  assert.equal(periodPlacement(a220, september).placement, "date_pending");
+  // 기간이 달 일부면 어긋난 일자가 둘 다 그 안에 있어야 한다.
+  assert.equal(reportEligible(airbus, { from_date: "2026-09-09", to_date: "2026-09-30" }), false);
+  // 근거 목록 없이 충돌 표시만 있는 옛 행은 그대로 보류한다.
+  assert.equal(reportEligible({ published_at: "2026-09-10", published_at_source: "meta", date_conflict: true }, september), false);
+});
+
 test("English month names are read as UTC so the first of a month keeps its month", () => {
   const chosen = chooseFrom("<body>Published August 1, 2026 in Seoul</body>");
   assert.equal(resolveDateState(chosen).day, "2026-08-01");

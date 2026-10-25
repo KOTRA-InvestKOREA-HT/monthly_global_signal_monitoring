@@ -177,6 +177,23 @@ function touchesPeriod(state, period) {
   return state.precision === "day" ? dayInPeriod(state.day, period) : monthTouchesPeriod(state.month, period);
 }
 
+// 확정 근거끼리 일자가 어긋나도, 그 근거가 모두 보고 기간 안이면 어느 날짜를 골라도 이번 기간 기사다
+// (2026-10-25 사용자 결정). Airbus 보도자료는 메타 태그·JSON-LD·표시 날짜가 9/8·9/10처럼 하루이틀 달라
+// 9월 기사가 충돌로 보류됐다. 월 단위 근거는 선택 기간이 그 달 전체를 덮을 때만 안으로 친다.
+// report_content.py 의 confirmed_evidence_inside 와 같은 규칙이다.
+function insidePeriod(item, period) {
+  const day = item.precision === "month" ? "" : dayOf(item.date);
+  if (day) return dayInPeriod(day, period);
+  const month = monthOf(item.month || item.date);
+  return Boolean(month) && coversWholeMonth(period, month);
+}
+
+function confirmedEvidenceInside(state, period) {
+  const confirmed = state.candidates.filter((item) => item?.kind === "published" && evidenceGrade(item.source) === "confirmed");
+  return confirmed.length > 0 && confirmed.every((item) => insidePeriod(item, period)) &&
+    insidePeriod({ precision: state.precision, date: state.day, month: state.month }, period);
+}
+
 // 제목이나 URL에 대상 연도가 박힌 정기 문서의 발행 연도. 연간·통합·지속가능경영 보고서는 그해 실적을
 // 이듬해에 싣고, 위임장 설명서(proxy statement)는 표기한 해에 나온다. 게시일 근거가 없어도 이 연도가
 // 보고 기간보다 앞이면 이번 달 자료일 수 없다. 2026-08 실행에서 Umicore 2023 연차보고서와 Albemarle
@@ -241,6 +258,7 @@ export function periodPlacement(row, period) {
   if (state.status === "unknown") return hold("게시일 근거가 전혀 없음");
   const touches = touchesPeriod(state, period);
   if (state.status === "conflicting") {
+    if (confirmedEvidenceInside(state, period)) return { placement: "in_period", state, reason: "" };
     const anyTouches = touches || state.candidates.some((item) =>
       touchesPeriod({ precision: item.date ? "day" : "month", day: dayOf(item.date), month: monthOf(item.month || item.date) }, period));
     return anyTouches ? hold("게시일 근거가 서로 어긋남") : { placement: "out_of_period", state, reason: "충돌한 근거가 모두 기간 밖" };

@@ -335,10 +335,38 @@ def previous_month_range(now=None):
     return month_bounds(f"{year:04d}-{month:02d}")
 
 
-# 월간 보고서 본문에 쓸 수 있는 행인지 본다. 게시월까지 확정된 행만 통과한다.
-# 추정·충돌·미상 행은 원본과 웹 화면에 남아 검토 후보가 되고, 날짜를 보강한 뒤에 본문에 들어온다.
+def _evidence_inside(day, month, start, end):
+    if day:
+        return start.date() <= day <= end.date()
+    if not MONTH_ONLY.match(str(month or "")):
+        return False
+    month_start, month_end = month_bounds(month)
+    return start.date() <= month_start and month_end <= end.date()
+
+
+# 확정 근거끼리 일자가 어긋나도 모두 보고 기간 안이면 어느 날짜든 이번 기간 기사다(2026-10-25 사용자 결정).
+# date_state.mjs 의 confirmedEvidenceInside 와 같은 규칙이다. 월 단위 근거는 기간이 그 달 전체를 덮을 때만 안이다.
+def confirmed_evidence_inside(row, start, end):
+    confirmed = [item for item in row.get("date_candidates") or []
+                 if isinstance(item, dict) and item.get("kind") == "published"
+                 and item.get("source") in CONFIRMED_DATE_SOURCES]
+    if not confirmed:
+        return False
+    for item in confirmed:
+        day = None if item.get("precision") == "month" else date_day(item.get("date"))
+        month = item.get("month") or str(item.get("date") or "")[:7]
+        if not _evidence_inside(day, month, start, end):
+            return False
+    state = date_state(row)
+    return _evidence_inside(state["day"], state["month"], start, end)
+
+
+# 월간 보고서 본문에 쓸 수 있는 행인지 본다. 게시월까지 확정된 행과, 어긋난 확정 근거가 모두 기간 안인 행이 통과한다.
+# 추정·미상 행과 기간 밖을 가리키는 충돌 행은 원본과 웹 화면에 남아 검토 후보가 되고, 날짜를 보강한 뒤에 본문에 들어온다.
 def row_in_report_period(row, start, end):
     state = date_state(row)
+    if state["status"] == "conflicting":
+        return confirmed_evidence_inside(row, start, end)
     if state["status"] != "confirmed":
         return False
     if state["precision"] == "day":
