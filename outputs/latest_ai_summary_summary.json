@@ -67,12 +67,10 @@
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 198,
-    "requests": 41,
-    "cached": 200,
-    "written": 27,
-    "written_by": {
-      "gemini-3.5-flash-lite": 27
-    },
+    "requests": 12,
+    "cached": 227,
+    "written": 0,
+    "written_by": {},
     "failed": [
       {
         "article_id": "fa133c197f94d4cea83a7fbf",
@@ -107,15 +105,15 @@
     "key_runs": [
       {
         "key": 1,
-        "requests": 41
+        "requests": 12
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
     "articles": 197,
-    "requests": 32,
-    "cached": 190,
+    "requests": 3,
+    "cached": 224,
     "reviewed": 227,
     "flagged": [
       {
@@ -191,6 +189,24 @@
         "note": "The Korean term '고급 단계' is an unnatural literal translation of 'advanced stages' rather than an established business term."
       },
       {
+        "article_id": "c42b97f99d7fe40e8efda04a",
+        "company": "Air Liquide",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "operating under the TotalEnergies brand",
+        "source_phrase": "",
+        "note": "The detail that TEAL Mobility operates under the TotalEnergies brand is present in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "57adeae86c907805ba5dadea",
+        "company": "Ouster",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "페이로드",
+        "source_phrase": "",
+        "note": "The established Korean term for payload is 탑재체, making the transliteration 페이로드 an unestablished term."
+      },
+      {
         "article_id": "9116cd846d11e57c2900d8ff",
         "company": "Evonik Industries",
         "candidate_id": "relevant",
@@ -263,24 +279,6 @@
         "note": "The Korean summary mentions responding to demand, which is missing from the English summary."
       },
       {
-        "article_id": "c42b97f99d7fe40e8efda04a",
-        "company": "Air Liquide",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "operating under the TotalEnergies brand",
-        "source_phrase": "",
-        "note": "The detail that TEAL Mobility operates under the TotalEnergies brand is present in the English summary but missing in the Korean summary."
-      },
-      {
-        "article_id": "57adeae86c907805ba5dadea",
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "페이로드",
-        "source_phrase": "",
-        "note": "The established Korean term for payload is 탑재체, making the transliteration 페이로드 an unestablished term."
-      },
-      {
         "article_id": "853df67b36be1cd3828a93bb",
         "company": "Qualcomm",
         "candidate_id": "relevant",
@@ -306,6 +304,15 @@
         "copy_phrase": "미국",
         "source_phrase": "",
         "note": "The copy states the country 미국, which is not mentioned in the sources."
+      },
+      {
+        "article_id": "b6d84748dddf16bd5f6821e8",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "Applied Materials announced",
+        "source_phrase": "Tan announced",
+        "note": "The announcing party differs between the English and Korean summaries."
       },
       {
         "article_id": "27c0a0c096757cae1c8019d5",
@@ -335,13 +342,13 @@
         "note": "The sources state that BASF and Evonik are Germany's two largest chemical makers, not that Evonik is the single largest."
       },
       {
-        "article_id": "b6d84748dddf16bd5f6821e8",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
+        "article_id": "63f157a9af955a09267ee13c",
+        "company": "Qualcomm",
+        "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "Applied Materials announced",
-        "source_phrase": "Tan announced",
-        "note": "The announcing party differs between the English and Korean summaries."
+        "copy_phrase": ", which develops and maintains MoveIt",
+        "source_phrase": "",
+        "note": "English summary states that PickNik develops and maintains MoveIt, but this fact is missing in the Korean summary."
       },
       {
         "article_id": "8ba8ece42540ce6352968e22",
@@ -353,13 +360,13 @@
         "note": "The English summary states the materials will be used in batteries, while the Korean summary states they will be used to produce cathode materials."
       },
       {
-        "article_id": "63f157a9af955a09267ee13c",
-        "company": "Qualcomm",
+        "article_id": "211af5c824a1f8711e6ac039",
+        "company": "BASF",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": ", which develops and maintains MoveIt",
+        "copy_phrase": "진행 중임",
         "source_phrase": "",
-        "note": "English summary states that PickNik develops and maintains MoveIt, but this fact is missing in the Korean summary."
+        "note": "The advanced stage of the feasibility study is stated in English but omitted in Korean."
       },
       {
         "article_id": "0e8839bf980c461b590f8527",
@@ -380,15 +387,6 @@
         "note": "The term 고용량 is an incorrect translation for high-volume in the context of automotive camera applications."
       },
       {
-        "article_id": "211af5c824a1f8711e6ac039",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "진행 중임",
-        "source_phrase": "",
-        "note": "The advanced stage of the feasibility study is stated in English but omitted in Korean."
-      },
-      {
         "article_id": "c1038f6967d1557d828107d0",
         "company": "Merck",
         "candidate_id": "investment:1",
@@ -405,6 +403,15 @@
         "copy_phrase": "아시아태평양 지역 공급망 강화를 위해",
         "source_phrase": "to strengthen its production and supply operations in the Asia-Pacific region",
         "note": "The Korean summary omits 'production' from the Asia-Pacific operations goal, which is present in the English summary and sources."
+      },
+      {
+        "article_id": "a509c4a40a358412989221eb",
+        "company": "Besi",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "장비 준비 태세",
+        "source_phrase": "",
+        "note": "장비 준비 태세 is an unnatural literal compound coined from English parts rather than an established Korean business term."
       },
       {
         "article_id": "04288293e3090223a116bfb3",
@@ -506,13 +513,13 @@
         "note": "파일럻 is a malformed Hangul transliteration of pilot and not an established Korean term."
       },
       {
-        "article_id": "a509c4a40a358412989221eb",
-        "company": "Besi",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "장비 준비 태세",
+        "article_id": "22348957a5fd02d5f9a3c521",
+        "company": "Nexeon",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "The Korea Development Bank and Honda Xcelerator Ventures",
         "source_phrase": "",
-        "note": "장비 준비 태세 is an unnatural literal compound coined from English parts rather than an established Korean business term."
+        "note": "The participating new investors mentioned in the English summary are omitted in the Korean summary."
       },
       {
         "article_id": "edf5f44386e653b918f608a2",
@@ -524,13 +531,13 @@
         "note": "The phrase is a literal compound translation rather than an established Korean term."
       },
       {
-        "article_id": "22348957a5fd02d5f9a3c521",
-        "company": "Nexeon",
-        "candidate_id": "investment:3",
+        "article_id": "71c390fc19ca5fa7a3bc533a",
+        "company": "Amkor Technology",
+        "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "The Korea Development Bank and Honda Xcelerator Ventures",
+        "copy_phrase": "고객 수요",
         "source_phrase": "",
-        "note": "The participating new investors mentioned in the English summary are omitted in the Korean summary."
+        "note": "The Korean summary translates customer commitments as customer demand creating a discrepancy between the English and Korean summaries."
       },
       {
         "article_id": "7f84fa60acc76262aec361a0",
@@ -596,38 +603,28 @@
         "note": "The term '다이투웨이퍼' is a literal compound coined from English parts rather than an established Korean business term."
       },
       {
-        "article_id": "71c390fc19ca5fa7a3bc533a",
-        "company": "Amkor Technology",
+        "article_id": "8957d831af85b3d95d01527f",
+        "company": "Moderna",
         "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "고객 수요",
-        "source_phrase": "",
-        "note": "The Korean summary translates customer commitments as customer demand creating a discrepancy between the English and Korean summaries."
+        "copy_phrase": "with a single injection",
+        "source_phrase": "with a single injection",
+        "note": "The detail regarding a single injection appears in the English summary but is missing in the Korean summary."
       }
     ],
     "enforce": [],
-    "discarded": 0,
+    "discarded": 1,
     "errors": {},
     "unchecked": [
       {
         "article_id": "82f3b491db90337154e4e469",
         "company": "Norsk Hydro",
         "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "8957d831af85b3d95d01527f",
-        "company": "Moderna",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "b0bda35e95d8e8268a526547",
-        "company": "Applied Materials",
-        "candidate_id": "investment:1"
       }
     ],
     "kept": [],
-    "first_flagged": 60,
-    "first_enforce": 3,
+    "first_flagged": 58,
+    "first_enforce": 1,
     "rounds": [
       {
         "round": 1,
@@ -636,35 +633,21 @@
             "company": "Norsk Hydro",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states the recycling and processing as definite current or completed actions, whereas the sources state them as future actions. Copy: \"벨기에 Ghlin 시설에서 알루미늄을 재활용하고 Lichtervelde 시설에서 압출 빌렛으로 가공함\" Source: \"In this pilot study, Hydro will recycle aluminium from decommissioned trains at its recycling facility in Ghlin, Belgium .\""
-            ]
-          },
-          {
-            "company": "Applied Materials",
-            "candidate_id": "investment:1",
-            "problems": [
-              "review_certainty: The source states as a current fact that the expansion does not eliminate the risks, whereas the copy states as future that it will bear them. Copy: \"실행 및 자본 배분 리스크를 안게 될 예정임\" Source: \"it does not eliminate execution, regulatory, or capital-allocation risks\""
-            ]
-          },
-          {
-            "company": "Moderna",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states as current fact what the sources state as expected. Copy: \"is expanding its research\" Source: \"is expected to broaden its research\""
+              "review_certainty: The copy states the project joining as future whereas the sources state it as present. Copy: \"Hydro will join\" Source: \"Hydro joins\""
             ]
           }
         ],
-        "written": 3,
+        "written": 1,
         "failed": 0,
         "kept": 0,
-        "requests": 3
+        "requests": 1
       }
     ]
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 6,
-    "cached": 6,
+    "targets": 0,
+    "cached": 0,
     "requests": 0,
     "written": 0,
     "nothing_new": 0,
