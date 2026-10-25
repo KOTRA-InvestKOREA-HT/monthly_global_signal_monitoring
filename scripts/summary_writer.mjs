@@ -382,8 +382,8 @@ export function publishedDecisions(article, review) {
     !(review.semantic_recheck_pending?.candidate_ids || []).includes(decision.candidate_id));
 }
 
-// 문안을 쓸 후보. 보고서에 실릴 승인 후보와, 품목 연계만 모자라 사업현황 상자를 채울 수 있는 근접 사업동향 후보다.
-// 근접 사업동향 행은 위 지표 칸과 다른 기사가 타겟 품목 쪽에 없을 때 상자에 실린다(report_content.best_business_row).
+// 문안을 쓸 후보. 보고서에 실릴 승인 후보와, 품목 연계만 모자란 근접 사업동향 후보다.
+// 근접 사업동향 행은 2026-10-25부터 사업현황 상자에 싣지 않고(report_content.best_business_row) 대시보드에만 남는다.
 export function writerTargets(article, review) {
   const pending = new Set(review.semantic_recheck_pending?.candidate_ids || []);
   return review.decisions.filter(decision => {

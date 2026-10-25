@@ -73,6 +73,16 @@ test('a business article the report holds back for its date does not count as bu
   assert.deepEqual(boxCopyTargets([article, other], reviews).map(target => target.article.id), [article.id]);
 });
 
+// 4호 재발행 Albemarle·Tokyo Electron·NXP: 품목과 무관한 인사·대출 공시의 나머지 내용이 상자에 실렸다(2026-10-25 사용자 결정).
+test('a signal unrelated to the target technology gets no box copy, unless the company has no target technology', () => {
+  const unlinked = { ...review, decisions: [{ ...signal, target_technology_supported: false }] };
+  assert.deepEqual(boxCopyTargets([article], new Map([[article.id, unlinked]])), []);
+  const exemptRow = { ...row, excluded_from_relevance: true };
+  const exempt = groupArticles([exemptRow], [], period)[0];
+  const exemptReview = { ...unlinked, article_id: exempt.id };
+  assert.equal(boxCopyTargets([exempt], new Map([[exempt.id, exemptReview]])).length, 1);
+});
+
 test('the request shows what the signal card already says and asks for the rest of the article', () => {
   const request = boxRequest(article, [signal]);
   assert.deepEqual(request.already_said, [signal.summary_en]);

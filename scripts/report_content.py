@@ -1150,28 +1150,6 @@ def business_row_on_target(row, exempt_company):
     return exempt_company or is_relevance_exempt(row) or row.get("ai_target_technology_supported") is True
 
 
-def business_near_miss(row):
-    """승인은 아니지만 사업현황 상자에 실을 수 있는 사업동향 행인지.
-
-    승인 조건(signal_supported)에서 품목 연계 근거 하나만 빠진 행이다. 나머지는 그대로 요구한다.
-    한·영 문안이 모두 있어야 한다. 문안이 없으면 business_text 가 근거 발췌로 떨어지고, 그러면
-    한국어판에 영문·일문 본문이나 "PDF 3.29 MB" 같은 문구가 그대로 나간다(2026-08 실행).
-    """
-    if not row or row.get("ai_signal_supported") is not False:
-        return False
-    # 투자 시그널 행은 여기로 오지 않는다. 사업동향 행만 상자의 후보다.
-    if row.get("investment_signal_no") is not None:
-        return False
-    if row.get("ai_event_stage") != BUSINESS_STAGE:
-        return False
-    if row.get("ai_summary_quality") != "pass":
-        return False
-    for field in ("ai_entity_supported", "ai_indicator_supported", "ai_leading_indicator_supported"):
-        if row.get(field) is not True:
-            return False
-    return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
-
-
 # 위 지표 칸과 같은 사건인지 가르는 규칙(2026-10-23 사용자 결정). 외부 기사를 늘 받게 되면서, 지표 칸의 공식
 # 보도자료와 같은 사건을 다룬 다른 매체 기사가 주소·제목이 달라 상자에 들어올 수 있다. 영문 문안으로 잰다
 # (국문은 낱말 경계가 조사에 붙는다). 다음 가운데 하나면 같은 사건이다.
@@ -1180,10 +1158,13 @@ def business_near_miss(row):
 #   2. 위 칸에 나온 고유명사(사람·상대 기업·장소)를 함께 쓰면서 50% 넘게 겹치거나, 고유명사 둘 이상을 함께 쓰면서
 #      40% 넘게 겹친다. 4호 Albemarle 의 SEC 공시(같은 CEO 선임, 46%, Ragnar·Udd)가 여기 걸린다.
 #   3. 위 칸과 같은 금액·수량을 쓰고 고유명사도 하나 이상 같다. 같은 투자를 다른 말로 쓴 기사가 여기 걸린다.
+#   4. 고유명사 셋 이상을 함께 쓰면서 30% 넘게 겹친다(2026-10-25). 4호 재발행 Nexeon 의 BusinessCloud 기사(같은
+#      National Wealth Fund 투자 유치, 36%, National·Wealth·Fund·UK-based)가 2번 잣대(40%)를 비껴 상자에 실렸다.
 # 제품 이름만 같고 사건이 다른 기사(Ouster 의 Rev8 OS1 Max 고객 확대, 26%)는 같은 사건이 아니다.
 SAME_EVENT_OVERLAP = 0.6
 SAME_EVENT_NAMED_OVERLAP = 0.5
 SAME_EVENT_PARTIAL_OVERLAP = 0.4
+SAME_EVENT_MANY_NAMES_OVERLAP = 0.3
 SAME_EVENT_WORD = re.compile(r"[a-z0-9][a-z0-9.,$%-]*")
 SAME_EVENT_NAME = re.compile(r"\b[A-Z][A-Za-z0-9&*-]+")
 SAME_EVENT_AMOUNT = re.compile(
@@ -1234,59 +1215,64 @@ def same_event_as_signal(row, shown_rows, company=""):
             return True
         if overlap > SAME_EVENT_PARTIAL_OVERLAP and len(shared_names) >= 2:
             return True
+        if overlap > SAME_EVENT_MANY_NAMES_OVERLAP and len(shared_names) >= 3:
+            return True
         if amounts & _same_event_amounts(theirs_text) and shared_names:
             return True
     return False
 
 
+def _signal_overlap(row, shown_rows, text_field="ai_summary_en"):
+    """row 문안의 영문 낱말 가운데 위 지표 칸 문안에도 있는 낱말의 비율. 가장 많이 겹치는 칸으로 잰다."""
+    mine = _same_event_words(clean_text(row.get(text_field)))
+    if not mine:
+        return 1.0
+    return max((len(mine & _same_event_words(clean_text(shown.get("ai_summary_en")))) / len(mine)
+                for shown in shown_rows), default=0.0)
+
+
 def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False):
-    """사업현황 상자에 쓸 행. 위 지표 칸을 그대로 되풀이하지 않는 것을 순서대로 고른다(2026-10-22 사용자 결정).
+    """사업현황 상자에 쓸 행. 2026-10-25 사용자가 정한 세 순위를 따른다.
 
-    4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다. 기사 하나를 지표와 사업동향으로
-    한꺼번에 판정해 같은 보도자료가 두 곳에서 승인되고, 다른 문안이 없으면 지표 칸 문안을 다시 실었기 때문이다.
-    고르는 순서:
+    1. 위 지표 칸과 겹치지 않고 타겟 품목과 이어진 행. 다른 기사이면서 같은 사건도 아니어야 한다.
+       타겟 품목이 없는(면제) 기업은 그 달의 사업동향이면 된다.
+    2. 위 지표 칸과 겹치더라도(같은 기사나 같은 사건) 타겟 품목과 이어져 있고 더 자세한 설명이나 다른 내용이 있는 행.
+       따로 판정한 사업동향 문안을 먼저, 지표 기사에서 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)을 다음에 쓴다.
+       위 칸 문안과 글자가 같거나 낱말이 SAME_EVENT_OVERLAP 넘게 겹치면 덧붙인 내용이 없는 되풀이로 본다.
+    3. 그 밖은 None 이다. 상자는 "확인되지 않음" 문구(business_empty)를 싣는다.
 
-    1. 위 지표 칸과 다른 기사로, 타겟 품목과 이어진 행(면제 기업은 회사 전반)
-    2. 위 지표 칸과 다른 기사의 다른 사업동향(품목 연계만 빠진 근접 행, 회사 단위 시그널 행 포함)
-    3. 위 지표 칸과 같은 기사라도, 사업동향 쪽으로 따로 쓴 문안이 있는 행
-    4. 지표 기사 본문에서 위 문안이 다루지 않은 내용으로 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)
-
-    어느 단계든 위 지표 칸과 같은 사건(same_event_as_signal)이면 고르지 않고 다음 후보로 넘어간다.
-    모두 없으면 None 이다. 상자는 빼지 않고 "확인되지 않음" 문구(business_empty)를 싣는다. 예전에는 마지막 자리로
-    지표 칸 문안을 다시 실었으나, 4호 재발행에서 Corning·Chemours 상자가 위 칸을 글자 그대로 되풀이해
-    되풀이 대신 없음으로 표시하기로 했다(2026-10-23 사용자 결정).
+    타겟 품목과 무관한 행(품목 연계만 빠진 근접 행, 품목 연계가 없는 회사 단위 시그널)은 어느 순위에도 들지 않는다.
+    4호 재발행에서 onsemi 전력 플랫폼·Bayer 신약 승인·Jenoptik 단속 카메라가 품목과 무관한데 상자에 실렸고,
+    Albemarle·Tokyo Electron·NXP 는 위 칸과 같은 인사·대출 공시의 나머지 내용이 실렸다.
+    같은 순위 안에서는 sort_signal_rows 순서(보도자료·공식 출처 먼저)를 따른다.
     """
     shown_ids = {id(row) for row in shown_rows}
     shown_keys = set().union(*(article_keys(row) for row in shown_rows)) if shown_rows else set()
     shown_texts = {clean_text(summary_field(row, "ai_summary")) for row in shown_rows}
 
     def mine(row):
-        return (row.get("company") == company and id(row) not in shown_ids
-                and not same_event_as_signal(row, shown_rows, company))
+        return row.get("company") == company and id(row) not in shown_ids
 
-    def separate(row):
-        return mine(row) and not (article_keys(row) & shown_keys)
+    def on_target(row):
+        return business_row_on_target(row, exempt_company)
 
-    def usable(row):
-        return signal_supported(row) or business_near_miss(row)
+    def overlaps(row):
+        return bool(article_keys(row) & shown_keys) or same_event_as_signal(row, shown_rows, company)
 
+    def adds_detail(row):
+        return (clean_text(summary_field(row, "ai_summary")) not in shown_texts
+                and _signal_overlap(row, shown_rows) <= SAME_EVENT_OVERLAP)
+
+    business = [row for row in relevant_rows if mine(row) and signal_supported(row) and on_target(row)]
+    signals = [row for row in investment_rows if mine(row) and signal_publishable(row) and on_target(row)]
+    boxed = [{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
+             for row in shown_rows if row.get("company") == company and signal_publishable(row) and on_target(row)
+             and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
     tiers = [
-        [row for row in relevant_rows if separate(row) and signal_supported(row)
-         and business_row_on_target(row, exempt_company)]
-        + [row for row in investment_rows if separate(row) and signal_publishable(row)
-           and business_row_on_target(row, exempt_company)],
-        [row for row in relevant_rows if separate(row) and usable(row)]
-        + [row for row in investment_rows if separate(row) and signal_publishable(row)],
-        [row for row in relevant_rows if mine(row) and usable(row)
-         and clean_text(summary_field(row, "ai_summary")) not in shown_texts],
+        [row for row in business + signals if not overlaps(row)],
+        [row for row in business if overlaps(row) and adds_detail(row)],
+        [row for row in boxed if adds_detail(row)],
     ]
-    boxed = [row for row in shown_rows if row.get("company") == company and signal_publishable(row)
-             and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))
-             and not same_event_as_signal({**row, "ai_summary_en": row["ai_box_summary_en"]}, shown_rows, company)]
-    if boxed:
-        # 마지막(4단계) 자리다. 출처는 그 지표 기사 그대로이고 문안만 바꾼 사본을 돌려준다.
-        tiers.append([{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
-                         for row in boxed])
     for candidates in tiers:
         if candidates:
             return sort_signal_rows(candidates)[0]

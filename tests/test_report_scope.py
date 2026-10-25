@@ -14,10 +14,11 @@ def approved(company, **extra):
 
 
 class BusinessBoxTests(unittest.TestCase):
-    """사업현황 상자는 위 지표 칸을 되풀이하지 않는 것을 순서대로 고르고, 없으면 되풀이 대신 없음으로 적는다.
+    """사업현황 상자는 2026-10-25 사용자가 정한 세 순위로 고른다.
 
-    4호에서 기업 카드 12장 중 8장의 상자가 위 지표 칸 문안을 되풀이했다(2026-10-22 사용자 지적).
-    재발행에서도 Corning·Chemours 가 되풀이해, 다른 문안이 없으면 "확인되지 않음"을 싣기로 했다(2026-10-23).
+    1. 위 지표 칸과 겹치지 않고 타겟 품목과 이어진 행(타겟 품목이 없는 면제 기업은 그 달의 사업동향)
+    2. 위 칸과 겹쳐도 타겟 품목과 이어져 있고 더 자세하거나 다른 내용이 있는 행
+    3. 그 밖은 비운다("확인되지 않음"). 타겟 품목과 무관한 행은 싣지 않는다.
     """
 
     @staticmethod
@@ -36,40 +37,61 @@ class BusinessBoxTests(unittest.TestCase):
         near = self.near("Norsk Hydro", url="https://hydro.com/c")
         self.assertIs(pdf.best_business_row("Norsk Hydro", [same, near, other], [signal], [signal]), other)
 
-    def test_another_development_beats_the_same_article(self):
-        signal = approved("Onsemi", investment_signal_no=4, ai_summary_en="Valens deal.", url="https://onsemi.com/a",
-                          title="Valens Semiconductor and onsemi Partner on 3MP Camera")
-        same = approved("Onsemi", ai_event_stage="not_applicable", ai_summary_en="Valens partnership.",
-                        url="https://news.example/relay", title="Valens Semiconductor and onsemi partner on 3MP camera")
+    def test_rows_unrelated_to_the_target_technology_leave_the_box_empty(self):
+        # 4호 재발행: onsemi 전력 플랫폼, Bayer 신약 승인, Jenoptik 단속 카메라가 품목과 무관한데 상자에 실렸다.
+        signal = approved("Onsemi", investment_signal_no=4, ai_summary_en="Valens deal.", url="https://onsemi.com/a")
         near = self.near("Onsemi", url="https://onsemi.com/b")
-        self.assertIs(pdf.best_business_row("Onsemi", [same, near], [signal], [signal]), near)
-        # 다른 기사의 회사 단위 시그널 행도 다른 동향이다.
+        self.assertIsNone(pdf.best_business_row("Onsemi", [near], [signal], [signal]))
         financing = approved("Onsemi", investment_signal_no=3, ai_summary_en="Notes.", url="https://onsemi.com/c",
                              ai_target_technology_supported=False)
-        self.assertIs(pdf.best_business_row("Onsemi", [same], [signal, financing], [signal]), financing)
+        self.assertIsNone(pdf.best_business_row("Onsemi", [near], [signal, financing], [signal]))
+        # 타겟 품목이 없는 면제 기업은 그 달의 사업동향이면 된다.
+        self.assertIs(pdf.best_business_row("Onsemi", [], [signal, financing], [signal], exempt_company=True), financing)
 
-    def test_the_same_article_with_its_own_prose_beats_a_repeat(self):
-        signal = approved("Amkor Technology", investment_signal_no=2, ai_summary_en="Phase 2.", ai_summary_ko="2단계", ai_event_stage="planned",
-                          url="https://amkor.com/a")
+    def test_an_overlapping_target_linked_row_with_more_to_say_comes_next(self):
+        signal = approved("Amkor Technology", investment_signal_no=2, ai_summary_en="Phase 2.", ai_summary_ko="2단계",
+                          ai_event_stage="planned", url="https://amkor.com/a")
         same = approved("Amkor Technology", ai_event_stage="not_applicable", ai_summary_en="Arizona campus grows.",
                         ai_summary_ko="애리조나 캠퍼스 확장", url="https://amkor.com/a")
+        self.assertIs(pdf.best_business_row("Amkor Technology", [same], [signal], [signal]), same)
         self.assertIs(pdf.best_business_row("Amkor Technology", [same], [signal], [signal], exempt_company=True), same)
-        # 문안까지 같으면 되풀이일 뿐이라 고르지 않는다.
+        # 문안까지 같으면 덧붙인 내용이 없는 되풀이라 고르지 않는다.
         twin = dict(same, ai_summary_en="Phase 2.", ai_summary_ko="2단계")
-        self.assertIsNone(pdf.best_business_row("Amkor Technology", [twin], [signal], [signal], exempt_company=True))
+        self.assertIsNone(pdf.best_business_row("Amkor Technology", [twin], [signal], [signal]))
+        # 품목과 무관하면 겹치는 행은 쓰지 않는다.
+        self.assertIsNone(pdf.best_business_row("Amkor Technology", [dict(same, ai_target_technology_supported=False,
+                                                                          ai_signal_supported=False)], [signal], [signal]))
 
-    def test_box_copy_from_the_signal_article_beats_a_repeat(self):
+    def test_box_copy_from_the_signal_article_needs_the_target_technology(self):
         # box_writer.mjs 가 지표 기사 본문에서 위 문안에 없는 내용으로 따로 쓴 상자 문안.
-        signal = approved("NXP", investment_signal_no=3, ai_summary_en="EIB loan.", url="https://nxp.com/a",
-                          ai_box_summary_en="The loan funds the Kuala Lumpur test site.",
-                          ai_box_summary_ko="대출금은 쿠알라룸푸르 테스트 공장에 쓰임.")
-        row = pdf.best_business_row("NXP", [], [signal], [signal])
+        box = {"ai_box_summary_en": "The loan funds the Kuala Lumpur test site.",
+               "ai_box_summary_ko": "대출금은 쿠알라룸푸르 테스트 공장에 쓰임."}
+        linked = approved("NXP", investment_signal_no=3, ai_summary_en="EIB loan.", url="https://nxp.com/a", **box)
+        row = pdf.best_business_row("NXP", [], [linked], [linked])
         self.assertEqual(row["ai_summary_en"], "The loan funds the Kuala Lumpur test site.")
-        self.assertEqual(row["url"], signal["url"])
-        self.assertEqual(signal["ai_summary_en"], "EIB loan.", "지표 칸 행은 그대로 둔다")
-        # 다른 기사가 있으면 그것이 먼저다.
-        near = self.near("NXP", url="https://nxp.com/b")
-        self.assertIs(pdf.best_business_row("NXP", [near], [signal], [signal]), near)
+        self.assertEqual(row["url"], linked["url"])
+        self.assertEqual(linked["ai_summary_en"], "EIB loan.", "지표 칸 행은 그대로 둔다")
+        # 4호 재발행 NXP·Albemarle·Tokyo Electron: 품목과 무관한 대출·인사 공시의 나머지 내용은 싣지 않는다.
+        unlinked = dict(linked, ai_target_technology_supported=False)
+        self.assertIsNone(pdf.best_business_row("NXP", [], [unlinked], [unlinked]))
+        # 겹치지 않는 품목 연계 기사가 있으면 그것이 먼저다.
+        other = approved("NXP", ai_event_stage="not_applicable", ai_summary_en="Radar chip launch.", url="https://nxp.com/b")
+        self.assertIs(pdf.best_business_row("NXP", [other], [linked], [linked]), other)
+
+    def test_another_outlet_retelling_the_signal_event_moves_to_the_second_tier(self):
+        # 4호 재발행 Nexeon: 위 칸과 같은 투자 유치를 다른 매체가 쓴 기사가 다른 사건인 품질 인증 기사보다 먼저 실렸다.
+        signal = approved("Nexeon", investment_signal_no=3, url="https://chargedevs.example/a",
+                          ai_summary_en="Nexeon closed a GBP 100 million round, including GBP 52.6 million from the National "
+                                        "Wealth Fund, and will invest in its UK-based pilot manufacturing facility and R&D.")
+        retold = approved("Nexeon", ai_event_stage="not_applicable", url="https://businesscloud.example/b", source_type="official",
+                          ai_summary_ko="NWF 자금이 영국 파일럿 공장과 연구에 쓰임.", ai_summary_en="Nexeon, headquartered in Abingdon, develops silicon anode materials. Funding from the "
+                                        "National Wealth Fund will support a UK-based pilot manufacturing facility and research.")
+        other = approved("Nexeon", ai_event_stage="not_applicable", url="https://oxfordmail.example/c", source_type="fallback",
+                         ai_summary_ko="군산 공장 ISO 9001 인증.", ai_summary_en="Nexeon's Gunsan plant in South Korea secured ISO 9001:2015 certification.")
+        self.assertTrue(pdf.same_event_as_signal(retold, [signal], "Nexeon"))
+        self.assertIs(pdf.best_business_row("Nexeon", [retold, other], [signal], [signal]), other)
+        # 다른 사건이 없으면 더 자세한 그 기사가 다음 순위로 실린다.
+        self.assertIs(pdf.best_business_row("Nexeon", [retold], [signal], [signal]), retold)
 
     def test_the_signal_card_is_never_repeated_in_the_box(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")
@@ -87,16 +109,6 @@ class BusinessBoxTests(unittest.TestCase):
         signal = approved("3M", investment_signal_no=3, url="https://3m.com/a", ai_summary_en="Financing.")
         for changes in ({"ai_summary_en": ""}, {"ai_summary_ko": ""}, {"ai_signal_supported": False}, {"company": "Other"}):
             self.assertIsNone(pdf.best_business_row("3M", [], [], [dict(signal, **changes)], exempt_company=True))
-        for blank in ({"ai_summary_ko": ""}, {"ai_summary_en": ""}):
-            self.assertFalse(pdf.business_near_miss(self.near("3M", **blank)), blank)
-
-    def test_near_miss_rows_keep_the_other_approval_conditions(self):
-        for field in ("ai_entity_supported", "ai_indicator_supported", "ai_leading_indicator_supported"):
-            self.assertFalse(pdf.business_near_miss(self.near("Evonik Industries", **{field: False})), field)
-        self.assertFalse(pdf.business_near_miss(self.near("Evonik Industries", ai_summary_quality="needs_review")))
-        self.assertFalse(pdf.business_near_miss(self.near("Evonik Industries", investment_signal_no=3)))
-        self.assertFalse(pdf.business_near_miss(approved("Evonik Industries", ai_event_stage="not_applicable")))
-        self.assertFalse(pdf.business_near_miss(None))
 
     def test_a_near_miss_row_never_lights_a_matrix_cell(self):
         row = self.near("Evonik Industries", investment_signal_no=3)

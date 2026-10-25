@@ -442,8 +442,8 @@ function dateStatedInQuote(quote) {
 //
 // 이 행은 ai_signal_supported=false 로 나간다. 매트릭스와 다섯 지표 칸에는 실리지 않는다.
 // 투자 후보의 근접 행은 대시보드가 사람에게 보여 주는 "확인해 볼 만한 후보" 목록이고,
-// 사업동향의 근접 행은 그 기업의 사업현황 상자가 위 지표 칸을 되풀이하지 않게 하는 데 쓰인다
-// (report_content.best_business_row 의 2·3단계).
+// 사업동향의 근접 행은 품목과 무관한 사업동향이라 2026-10-25부터 사업현황 상자에 싣지 않는다
+// (report_content.best_business_row). 대시보드에서만 보인다.
 //
 // 사업동향 후보도 같은 기준으로 센다. 예전에는 kind 가 investment 가 아니면 바로 false 였고,
 // 그래서 사업동향은 근접 단계 자체가 없었다. 2026-08 실행의 Skyworks·Evonik·Jenoptik 은 승인된

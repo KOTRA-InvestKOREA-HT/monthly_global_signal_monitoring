@@ -67,7 +67,10 @@ class SameEventTests(unittest.TestCase):
                  "ai_summary_en": "Amkor Technology is reviewing an expanded investment in its plant in Gwangju, "
                                   "South Jeolla Province, Korea, as demand for advanced packaging grows."}
         self.assertIs(content.best_business_row("Amkor Technology", [repeat, other], [], [signal]), other)
-        self.assertIsNone(content.best_business_row("Amkor Technology", [repeat], [], [signal]))
+        # 같은 사건이라도 타겟 품목과 이어져 있고 더 자세하면(120억 달러, AI 칩용 클린룸) 다음 순위로 싣는다(2026-10-25).
+        self.assertIs(content.best_business_row("Amkor Technology", [repeat], [], [signal]), repeat)
+        unlinked = {**repeat, "ai_target_technology_supported": False}
+        self.assertIsNone(content.best_business_row("Amkor Technology", [unlinked], [], [signal]))
 
 
 if __name__ == "__main__":
