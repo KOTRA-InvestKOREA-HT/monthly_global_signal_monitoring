@@ -715,6 +715,35 @@ function extractDateFromItemprop(html) {
   return null;
 }
 
+// <article> 안에 다시 든 <article> 은 관련 기사 카드다. Airbus 보도자료는 본문 <article> 끝에 "관련 뉴스" 카드
+// 다섯 장을 <article> 로 넣고 카드마다 그 기사의 <time> 을 단다. 그 날짜(10월)가 9월 기사의 게시일 근거로 읽혀
+// 9월 기사 여섯 건이 모두 근거 충돌로 보류됐다(2026-10 로컬 수집). 바깥 기사에 <time> 이 하나라도 있을 때만
+// 안쪽 조각을 뺀다. 기사 본문이 안쪽 <article> 에만 있는 페이지는 이전처럼 모두 읽는다.
+function withoutNestedArticles(html) {
+  const source = stripComments(html);
+  const cuts = [];
+  let depth = 0;
+  let start = 0;
+  for (const match of source.matchAll(/<article\b[^>]*>|<\/article\s*>/gi)) {
+    if (match[0][1] !== "/") {
+      depth += 1;
+      if (depth === 2) start = match.index;
+    } else if (depth > 0) {
+      if (depth === 2) cuts.push([start, match.index + match[0].length]);
+      depth -= 1;
+    }
+  }
+  if (!cuts.length) return html;
+  let outer = "";
+  let from = 0;
+  for (const [cutStart, cutEnd] of cuts) {
+    outer += source.slice(from, cutStart);
+    from = cutEnd;
+  }
+  outer += source.slice(from);
+  return /<time\b/i.test(outer) ? outer : html;
+}
+
 // 찾은 근거를 하나로 줄이지 않고 모두 돌려준다. 어느 하나를 고르는 판단과 근거끼리
 // 어긋나는지 보는 판단이 chooseDateEvidence 한 곳에서 이뤄져야 하기 때문이다.
 export function collectHtmlDateEvidence(html, url = "") {
@@ -729,7 +758,7 @@ export function collectHtmlDateEvidence(html, url = "") {
   return [
     dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
     dateEvidence(jsonLdPublished?.[1], "jsonld", "published"),
-    ...extractDatesFromTimeTags(html),
+    ...extractDatesFromTimeTags(withoutNestedArticles(html)),
     dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
     dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
     dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),

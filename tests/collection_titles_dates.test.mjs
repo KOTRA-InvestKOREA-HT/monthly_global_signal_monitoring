@@ -133,6 +133,23 @@ test('a newsroom that prints no date at all is placed by the CMS modification ti
   assert.equal(periodPlacement(recent, { from_date: '2026-08-01', to_date: '2026-08-31' }).placement, 'date_pending');
 });
 
+// Airbus 보도자료: 본문 <article> 끝의 관련 뉴스 카드(안쪽 <article>)마다 10월 <time> 이 붙어 9월 기사가 근거 충돌로 보류됐다.
+test('time tags on related-article cards nested inside the article are not its publication date', () => {
+  const card = (day) => `<article class="awx-card"><h3>Other news</h3><time datetime="2026-10-${day}T09:00:00Z" class="awx-time"></time></article>`;
+  const html = '<html><head><meta property="article:published_time" content="2026-09-08" /></head><body><main>'
+    + '<article class="node node--press-release"><h1>AIRCAIRO places order for 15 Airbus A320neo aircraft</h1>'
+    + '<time datetime="2026-09-08T16:01:14Z" class="awx-time"></time><p>Body text.</p>'
+    + '<section id="related-news">' + card('21') + card('16') + '</section></article></main></body></html>';
+  const evidence = collectHtmlDateEvidence(html, 'https://www.airbus.com/en/newsroom/press-releases/2026-09-aircairo-places-order-for-15-airbus-a320neo-aircraft');
+  assert.deepEqual(evidence.filter(item => item.source === 'time_tag').map(item => item.date), ['2026-09-08T16:01:14Z']);
+  const row = chooseDateEvidence(evidence);
+  assert.equal(row.published_at_status, 'confirmed');
+  assert.equal(periodPlacement(row, { from_date: '2026-09-01', to_date: '2026-09-30' }).placement, 'in_period');
+  // 바깥 기사에 <time> 이 없으면 안쪽 기사의 날짜가 유일한 근거이므로 그대로 읽는다.
+  const innerOnly = '<article><h1>Page</h1><article><time datetime="2026-09-10">Sep 10</time><p>Story.</p></article></article>';
+  assert.deepEqual(collectHtmlDateEvidence(innerOnly).filter(item => item.source === 'time_tag').map(item => item.date.slice(0, 10)), ['2026-09-10']);
+});
+
 // 2026-08 수집본: "Archive AGM 2023", "2018 Reference document", "Q4 and full year 2020 press release" 가
 // 날짜 없이 들어와 기업 자리를 차지했다. 지난해를 단 이번 해 문서와 확정 날짜는 건드리지 않는다.
 test('a title naming only years two or more before the period is out of period unless its date is confirmed', () => {
