@@ -1,23 +1,43 @@
 {
   "status": "completed",
-  "requests": 11,
-  "cached": 716,
-  "completed": 726,
-  "total": 726,
+  "requests": 80,
+  "cached": 665,
+  "completed": 733,
+  "total": 733,
   "no_body_skipped": 0,
   "date_hints": 0,
   "failed_articles": [],
-  "diagnostics": [],
+  "diagnostics": [
+    {
+      "article_id": "a509c4a40a358412989221eb",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/a509c4a40a358412989221eb/491cd3a5-c16e-46ec-8268-89270e9c8524-attempt-1.json"
+    },
+    {
+      "article_id": "8957d831af85b3d95d01527f",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/8957d831af85b3d95d01527f/6396387c-652f-487d-b78b-b2b40a18005e-attempt-1.json"
+    }
+  ],
   "concurrency": 4,
-  "quote_removals": [],
+  "quote_removals": [
+    {
+      "article_id": "6cb38aa0388995b37235a91b",
+      "candidate_ids": [
+        "investment:4"
+      ]
+    }
+  ],
   "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 1,
-    "verified": 1,
+    "requested": 10,
+    "verified": 10,
     "partial": 0,
     "pending": 0,
-    "changed": 0,
+    "changed": 3,
     "failed": 0,
     "rejected_responses": 0,
     "errors": {}
@@ -26,11 +46,11 @@
     {
       "key": 1,
       "status": "completed",
-      "requests": 11,
-      "completed": 726
+      "requests": 80,
+      "completed": 733
     }
   ],
-  "approved_candidates": 132,
+  "approved_candidates": 130,
   "period": {
     "from_date": "2026-09-01",
     "to_date": "2026-09-30"
@@ -39,19 +59,19 @@
   "model": "gemini-3.5-flash-lite",
   "issue_number": "4",
   "judgement_run": {
-    "id": "39926491091",
+    "id": "40162370025",
     "attempt": "1",
-    "sha": "2ac9d3641cb4be492df49b3099120b22604b187f",
+    "sha": "d33722b21dd1e3857ada9b73922981eaa83a2fd8",
     "ref": "main"
   },
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 193,
-    "requests": 149,
-    "cached": 74,
-    "written": 144,
+    "articles": 198,
+    "requests": 41,
+    "cached": 200,
+    "written": 27,
     "written_by": {
-      "gemini-3.5-flash-lite": 144
+      "gemini-3.5-flash-lite": 27
     },
     "failed": [
       {
@@ -77,34 +97,26 @@
         "problems": [
           "bilingual_month_mismatch"
         ]
-      },
-      {
-        "article_id": "22348957a5fd02d5f9a3c521",
-        "company": "Nexeon",
-        "candidate_id": "investment:3",
-        "problems": [
-          "ungrounded_numbers:£52.6 million"
-        ]
       }
     ],
     "errors": {},
     "rejected": {
-      "ungrounded_numbers": 2,
+      "ungrounded_numbers": 1,
       "bilingual_month_mismatch": 2
     },
     "key_runs": [
       {
         "key": 1,
-        "requests": 149
+        "requests": 41
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 189,
-    "requests": 124,
-    "cached": 72,
-    "reviewed": 218,
+    "articles": 197,
+    "requests": 32,
+    "cached": 190,
+    "reviewed": 227,
     "flagged": [
       {
         "article_id": "afd0b42563ac9fc82052f698",
@@ -123,6 +135,24 @@
         "copy_phrase": "established by",
         "source_phrase": "",
         "note": "The English copy describes the framework as established, whereas the Korean copy describes it as being built."
+      },
+      {
+        "article_id": "a69073c435795dac86de3b26",
+        "company": "Skyworks",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "bolstering capabilities for autonomous vehicle IMU, RF, and baseband chips.",
+        "source_phrase": "",
+        "note": "The sources do not state that the combination bolsters capabilities for autonomous vehicle IMU, RF, and baseband chips."
+      },
+      {
+        "article_id": "a69073c435795dac86de3b26",
+        "company": "Skyworks",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "자율주행 차량용 IMU, RF 및 베이스밴드 칩 관련 역량을 강화하는 것임.",
+        "source_phrase": "",
+        "note": "The sources do not state that the combination enhances capabilities for autonomous vehicle IMU, RF, and baseband chips."
       },
       {
         "article_id": "9de24507c17f74e82b9e357d",
@@ -161,33 +191,6 @@
         "note": "The Korean term '고급 단계' is an unnatural literal translation of 'advanced stages' rather than an established business term."
       },
       {
-        "article_id": "8e63ebcf75cecf1a54b94d6d",
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "growing",
-        "source_phrase": "",
-        "note": "Summary EN states growing customer momentum, whereas summary_ko states surging customer momentum, creating a mismatch between the two language summaries."
-      },
-      {
-        "article_id": "8e63ebcf75cecf1a54b94d6d",
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "유틸리티 회랑",
-        "source_phrase": "",
-        "note": "유틸리티 회랑 is a literal compound coined from English parts and is not an established Korean term."
-      },
-      {
-        "article_id": "8e63ebcf75cecf1a54b94d6d",
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "네이티브 컬러",
-        "source_phrase": "",
-        "note": "네이티브 is a Hangul transliteration of an English word and is not an established Korean term."
-      },
-      {
         "article_id": "9116cd846d11e57c2900d8ff",
         "company": "Evonik Industries",
         "candidate_id": "relevant",
@@ -224,22 +227,13 @@
         "note": "The term '코바인더' is a literal transliteration of 'co-binder' rather than an established Korean technical term."
       },
       {
-        "article_id": "a69073c435795dac86de3b26",
-        "company": "Skyworks",
+        "article_id": "f081bb7cf0c2e847d7c4c239",
+        "company": "Mitsubishi Chemical",
         "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "bolstering capabilities for autonomous vehicle IMU, RF, and baseband chips.",
+        "check": "term",
+        "copy_phrase": "바이오 엔지니어링 플라스틱",
         "source_phrase": "",
-        "note": "The sources do not state that the combination bolsters capabilities for autonomous vehicle IMU, RF, and baseband chips."
-      },
-      {
-        "article_id": "a69073c435795dac86de3b26",
-        "company": "Skyworks",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "자율주행 차량용 IMU, RF 및 베이스밴드 칩 관련 역량을 강화하는 것임.",
-        "source_phrase": "",
-        "note": "The sources do not state that the combination enhances capabilities for autonomous vehicle IMU, RF, and baseband chips."
+        "note": "바이오 엔지니어링 플라스틱 is a literal compound translation not established in Korean business terminology."
       },
       {
         "article_id": "c1a51330f57a94c64f9744a5",
@@ -269,13 +263,22 @@
         "note": "The Korean summary mentions responding to demand, which is missing from the English summary."
       },
       {
-        "article_id": "f081bb7cf0c2e847d7c4c239",
-        "company": "Mitsubishi Chemical",
+        "article_id": "c42b97f99d7fe40e8efda04a",
+        "company": "Air Liquide",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "operating under the TotalEnergies brand",
+        "source_phrase": "",
+        "note": "The detail that TEAL Mobility operates under the TotalEnergies brand is present in the English summary but missing in the Korean summary."
+      },
+      {
+        "article_id": "57adeae86c907805ba5dadea",
+        "company": "Ouster",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "바이오 엔지니어링 플라스틱",
+        "copy_phrase": "페이로드",
         "source_phrase": "",
-        "note": "바이오 엔지니어링 플라스틱 is a literal compound translation not established in Korean business terminology."
+        "note": "The established Korean term for payload is 탑재체, making the transliteration 페이로드 an unestablished term."
       },
       {
         "article_id": "853df67b36be1cd3828a93bb",
@@ -332,13 +335,13 @@
         "note": "The sources state that BASF and Evonik are Germany's two largest chemical makers, not that Evonik is the single largest."
       },
       {
-        "article_id": "bf8a0c965159aea50be8ba1b",
-        "company": "Qualcomm",
-        "candidate_id": "relevant",
+        "article_id": "b6d84748dddf16bd5f6821e8",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
         "check": "mismatch",
-        "copy_phrase": "따를 예정임",
-        "source_phrase": "",
-        "note": "Summary_en states that the closing remains subject to conditions, whereas summary_ko states it is scheduled to follow them in the future."
+        "copy_phrase": "Applied Materials announced",
+        "source_phrase": "Tan announced",
+        "note": "The announcing party differs between the English and Korean summaries."
       },
       {
         "article_id": "8ba8ece42540ce6352968e22",
@@ -350,13 +353,13 @@
         "note": "The English summary states the materials will be used in batteries, while the Korean summary states they will be used to produce cathode materials."
       },
       {
-        "article_id": "358c131e660eb2e7744707ca",
-        "company": "Cognex",
+        "article_id": "63f157a9af955a09267ee13c",
+        "company": "Qualcomm",
         "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "딥 카메라",
+        "check": "mismatch",
+        "copy_phrase": ", which develops and maintains MoveIt",
         "source_phrase": "",
-        "note": "The term 딥 카메라 is an improper transliteration; 심도 카메라 or 깊이 카메라 is the established Korean term."
+        "note": "English summary states that PickNik develops and maintains MoveIt, but this fact is missing in the Korean summary."
       },
       {
         "article_id": "0e8839bf980c461b590f8527",
@@ -368,15 +371,6 @@
         "note": "The term '피지컬 AI' is a Hangul transliteration of the English phrase 'Physical AI' rather than an established Korean translation."
       },
       {
-        "article_id": "1bff4eccec37e8d7f246b187",
-        "company": "Cognex",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "뎁스 센싱",
-        "source_phrase": "",
-        "note": "뎁스 센싱 is a Hangul transliteration of English common nouns rather than an established Korean term."
-      },
-      {
         "article_id": "5f3ba534c7ab57b2236846c3",
         "company": "Onsemi",
         "candidate_id": "relevant",
@@ -386,13 +380,13 @@
         "note": "The term 고용량 is an incorrect translation for high-volume in the context of automotive camera applications."
       },
       {
-        "article_id": "722e69eb10be18b39d76492d",
-        "company": "Charles River",
-        "candidate_id": "investment:4",
+        "article_id": "211af5c824a1f8711e6ac039",
+        "company": "BASF",
+        "candidate_id": "relevant",
         "check": "mismatch",
-        "copy_phrase": "to support chemistry, manufacturing, and controls work required by global regulators.",
+        "copy_phrase": "진행 중임",
         "source_phrase": "",
-        "note": "The details regarding chemistry, manufacturing, and controls work and regulatory requirements present in the English summary are missing in the Korean summary."
+        "note": "The advanced stage of the feasibility study is stated in English but omitted in Korean."
       },
       {
         "article_id": "c1038f6967d1557d828107d0",
@@ -512,6 +506,15 @@
         "note": "파일럻 is a malformed Hangul transliteration of pilot and not an established Korean term."
       },
       {
+        "article_id": "a509c4a40a358412989221eb",
+        "company": "Besi",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "장비 준비 태세",
+        "source_phrase": "",
+        "note": "장비 준비 태세 is an unnatural literal compound coined from English parts rather than an established Korean business term."
+      },
+      {
         "article_id": "edf5f44386e653b918f608a2",
         "company": "Solvay",
         "candidate_id": "relevant",
@@ -519,6 +522,15 @@
         "copy_phrase": "분리 사업 운영 부문",
         "source_phrase": "",
         "note": "The phrase is a literal compound translation rather than an established Korean term."
+      },
+      {
+        "article_id": "22348957a5fd02d5f9a3c521",
+        "company": "Nexeon",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "The Korea Development Bank and Honda Xcelerator Ventures",
+        "source_phrase": "",
+        "note": "The participating new investors mentioned in the English summary are omitted in the Korean summary."
       },
       {
         "article_id": "7f84fa60acc76262aec361a0",
@@ -582,66 +594,40 @@
         "copy_phrase": "다이투웨이퍼",
         "source_phrase": "",
         "note": "The term '다이투웨이퍼' is a literal compound coined from English parts rather than an established Korean business term."
+      },
+      {
+        "article_id": "71c390fc19ca5fa7a3bc533a",
+        "company": "Amkor Technology",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "고객 수요",
+        "source_phrase": "",
+        "note": "The Korean summary translates customer commitments as customer demand creating a discrepancy between the English and Korean summaries."
       }
     ],
     "enforce": [],
-    "discarded": 2,
+    "discarded": 0,
     "errors": {},
     "unchecked": [
-      {
-        "article_id": "26b7f75f688a173f6faab401",
-        "company": "Albemarle",
-        "candidate_id": "investment:5"
-      },
       {
         "article_id": "82f3b491db90337154e4e469",
         "company": "Norsk Hydro",
         "candidate_id": "investment:4"
       },
       {
-        "article_id": "c2d4a7eba8ae56f0d409b555",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "c2d4a7eba8ae56f0d409b555",
-        "company": "Applied Materials",
+        "article_id": "8957d831af85b3d95d01527f",
+        "company": "Moderna",
         "candidate_id": "relevant"
       },
       {
-        "article_id": "2650c85d0e87e96183a0d98c",
-        "company": "Vestas",
-        "candidate_id": "investment:3"
-      },
-      {
-        "article_id": "71c390fc19ca5fa7a3bc533a",
-        "company": "Amkor Technology",
-        "candidate_id": "investment:2"
-      },
-      {
-        "article_id": "71c390fc19ca5fa7a3bc533a",
-        "company": "Amkor Technology",
-        "candidate_id": "relevant"
-      },
-      {
-        "article_id": "b6d84748dddf16bd5f6821e8",
+        "article_id": "b0bda35e95d8e8268a526547",
         "company": "Applied Materials",
-        "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "9417ebda53fb972f828cb3d7",
-        "company": "ASML",
-        "candidate_id": "investment:4"
-      },
-      {
-        "article_id": "9417ebda53fb972f828cb3d7",
-        "company": "ASML",
-        "candidate_id": "relevant"
+        "candidate_id": "investment:1"
       }
     ],
     "kept": [],
-    "first_flagged": 73,
-    "first_enforce": 10,
+    "first_flagged": 60,
+    "first_enforce": 3,
     "rounds": [
       {
         "round": 1,
@@ -650,89 +636,37 @@
             "company": "Norsk Hydro",
             "candidate_id": "investment:4",
             "problems": [
-              "review_certainty: The copy states the joining of the project as future, whereas the source states it as done. Copy: \"will join\" Source: \"Hydro joins\""
-            ]
-          },
-          {
-            "company": "Albemarle",
-            "candidate_id": "investment:5",
-            "problems": [
-              "review_certainty: The source states the appointment as a done fact, but the copy states it as planned ('예정'). Copy: \"선임할 예정이며\" Source: \"Ragnar Udd Appointed President and CEO, Effective February 1, 2027\""
+              "review_certainty: The copy states the recycling and processing as definite current or completed actions, whereas the sources state them as future actions. Copy: \"벨기에 Ghlin 시설에서 알루미늄을 재활용하고 Lichtervelde 시설에서 압출 빌렛으로 가공함\" Source: \"In this pilot study, Hydro will recycle aluminium from decommissioned trains at its recycling facility in Ghlin, Belgium .\""
             ]
           },
           {
             "company": "Applied Materials",
-            "candidate_id": "investment:4",
+            "candidate_id": "investment:1",
             "problems": [
-              "review_unsupported: The source states that Tan announced the partnership, not Applied Materials. Copy: \"Applied Materials announced\" Source: \"Tan announced the phase four of the partnership\""
+              "review_certainty: The source states as a current fact that the expansion does not eliminate the risks, whereas the copy states as future that it will bear them. Copy: \"실행 및 자본 배분 리스크를 안게 될 예정임\" Source: \"it does not eliminate execution, regulatory, or capital-allocation risks\""
             ]
           },
           {
-            "company": "Applied Materials",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: The copy states as ongoing what the sources state as future. Copy: \"4단계 확장을 진행하며\" Source: \"will expand\""
-            ]
-          },
-          {
-            "company": "Applied Materials",
+            "company": "Moderna",
             "candidate_id": "relevant",
             "problems": [
-              "review_certainty: The copy states as ongoing what the sources state as future. Copy: \"is expanding\" Source: \"will expand\""
-            ]
-          },
-          {
-            "company": "Vestas",
-            "candidate_id": "investment:3",
-            "problems": [
-              "review_unsupported: The sources do not state the specific project description. Copy: \"automated service inspection project\"",
-              "review_unsupported: The sources do not state the specific project description or wind turbines. Copy: \"풍력 터빈 자동 점검 프로젝트\""
-            ]
-          },
-          {
-            "company": "Amkor Technology",
-            "candidate_id": "investment:2",
-            "problems": [
-              "review_certainty: The copy states as definite an expansion that the sources state as expected. Copy: \"The expansion adds 60,000 square meters of cleanroom space to reach about 93,000 square meters\" Source: \"the phase 2 expansion is expected to add 60,000 square meters and bring the campus to approximately 93,000 square meters of cleanroom space.\""
-            ]
-          },
-          {
-            "company": "Amkor Technology",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states as current fact an expansion that the sources state as expected. Copy: \"adding 60,000 square meters of cleanroom space to reach approximately 93,000 square meters\" Source: \"is expected to add 60,000 square meters and bring the campus to approximately 93,000 square meters of cleanroom space.\""
-            ]
-          },
-          {
-            "company": "ASML",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: The copy states as decided what the sources state as future. Copy: \"agreed to expand\" Source: \"would expand\"",
-              "review_certainty: The copy states as decided what the sources state as future. Copy: \"확대하기로 했으며\" Source: \"would expand\""
-            ]
-          },
-          {
-            "company": "ASML",
-            "candidate_id": "relevant",
-            "problems": [
-              "review_certainty: The copy states as decided what the sources state as future. Copy: \"agreed to expand\" Source: \"would expand\"",
-              "review_certainty: The copy states as decided what the sources state as future. Copy: \"확대하기로 했음\" Source: \"would expand\""
+              "review_certainty: The copy states as current fact what the sources state as expected. Copy: \"is expanding its research\" Source: \"is expected to broaden its research\""
             ]
           }
         ],
-        "written": 10,
+        "written": 3,
         "failed": 0,
         "kept": 0,
-        "requests": 8
+        "requests": 3
       }
     ]
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
     "targets": 6,
-    "cached": 4,
-    "requests": 2,
-    "written": 2,
+    "cached": 6,
+    "requests": 0,
+    "written": 0,
     "nothing_new": 0,
     "failed": [],
     "errors": {}
