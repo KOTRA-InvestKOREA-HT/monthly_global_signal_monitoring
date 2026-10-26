@@ -135,7 +135,10 @@ class BusinessRowSelectionTests(unittest.TestCase):
 
 
 class RepeatedSentenceTests(unittest.TestCase):
-    """상자 문안에서 위 칸(또는 먼저 고른 상자 항목)을 되풀이하는 문장만 빼고 나머지를 싣는다(2026-10-26 사용자 결정)."""
+    """위 칸(또는 먼저 고른 상자 항목)을 되풀이하는 문장이 하나라도 있는 상자 문안은 싣지 않는다(2026-10-26 사용자 결정).
+
+    처음에는 그 문장만 빼고 나머지를 실었으나, 앞 문장이 빠진 상자가 맥락 없이 시작해 어색했다. 문장을 자르지 않는다.
+    """
 
     # 4호 p23 Safran: 문안 전체는 위 칸과 0.51 이라 2순위를 통과했지만 첫 문장은 0.82 겹친다.
     SAFRAN_SIGNAL = ("Safran Electrical & Power is preparing to ramp up production of its EngineUS 100 electric motor family "
@@ -155,24 +158,15 @@ class RepeatedSentenceTests(unittest.TestCase):
                        **{"ai_summary_en": self.SAFRAN_EN, "ai_summary_ko": self.SAFRAN_KO, **extra})
         return signal, box
 
-    def test_safran_keeps_only_the_new_sentence(self):
+    def test_safran_box_that_repeats_its_first_sentence_is_dropped(self):
         signal, box = self.safran()
-        row = content.best_business_row("Safran", [box], [signal], [signal])
-        self.assertEqual(row["ai_summary_en"], "The EngineUS motor received certification in 2025 to address the emerging "
-                                               "market for light and small regional electric and hybrid-electric aircraft.")
-        self.assertEqual(row["ai_summary_ko"], "EngineUS는 소형 및 지역 항공기 부문의 전기 및 하이브리드 전기 항공기 신흥 시장을 "
-                                               "겨냥해 2025년에 인증을 받았음.")
-        self.assertEqual(row["url"], box["url"])
+        self.assertTrue(content.repeats_said(box, [signal]))
+        self.assertIsNone(content.best_business_row("Safran", [box], [signal], [signal]))
         self.assertEqual(box["ai_summary_en"], self.SAFRAN_EN, "원래 행은 그대로 둔다")
-        for lang in ("ko", "en"):
-            content.set_language(lang)
-            try:
-                self.assertNotIn("highly automated" if lang == "en" else "자동화 공장", content.business_text([row]))
-            finally:
-                content.set_language("ko")
 
-    def test_merck_drops_the_repeated_investment_sentence(self):
-        # 4호 p20 Merck: 첫 문장(벵갈루루 1,300만 유로 투자)이 지표 1 칸을 되풀이했다(0.72, 전체 0.47).
+    def test_merck_box_that_repeats_the_investment_sentence_is_dropped(self):
+        # 4호 p20 Merck: 첫 문장(벵갈루루 1,300만 유로 투자)이 지표 1 칸을 되풀이했다(0.72, 전체 0.47). 남은 둘째 문장만 실으면
+        # "해당 Jigani 사업장은…"으로 맥락 없이 시작한다.
         signal = approved("Merck", investment_signal_no=1, ai_event_stage="precursor", url="https://bioprocess.example/a",
                           title="Merck KGaA expands life science manufacturing hub in Bengaluru", published_at="2026-09-18",
                           ai_summary_en="Merck KGaA will invest €13 million (about US$15 million) to expand its manufacturing "
@@ -187,29 +181,30 @@ class RepeatedSentenceTests(unittest.TestCase):
                        ai_summary_ko="Merck KGaA는 인도 Bengaluru 제조 시설에 1,300만 유로(약 1,500만 달러)를 투자하여 생물학 및 "
                                      "화학 역량을 확장할 예정임. 해당 Jigani 사업장은 DNA 연구, 세포 배양, 진단 및 의약품 제조에 "
                                      "사용되는 진단용 응용 프로그램의 생물학적 완충제와 원료를 제조할 예정임.")
-        row = content.best_business_row("Merck", [box], [signal], [signal])
-        self.assertTrue(row["ai_summary_en"].startswith("The Jigani site will manufacture"))
-        self.assertTrue(row["ai_summary_ko"].startswith("해당 Jigani 사업장은"))
-        self.assertEqual(len(content.sentence_spans(row["ai_summary_en"])), 1)
+        self.assertIsNone(content.best_business_row("Merck", [box], [signal], [signal]))
 
-    def test_a_korean_sentence_count_that_differs_rejects_the_row(self):
-        # 국문이 한 문장이면 어느 국문 문장을 뺄지 알 수 없다. 그 행은 싣지 않는다.
-        signal, box = self.safran(ai_summary_ko=self.SAFRAN_KO.replace("예정임. ", "예정이며, "))
-        self.assertIsNone(content.best_business_row("Safran", [box], [signal], [signal]))
-
-    def test_a_row_with_every_sentence_repeated_is_rejected(self):
-        signal, box = self.safran(ai_summary_en=self.SAFRAN_EN.split(". ")[0] + ".", ai_summary_ko=self.SAFRAN_KO.split("예정임. ")[0] + "예정임.")
-        self.assertIsNone(content.drop_repeated_sentences(box, [signal]))
-        self.assertIsNone(content.best_business_row("Safran", [box], [signal], [signal]))
+    def test_the_same_article_with_only_new_content_is_kept(self):
+        # 4호 Cytiva: 위 칸(WhiteLab Genomics 협력)과 같은 기사지만 상자 문안(ÄKTA readyflux 공개)은 되풀이하지 않는다.
+        signal = approved("Cytiva", investment_signal_no=4, ai_event_stage="precursor", url="https://mchem.example/a",
+                          title="The path toward autonomous biopharma manufacturing", published_at="2026-09-21",
+                          ai_summary_en="Cytiva partnered with WhiteLab Genomics to use AI to accelerate cell line development "
+                                        "for AAV gene therapies and shorten timelines to clinical entry.")
+        box = approved("Cytiva", url=signal["url"], title=signal["title"], published_at="2026-09-21",
+                       ai_summary_en="Cytiva unveiled its new ÄKTA readyflux system for small-batch drug production. The "
+                                     "single-use platform is designed to simplify technology transfer, improve consistency and "
+                                     "cut downtime.",
+                       ai_summary_ko="Cytiva는 소량 의약품 생산을 위한 새로운 ÄKTA readyflux 시스템을 공개했음.")
+        self.assertFalse(content.repeats_said(box, [signal]))
+        self.assertIs(content.best_business_row("Cytiva", [box], [signal], [signal]), box)
 
     def test_a_row_with_nothing_repeated_is_returned_untouched(self):
         signal, _ = self.safran()
         other = article("Safran", "propulsion", 15, "EDGE and Safran will build sovereign missile propulsion systems in Brazil.")
-        self.assertIs(content.drop_repeated_sentences(other, [signal]), other)
+        self.assertFalse(content.repeats_said(other, [signal]))
         self.assertIs(content.best_business_row("Safran", [other], [signal], [signal]), other)
 
-    def test_a_later_item_drops_sentences_an_earlier_item_already_said(self):
-        # 다른 기사이고 원래 문안으로 보아 다른 사건이면, 먼저 고른 항목을 되풀이하는 문장만 뺀다.
+    def test_a_later_item_that_repeats_an_earlier_item_is_dropped(self):
+        # 다른 기사이고 다른 사건이어도, 먼저 고른 항목을 되풀이하는 문장이 있으면 싣지 않는다.
         first = article("Acme", "plant", 20, "A second wafer fabrication plant opened with local hiring. The plant makes "
                         "silicon carbide power wafers for electric vehicle inverters and will ship samples to carmakers soon.",
                         ko="두 번째 웨이퍼 공장이 문을 열고 지역 인력을 채용함. 공장은 전기차 인버터용 탄화규소 웨이퍼를 만듦.")
@@ -218,15 +213,11 @@ class RepeatedSentenceTests(unittest.TestCase):
                         "solvents and steady output across three shifts.",
                         ko="두 번째 웨이퍼 공장이 문을 열었음. 업계 단체가 분리막 라인에 올해의 품질상을 줌.")
         self.assertFalse(content.same_event_as_item(later, [first], "Acme"))
-        chosen = content.business_rows("Acme", [first, later], [], [], exempt_company=True)
-        self.assertEqual([row["url"] for row in chosen], [first["url"], later["url"]])
-        self.assertIs(chosen[0], first)
-        self.assertTrue(chosen[1]["ai_summary_en"].startswith("An industry group gave the battery separator line"))
-        self.assertEqual(chosen[1]["ai_summary_ko"], "업계 단체가 분리막 라인에 올해의 품질상을 줌.")
+        self.assertEqual(content.business_rows("Acme", [first, later], [], [], exempt_company=True), [first])
 
-    def test_a_different_article_about_the_same_event_is_not_let_in_by_trimming(self):
-        # 4호 Nexeon: BusinessCloud 기사는 위 칸(Charged EVs·Solar Power Portal)과 같은 투자 유치 기사다. NWF 문장(0.75)을
-        # 빼면 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다. 다른 기사이고 같은 사건이라 통째로 뺀다(2026-10-26 사용자 결정).
+    def test_a_different_article_about_the_same_event_with_a_repeated_sentence_is_dropped(self):
+        # 4호 Nexeon: BusinessCloud 기사는 위 칸(Charged EVs·Solar Power Portal)과 같은 투자 유치 기사이고, NWF 문장이 위 칸을
+        # 되풀이한다(0.75). 문장을 빼고 싣던 동안에는 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다.
         charged = approved("Nexeon", investment_signal_no=3, ai_event_stage="precursor", url="https://chargedevs.example/a",
                            title="Nexeon raises £100 million to expand its UK silicon anode operations", published_at="2026-09-09",
                            ai_summary_en="Nexeon closed a £100-million ($133-million) investment round, including a £52.6-million "
@@ -251,20 +242,17 @@ class RepeatedSentenceTests(unittest.TestCase):
                                  title="Nexeon raises £100m as National Wealth Fund invests - BusinessCloud")
         shown = [charged, solar]
         self.assertTrue(content.same_event_as_signal(business_cloud, shown, "Nexeon"))
-        self.assertIsNot(content.drop_repeated_sentences(business_cloud, shown), business_cloud, "문장을 빼면 들어올 수 있던 행")
+        self.assertTrue(content.repeats_said(business_cloud, shown))
         gunsan = article("Nexeon", "oxfordmail", 2, "Nexeon's facility in Gunsan, South Korea, has been awarded ISO 9001:2015 "
                          "certification.", ko="Nexeon 의 군산 공장이 ISO 9001:2015 인증을 받음.")
         self.assertEqual(content.business_rows("Nexeon", [gunsan, business_cloud], [], shown), [gunsan])
         self.assertIsNone(content.best_business_row("Nexeon", [business_cloud], [], shown))
 
-    def test_the_same_article_as_a_cell_above_is_still_trimmed_and_kept(self):
-        # Safran·Merck 처럼 위 칸과 같은 기사는 되풀이하는 문장만 빼고 싣는다. 다른 상자 항목이 먼저 있어도 같다.
+    def test_a_repeating_row_is_dropped_even_after_another_item(self):
         signal, box = self.safran()
         other = article("Safran", "propulsion", 15, "EDGE and Safran will build sovereign missile propulsion systems in Brazil.",
                         ko="EDGE 와 Safran 이 브라질에서 미사일 추진 체계를 만듦.")
-        chosen = content.business_rows("Safran", [other, box], [signal], [signal])
-        self.assertEqual([row["url"] for row in chosen], [other["url"], box["url"]])
-        self.assertTrue(chosen[1]["ai_summary_en"].startswith("The EngineUS motor received certification in 2025"))
+        self.assertEqual(content.business_rows("Safran", [other, box], [signal], [signal]), [other])
 
 
 @unittest.skipIf(view is None, "reportlab is not installed")

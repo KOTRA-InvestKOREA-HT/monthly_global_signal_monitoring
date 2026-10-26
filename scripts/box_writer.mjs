@@ -140,7 +140,7 @@ const overlap = (text, theirs) => {
 };
 
 // 위 문안을 다시 쓴 것인지. 상자 문안의 낱말 가운데 이미 쓴 문안에 있는 낱말의 비율로 본다. 문안 전체뿐 아니라 문장 하나라도
-// 그 비율을 넘으면 되풀이다(2026-10-26). 보고서는 그런 문장을 빼고 싣는다(report_content.drop_repeated_sentences). 4호 p23
+// 그 비율을 넘으면 되풀이다(2026-10-26). 보고서는 그런 문장이 있는 문안을 싣지 않는다(report_content.repeats_said). 4호 p23
 // Safran 상자는 전체 0.51 이었으나 첫 문장이 위 칸과 0.82 겹쳤다. 다시 쓰게 해 처음부터 새 사실만 받는다.
 export function repeatsSignal(summaryEn, alreadySaid) {
   return alreadySaid.some(text => {
