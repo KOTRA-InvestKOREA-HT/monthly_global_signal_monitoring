@@ -1304,6 +1304,36 @@ def business_item_ready(row):
     return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
 
 
+# 상자 문안에서 위 칸을 되풀이하는 문장만 빼고 나머지를 싣는다(2026-10-26 사용자 결정: "나머지는 살린다").
+# 문안 전체로 재면 새 문장이 섞인 행이 SAME_EVENT_OVERLAP 아래로 내려가 2순위를 통과한다. 4호 p23 Safran 상자는 전체
+# 0.51 이었지만 첫 문장(EngineUS 100 전기모터 양산·자동화 공장)이 위 칸 문안과 0.82 겹쳐 거의 그대로 실렸고, 새 내용은
+# 둘째 문장(2025년 인증)뿐이었다. p20 Merck 도 첫 문장(벵갈루루 1,300만 유로 투자)이 지표 1 칸을 되풀이했다(0.72, 전체 0.47).
+# 영문 문장마다 그 문장의 낱말 가운데 위 칸(또는 이미 고른 상자 항목) 문안에 있는 낱말의 비율을 잰다. 문장 쪽을 분모로
+# 두는 것은 "이 문장이 이미 한 말인가"를 묻기 때문이다. 위 칸 쪽을 분모로 두면 긴 위 칸 문안에 짧은 문장이 묻혀 늘 낮게 나온다.
+# 낱말은 _same_event_words 와 같은 잣대다. 국문은 낱말 경계가 조사에 붙어 잴 수 없으므로 영문과 문장 수가 같을 때만 같은
+# 순번의 문장을 뺀다. 문장 수가 다르면 어느 국문 문장이 빠질지 알 수 없어 그 행을 싣지 않는다. 남는 문장이 없어도 싣지 않는다.
+def drop_repeated_sentences(row, said_rows):
+    """row 문안에서 said_rows 문안을 되풀이하는 문장을 뺀 행. 뺄 문장이 없으면 row 그대로, 실을 수 없으면 None."""
+    sentences_en = sentence_spans(clean_text(row.get("ai_summary_en")))
+    said = [words for words in (_same_event_words(clean_text(other.get("ai_summary_en"))) for other in said_rows) if words]
+    if not sentences_en or not said:
+        return row
+
+    def repeated(sentence):
+        words = _same_event_words(sentence)
+        return bool(words) and max(len(words & other) / len(words) for other in said) > SAME_EVENT_OVERLAP
+
+    keep = [not repeated(sentence) for sentence in sentences_en]
+    if all(keep):
+        return row
+    sentences_ko = sentence_spans(clean_text(row.get("ai_summary_ko")))
+    if not any(keep) or len(sentences_ko) != len(sentences_en):
+        return None
+    return {**row,
+            "ai_summary_en": " ".join(text for text, kept in zip(sentences_en, keep) if kept),
+            "ai_summary_ko": " ".join(text for text, kept in zip(sentences_ko, keep) if kept)}
+
+
 def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False, limit=BUSINESS_ITEM_LIMIT):
     """사업현황 상자에 쓸 행을 순위대로 limit 개까지. 순위 규칙은 best_business_row 설명과 같다.
 
@@ -1311,6 +1341,9 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
     같은 사건(same_event_as_item)인 후보는 건너뛴다. 4호 Norsk Hydro 의
     Siemens Mobility 철도 재활용 기사는 사업동향 행과 투자 시그널 행으로 두 번, Recycling Today 기사로 한 번 더
     들어와 있어 이 거름이 없으면 같은 사건이 세 칸을 채운다.
+    후보마다 위 칸과 이미 고른 항목을 되풀이하는 문장을 먼저 뺀다(drop_repeated_sentences). 순위는 원래 문안으로
+    가르고, 2·3순위의 '더 자세한 내용' 검사와 같은 사건 검사, 상자에 찍는 문안은 뺀 뒤의 문안으로 한다. 뺄 문장이 없는
+    행은 손대지 않으므로 그런 상자는 예전과 글자 하나 다르지 않다. 문장을 뺀 행은 원래 행의 사본이다.
     돌려주는 순서는 고른 순서(순위·sort_signal_rows)다. 상자에 찍는 순서는 business_display_order 가 정한다.
     """
     shown_ids = {id(row) for row in shown_rows}
@@ -1337,16 +1370,20 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
              and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
     tiers = [
         [row for row in business + signals if not overlaps(row)],
-        [row for row in business if overlaps(row) and adds_detail(row)],
-        [row for row in boxed if adds_detail(row)],
+        [row for row in business if overlaps(row)],
+        boxed,
     ]
     chosen, chosen_keys = [], set()
-    for candidates in tiers:
+    for tier, candidates in enumerate(tiers):
         for row in sort_signal_rows(candidates):
             if len(chosen) >= limit:
                 return chosen
-            if chosen and (not business_item_ready(row) or article_keys(row) & chosen_keys
-                           or same_event_as_item(row, chosen, company)):
+            if chosen and not business_item_ready(row):
+                continue
+            row = drop_repeated_sentences(row, [*shown_rows, *chosen])
+            if row is None or (tier and not adds_detail(row)):
+                continue
+            if chosen and (article_keys(row) & chosen_keys or same_event_as_item(row, chosen, company)):
                 continue
             chosen.append(row)
             chosen_keys |= article_keys(row)

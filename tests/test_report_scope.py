@@ -90,8 +90,14 @@ class BusinessBoxTests(unittest.TestCase):
                          ai_summary_ko="군산 공장 ISO 9001 인증.", ai_summary_en="Nexeon's Gunsan plant in South Korea secured ISO 9001:2015 certification.")
         self.assertTrue(pdf.same_event_as_signal(retold, [signal], "Nexeon"))
         self.assertIs(pdf.best_business_row("Nexeon", [retold, other], [signal], [signal]), other)
-        # 다른 사건이 없으면 더 자세한 그 기사가 다음 순위로 실린다.
-        self.assertIs(pdf.best_business_row("Nexeon", [retold], [signal], [signal]), retold)
+        # 다른 사건이 없으면 더 자세한 그 기사가 다음 순위로 실린다. 위 칸을 되풀이하는 둘째 문장(NWF 자금이 영국
+        # 파일럿 공장에 쓰임)은 빼고 첫 문장만 싣는다(2026-10-26). 국문이 한 문장뿐이면 어느 문장을 뺄지 몰라 싣지 않는다.
+        self.assertIsNone(pdf.best_business_row("Nexeon", [retold], [signal], [signal]))
+        retold["ai_summary_ko"] = "Nexeon 은 Abingdon 에 본사를 둔 실리콘 음극재 개발사임. NWF 자금이 영국 파일럿 공장과 연구에 쓰임."
+        kept = pdf.best_business_row("Nexeon", [retold], [signal], [signal])
+        self.assertEqual(kept["url"], retold["url"])
+        self.assertEqual(kept["ai_summary_en"], "Nexeon, headquartered in Abingdon, develops silicon anode materials.")
+        self.assertEqual(kept["ai_summary_ko"], "Nexeon 은 Abingdon 에 본사를 둔 실리콘 음극재 개발사임.")
 
     def test_the_signal_card_is_never_repeated_in_the_box(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")

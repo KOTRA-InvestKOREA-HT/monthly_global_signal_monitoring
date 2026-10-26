@@ -126,7 +126,8 @@ Charles River Laboratories는 2026년 8월 20일 Medigen Vaccine Biologics Corp.
 5 핵심경영진 행보 이번 달 해당 신호 없음
 글로벌 사업현황
 투자유치 필요 품목·기술 바이러스 검증 및 MCB/WCB 특성분석
-해당 기간 관련 글로벌 사업현황이 확인되지 않음.
+양사는 차세대 염기서열 분석 등의 첨단 분석 플랫폼을 활용해 백신 개발 가속화와 글로벌 규제 표준 부합을 지원할 예정임.
+출처 공식보도자료 · Charles River - News Releases / Press Releases 2026.08.20
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 03
 
 ===== PAGE 4 =====
@@ -144,7 +145,7 @@ Boeing
 5 핵심경영진 행보 이번 달 해당 신호 없음
 글로벌 사업현황
 투자유치 필요 품목·기술 항공용 전기모터/고출력 배터리 추진 모듈
-보잉은 위스크 에어로(Wisk Aero), 스카이기리드(SkyGrid), 인시투(Insitu) 자회사를 아처(Archer)에 매각하는 최종 계약을 체결했음. 이번 거래를 통해 보잉은 아처의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축할 예정임. 양사는 전기 수직이착륙(eVTOL) 항공기 및 자율주행 기술 분야에서 협력하여 차세대 항공 모빌리티 플랫폼을 발전시킬 계획임.
+이번 거래를 통해 보잉은 아처의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축할 예정임. 양사는 전기 수직이착륙(eVTOL) 항공기 및 자율주행 기술 분야에서 협력하여 차세대 항공 모빌리티 플랫폼을 발전시킬 계획임.
 출처 공식보도자료 · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 04
 
@@ -181,8 +182,10 @@ Applied Materials가 University of California, Berkeley와 실리콘밸리의 EP
 출처 공식보도자료 · Applied Materials 2026.08.11
 5 핵심경영진 행보 이번 달 해당 신호 없음
 글로벌 사업현황
-Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함.
+1. Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함.
 출처 공식보도자료 · Applied Materials 2026.08.13
+2. 양 기관의 연구진은 AI 컴퓨팅의 기초가 되는 소재 및 공정 혁신을 가속화하기 위한 고영향력 연구 프로그램을 공동으로 추진할 예정임.
+출처 공식보도자료 · Applied Materials 2026.08.11
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 06
 
 ===== PAGE 7 =====
@@ -200,7 +203,9 @@ National Wealth Fund의 5,260만 파운드 출자를 포함해 총 1억 파운�
 5 핵심경영진 행보 이번 달 해당 신호 없음
 글로벌 사업현황
 투자유치 필요 품목·기술 실리콘 음극재 기술(증착형 Si-C)
-Nexeon은 2026년 8월 28일 한국 군산 생산 시설이 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득했음. 군산 시설은 회사의 첫 상업용 생산 공장으로 실리콘-탄소 음극재의 대량 제조를 위해 설계되었음. 이번 인증을 통해 글로벌 고객사 공급 확대를 위한 탄탄한 품질 관리 기반을 확보했음.
+1. Nexeon은 최근 National Wealth Fund, Korea Development Bank, Honda Xcelerator Ventures 등이 참여한 가운데 총 1억 파운드(약 1억 3,300만 달러) 규모의 투자 라운드를 완료했음. 이번 투자를 통해 영국 내 파일럿 제조 시설 개발을 추진하고 첨단 제조 기술 부서를 확장할 예정임.
+출처 Nexeon - Media / Newsroom 2026.08.31
+2. Nexeon은 2026년 8월 28일 한국 군산 생산 시설이 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득했음. 군산 시설은 회사의 첫 상업용 생산 공장으로 실리콘-탄소 음극재의 대량 제조를 위해 설계되었음. 이번 인증을 통해 글로벌 고객사 공급 확대를 위한 탄탄한 품질 관리 기반을 확보했음.
 출처 Nexeon - Media / Newsroom 2026.08.28
 Invest KOREA · 타겟기업 글로벌 투자시그널 모니터링 · Issue 3 07
 

@@ -118,13 +118,35 @@ export function boxKey(writer, instruction, request) {
 
 const words = text => new Set(String(text || '').toLowerCase().match(/[a-z0-9][a-z0-9.,$%-]*/g) || []);
 
-// 위 문안을 다시 쓴 것인지. 상자 문안의 낱말 가운데 이미 쓴 문안에 있는 낱말의 비율로 본다.
+// 문장 나누기. report_content.sentence_spans 와 같은 규칙이다(Inc.·Co.·U.S. 같은 약어와 머리글자 뒤의 점은 문장 끝이 아니다).
+const SENTENCE_END = /。+|[.!?]+(?=\s|$)/g;
+const NOT_A_SENTENCE_END = /(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e))$/;
+export function sentenceSpans(text) {
+  const source = String(text || '');
+  const sentences = [];
+  let start = 0;
+  for (const match of source.matchAll(SENTENCE_END)) {
+    if (match[0] === '.' && NOT_A_SENTENCE_END.test(source.slice(start, match.index))) continue;
+    sentences.push(source.slice(start, match.index + match[0].length).trim());
+    start = match.index + match[0].length;
+  }
+  sentences.push(source.slice(start).trim());
+  return sentences.filter(Boolean);
+}
+
+const overlap = (text, theirs) => {
+  const mine = words(text);
+  return mine.size ? [...mine].filter(word => theirs.has(word)).length / mine.size : 0;
+};
+
+// 위 문안을 다시 쓴 것인지. 상자 문안의 낱말 가운데 이미 쓴 문안에 있는 낱말의 비율로 본다. 문안 전체뿐 아니라 문장 하나라도
+// 그 비율을 넘으면 되풀이다(2026-10-26). 보고서는 그런 문장을 빼고 싣는다(report_content.drop_repeated_sentences). 4호 p23
+// Safran 상자는 전체 0.51 이었으나 첫 문장이 위 칸과 0.82 겹쳤다. 다시 쓰게 해 처음부터 새 사실만 받는다.
 export function repeatsSignal(summaryEn, alreadySaid) {
-  const mine = words(summaryEn);
-  if (!mine.size) return false;
   return alreadySaid.some(text => {
     const theirs = words(text);
-    return [...mine].filter(word => theirs.has(word)).length / mine.size > REPEAT_OVERLAP;
+    return overlap(summaryEn, theirs) > REPEAT_OVERLAP
+      || sentenceSpans(summaryEn).some(sentence => overlap(sentence, theirs) > REPEAT_OVERLAP);
   });
 }
 

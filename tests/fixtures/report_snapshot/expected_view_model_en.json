@@ -1042,10 +1042,10 @@
           "items": [
             {
               "no": "",
-              "body": "No related business developments found in August 2026.",
+              "body": "The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness.",
               "cut": false,
-              "source": "",
-              "source_url": ""
+              "source": "Source:  Press release · Charles River - News Releases / Press Releases Aug 20, 2026",
+              "source_url": "https://ir.criver.com/news-releases/news-release-details/charles-river-laboratories-and-medigen-vaccine-biologics-corp"
             }
           ]
         }
@@ -1100,7 +1100,7 @@
           "items": [
             {
               "no": "",
-              "body": "Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.",
+              "body": "Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.",
               "cut": false,
               "source": "Source:  Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026",
               "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
@@ -1212,14 +1212,21 @@
           "heading": "Business Developments",
           "target_label": "",
           "target_text": "",
-          "numbered": false,
+          "numbered": true,
           "items": [
             {
-              "no": "",
+              "no": "1.",
               "body": "Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.",
               "cut": false,
               "source": "Source:  Press release · Applied Materials Aug 13, 2026",
               "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+            },
+            {
+              "no": "2.",
+              "body": "Faculty and students from UC Berkeley will work alongside Applied scientists and engineers to pursue research programs accelerating material and process innovations foundational to AI computing.",
+              "cut": false,
+              "source": "Source:  Press release · Applied Materials Aug 11, 2026",
+              "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/uc-berkeley-join-applied-materials-epic-center-speed-chip"
             }
           ]
         }
@@ -1270,10 +1277,17 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "CVD silicon-carbon (Si-C) anode materials",
-          "numbered": false,
+          "numbered": true,
           "items": [
             {
-              "no": "",
+              "no": "1.",
+              "body": "Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit.",
+              "cut": false,
+              "source": "Source:  Nexeon - Media / Newsroom Aug 31, 2026",
+              "source_url": "https://www.nexeonglobal.com/media/national-wealth-fund-backs-nexeon-in-gbp100m-investment-round"
+            },
+            {
+              "no": "2.",
               "body": "Nexeon announced on August 28, 2026, that its production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification for quality management systems. The Gunsan facility is the company's first commercial-scale production plant designed for the volume manufacture of silicon-carbon anode materials. This certification provides a strong foundation for supplying global customers at scale.",
               "cut": false,
               "source": "Source:  Nexeon - Media / Newsroom Aug 28, 2026",

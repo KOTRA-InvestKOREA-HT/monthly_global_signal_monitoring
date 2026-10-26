@@ -126,7 +126,8 @@ Source: Press release · Charles River - News Releases / Press Releases Aug 20, 
 5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Virus validation and master/working cell bank characterization
-No related business developments found in August 2026.
+The companies will leverage advanced analytical platforms including Next-Generation Sequencing to accelerate high-quality vaccine development and support global regulatory readiness.
+Source: Press release · Charles River - News Releases / Press Releases Aug 20, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 03
 
 ===== PAGE 4 =====
@@ -144,7 +145,7 @@ Source: Press release · Boeing - News Releases and Statements / Press Releases 
 5 Top Executives' Activities No signal in August
 Business Developments
 Target technology Electric motors and high-power battery propulsion modules for aircraft
-Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.
+Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.
 Source: Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 04
 
@@ -180,8 +181,10 @@ Applied Materials announced that University of California, Berkeley will join it
 Source: Press release · Applied Materials Aug 11, 2026
 5 Top Executives' Activities No signal in August
 Business Developments
-Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
+1. Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.
 Source: Press release · Applied Materials Aug 13, 2026
+2. Faculty and students from UC Berkeley will work alongside Applied scientists and engineers to pursue research programs accelerating material and process innovations foundational to AI computing.
+Source: Press release · Applied Materials Aug 11, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 06
 
 ===== PAGE 7 =====
@@ -199,7 +202,9 @@ Source: Nexeon - Media / Newsroom Aug 31, 2026
 5 Top Executives' Activities No signal in August
 Business Developments
 Target technology CVD silicon-carbon (Si-C) anode materials
-Nexeon announced on August 28, 2026, that its production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification for quality management systems. The Gunsan facility is the company's first commercial-scale production plant designed for the volume manufacture of silicon-carbon anode materials. This certification provides a strong foundation for supplying global customers at scale.
+1. Nexeon has completed its latest investment round totalling £100 million ($133 million), backed by the National Wealth Fund, Korea Development Bank, and Honda Xcelerator Ventures. The funding will support the development of a UK-based pilot manufacturing facility and the expansion of its advanced manufacturing technology unit.
+Source: Nexeon - Media / Newsroom Aug 31, 2026
+2. Nexeon announced on August 28, 2026, that its production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification for quality management systems. The Gunsan facility is the company's first commercial-scale production plant designed for the volume manufacture of silicon-carbon anode materials. This certification provides a strong foundation for supplying global customers at scale.
 Source: Nexeon - Media / Newsroom Aug 28, 2026
 Invest KOREA · Global Investment Signal Monitor · Issue 3 07
 
