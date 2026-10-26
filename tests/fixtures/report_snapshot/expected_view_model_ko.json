@@ -1040,10 +1040,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "투자유치 필요 품목·기술",
           "target_text": "바이러스 검증 및 MCB/WCB 특성분석",
-          "body": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
-          "cut": false,
-          "source": "",
-          "source_url": ""
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
+              "cut": false,
+              "source": "",
+              "source_url": ""
+            }
+          ]
         }
       },
       {
@@ -1092,10 +1098,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "투자유치 필요 품목·기술",
           "target_text": "항공용 전기모터/고출력 배터리 추진 모듈",
-          "body": "보잉은 위스크 에어로(Wisk Aero), 스카이기리드(SkyGrid), 인시투(Insitu) 자회사를 아처(Archer)에 매각하는 최종 계약을 체결했음. 이번 거래를 통해 보잉은 아처의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축할 예정임. 양사는 전기 수직이착륙(eVTOL) 항공기 및 자율주행 기술 분야에서 협력하여 차세대 항공 모빌리티 플랫폼을 발전시킬 계획임.",
-          "cut": false,
-          "source": "출처  공식보도자료 · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
-          "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "보잉은 위스크 에어로(Wisk Aero), 스카이기리드(SkyGrid), 인시투(Insitu) 자회사를 아처(Archer)에 매각하는 최종 계약을 체결했음. 이번 거래를 통해 보잉은 아처의 지분을 취득하고 전략적 파트너로서 지속적인 기술 공유 및 협력 관계를 구축할 예정임. 양사는 전기 수직이착륙(eVTOL) 항공기 및 자율주행 기술 분야에서 협력하여 차세대 항공 모빌리티 플랫폼을 발전시킬 계획임.",
+              "cut": false,
+              "source": "출처  공식보도자료 · Boeing - News Releases and Statements / Press Releases / Statements 2026.08.10",
+              "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+            }
+          ]
         }
       },
       {
@@ -1144,10 +1156,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "투자유치 필요 품목·기술",
           "target_text": "로봇용 라이다",
-          "body": "Ouster는 2026년 2분기 세계 최초의 네이티브 컬러 라이다 센서인 Rev8을 출시함. 대형 중기 제조사, 자율주행 농기계 개발사, 자율주행차 공급업체 등으로부터 100만 달러를 초과하는 다수의 고객 주문을 확보함. 또한 유타주 교통국과 계약을 체결하여 주 전역 수백 개의 교차로에 라이다를 배치할 예정임.",
-          "cut": false,
-          "source": "출처  Yahoo Finance 2026.08.17",
-          "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Ouster는 2026년 2분기 세계 최초의 네이티브 컬러 라이다 센서인 Rev8을 출시함. 대형 중기 제조사, 자율주행 농기계 개발사, 자율주행차 공급업체 등으로부터 100만 달러를 초과하는 다수의 고객 주문을 확보함. 또한 유타주 교통국과 계약을 체결하여 주 전역 수백 개의 교차로에 라이다를 배치할 예정임.",
+              "cut": false,
+              "source": "출처  Yahoo Finance 2026.08.17",
+              "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+            }
+          ]
         }
       },
       {
@@ -1196,10 +1214,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "",
           "target_text": "",
-          "body": "Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함.",
-          "cut": false,
-          "source": "출처  공식보도자료 · Applied Materials 2026.08.13",
-          "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Applied Materials는 DRAM과 첨단 패키징을 위한 6개의 신규 칩 제조 시스템을 도입했음. Centura Prime Epi, Opta Quad CMP, Nokota VMax 2 ECD 등 첨단 소재 공정 및 패키징용 신제품과 기술을 공개하며 포트폴리오를 확장함.",
+              "cut": false,
+              "source": "출처  공식보도자료 · Applied Materials 2026.08.13",
+              "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+            }
+          ]
         }
       },
       {
@@ -1248,10 +1272,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "투자유치 필요 품목·기술",
           "target_text": "실리콘 음극재 기술(증착형 Si-C)",
-          "body": "Nexeon은 2026년 8월 28일 한국 군산 생산 시설이 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득했음. 군산 시설은 회사의 첫 상업용 생산 공장으로 실리콘-탄소 음극재의 대량 제조를 위해 설계되었음. 이번 인증을 통해 글로벌 고객사 공급 확대를 위한 탄탄한 품질 관리 기반을 확보했음.",
-          "cut": false,
-          "source": "출처  Nexeon - Media / Newsroom 2026.08.28",
-          "source_url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Nexeon은 2026년 8월 28일 한국 군산 생산 시설이 품질경영시스템 국제 표준인 ISO 9001:2015 인증을 획득했음. 군산 시설은 회사의 첫 상업용 생산 공장으로 실리콘-탄소 음극재의 대량 제조를 위해 설계되었음. 이번 인증을 통해 글로벌 고객사 공급 확대를 위한 탄탄한 품질 관리 기반을 확보했음.",
+              "cut": false,
+              "source": "출처  Nexeon - Media / Newsroom 2026.08.28",
+              "source_url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant"
+            }
+          ]
         }
       },
       {
@@ -1300,10 +1330,16 @@
           "heading": "글로벌 사업현황",
           "target_label": "투자유치 필요 품목·기술",
           "target_text": "이온교환막 및 바이폴라 이온교환막",
-          "body": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
-          "cut": false,
-          "source": "",
-          "source_url": ""
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "해당 기간 관련 글로벌 사업현황이 확인되지 않음.",
+              "cut": false,
+              "source": "",
+              "source_url": ""
+            }
+          ]
         }
       }
     ],

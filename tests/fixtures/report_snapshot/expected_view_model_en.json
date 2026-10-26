@@ -1038,10 +1038,16 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "Virus validation and master/working cell bank characterization",
-          "body": "No related business developments found in August 2026.",
-          "cut": false,
-          "source": "",
-          "source_url": ""
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "No related business developments found in August 2026.",
+              "cut": false,
+              "source": "",
+              "source_url": ""
+            }
+          ]
         }
       },
       {
@@ -1090,10 +1096,16 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "Electric motors and high-power battery propulsion modules for aircraft",
-          "body": "Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.",
-          "cut": false,
-          "source": "Source:  Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026",
-          "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Boeing has signed definitive agreements to transfer its Wisk Aero, SkyGrid, and Insitu subsidiaries to Archer Aviation. Under the transaction, Boeing will take a stake in Archer and establish an ongoing collaboration and technology-sharing arrangement. The partnership combines Wisk's pioneering eVTOL and autonomy technologies with Archer's platform to advance the aerospace and defense sector.",
+              "cut": false,
+              "source": "Source:  Press release · Boeing - News Releases and Statements / Press Releases / Statements Aug 10, 2026",
+              "source_url": "https://boeing.mediaroom.com/2026-08-10-Archer-to-Shape-Physical-AI-Future-of-Aerospace-and-Defense-with-Acquisition-of-Boeings-Wisk-Aero,-Insitu-and-SkyGrid-Subsidiaries-Boeing-to-Invest-in-Archer-and-Collaborate"
+            }
+          ]
         }
       },
       {
@@ -1142,10 +1154,16 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "Lidar sensors for robots",
-          "body": "Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state.",
-          "cut": false,
-          "source": "Source:  Yahoo Finance Aug 17, 2026",
-          "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Ouster launched Rev8, the world's first native color LiDAR sensor, in the second quarter of 2026. Customer adoption was reflected in several orders exceeding $1 million from major industry leaders, including the world's largest heavy machinery manufacturer. In addition, the company secured a significant contract with the Utah Department of Transportation for its largest LiDAR deployment to cover several hundred intersections across the state.",
+              "cut": false,
+              "source": "Source:  Yahoo Finance Aug 17, 2026",
+              "source_url": "https://finance.yahoo.com/technology/articles/ousters-lidar-shipments-jump-70-160000872.html"
+            }
+          ]
         }
       },
       {
@@ -1194,10 +1212,16 @@
           "heading": "Business Developments",
           "target_label": "",
           "target_text": "",
-          "body": "Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.",
-          "cut": false,
-          "source": "Source:  Press release · Applied Materials Aug 13, 2026",
-          "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Applied Materials introduced six new chipmaking systems for DRAM and advanced packaging. The company unveiled advanced semiconductor systems and technologies including Centura Prime Epi, Opta Quad CMP, and Nokota VMax 2 ECD to enhance material engineering and manufacturing efficiency.",
+              "cut": false,
+              "source": "Source:  Press release · Applied Materials Aug 13, 2026",
+              "source_url": "https://ir.appliedmaterials.com/news-releases/news-release-details/applied-materials-announces-third-quarter-2026-results"
+            }
+          ]
         }
       },
       {
@@ -1246,10 +1270,16 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "CVD silicon-carbon (Si-C) anode materials",
-          "body": "Nexeon announced on August 28, 2026, that its production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification for quality management systems. The Gunsan facility is the company's first commercial-scale production plant designed for the volume manufacture of silicon-carbon anode materials. This certification provides a strong foundation for supplying global customers at scale.",
-          "cut": false,
-          "source": "Source:  Nexeon - Media / Newsroom Aug 28, 2026",
-          "source_url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant"
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "Nexeon announced on August 28, 2026, that its production facility in Gunsan, South Korea, has achieved ISO 9001:2015 certification for quality management systems. The Gunsan facility is the company's first commercial-scale production plant designed for the volume manufacture of silicon-carbon anode materials. This certification provides a strong foundation for supplying global customers at scale.",
+              "cut": false,
+              "source": "Source:  Nexeon - Media / Newsroom Aug 28, 2026",
+              "source_url": "https://www.nexeonglobal.com/media/nexeon-achieves-iso-9001-certification-for-gunsan-plant"
+            }
+          ]
         }
       },
       {
@@ -1298,10 +1328,16 @@
           "heading": "Business Developments",
           "target_label": "Target technology",
           "target_text": "Ion-exchange and bipolar membranes",
-          "body": "No related business developments found in August 2026.",
-          "cut": false,
-          "source": "",
-          "source_url": ""
+          "numbered": false,
+          "items": [
+            {
+              "no": "",
+              "body": "No related business developments found in August 2026.",
+              "cut": false,
+              "source": "",
+              "source_url": ""
+            }
+          ]
         }
       }
     ],

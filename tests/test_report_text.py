@@ -18,8 +18,8 @@ import report_content as content  # noqa: E402
 
 REPORT_TEXT = json.loads((ROOT / "config" / "report_text.json").read_text(encoding="utf-8"))
 TECH_MAP = json.loads((ROOT / "data" / "company_technology_map.json").read_text(encoding="utf-8"))
-# t() 와 matrix_footnote() 가 채워 넣는 값의 이름.
-PLACEHOLDERS = {"issue", "month", "period", "on", "off", "total", "companies"}
+# t() 와 matrix_footnote() 가 채워 넣는 값의 이름. no 는 사업현황 상자 항목 번호(business_item_number)다.
+PLACEHOLDERS = {"issue", "month", "period", "on", "off", "total", "companies", "no"}
 HANGUL = re.compile(r"[가-힣]")
 
 

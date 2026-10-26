@@ -111,29 +111,85 @@ def signal_entry(no, rows, measure):
     }
 
 
-def detail_entries(profiles, signal_index, relevant, investment, measure, summary=None):
+def business_items(rows):
+    """사업현황 상자의 항목. 한 건이면 예전 상자와 같고(번호 없음), 두세 건이면 최신 기사부터 "1." "2." "3."을 붙인다.
+
+    항목마다 제 출처 줄을 단다. 지표 칸이 문안 바로 아래에 출처를 다는 것과 같다. 고른 행이 없으면
+    "확인되지 않음" 문구 한 항목이고 출처 줄은 없다.
+    """
+    if not rows:
+        return [{"no": "", "body": report.business_text([]), "cut": False, "source": "", "source_url": ""}]
+    ordered = report.business_display_order(rows)
+    numbered = len(ordered) > 1
+    items = []
+    for index, row in enumerate(ordered, start=1):
+        body = report.business_text([row])
+        items.append({
+            "no": report.t("business_item_number", no=index) if numbered else "",
+            "body": body,
+            "cut": summary_cut(row, body),
+            "source": report.source_line(row),
+            "source_url": report.source_url(row),
+        })
+    return items
+
+
+# 사업현황 상자 아래 끝이 푸터 선에서 이만큼(pt) 위에 있어야 여러 건을 싣는다. 높이 어림(report_measure)은
+# 4호 44장에서 Chrome 과 0.2pt 안으로 맞았으나, 영문 붙임표 줄바꿈처럼 줄 수가 한 줄씩 어긋날 수 있어
+# 본문 두 줄(11.7pt × 2)만큼 남긴다.
+BUSINESS_FIT_MARGIN = 24
+
+
+def fitted_business_rows(rows, signal_rows, profiles_by_lang, company, measure):
+    """쪽에 들어가는 만큼만 남긴 상자 행. 우선순위가 낮은 행(rows 의 뒤)부터 뺀다.
+
+    상자에 몇 건을 실을지는 국문판과 영문판이 같아야 한다. 한쪽 판에만 기사가 하나 더 실리면 한·영 보고서가
+    다른 말을 한다(한쪽에서만 금액·일정이 빠지던 HyproMag·Renishaw 와 같은 어긋남). 그래서 두 판에서 모두
+    푸터 선 위에 들어가는 건수를 고른다. 문안을 문장 중간에서 자르지 않는다. 자른 문안은 빌드가 멈추는
+    "잘린 문안"(build_html_report.mjs cutTexts)이라, 들어가지 않으면 그 항목을 통째로 뺀다.
+    한 건은 들어가는지 묻지 않는다. 예전 한 건짜리 상자와 같은 결과를 내야 하기 때문이다.
+    """
+    def fits(chosen):
+        for lang, by_company in profiles_by_lang.items():
+            with report.language(lang):
+                profile = by_company[company]
+                signals = [signal_entry(no, signal_rows.get(no, []), measure) for no in range(1, 6)]
+                target_label, target_text = report.target_section_for_profile(profile)
+                bottom = report_measure.detail_bottom(measure, signals, target_label, target_text, business_items(chosen))
+                if bottom + BUSINESS_FIT_MARGIN > report_measure.CONTENT_BOTTOM:
+                    return False
+        return True
+
+    while len(rows) > 1 and not fits(rows):
+        rows = rows[:-1]
+    return rows
+
+
+def detail_entries(profiles, signal_index, relevant, investment, measure, summary=None, profiles_by_lang=None):
     entries = []
     for profile in profiles:
         rows_by_signal = signal_index.get(profile["company"], {})
         if not any(rows_by_signal.values()):
             continue
         shown = [rows[0] for rows in rows_by_signal.values() if rows]
-        business_row = report.best_business_row(profile["company"], relevant, investment, shown,
-                                                exempt_company=bool(profile.get("exempt_from_relevance")))
+        business_rows = report.business_rows(profile["company"], relevant, investment, shown,
+                                             exempt_company=bool(profile.get("exempt_from_relevance")))
         # 사람이 그 달 상자를 비워 둔 기업(config/business_box_overrides.json)은 "확인되지 않음" 문구를 싣는다.
         if summary is not None and report.business_box_cleared(profile["company"], summary):
-            business_row = None
+            business_rows = []
+        if len(business_rows) > 1:
+            business_rows = fitted_business_rows(
+                business_rows, rows_by_signal,
+                profiles_by_lang or {report.LANG: {profile["company"]: profile}}, profile["company"], measure)
         target_label, target_text = report.target_section_for_profile(profile)
-        # 위 지표 칸과 다른 문안이 없으면(None) 되풀이하지 않고 "확인되지 않음" 문구를 싣는다. 출처 줄은 없다.
-        business_body = report.business_text([business_row] if business_row else [])
+        # 위 지표 칸과 다른 문안이 없으면(빈 목록) 되풀이하지 않고 "확인되지 않음" 문구를 싣는다. 출처 줄은 없다.
+        items = business_items(business_rows)
         business = {
             "heading": report.t("business_heading"),
             "target_label": target_label,
             "target_text": target_text,
-            "body": business_body,
-            "cut": summary_cut(business_row, business_body),
-            "source": report.source_line(business_row) if business_row else "",
-            "source_url": report.source_url(business_row) if business_row else "",
+            "numbered": len(items) > 1,
+            "items": items,
         }
         entries.append({
             "company": profile.get("display_name") or profile["company"],
@@ -203,6 +259,11 @@ def build(args):
         investment_signals, report.parse_ignored_signal_keys(args.ignored_signals))
 
     profiles = report.build_profiles(targets, tech_map)
+    # 사업현황 상자 건수는 한·영 두 판에 다 들어가는지로 정하므로 두 언어의 품목명을 함께 둔다.
+    profiles_by_lang = {}
+    for lang in ("ko", "en"):
+        with report.language(lang):
+            profiles_by_lang[lang] = {profile["company"]: profile for profile in report.build_profiles(targets, tech_map)}
     signal_index = report.index_investment_signals(investment_signals)
     counts = matrix_counts(profiles, signal_index)
     # 호수는 호출한 쪽이 반드시 준다. 기본값 "2"로 채우던 때는 호수 없이 만든 보고서가 지난 호수로 나갔다.
@@ -248,7 +309,8 @@ def build(args):
         "details": {
             "kicker": report.t("detail_kicker"),
             "title": report.t("detail_title"),
-            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, measure, summary),
+            "pages": detail_entries(profiles, signal_index, relevant, investment_signals, measure, summary,
+                                    profiles_by_lang),
             "pill_width": report_measure.signal_pill_column(measure),
         },
         "items": item_entries(profiles, signal_index, relevant, summary),

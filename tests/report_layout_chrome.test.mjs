@@ -58,9 +58,20 @@ function crowdedDetail(signalCount) {
   page.signals = page.signals.map((signal, index) => (index < signalCount ? longSignal(signal, sentence) : signal));
   // 첫 카드는 별도 기사가 없어 상자가 빠져 있다. 가장 붐비는 경우를 재려고 다른 카드의 상자를 빌려 온다.
   page.business = { ...(page.business || model.details.pages.find(entry => entry.business).business) };
-  page.business.body = (sentence.repeat(5)).trim().slice(0, 420);
+  page.business.items = [{ ...page.business.items[0], body: (sentence.repeat(5)).trim().slice(0, 420) }];
   return { model, company: page.company };
 }
+
+// 사업현황 상자에 기사 세 건(2026-10-26). 항목마다 번호·문안·출처 줄이 있고, 뷰 모델이 쪽에 들어간다고 본 만큼이면
+// 줄 수 제한에도, 푸터 선에도 걸리지 않아야 한다.
+const numberedBox = business => ({
+  ...business,
+  numbered: true,
+  items: [1, 2, 3].map(no => ({
+    no: `${no}.`, body: sentence.repeat(3).trim(), cut: false,
+    source: `Source:  Media ${no} Sep ${10 - no}, 2026`, source_url: `https://www.example.com/news/${no}`,
+  })),
+});
 
 test('the current report fits every page and shows every text whole', { skip }, async () => {
   for (const lang of ['ko', 'en']) {
@@ -85,6 +96,15 @@ test('a detail page whose content runs below the footer rule fails the build', {
   const worse = await measure(crowdedDetail(4).model);
   const past = worse.problems.find(problem => problem.part === 'page overflow');
   assert.ok(past && past.bottom > overflow[0].bottom, JSON.stringify(worse.problems));
+});
+
+test('a business box with three numbered articles fits a one-signal card whole', { skip }, async () => {
+  const model = fixture('en');
+  const index = model.details.pages.findIndex(entry => entry.business
+    && entry.signals.filter(signal => signal.active).length === 1);
+  model.details.pages[index].business = numberedBox(model.details.pages[index].business);
+  const layout = await measure(model);
+  assert.deepEqual(layout.problems, []);
 });
 
 test('a one-line box that ellipsizes its text is reported', { skip }, async () => {

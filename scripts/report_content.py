@@ -11,6 +11,7 @@
 import json
 import re
 from collections import defaultdict
+from contextlib import contextmanager
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
@@ -172,6 +173,19 @@ def set_language(lang):
     global LANG
     LANG = "en" if str(lang or "").strip().lower() in ("en", "eng", "english") else "ko"
     return LANG
+
+
+@contextmanager
+def language(lang):
+    """잠시 다른 언어로 문안을 만든다. 사업현황 상자에 몇 건을 실을지는 한·영 두 판에 다 들어가는지로 정한다
+    (report_view_model.fitted_business_rows). 보고 기간 문구(REPORT_PERIOD_TEXT)는 바꾸지 않으므로
+    {month}·{period} 가 든 문구를 여기서 만들지 않는다."""
+    previous = LANG
+    set_language(lang)
+    try:
+        yield LANG
+    finally:
+        set_language(previous)
 
 
 # 영문 문구 몇 개는 보고 달·기간을 문장 안에 적는다({month}, {period}). 칸마다 summary 를 넘기지 않도록
@@ -1222,6 +1236,51 @@ def same_event_as_signal(row, shown_rows, company=""):
     return False
 
 
+# 사업현황 상자 항목끼리 같은 사건인지 가르는 규칙(2026-10-26, 상자에 세 건까지 싣게 되면서 정함).
+# 위 지표 칸 잣대(same_event_as_signal)는 상자 문안을 위 칸 문안에 대어 한 방향으로만 잰다. 상자 항목끼리는 어느 쪽도
+# 기준이 아니므로 두 방향으로 재고, 덧붙여 어느 방향이든 낱말이 30% 넘게 겹치면서 고유명사나 금액·수량을 하나라도
+# 함께 쓰면 같은 사건으로 본다. 금액은 "$12 billion"과 "$12bn"을 같은 값으로 읽는다. 4호 자료로 세 건을 골라 보니
+# 위 칸 잣대만으로는 다음 셋이 한 상자에 두 번씩 들어갔다.
+#   Applied Materials 의 A*STAR 공동연구실 4단계 확장(CRN Asia·Tech Wire Asia, 39%/48%, A*STAR·Singapore)
+#   Amkor 의 Peoria 투자 120억 달러 확대(ABC15·Cleanroom Technology, 52%/38%, "$12 billion"·"$12bn")
+#   Moderna·Merck 의 intismeran 3상 결과(Fierce Biotech·BioXconomy, 34%/26%, Keytruda·Merck)
+# 같은 4호에서 다른 사건끼리는 고유명사를 함께 써도 21% 아래였다(Ouster 의 Rev8 고객 확대와 INTERGEO 전시).
+# 확실하지 않으면 한 건을 덜 싣는 쪽을 고른다. 같은 사건이 상자에 두 번 실리는 것이 사용자가 거듭 지적한 문제였다.
+# 낱말로 가를 수 없는 경우는 남는다. 4호 Amkor 의 ABC15(Peoria, $12 billion)와 Yahoo Finance(Arizona 2단계, 금액 없음)는
+# 같은 2단계 투자인데 고유명사·금액을 함께 쓰지 않아(38%/30%) 둘 다 실린다.
+SAME_EVENT_ITEM_OVERLAP = 0.3
+SAME_EVENT_UNIT_SPELLINGS = {"bn": "billion", "mn": "million"}
+
+
+def _same_event_item_amounts(text):
+    amounts = set()
+    for amount in _same_event_amounts(text):
+        number, unit = re.match(r"([\d.]*)(.*)", amount).groups()
+        amounts.add(number + SAME_EVENT_UNIT_SPELLINGS.get(unit, unit))
+    return amounts
+
+
+def same_event_as_item(row, chosen_rows, company=""):
+    """row 가 상자에 이미 고른 항목 가운데 하나와 같은 사건인지. 규칙은 위 주석."""
+    own = {word.lower() for word in re.findall(r"[A-Za-z0-9&-]+", f"{company} {row.get('company', '')}")}
+    text = clean_text(row.get("ai_summary_en"))
+    mine = _same_event_words(text)
+    for other in chosen_rows:
+        if same_event_as_signal(row, [other], company) or same_event_as_signal(other, [row], company):
+            return True
+        theirs_text = clean_text(other.get("ai_summary_en"))
+        theirs = _same_event_words(theirs_text)
+        if not mine or not theirs:
+            continue
+        shared = len(mine & theirs)
+        if max(shared / len(mine), shared / len(theirs)) <= SAME_EVENT_ITEM_OVERLAP:
+            continue
+        if (_same_event_names(text, own) & _same_event_names(theirs_text, own)
+                or _same_event_item_amounts(text) & _same_event_item_amounts(theirs_text)):
+            return True
+    return False
+
+
 def _signal_overlap(row, shown_rows, text_field="ai_summary_en"):
     """row 문안의 영문 낱말 가운데 위 지표 칸 문안에도 있는 낱말의 비율. 가장 많이 겹치는 칸으로 잰다."""
     mine = _same_event_words(clean_text(row.get(text_field)))
@@ -1231,20 +1290,28 @@ def _signal_overlap(row, shown_rows, text_field="ai_summary_en"):
                 for shown in shown_rows), default=0.0)
 
 
-def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False):
-    """사업현황 상자에 쓸 행. 2026-10-25 사용자가 정한 세 순위를 따른다.
+# 사업현황 상자에 싣는 기사 수의 상한(2026-10-26 사용자 결정). 4호 Moderna·Amkor·Ouster 처럼 품목과 이어진
+# 사업동향 기사가 여럿인 기업도 상자에는 한 건만 실렸다. 세 건까지 "1. 2. 3."으로 나눠 싣는다.
+BUSINESS_ITEM_LIMIT = 3
 
-    1. 위 지표 칸과 겹치지 않고 타겟 품목과 이어진 행. 다른 기사이면서 같은 사건도 아니어야 한다.
-       타겟 품목이 없는(면제) 기업은 그 달의 사업동향이면 된다.
-    2. 위 지표 칸과 겹치더라도(같은 기사나 같은 사건) 타겟 품목과 이어져 있고 더 자세한 설명이나 다른 내용이 있는 행.
-       따로 판정한 사업동향 문안을 먼저, 지표 기사에서 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)을 다음에 쓴다.
-       위 칸 문안과 글자가 같거나 낱말이 SAME_EVENT_OVERLAP 넘게 겹치면 덧붙인 내용이 없는 되풀이로 본다.
-    3. 그 밖은 None 이다. 상자는 "확인되지 않음" 문구(business_empty)를 싣는다.
 
-    타겟 품목과 무관한 행(품목 연계만 빠진 근접 행, 품목 연계가 없는 회사 단위 시그널)은 어느 순위에도 들지 않는다.
-    4호 재발행에서 onsemi 전력 플랫폼·Bayer 신약 승인·Jenoptik 단속 카메라가 품목과 무관한데 상자에 실렸고,
-    Albemarle·Tokyo Electron·NXP 는 위 칸과 같은 인사·대출 공시의 나머지 내용이 실렸다.
-    같은 순위 안에서는 sort_signal_rows 순서(보도자료·공식 출처 먼저)를 따른다.
+def business_item_ready(row):
+    """두 번째 이후 항목으로 실을 수 있는지. 국·영문 문안이 이미 다 있어야 한다.
+
+    발행 단계는 모델을 부르지 않으므로, 문안이 한쪽만 있는 행을 실으면 한 언어 보고서에만 항목이 생긴다.
+    첫 항목은 예전 한 건짜리 상자와 똑같이 고른다(문안이 없으면 기사 본문 발췌로 채우던 동작 그대로).
+    """
+    return bool(clean_text(row.get("ai_summary_ko"))) and bool(clean_text(row.get("ai_summary_en")))
+
+
+def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False, limit=BUSINESS_ITEM_LIMIT):
+    """사업현황 상자에 쓸 행을 순위대로 limit 개까지. 순위 규칙은 best_business_row 설명과 같다.
+
+    1순위에서 다 채우지 못하면 2순위, 3순위에서 이어 채운다. 이미 고른 행과 같은 기사(article_keys)이거나
+    같은 사건(same_event_as_item)인 후보는 건너뛴다. 4호 Norsk Hydro 의
+    Siemens Mobility 철도 재활용 기사는 사업동향 행과 투자 시그널 행으로 두 번, Recycling Today 기사로 한 번 더
+    들어와 있어 이 거름이 없으면 같은 사건이 세 칸을 채운다.
+    돌려주는 순서는 고른 순서(순위·sort_signal_rows)다. 상자에 찍는 순서는 business_display_order 가 정한다.
     """
     shown_ids = {id(row) for row in shown_rows}
     shown_keys = set().union(*(article_keys(row) for row in shown_rows)) if shown_rows else set()
@@ -1273,10 +1340,54 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
         [row for row in business if overlaps(row) and adds_detail(row)],
         [row for row in boxed if adds_detail(row)],
     ]
+    chosen, chosen_keys = [], set()
     for candidates in tiers:
-        if candidates:
-            return sort_signal_rows(candidates)[0]
-    return None
+        for row in sort_signal_rows(candidates):
+            if len(chosen) >= limit:
+                return chosen
+            if chosen and (not business_item_ready(row) or article_keys(row) & chosen_keys
+                           or same_event_as_item(row, chosen, company)):
+                continue
+            chosen.append(row)
+            chosen_keys |= article_keys(row)
+    return chosen
+
+
+def business_row_day(row):
+    """상자 항목을 최신순으로 놓을 때 쓰는 날짜. 출처 줄이 찍는 날짜(format_row_date)와 같은 근거다.
+
+    일자 없이 달만 확정된 기사는 sort_signal_rows 처럼 그 달 1일로 놓는다. 같은 달의 일자 확정 기사보다 뒤에 온다.
+    """
+    state = date_state(row)
+    return state["day"] or (month_bounds(state["month"])[0] if state["month"] else date.min)
+
+
+def business_display_order(rows):
+    """상자에 찍는 순서. 사용자는 상자를 '최신 기사'로 읽으므로 게시일이 늦은 기사부터 싣는다(2026-10-26 사용자 결정).
+
+    날짜가 같으면 고른 순서(순위·sort_signal_rows)를 지킨다. sorted 는 reverse 여도 같은 값의 순서를 바꾸지 않는다.
+    """
+    return sorted(rows, key=business_row_day, reverse=True)
+
+
+def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), exempt_company=False):
+    """사업현황 상자에 쓸 행. 2026-10-25 사용자가 정한 세 순위를 따른다.
+
+    1. 위 지표 칸과 겹치지 않고 타겟 품목과 이어진 행. 다른 기사이면서 같은 사건도 아니어야 한다.
+       타겟 품목이 없는(면제) 기업은 그 달의 사업동향이면 된다.
+    2. 위 지표 칸과 겹치더라도(같은 기사나 같은 사건) 타겟 품목과 이어져 있고 더 자세한 설명이나 다른 내용이 있는 행.
+       따로 판정한 사업동향 문안을 먼저, 지표 기사에서 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)을 다음에 쓴다.
+       위 칸 문안과 글자가 같거나 낱말이 SAME_EVENT_OVERLAP 넘게 겹치면 덧붙인 내용이 없는 되풀이로 본다.
+    3. 그 밖은 None 이다. 상자는 "확인되지 않음" 문구(business_empty)를 싣는다.
+
+    타겟 품목과 무관한 행(품목 연계만 빠진 근접 행, 품목 연계가 없는 회사 단위 시그널)은 어느 순위에도 들지 않는다.
+    4호 재발행에서 onsemi 전력 플랫폼·Bayer 신약 승인·Jenoptik 단속 카메라가 품목과 무관한데 상자에 실렸고,
+    Albemarle·Tokyo Electron·NXP 는 위 칸과 같은 인사·대출 공시의 나머지 내용이 실렸다.
+    같은 순위 안에서는 sort_signal_rows 순서(보도자료·공식 출처 먼저)를 따른다.
+    상자에 세 건까지 싣게 된 뒤(2026-10-26)로는 business_rows 의 첫 행이다.
+    """
+    rows = business_rows(company, relevant_rows, investment_rows, shown_rows, exempt_company, limit=1)
+    return rows[0] if rows else None
 
 
 # 사업현황 상자를 사람이 직접 비우는 기업(보고 달별). 규칙으로 가를 수 없는 카드를 그 달에만 비운다.

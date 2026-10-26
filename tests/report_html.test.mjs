@@ -47,7 +47,7 @@ function withDetails(companies, signalsFor = () => [firing(4)]) {
       signals: [1, 2, 3, 4, 5].map(no => signalsFor(company).find(s => s.no === no) || silent(no)),
       business: {
         heading: '글로벌 사업현황', target_label: '투자유치 필요 품목·기술', target_text: '라이다',
-        body: '본문', source: '출처 Media',
+        numbered: false, items: [{ no: '', body: '본문', cut: false, source: '출처 Media', source_url: '' }],
       },
     })),
   };
@@ -325,6 +325,46 @@ test('a business box without a target keeps the heading line alone', () => {
   assert.equal(occurrences(html, 'class="business-target"'), 0);
 });
 
+// 사업현황 상자에 기사를 세 건까지 싣는다(2026-10-26 사용자 결정). 한 건이면 예전 상자 그대로다.
+const boxItem = (no, extra = {}) => ({ no, body: `본문 ${no || '하나'}`, cut: false, source: `출처 Media ${no}`,
+  source_url: `https://www.example.com/${no || 'one'}`, ...extra });
+
+test('a business box with one article prints it exactly as before, without a number', () => {
+  const m = withDetails(['Ouster']);
+  m.details.pages[0].business.items = [boxItem('', { source_url: '' })];
+  const html = renderReport(m);
+  assert.match(html, /<\/p>\s*<p class="business-body">본문 하나<\/p>\s*<p class="source">출처 Media <\/p>\s*<\/section>/);
+  assert.equal(occurrences(html, 'class="business-items"'), 0);
+  assert.equal(occurrences(html, 'class="business-no"'), 0);
+});
+
+test('a business box with two or three articles numbers each one and gives it its own source', () => {
+  for (const count of [2, 3]) {
+    const m = withDetails(['Moderna']);
+    m.details.pages[0].business.numbered = true;
+    m.details.pages[0].business.items = Array.from({ length: count }, (_, i) => boxItem(`${i + 1}.`));
+    const html = renderReport(m);
+    assert.equal(occurrences(html, '<ol class="business-items">'), 1);
+    assert.equal(occurrences(html, '<li class="business-item">'), count);
+    assert.equal(occurrences(html, 'class="business-body"'), count);
+    // 한 건 상자의 출처 한 줄 + 지표 칸 한 줄 대신, 항목마다 원문으로 가는 출처 줄이 하나씩이다.
+    assert.equal(occurrences(html, 'class="source"'), count + 1);
+    const order = Array.from({ length: count }, (_, i) => html.indexOf(`<span class="business-no">${i + 1}.</span>`));
+    assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), String(order));
+    for (let i = 1; i <= count; i += 1) {
+      assert.match(html, new RegExp(`<span class="business-no">${i}\\.</span>\\s*<div class="business-item-body">\\s*`
+        + `<p class="business-body">본문 ${i}\\.</p>\\s*<p class="source"><a href="https://www.example.com/${i}\\.">출처 Media ${i}\\.</a></p>`));
+    }
+  }
+});
+
+test('a cut article in a numbered business box is reported with its number', () => {
+  const m = withDetails(['Moderna']);
+  m.details.pages[0].business.numbered = true;
+  m.details.pages[0].business.items = [boxItem('1.'), boxItem('2.', { cut: true })];
+  assert.deepEqual(cutTexts(m), [{ company: 'Moderna', part: 'business 2' }]);
+});
+
 test('source lines link to the original article when a web address is known', () => {
   const html = renderReport(withDetails(['Ouster'], () => [firing(4, {
     source: 'Source Ouster - Official RSS 2026.08.26',
@@ -382,7 +422,7 @@ test('every cut summary, from character limits or rendered clipping, is reported
   base.items = { cards: [{ company: 'HyproMag', cut: false }, { company: 'Renishaw', cut: true }] };
   assert.deepEqual(cutTexts(base), [{ company: 'Renishaw', part: 'item' }]);
   base.details.pages[0].signals[2].cut = true;
-  base.details.pages[1].business.cut = true;
+  base.details.pages[1].business.items[0].cut = true;
   assert.deepEqual(cutTexts(base, [{ company: 'Air Liquide', part: 'business-body' }]), [
     { company: '3M', part: 'signal 3' }, { company: 'Nexeon', part: 'business' }, { company: 'Renishaw', part: 'item' },
     { company: 'Air Liquide', part: 'business-body', rendered: true }]);

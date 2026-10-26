@@ -273,6 +273,26 @@ const signalRow = signal => `
             </div>
           </li>`;
 
+// 사업현황 상자 본문. 한 건이면 예전처럼 문단 하나와 출처 줄이다. 두세 건이면(2026-10-26 사용자 결정)
+// 번호 칸 옆에 문안과 그 기사의 출처 줄을 붙여 "1." "2." "3." 항목으로 나눈다. 번호는 뷰 모델이 준다
+// (config/report_text.json business_item_number). 몇 건이 쪽에 들어가는지도 뷰 모델이 재서 정한다.
+const businessItems = business => {
+  const items = business.items || [];
+  if (!business.numbered) {
+    return items.map(item => `<p class="business-body">${escapeHtml(item.body)}</p>
+          ${item.source ? sourceLine(item.source, item.source_url) : ''}`).join('');
+  }
+  return `<ol class="business-items">${items.map(item => `
+            <li class="business-item">
+              <span class="business-no">${escapeHtml(item.no)}</span>
+              <div class="business-item-body">
+                <p class="business-body">${escapeHtml(item.body)}</p>
+                ${item.source ? sourceLine(item.source, item.source_url) : ''}
+              </div>
+            </li>`).join('')}
+          </ol>`;
+};
+
 function detailPages(state, model, assets) {
   const { details } = model;
   return details.pages.map((entry, index) => page(state, `
@@ -295,8 +315,7 @@ function detailPages(state, model, assets) {
             <span class="pill target">${escapeHtml(entry.business.target_label)}</span>
             <span class="target-text">${escapeHtml(entry.business.target_text)}</span>
           </p>` : ''}
-          <p class="business-body">${escapeHtml(entry.business.body)}</p>
-          ${entry.business.source ? sourceLine(entry.business.source, entry.business.source_url) : ''}
+          ${businessItems(entry.business)}
         </section>` : ''}
       </div>`)).join('');
 }
@@ -793,6 +812,17 @@ body {
   overflow: hidden;
 }
 .business-box .source { margin-top: 7.1pt; font-size: 8pt; }
+/* Two or three articles: each a numbered item with its own source right under
+   its text, the way an indicator row carries its source (2.4pt), and 8pt between
+   items. The number sits in a 12pt column so the text and source share one left
+   edge. report_measure.py (business_box_height) mirrors these values. */
+.business-items { margin: 6.4pt 0 0; padding: 0; list-style: none; }
+.business-item { display: flex; }
+.business-item + .business-item { margin-top: 8pt; }
+.business-no { flex: none; width: 12pt; font-size: 9pt; line-height: 11.7pt; font-weight: 600; color: ${COLORS.teal}; }
+.business-item-body { flex: 1; min-width: 0; }
+.business-item .business-body { margin: 0; }
+.business-item .source { margin-top: 2.4pt; }
 
 .matrix-desc {
   margin: 0 0 5pt;

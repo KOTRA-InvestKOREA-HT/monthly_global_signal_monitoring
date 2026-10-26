@@ -120,7 +120,11 @@ export function cutTexts(model, clipped = []) {
   const cut = [];
   for (const page of model.details?.pages || []) {
     for (const signal of page.signals || []) if (signal.cut) cut.push({ company: page.company, part: `signal ${signal.no}` });
-    if (page.business?.cut) cut.push({ company: page.company, part: 'business' });
+    // 사업현황 상자는 2026-10-26 부터 항목이 세 개까지다. 한 건이면 예전처럼 'business', 여러 건이면 몇 번째인지 적는다.
+    const items = page.business?.items || [];
+    items.forEach((item, index) => {
+      if (item.cut) cut.push({ company: page.company, part: items.length > 1 ? `business ${index + 1}` : 'business' });
+    });
   }
   for (const card of model.items?.cards || []) if (card.cut) cut.push({ company: card.company, part: 'item' });
   return [...cut, ...clipped.map(item => ({ ...item, rendered: true }))];

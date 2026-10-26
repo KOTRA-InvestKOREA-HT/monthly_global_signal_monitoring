@@ -67,8 +67,10 @@ for (const lang of ['ko', 'en']) {
       printed(page, vm.footer);
       printed(page, entry.company);
       if (entry.business) {
-        printed(page, entry.business.body);
-        printed(page, entry.business.source);
+        for (const item of entry.business.items) {
+          printed(page, `${item.no ? `${item.no} ` : ''}${item.body}`);
+          if (item.source) printed(page, item.source);
+        }
       }
       for (const signal of entry.signals) {
         printed(page, signal.label);
