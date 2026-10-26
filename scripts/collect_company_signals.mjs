@@ -14,11 +14,14 @@ import {
   isPersonOrCoveragePage,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-import { aemModelUrl, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, recoverPublisherRow } from './publisher_recovery.mjs';
+import { aemModelUrl, configuredOfficialHosts, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, isOfficialHostUrl,
+  recoverPublisherRow } from './publisher_recovery.mjs';
+import { extractEmbeddedArticle, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
 import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 // v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
-export const CONTENT_COLLECTION_VERSION = 'article-body-v18-feed-summary';
+// v19: 제목을 못 찾은 페이지에 제목 후보를 더 대 보고, 공식 호스트의 AEM 모델과 스크립트에 실린 본문(Arc·JSON-LD·RSC)을 읽는다.
+export const CONTENT_COLLECTION_VERSION = 'article-body-v19-embedded-body';
 // 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
 // 읽어 가므로 다시 내보낸다.
 export { TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collection_args.mjs';
@@ -427,6 +430,22 @@ function feedSummaryBody(summary, contentCharLimit) {
   return hasArticleBody({ content_text: text }) ? text : "";
 }
 
+// 스크립트 데이터(Arc·JSON-LD·RSC)에 실린 HTML 을 글로 바꾼다. 이 데이터는 &rsquo;·&nbsp; 같은 이름 있는 엔티티를
+// 그대로 싣는 일이 많아 피드 요약처럼 한 번 더 푼다. 상세 페이지 HTML 추출(cleanHtmlText)은 바꾸지 않는다.
+function embeddedHtmlText(raw = "") {
+  return cleanHtmlText(String(raw || ""))
+    .replace(/&([a-z]+);/gi, (match, name) => FEED_HTML_ENTITIES[name] ?? match)
+    .replace(/[ \t]+/g, " ")
+    .replace(/[ \t]*\n\s*/g, "\n")
+    .trim();
+}
+
+// 받은 문서에서 본문을 얻은 상태. 상세 페이지 HTML(fetched), 공식 AEM 모델(fetched_aem_model),
+// 페이지 스크립트에 실린 본문(fetched_embedded_arc·jsonld·rsc). 집계는 이 넷을 모두 "받음"으로 센다.
+export function fetchedContentStatus(status) {
+  return /^fetched(?:_aem_model|_embedded_(?:arc|jsonld|rsc))?$/.test(String(status || ""));
+}
+
 function withoutFeedSummary(row) {
   const { feed_summary, ...rest } = row;
   return rest;
@@ -805,14 +824,13 @@ function scopeFragments(html, tag) {
   return fragments;
 }
 
-export function extractArticleText(html) {
-  // An article tag can be a download card or company boilerplate. Advance to
-  // main/body when it cannot supply both the headline and substantive text.
-  // 주석은 먼저 지운다. 주석 처리된 <article> 이 남으면 깊이 계산이 어긋난다.
-  const scoped = stripComments(html).replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
-  const normalize = text => cleanHtmlText(text).normalize('NFKC').toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-  const headline = normalize(extractPageTitle(scoped));
+const normalizeArticleText = text => cleanHtmlText(text).normalize('NFKC').toLowerCase()
+  .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+
+// 본문 범위를 제목 하나(정규화한 글)로 찾는다. matched 는 제목이 든 조각을 골랐는지다.
+// 제목을 끝내 못 찾으면 가장 긴 조각(마지막 대체)을 돌려주고 matched 는 false 다.
+function scanArticleScopes(scoped, headline) {
+  const normalize = normalizeArticleText;
   // og:title 은 잘려 오는 일이 잦아("... support successful | Infineon Technologies")
   // 실제 제목 heading 이 headline 보다 길 수 있다. 접두 일치까지 같은 제목으로 본다.
   const carriesHeadline = text => Boolean(headline) &&
@@ -837,14 +855,86 @@ export function extractArticleText(html) {
     levels.push(candidates);
     const substantive = candidates.find(text => text.length >= 300 &&
       (!headline || normalize(text).includes(headline)));
-    if (substantive) return substantive;
+    if (substantive) return { text: substantive, matched: Boolean(headline) };
   }
   // A genuine short notice must survive when no larger usable scope exists.
   for (const candidates of levels) {
     const matching = candidates.find(text => headline && normalize(text).includes(headline));
-    if (matching) return matching;
+    if (matching) return { text: matching, matched: true };
   }
-  return levels.find(candidates => candidates.length)?.[0] || cleanHtmlText(scoped);
+  return { text: levels.find(candidates => candidates.length)?.[0] || cleanHtmlText(scoped), matched: false };
+}
+
+// 페이지 제목(extractPageTitle)으로 본문을 못 찾았을 때 다시 대 볼 제목들. 순서대로 대 보고 처음 맞는 것을 쓴다.
+// og:title 뒤에 " - 사이트 이름"이 붙은 사이트(2026-09 수집의 KED Global, ITS International, Best Magazine)는
+// extractPageTitle 이 " | …"만 떼므로 제목이 본문 어디에도 없었다. og:title 과 h1 의 문구가 다른 사이트
+// (Light Reading)도 있다. 그러면 가장 긴 <article> 조각으로 넘어가는데, 그 조각이 관련 기사 카드였다.
+// h1·<title> 에서 온 후보는 og:title 이나 행 제목과 가르는 낱말이 절반 이상 겹칠 때만 쓴다. news.3m.com 은
+// 모든 기사의 h1 이 "3M News Center - 3M Stories"라서, 그대로 받으면 본문이 사이트 공통 제목에서 잘린다.
+function retryHeadlines(scoped, rowTitle, tried) {
+  const ogTitle = extractMetaContent(scoped, ["og:title", "twitter:title"]);
+  const stripped = title => {
+    const once = withoutSiteSuffix(title.replace(/\s+\|.*$/, ""));
+    return [once, withoutSiteSuffix(once)];
+  };
+  // 대조 기준에서는 사이트 이름을 뗀다. 행 제목 "… - 3M News" 의 "news" 가 h1 "3M News Center" 와 겹쳐 통과하면 안 된다.
+  const references = [ogTitle, rowTitle].filter(Boolean).map(title => stripped(title)[0]);
+  const related = title => references.some(reference => sharedWordRatio(title, reference) >= 0.5);
+  const h1 = extractTagText(scoped, "h1");
+  const pageTitle = extractTagText(scoped, "title");
+  const candidates = [
+    ...(ogTitle ? stripped(ogTitle) : []),
+    ...(rowTitle ? stripped(rowTitle) : []),
+    ...[h1, ...stripped(h1), pageTitle, ...stripped(pageTitle)].filter(title => title && related(title)),
+  ];
+  return [...new Set(candidates.map(normalizeArticleText))]
+    .filter(headline => headline && headline !== tried && headline.split(" ").length >= 3);
+}
+
+// 본문과 함께 제목을 찾았는지(matchedHeadline)를 돌려준다. 제목을 못 찾은 페이지는 수집기가 스크립트에 실린
+// 본문(embedded_article.mjs)을 더 찾아본다. title: 행 제목(Google 제목은 " - 발행사"로 끝난다).
+// 다시 대 보기는 처음 시도가 제목을 못 찾았을 때만 한다. 처음 시도에서 제목을 찾은 페이지의 본문은 예전과
+// 글자 하나 다르지 않아야 한다. 본문이 바뀌면 기사 ID 가 바뀌어 저장된 판정을 다시 쓸 수 없다.
+export function extractArticleBody(html, { title = "" } = {}) {
+  // An article tag can be a download card or company boilerplate. Advance to
+  // main/body when it cannot supply both the headline and substantive text.
+  // 주석은 먼저 지운다. 주석 처리된 <article> 이 남으면 깊이 계산이 어긋난다.
+  const scoped = stripComments(html).replace(/<(nav|aside|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  const headline = normalizeArticleText(extractPageTitle(scoped));
+  const first = scanArticleScopes(scoped, headline);
+  // 페이지에 제목이 아예 없으면 예전 결과를 그대로 둔다. 대 볼 기준(og:title)도 없다.
+  if (first.matched || !headline) return { text: first.text, matchedHeadline: first.matched };
+  // 다시 대 볼 때는 스크립트를 먼저 지운다. 스크립트 문자열 안의 <h1> 에서 본문을 자르면 여는 <script> 가 잘려 나가
+  // 코드가 본문 글자로 남는다. The Northern Miner 의 유료 안내 페이지는 og:title("Free Article Limit Reached")과 같은
+  // <h1> 을 인쇄용 스크립트 문자열에 싣는다. 처음 시도는 예전과 같아야 하므로 지우지 않는다.
+  const bare = scoped.replace(/<(script|style|noscript)\b[\s\S]*?<\/\1>/gi, ' ');
+  for (const candidate of retryHeadlines(bare, String(title || ""), headline)) {
+    const retry = scanArticleScopes(bare, candidate);
+    if (retry.matched) return { text: retry.text, matchedHeadline: true };
+  }
+  return { text: first.text, matchedHeadline: false };
+}
+
+export function extractArticleText(html, options = {}) {
+  return extractArticleBody(html, options).text;
+}
+
+// 상세 페이지 HTML 의 본문. status 는 스크립트에서 꺼냈을 때만 fetched_embedded_* 이고, 아니면 빈 값이다.
+// HTML 추출이 실패했으면(본문이 기준 미달이거나 제목을 못 찾았으면) 페이지 스크립트에 실린 본문을 찾는다.
+// 2026-09 수집의 Chosun English(Arc XP)는 70~90자, LPGA(Next.js)는 179자만 남았는데, 같은 페이지의 스크립트
+// 데이터에 기사 전문이 있었다. 꺼낸 글은 제목 대조를 통과해야 하고(embedded_article.mjs) 기준 이상일 때만 쓴다.
+// 제목을 찾았고 기준을 넘은 본문은 건드리지 않는다. 바꾸면 기사 ID 가 바뀐다.
+export function articleContentFromHtml(html, { title = "", pageTitle = extractPageTitle(html) } = {}) {
+  const extracted = extractArticleBody(html, { title });
+  if (extracted.matchedHeadline && extracted.text.length >= ARTICLE_BODY_MIN_CHARS) {
+    return { text: extracted.text, status: "", matchedHeadline: true };
+  }
+  const embedded = extractEmbeddedArticle(html, { titles: [pageTitle, title], htmlToText: embeddedHtmlText });
+  if (embedded && embedded.content.length >= ARTICLE_BODY_MIN_CHARS) {
+    return { text: `${embedded.title}\n${embedded.content}`, status: `fetched_embedded_${embedded.kind}`,
+      matchedHeadline: extracted.matchedHeadline };
+  }
+  return { text: extracted.text, status: "", matchedHeadline: extracted.matchedHeadline };
 }
 
 function contentExcerpt(text = "", limit = 800) {
@@ -2080,7 +2170,7 @@ export function chooseBetterTitle(currentTitle, pageTitle, url, company) {
 // probe: Google 확인 차례(createPublisherProbe). log: 기업 수집의 단계 기록(createStepLog).
 // tally: 이 기업의 제외 집계(createTally). 다시 쓴 상세 단계의 제외도 센다. 이어 받은 기업의 집계가 전체 재수집과 같아야 한다.
 export async function enrichOfficialRowsWithContent(rows, args, collectedAt, company,
-  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog(), tally = createTally() } = {}) {
+  { yieldSlot = task => task(), probe = probePublisher, log = createStepLog(), tally = createTally(), officialHosts = new Set() } = {}) {
   rows = selectDetailRows(rows, args.maxVerifyPerCompany);
   if (!args.fetchOfficialContent) {
     return { rows: rows.filter(row => row.link_verdict !== 'fetch_to_verify').map(withoutFeedSummary), requestCount: 0, errors: [] };
@@ -2150,7 +2240,7 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
     // 상세 페이지 한 건이 한 단계다. 재시도할 까닭이 상세 페이지 단계에만 남은 기업을 이어 받을 때는 앞선 실행이
     // 받아 둔 결과를 그대로 쓰고, 실패했거나 멈춰서 요청하지 못한 기사만 다시 받는다(createStepLog).
     const { value: outcome, replayed } = await log.run(stepKey("detail", listed),
-      () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe, feedSummary }));
+      () => fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe, feedSummary, officialHosts }));
     if (!replayed) requestCount += outcome.requestCount;
     detailCount += outcome.detailCount;
     errors.push(...outcome.errors);
@@ -2167,7 +2257,8 @@ export async function enrichOfficialRowsWithContent(rows, args, collectedAt, com
 // 상세 페이지 한 건을 받아 판정한 결과. 체크포인트에 그대로 남으므로 데이터만 담는다.
 // row: 남길 행, exclusion: 버린 까닭([제목, URL, 사유]), detailCount: 상세 페이지 상한에 세는 요청 수,
 // paced: 요청 간격을 둘지. 본문을 받았거나 오류 행을 남긴 경우에만 둔다. 버리거나 멈춘 기사 뒤에는 두지 않는다.
-async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { yieldSlot, probe, feedSummary = "" }) {
+async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company,
+  { yieldSlot, probe, feedSummary = "", officialHosts = new Set() }) {
   const outcome = { requestCount: 0, detailCount: 0, errors: [], row: null, exclusion: null, paced: false };
   const errors = outcome.errors;
   const exclude = (title, url, reason) => ({ ...outcome, exclusion: [title, url, reason] });
@@ -2211,8 +2302,11 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
       return { ...outcome, row: { ...row, content_fetch_status: 'google_probe_paused' } };
     }
     const html = document.html;
-    let content = document.content ?? extractArticleText(html);
     const pageTitle = extractPageTitle(html);
+    // PDF 처럼 추출기가 본문을 준 문서는 그 본문을 그대로 쓴다.
+    const extracted = document.content != null ? { text: document.content, status: '' }
+      : articleContentFromHtml(html, { title: row.title, pageTitle });
+    let content = extracted.text;
     const resolvedTitle = chooseBetterTitle(row.title, pageTitle, row.url, company);
     if (row.publisher_resolution === 'official_exact_title' &&
         !fetchedTitleMatchesPublisherArticle(row, pageTitle || content.split(/\r?\n/, 1)[0])) {
@@ -2220,12 +2314,17 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company, { 
     }
     // 읽을 수 없는 문서였음을 "본문 없음"과 구분해 남긴다. 수집을 보완할 사람이 무엇을 고쳐야
     // 하는지 알 수 있어야 한다(PDF 추출 실패인지, 애초에 표 파일이었는지).
-    let contentFetchStatus = content ? 'fetched' : document.documentType ? `unreadable_${document.documentType}` : 'empty';
-    // Some official AEM pages return only a title shell in HTML. After an
-    // independently discovered same-host exact-title URL, try that page's
+    let contentFetchStatus = extracted.status || (content ? 'fetched' : document.documentType ? `unreadable_${document.documentType}` : 'empty');
+    // Some official AEM pages return only a title shell in HTML. Try that page's
     // same-path model once. The model helper accepts content only when its
     // own title identifies the same article.
-    if (row.publisher_resolution === 'official_exact_title' && content.length < ARTICLE_BODY_MIN_CHARS) {
+    // 예전에는 제목 대조로 공식 주소를 찾은 행(official_exact_title)만 모델을 봤다. 2026-09 수집의 Qualcomm
+    // 보도자료 두 건(Apple 특허 재계약, PickNik 인수)은 Google 주소를 해독해 qualcomm.com 에 닿았는데도 모델을 보지
+    // 않아 본문이 제목 껍데기(83자·93자)로 남았다. 이제 받은 HTML 주소가 그 기업의 공식 호스트이고 본문이 짧으면 본다.
+    // PDF 처럼 추출기가 본문을 준 문서에는 모델이 없다.
+    const officialShell = row.publisher_resolution === 'official_exact_title' ||
+      (document.content == null && isOfficialHostUrl(document.resolvedUrl, officialHosts));
+    if (officialShell && content.length < ARTICLE_BODY_MIN_CHARS) {
       const modelUrl = aemModelUrl(document.resolvedUrl);
       try {
         outcome.requestCount += 1;
@@ -3014,7 +3113,8 @@ function collectSource(source, company, sourceConfig, args, dateRange, collected
 export async function collectCompany(company, sourceConfig, selectedSources, args, dateRange, collectedAt, options = {}) {
   const { log = createStepLog(), trend = {} } = options;
   const tally = createTally();
-  const slot = { ...options, log, tally };
+  // 공식 호스트에 닿은 짧은 페이지는 AEM 모델을 한 번 더 본다(fetchDetailOutcome). Google 경로로 온 행도 그렇다.
+  const slot = { ...options, log, tally, officialHosts: configuredOfficialHosts(company.company, sourceConfig) };
   const { technologyMap = trendTechnology, keywordConfig = trendKeywordConfig, searchTerms = trendSearchTerms } = trend;
   const companyRows = [];
   const publisherCandidates = [];
@@ -3299,9 +3399,9 @@ async function main() {
     // Google News 기사가 발행사 본문에 닿은 두 경로를 따로 센다. 예전 publisher_resolution_count 는 제목 대조만
     // 세서, 해독으로 50건을 받은 9월 28일 실행에서도 0이라 해독이 안 되는 것처럼 읽혔다.
     google_news_rows: finalRows.filter(row => isGoogle(row.url)).length,
-    // 중계 주소를 해독(또는 리다이렉트)해 발행사 본문을 받은 행.
+    // 중계 주소를 해독(또는 리다이렉트)해 발행사 본문을 받은 행. AEM 모델이나 스크립트에서 본문을 꺼낸 행도 받은 것이다.
     google_news_decoded_count: finalRows.filter(row => isGoogle(row.url) && !row.publisher_resolution &&
-      row.content_fetch_status === 'fetched' && row.content_source_url && !isGoogle(row.content_source_url)).length,
+      fetchedContentStatus(row.content_fetch_status) && row.content_source_url && !isGoogle(row.content_source_url)).length,
     // 같은 제목의 공식 보도자료로 바꿔 받은 행(recoverPublisherRow).
     official_title_recovery_count: finalRows.filter(row => row.publisher_resolution === 'official_exact_title').length,
     // 시도했지만 해독도 리다이렉트도 발행사에 닿지 못한 행과, 그 해독 실패 사유.

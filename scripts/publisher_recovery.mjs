@@ -41,6 +41,12 @@ export function configuredOfficialHosts(company, sourceConfig) {
   return new Set(pages.map(page => canonicalHost(page.domain || page.url)).filter(Boolean));
 }
 
+// 받은 문서 주소가 그 기업의 공식 호스트(configuredOfficialHosts)인지. www. 와 끝의 점은 무시한다.
+export function isOfficialHostUrl(url, hosts) {
+  const parsed = httpUrl(url);
+  return Boolean(parsed && hosts?.has(canonicalHost(parsed.hostname)));
+}
+
 export function publisherRecoveryCandidate(row, sourceConfig) {
   const discovery = httpUrl(row?.url);
   const publisherHome = httpUrl(row?.publisher_home_url);
@@ -80,9 +86,18 @@ export function extractQualcommAemArticle(row, model, htmlToText) {
   // Qualcomm's press-note AEM model stores the article in this named media-RTE
   // component. Do not recursively harvest rich text: sibling RTEs contain the
   // company boilerplate, footer, and related cards.
-  const component = model?.[":items"]?.root?.[":items"]?.responsivegrid?.[":items"]?.mediarte;
-  if (!/\/mediarte\/v1\/mediarte$/.test(component?.[":type"] || "")) return null;
-  const content = cleanTitle(htmlToText(component?.qcommRTE?.text || ""));
+  // 본문 컴포넌트 이름은 "mediarte" 로 정해져 있지 않다. 2026-09 수집의 Apple 특허 재계약 보도자료는
+  // 이미지 컴포넌트(mediaimage)가 먼저 오고 본문이 "mediarte_1" 에 있었다. 그래서 :itemsOrder 순서(없으면 키 순서)로
+  // 처음 나오는 mediarte(_숫자) 컴포넌트 하나만 읽는다. PickNik 인수 보도자료처럼 mediarte 뒤에 오는
+  // mediarte_1 은 회사 소개 문구라서 모두 모으지 않는다.
+  const grid = model?.[":items"]?.root?.[":items"]?.responsivegrid;
+  const items = grid?.[":items"];
+  if (!items || typeof items !== "object") return null;
+  const order = Array.isArray(grid[":itemsOrder"]) ? grid[":itemsOrder"] : Object.keys(items);
+  const key = order.find(name => /^mediarte(?:_\d+)?$/.test(name) &&
+    /\/mediarte\/v1\/mediarte$/.test(items[name]?.[":type"] || ""));
+  if (!key) return null;
+  const content = cleanTitle(htmlToText(items[key]?.qcommRTE?.text || ""));
   return content ? { title: cleanTitle(model.title), content } : null;
 }
 
