@@ -93,7 +93,8 @@ def cover_line_size(measure, lines):
 # 사업현황 상자에 기사를 세 건까지 싣게 되면서(2026-10-26 사용자 결정) 상자가 쪽 아래 푸터 선을 넘지 않는지
 # 뷰 모델이 미리 알아야 한다. Chrome 이 그린 뒤에야 알면 빌드가 멈춘다(build_html_report.mjs cutTexts).
 # 아래 값은 report_html.mjs 의 .detail·.signal-box·.business-box CSS 를 옮긴 것이다. CSS 를 바꾸면 함께 바꾼다.
-# 4호(2026-09) 한·영 22장을 Chrome 으로 잰 높이와 비교해 맞췄다(시그널 상자 오차 ±0.5pt 안, 상자는 줄 수가 같다).
+# 4호(2026-09) 한·영 상세 쪽 44장을 Chrome 이 그린 높이와 맞대 보았다. 줄 수는 모두 같았고, 상자 아래 끝은 한 건짜리
+# 상자에서 0.2pt, 번호 항목 상자(두세 건, 12장)에서 0.5pt 안으로 맞았다. 남는 차이는 report_view_model.BUSINESS_FIT_MARGIN 이 덮는다.
 # Pretendard JP 의 hhea 높이 (1950 + 494) / 2048. CSS line-height: normal 이 이 비율이다.
 LINE_RATIO = 2444 / 2048
 # .detail 의 top 과 푸터 선(report_html.mjs CONTENT_BOTTOM_PT = 780 - 38).
