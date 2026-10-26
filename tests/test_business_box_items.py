@@ -209,16 +209,62 @@ class RepeatedSentenceTests(unittest.TestCase):
         self.assertIs(content.best_business_row("Safran", [other], [signal], [signal]), other)
 
     def test_a_later_item_drops_sentences_an_earlier_item_already_said(self):
-        first = article("Acme", "plant", 20, "A second wafer fabrication plant opened near Dresden with local hiring of 400 people.",
-                        ko="드레스덴 인근에 두 번째 웨이퍼 공장이 문을 열고 400명을 채용함.")
-        later = article("Acme", "award", 5, "A second wafer fabrication plant opened near Dresden with local hiring of 400 "
-                        "people. An industry group gave the battery separator line its yearly quality award.",
-                        ko="드레스덴 인근 두 번째 웨이퍼 공장이 문을 열었음. 업계 단체가 분리막 라인에 올해의 품질상을 줌.")
+        # 다른 기사이고 원래 문안으로 보아 다른 사건이면, 먼저 고른 항목을 되풀이하는 문장만 뺀다.
+        first = article("Acme", "plant", 20, "A second wafer fabrication plant opened with local hiring. The plant makes "
+                        "silicon carbide power wafers for electric vehicle inverters and will ship samples to carmakers soon.",
+                        ko="두 번째 웨이퍼 공장이 문을 열고 지역 인력을 채용함. 공장은 전기차 인버터용 탄화규소 웨이퍼를 만듦.")
+        later = article("Acme", "award", 5, "A second wafer fabrication plant opened with local hiring. An industry group "
+                        "gave the battery separator line its yearly quality award for low defect rates, safe handling of "
+                        "solvents and steady output across three shifts.",
+                        ko="두 번째 웨이퍼 공장이 문을 열었음. 업계 단체가 분리막 라인에 올해의 품질상을 줌.")
+        self.assertFalse(content.same_event_as_item(later, [first], "Acme"))
         chosen = content.business_rows("Acme", [first, later], [], [], exempt_company=True)
         self.assertEqual([row["url"] for row in chosen], [first["url"], later["url"]])
         self.assertIs(chosen[0], first)
-        self.assertEqual(chosen[1]["ai_summary_en"], "An industry group gave the battery separator line its yearly quality award.")
+        self.assertTrue(chosen[1]["ai_summary_en"].startswith("An industry group gave the battery separator line"))
         self.assertEqual(chosen[1]["ai_summary_ko"], "업계 단체가 분리막 라인에 올해의 품질상을 줌.")
+
+    def test_a_different_article_about_the_same_event_is_not_let_in_by_trimming(self):
+        # 4호 Nexeon: BusinessCloud 기사는 위 칸(Charged EVs·Solar Power Portal)과 같은 투자 유치 기사다. NWF 문장(0.75)을
+        # 빼면 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다. 다른 기사이고 같은 사건이라 통째로 뺀다(2026-10-26 사용자 결정).
+        charged = approved("Nexeon", investment_signal_no=3, ai_event_stage="precursor", url="https://chargedevs.example/a",
+                           title="Nexeon raises £100 million to expand its UK silicon anode operations", published_at="2026-09-09",
+                           ai_summary_en="Nexeon closed a £100-million ($133-million) investment round, including a £52.6-million "
+                                         "($70-million) commitment from the UK’s National Wealth Fund and participation from new "
+                                         "investors The Korea Development Bank and Honda Xcelerator Ventures, to fund a UK-based "
+                                         "pilot manufacturing facility, R&D work, and an expansion of its advanced manufacturing "
+                                         "technology unit.")
+        solar = approved("Nexeon", investment_signal_no=2, ai_event_stage="planned", url="https://solarpowerportal.example/b",
+                         title="National Wealth Fund backs Nexeon’s sodium battery tech with £53 million", published_at="2026-09-02",
+                         ai_summary_en="Nexeon will use the investment funds for a pilot manufacturing facility in the UK and "
+                                       "ongoing research and development efforts.")
+        business_cloud = article("Nexeon", "businesscloud", 2,
+                                 "Nexeon, headquartered in Abingdon near Oxford, is developing silicon anode materials to enable "
+                                 "higher energy density lithium-ion batteries, helping reduce charging times and extend electric "
+                                 "vehicle range. The National Wealth Fund's financing will support the company's development of a "
+                                 "UK-based pilot manufacturing facility, research and development activities, and the expansion of "
+                                 "its advanced manufacturing technology unit.",
+                                 ko="옥스퍼드 인근 Abingdon에 본사를 둔 Nexeon은 전기차의 충전 시간을 줄이고 주행 거리를 늘리는 "
+                                    "고에너지 밀도 리튬이온 배터리 생산을 가능하게 하는 실리콘 음극재 소재를 개발하고 있음. National "
+                                    "Wealth Fund의 자금 지원은 영국 내 파일럿 제조 시설 구축, 연구개발 활동 및 첨단 제조 기술 부문 "
+                                    "확장을 지원할 예정임.",
+                                 title="Nexeon raises £100m as National Wealth Fund invests - BusinessCloud")
+        shown = [charged, solar]
+        self.assertTrue(content.same_event_as_signal(business_cloud, shown, "Nexeon"))
+        self.assertIsNot(content.drop_repeated_sentences(business_cloud, shown), business_cloud, "문장을 빼면 들어올 수 있던 행")
+        gunsan = article("Nexeon", "oxfordmail", 2, "Nexeon's facility in Gunsan, South Korea, has been awarded ISO 9001:2015 "
+                         "certification.", ko="Nexeon 의 군산 공장이 ISO 9001:2015 인증을 받음.")
+        self.assertEqual(content.business_rows("Nexeon", [gunsan, business_cloud], [], shown), [gunsan])
+        self.assertIsNone(content.best_business_row("Nexeon", [business_cloud], [], shown))
+
+    def test_the_same_article_as_a_cell_above_is_still_trimmed_and_kept(self):
+        # Safran·Merck 처럼 위 칸과 같은 기사는 되풀이하는 문장만 빼고 싣는다. 다른 상자 항목이 먼저 있어도 같다.
+        signal, box = self.safran()
+        other = article("Safran", "propulsion", 15, "EDGE and Safran will build sovereign missile propulsion systems in Brazil.",
+                        ko="EDGE 와 Safran 이 브라질에서 미사일 추진 체계를 만듦.")
+        chosen = content.business_rows("Safran", [other, box], [signal], [signal])
+        self.assertEqual([row["url"] for row in chosen], [other["url"], box["url"]])
+        self.assertTrue(chosen[1]["ai_summary_en"].startswith("The EngineUS motor received certification in 2025"))
 
 
 @unittest.skipIf(view is None, "reportlab is not installed")

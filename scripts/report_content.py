@@ -1341,9 +1341,15 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
     같은 사건(same_event_as_item)인 후보는 건너뛴다. 4호 Norsk Hydro 의
     Siemens Mobility 철도 재활용 기사는 사업동향 행과 투자 시그널 행으로 두 번, Recycling Today 기사로 한 번 더
     들어와 있어 이 거름이 없으면 같은 사건이 세 칸을 채운다.
-    후보마다 위 칸과 이미 고른 항목을 되풀이하는 문장을 먼저 뺀다(drop_repeated_sentences). 순위는 원래 문안으로
-    가르고, 2·3순위의 '더 자세한 내용' 검사와 같은 사건 검사, 상자에 찍는 문안은 뺀 뒤의 문안으로 한다. 뺄 문장이 없는
-    행은 손대지 않으므로 그런 상자는 예전과 글자 하나 다르지 않다. 문장을 뺀 행은 원래 행의 사본이다.
+    위 칸과 이미 고른 항목을 되풀이하는 문장은 뺀다(drop_repeated_sentences). 순위는 원래 문안으로 가른다.
+    문장을 빼서 살릴 수 있는 것은 위 지표 칸과 같은 기사(같은 기사로 판정한 2순위 행, 그 기사에서 따로 쓴 3순위 상자
+    문안)와, 위 칸과도 이미 고른 항목과도 다른 사건인 다른 기사뿐이다(2026-10-26 사용자 결정). 다른 기사가 같은 사건인지는
+    원래 문안으로 가린다. 문장을 빼고 나면 같은 사건이 아닌 것처럼 보이기 때문이다. 4호 Nexeon 의 BusinessCloud 기사는
+    National Wealth Fund 투자 문장(위 칸과 0.75)을 빼자 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다. 2026-10-25 에
+    같은 사건으로 가려 상자에서 뺀 기사다. 같은 사건인 다른 기사는 되풀이하는 문장이 하나도 없을 때만 예전처럼 원래 문안
+    그대로 2순위 검사를 받고, 되풀이하는 문장이 있으면 통째로 뺀다.
+    2·3순위의 '더 자세한 내용' 검사, 같은 기사의 같은 사건 검사, 상자에 찍는 문안은 뺀 뒤의 문안으로 한다. 뺄 문장이
+    없는 행은 손대지 않으므로 그런 상자는 예전과 글자 하나 다르지 않다. 문장을 뺀 행은 원래 행의 사본이다.
     돌려주는 순서는 고른 순서(순위·sort_signal_rows)다. 상자에 찍는 순서는 business_display_order 가 정한다.
     """
     shown_ids = {id(row) for row in shown_rows}
@@ -1378,12 +1384,21 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
         for row in sort_signal_rows(candidates):
             if len(chosen) >= limit:
                 return chosen
-            if chosen and not business_item_ready(row):
+            if chosen and (not business_item_ready(row) or article_keys(row) & chosen_keys):
                 continue
-            row = drop_repeated_sentences(row, [*shown_rows, *chosen])
-            if row is None or (tier and not adds_detail(row)):
+            # 3순위 상자 문안은 위 칸 기사에서 따로 쓴 것이라 같은 기사다.
+            same_article = tier == 2 or bool(article_keys(row) & shown_keys)
+            if not same_article and chosen and same_event_as_item(row, chosen, company):
                 continue
-            if chosen and (article_keys(row) & chosen_keys or same_event_as_item(row, chosen, company)):
+            trimmed = drop_repeated_sentences(row, [*shown_rows, *chosen])
+            # 다른 기사인데 위 칸과 같은 사건(2순위)이면 문장을 빼서 들여보내지 않는다. 되풀이하는 문장이 하나라도 있으면
+            # 통째로 뺀다. 되풀이하는 문장이 없으면 2026-10-25 규칙대로 원래 문안 그대로 2순위 검사를 받는다(4호 Nexeon 의 Dentons).
+            if trimmed is None or (trimmed is not row and not same_article and tier):
+                continue
+            row = trimmed
+            if tier and not adds_detail(row):
+                continue
+            if same_article and chosen and same_event_as_item(row, chosen, company):
                 continue
             chosen.append(row)
             chosen_keys |= article_keys(row)
