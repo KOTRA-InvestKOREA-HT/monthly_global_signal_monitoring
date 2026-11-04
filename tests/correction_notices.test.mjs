@@ -32,3 +32,16 @@ test('page and company caps prefer releases over correction notices at the same 
   // 링크 순위가 먼저다.
   assert.equal(trimByRank([{ title: notices[0], link_rank: 0 }, { title: release, link_rank: 1 }], 1)[0].title, notices[0]);
 });
+
+// 공식 출처의 정례 공지(실적 발표 일정·배당·지분 공시)도 같은 출처 안에서 뒤로 간다. 버리지는 않는다.
+// 공식 제목은 소문자 URL 조각인 경우가 많다. 실적 발표 자체("dow reports ...")는 제자리에 있다.
+test('official routine notices move behind releases but before correction notices, and stay', () => {
+  const rows = [{ title: 'dow to report third quarter 2026 results on october 23' }, { title: notices[0] },
+    { title: 'dow reports third quarter 2026 results' }, { title: 'Umicore: Disclosure of transactions in own shares' },
+    { title: 'ouster acquires stereolabs to expand into vision' }];
+  assert.deepEqual(correctionsLast(rows).map(row => row.title), ['dow reports third quarter 2026 results',
+    'ouster acquires stereolabs to expand into vision', 'dow to report third quarter 2026 results on october 23',
+    'Umicore: Disclosure of transactions in own shares', notices[0]]);
+  assert.equal(trimByRank(rows.map(row => ({ ...row, link_rank: 0 })), 2).map(row => row.title)
+    .includes('dow to report third quarter 2026 results on october 23'), false);
+});

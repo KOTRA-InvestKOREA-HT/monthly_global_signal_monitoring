@@ -1,5 +1,5 @@
 {
-  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates.",
+  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates. external_news_title_names: extra names (short, parent or brand names) that mark an external (Google News) title as being about the company; used only to order fallback rows before the per-source cap and for the Korea-query title check, never sent to the judge (query_aliases in data/target_companies.json stay unchanged); upper-case names of up to four characters are matched case-sensitively. external_news_same_name_exclusions: per-company regex (pattern, optional case_sensitive) tested on the external title without the ' - Publisher' suffix; a match drops the row before the cap. required_form: exact-case spelling an external title must contain. external_news_unreadable_outlets: outlets that never yielded an article body in the 2026-08..10 collections; their rows are ordered last before the cap, not dropped. Official rows are never dropped by these rules. Editing them changes the collection identity, so the next run recollects.",
   "official_feeds": {
     "Australian Strategic Metals": [
       {
@@ -3424,5 +3424,163 @@
         "include": "^https://www\\.airbus\\.com/en/newsroom/press-releases/\\d{4}-\\d{2}-"
       }
     ]
-  }
+  },
+  "external_news_title_names": {
+    "Amkor Technology": [
+      "Amkor"
+    ],
+    "Eli Lilly and Company": [
+      "Lilly"
+    ],
+    "Cytiva": [
+      "Danaher"
+    ],
+    "EMM(Umicore)": [
+      "Umicore",
+      "EMM"
+    ],
+    "Prodrive": [
+      "Prodrive"
+    ],
+    "Norsk Hydro": [
+      "Hydro"
+    ],
+    "HyproMag": [
+      "HyProMag",
+      "Mkango",
+      "CoTec"
+    ],
+    "Magnix": [
+      "magniX"
+    ],
+    "Siemens-Gamesa": [
+      "Siemens Gamesa",
+      "Siemens Energy"
+    ],
+    "Toppan Holdings": [
+      "Toppan"
+    ],
+    "DNP": [
+      "Dai Nippon"
+    ],
+    "Applied Materials": [
+      "AMAT"
+    ],
+    "Ouster": [
+      "OUST"
+    ],
+    "Hitachi Metals": [
+      "Proterial"
+    ],
+    "Shin-Etsu Chemicals": [
+      "Shin-Etsu"
+    ],
+    "Tokyo Electron": [
+      "TEL"
+    ],
+    "Asahi Glass": [
+      "AGC"
+    ],
+    "Merck": [
+      "Merck KGaA",
+      "MilliporeSigma",
+      "EMD Electronics"
+    ],
+    "Schott Pharma": [
+      "SCHOTT"
+    ],
+    "Hexagon AB": [
+      "Hexagon"
+    ],
+    "GE Healthcare": [
+      "GE HealthCare"
+    ],
+    "Evonik Industries": [
+      "Evonik"
+    ],
+    "Maxon": [
+      "maxon"
+    ],
+    "Besi": [
+      "Besi",
+      "BE Semiconductor"
+    ],
+    "Onsemi": [
+      "ON Semiconductor"
+    ],
+    "Texcell": [
+      "ABL Diagnostics",
+      "Texcell"
+    ],
+    "Syensqo": [
+      "Susco"
+    ],
+    "Cheng Uei Precision": [
+      "Foxlink",
+      "Cheng Uei"
+    ],
+    "Shanghai Electric Wind Power": [
+      "Shanghai Electric"
+    ]
+  },
+  "external_news_same_name_exclusions": {
+    "Safran": {
+      "pattern": "\\bPeter Safran\\b|\\bDC Studios\\b|\\bJames Gunn\\b"
+    },
+    "EVG": {
+      "pattern": "\\bEaton Vance\\b|\\bEvion\\b|\\bASX:\\s?EVG\\b|\\bNYSE:\\s?EVG\\b|\\bEVG:ASX\\b|\\bManiry\\b"
+    },
+    "DNP": {
+      "pattern": "\\bDNP Select\\b|\\bSelect Income Fund\\b"
+    },
+    "Albemarle": {
+      "pattern": "\\bAlbemarle County\\b|\\bSupervisors\\b|\\bCharlottesville\\b"
+    },
+    "Dupont": {
+      "pattern": "\\bDupont (?:Circle|Hospital)\\b|\\bduPont REGISTRY\\b|\\b(?:Guillaume|Pierre|Jean|Marie) Dupont\\b",
+      "required_form": "DuPont"
+    },
+    "JSR": {
+      "pattern": "\\bDeno\\b|\\bJSR (?:registry|Genetics)\\b|\\bJamshedpur\\b|\\bJet Set Radio\\b|\\bin JSR\\b"
+    },
+    "Ouster": {
+      "pattern": "\\bouster of\\b|\\b(?:his|her|their|the|'s|’s) ouster\\b|\\bouster (?:from|bid|vote|attempt|under)\\b|\\bMSCI ouster\\b"
+    },
+    "Maxon": {
+      "pattern": "\\bTh[öo]mus\\b|\\bZBrush\\b|\\bCinema 4D\\b|\\bRedshift\\b|\\bMaxon (?:One|Fall|Spring)\\b|\\bRed Giant\\b"
+    },
+    "DOW": {
+      "pattern": "\\bDow Jones\\b|\\bthe Dow\\b|\\bDow (?:futures|falls|drops|rises|gains|slips|closes|jumps|tumbles|sinks|climbs|ends)\\b|\\bDoW\\b|\\bDepartment of War\\b",
+      "case_sensitive": true
+    },
+    "Bayer": {
+      "pattern": "\\bBayern\\b|\\bLeverkusen\\b|\\bBundesliga\\b|\\bDFB\\b"
+    },
+    "Toray": {
+      "pattern": "\\bPan Pacific Open\\b|\\bWTA\\b|\\btennis\\b"
+    },
+    "Merck": {
+      "pattern": "\\bMerck & Co\\b|\\bKeytruda\\b|\\bMSD\\b|\\bRahway\\b|\\bWinrevair\\b|\\bGardasil\\b"
+    },
+    "Corning": {
+      "pattern": "\\bCorning, N\\.?Y|\\bObituary\\b|\\bCorning-Painted Post\\b"
+    },
+    "Hexagon AB": {
+      "pattern": "\\bnuclear hexagon\\b|\\bHexagon (?:Composites|Purus)\\b"
+    }
+  },
+  "external_news_unreadable_outlets": [
+    "Reuters",
+    "Seeking Alpha",
+    "Fortune Business Insights",
+    "Bloomberg",
+    "Investing.com",
+    "Business Wire",
+    "Wind Power Monthly",
+    "Barron's",
+    "Benzinga",
+    "WSJ",
+    "Wall Street Journal",
+    "Moomoo"
+  ]
 }

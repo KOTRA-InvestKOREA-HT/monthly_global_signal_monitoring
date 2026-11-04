@@ -192,7 +192,8 @@ test('link verdict and exclusion counts travel with the company result through t
 test('a fallback article excluded at the detail stage stays excluded', async () => {
   const network = fakeNetwork();
   // 검색 결과의 짧은 제목은 받아 본 페이지 제목으로 바뀌고, 그 제목이 목록 페이지라 기사에서 빠진다.
-  const shortTitled = fallback.map((item, index) => (index === 0 ? ['Acme update', ...item.slice(1)] : item));
+  // 짧은 제목에도 기업 이름을 둔다. 이름 없는 제목은 상한 전에 뒤로 밀려(orderExternalRows) 상세 페이지 상한 밖에 선다.
+  const shortTitled = fallback.map((item, index) => (index === 0 ? ['Acme Widgets', ...item.slice(1)] : item));
   const fetch = async (url, init) => {
     url = String(url);
     if (url === publisher('G1')) return new Response(body('News archive', 11));

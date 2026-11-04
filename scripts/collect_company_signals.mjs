@@ -16,7 +16,7 @@ import {
 } from "./link_policy.mjs";
 import { aemModelUrl, configuredOfficialHosts, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, isOfficialHostUrl,
   recoverPublisherRow } from './publisher_recovery.mjs';
-import { extractEmbeddedArticle, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
+import { distinctiveWords, extractEmbeddedArticle, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
 import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 // v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
@@ -1189,6 +1189,209 @@ export function titleNamesCompany(title, names) {
   });
 }
 
+// ---- 외부 기사 잡음 줄이기 (2026-11) ----
+// 외부 기사(Google News 대체 수집·사업동향 탐색·한국 관련 검색)는 본문 없이 RSS 제목만 보고 상한(maxPerSource 등)으로
+// 자른다. 8~10월 수집을 되짚어 보니 실적 발표 일정·배당·지분 공시 같은 정례 공지, 시장조사 보도자료,
+// 이름이 같은 다른 대상(영화 제작자 Peter Safran, Dow Jones 지수 등), 공식 보도자료를 옮겨 실은 기사가 그 자리를
+// 차지했고, 이들 가운데 승인된 기사는 10월 DOW 의 openPR 시장 보고서 1건뿐이었다. 그래서 상한보다 먼저 거르거나
+// 뒤로 미룬다. 공식 출처 행은 거르지 않는다. 공식 제목은 소문자 URL 조각("dow reports third quarter 2026 results")인
+// 경우가 많아 제목 규칙이 엉뚱하게 걸린다. 정례 공지만 출처 안에서 뒤로 보낸다(correctionLast).
+// 목록(기업별 다른 이름·동명 제외 규칙·본문을 주지 않는 매체)은 config/company_sources.json 에 있다.
+// query_aliases 에 넣지 않는 것은 그것이 판정 모델에 가는 기업 식별 정보라서다(companySearchNames 설명 참고).
+
+// 매체 이름(" - Reuters")을 뗀 제목. stockCommentary 와 같은 방식이다.
+function titleWithoutOutlet(title) {
+  return String(title || "").replace(/\s+-\s+[^-]+$/, "");
+}
+
+function rowOutlet(row) {
+  const suffix = String(row?.title || "").match(/\s-\s([^-]+)$/)?.[1] || "";
+  return `${row?.publisher || ""} ${suffix}`.trim();
+}
+
+const isExternalRow = (row) => row?.source_type !== "official";
+
+// 1. 정례 공지: 실적 예고·발표 일정·콘퍼런스콜 안내·녹취록·배당·지분 변동 공시·자사주 현황·주간 전망.
+// 실적 자체("3M Q3 Earnings Call Highlights", Shin-Etsu "[FY2026 Q2 Earnings Call] ... Record Q2 Operating Profit")는 걸리지 않는다.
+export const ROUTINE_NOTICE_PATTERN = new RegExp([
+  String.raw`\bearnings preview\b`,
+  String.raw`\bwhat to expect\b.*\b(?:earnings|results|quarter|report)\b`,
+  String.raw`\b(?:earnings|results|quarter)\b.*\bwhat to expect\b`,
+  String.raw`\b(?:to|will) (?:report|announce|release)\b.{0,60}\b(?:results|earnings)\b`,
+  String.raw`\b(?:sets?|schedules?|announces?)\b.{0,40}\bdates?\b.{0,40}\b(?:earnings|results|conference call)\b`,
+  String.raw`\bschedules?\b.{0,60}\b(?:earnings|conference call)\b`,
+  String.raw`\b(?:to host|announces?)\b.{0,60}\bconference call\b`,
+  String.raw`\bearnings (?:conference )?call (?:is live|transcript|presentation)\b`,
+  String.raw`\btranscript\b`,
+  String.raw`\bto (?:present|participate) (?:at|in)\b.{0,60}\bconferences?\b`,
+  String.raw`\b(?:declares?|announces?|approves?)\b.{0,40}\bdividends?\b`,
+  String.raw`\bex-dividend\b`,
+  String.raw`\bnotifications? (?:of|by|from)\b.{0,30}\b(?:holdings?|shareholding|participation)\b`,
+  String.raw`\b(?:participation|transparency) notifications?\b`,
+  String.raw`\bown shares\b`,
+  String.raw`\btreasury shares\b`,
+  String.raw`\bshare (?:buy-?back|repurchase)s? (?:status|progress|transactions?|update)\b`,
+  String.raw`\bseasonal returns chart\b`,
+  String.raw`\bstock price, news, quote\b`,
+  String.raw`\bearnings snapshot\b`,
+  String.raw`\bweek ahead\b`,
+].join("|"), "i");
+
+export function routineNotice(row) {
+  return ROUTINE_NOTICE_PATTERN.test(titleWithoutOutlet(row?.title));
+}
+
+// 2. 시장조사 보도자료("... Market Size to Reach USD 12 Bn by 2034, CAGR 8%"). 제목으로 보거나, 시장조사 배포처가
+// 낸 "market" 제목이면 뺀다. IndexBox 는 매체로 막지 않는다. Rio Tinto·HyProMag 소식을 싣는 뉴스 항목이 있다.
+// "Samsung's HBM Market Share Jumps" 같은 사업 기사는 걸리지 않는다.
+const MARKET_RESEARCH_TITLE = /\bmarket (?:size|is going to boom|to reach|forecast|research|intelligence report|report|worth)\b|\bmarket\b.{0,40}\b(?:CAGR|20[3-4]\d)\b|\bCAGR\b|\bsize,? share\b/i;
+const MARKET_RESEARCH_PUBLISHERS = /\b(?:openPR|Fortune Business Insights|Grand View Research|Market Research Future|MRFR|SNS Insider|MarketsandMarkets|Maximize Market Research|Credence Research|Market Growth Reports)\b/i;
+
+export function marketResearchPromo(row) {
+  const title = titleWithoutOutlet(row?.title);
+  if (MARKET_RESEARCH_TITLE.test(title)) return true;
+  return MARKET_RESEARCH_PUBLISHERS.test(rowOutlet(row)) && /\bmarket\b/i.test(String(row?.title || ""));
+}
+
+// 4. 이름이 같은 다른 대상. 기업마다 company_sources.json 의 external_news_same_name_exclusions 에
+// { pattern, case_sensitive, required_form } 으로 적는다. pattern 이 매체 이름을 뗀 제목에 맞으면 뺀다.
+// required_form 은 대소문자까지 그대로 제목에 있어야 하는 표기다. 8~10월 외부 기사 제목 가운데 "Dupont"·"duPont"
+// 으로 쓴 것은 모두 다른 대상(사람·지명·잡지)이었고 회사 기사는 모두 "DuPont" 이었다.
+const sameNameRuleCache = new WeakMap();
+
+function sameNameRule(company, sourceConfig) {
+  const name = typeof company === "string" ? company : company?.company;
+  const entry = sourceConfig?.external_news_same_name_exclusions?.[name];
+  if (!entry) return null;
+  if (!sameNameRuleCache.has(entry)) {
+    sameNameRuleCache.set(entry, {
+      pattern: entry.pattern ? new RegExp(entry.pattern, entry.case_sensitive ? "" : "i") : null,
+      requiredForm: entry.required_form ? String(entry.required_form) : "",
+    });
+  }
+  return sameNameRuleCache.get(entry);
+}
+
+export function sameNameCollision(row, company, sourceConfig) {
+  const rule = sameNameRule(company, sourceConfig);
+  if (!rule) return false;
+  const title = titleWithoutOutlet(row?.title);
+  if (rule.pattern?.test(title)) return true;
+  return Boolean(rule.requiredForm) && !title.includes(rule.requiredForm);
+}
+
+// 외부 행을 상한 전에 뺄 까닭. 빼지 않으면 빈 문자열이다. 공식 출처 행은 늘 빈 문자열이다.
+export function externalNoiseReason(row, company, sourceConfig) {
+  if (!isExternalRow(row)) return "";
+  if (routineNotice(row)) return "routine_notice";
+  if (marketResearchPromo(row)) return "market_research";
+  if (sameNameCollision(row, company, sourceConfig)) return "same_name";
+  return "";
+}
+
+// 3. 제목에 기업을 부르는 이름. 표시명·별칭·검색용 이름에 company_sources.json 의 external_news_title_names
+// (약칭·모회사·브랜드: "Amkor", "Prodrive", "Siemens Energy" 등)를 더한다. 거르지 않고 순서와 한국 관련 검색에만 쓴다.
+export function companyTitleNames(company, sourceConfig) {
+  const extra = sourceConfig?.external_news_title_names?.[company?.company] || [];
+  return [...new Set([...baseTitleNames(company), ...extra].map((name) => String(name || "").trim()).filter(Boolean))];
+}
+
+function baseTitleNames(company) {
+  return [...relevantAliases(company), company?.company, ...(company?.query_aliases || [])]
+    .map((name) => String(name || "").trim()).filter(Boolean);
+}
+
+// 검색 이름(relevantAliases) 밖에서 더한 대문자 네 글자 이하 약칭("TEL", "AGC", "AMAT", "OUST", "EMM")은 대소문자까지
+// 맞춰 본다. 그래야 "Tel Aviv" 가 Tokyo Electron 제목으로 잡히지 않는다. 검색 이름은 예전처럼 대소문자를 가리지 않아,
+// 한국 관련 검색의 제목 확인은 예전에 통과하던 제목을 모두 그대로 통과시킨다.
+export function titleNamesCompanyExpanded(title, company, sourceConfig) {
+  const base = new Set(relevantAliases(company));
+  const names = companyTitleNames(company, sourceConfig);
+  const strict = names.filter((name) => !base.has(name) && /^[A-Z0-9]{2,4}$/.test(name));
+  if (titleNamesCompany(title, names.filter((name) => !strict.includes(name)))) return true;
+  const text = String(title || "");
+  return strict.some((name) => new RegExp(`(?:^|[^A-Za-z0-9])${name}(?:$|[^A-Za-z0-9])`).test(text));
+}
+
+// 5. 본문을 받지 못하는 매체(유료벽·봇 차단). 8~10월 수집에서 본문이 한 번도 나오지 않았다. 빼지 않고 뒤로 민다.
+export function unreadableOutlet(row, sourceConfig) {
+  const outlets = sourceConfig?.external_news_unreadable_outlets || [];
+  if (!outlets.length) return false;
+  const outlet = rowOutlet(row).toLowerCase();
+  return outlets.some((name) => {
+    const escaped = String(name).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`).test(outlet);
+  });
+}
+
+// 6. 공식 보도자료를 옮겨 실은 외부 기사. 본문이 있는 공식 행과 제목의 가르는 낱말(distinctiveWords)이
+// 절반 이상 겹치면(자카드 계수 0.5 이상) 같은 보도자료로 본다. 8~10월 기준으로 이렇게 빠질 외부 기사 가운데
+// 승인된 것은 모두 그 공식 행도 승인됐다. 본문이 없는 공식 행은 비교에서 뺀다. 그때는 외부 사본이 유일한 본문이다.
+export const OFFICIAL_COPY_OVERLAP = 0.5;
+
+export function titleWordOverlap(a, b) {
+  const left = new Set(distinctiveWords(withoutSiteSuffix(a)));
+  const right = new Set(distinctiveWords(withoutSiteSuffix(b)));
+  if (!left.size || !right.size) return 0;
+  let shared = 0;
+  for (const word of left) if (right.has(word)) shared += 1;
+  return shared / (left.size + right.size - shared);
+}
+
+export function copiesOfficialRow(row, officialRows = []) {
+  if (!isExternalRow(row)) return false;
+  return officialRows.some((official) => official?.source_type === "official" && hasArticleBody(official)
+    && titleWordOverlap(row.title, official.title) >= OFFICIAL_COPY_OVERLAP);
+}
+
+// 외부 검색 결과를 상한 전에 고른다. 잡음(1·2·4)과 공식 보도자료 사본(6)을 빼고, 남은 행을 제목에 기업 이름이
+// 있는 것 먼저, 그다음 본문을 주는 매체 먼저로 안정 정렬한다(3·5). dropped 는 까닭별로 뺀 수다.
+export function screenExternalRows(rows, company, sourceConfig, officialRows = []) {
+  const dropped = {};
+  const kept = [];
+  for (const row of rows) {
+    const reason = externalNoiseReason(row, company, sourceConfig) || (copiesOfficialRow(row, officialRows) ? "official_copy" : "");
+    if (reason) dropped[reason] = (dropped[reason] || 0) + 1;
+    else kept.push(row);
+  }
+  return { rows: kept, dropped };
+}
+
+export function orderExternalRows(rows, company, sourceConfig) {
+  return rows
+    .map((row, index) => ({ row, index,
+      unnamed: titleNamesCompanyExpanded(row.title, company, sourceConfig) ? 0 : 1,
+      unreadable: unreadableOutlet(row, sourceConfig) ? 1 : 0 }))
+    .sort((a, b) => a.unnamed - b.unnamed || a.unreadable - b.unreadable || a.index - b.index)
+    .map(({ row }) => row);
+}
+
+// 내보내기 직전의 외부 기사 재검사. 규칙을 고치기 전에 받아 둔 기업 체크포인트에도 같은 기준이 닿게 한다.
+// 공식 출처 행은 그대로 둔다. 순서 규칙(3·5)은 이미 자른 결과에는 의미가 없어 여기서 보지 않는다.
+export function exportExternalFilter(rows, companies = [], sourceConfig = {}) {
+  const companyByName = new Map(companies.map((company) => [company.company, company]));
+  const officialByCompany = new Map();
+  for (const row of rows) {
+    if (row.source_type !== "official") continue;
+    if (!officialByCompany.has(row.company)) officialByCompany.set(row.company, []);
+    officialByCompany.get(row.company).push(row);
+  }
+  const noiseDropped = {};
+  let stockCommentaryDropped = 0;
+  const kept = rows.filter((row) => {
+    if (row.source_type === "official") return true;
+    if (stockCommentary(row)) {
+      stockCommentaryDropped += 1;
+      return false;
+    }
+    const reason = externalNoiseReason(row, companyByName.get(row.company) || { company: row.company }, sourceConfig)
+      || (copiesOfficialRow(row, officialByCompany.get(row.company) || []) ? "official_copy" : "");
+    if (reason) noiseDropped[reason] = (noiseDropped[reason] || 0) + 1;
+    return !reason;
+  });
+  return { rows: kept, stockCommentaryDropped, noiseDropped };
+}
+
 export function parseRssOrAtom(xml, company, collectedAt, collector, query, defaultSource, feedKind = "") {
   const rows = [];
   const isOfficialCollector = collector.startsWith("official_");
@@ -1539,11 +1742,14 @@ const CORRECTION_NOTICE_PATTERN = new RegExp([
   "訂正", "一部変更のお知らせ", "정정",
 ].join("|"), "i");
 
+// 정례 공지(routineNotice: 실적 발표 일정·배당·지분 공시 등)도 같은 출처 안에서 뒤로 보낸다. 공식 행은 버리지 않는다.
+// 순서는 보통 기사, 정례 공지, 정정·수정 공시다.
 function correctionLast(row) {
-  return CORRECTION_NOTICE_PATTERN.test(String(row?.title || "")) ? 1 : 0;
+  if (CORRECTION_NOTICE_PATTERN.test(String(row?.title || ""))) return 2;
+  return routineNotice(row) ? 1 : 0;
 }
 
-// 출처 순서는 지키고 정정·수정 공시만 뒤로 보낸다(안정 정렬).
+// 출처 순서는 지키고 정정·수정 공시와 정례 공지만 뒤로 보낸다(안정 정렬).
 export function correctionsLast(rows) {
   return rows
     .map((row, index) => ({ row, index }))
@@ -2435,7 +2641,8 @@ export function trendDigestInputs(args, technology = trendTechnology, keywordCon
 
 // 출처 설정에서 기업 이름을 키로 갖는 항목. 수집기는 여기서 자기 기업 몫만 읽는다(collectOfficialFeeds·
 // collectOfficialPages·collectOfficialSitemaps·collectSecFilings 와 publisher_recovery 의 configuredOfficialHosts).
-const PER_COMPANY_SOURCE_KEYS = new Set(["official_feeds", "official_pages", "official_sitemaps", "sec_filers"]);
+const PER_COMPANY_SOURCE_KEYS = new Set(["official_feeds", "official_pages", "official_sitemaps", "sec_filers",
+  "external_news_title_names", "external_news_same_name_exclusions"]);
 
 // 기업 체크포인트 식별자. 전에는 출처 설정 전체를 넣어, 한 기업의 출처만 고쳐도 77개 기업을 모두 다시 받았다.
 // 이제 그 기업의 결과를 바꿀 수 있는 것만 넣는다: 회사 항목, 출처 설정의 자기 몫, 사업동향 탐색 입력의 자기 몫,
@@ -2671,7 +2878,8 @@ async function searchGoogleNews(params, timeoutSeconds) {
   }
 }
 
-async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt, searchTerms = null) {
+async function collectTrendDiscovery(company, technology, keywordConfig, dateRange, timeoutSeconds, collectedAt, searchTerms = null,
+  sourceConfig = {}) {
   const query = buildTrendQuery(company, technology, keywordConfig, dateRange, searchTerms);
   if (!query) return { rows: [], requestCount: 0, query: "" };
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
@@ -2688,11 +2896,12 @@ async function collectTrendDiscovery(company, technology, keywordConfig, dateRan
     dateRange,
   ).map((row) => ({ ...row, ...fallbackSourceFields(90), official_source_url: "",
     discovery_snippet: snippets.get(row.title) || "" }))
-    .filter((row) => !stockCommentary(row));
+    .filter((row) => !stockCommentary(row) && !externalNoiseReason(row, company, sourceConfig));
   return { rows, requestCount: 1, query };
 }
 
-async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt) {
+// officialRows: 본문까지 받은 이 기업의 공식 행. 그 보도자료를 옮겨 실은 외부 기사를 상한 전에 뺀다(copiesOfficialRow).
+async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSeconds, collectedAt, sourceConfig = {}, officialRows = []) {
   const query = buildQuery(company, dateRange);
   const params = new URLSearchParams({
     q: query,
@@ -2701,24 +2910,27 @@ async function collectGoogleNews(company, dateRange, maxPerSource, timeoutSecond
     ceid: "US:en",
   });
   const xml = await searchGoogleNews(params, timeoutSeconds);
+  const found = filterByDateRange(
+    parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
+    dateRange,
+  )
+    .map((row) => ({
+      ...row,
+      ...fallbackSourceFields(90),
+      official_source_url: "",
+    }))
+    // 상한보다 먼저 거른다. 뒤에서 거르면 주가 해설이 차지한 자리가 빈 채로 남는다.
+    .filter((row) => !stockCommentary(row));
+  // 잡음과 공식 보도자료 사본도 상한 전에 빼고, 제목에 기업 이름이 있는 기사·본문을 주는 매체를 앞에 세운다.
+  const screened = screenExternalRows(found, company, sourceConfig, officialRows);
   return {
-    rows: filterByDateRange(
-      parseRssOrAtom(xml, company, collectedAt, "google_news_rss", query, "Google News"),
-      dateRange,
-    )
-      .map((row) => ({
-        ...row,
-        ...fallbackSourceFields(90),
-        official_source_url: "",
-      }))
-      // 상한보다 먼저 거른다. 뒤에서 거르면 주가 해설이 차지한 자리가 빈 채로 남는다.
-      .filter((row) => !stockCommentary(row))
-      .slice(0, maxPerSource),
+    rows: orderExternalRows(screened.rows, company, sourceConfig).slice(0, maxPerSource),
     requestCount: 1,
+    dropped: screened.dropped,
   };
 }
 
-async function collectKoreaNews(company, dateRange, timeoutSeconds, collectedAt) {
+async function collectKoreaNews(company, dateRange, timeoutSeconds, collectedAt, sourceConfig = {}) {
   const query = buildKoreaQuery(company, dateRange);
   const params = new URLSearchParams({ q: query, hl: "en-US", gl: "US", ceid: "US:en" });
   const xml = await searchGoogleNews(params, timeoutSeconds);
@@ -2726,7 +2938,8 @@ async function collectKoreaNews(company, dateRange, timeoutSeconds, collectedAt)
     parseRssOrAtom(xml, company, collectedAt, "google_news_korea", query, "Google News"),
     dateRange,
   ).map((row) => ({ ...row, ...fallbackSourceFields(90), official_source_url: "" }))
-    .filter((row) => !stockCommentary(row) && titleNamesCompany(row.title, relevantAliases(company)));
+    .filter((row) => !stockCommentary(row) && !externalNoiseReason(row, company, sourceConfig)
+      && titleNamesCompanyExpanded(row.title, company, sourceConfig));
   return { rows, requestCount: 1, query };
 }
 
@@ -3187,8 +3400,10 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
     stats.fallback = "run";
     try {
       const { value: fallback, replayed } = await log.run("google_news",
-        () => collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt));
+        () => collectGoogleNews(company, dateRange, args.maxPerSource, args.timeoutSeconds, collectedAt, sourceConfig,
+          rows.filter(row => row.source_type === 'official')));
       stats.fallback_found = fallback.rows.length;
+      if (fallback.dropped && Object.keys(fallback.dropped).length) stats.fallback_noise_dropped = fallback.dropped;
       if (!replayed) requestCount += fallback.requestCount;
       if (!replayed && fallback.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       const recoveredFallback = fallback.rows
@@ -3239,13 +3454,17 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
     stats.trend_discovery = "run";
     try {
       const { value: discovered, replayed } = await log.run("google_news_trend",
-        () => collectTrendDiscovery(company, technology, keywordConfig, dateRange, args.timeoutSeconds, collectedAt, searchTerms));
+        () => collectTrendDiscovery(company, technology, keywordConfig, dateRange, args.timeoutSeconds, collectedAt, searchTerms,
+          sourceConfig));
       if (!replayed) requestCount += discovered.requestCount;
       if (!replayed && discovered.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       if (!discovered.query) stats.trend_discovery = "no_query";
       stats.trend_discovery_found = discovered.rows.length;
       const keywords = trendKeywords(technology, keywordConfig, company, searchTerms);
-      const selected = selectTrendRows(discovered.rows, rows, keywords, args.maxTrendDiscovery);
+      // 공식 보도자료를 옮겨 실은 기사는 자리를 받기 전에 뺀다(copiesOfficialRow).
+      const officialRows = rows.filter(row => row.source_type === 'official');
+      const candidates = discovered.rows.filter(row => !copiesOfficialRow(row, officialRows));
+      const selected = selectTrendRows(candidates, rows, keywords, args.maxTrendDiscovery);
       stats.trend_discovery_kept = selected.length;
       if (selected.length) {
         const recovered = selected.map(row => recoverPublisherRow(row, publisherCandidates, sourceConfig));
@@ -3267,13 +3486,15 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
     stats.korea_news = "run";
     try {
       const { value: found, replayed } = await log.run("google_news_korea",
-        () => collectKoreaNews(company, dateRange, args.timeoutSeconds, collectedAt));
+        () => collectKoreaNews(company, dateRange, args.timeoutSeconds, collectedAt, sourceConfig));
       if (!replayed) requestCount += found.requestCount;
       if (!replayed && found.requestCount > 0) await sleep(args.rateLimitSeconds * 1000);
       stats.korea_news_found = found.rows.length;
       const selected = [];
+      const officialRows = rows.filter(row => row.source_type === 'official');
       for (const row of found.rows) {
         if (selected.length >= args.maxKoreaNews) break;
+        if (copiesOfficialRow(row, officialRows)) continue;
         if (!isDuplicateTrendRow(row, [...rows, ...selected])) selected.push({ ...row, korea_discovery: true });
       }
       stats.korea_news_kept = selected.length;
@@ -3349,7 +3570,9 @@ async function main() {
 
   // 주가 해설은 검색 단계에서 이미 빼지만, 기준을 고치기 전에 받아 둔 기업 체크포인트에는 남아 있다. 내보내기 전에
   // 한 번 더 걸러 같은 기준이 받아 둔 수집에도 닿게 한다. 공식 출처 행은 보지 않는다.
-  const exportedRows = rows.filter(row => row.source_type === 'official' || !stockCommentary(row));
+  // 외부 기사 잡음 규칙(externalNoiseReason)과 공식 보도자료 사본(copiesOfficialRow)도 같은 까닭으로 여기서 한 번 더 본다.
+  const exportFilter = exportExternalFilter(rows, companies, sourceConfig);
+  const exportedRows = exportFilter.rows;
   const finalRows = sortRows(dedupeRows(exportedRows));
   const tally = companyResults.reduce((total, result) => mergeTally(total, result.stats), createTally());
   const samplesByReason = summarySamples(tally.excluded_non_article_samples);
@@ -3390,7 +3613,9 @@ async function main() {
     trend_discovery_kept: companyResults.reduce((total, result) => total + (result.stats?.trend_discovery_kept || 0), 0),
     trend_discovery_per_company: args.maxTrendDiscovery,
     // 공식 기사가 자리를 채워도 상한 밖에 덧붙인 외부 기사(fallbackMode always), 한국 관련 검색이 보탠 기사.
-    stock_commentary_dropped: rows.length - exportedRows.length,
+    stock_commentary_dropped: exportFilter.stockCommentaryDropped,
+    // 내보내기 전에 외부 기사 잡음 규칙으로 뺀 수(대개 규칙을 고치기 전에 받아 둔 체크포인트 몫이다).
+    external_noise_dropped: exportFilter.noiseDropped,
     external_news_reserved: companyResults.reduce((total, result) => total + (result.stats?.fallback_reserved || 0), 0),
     external_news_per_company: args.maxExternalNews,
     korea_news_found: companyResults.reduce((total, result) => total + (result.stats?.korea_news_found || 0), 0),

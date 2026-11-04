@@ -7,7 +7,7 @@ import {
   TREND_DISCOVERY_PER_COMPANY, TREND_QUERY_KEYWORD_LIMIT, buildTrendQuery, trendKeywords,
   matchedTrendKeywords, isDuplicateTrendRow, selectTrendRows, trendDigestInputs, trendSearchWindow,
   rankTrendQueryTerms, trendTermRank, selectTrendQueryTerms, companySearchTerms,
-  companySearchNames, companyTrendInputs,
+  companySearchNames, companyTrendInputs, copiesOfficialRow, externalNoiseReason,
 } from '../scripts/collect_company_signals.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -320,4 +320,22 @@ test('every per-company search term and name points at a listed company and can 
     assert.ok(listed.has(name), `unknown company in company_names: ${name}`);
     assert.ok(Array.isArray(names) && names.length > 0, name);
   }
+});
+
+// 사업동향 탐색 결과에도 외부 기사 잡음 규칙이 닿는다. 10월 탐색 후보 가운데 31건이 시장조사 보도자료였다.
+// IndexBox 는 매체로 막지 않는다. Rio Tinto·HyProMag 소식을 싣는 뉴스 항목이 승인된 적이 있다.
+test('trend discovery drops market research releases and official copies, keeps IndexBox news', () => {
+  const sources = JSON.parse(readFileSync('config/company_sources.json', 'utf8'));
+  const trendRow = (title, companyName) => ({ title, company: companyName, source_type: 'fallback', collector: 'google_news_trend' });
+  const rio = { company: 'Rio Tinto', query_aliases: [] };
+  assert.equal(externalNoiseReason(trendRow('Lithium Hydroxide Market Size to Reach USD 40 Bn by 2034 - openPR.com', 'Rio Tinto'), rio, sources),
+    'market_research');
+  assert.equal(externalNoiseReason(trendRow('Rio Tinto Commissions Lithium Plant in Argentina - IndexBox', 'Rio Tinto'), rio, sources), '');
+  assert.equal(externalNoiseReason(trendRow('HyProMag USA Plans Magnet Recycling Hub in Texas - IndexBox', 'HyproMag'),
+    { company: 'HyproMag', query_aliases: ['HyProMag'] }, sources), '');
+  const official = { source_type: 'official', title: 'Rio Tinto celebrates opening of $1.4 billion lithium projects in Argentina',
+    content_text: 'Rio Tinto opened its lithium projects in Argentina. '.repeat(20) };
+  assert.equal(copiesOfficialRow(trendRow('Rio Tinto celebrates opening of US$1.4 billion lithium projects in Argentina - Global Mining Review',
+    'Rio Tinto'), [official]), true);
+  assert.equal(copiesOfficialRow(trendRow('Rio Tinto Commissions Lithium Plant in Argentina - IndexBox', 'Rio Tinto'), [official]), false);
 });
