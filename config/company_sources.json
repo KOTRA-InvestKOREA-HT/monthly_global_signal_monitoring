@@ -1,5 +1,5 @@
 {
-  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates. external_news_title_names: extra names (short, parent or brand names) that mark an external (Google News) title as being about the company; used only to order fallback rows before the per-source cap and for the Korea-query title check, never sent to the judge (query_aliases in data/target_companies.json stay unchanged); upper-case names of up to four characters are matched case-sensitively. external_news_same_name_exclusions: per-company regex (pattern, optional case_sensitive) tested on the external title without the ' - Publisher' suffix; a match drops the row before the cap. required_form: exact-case spelling an external title must contain. external_news_unreadable_outlets: outlets that never yielded an article body in the 2026-08..10 collections; their rows are ordered last before the cap, not dropped. Official rows are never dropped by these rules. Editing them changes the collection identity, so the next run recollects.",
+  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates. An official_pages entry may carry include (regex on the absolute link URL, case-insensitive); links that do not match are ignored, so a third-party distribution host such as pressreleasefinder.com counts as official only under the company's own path. syensqo.com answers 403 to the collector (Actions and local), so Syensqo's releases are also read from its Press Release Finder page; the syensqo.com entries stay in case the block is lifted. external_news_title_names: extra names (short, parent or brand names) that mark an external (Google News) title as being about the company; used only to order fallback rows before the per-source cap and for the Korea-query title check, never sent to the judge (query_aliases in data/target_companies.json stay unchanged); upper-case names of up to four characters are matched case-sensitively. external_news_same_name_exclusions: per-company regex (pattern, optional case_sensitive) tested on the external title without the ' - Publisher' suffix; a match drops the row before the cap. required_form: exact-case spelling an external title must contain. external_news_unreadable_outlets: outlets that never yielded an article body in the 2026-08..10 collections; their rows are ordered last before the cap, not dropped. Official rows are never dropped by these rules. Editing them changes the collection identity, so the next run recollects.",
   "official_feeds": {
     "Australian Strategic Metals": [
       {
@@ -1922,6 +1922,16 @@
     ],
     "Syensqo": [
       {
+        "source": "Syensqo - Press Releases (Press Release Finder distribution)",
+        "kind": "press_release",
+        "url": "https://www.pressreleasefinder.com/Syensqo/",
+        "crawl_priority": "Primary",
+        "page_title": "Syensqo press releases",
+        "source_type_label": "Press Releases",
+        "domain": "www.pressreleasefinder.com",
+        "include": "^https://www\\.pressreleasefinder\\.com/Syensqo/[A-Za-z0-9_-]+/en/?$"
+      },
+      {
         "source": "Syensqo - News and Press Releases / Press Releases",
         "kind": "press_release",
         "url": "https://www.syensqo.com/en/newsroom/news-and-press-releases",
@@ -3233,15 +3243,6 @@
         "page_title": "Announcements and Circulars",
         "source_type_label": "Regulatory Filings / Announcements",
         "domain": "www.shanghai-electric.com"
-      },
-      {
-        "source": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Official Website / Company Website",
-        "kind": "official_page",
-        "url": "https://www.sewpg.com/",
-        "crawl_priority": "Primary",
-        "page_title": "Shanghai Electric Wind Power Official Website",
-        "source_type_label": "Company Website",
-        "domain": "www.sewpg.com"
       },
       {
         "source": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",

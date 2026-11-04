@@ -73,6 +73,19 @@ export function fetchedTitleMatchesPublisherArticle(row, fetchedTitle) {
   });
 }
 
+// .model.json 을 받아 볼 호스트. AEM(Adobe Experience Manager)으로 만든 것이 확인됐고 모델 본문을 읽을 줄 아는 곳만 둔다.
+// 본문 추출기(extractQualcommAemArticle)는 Qualcomm 의 mediarte·qcommRTE 컴포넌트만 읽으므로, 다른 AEM 사이트의 모델을
+// 받아도 본문이 나오지 않는다. 2026-10 수집에서 공식 호스트 전체에 모델을 붙였더니 14개 기업에서 23건이 404·403·차단
+// 페이지로 끝났고 본문을 얻은 행은 없었다. 설정 파일이 아니라 여기 두는 까닭: 이 목록은 추출기와 짝이라 함께 바뀌어야 하고,
+// 출처 설정 최상위에 키를 더하면 77개 기업의 수집 식별자가 모두 바뀐다. 하위 호스트는 따로 적는다
+// (investor.qualcomm.com 은 AEM 이 아니라 Q4 IR 플랫폼이다).
+export const AEM_MODEL_HOSTS = new Set(["qualcomm.com"]);
+
+export function hasAemModel(url, hosts = AEM_MODEL_HOSTS) {
+  const parsed = httpUrl(url);
+  return Boolean(parsed && hosts.has(canonicalHost(parsed.hostname)));
+}
+
 export function aemModelUrl(articleUrl) {
   const parsed = httpUrl(articleUrl);
   if (!parsed) return "";

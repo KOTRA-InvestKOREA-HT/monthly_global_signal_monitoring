@@ -2,7 +2,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { createDomainGuard, collectWithCheckpoint, createStepLog, retryableCollection, collectionInputDigest, stepKey } from './collection_resilience.mjs';
+import { botChallengeError, createDomainGuard, collectWithCheckpoint, createStepLog, detectBotChallenge, retryableCollection,
+  collectionInputDigest, stepKey } from './collection_resilience.mjs';
 import { ARTICLE_BODY_MIN_CHARS, chooseDateEvidence, hasArticleBody, periodPlacement, reportEligible, resolveDateState, unextractableBody } from "./date_state.mjs";
 import {
   augustRule,
@@ -14,14 +15,16 @@ import {
   isPersonOrCoveragePage,
   verifyFetchedArticle,
 } from "./link_policy.mjs";
-import { aemModelUrl, configuredOfficialHosts, extractQualcommAemArticle, fetchedTitleMatchesPublisherArticle, isOfficialHostUrl,
+import { aemModelUrl, configuredOfficialHosts, extractQualcommAemArticle, hasAemModel, fetchedTitleMatchesPublisherArticle, isOfficialHostUrl,
   recoverPublisherRow } from './publisher_recovery.mjs';
 import { distinctiveWords, extractEmbeddedArticle, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
 import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 // v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
 // v19: 제목을 못 찾은 페이지에 제목 후보를 더 대 보고, 공식 호스트의 AEM 모델과 스크립트에 실린 본문(Arc·JSON-LD·RSC)을 읽는다.
-export const CONTENT_COLLECTION_VERSION = 'article-body-v19-embedded-body';
+// v20: 200 으로 온 봇 차단 페이지(Incapsula·Akamai·Cloudflare)를 본문·목록으로 쓰지 않고 bot_challenge 오류로 남긴다.
+//      AEM 모델은 AEM 호스트(qualcomm.com)에서만 본다. 받아 둔 체크포인트의 차단 페이지 본문을 다시 쓰지 않게 버전을 올린다.
+export const CONTENT_COLLECTION_VERSION = 'article-body-v20-bot-challenge';
 // 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
 // 읽어 가므로 다시 내보낸다.
 export { TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collection_args.mjs';
@@ -1050,7 +1053,11 @@ async function fetchPageOnce(url, timeoutSeconds) {
       headers: requestHeaders(url),
     });
     if (!response.ok) throw httpError(response);
-    return { text: await response.text(), url: pageBaseUrl(url, response.url) };
+    const text = await response.text();
+    // 200 으로 온 봇 차단 페이지는 목록·피드·사이트맵이 아니다. 받은 글로 넘기면 링크 0건으로 조용히 끝난다.
+    const challenge = detectBotChallenge(text);
+    if (challenge) throw botChallengeError(challenge);
+    return { text, url: pageBaseUrl(url, response.url) };
   } finally {
     clearTimeout(timeout);
   }
@@ -1826,6 +1833,9 @@ function normalizeOfficialPageEntries(entries) {
         crawlPriority: entry.crawl_priority || "",
         pageTitle: entry.page_title || "",
         sourceTypeLabel: entry.source_type_label || "",
+        // 링크 주소(절대 주소)에 거는 정규식. 맞지 않는 링크는 판정도 복구 후보도 하지 않는다. 회사 몫이 경로 하나뿐인
+        // 제3자 배포 사이트(pressreleasefinder.com/Syensqo/)에서 다른 회사의 보도자료·메뉴 링크를 빼는 데 쓴다.
+        include: entry.include ? new RegExp(entry.include, "i") : null,
       };
     })
     .filter((entry) => entry.url);
@@ -1956,6 +1966,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       }
       const kept = [];
       for (const anchor of parseAnchors(html, baseUrl)) {
+        if (page.include && !page.include.test(anchor.url)) continue;
         // Keep raw configured-newsroom anchors only for exact-title recovery of
         // an opaque Google discovery URL. They do not enter collection unless
         // the ordinary link policy accepts them.
@@ -2329,7 +2340,15 @@ async function requestDocument(target, timeoutSeconds, fetchImpl) {
     throw Object.assign(new Error('publisher_url_unresolved'), { noRetry: true });
   }
   const declaredPdf = /application\/pdf/i.test(response.headers.get('content-type') || '') || /\.pdf(?:[?#]|$)/i.test(resolvedUrl);
-  return { bytes: await readLimitedResponse(response), resolvedUrl, declaredPdf };
+  const bytes = await readLimitedResponse(response);
+  // 200 으로 온 봇 차단 페이지를 본문으로 저장하지 않는다. 2026-10 Airbus 기사 5건의 본문이
+  // "Request unsuccessful. Incapsula incident ID: ..." 한 줄이었다. 오류로 남겨 본문 없는 행이 되게 한다.
+  // domainGuard 안에서 던져야 같은 호스트의 연속 차단을 센다.
+  if (!declaredPdf && sniffDocumentType(bytes) === 'text') {
+    const challenge = detectBotChallenge(new TextDecoder().decode(bytes));
+    if (challenge) throw botChallengeError(challenge);
+  }
+  return { bytes, resolvedUrl, declaredPdf };
 }
 
 export async function downloadArticleDocument(target, timeoutSeconds, fetchImpl = fetch) {
@@ -2528,9 +2547,12 @@ async function fetchDetailOutcome(row, detailUrl, args, collectedAt, company,
     // 보도자료 두 건(Apple 특허 재계약, PickNik 인수)은 Google 주소를 해독해 qualcomm.com 에 닿았는데도 모델을 보지
     // 않아 본문이 제목 껍데기(83자·93자)로 남았다. 이제 받은 HTML 주소가 그 기업의 공식 호스트이고 본문이 짧으면 본다.
     // PDF 처럼 추출기가 본문을 준 문서에는 모델이 없다.
+    // 모델은 AEM 으로 만든 것이 확인된 호스트(hasAemModel, 지금은 qualcomm.com)에서만 본다. 2026-10 수집에서는 공식 호스트이면
+    // 어디서나 .model.json 을 붙여, AEM 이 아닌 14개 기업에서 쓸모없는 요청 23건이 오류(404·403·Incapsula HTML)로 남았다.
+    // 목록 페이지(latest-stories.model.json)까지 그랬다. 모델 본문을 읽는 extractQualcommAemArticle 도 Qualcomm 컴포넌트만 안다.
     const officialShell = row.publisher_resolution === 'official_exact_title' ||
       (document.content == null && isOfficialHostUrl(document.resolvedUrl, officialHosts));
-    if (officialShell && content.length < ARTICLE_BODY_MIN_CHARS) {
+    if (officialShell && content.length < ARTICLE_BODY_MIN_CHARS && hasAemModel(document.resolvedUrl)) {
       const modelUrl = aemModelUrl(document.resolvedUrl);
       try {
         outcome.requestCount += 1;
@@ -3258,6 +3280,12 @@ export function sitemapUrlDate(url) {
   return null;
 }
 
+// 사이트맵 항목 수. 기사 주소(<url>)와 하위 사이트맵(<sitemap>)을 함께 센다. 기간·include 로 거르기 전의 수다.
+// 2026-10 Airbus 사이트맵 세 쪽은 200 으로 Incapsula 차단 페이지를 돌려줘 항목이 0개였는데, 오류 없이 0건으로 끝났다.
+export function sitemapEntryCount(xml) {
+  return (String(xml || "").match(/<(?:[\w-]+:)?(?:url|sitemap)>/gi) || []).length;
+}
+
 export function sitemapRows(xml, company, entry, dateRange, collectedAt) {
   const include = entry.include ? new RegExp(entry.include, "i") : null;
   const sourceName = entry.source || `${company.company} - Official news sitemap`;
@@ -3296,6 +3324,8 @@ async function collectOfficialSitemaps(company, sourceConfig, dateRange, maxPerS
     try {
       requestCount += 1;
       const xml = await fetchText(entry.url, timeoutSeconds);
+      // 항목이 하나도 없는 응답은 사이트맵이 아니다(차단·안내 페이지, 빈 응답). 0건으로 조용히 끝내지 않고 오류로 남긴다.
+      if (!sitemapEntryCount(xml)) throw new Error('sitemap_empty: no <url> or <sitemap> entries');
       rows.push(...correctionsLast(sitemapRows(xml, company, entry, dateRange, collectedAt)).slice(0, maxPerSource));
     } catch (error) {
       errors.push({ source_url: entry.url, source_name: entry.source || "Official news sitemap", kind: "sitemap", error: error.message });

@@ -33,13 +33,54 @@ export function collectionNeedsRefresh(summary, { version, inputDigest, now = Da
     !Number.isFinite(age) || age < 0 || age >= maxAge;
 }
 
-export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 30000 } = {}) {
+// 봇 차단·확인 페이지. 서버가 HTTP 200 으로 차단 안내문을 돌려주면 수집기는 그 글을 본문으로 받았다.
+// 2026-10 수집에서 airbus.com(Imperva)이 "Request unsuccessful. Incapsula incident ID: ..." 를 200 으로 돌려줘
+// Airbus 기사 5건이 그 한 줄을 본문(content_fetch_status fetched)으로 저장했고, 같은 응답을 받은 사이트맵·목록은
+// 링크 0건으로 조용히 끝났다. 표식은 차단 업체가 심는 것만 쓴다. 기사 본문에 "access denied" 같은 낱말이 있다고
+// 걸리지 않게, 페이지 제목·업체 자원 경로·사건 번호처럼 차단 페이지에만 있는 것을 짝으로 본다.
+// 차단 페이지는 짧다(Incapsula 1KB 안팎, Cloudflare 확인 페이지 수십 KB). 그보다 긴 응답은 보지 않는다.
+const BOT_CHALLENGE_MAX_CHARS = 60000;
+const BOT_CHALLENGES = [
+  // Imperva Incapsula: 차단 문구나, 차단·확인 iframe 의 자원 경로(?SWUDNSAI=·?CWUDNSAI=·incident_id=).
+  // 자원 경로만으로는 보지 않는다. Imperva 는 정상 페이지에도 /_Incapsula_Resource?SWJIYLWA=... 스크립트를 심는다.
+  ['incapsula', text => /Request unsuccessful\. Incapsula incident ID/i.test(text) ||
+    /\/_Incapsula_Resource\?[^"'\s>]*\b(?:[SC]WUDNSAI|incident_id)=/i.test(text)],
+  // Akamai: 제목 "Access Denied" 와 참조 번호("Reference #18.5e3c1302.1700000000.1a2b3c", HTML 엔티티로도 온다).
+  ['akamai', text => /<title>\s*Access Denied\s*<\/title>/i.test(text) &&
+    /Reference(?:&#32;|\s)+(?:&#35;|#)\s*\d+(?:&#46;|\.)[0-9a-f]+/i.test(text)],
+  // Cloudflare: "Just a moment..." 확인 페이지는 제목과 확인 스크립트가 함께 있고, 차단 페이지는 제목이 정해져 있다.
+  ['cloudflare', text => (/<title>\s*Just a moment\.\.\.\s*<\/title>/i.test(text) &&
+    /\/cdn-cgi\/challenge-platform\/|_cf_chl_opt|cf-chl-/i.test(text)) ||
+    /<title>\s*Attention Required! \| Cloudflare\s*<\/title>/i.test(text)],
+];
+
+// 차단 페이지를 낸 업체 이름. 차단 페이지가 아니면 빈 값이다.
+export function detectBotChallenge(text) {
+  const body = String(text ?? '');
+  if (!body || body.length > BOT_CHALLENGE_MAX_CHARS) return '';
+  return BOT_CHALLENGES.find(([, matches]) => matches(body))?.[0] || '';
+}
+
+// 차단 페이지를 받은 요청의 오류. 다시 보내도 같은 답이 오므로 재시도하지 않고(noRetry), 메시지가 일시 오류
+// 모양(TRANSIENT_ERROR)이 아니라서 기업도 재시도 대상이 되지 않는다. 같은 차단이 매 실행 되풀이될 텐데 그때마다
+// 기업을 처음부터 다시 받을 까닭이 없다.
+export function botChallengeError(vendor, detail = '') {
+  return Object.assign(new Error(`bot_challenge: ${vendor}${detail ? ` (${detail})` : ''}`), { noRetry: true, botChallenge: vendor });
+}
+
+// challengeThreshold: 한 호스트에서 차단 페이지를 연달아 이만큼 받으면 이번 실행 동안 그 호스트에는 더 보내지 않고
+// 같은 bot_challenge 오류로 끝낸다. domain_cooldown 과 달리 일시 오류로 세지 않는다(재시도 대상이 아니다).
+export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 30000, challengeThreshold = 2 } = {}) {
   const domains = new Map();
-  const stats = { attempts: 0, skipped: 0, elapsed_ms: 0 };
+  const stats = { attempts: 0, skipped: 0, elapsed_ms: 0, bot_challenges: 0, challenge_skipped: 0 };
   return { stats, async run(url, request) {
     const host = new URL(url).hostname;
-    const state = domains.get(host) || { failures: 0, until: 0, probing: false };
+    const state = domains.get(host) || { failures: 0, until: 0, probing: false, challenges: 0, vendor: '' };
     domains.set(host, state);
+    if (state.challenges >= challengeThreshold) {
+      stats.challenge_skipped++;
+      throw botChallengeError(state.vendor, `skipped: ${host} challenged earlier in this run`);
+    }
     if (state.failures >= threshold && (now() < state.until || state.probing)) {
       stats.skipped++;
       throw Object.assign(new Error(`domain_cooldown: ${host}`), { noRetry: true });
@@ -53,8 +94,15 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
     try {
       const result = await request();
       state.failures = 0;
+      state.challenges = 0;
       return result;
     } catch (error) {
+      // 차단 페이지는 호스트가 응답한 것이라 일시 장애로 세지 않는다(아래 noRetry 갈래). 연속 횟수만 따로 센다.
+      if (error.botChallenge) {
+        stats.bot_challenges++;
+        state.challenges++;
+        state.vendor = error.botChallenge;
+      } else state.challenges = 0;
       // A reachable server rejecting one URL is different from an unavailable host.
       // noRetry 오류(크기 초과, Google 중계 주소 등)는 응답을 받은 뒤의 판단이라 호스트 장애가 아니다.
       if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
