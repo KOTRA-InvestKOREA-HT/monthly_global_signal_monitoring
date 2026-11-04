@@ -1,656 +1,340 @@
 {
-  "status": "completed",
-  "requests": 80,
-  "cached": 665,
-  "completed": 733,
-  "total": 733,
+  "status": "completed_with_review_failures",
+  "reason": "invalid_responses",
+  "requests": 908,
+  "cached": 439,
+  "completed": 798,
+  "total": 800,
   "no_body_skipped": 0,
   "date_hints": 0,
-  "failed_articles": [],
-  "diagnostics": [
+  "failed_articles": [
     {
-      "article_id": "a509c4a40a358412989221eb",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/a509c4a40a358412989221eb/491cd3a5-c16e-46ec-8268-89270e9c8524-attempt-1.json"
+      "article_id": "ddab7cfb7499239ce14db1b5",
+      "reason": "evidence_mismatch"
     },
     {
-      "article_id": "8957d831af85b3d95d01527f",
+      "article_id": "c8e5ce61778b3196c5fd989f",
+      "reason": "evidence_mismatch"
+    }
+  ],
+  "diagnostics": [
+    {
+      "article_id": "ddab7cfb7499239ce14db1b5",
       "attempt": 1,
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/8957d831af85b3d95d01527f/6396387c-652f-487d-b78b-b2b40a18005e-attempt-1.json"
+      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/28b08c43-8b12-4ca2-ac62-571b778ae348-attempt-1.json"
+    },
+    {
+      "article_id": "ddab7cfb7499239ce14db1b5",
+      "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/f55835f2-d4c9-4326-8ec2-1327d15fe899-attempt-2.json"
+    },
+    {
+      "article_id": "12d31083265e55779cf75f10",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/12d31083265e55779cf75f10/0b38ccd9-3035-46d1-b434-aae5cced0595-attempt-1.json"
+    },
+    {
+      "article_id": "12d31083265e55779cf75f10",
+      "attempt": 1,
+      "stage": "verify",
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/12d31083265e55779cf75f10/50bb2d15-dce2-4a3a-bcd8-0f85370274a7-verify-attempt-1.json"
+    },
+    {
+      "article_id": "3446f01b98a489c5690388ae",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/3446f01b98a489c5690388ae/f787002a-d01f-42d6-b883-1f7b6de16a5c-attempt-1.json"
+    },
+    {
+      "article_id": "34315fc45939bffaff16b4c5",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/34315fc45939bffaff16b4c5/d5665d37-5072-4489-b81c-0b9a0d01e573-attempt-1.json"
+    },
+    {
+      "article_id": "5fe0a7a4028e0fef4edf5c45",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/5fe0a7a4028e0fef4edf5c45/41dd1cb2-4ba0-4233-bd94-e22c1423e2be-attempt-1.json"
+    },
+    {
+      "article_id": "0d72718b302e4509aaa1a349",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/0d72718b302e4509aaa1a349/c6c22a3b-fc88-4ed4-85b3-352f63ebb0f9-attempt-1.json"
+    },
+    {
+      "article_id": "c8e5ce61778b3196c5fd989f",
+      "attempt": 1,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/c8e5ce61778b3196c5fd989f/2c77a0c9-1fbf-4cd2-a2e0-c52fb46be05a-attempt-1.json"
+    },
+    {
+      "article_id": "c8e5ce61778b3196c5fd989f",
+      "attempt": 2,
+      "reason": "evidence_mismatch",
+      "file": "reviews/diagnostics/c8e5ce61778b3196c5fd989f/a39c6aaf-6fb6-43e5-af56-e1187fd5784e-attempt-2.json"
     }
   ],
   "concurrency": 4,
   "quote_removals": [
     {
-      "article_id": "6cb38aa0388995b37235a91b",
+      "article_id": "12d31083265e55779cf75f10",
+      "candidate_ids": [
+        "investment:1",
+        "investment:2",
+        "investment:3",
+        "investment:4",
+        "investment:5",
+        "relevant",
+        "investment:2"
+      ]
+    },
+    {
+      "article_id": "af6a729e6241c97510f38de8",
+      "candidate_ids": [
+        "investment:3"
+      ]
+    },
+    {
+      "article_id": "4327e653f0fa64e0ec84b54b",
       "candidate_ids": [
         "investment:4"
+      ]
+    },
+    {
+      "article_id": "148b5db2e78a4b1e38be8695",
+      "candidate_ids": [
+        "investment:5"
+      ]
+    },
+    {
+      "article_id": "d4e89cf4a2bd1830fe7f809a",
+      "candidate_ids": [
+        "investment:5"
+      ]
+    },
+    {
+      "article_id": "344e84a87d077ee76c012325",
+      "candidate_ids": [
+        "investment:3",
+        "investment:4",
+        "relevant"
+      ]
+    },
+    {
+      "article_id": "67cb55a30303779bad2be868",
+      "candidate_ids": [
+        "relevant"
+      ]
+    },
+    {
+      "article_id": "0a77319856b4243212a27668",
+      "candidate_ids": [
+        "investment:1",
+        "investment:2",
+        "investment:4",
+        "relevant"
+      ]
+    },
+    {
+      "article_id": "89e700a578a1472422af6244",
+      "candidate_ids": [
+        "investment:2",
+        "relevant"
       ]
     }
   ],
   "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 10,
-    "verified": 10,
+    "requested": 45,
+    "verified": 44,
     "partial": 0,
     "pending": 0,
-    "changed": 3,
+    "changed": 12,
     "failed": 0,
-    "rejected_responses": 0,
-    "errors": {}
+    "rejected_responses": 1,
+    "errors": {
+      "evidence_mismatch": 1
+    }
   },
   "key_runs": [
     {
       "key": 1,
-      "status": "completed",
-      "requests": 80,
-      "completed": 733
+      "status": "paused",
+      "reason": "quota",
+      "requests": 495,
+      "completed": 439
+    },
+    {
+      "key": 2,
+      "status": "paused",
+      "reason": "invalid_responses",
+      "requests": 413,
+      "completed": 798
     }
   ],
-  "approved_candidates": 130,
+  "approved_candidates": 150,
   "period": {
-    "from_date": "2026-09-01",
-    "to_date": "2026-09-30"
+    "from_date": "2026-10-01",
+    "to_date": "2026-10-31"
   },
   "provider": "gemini",
   "model": "gemini-3.5-flash-lite",
-  "issue_number": "4",
+  "issue_number": "5",
   "judgement_run": {
-    "id": "40162370025",
+    "id": "41403709884",
     "attempt": "1",
-    "sha": "d33722b21dd1e3857ada9b73922981eaa83a2fd8",
+    "sha": "92827f214ecc666dc0b9fc3ed6c2e0ebeaa4a80b",
     "ref": "main"
   },
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 198,
-    "requests": 12,
-    "cached": 227,
-    "written": 0,
-    "written_by": {},
+    "articles": 217,
+    "requests": 160,
+    "cached": 99,
+    "written": 160,
+    "written_by": {
+      "gemini-3.5-flash-lite": 160
+    },
     "failed": [
       {
-        "article_id": "fa133c197f94d4cea83a7fbf",
-        "company": "Merck",
-        "candidate_id": "relevant",
-        "problems": [
-          "ungrounded_numbers:1 억"
-        ]
-      },
-      {
-        "article_id": "8ba8ece42540ce6352968e22",
-        "company": "Umicore",
-        "candidate_id": "investment:1",
-        "problems": [
-          "bilingual_month_mismatch"
-        ]
-      },
-      {
-        "article_id": "38f866b0213472ddd06ef914",
-        "company": "EMM(Umicore)",
-        "candidate_id": "investment:2",
+        "article_id": "2850b3a0cf669688ad4cb451",
+        "company": "Siemens-Gamesa",
+        "candidate_id": "investment:5",
         "problems": [
           "bilingual_month_mismatch"
         ]
       }
     ],
-    "errors": {},
+    "errors": {
+      "unavailable": 8,
+      "invalid_response": 1
+    },
     "rejected": {
-      "ungrounded_numbers": 1,
-      "bilingual_month_mismatch": 2
+      "bilingual_month_mismatch": 1
     },
     "key_runs": [
       {
         "key": 1,
-        "requests": 12
+        "requests": 160
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 197,
-    "requests": 3,
-    "cached": 224,
-    "reviewed": 227,
+    "articles": 18,
+    "requests": 18,
+    "cached": 0,
+    "reviewed": 20,
     "flagged": [
       {
-        "article_id": "afd0b42563ac9fc82052f698",
-        "company": "Toppan Holdings",
-        "candidate_id": "relevant",
+        "article_id": "674e4d78cb0cf5b2c8449d2c",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
         "check": "certainty",
-        "copy_phrase": "established by",
-        "source_phrase": "to be established by",
-        "note": "The copy states the framework was established, whereas the sources state it is to be established in the future."
+        "copy_phrase": "is retiring",
+        "source_phrase": "to retire",
+        "note": "The source states Patrik Jonsson's retirement as a future event, whereas the copy states it as present or ongoing."
       },
       {
-        "article_id": "afd0b42563ac9fc82052f698",
-        "company": "Toppan Holdings",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "established by",
-        "source_phrase": "",
-        "note": "The English copy describes the framework as established, whereas the Korean copy describes it as being built."
-      },
-      {
-        "article_id": "a69073c435795dac86de3b26",
-        "company": "Skyworks",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "bolstering capabilities for autonomous vehicle IMU, RF, and baseband chips.",
-        "source_phrase": "",
-        "note": "The sources do not state that the combination bolsters capabilities for autonomous vehicle IMU, RF, and baseband chips."
-      },
-      {
-        "article_id": "a69073c435795dac86de3b26",
-        "company": "Skyworks",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "자율주행 차량용 IMU, RF 및 베이스밴드 칩 관련 역량을 강화하는 것임.",
-        "source_phrase": "",
-        "note": "The sources do not state that the combination enhances capabilities for autonomous vehicle IMU, RF, and baseband chips."
-      },
-      {
-        "article_id": "9de24507c17f74e82b9e357d",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "includes cutting 3,200 jobs worldwide",
-        "source_phrase": "3,200 jobs will be cut worldwide",
-        "note": "The copy states as current what the sources state as future."
-      },
-      {
-        "article_id": "9de24507c17f74e82b9e357d",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "확보할 방침임",
-        "source_phrase": "Evonik is securing financial leeway",
-        "note": "The copy states as planned what the sources state as ongoing."
-      },
-      {
-        "article_id": "9de24507c17f74e82b9e357d",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "감원을 단행하여",
-        "source_phrase": "3,200 jobs will be cut worldwide",
-        "note": "The copy states as done what the sources state as future."
-      },
-      {
-        "article_id": "dc6fe9762aaa51b2fb81b482",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "고급 단계",
-        "source_phrase": "",
-        "note": "The Korean term '고급 단계' is an unnatural literal translation of 'advanced stages' rather than an established business term."
-      },
-      {
-        "article_id": "c42b97f99d7fe40e8efda04a",
-        "company": "Air Liquide",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "operating under the TotalEnergies brand",
-        "source_phrase": "",
-        "note": "The detail that TEAL Mobility operates under the TotalEnergies brand is present in the English summary but missing in the Korean summary."
-      },
-      {
-        "article_id": "57adeae86c907805ba5dadea",
-        "company": "Ouster",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "페이로드",
-        "source_phrase": "",
-        "note": "The established Korean term for payload is 탑재체, making the transliteration 페이로드 an unestablished term."
-      },
-      {
-        "article_id": "9116cd846d11e57c2900d8ff",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "개인 관리",
-        "source_phrase": "",
-        "note": "The term '개인 관리' is a literal translation of 'personal care' instead of the established industry loanword '퍼스널 케어'."
-      },
-      {
-        "article_id": "0e4d13d64de0e6ff6e021fea",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "Developed in collaboration with Constantia Flexibles",
-        "source_phrase": "For the award-winning entry, a packaging sample provided by Constantia Flexibles was submitted, featuring printing inks formulated with TEGO ® Res 1100.",
-        "note": "The sources state that Constantia Flexibles provided a packaging sample for the award-winning entry, not that the product was developed in collaboration with them."
-      },
-      {
-        "article_id": "0e4d13d64de0e6ff6e021fea",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "Developed in collaboration with Constantia Flexibles",
-        "source_phrase": "",
-        "note": "English states the product was developed in collaboration with Constantia Flexibles, whereas Korean states the entry was submitted through collaboration with them."
-      },
-      {
-        "article_id": "0e4d13d64de0e6ff6e021fea",
-        "company": "Evonik Industries",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "코바인더",
-        "source_phrase": "",
-        "note": "The term '코바인더' is a literal transliteration of 'co-binder' rather than an established Korean technical term."
-      },
-      {
-        "article_id": "f081bb7cf0c2e847d7c4c239",
+        "article_id": "82b84d3a1bdc202a3ddfcc0d",
         "company": "Mitsubishi Chemical",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "바이오 엔지니어링 플라스틱",
-        "source_phrase": "",
-        "note": "바이오 엔지니어링 플라스틱 is a literal compound translation not established in Korean business terminology."
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "appointed",
+        "source_phrase": "Effective as of January 1, 2027",
+        "note": "The copy presents the appointment as a completed action, whereas the source indicates it is effective on a future date."
       },
       {
-        "article_id": "c1a51330f57a94c64f9744a5",
-        "company": "Infineon",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "고체 차단기",
-        "source_phrase": "",
-        "note": "Solid-state in this technological context is standardly translated as 반도체 rather than literally as 고체, making 고체 차단기 an unestablished literal compound."
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "Ilya Yuffa를 Lilly Global Markets 사장으로 임명하고",
+        "source_phrase": "On Jan. 1, 2027 , Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets",
+        "note": "The copy states Ilya Yuffa's appointment as done, whereas the sources state it as a future event for Jan. 1, 2027."
       },
       {
-        "article_id": "79837aaadb5003f9d62ddd75",
-        "company": "Schmalz",
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
         "candidate_id": "investment:5",
         "check": "mismatch",
-        "copy_phrase": "Dr. Kurt Schmalz 등",
+        "copy_phrase": "Lilly Global Markets 사장",
         "source_phrase": "",
-        "note": "The Korean summary omits Dr. Johannes Schmalz and Andreas Beutel, who are included in the English summary."
+        "note": "The English summary includes executive vice president for Ilya Yuffa, which is missing in the Korean summary."
       },
       {
-        "article_id": "c2b622aa28c7776c142cdae3",
-        "company": "Nabtesco",
-        "candidate_id": "relevant",
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
         "check": "mismatch",
-        "copy_phrase": "수요에 대응해",
+        "copy_phrase": "Lilly Europe and Canada 대표",
         "source_phrase": "",
-        "note": "The Korean summary mentions responding to demand, which is missing from the English summary."
+        "note": "The English summary includes group vice president for Elias Khalil, which is missing in the Korean summary."
       },
       {
-        "article_id": "853df67b36be1cd3828a93bb",
-        "company": "Qualcomm",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "are expected to launch in the second half of 2022",
-        "source_phrase": "The newly announced FE modules are expected to launch in H2 2022",
-        "note": "The copy states the launch as expected, but the event date is on or before the published date, making it a past event."
-      },
-      {
-        "article_id": "7822cd3830ff8939586fff7c",
-        "company": "Magnix",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "United States",
-        "source_phrase": "",
-        "note": "The copy states the country United States, which is not mentioned in the sources."
-      },
-      {
-        "article_id": "7822cd3830ff8939586fff7c",
-        "company": "Magnix",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "미국",
-        "source_phrase": "",
-        "note": "The copy states the country 미국, which is not mentioned in the sources."
-      },
-      {
-        "article_id": "b6d84748dddf16bd5f6821e8",
-        "company": "Applied Materials",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "Applied Materials announced",
-        "source_phrase": "Tan announced",
-        "note": "The announcing party differs between the English and Korean summaries."
-      },
-      {
-        "article_id": "27c0a0c096757cae1c8019d5",
-        "company": "Jenoptik",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "자회사인",
-        "source_phrase": "",
-        "note": "The sources do not state that Jenoptik Canada is a subsidiary."
-      },
-      {
-        "article_id": "27c0a0c096757cae1c8019d5",
-        "company": "Jenoptik",
+        "article_id": "8037799df096aca6557c1c28",
+        "company": "Charles River",
         "candidate_id": "relevant",
         "check": "term",
-        "copy_phrase": "녹색신호 과속",
+        "copy_phrase": "엔드포인트",
         "source_phrase": "",
-        "note": "녹색신호 과속 is a literal compound coined from English parts rather than an established Korean term."
-      },
-      {
-        "article_id": "08526a3f22a77e1cbbbe82fa",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "독일 최대 화학사인 Evonik Industries",
-        "source_phrase": "Germany's two largest chemical makers",
-        "note": "The sources state that BASF and Evonik are Germany's two largest chemical makers, not that Evonik is the single largest."
-      },
-      {
-        "article_id": "63f157a9af955a09267ee13c",
-        "company": "Qualcomm",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": ", which develops and maintains MoveIt",
-        "source_phrase": "",
-        "note": "English summary states that PickNik develops and maintains MoveIt, but this fact is missing in the Korean summary."
-      },
-      {
-        "article_id": "8ba8ece42540ce6352968e22",
-        "company": "Umicore",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "the materials will be used in batteries for electric vehicles produced in North America.",
-        "source_phrase": "",
-        "note": "The English summary states the materials will be used in batteries, while the Korean summary states they will be used to produce cathode materials."
-      },
-      {
-        "article_id": "211af5c824a1f8711e6ac039",
-        "company": "BASF",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "진행 중임",
-        "source_phrase": "",
-        "note": "The advanced stage of the feasibility study is stated in English but omitted in Korean."
-      },
-      {
-        "article_id": "0e8839bf980c461b590f8527",
-        "company": "Cognex",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "피지컬 AI",
-        "source_phrase": "",
-        "note": "The term '피지컬 AI' is a Hangul transliteration of the English phrase 'Physical AI' rather than an established Korean translation."
-      },
-      {
-        "article_id": "5f3ba534c7ab57b2236846c3",
-        "company": "Onsemi",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "고용량",
-        "source_phrase": "",
-        "note": "The term 고용량 is an incorrect translation for high-volume in the context of automotive camera applications."
-      },
-      {
-        "article_id": "c1038f6967d1557d828107d0",
-        "company": "Merck",
-        "candidate_id": "investment:1",
-        "check": "mismatch",
-        "copy_phrase": "Bengaluru, India",
-        "source_phrase": "in its Jigani, Bengaluru site",
-        "note": "The English summary omits the Jigani location, which is present in the Korean summary and sources."
-      },
-      {
-        "article_id": "c1038f6967d1557d828107d0",
-        "company": "Merck",
-        "candidate_id": "investment:1",
-        "check": "mismatch",
-        "copy_phrase": "아시아태평양 지역 공급망 강화를 위해",
-        "source_phrase": "to strengthen its production and supply operations in the Asia-Pacific region",
-        "note": "The Korean summary omits 'production' from the Asia-Pacific operations goal, which is present in the English summary and sources."
-      },
-      {
-        "article_id": "a509c4a40a358412989221eb",
-        "company": "Besi",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "장비 준비 태세",
-        "source_phrase": "",
-        "note": "장비 준비 태세 is an unnatural literal compound coined from English parts rather than an established Korean business term."
-      },
-      {
-        "article_id": "04288293e3090223a116bfb3",
-        "company": "Maxon",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "is introducing",
-        "source_phrase": "Soon, a new \" m otion in sights and d iagnostics\" service from Swiss precision-drive specialist maxon called maxon MIND will help machine builders and plant engineers add condition monitoring and diagnostics capabilities to their equipment.",
-        "note": "The copy states the service is being introduced now, whereas the sources state it will help in the future and its official release is expected in 2027."
-      },
-      {
-        "article_id": "04288293e3090223a116bfb3",
-        "company": "Maxon",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "제공하고 있음",
-        "source_phrase": "Soon, a new \" m otion in sights and d iagnostics\" service from Swiss precision-drive specialist maxon called maxon MIND will help machine builders and plant engineers add condition monitoring and diagnostics capabilities to their equipment.",
-        "note": "The copy states that the service is currently being provided, whereas the sources state it will help in the future and is expected to be released in 2027."
-      },
-      {
-        "article_id": "e33c6bcdbadf9c90d437c75b",
-        "company": "Toppan Holdings",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "supports an overall supply infrastructure",
-        "source_phrase": "will be able to establish an overall supply infrastructure",
-        "note": "The copy states as present what the sources state as future."
-      },
-      {
-        "article_id": "e33c6bcdbadf9c90d437c75b",
-        "company": "Toppan Holdings",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "공급 인프라를 구축하며",
-        "source_phrase": "will be able to establish an overall supply infrastructure",
-        "note": "The copy states as present what the sources state as future."
-      },
-      {
-        "article_id": "8c6a74909944b9d1b0640440",
-        "company": "Hexagon AB",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "entry point",
-        "source_phrase": "",
-        "note": "The phrase 'entry point' appears in the English summary and is missing in the Korean summary."
-      },
-      {
-        "article_id": "c9aa34a8ee7202db9137a8f7",
-        "company": "3M",
-        "candidate_id": "investment:4",
-        "check": "term",
-        "copy_phrase": "open-field",
-        "source_phrase": "",
-        "note": "The English term open-field is left in Latin script instead of being translated into Korean."
-      },
-      {
-        "article_id": "c9aa34a8ee7202db9137a8f7",
-        "company": "3M",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "open-field",
-        "source_phrase": "",
-        "note": "The English term open-field is left in Latin script instead of being translated into Korean."
-      },
-      {
-        "article_id": "43f3e61be8696d0263e4d628",
-        "company": "Prodrive",
-        "candidate_id": "investment:4",
-        "check": "term",
-        "copy_phrase": "확장 생산",
-        "source_phrase": "",
-        "note": "The term '확장 생산' is a literal compound coined from English parts rather than an established Korean business term."
-      },
-      {
-        "article_id": "1aac886c2c781ef065b3751c",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "원격 전이 없는 생존율",
-        "source_phrase": "",
-        "note": "The phrase 원격 전이 없는 생존율 is a literal translation rather than the established Korean medical term 무원격전이 생존율."
-      },
-      {
-        "article_id": "11cfd15d00e8635453dd7c23",
-        "company": "Norsk Hydro",
-        "candidate_id": "investment:4",
-        "check": "term",
-        "copy_phrase": "파일럻",
-        "source_phrase": "",
-        "note": "파일럻 is a malformed Hangul transliteration of pilot and not an established Korean term."
-      },
-      {
-        "article_id": "11cfd15d00e8635453dd7c23",
-        "company": "Norsk Hydro",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "파일럻",
-        "source_phrase": "",
-        "note": "파일럻 is a malformed Hangul transliteration of pilot and not an established Korean term."
-      },
-      {
-        "article_id": "22348957a5fd02d5f9a3c521",
-        "company": "Nexeon",
-        "candidate_id": "investment:3",
-        "check": "mismatch",
-        "copy_phrase": "The Korea Development Bank and Honda Xcelerator Ventures",
-        "source_phrase": "",
-        "note": "The participating new investors mentioned in the English summary are omitted in the Korean summary."
-      },
-      {
-        "article_id": "edf5f44386e653b918f608a2",
-        "company": "Solvay",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "분리 사업 운영 부문",
-        "source_phrase": "",
-        "note": "The phrase is a literal compound translation rather than an established Korean term."
-      },
-      {
-        "article_id": "71c390fc19ca5fa7a3bc533a",
-        "company": "Amkor Technology",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "고객 수요",
-        "source_phrase": "",
-        "note": "The Korean summary translates customer commitments as customer demand creating a discrepancy between the English and Korean summaries."
-      },
-      {
-        "article_id": "7f84fa60acc76262aec361a0",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": ", USA,",
-        "source_phrase": "",
-        "note": "The source text does not state USA."
-      },
-      {
-        "article_id": "7f84fa60acc76262aec361a0",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "unsupported",
-        "copy_phrase": "미국",
-        "source_phrase": "",
-        "note": "The source text does not state the country."
-      },
-      {
-        "article_id": "4dfca4717d119ac52d24196f",
-        "company": "Ouster",
-        "candidate_id": "investment:4",
-        "check": "mismatch",
-        "copy_phrase": "firmware tuning",
-        "source_phrase": "firmware tuning",
-        "note": "The firmware tuning detail present in the English summary is missing from the Korean summary."
-      },
-      {
-        "article_id": "ce674edc3716eb6f1b7584c2",
-        "company": "ABB",
-        "candidate_id": "relevant",
-        "check": "certainty",
-        "copy_phrase": "편입됨",
-        "source_phrase": "will be folded into ABB's Marine & Ports division",
-        "note": "The source states that Hoglund will be folded into ABB's Marine & Ports division, whereas the copy states it as completed."
-      },
-      {
-        "article_id": "8605f0375c5c9b3ed8e44ee8",
-        "company": "Sumitomo Chemical",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "필름",
-        "source_phrase": "",
-        "note": "The English summary refers to filament, whereas the Korean summary incorrectly translates it as film (필름)."
-      },
-      {
-        "article_id": "c346e7e75d33ff78e3514dbd",
-        "company": "Applied Materials",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "웨이퍼투웨이퍼",
-        "source_phrase": "",
-        "note": "The term '웨이퍼투웨이퍼' is a literal compound coined from English parts rather than an established Korean business term."
-      },
-      {
-        "article_id": "c346e7e75d33ff78e3514dbd",
-        "company": "Applied Materials",
-        "candidate_id": "relevant",
-        "check": "term",
-        "copy_phrase": "다이투웨이퍼",
-        "source_phrase": "",
-        "note": "The term '다이투웨이퍼' is a literal compound coined from English parts rather than an established Korean business term."
-      },
-      {
-        "article_id": "8957d831af85b3d95d01527f",
-        "company": "Moderna",
-        "candidate_id": "relevant",
-        "check": "mismatch",
-        "copy_phrase": "with a single injection",
-        "source_phrase": "with a single injection",
-        "note": "The detail regarding a single injection appears in the English summary but is missing in the Korean summary."
+        "note": "The word 엔드포인트 is a Hangul transliteration of the English common noun endpoint and should be translated as an established Korean term such as 평가지표."
       }
     ],
-    "enforce": [],
-    "discarded": 1,
-    "errors": {},
-    "unchecked": [
+    "enforce": [
       {
-        "article_id": "82f3b491db90337154e4e469",
-        "company": "Norsk Hydro",
-        "candidate_id": "investment:4"
+        "article_id": "674e4d78cb0cf5b2c8449d2c",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: The source states Patrik Jonsson's retirement as a future event, whereas the copy states it as present or ongoing. Copy: \"is retiring\" Source: \"to retire\""
+        ]
+      },
+      {
+        "article_id": "82b84d3a1bdc202a3ddfcc0d",
+        "company": "Mitsubishi Chemical",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: The copy presents the appointment as a completed action, whereas the source indicates it is effective on a future date. Copy: \"appointed\" Source: \"Effective as of January 1, 2027\""
+        ]
+      },
+      {
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: The copy states Ilya Yuffa's appointment as done, whereas the sources state it as a future event for Jan. 1, 2027. Copy: \"Ilya Yuffa를 Lilly Global Markets 사장으로 임명하고\" Source: \"On Jan. 1, 2027 , Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets\""
+        ]
       }
     ],
+    "discarded": 0,
+    "errors": {
+      "quota": 1
+    },
+    "stopped": {
+      "reason": "quota",
+      "http_status": 429
+    },
+    "unchecked": [],
     "kept": [],
-    "first_flagged": 58,
-    "first_enforce": 1,
-    "rounds": [
-      {
-        "round": 1,
-        "asked": [
-          {
-            "company": "Norsk Hydro",
-            "candidate_id": "investment:4",
-            "problems": [
-              "review_certainty: The copy states the project joining as future whereas the sources state it as present. Copy: \"Hydro will join\" Source: \"Hydro joins\""
-            ]
-          }
-        ],
-        "written": 1,
-        "failed": 0,
-        "kept": 0,
-        "requests": 1
-      }
-    ]
+    "first_flagged": 6,
+    "first_enforce": 3,
+    "rounds": []
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 0,
+    "targets": 1,
     "cached": 0,
-    "requests": 0,
+    "requests": 1,
     "written": 0,
-    "nothing_new": 0,
+    "nothing_new": 1,
     "failed": [],
     "errors": {}
   }
