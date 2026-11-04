@@ -1,5 +1,5 @@
 {
-  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates. An official_pages entry may carry include (regex on the absolute link URL, case-insensitive); links that do not match are ignored, so a third-party distribution host such as pressreleasefinder.com counts as official only under the company's own path. syensqo.com answers 403 to the collector (Actions and local), so Syensqo's releases are also read from its Press Release Finder page; the syensqo.com entries stay in case the block is lifted. external_news_title_names: extra names (short, parent or brand names) that mark an external (Google News) title as being about the company; used only to order fallback rows before the per-source cap and for the Korea-query title check, never sent to the judge (query_aliases in data/target_companies.json stay unchanged); upper-case names of up to four characters are matched case-sensitively. external_news_same_name_exclusions: per-company regex (pattern, optional case_sensitive) tested on the external title without the ' - Publisher' suffix; a match drops the row before the cap. required_form: exact-case spelling an external title must contain. external_news_unreadable_outlets: outlets that never yielded an article body in the 2026-08..10 collections; their rows are ordered last before the cap, not dropped. Official rows are never dropped by these rules. Editing them changes the collection identity, so the next run recollects.",
+  "description": "Official company sources, maintained by hand (first seeded from 77_target_companies_official_press_IR_filings_newsroom_urls.csv.xlsx; no script regenerates this file). The collector reads these official sources first, runs the Google News fallback only for companies without a usable in-period official article, and runs the business-trend search for every company. official_pages: newsroom/IR listing pages; official_feeds: official RSS/Atom/JSON feeds; sec_filers: SEC CIKs confirmed by ticker (8-K only, requires SEC_USER_AGENT); official_sitemaps: sitemaps whose URLs carry publication dates. An official_pages entry may carry include (regex on the absolute link URL, case-insensitive); links that do not match are ignored, so a third-party distribution host such as pressreleasefinder.com counts as official only under the company's own path. syensqo.com answers 403 to the collector (Actions and local), so Syensqo's releases are also read from its Press Release Finder page; the syensqo.com entries stay in case the block is lifted. An official_pages entry may also carry article_path (regex on the absolute link URL, case-insensitive): links that match and that the link rules would send to fetch_to_verify are accepted as articles without the verify fetch (Plansee's /en/articles/detail/ stories; max_verify_per_company is 0). An official page that returns no links at all is recorded as a page_empty error, so a JavaScript-only listing must be replaced by its data source. For that reason ABB's www.abb.com/global/en/company/media (a page with no links) and Proterial's /e/press/ (a meta refresh to /e/press/2026/, which is listed) were dropped; Cytiva's www.cytivalifesciences.com/news-center (a JavaScript app shell with no links; it never yielded a row) was dropped too. An entry with host_only true is not fetched: it only declares its domain as an official host of the company (Google-row title recovery and the AEM model fallback). Qualcomm's www.qualcomm.com/news/releases is such an entry: the page has no links, but qualcomm.com must stay Qualcomm's official (AEM) host. Feeds with format json read items/title/url/date (and optional body, base, include) from a JSON listing; a date that is not YYYYMMDD or a parseable date is read from its text (SCHOTT Pharma's tagLine \"Thursday, October 1, 2026, mainz, germany\"). SCHOTT Pharma's IR pages are JavaScript shells with no links, so its media releases (financial results included) are read from the site's search API. Shanghai Electric Wind Power's shanghai-electric.com pages are navigation only, so its announcements and periodic reports are read from the Shanghai Stock Exchange IR API (open.sseinfo.com, code 688660); the documents are PDFs on static.sse.com.cn. external_news_title_names: extra names (short, parent or brand names) that mark an external (Google News) title as being about the company; used only to order fallback rows before the per-source cap and for the Korea-query title check, never sent to the judge (query_aliases in data/target_companies.json stay unchanged); upper-case names of up to four characters are matched case-sensitively. external_news_same_name_exclusions: per-company regex (pattern, optional case_sensitive) tested on the external title without the ' - Publisher' suffix; a match drops the row before the cap. required_form: exact-case spelling an external title must contain. external_news_unreadable_outlets: outlets that never yielded an article body in the 2026-08..10 collections; their rows are ordered last before the cap, not dropped. Official rows are never dropped by these rules. Editing them changes the collection identity, so the next run recollects.",
   "official_feeds": {
     "Australian Strategic Metals": [
       {
@@ -261,6 +261,47 @@
           "base": "https://www.investors.dupont.com/"
         }
       }
+    ],
+    "Schott Pharma": [
+      {
+        "source": "Schott Pharma - Media releases (site search API)",
+        "kind": "press_release",
+        "url": "https://www.schott-pharma.com/api/search/get?query=:media-release:!archive&locale=en&searchRootIds=9651c9b1152b45cb8ed96a8021809764,703e8b099e394885a0ba193779710319,0ef9705e86c842b7ad721c7cf2eb7e64,830b9678b61647f09ccdb359a84306a7,f3d9a43f06fb40de87a6f7a894efe0d6&templateIds=e44fd60d45ab4d5db42efad906a3130a&tenantName=Pharma&resultTemplate=NewsList&useCodes=true&logic=Or&sort=Desc&sortBy=Released&currentPage=0&pageSize=12",
+        "format": "json",
+        "json": {
+          "items": "results",
+          "title": "title",
+          "url": "linkHref",
+          "date": "tagLine",
+          "base": "https://www.schott-pharma.com/"
+        }
+      }
+    ],
+    "Shanghai Electric Wind Power": [
+      {
+        "source": "Shanghai Electric Wind Power - SSE announcements (临时公告)",
+        "kind": "filing",
+        "url": "https://open.sseinfo.com/ir2/notice?code=688660&bulletintype=2&page=1&perpage=20",
+        "format": "json",
+        "json": {
+          "items": "pageContent",
+          "title": "title",
+          "url": "url",
+          "date": "ssedate"
+        }
+      },
+      {
+        "source": "Shanghai Electric Wind Power - SSE periodic reports (定期报告)",
+        "kind": "financial_report",
+        "url": "https://open.sseinfo.com/ir2/notice?code=688660&bulletintype=1&page=1&perpage=10",
+        "format": "json",
+        "json": {
+          "items": "pageContent",
+          "title": "title",
+          "url": "url",
+          "date": "ssedate"
+        }
+      }
     ]
   },
   "official_pages": {
@@ -408,15 +449,6 @@
       }
     ],
     "Cytiva": [
-      {
-        "source": "Cytiva - Cytiva News Center / Newsroom / News",
-        "kind": "newsroom",
-        "url": "https://www.cytivalifesciences.com/news-center",
-        "crawl_priority": "Primary",
-        "page_title": "Cytiva News Center",
-        "source_type_label": "Newsroom / News",
-        "domain": "www.cytivalifesciences.com"
-      },
       {
         "source": "Cytiva - Danaher Press Releases / Press Releases",
         "kind": "press_release",
@@ -900,16 +932,8 @@
         "crawl_priority": "Primary",
         "page_title": "News Releases",
         "source_type_label": "Press Releases",
-        "domain": "www.qualcomm.com"
-      },
-      {
-        "source": "Qualcomm - Qualcomm News / Newsroom / News",
-        "kind": "newsroom",
-        "url": "https://www.qualcomm.com/news",
-        "crawl_priority": "Primary",
-        "page_title": "Qualcomm News",
-        "source_type_label": "Newsroom / News",
-        "domain": "www.qualcomm.com"
+        "domain": "www.qualcomm.com",
+        "host_only": true
       },
       {
         "source": "Qualcomm - Investor Relations Overview / Investor Relations",
@@ -1598,35 +1622,6 @@
         "domain": "www.emdgroup.com"
       }
     ],
-    "Schott Pharma": [
-      {
-        "source": "Schott Pharma - IR Press Releases / Press Releases",
-        "kind": "press_release",
-        "url": "https://ir.schott-pharma.com/investor-relations/de/news-publications/press-releases",
-        "crawl_priority": "Primary",
-        "page_title": "IR Press Releases",
-        "source_type_label": "Press Releases",
-        "domain": "ir.schott-pharma.com"
-      },
-      {
-        "source": "Schott Pharma - Investor Relations / Investor Relations",
-        "kind": "ir",
-        "url": "https://ir.schott-pharma.com/investor-relations/",
-        "crawl_priority": "Primary",
-        "page_title": "Investor Relations",
-        "source_type_label": "Investor Relations",
-        "domain": "ir.schott-pharma.com"
-      },
-      {
-        "source": "Schott Pharma - Reports and Presentations / Financial Reports / Presentations",
-        "kind": "presentation",
-        "url": "https://www.schott-pharma.com/investor-relations/news-publications/reports-and-presentations",
-        "crawl_priority": "Primary",
-        "page_title": "Reports and Presentations",
-        "source_type_label": "Financial Reports / Presentations",
-        "domain": "www.schott-pharma.com"
-      }
-    ],
     "BASF": [
       {
         "source": "BASF - News Releases / Press Releases",
@@ -2053,15 +2048,6 @@
         "domain": "global.abb"
       },
       {
-        "source": "ABB - News and Media / Newsroom / Media",
-        "kind": "newsroom",
-        "url": "https://www.abb.com/global/en/company/media",
-        "crawl_priority": "Primary",
-        "page_title": "News and Media",
-        "source_type_label": "Newsroom / Media",
-        "domain": "www.abb.com"
-      },
-      {
         "source": "ABB - Investors / Investor Relations",
         "kind": "ir",
         "url": "https://global.abb/group/en/investors",
@@ -2363,7 +2349,8 @@
         "crawl_priority": "Primary",
         "page_title": "Press & Stories",
         "source_type_label": "Press Releases / Stories",
-        "domain": "plansee-group.com"
+        "domain": "plansee-group.com",
+        "article_path": "^https://plansee-group.com/en/articles/detail/[a-z0-9-]+/?$"
       },
       {
         "source": "Plansee - News & Media / Newsroom / Media",
@@ -2372,7 +2359,8 @@
         "crawl_priority": "Primary",
         "page_title": "News & Media",
         "source_type_label": "Newsroom / Media",
-        "domain": "plansee-group.com"
+        "domain": "plansee-group.com",
+        "article_path": "^https://plansee-group.com/en/articles/detail/[a-z0-9-]+/?$"
       }
     ],
     "Texcell": [
@@ -2669,15 +2657,6 @@
       }
     ],
     "Hitachi Metals": [
-      {
-        "source": "Hitachi Metals - Proterial Press / Press Releases",
-        "kind": "press_release",
-        "url": "https://www.proterial.com/e/press/",
-        "crawl_priority": "Primary",
-        "page_title": "Proterial Press",
-        "source_type_label": "Press Releases",
-        "domain": "www.proterial.com"
-      },
       {
         "source": "Hitachi Metals - Proterial 2026 Press Releases / Press Releases",
         "kind": "press_release",
@@ -3214,44 +3193,6 @@
         "page_title": "Taiwan TDCC IR Platform - Company/IR Contact",
         "source_type_label": "IR Contact / Market Infrastructure",
         "domain": "irplatform.tdcc.com.tw"
-      }
-    ],
-    "Shanghai Electric Wind Power": [
-      {
-        "source": "Shanghai Electric Wind Power - Company Information / Investor Relations / Company Profile",
-        "kind": "ir",
-        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/gsxx/",
-        "crawl_priority": "Primary",
-        "page_title": "Company Information",
-        "source_type_label": "Investor Relations / Company Profile",
-        "domain": "www.shanghai-electric.com"
-      },
-      {
-        "source": "Shanghai Electric Wind Power - Investor Relations Contact / Investor Relations Contact",
-        "kind": "ir",
-        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/tzzgxllfs/",
-        "crawl_priority": "Primary",
-        "page_title": "Investor Relations Contact",
-        "source_type_label": "Investor Relations Contact",
-        "domain": "www.shanghai-electric.com"
-      },
-      {
-        "source": "Shanghai Electric Wind Power - Announcements and Circulars / Regulatory Filings / Announcements",
-        "kind": "filing",
-        "url": "https://www.shanghai-electric.com/listed/dqfdjt/tzzgx/ggyth/",
-        "crawl_priority": "Primary",
-        "page_title": "Announcements and Circulars",
-        "source_type_label": "Regulatory Filings / Announcements",
-        "domain": "www.shanghai-electric.com"
-      },
-      {
-        "source": "Shanghai Electric Wind Power - Shanghai Electric Wind Power Group Profile / Corporate Profile",
-        "kind": "official_page",
-        "url": "https://www.shanghai-electric.com/listed_en/windpower/",
-        "crawl_priority": "Primary",
-        "page_title": "Shanghai Electric Wind Power Group Profile",
-        "source_type_label": "Corporate Profile",
-        "domain": "www.shanghai-electric.com"
       }
     ]
   },

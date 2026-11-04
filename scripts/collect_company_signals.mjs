@@ -24,7 +24,9 @@ import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v19: 제목을 못 찾은 페이지에 제목 후보를 더 대 보고, 공식 호스트의 AEM 모델과 스크립트에 실린 본문(Arc·JSON-LD·RSC)을 읽는다.
 // v20: 200 으로 온 봇 차단 페이지(Incapsula·Akamai·Cloudflare)를 본문·목록으로 쓰지 않고 bot_challenge 오류로 남긴다.
 //      AEM 모델은 AEM 호스트(qualcomm.com)에서만 본다. 받아 둔 체크포인트의 차단 페이지 본문을 다시 쓰지 않게 버전을 올린다.
-export const CONTENT_COLLECTION_VERSION = 'article-body-v20-bot-challenge';
+// v21: 앞자리가 12를 넘는 슬래시 날짜(27/10/2025)를 일-월-연으로 읽고, 링크가 0개인 공식 페이지를 page_empty 오류로 남기며,
+//      찾아낸 피드를 한 번만 받는다(실패가 호스트 쉼을 부르지 않는다). 받아 둔 체크포인트의 날짜 미상 행·빠진 오류를 다시 쓰지 않게 올린다.
+export const CONTENT_COLLECTION_VERSION = 'article-body-v21-empty-page';
 // 기업당 사업동향 탐색 후보 상한과 운영 수집 인자는 collection_args.mjs 에 있다. 판정 파이프라인이 이 파일에서
 // 읽어 가므로 다시 내보낸다.
 export { TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collection_args.mjs';
@@ -634,6 +636,13 @@ export function extractDateFromText(value = "") {
   if (dayMonth) {
     return isoDate(dayMonth[3], monthNumberFromName(dayMonth[2]), dayMonth[1]);
   }
+  // 앞자리가 12를 넘는 슬래시 표기(27/10/2025)는 일-월-연으로만 읽힌다. 앞자리가 12 이하면 위의 미국식이 먼저다.
+  // 2026-10 Texcell(프랑스) 목록의 "27/10/2025" 가 날짜 미상이었다. 예전에는 이 모양을 아무 날짜로도 읽지 않았다.
+  // 맨 끝에 둔다. 예전에 날짜를 찾던 글(본문의 월 이름 날짜 등)은 이 표기가 함께 있어도 예전 날짜 그대로다.
+  const dayFirstSlash = text.match(/\b(1[3-9]|2\d|3[01])\/(0?[1-9]|1[0-2])\/((?:19|20)\d{2})\b/);
+  if (dayFirstSlash) {
+    return isoDate(dayFirstSlash[3], dayFirstSlash[2], dayFirstSlash[1]);
+  }
   return null;
 }
 
@@ -1043,7 +1052,9 @@ function requestHeaders(url) {
 }
 
 // 본문과 함께 리디렉트를 다 따라간 뒤의 최종 주소를 돌려준다. 목록 페이지의 상대 링크는 이 주소를 기준으로 풀어야 한다.
-async function fetchPageOnce(url, timeoutSeconds) {
+// discovered: 목록 페이지가 광고한 피드를 받는 요청(fetchDiscoveredFeed). 실패 응답의 본문을 읽어 WordPress 의
+// "No feeds available!" 를 알아보고, 상태 코드 오류를 호스트 장애로 세지 않게 표시한다.
+async function fetchPageOnce(url, timeoutSeconds, { discovered = false } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
   try {
@@ -1052,7 +1063,7 @@ async function fetchPageOnce(url, timeoutSeconds) {
       redirect: "follow",
       headers: requestHeaders(url),
     });
-    if (!response.ok) throw httpError(response);
+    if (!response.ok) throw discovered ? await discoveredFeedError(response) : httpError(response);
     const text = await response.text();
     // 200 으로 온 봇 차단 페이지는 목록·피드·사이트맵이 아니다. 받은 글로 넘기면 링크 0건으로 조용히 끝난다.
     const challenge = detectBotChallenge(text);
@@ -1118,6 +1129,31 @@ async function fetchWithRetries(url, attempt) {
 
 export async function fetchPage(url, timeoutSeconds) {
   return fetchWithRetries(url, () => fetchPageOnce(url, timeoutSeconds));
+}
+
+// WordPress 가 피드가 꺼진 글 묶음에 돌려주는 wp_die 문구. 상태 코드는 500 이다.
+const WORDPRESS_NO_FEEDS = /No feeds available/i;
+
+// 찾아낸 피드가 실패한 응답의 오류. 상태 코드 오류는 hostNeutral 로 표시해 domainGuard 가 호스트의 연속 실패로
+// 세지 않게 한다(서버는 응답했다. 그 주소에 피드가 없을 뿐이다). WordPress 가 피드를 끈 경우는 일시 오류 모양이 아닌
+// 메시지로 바꾼다. "HTTP 500" 그대로 두면 매 실행 같은 답이 올 텐데 기업이 재시도 대상(retryableError)이 된다.
+async function discoveredFeedError(response) {
+  const error = Object.assign(httpError(response), { noRetry: true, hostNeutral: true });
+  const body = await response.text().catch(() => "");
+  if (WORDPRESS_NO_FEEDS.test(body.slice(0, 20000))) error.message = `feed_unavailable: no feeds available (status ${response.status})`;
+  return error;
+}
+
+// 목록 페이지에서 찾아낸 피드(discoverFeedLinks)를 받는다. 설정한 출처가 아니라 페이지가 광고한 주소라 한 번만 보내고
+// 재시도하지 않는다. 설정한 피드(collectOfficialFeeds)는 지금처럼 fetchText 로 재시도하고 호스트 실패로도 센다.
+// 연결 오류·시간초과는 호스트가 응답하지 않은 것이라 지금처럼 domainGuard 가 센다.
+export async function fetchDiscoveredFeed(url, timeoutSeconds) {
+  try {
+    return (await domainGuard.run(url, () => fetchPageOnce(url, timeoutSeconds, { discovered: true }))).text;
+  } catch (error) {
+    // 재시도하지 않았다는 표시만 남긴다. 메시지와 상태는 그대로다.
+    throw Object.assign(error, { noRetry: true });
+  }
 }
 
 export async function fetchText(url, timeoutSeconds) {
@@ -1722,6 +1758,13 @@ export function judgeAnchor(anchor, pageUrl, policy = linkPolicy) {
   return { verdict: "hard_reject", reason: "" };
 }
 
+// 설정 항목의 기사 주소 모양(article_path)에 맞는 확인 대상 링크는 기사로 받는다. 이미 받는 링크(accept)와 구조적으로
+// 거부된 링크(hard_reject)는 건드리지 않는다. 순위는 제안 규칙의 새 기사와 같은 1이다(지금 걷던 기사 뒤).
+export function configuredArticleVerdict(judged, anchor, page) {
+  if (judged.verdict !== "fetch_to_verify" || !page?.articlePath?.test(anchor.url)) return judged;
+  return { verdict: "accept", reason: "configured_article_path", rank: 1 };
+}
+
 function acceptFirst(row) {
   return row.link_rank ?? 0;
 }
@@ -1753,8 +1796,17 @@ const CORRECTION_NOTICE_PATTERN = new RegExp([
 // 순서는 보통 기사, 정례 공지, 정정·수정 공시다.
 function correctionLast(row) {
   if (CORRECTION_NOTICE_PATTERN.test(String(row?.title || ""))) return 2;
-  return routineNotice(row) ? 1 : 0;
+  return routineNotice(row) || CHINESE_ROUTINE_FILING_PATTERN.test(String(row?.title || "")) ? 1 : 0;
 }
+
+// 중국 거래소 공시의 정례 절차 문서: 주주총회 소집·결의·회의자료, 변호사 법률의견서, 실적설명회 참가 안내, 모집자금 사용
+// 보고, 주관사 검토의견, 독립이사·감사회 의견·직무보고. 상하이거래소(SSE) 공시 목록(Shanghai Electric Wind Power)에서
+// 실적·계약·손상 공시와 한 목록에 섞여 온다. 공식 행은 버리지 않고 같은 출처 안에서 뒤로만 보낸다.
+// 외부 기사 거르기(routineNotice → externalNoiseReason 은 행을 뺀다)에는 넣지 않는다. 거기 넣으면 중국어 기사가 빠진다.
+// 분기·반기·연간 보고서(季度报告·年度报告), 실적 속보·예고(业绩快报·业绩预亏), 중대 계약(重大合同), 손상(资产减值)은 걸리지 않는다.
+export const CHINESE_ROUTINE_FILING_PATTERN = new RegExp([
+  "股东大?会", "法律意见书", "业绩说明会", "募集资金(?:存放|使用|管理)", "闲置募集资金", "核查意见", "独立董事", "监事会",
+].join("|"));
 
 // 출처 순서는 지키고 정정·수정 공시와 정례 공지만 뒤로 보낸다(안정 정렬).
 export function correctionsLast(rows) {
@@ -1820,8 +1872,12 @@ function fallbackSourceFields(priority) {
   };
 }
 
-function normalizeOfficialPageEntries(entries) {
+// host_only 항목은 받지 않는다. 그 도메인이 기업의 공식 호스트라는 선언만 한다(publisher_recovery 의
+// configuredOfficialHosts: Google 기사 제목 복구와 AEM 모델). Qualcomm 의 www.qualcomm.com/news/releases 는 링크 0개인
+// AEM 껍데기라 받으면 매달 page_empty 오류로 기업이 미완료가 되지만, qualcomm.com 은 공식 호스트로 남아야 한다.
+export function normalizeOfficialPageEntries(entries) {
   return entries
+    .filter((entry) => typeof entry === "string" || !entry?.host_only)
     .map((entry) => {
       if (typeof entry === "string") {
         return { url: entry, source: "Official page", kind: "official_page" };
@@ -1836,6 +1892,11 @@ function normalizeOfficialPageEntries(entries) {
         // 링크 주소(절대 주소)에 거는 정규식. 맞지 않는 링크는 판정도 복구 후보도 하지 않는다. 회사 몫이 경로 하나뿐인
         // 제3자 배포 사이트(pressreleasefinder.com/Syensqo/)에서 다른 회사의 보도자료·메뉴 링크를 빼는 데 쓴다.
         include: entry.include ? new RegExp(entry.include, "i") : null,
+        // 그 사이트의 기사 주소 모양(절대 주소에 거는 정규식). 링크 규칙이 확인 대상(fetch_to_verify)으로 넘길 링크 가운데
+        // 이 모양인 것은 받아 보지 않고 기사로 받는다(link_reason configured_article_path). 구조적 거부(목록·자산·메뉴)는
+        // 그대로다. 2026-10 Plansee 의 /en/articles/detail/ 기사는 경로에 news·press 낱말이 없어 확인 대상이었고,
+        // 확인 예산(max_verify_per_company)이 0 이라 10/15 기사가 verify_budget_exhausted 로 빠졌다.
+        articlePath: entry.article_path ? new RegExp(entry.article_path, "i") : null,
       };
     })
     .filter((entry) => entry.url);
@@ -1846,6 +1907,16 @@ function normalizeOfficialPageEntries(entries) {
 // 그래서 2026-08 수집에서 magniX 는 결과가 0건이었다. 설정의 json 항목이 필드 이름을 정한다:
 // items(배열 경로, 점으로 구분), title, url, date(YYYYMMDD 또는 ISO), body(HTML 본문), base(상대 주소의 기준), include.
 // 본문이 있으면 여기서 싣는다. 본문이 실린 행은 상세 페이지를 다시 받지 않는다(enrichOfficialRowsWithContent).
+// JSON 피드 항목의 날짜 값. YYYYMMDD 는 ISO 로 바꾸고, 날짜로 읽히는 값(ISO·"10/29/2026 00:00:00" 등)은 그대로 둔다.
+// 둘 다 아니면 글 속 날짜를 찾는다. SCHOTT Pharma 검색 API 의 tagLine 은 "Thursday, October 1, 2026, mainz, germany"
+// 처럼 날짜 뒤에 발표 장소가 붙어 그대로는 날짜로 읽히지 않는다. 읽히던 값은 이 단계를 거치지 않으므로 예전 피드는 그대로다.
+export function jsonFeedDate(value) {
+  const rawDate = String(value ?? "").trim();
+  if (/^\d{8}$/.test(rawDate)) return `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6)}`;
+  if (!rawDate || dateEvidence(rawDate, "feed")) return rawDate;
+  return extractDateFromText(rawDate) || rawDate;
+}
+
 export function parseJsonFeed(text, company, collectedAt, query, defaultSource, feedKind, spec = {}, contentCharLimit = 36000) {
   const payload = JSON.parse(text);
   const items = String(spec.items || "").split(".").filter(Boolean).reduce((value, key) => value?.[key], payload);
@@ -1862,8 +1933,7 @@ export function parseJsonFeed(text, company, collectedAt, query, defaultSource, 
       continue;
     }
     if (include && !include.test(url)) continue;
-    const rawDate = String(item?.[spec.date] || "").trim();
-    const date = /^\d{8}$/.test(rawDate) ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6)}` : rawDate;
+    const date = jsonFeedDate(item?.[spec.date]);
     const body = cleanHtmlText(String(item?.[spec.body] || "")).slice(0, contentCharLimit);
     rows.push({
       target_no: company.target_no,
@@ -1941,10 +2011,15 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
       // 링크는 리디렉트 뒤 실제로 받은 주소(baseUrl) 기준으로 풀고 판정한다. 같은 호스트 판정(sameHostNewsPath)도
       // 실제 페이지 호스트와 비교해야 맞다. 행의 query·official_source_url 은 설정 주소 그대로 둔다.
       const { text: html, url: baseUrl } = await fetchPage(page.url, timeoutSeconds);
-      for (const feedUrl of discoverFeedLinks(html, baseUrl)) {
+      const anchors = parseAnchors(html, baseUrl);
+      const feedUrls = discoverFeedLinks(html, baseUrl);
+      for (const feedUrl of feedUrls) {
         try {
           requestCount += 1;
-          const feedXml = await fetchText(feedUrl, timeoutSeconds);
+          // 찾아낸 피드는 설정한 출처가 아니라 페이지가 광고한 주소다. 한 번만 보내고, 실패해도 호스트 장애로 세지 않는다
+          // (fetchDiscoveredFeed). 2026-10 Texcell 의 /actualites/feed/ 는 500("No feeds available!")이었는데,
+          // 재시도 3번이 domainGuard 의 연속 실패 한도를 채워 홈페이지와 상세 기사 3건이 domain_cooldown 으로 끝났다.
+          const feedXml = await fetchDiscoveredFeed(feedUrl, timeoutSeconds);
           // 목록 페이지에서 찾은 피드의 항목도 링크 단계의 구조적 거부는 거친다. 설정한 피드처럼 인물·애널리스트
           // 소개 페이지를 빼고, 목록·깨진 주소도 뺀다. 예전에는 아무 판정 없이 들어왔다.
           const feedRows = filterByDateRange(
@@ -1964,8 +2039,13 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           errors.push({ source_url: feedUrl, source_name: `${page.source} RSS`, kind: "discovered_feed", error: error.message });
         }
       }
+      // 200 으로 받았는데 링크가 하나도 없는 페이지는 목록이 아니다(자바스크립트로 그리는 빈 껍데기, 안내 페이지).
+      // 0건으로 조용히 끝내지 않고 오류로 남긴다(sitemap_empty 와 같은 취지). 링크는 있는데 모두 거부된 페이지는 오류가 아니다.
+      // 2026-10 SCHOTT Pharma IR 페이지 세 곳은 SvelteKit 껍데기(5.3KB, 링크 0개)라 매달 오류 없이 0건이었다.
+      // 링크 없이 피드만 알리는 페이지는 그 피드가 목록이다(피드 실패는 위에서 discovered_feed 오류로 남는다).
+      if (!anchors.length && !feedUrls.length) throw new Error("page_empty: 0 links");
       const kept = [];
-      for (const anchor of parseAnchors(html, baseUrl)) {
+      for (const anchor of anchors) {
         if (page.include && !page.include.test(anchor.url)) continue;
         // Keep raw configured-newsroom anchors only for exact-title recovery of
         // an opaque Google discovery URL. They do not enter collection unless
@@ -1974,7 +2054,7 @@ async function collectOfficialPages(company, sourceConfig, dateRange, maxPerSour
           recoveryCandidates.push({ company: company.company, title: officialTitle(anchor),
             url: anchor.url, source_page_url: page.url });
         }
-        const judged = judgeAnchor(anchor, baseUrl, linkPolicy);
+        const judged = configuredArticleVerdict(judgeAnchor(anchor, baseUrl, linkPolicy), anchor, page);
         countLinkVerdict(tally, judged.verdict);
         if (judged.verdict === "hard_reject") {
           if (judged.reason) recordExclusion(tally, company.company, anchor.title, anchor.url, judged.reason);

@@ -82,7 +82,7 @@ function selectPages(config, args) {
   for (const [company, entries] of Object.entries(config.official_pages || {})) {
     const list = (entries || [])
       .map((entry) => (typeof entry === "string" ? { url: entry } : entry))
-      .filter((entry) => entry.url);
+      .filter((entry) => entry.url && !entry.host_only);
     // 회사당 Primary 를 먼저 쓴다. 77개사를 고르게 담아야 한 사이트의 버릇이 전체를 흔들지 않는다.
     list.sort((a, b) => (a.crawl_priority === "Primary" ? 0 : 1) - (b.crawl_priority === "Primary" ? 0 : 1));
     for (const entry of list.slice(0, args.perCompany)) pages.push({ company, url: entry.url });

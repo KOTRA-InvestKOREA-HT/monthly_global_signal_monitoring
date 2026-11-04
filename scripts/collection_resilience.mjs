@@ -105,7 +105,12 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       } else state.challenges = 0;
       // A reachable server rejecting one URL is different from an unavailable host.
       // noRetry 오류(크기 초과, Google 중계 주소 등)는 응답을 받은 뒤의 판단이라 호스트 장애가 아니다.
-      if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
+      // hostNeutral 오류는 연속 실패 수를 늘리지도 되돌리지도 않는다. 목록 페이지가 광고했을 뿐인 피드 주소의 5xx 가
+      // 그렇다(2026-10 Texcell /actualites/feed/ 의 500). 그 실패로 같은 호스트의 목록·기사가 30초 쉬면 안 되고,
+      // 그 응답이 앞선 진짜 장애의 연속 횟수를 지워서도 안 된다.
+      if (error.hostNeutral) {
+        // 그대로 둔다.
+      } else if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
         state.failures++;
         if (state.failures >= threshold) state.until = now() + cooldownMs;
       } else state.failures = 0;

@@ -36,9 +36,12 @@ export function publisherArticleTitle(row) {
     : title;
 }
 
+// 공식 목록 페이지와 공식 피드의 호스트. 2026-11 까지는 목록 페이지만 봤다. 그때 설정된 피드 호스트는 모두 목록 페이지
+// 호스트이기도 해서 결과가 같다. 목록 페이지가 자바스크립트 껍데기라 빼고 피드(검색 API)만 남긴 SCHOTT Pharma 는
+// 피드 호스트(www.schott-pharma.com)가 없으면 공식 호스트가 하나도 남지 않아 Google 기사 복구를 하지 못한다.
 export function configuredOfficialHosts(company, sourceConfig) {
-  const pages = sourceConfig?.official_pages?.[company] || [];
-  return new Set(pages.map(page => canonicalHost(page.domain || page.url)).filter(Boolean));
+  const entries = [...(sourceConfig?.official_pages?.[company] || []), ...(sourceConfig?.official_feeds?.[company] || [])];
+  return new Set(entries.map(entry => canonicalHost(typeof entry === "string" ? entry : entry.domain || entry.url)).filter(Boolean));
 }
 
 // 받은 문서 주소가 그 기업의 공식 호스트(configuredOfficialHosts)인지. www. 와 끝의 점은 무시한다.

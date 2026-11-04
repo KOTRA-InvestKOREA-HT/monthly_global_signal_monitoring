@@ -275,7 +275,9 @@ test('Press Release Finder is official for Syensqo only, and only under /Syensqo
 });
 
 test('sewpg.com is no longer read; the AEM host list adds no source-config key', () => {
-  const sewpg = realSources.official_pages['Shanghai Electric Wind Power'];
+  // 2026-11 부터 이 기업은 상하이거래소 IR API(official_feeds)로 읽는다(silent_official_sources.test.mjs).
+  const sewpg = [...(realSources.official_pages['Shanghai Electric Wind Power'] || []),
+    ...realSources.official_feeds['Shanghai Electric Wind Power']];
   assert.ok(sewpg.length > 0);
   assert.equal(sewpg.some(page => /sewpg\.com/.test(`${page.url} ${page.domain}`)), false);
   // AEM 호스트 목록은 코드에 둔다. 출처 설정 최상위 키가 늘면 77개 기업의 수집 식별자가 모두 바뀐다.
