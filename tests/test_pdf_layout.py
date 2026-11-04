@@ -218,6 +218,30 @@ class SentenceBoundaryTests(unittest.TestCase):
                          ["Michael J. Fox Foundation joined.", "Sales rose 23.6% at Acme Inc. in Q2.", "Next"])
         self.assertEqual(pdf.sentence_spans("出資しました。連携を強化します。"), ["出資しました。", "連携を強化します。"])
 
+    def test_month_abbreviations_and_lowercase_continuations_are_not_sentence_ends(self):
+        # 2026-10 영문판 Eli Lilly 칸: 표제가 "...effective Jan."에서 끊기고 상세가 "1, 2027, with ..."로 시작했다.
+        text = ("Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027, with Ilya Yuffa "
+                "taking on the role of president. Laura Steele will be promoted.")
+        self.assertEqual(pdf.sentence_spans(text), [
+            "Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027, with Ilya Yuffa "
+            "taking on the role of president.",
+            "Laura Steele will be promoted.",
+        ])
+        self.assertEqual(pdf.sentence_spans("The deal closes in Sept. 2026 with Acme Corp. and Dr. Kim. Shares rose."),
+                         ["The deal closes in Sept. 2026 with Acme Corp. and Dr. Kim.", "Shares rose."])
+        self.assertEqual(pdf.sentence_spans("It ranks No. 1 in the U.K. market, e.g. in retail vs. rivals. Next"),
+                         ["It ranks No. 1 in the U.K. market, e.g. in retail vs. rivals.", "Next"])
+        self.assertEqual(pdf.sentence_spans("Sales grew approx. three times. Next"), ["Sales grew approx. three times.", "Next"])
+
+    def test_english_card_headline_keeps_a_date_abbreviation(self):
+        pdf.set_language("en")
+        row = {"ai_summary_en": "Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027. "
+                                "Laura Steele will be promoted to president of Lilly USA."}
+        parts = pdf.summary_parts(row)
+        self.assertEqual(parts["headline"].rstrip("."),
+                         "Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027")
+        self.assertTrue(parts["detail"].startswith("Laura Steele"))
+
     def test_korean_phrasing_keeps_initials_and_decimals(self):
         text = pdf.phraseify_summary_text("써모 피셔 사이언티픽이 마이클 J. 폭스 재단과 협력해 매출 23.6% 증가를 기록함.")
         self.assertIn("J. 폭스", text)

@@ -94,7 +94,8 @@ class BusinessRowSelectionTests(unittest.TestCase):
                        "with A*STAR under Phase 4 of the partnership in Singapore. The expansion will significantly increase "
                        "infrastructure, equipment, and headcount to support deeper research into advanced packaging for "
                        "artificial intelligence and advanced computing.")
-        self.assertFalse(content.same_event_as_signal(wire, [crn], "Applied Materials"), "위 칸 잣대만으로는 못 거른다")
+        # 위 칸 잣대도 두 방향으로 재면서(2026-11-04) 이 쌍을 같은 사건으로 본다(A*STAR·Singapore 를 함께 쓴다).
+        self.assertTrue(content.same_event_as_signal(wire, [crn], "Applied Materials"))
         self.assertTrue(content.same_event_as_item(wire, [crn], "Applied Materials"))
         self.assertEqual(content.business_rows("Acme", [plant, radar], [plant_signal], [self.signal]), [plant, radar])
         other = article("Applied Materials", "hbm", 1, "Applied Materials offers a hybrid bonding portfolio including the "
@@ -253,6 +254,159 @@ class RepeatedSentenceTests(unittest.TestCase):
         other = article("Safran", "propulsion", 15, "EDGE and Safran will build sovereign missile propulsion systems in Brazil.",
                         ko="EDGE 와 Safran 이 브라질에서 미사일 추진 체계를 만듦.")
         self.assertEqual(content.business_rows("Safran", [other, box], [signal], [signal]), [other])
+
+
+class Issue5RepeatTests(unittest.TestCase):
+    """5호(2026-10) 상자가 위 칸을 되풀이한 네 곳(2026-11-04 사용자 지적). 문안·주소는 5호 실제 값이다.
+
+    위 칸과 같은 기사(주소)이거나, 다른 매체·다른 문서가 같은 사건을 다시 쓴 상자 항목은 싣지 않는다.
+    """
+
+    def card(self, company, no, url, en, title, day):
+        return approved(company, investment_signal_no=no, ai_event_stage="precursor", url=url, title=title,
+                        published_at=f"2026-10-{day:02d}", ai_summary_en=en, ai_summary_ko=f"{company} 지표 {no} 문안.")
+
+    def item(self, company, url, en, title, day, **extra):
+        return approved(company, url=url, title=title, published_at=f"2026-10-{day:02d}", ai_summary_en=en,
+                        ai_summary_ko=f"{company} 상자 문안.", **extra)
+
+    def test_3m_box_from_the_same_press_release_is_dropped(self):
+        url = "https://investors.3m.com/news-events/press-releases/detail/1945/3m-announces-collaboration-with-gseo-to-advance-expanded"
+        title = "3M announces collaboration with GSEO to advance Expanded Beam Optical manufacturing and development"
+        card = self.card("3M", 2, url, "3M and GSEO aim to support Expanded Beam Optical commercialization and long-term "
+                         "capacity expansion to meet growing demand from hyperscale data centers and other advanced "
+                         "connectivity applications.", title, 19)
+        box = self.item("3M", url, "3M announced a collaboration with optical technology company Genius Electronic Optical "
+                        "Co., Ltd. (GSEO) to advance technology development and manufacturing for 3M's Expanded Beam "
+                        "Optical (EBO) solutions.", title, 19)
+        # 같은 날 위 칸 1(Yahoo Finance 실적 발표 기사)도 같은 GSEO 계약을 쓴다.
+        yahoo = self.card("3M", 1, "https://news.google.com/rss/articles/yahoo-3m-q3",
+                          "3M signed a contract manufacturing agreement with Genius Electronic Optical Company (GSEO) and "
+                          "acquired a 4.7% stake in the supplier to expand optical-connectivity capacity and support supply "
+                          "diversity.", "3M Q3 Earnings Call Highlights - Yahoo Finance", 20)
+        self.assertFalse(content.repeats_said(box, [card, yahoo]), "문장 되풀이 거름으로는 걸리지 않는다")
+        # 같은 보도자료의 위 칸 2 와는 29%라 그 칸만으로는 같은 사건으로 잡히지 않는다. 위 칸 1 과 같은 사건(46%, GSEO·Genius
+        # ·Electronic·Optical)이라 2순위에 들지 못한다.
+        self.assertFalse(content.same_event_as_signal(box, [card], "3M"))
+        self.assertTrue(content.same_event_as_signal(box, [yahoo], "3M"))
+        self.assertEqual(content.business_rows("3M", [box], [], [card, yahoo]), [])
+
+    def test_besi_box_from_the_same_press_release_is_dropped(self):
+        url = ("https://www.besi.com/investor-relations/press-releases/details/"
+               "applied-materials-to-increase-its-strategic-investment-in-be-semiconductor-industries/")
+        title = "Applied Materials to Increase its Strategic Investment in BE Semiconductor Industries"
+        card = self.card("Besi", 4, url, "Besi joined Applied Materials' EPIC Center as an Innovation Partner to expand their "
+                         "collaboration targeting next-generation 3D IC scaling, logic and memory integration, "
+                         "thermo-compression bonding scaling, and new integration platforms.", title, 27)
+        same = self.item("Besi", url, "Besi and Applied have collaborated since 2020 on developing and commercializing "
+                         "integrated hybrid bonding production systems for semiconductor manufacturers, and recently expanded "
+                         "their partnership with Besi joining Applied's EPIC Center as an Innovation Partner.", title, 27)
+        # 같은 날 다른 매체의 다른 내용(Kinex 공동 개발, 3분기 수주)은 남는다.
+        trendforce = self.item("Besi", "https://news.google.com/rss/articles/trendforce-besi",
+                               "Applied Materials and BESI jointly developed Kinex, an integrated die-to-wafer hybrid bonding "
+                               "system combining Applied Materials' expertise in etching, planarization, deposition, and "
+                               "inspection with BESI's precision die placement and assembly technologies. Additionally, BESI "
+                               "reported that its third-quarter orders rose 96% year over year to €342.6 million.",
+                               "[News] Applied Materials to Double BESI Stake to 20% - TrendForce", 27,
+                               content_source_url="https://www.trendforce.com/news/2026/10/27/besi-stake")
+        self.assertEqual(content.business_rows("Besi", [same, trendforce], [], [card]), [trendforce])
+
+    def test_air_liquide_relay_link_to_the_card_document_is_the_same_article(self):
+        # 상자 행은 Google News 중계 주소와 " - Air Liquide" 꼬리 제목으로 들어왔고, 원문 주소(content_source_url)가 지표 4 칸과 같다.
+        q3 = ("https://www.airliquide.com/group/press-releases-news/2026-10-29/"
+              "q3-2026-results-air-liquide-accelerates-driven-sales-growth-and-launch-its-strategic-plan")
+        research = self.card("Air Liquide", 4, q3, "Air Liquide, the Ecole normale supérieure (ENS-PSL), and the ENS "
+                             "Foundation created a research chair titled Artificial Intelligence for chemistry and "
+                             "through chemistry.",
+                             "Press Releases Group Q3 2026 Results: Air Liquide accelerates October 29, 2026", 29)
+        bond = self.card("Air Liquide", 3, "https://www.airliquide.com/group/press-releases-news/2026-10-06/bond",
+                         "On October 6, 2026, Air Liquide issued a 2 billion euros multi-tranche bond in France with "
+                         "2-year, 5-year, and 10-year maturities at a weighted average interest rate below 4.00% per annum. "
+                         "Net proceeds will fund general corporate purposes and debt refinancing. The issue received A "
+                         "ratings from Standard & Poor's and Scope Ratings, and an A2 rating from Moody's.",
+                         "Air Liquide has successfully issued a 2 billion euros multi-tranche bond", 6)
+        relayed = self.item("Air Liquide", "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQd3Zp?oc=5",
+                            "Air Liquide issued a €2 billion multi-tranche bond on the Euro market to support its capital "
+                            "allocation and drive the development of activities in future growth markets.",
+                            "Q3 2026 Results: Air Liquide accelerates - Air Liquide", 29, content_source_url=q3)
+        self.assertTrue(content.article_keys(relayed) & content.article_keys(research))
+        # 같은 문서(위 칸 4)라 2순위 후보가 되지만, 위 칸 3 의 채권 발행과 같은 사건이라 실리지 않는다.
+        self.assertEqual(content.business_rows("Air Liquide", [relayed], [], [research, bond]), [])
+        # 원문 주소가 없어도 위 칸의 채권 발행과 같은 사건(같은 금액, 46%)이라 빠진다.
+        unresolved = dict(relayed, content_source_url="")
+        self.assertEqual(content.business_rows("Air Liquide", [unresolved], [], [bond]), [])
+        # 다른 사건(DIG Airgas 인수)은 남는다.
+        dig = self.item("Air Liquide", "https://www.tradingview.com/news/dig-airgas",
+                        "Air Liquide closed the €2.85 billion acquisition of South Korea-based DIG Airgas and will build a "
+                        "plant in Taiwan to boost capacity for high-purity gases amid rising AI-driven demand.",
+                        "Key facts: Air Liquide SA >€4.1B investments; €2.85B DIG Airgas deal - TradingView", 30)
+        self.assertEqual(content.business_rows("Air Liquide", [dig, relayed], [], [research, bond]), [dig])
+
+    def test_amkor_official_release_of_the_card_event_is_dropped(self):
+        card = self.card("Amkor Technology", 2, "https://news.google.com/rss/articles/yahoo-amkor",
+                         "Nvidia and Amkor agreed to expand their partnership to boost advanced packaging capacity in South "
+                         "Korea, targeting a more than 300% increase in interposer wafer capacity by the end of 2028.",
+                         "Amkor Technology stock jumps on Nvidia advanced packaging expansion - Yahoo Finance", 21)
+        release = self.item("Amkor Technology", "https://ir.amkor.com/news-releases/news-release-details/"
+                            "amkor-technology-and-nvidia-advance-strategic-partnership-ai",
+                            "Amkor Technology announced a $1.3 billion agreement with NVIDIA on October 21, 2026, to expand "
+                            "capacity in South Korea for semiconductor packaging and test services, building on their Arizona "
+                            "collaboration. With this commitment, multi-year agreements in Arizona and South Korea total $3 "
+                            "billion to support growing demand for next-generation AI and accelerated computing platforms.",
+                            "Amkor Technology and NVIDIA Advance Strategic Partnership for AI Infrastructure", 21)
+        self.assertEqual(content.business_rows("Amkor Technology", [release], [], [card]), [])
+
+    def test_distinct_developments_of_the_month_stay(self):
+        # 5호 Applied Materials: 위 칸(Besi 지분 확대)과 다른 EPIC Center 공개·Besi 하이브리드 본딩·Intel 협력은 그대로 실린다.
+        card = self.card("Applied Materials", 4, "https://ir.appliedmaterials.com/besi-stake",
+                         "Applied Materials entered into an accelerated share purchase agreement to increase its investment "
+                         "in BE Semiconductor Industries to approximately 20 percent of outstanding shares, with share "
+                         "delivery subject to the expiration or termination of the applicable HSR Act waiting period.",
+                         "Applied Materials to Increase its Strategic Investment in BE Semiconductor Industries", 26)
+        epic = self.item("Applied Materials", "https://ir.appliedmaterials.com/epic",
+                         "Applied Materials unveiled its Equipment and Process Innovation and Commercialization (EPIC) Center "
+                         "in Silicon Valley, the world's largest facility dedicated to collaborative semiconductor process "
+                         "technology and manufacturing equipment research and development.", "Applied unveils EPIC Center", 13)
+        bonding = self.item("Applied Materials", "https://ir.appliedmaterials.com/hybrid-bonding",
+                            "Applied Materials and Besi are advancing hybrid bonding technology for next-generation AI "
+                            "systems, combining Besi's expertise in precision die-to-wafer bonding with Applied's leadership "
+                            "in front-end processing.", "Applied and Besi advance hybrid bonding", 12)
+        intel = self.item("Applied Materials", "https://ir.appliedmaterials.com/intel",
+                          "Applied Materials is working with Intel Corporation to accelerate the development of chipmaking "
+                          "innovations for next-generation transistors, interconnects, and advanced packaging technologies.",
+                          "Applied Materials and Intel collaborate", 6)
+        self.assertEqual(content.business_rows("Applied Materials", [epic, bonding, intel], [], [card]), [epic, bonding, intel])
+
+    def test_norsk_hydro_new_content_from_the_card_article_stays(self):
+        # 5호 Norsk Hydro: 위 칸 4(Train2Train)와 같은 보도자료지만 Torija 재활용 공장은 다른 내용이다(24%/31%). 2순위로 남는다.
+        url = ("https://www.hydro.com/en/global/media/news/2026/"
+               "aluminium-2026-hydro-invests-to-strengthen-resilience-across-the-aluminium-value-chain/")
+        title = "Aluminium 2026: Hydro invests to strengthen resilience across the aluminium value chain"
+        card = self.card("Norsk Hydro", 4, url, "In the Siemens Mobility-led Train2Train pilot, aluminum recovered from "
+                         "decommissioned trains will be recycled at Hydro's facility in Ghlin, Belgium, and processed into "
+                         "new extrusion billets to produce rail components at Hydro's extrusion facility in Harderwijk, "
+                         "the Netherlands.", title, 6)
+        torija = self.item("Norsk Hydro", url, "Hydro reached an annual post-consumer aluminum scrap recycling capacity of "
+                           "around 850,000 tonnes by the end of 2025 and is investing EUR 180 million in a new recycling "
+                           "plant in Torija, Spain. The facility will have an annual capacity of 120,000 tonnes.", title, 6)
+        self.assertFalse(content.same_event_as_signal(torija, [card], "Norsk Hydro"))
+        self.assertEqual(content.business_rows("Norsk Hydro", [torija], [], [card]), [torija])
+
+    def test_box_copy_from_the_card_article_that_restates_the_card_is_dropped(self):
+        # 3순위(box_writer.mjs 가 지표 기사에서 쓴 상자 문안)도 위 칸과 같은 사건이면 싣지 않는다. 다른 내용이면 싣는다.
+        restating = self.card("Besi", 4, "https://www.besi.com/press/epic", "Besi joined Applied Materials' EPIC Center as "
+                              "an Innovation Partner to expand their collaboration targeting next-generation 3D IC scaling.",
+                              "Applied Materials to Increase its Strategic Investment in BE Semiconductor Industries", 27)
+        restating.update(ai_box_summary_en="Besi became an Innovation Partner at Applied Materials' EPIC Center to expand "
+                                           "their collaboration on next-generation 3D IC scaling and hybrid bonding.",
+                         ai_box_summary_ko="Besi 가 Applied Materials EPIC Center 의 혁신 파트너가 됨.")
+        self.assertEqual(content.business_rows("Besi", [], [restating], [restating]), [])
+        fresh = dict(restating, ai_box_summary_en="Besi reported third-quarter orders of EUR 342.6 million, up 96% from a "
+                                                  "year earlier, led by hybrid bonding equipment.",
+                     ai_box_summary_ko="Besi 3분기 수주가 3억 4,260만 유로로 96% 늘었음.")
+        self.assertEqual([row["ai_summary_en"] for row in content.business_rows("Besi", [], [fresh], [fresh])],
+                         [fresh["ai_box_summary_en"]])
+
 
 
 @unittest.skipIf(view is None, "reportlab is not installed")

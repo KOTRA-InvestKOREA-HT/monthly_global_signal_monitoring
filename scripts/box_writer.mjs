@@ -20,7 +20,7 @@ import {
 } from './review_prompts.mjs';
 import { importReview } from './local_report.mjs';
 import { reportEligible } from './date_state.mjs';
-import { ARTICLE_EVIDENCE_CHARS, WRITER_ATTEMPTS, writtenProblems } from './summary_writer.mjs';
+import { ARTICLE_EVIDENCE_CHARS, WRITER_ATTEMPTS, explainProblem, writtenProblems } from './summary_writer.mjs';
 
 export const BOX_WRITER_VERSION = 'box-writer-v1';
 // 상자 본문은 보고서에서 950자까지 싣는다(report_content.business_text). 한 단락으로 충분히 들어가게 묻는다.
@@ -118,15 +118,19 @@ export function boxKey(writer, instruction, request) {
 
 const words = text => new Set(String(text || '').toLowerCase().match(/[a-z0-9][a-z0-9.,$%-]*/g) || []);
 
-// 문장 나누기. report_content.sentence_spans 와 같은 규칙이다(Inc.·Co.·U.S. 같은 약어와 머리글자 뒤의 점은 문장 끝이 아니다).
+// 문장 나누기. report_content.sentence_spans 와 같은 규칙이다(Inc.·Co.·U.S.·Jan. 같은 약어와 머리글자 뒤의 점,
+// 뒤에 소문자가 이어지는 점은 문장 끝이 아니다).
 const SENTENCE_END = /。+|[.!?]+(?=\s|$)/g;
-const NOT_A_SENTENCE_END = /(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e))$/;
+const NOT_A_SENTENCE_END = /(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec))$/;
+const CONTINUES_SENTENCE = /^\s+[a-z]/;
 export function sentenceSpans(text) {
   const source = String(text || '');
   const sentences = [];
   let start = 0;
   for (const match of source.matchAll(SENTENCE_END)) {
-    if (match[0] === '.' && NOT_A_SENTENCE_END.test(source.slice(start, match.index))) continue;
+    const end = match.index + match[0].length;
+    if (match[0] === '.' && (NOT_A_SENTENCE_END.test(source.slice(start, match.index))
+      || CONTINUES_SENTENCE.test(source.slice(end)))) continue;
     sentences.push(source.slice(start, match.index + match[0].length).trim());
     start = match.index + match[0].length;
   }
@@ -194,7 +198,8 @@ export async function writeBoxCopy({ articles, reviewDir, boxDir, writer, apiKey
     if (saved?.key === key && (saved.nothing_new || !boxProblems(article, saved, alreadySaid).length)) { stats.cached += 1; continue; }
     let rejected = [], previous = null, result = null;
     for (let attempt = 1; attempt <= attempts && !result && !stats.stopped; attempt++) {
-      const request = boxRequest(article, decisions, rejected.map(code => PROBLEM_TEXT[code] || code), previous);
+      // 상자 전용 코드가 아니면 문안 단계와 같은 안내 문장(explainProblem)을 보낸다. 코드만 보내면 무엇을 고칠지 모델이 짐작해야 한다.
+      const request = boxRequest(article, decisions, rejected.map(code => PROBLEM_TEXT[code] || explainProblem(code)), previous);
       let answer = null;
       for (let retry = 0; ; retry++) {
         await pace(writer.delayMs, sleep);

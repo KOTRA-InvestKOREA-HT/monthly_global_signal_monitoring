@@ -96,6 +96,9 @@ test('copy that restates the signal card, or has no source passage, is rejected'
   // 새 문장을 덧붙여 전체 비율을 낮춰도, 위 칸을 되풀이한 문장이 하나라도 있으면 되풀이다(4호 p23 Safran).
   assert.equal(repeatsSignal(`${signal.summary_en} ${fresh.summary_en}`, [signal.summary_en]), true);
   assert.deepEqual(sentenceSpans('Acme Inc. opened a U.S. plant. It hired 400 people!'), ['Acme Inc. opened a U.S. plant.', 'It hired 400 people!']);
+  assert.deepEqual(sentenceSpans('Lilly named leaders, effective Jan. 1, 2027, with Dr. Yuffa. Sales grew approx. two times. Next'),
+    ['Lilly named leaders, effective Jan. 1, 2027, with Dr. Yuffa.', 'Sales grew approx. two times.', 'Next']);
+  assert.deepEqual(sentenceSpans('It closes in Sept. 2026 in the U.K. market. Next'), ['It closes in Sept. 2026 in the U.K. market.', 'Next']);
   assert.deepEqual(boxProblems(article, fresh, [signal.summary_en]), []);
   assert.ok(boxProblems(article, { ...fresh, summary_en: signal.summary_en }, [signal.summary_en]).includes('repeats_signal'));
   assert.ok(boxProblems(article, { ...fresh, source_quotes: [] }, [signal.summary_en]).includes('source_quotes_missing'));
@@ -134,6 +137,21 @@ test('a repeat is sent back once with the reason, and an article with nothing ne
   const stats = await run(empty, async () => gemini({ source_quotes: [], summary_en: '', summary_ko: '' }));
   assert.equal(stats.nothing_new, 1);
   assert.equal((await loadBoxCopy(empty.boxDir, [{ article_id: article.id }])).size, 0);
+});
+
+// 5호 국문 PDF: Thermo Fisher 상자 "Massachusetts州", Air Liquide 상자 "South Korea 소재 … Taiwan에".
+// 상자 문안도 문안 단계의 국문 검사를 받고, 다시 쓸 때는 코드가 아니라 고칠 내용을 받는다.
+test('box copy with hanja or an English country name in Korean is sent back with the reason spelled out', async () => {
+  assert.ok(boxProblems(article, { ...fresh, summary_ko: fresh.summary_ko.replace('Dresden 공장은', 'Germany Sachsen州 Dresden 공장은') },
+    [signal.summary_en]).includes('cjk_in_korean:州'));
+  const foreign = { ...fresh, summary_ko: fresh.summary_ko.replace('현지에서', 'Germany에서') };
+  assert.ok(boxProblems(article, foreign, [signal.summary_en]).includes('english_country_in_korean:Germany'));
+  const ws = await workspace();
+  const bodies = [];
+  const answers = [foreign, fresh];
+  const stats = await run(ws, async (url, init) => { bodies.push(JSON.parse(JSON.parse(init.body).contents[0].parts[0].text)); return gemini(answers.shift()); });
+  assert.equal(stats.written, 1);
+  assert.match(bodies[1].rejected_because.join(' '), /leaves a country name in English.*\[english_country_in_korean:Germany\]/);
 });
 
 test('a quota stop leaves no file and does not count as a failure', async () => {

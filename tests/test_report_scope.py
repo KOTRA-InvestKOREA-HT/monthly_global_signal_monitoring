@@ -78,7 +78,7 @@ class BusinessBoxTests(unittest.TestCase):
         other = approved("NXP", ai_event_stage="not_applicable", ai_summary_en="Radar chip launch.", url="https://nxp.com/b")
         self.assertIs(pdf.best_business_row("NXP", [other], [linked], [linked]), other)
 
-    def test_another_outlet_retelling_the_signal_event_moves_to_the_second_tier(self):
+    def test_another_outlet_retelling_the_signal_event_is_never_used(self):
         # 4호 재발행 Nexeon: 위 칸과 같은 투자 유치를 다른 매체가 쓴 기사가 다른 사건인 품질 인증 기사보다 먼저 실렸다.
         signal = approved("Nexeon", investment_signal_no=3, url="https://chargedevs.example/a",
                           ai_summary_en="Nexeon closed a GBP 100 million round, including GBP 52.6 million from the National "
@@ -94,11 +94,12 @@ class BusinessBoxTests(unittest.TestCase):
         # 공장에 쓰임)이 있는 다른 기사는 그 문장을 빼서 들여보내지 않고 통째로 뺀다(2026-10-26 사용자 결정).
         retold["ai_summary_ko"] = "Nexeon 은 Abingdon 에 본사를 둔 실리콘 음극재 개발사임. NWF 자금이 영국 파일럿 공장과 연구에 쓰임."
         self.assertIsNone(pdf.best_business_row("Nexeon", [retold], [signal], [signal]))
-        # 되풀이하는 문장이 없는 다른 기사는 2026-10-25 규칙대로 2순위로 실린다.
+        # 되풀이하는 문장이 없어도 같은 사건을 쓴 다른 기사는 싣지 않는다(2026-11-04). 2026-10-25 에는 2순위로 실었으나,
+        # 5호 Amkor 상자가 이 길로 위 칸(Yahoo Finance)의 한국 증설을 공식 보도자료로 다시 실었다.
         fresh = dict(retold, ai_summary_en="Nexeon develops silicon anode materials in Abingdon. Backing from the National "
                                            "Wealth Fund goes to a UK-based pilot line and R&D hiring.")
         self.assertTrue(pdf.same_event_as_signal(fresh, [signal], "Nexeon"))
-        self.assertIs(pdf.best_business_row("Nexeon", [fresh], [signal], [signal]), fresh)
+        self.assertIsNone(pdf.best_business_row("Nexeon", [fresh], [signal], [signal]))
 
     def test_the_signal_card_is_never_repeated_in_the_box(self):
         signal = approved("Corning", investment_signal_no=3, ai_summary_en="Equity program.", url="https://corning.com/a")

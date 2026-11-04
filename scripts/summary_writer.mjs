@@ -213,7 +213,11 @@ const PROBLEM_GUIDE = [
   [/^company_name_not_latin$/, 'Keep company names in summary_ko in their original Latin spelling, as summary_en has them.'],
   // 상한 상수가 아래에서 정의되므로 부를 때 만든다.
   [/^summary_too_long$/, () => `The signal card detail is too long: at most ${SIGNAL_SUMMARY_LIMITS.ko} Korean characters after the separator and ${SIGNAL_SUMMARY_LIMITS.en} English characters. Drop secondary detail, never a selected fact.`],
-  [/^mistranslated_term$/, 'A term is mistranslated in summary_ko; use the Korean terminology in the policy.'],
+  [/^english_date_in_korean:/, 'summary_ko writes a date with an English month name. Write dates in Korean form: 2027년 1월 1일, 10월 6일, 2026년 9월.'],
+  [/^cjk_in_korean:/, 'summary_ko contains Chinese characters (hanja) or Japanese kana. Write the Korean in Hangul (주, not 州; 시, not 市); keep company names in Latin script.'],
+  [/^english_country_in_korean:/, 'summary_ko leaves a country name in English. Write country names in Korean (한국, 대만, 일본, 중국, 미국, 독일); ' +
+    'keep a country name in English only inside a company, institution, event or program name.'],
+  [/^mistranslated_term$/,'A term is mistranslated in summary_ko; use the Korean terminology in the policy.'],
   [/^bilingual_month_mismatch$/, 'The two languages state different months; both must carry the same months.'],
   [/^bilingual_percent_mismatch$/, 'The two languages state different percentages; both must carry the same percentages.'],
   [/^missing_item$/, 'The previous answer left this item out; return it.'],
@@ -328,8 +332,15 @@ export function bilingualFactProblems(decision) {
   const ko = String(decision.summary_ko || ''), en = String(decision.summary_en || '');
   if (!ko.trim() || !en.trim()) return [];
   const koMonths = factSet([...ko.matchAll(/(?<!\d)(1[0-2]|[1-9])월/g)].map(m => Number(m[1])));
-  const enMonths = factSet([...en.matchAll(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi)]
-    .filter(m => !(m[1].toLowerCase() === 'may' && m[0] === 'may')).map(m => EN_MONTHS.indexOf(m[1].toLowerCase()) + 1));
+  // 약어(Jan.·Sept. 23·Oct 6)도 읽는다. 전체 철자만 읽던 때 영문 "Sept. 23"과 국문 "9월 23일"이 불일치로 걸렸다
+  // (docs/prompt_burden_review_2026-10-26.md 3번). 국문 문안의 영문 날짜를 걸게 된 뒤(english_date_in_korean)로는 이 오탐이
+  // "Jan. 1, 2027" 카드를 국문으로 고칠 길까지 막는다. 약어는 마침표나 숫자가 뒤따를 때만 달로 본다.
+  const enMonths = factSet([
+    ...[...en.matchAll(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi)]
+      .filter(m => !(m[1].toLowerCase() === 'may' && m[0] === 'may')).map(m => EN_MONTHS.indexOf(m[1].toLowerCase()) + 1),
+    ...[...en.matchAll(/\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)(?:\.|(?=\s?\d))/g)]
+      .map(m => EN_MONTHS.findIndex(month => month.startsWith(m[1].toLowerCase())) + 1),
+  ]);
   const koPercents = factSet([...ko.matchAll(/(\d+(?:\.\d+)?)\s?(?:%|퍼센트)/g)].map(m => Number(m[1])));
   const enPercents = factSet([...en.matchAll(/(\d+(?:\.\d+)?)\s?(?:%|percent\b)/gi)].map(m => Number(m[1])));
   return [...(koMonths !== enMonths ? ['bilingual_month_mismatch'] : []), ...(koPercents !== enPercents ? ['bilingual_percent_mismatch'] : [])];
@@ -342,6 +353,52 @@ const MISTRANSLATIONS = [
   { ko: /함대/, en: /(?:^|[^a-z])fleet(?:[^a-z]|$)/i },
 ];
 
+// ---- 국문 문안에 남은 외국 문자·영문 표기 검사(2026-11-04, 5호 국문 PDF) ----
+// Eli Lilly 카드 "Jan. 1, 2027부로", Thermo Fisher 상자 "미국 Massachusetts州 Plainville", Air Liquide 상자
+// "South Korea 소재 … Taiwan에 공장을 건설할 예정임"이 그대로 실렸다. 셋 다 글자로 가릴 수 있으므로 지시문 문장을 늘리지
+// 않고(docs/prompt_burden_review_2026-10-26.md) 검사로 걸어 다시 쓰게 한다. 다시 쓸 때만 PROBLEM_GUIDE 안내가 간다.
+
+// 영문 달 이름이 날짜로 쓰인 것. 달 이름 앞뒤에 일·연도 숫자가 붙을 때만 본다("Jan. 1, 2027", "October 6", "6 October",
+// "Sept 2026"). 숫자 없이 홀로 선 낱말(행사·제품 이름의 일부일 수 있음)은 보지 않는다.
+const EN_MONTH_WORD = '(?:January|February|March|April|May|June|July|August|September|October|November|December|' +
+  'Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)';
+const ENGLISH_DATE = new RegExp(`(?<![A-Za-z])${EN_MONTH_WORD}\\.?,?\\s*\\d{1,4}(?!\\d)|(?<!\\d)\\d{1,2}(?:st|nd|rd|th)?\\s+${EN_MONTH_WORD}(?![A-Za-z])`);
+// 한자(CJK 통합 한자·확장 A·호환 한자·확장 B 이후)와 일본 가나. 국문 문안의 회사명·지명은 라틴 문자로 쓰므로 이 문자가
+// 들어갈 자리가 없다. 저장된 국문 문안 259건(2026-10호)에서 한자는 이 결함 한 건(州)뿐이었다. 원문 일본어 기사의 한자는
+// 근거 쪽에만 있고 문안에는 들어오지 않는다.
+const CJK_IN_KOREAN = /[぀-ヿ㐀-䶿一-鿿豈-﫿\u{20000}-\u{3134F}]/u;
+// 국문 표기가 정해진 나라 이름. 회사·기관·행사 이름 안의 나라 이름("Bank of Korea", "Taiwan Semiconductor",
+// "SEMICON Taiwan", "Lilly USA", "Merck KGaA, Darmstadt, Germany", "France 2030")은 고유명사라 그대로 둔다. 그래서 나라 이름이
+// 라틴 낱말과 이어지지 않고 홀로 설 때만 잡는다. 앞이 (빈칸·쉼표·여는 괄호를 건너) 라틴 문자·숫자로 끝나거나, 뒤에 빈칸·
+// 하이픈을 건너 라틴 문자·숫자가 오거나 소유격('s)이 붙으면 이름의 일부로 본다. "South Korea 소재", "Taiwan에", "India의"는
+// 걸리고, 고유명사 판별을 넘어서는 "South Korea Ochang"(나라 뒤 라틴 지명)은 이 검사가 놓친다.
+const EN_COUNTRIES = ['South Korea', 'North Korea', 'Korea', 'Taiwan', 'Japan', 'China', 'Hong Kong', 'Singapore', 'Vietnam',
+  'Thailand', 'Malaysia', 'Indonesia', 'Philippines', 'India', 'Australia', 'United States', 'USA', 'US', 'U\\.S\\.(?:A\\.)?',
+  'Canada', 'Mexico', 'Brazil', 'United Kingdom', 'UK', 'Britain', 'Germany', 'France', 'Italy', 'Spain', 'Netherlands',
+  'Belgium', 'Switzerland', 'Sweden', 'Finland', 'Norway', 'Denmark', 'Ireland', 'Austria', 'Poland', 'Hungary',
+  'Czech Republic', 'Israel', 'Saudi Arabia', 'United Arab Emirates', 'UAE'];
+const COUNTRY_WORD = new RegExp(`(?<![A-Za-z])(?:${EN_COUNTRIES.join('|')})(?![A-Za-z])`, 'g');
+const LATIN_BEFORE = /[A-Za-z0-9][.)&'’-]?[\s,(]*$/;
+const LATIN_AFTER = /^(?:['’]s(?![A-Za-z])|[\s-]*[A-Za-z0-9$])/;
+export function englishCountriesInKorean(ko) {
+  const text = String(ko || '');
+  return [...new Set([...text.matchAll(COUNTRY_WORD)]
+    .filter(m => !LATIN_BEFORE.test(text.slice(0, m.index)) && !LATIN_AFTER.test(text.slice(m.index + m[0].length)))
+    .map(m => m[0]))];
+}
+
+export function koreanScriptProblems(ko) {
+  const text = String(ko || '');
+  const problems = [];
+  const date = text.match(ENGLISH_DATE);
+  if (date) problems.push(`english_date_in_korean:${date[0].trim()}`);
+  const cjk = text.match(new RegExp(CJK_IN_KOREAN.source, 'gu'));
+  if (cjk) problems.push(`cjk_in_korean:${[...new Set(cjk)].join('')}`);
+  const countries = englishCountriesInKorean(text);
+  if (countries.length) problems.push(`english_country_in_korean:${countries.join('|')}`);
+  return problems;
+}
+
 // 보고서 시그널 칸의 문안 글자 상한. 렌더러(report_content.py summary_parts)와 config/copy_length_limits.json 하나를 함께 읽는다.
 // 상세 문안이 넘으면 "..."로 잘려 빌드가 실패한다. 상세 상한은 문안 지시문에 들어가므로 바꾸면 저장된 문안을 다시 쓴다.
 export const COPY_LENGTH_LIMITS = JSON.parse(readFileSync(new URL('../config/copy_length_limits.json', import.meta.url), 'utf8')).signal_card;
@@ -352,6 +409,7 @@ export function summaryStyleProblems(article, decision) {
   if (!ko) return [];
   const problems = [...bilingualFactProblems(decision)];
   if (MISTRANSLATIONS.some(term => term.ko.test(ko) && term.en.test(String(decision.summary_en || '')))) problems.push('mistranslated_term');
+  problems.push(...koreanScriptProblems(ko));
   // 투자 시그널 표제(" - " 앞)는 명사구라 문장 끝 검사는 상세·사업동향 문장에만 한다.
   const body = detailPart(ko);
   if (body.split(/(?<=[.!?])\s+/).some(sentence => KOREAN_PLAIN_ENDING.test(sentence.trim()))) problems.push('plain_sentence_ending');

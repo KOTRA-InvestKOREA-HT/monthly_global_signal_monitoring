@@ -8,7 +8,7 @@ import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblem
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
-  DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES, SIGNAL_SUMMARY_LIMITS,
+  koreanScriptProblems, englishCountriesInKorean, bilingualFactProblems, explainProblem, DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES, SIGNAL_SUMMARY_LIMITS,
 } from '../scripts/summary_writer.mjs';
 import { issueNumberFor, judgementFor, summaryApiKey } from '../scripts/publish_report.mjs';
 
@@ -195,6 +195,60 @@ test('Korean copy with a syllable repeated three times is rejected as garbled', 
   const ws = await workspace();
   const stats = await run(ws, async () => gemini([{ ...good, summary_ko: good.summary_ko.replace(/음\.$/, '음음음') }]));
   assert.equal(stats.rejected.garbled_korean, 1);
+});
+
+// 5호 국문 PDF(2026-11-04): Eli Lilly 카드 "Jan. 1, 2027부로", Thermo Fisher 상자 "Massachusetts州",
+// Air Liquide 상자 "South Korea 소재 … Taiwan에".
+test('Korean copy with an English date, hanja or kana, or an English country name is rejected with a named reason', () => {
+  assert.deepEqual(koreanScriptProblems('임원 임명 - Eli Lilly and Company는 Jan. 1, 2027부로 Ilya Yuffa를 사장으로 임명할 예정임.'),
+    ['english_date_in_korean:Jan. 1']);
+  for (const date of ['October 6', '6 October', 'Sept. 23', 'Oct 6', 'September 2026', 'May 1']) {
+    assert.match(koreanScriptProblems(`회사는 ${date}에 공장을 열 예정임.`)[0] || '', /^english_date_in_korean:/, date);
+  }
+  assert.deepEqual(koreanScriptProblems('Thermo Fisher는 미국 Massachusetts州 Plainville 사업장을 확장하고 있음.'), ['cjk_in_korean:州']);
+  assert.deepEqual(koreanScriptProblems('JSR는 東京 공장에서 フォトレジスト를 생산함.'), ['cjk_in_korean:東京フォトレジス']);
+  assert.deepEqual(koreanScriptProblems('Air Liquide는 South Korea 소재 DIG Airgas 인수를 완료했으며, Taiwan에 공장을 건설할 예정임.'),
+    ['english_country_in_korean:South Korea|Taiwan']);
+  assert.deepEqual(englishCountriesInKorean('India의 지원 사업, US 희토류 시장, 생산지는 Korea, Japan and China임.'), ['India', 'US', 'Korea']);
+
+  // 국문 날짜와 숫자 없는 행사 이름, 한글만 쓴 문안은 통과한다.
+  assert.deepEqual(koreanScriptProblems('Acme는 2027년 1월 1일부로 SEMICON West에서 미국 매사추세츠주 Plainville 공장을 공개할 예정임.'), []);
+  // 회사·기관·행사·사업 이름 안의 나라 이름은 고유명사라 그대로 둔다.
+  for (const name of ['Bank of Korea의 금리 결정', 'Taiwan Semiconductor Manufacturing Company와 협력', 'SEMICON Taiwan 2026에서 공개',
+    'Lilly USA 사장으로 승진', 'Merck KGaA, Darmstadt, Germany의 사업부', 'France 2030 프로그램 지원', 'Taiwan’s Ministry of Economic Affairs와 체결',
+    'JSR Micro Korea는 공장을 준공', 'Korea Zinc는 투자를 결정', 'Korean Air와 계약', 'US Food and Drug Administration 승인',
+    'Lilly Europe and Canada 대표', 'Korea-based 기업', 'US$ 5억 규모']) {
+    assert.deepEqual(koreanScriptProblems(`회사는 ${name}했음.`), [], name);
+  }
+});
+
+test('the new Korean checks reach the writer as a reason it can act on, and a fixed card passes', () => {
+  const article = { company: 'Eli Lilly and Company', candidates: [{ id: 'investment:5', kind: 'investment', row: {} }] };
+  const decision = { candidate_id: 'investment:5',
+    summary_en: 'Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027, with Ilya Yuffa taking on the role of president of Lilly Global Markets.',
+    summary_ko: '임원 임명 - Eli Lilly and Company는 Jan. 1, 2027부로 Ilya Yuffa를 Lilly Global Markets 사장으로 임명할 예정임.' };
+  // 영문 날짜만 쓰면 국문에 달이 없으니 한·영 달 대조에도 걸린다.
+  assert.deepEqual(summaryStyleProblems(article, decision), ['bilingual_month_mismatch', 'english_date_in_korean:Jan. 1']);
+  // 영문 약어 달(Jan.)과 국문 "1월"은 같은 달이다. 예전에는 불일치로 걸려 국문으로 고친 문안이 다시 거부됐다.
+  const fixed = { ...decision, summary_ko: decision.summary_ko.replace('Jan. 1, 2027부로', '2027년 1월 1일부로') };
+  assert.deepEqual(summaryStyleProblems(article, fixed), []);
+  assert.deepEqual(bilingualFactProblems({ summary_en: 'Eco&Dream said on Sept. 23 that it signed a supply contract.',
+    summary_ko: 'Eco&Dream은 9월 23일 공급 계약을 체결했다고 밝혔음.' }), []);
+  assert.deepEqual(bilingualFactProblems({ summary_en: 'The plant opens Oct 6.', summary_ko: '공장은 11월 6일 문을 열 예정임.' }),
+    ['bilingual_month_mismatch']);
+  assert.match(explainProblem('english_date_in_korean:Jan. 1'), /Korean form: 2027년 1월 1일.*\[english_date_in_korean:Jan\. 1\]$/);
+  assert.match(explainProblem('cjk_in_korean:州'), /Chinese characters.*\[cjk_in_korean:州\]$/);
+  assert.match(explainProblem('english_country_in_korean:Taiwan'), /country names in Korean \(한국, 대만.*\[english_country_in_korean:Taiwan\]$/);
+});
+
+test('copy with an English country name in Korean is written again with the reason named', async () => {
+  const ws = await workspace();
+  const bodies = [];
+  const answers = [[{ ...good, summary_ko: good.summary_ko.replace('독일 신규', 'Germany 신규') }], [good]];
+  const stats = await run(ws, async (url, init) => { bodies.push(JSON.parse(bodyText(init))); return gemini(answers.shift()); });
+  assert.equal(stats.written, 1);
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1].items[0].rejected_because.join(' '), /leaves a country name in English.*\[english_country_in_korean:Germany\]/);
 });
 
 test('written copy is saved into the judgement and reused without another request', async () => {

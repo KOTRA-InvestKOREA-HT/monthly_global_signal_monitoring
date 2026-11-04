@@ -709,15 +709,20 @@ def summary_plain_text(row):
 # 문장 끝. 마침표는 뒤에 공백이나 글 끝이 올 때만 끝으로 본다. 그래야 23.6% 같은 소수점이
 # 갈라지지 않는다. 영문 이니셜과 흔한 약어 뒤 마침표도 끝이 아니다. 2026-08 보고서에서
 # "Michael J. Fox" 가 "마이클 J, 폭스"로 인쇄됐다. 일본어 마침표는 뒤에 공백이 없어도 끝이다.
+# 달 약어 뒤 마침표와 뒤에 소문자가 이어지는 마침표도 끝이 아니다. 2026-10 영문판 Eli Lilly 칸 표제가
+# "...effective Jan."에서 끊기고 상세가 "1, 2027, with ..."로 시작했다.
 SENTENCE_END = re.compile(r"。+|[.!?]+(?=\s|$)")
-NOT_A_SENTENCE_END = re.compile(r"(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e))$")
+NOT_A_SENTENCE_END = re.compile(r"(?:\b[A-Z]|\b(?:Inc|Co|Corp|Ltd|Dr|Mr|Ms|Mrs|St|No|vs|etc|Jr|Sr|U\.S|e\.g|i\.e"
+                                r"|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec))$")
+CONTINUES_SENTENCE = re.compile(r"\s+[a-z]")
 
 
 def sentence_spans(text):
     text = str(text or "")
     sentences, start = [], 0
     for match in SENTENCE_END.finditer(text):
-        if match.group() == "." and NOT_A_SENTENCE_END.search(text[start:match.start()]):
+        if match.group() == "." and (NOT_A_SENTENCE_END.search(text[start:match.start()])
+                                     or CONTINUES_SENTENCE.match(text, match.end())):
             continue
         sentences.append(text[start:match.end()].strip())
         start = match.end()
@@ -1148,11 +1153,16 @@ def business_text(rows):
 
 def article_keys(row):
     """같은 기사인지 가를 열쇠. 주소(추적 인자·끝 슬래시 제외)와 제목. 같은 보도자료가 공식 주소와
-    중계 주소로 따로 들어오는 일이 있어 둘 중 하나만 같아도 같은 기사로 본다."""
+    중계 주소로 따로 들어오는 일이 있어 둘 중 하나만 같아도 같은 기사로 본다.
+
+    주소는 수집 주소(url)뿐 아니라 풀어낸 원문 주소(content_source_url·source_direct_url)도 쓴다(2026-11-04).
+    5호 Air Liquide 상자의 채권 발행 문안은 Google News 중계 주소로 들어온 3분기 실적 보도자료였다. 원문 주소는
+    지표 4 칸과 같았지만 수집 주소와 제목(" - Air Liquide" 꼬리)이 달라 다른 기사로 읽혔다."""
     keys = set()
-    url = clean_text(row.get("url")).split("#", 1)[0].split("?", 1)[0].rstrip("/").lower()
-    if url:
-        keys.add(("url", url))
+    for field in ("url", "content_source_url", "source_direct_url"):
+        url = clean_text(row.get(field)).split("#", 1)[0].split("?", 1)[0].rstrip("/").lower()
+        if url:
+            keys.add(("url", url))
     title = re.sub(r"\W+", " ", clean_text(row.get("title")).lower()).strip()
     if len(title) > 15:
         keys.add(("title", title))
@@ -1174,7 +1184,14 @@ def business_row_on_target(row, exempt_company):
 #   3. 위 칸과 같은 금액·수량을 쓰고 고유명사도 하나 이상 같다. 같은 투자를 다른 말로 쓴 기사가 여기 걸린다.
 #   4. 고유명사 셋 이상을 함께 쓰면서 30% 넘게 겹친다(2026-10-25). 4호 재발행 Nexeon 의 BusinessCloud 기사(같은
 #      National Wealth Fund 투자 유치, 36%, National·Wealth·Fund·UK-based)가 2번 잣대(40%)를 비껴 상자에 실렸다.
-# 제품 이름만 같고 사건이 다른 기사(Ouster 의 Rev8 OS1 Max 고객 확대, 26%)는 같은 사건이 아니다.
+#   5. (2026-11-04) 겹침은 두 방향으로 재어 큰 쪽을 쓴다. 상자 문안 쪽으로만 재면 위 칸보다 긴 문안(같은 사건에 금액·
+#      배경을 덧붙인 공식 보도자료)이 묻혀 낮게 나온다. 5호 Amkor 의 공식 보도자료($1.3B NVIDIA 한국 증설)는 Yahoo
+#      Finance 위 칸(같은 날 같은 한국 증설)과 26%였으나 위 칸 쪽으로 재면 39%이고 NVIDIA·South·Korea 를 함께 쓴다.
+#   6. (2026-11-04) 같은 금액·수량을 쓰면서 40% 넘게 겹치면 고유명사가 없어도 같은 사건이다. 5호 Air Liquide 의 3분기
+#      실적 보도자료 문안("€2 billion multi-tranche bond")은 위 칸의 10월 6일 채권 발행과 46% 겹치고 고유명사를 함께 쓰지 않았다.
+#      금액은 상자 항목끼리처럼 "$12 billion"과 "$12bn"을 같은 값으로 읽는다.
+# 제품 이름만 같고 사건이 다른 기사(Ouster 의 Rev8 OS1 Max 고객 확대, 26%)는 같은 사건이 아니다. 5호 Vestas 의 대만
+# 허브 조립(위 칸 Neretek MOU 와 32%, offshore·wind 둘)도 같은 사건이 아니다.
 SAME_EVENT_OVERLAP = 0.6
 SAME_EVENT_NAMED_OVERLAP = 0.5
 SAME_EVENT_PARTIAL_OVERLAP = 0.4
@@ -1218,20 +1235,25 @@ def same_event_as_signal(row, shown_rows, company=""):
     if not mine:
         return False
     own = {word.lower() for word in re.findall(r"[A-Za-z0-9&-]+", f"{company} {row.get('company', '')}")}
-    names, amounts = _same_event_names(text, own), _same_event_amounts(text)
+    names, amounts = _same_event_names(text, own), _same_event_item_amounts(text)
     for shown in shown_rows:
         theirs_text = clean_text(shown.get("ai_summary_en"))
-        overlap = len(mine & _same_event_words(theirs_text)) / len(mine)
+        theirs = _same_event_words(theirs_text)
+        if not theirs:
+            continue
+        # 두 방향 가운데 큰 쪽(규칙 5). 짧은 위 칸 문안이 긴 상자 문안에 거의 다 들어 있어도 같은 사건이다.
+        overlap = len(mine & theirs) / min(len(mine), len(theirs))
         shared_names = names & _same_event_names(theirs_text, own)
+        shared_amounts = amounts & _same_event_item_amounts(theirs_text)
         if overlap > SAME_EVENT_OVERLAP:
             return True
         if overlap > SAME_EVENT_NAMED_OVERLAP and shared_names:
             return True
-        if overlap > SAME_EVENT_PARTIAL_OVERLAP and len(shared_names) >= 2:
+        if overlap > SAME_EVENT_PARTIAL_OVERLAP and (len(shared_names) >= 2 or shared_amounts):
             return True
         if overlap > SAME_EVENT_MANY_NAMES_OVERLAP and len(shared_names) >= 3:
             return True
-        if amounts & _same_event_amounts(theirs_text) and shared_names:
+        if shared_amounts and shared_names:
             return True
     return False
 
@@ -1333,8 +1355,11 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
     들어와 있어 이 거름이 없으면 같은 사건이 세 칸을 채운다.
     위 칸이나 이미 고른 항목을 되풀이하는 문장이 하나라도 있는 행은 통째로 뺀다(repeats_said). 문장을 잘라 싣지 않으므로
     모든 검사는 원래 문안으로 한다. 4호 Nexeon 의 BusinessCloud 기사(위 칸과 같은 National Wealth Fund 투자, 그 문장 0.75)도
-    여기서 빠진다. 문장을 빼고 싣던 동안에는 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다. 같은 사건인 다른 기사라도
-    되풀이하는 문장이 없으면 2026-10-25 규칙대로 2순위 검사를 받는다(4호 Nexeon 의 Dentons).
+    여기서 빠진다. 문장을 빼고 싣던 동안에는 회사 소개 한 문장만 남아 세 번째 항목으로 실렸다.
+    2·3순위는 위 칸과 같은 기사이면서 위 칸 어느 것과도 같은 사건(same_event_as_signal)이 아닌 행만 받는다(2026-11-04).
+    같은 사건인 다른 기사는 되풀이하는 문장이 없어도 싣지 않는다. 2026-10-25 에는 2순위로 실었다(4호 Nexeon 의 Dentons).
+    5호에서 Amkor(공식 보도자료가 Yahoo Finance 위 칸의 한국 증설을 다시 씀)와 3M(GSEO 협력)·Besi(EPIC Center 합류,
+    위 칸과 같은 보도자료)가 이렇게 실렸다. 같은 기사의 다른 내용(5호 Norsk Hydro 의 Torija 재활용 공장, 4호 Cytiva)은 남는다.
     돌려주는 순서는 고른 순서(순위·sort_signal_rows)다. 상자에 찍는 순서는 business_display_order 가 정한다.
     """
     shown_ids = {id(row) for row in shown_rows}
@@ -1354,6 +1379,11 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
         return (clean_text(summary_field(row, "ai_summary")) not in shown_texts
                 and _signal_overlap(row, shown_rows) <= SAME_EVENT_OVERLAP)
 
+    def new_content(row):
+        # 2·3순위에 드는 것은 위 칸과 같은 기사의 다른 내용뿐이다(2026-11-04). 다른 매체가 위 칸 사건을 다시 쓴 기사는
+        # 내용이 더 있어도 싣지 않는다(10c146e 의 뜻). 같은 기사라도 위 칸(어느 칸이든)과 같은 사건이면 싣지 않는다.
+        return bool(article_keys(row) & shown_keys) and not same_event_as_signal(row, shown_rows, company)
+
     business = [row for row in relevant_rows if mine(row) and signal_supported(row) and on_target(row)]
     signals = [row for row in investment_rows if mine(row) and signal_publishable(row) and on_target(row)]
     boxed = [{**row, "ai_summary_ko": row["ai_box_summary_ko"], "ai_summary_en": row["ai_box_summary_en"]}
@@ -1361,8 +1391,8 @@ def business_rows(company, relevant_rows, investment_rows, shown_rows=(), exempt
              and clean_text(row.get("ai_box_summary_ko")) and clean_text(row.get("ai_box_summary_en"))]
     tiers = [
         [row for row in business + signals if not overlaps(row)],
-        [row for row in business if overlaps(row)],
-        boxed,
+        [row for row in business if overlaps(row) and new_content(row)],
+        [row for row in boxed if new_content(row)],
     ]
     chosen, chosen_keys = [], set()
     for tier, candidates in enumerate(tiers):
@@ -1404,8 +1434,10 @@ def best_business_row(company, relevant_rows, investment_rows, shown_rows=(), ex
 
     1. 위 지표 칸과 겹치지 않고 타겟 품목과 이어진 행. 다른 기사이면서 같은 사건도 아니어야 한다.
        타겟 품목이 없는(면제) 기업은 그 달의 사업동향이면 된다.
-    2. 위 지표 칸과 겹치더라도(같은 기사나 같은 사건) 타겟 품목과 이어져 있고 더 자세한 설명이나 다른 내용이 있는 행.
+    2. 위 지표 칸과 같은 기사이지만 타겟 품목과 이어져 있고 위 칸과 다른 내용이 있는 행.
        따로 판정한 사업동향 문안을 먼저, 지표 기사에서 따로 쓴 상자 문안(box_writer.mjs, ai_box_summary_*)을 다음에 쓴다.
+       위 칸 어느 것과도 같은 사건(same_event_as_signal)이면 같은 기사라도 싣지 않고, 위 칸 사건을 다른 매체가 다시 쓴
+       기사는 내용이 더 있어도 싣지 않는다(2026-11-04).
        위 칸 문안과 글자가 같거나 낱말이 SAME_EVENT_OVERLAP 넘게 겹치면 덧붙인 내용이 없는 되풀이로 본다.
     3. 그 밖은 None 이다. 상자는 "확인되지 않음" 문구(business_empty)를 싣는다.
 

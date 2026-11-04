@@ -67,10 +67,54 @@ class SameEventTests(unittest.TestCase):
                  "ai_summary_en": "Amkor Technology is reviewing an expanded investment in its plant in Gwangju, "
                                   "South Jeolla Province, Korea, as demand for advanced packaging grows."}
         self.assertIs(content.best_business_row("Amkor Technology", [repeat, other], [], [signal]), other)
-        # 같은 사건이라도 타겟 품목과 이어져 있고 더 자세하면(120억 달러, AI 칩용 클린룸) 다음 순위로 싣는다(2026-10-25).
-        self.assertIs(content.best_business_row("Amkor Technology", [repeat], [], [signal]), repeat)
+        # 다른 매체가 쓴 같은 사건은 더 자세해도(120억 달러, AI 칩용 클린룸) 싣지 않는다(2026-11-04). 2026-10-25 에는
+        # 2순위로 실었다. 같은 기사의 다른 내용만 2순위로 남는다(test_business_box_items 의 Cytiva·Norsk Hydro).
+        self.assertIsNone(content.best_business_row("Amkor Technology", [repeat], [], [signal]))
         unlinked = {**repeat, "ai_target_technology_supported": False}
         self.assertIsNone(content.best_business_row("Amkor Technology", [unlinked], [], [signal]))
+
+
+# 5호(2026-10) 실제 문안. 위 칸은 다른 매체 기사이고, 상자 후보는 같은 사건을 쓴 공식 보도자료다.
+AMKOR_KOREA_SIGNAL = {"company": "Amkor Technology", "ai_summary_en": (
+    "Nvidia and Amkor agreed to expand their partnership to boost advanced packaging capacity in South Korea, targeting "
+    "a more than 300% increase in interposer wafer capacity by the end of 2028.")}
+AMKOR_KOREA_RELEASE = (
+    "Amkor Technology announced a $1.3 billion agreement with NVIDIA on October 21, 2026, to expand capacity in South "
+    "Korea for semiconductor packaging and test services, building on their Arizona collaboration. With this commitment, "
+    "multi-year agreements in Arizona and South Korea total $3 billion to support growing demand for next-generation AI "
+    "and accelerated computing platforms.")
+AIR_LIQUIDE_BOND_SIGNAL = {"company": "Air Liquide", "ai_summary_en": (
+    "On October 6, 2026, Air Liquide issued a 2 billion euros multi-tranche bond in France with 2-year, 5-year, and "
+    "10-year maturities at a weighted average interest rate below 4.00% per annum. Net proceeds will fund general "
+    "corporate purposes and debt refinancing. The issue received A ratings from Standard & Poor's and Scope Ratings, "
+    "and an A2 rating from Moody's.")}
+VESTAS_NERETEK_SIGNAL = {"company": "Vestas", "ai_summary_en": (
+    "Vestas signed a memorandum of understanding with Neretek to explore deploying their foundation and turbine "
+    "technologies on deeper-water offshore wind projects, including assessing Neretek's BC90 foundation concept with "
+    "Vestas's turbines for the Other Deep Water Offshore Wind segment.")}
+
+
+class SameEventFromTheLongerSideTests(unittest.TestCase):
+    """겹침을 두 방향으로 재고, 같은 금액이면 고유명사 없이도 같은 사건으로 본다(2026-11-04, 5호 상자 되풀이)."""
+
+    def test_an_official_release_retelling_a_shorter_card_is_the_same_event(self):
+        # 5호 Amkor: 상자 문안 쪽으로는 26%지만 위 칸 쪽으로는 39%이고 NVIDIA·South·Korea 를 함께 쓴다.
+        self.assertTrue(same(AMKOR_KOREA_RELEASE, AMKOR_KOREA_SIGNAL))
+
+    def test_the_same_amount_with_most_words_shared_is_the_same_event(self):
+        # 5호 Air Liquide: 3분기 실적 보도자료가 10월 6일 채권 발행을 다시 썼다(46%, "€2 billion" = "2 billion euros").
+        self.assertTrue(same("Air Liquide issued a €2 billion multi-tranche bond on the Euro market to support its capital "
+                             "allocation and drive the development of activities in future growth markets.",
+                             AIR_LIQUIDE_BOND_SIGNAL))
+
+    def test_a_different_project_in_the_same_field_is_kept(self):
+        # 5호 Vestas: 대만 첫 V236 허브 조립은 Neretek MOU 와 32% 겹치고 offshore·wind 만 같다.
+        self.assertFalse(same("On October 13, 2026, Vestas completed the assembly of Taiwan's first V236-15.0 MW offshore "
+                              "wind turbine hub, supporting progress on CIP's 495 MW Fengmiao 1 Offshore Wind Farm.",
+                              VESTAS_NERETEK_SIGNAL))
+        # 같은 금액 단위라도 다른 사건은 남긴다(Amkor 의 광주 증설 검토).
+        self.assertFalse(same("Amkor Technology is reviewing an expanded investment in its plant in Gwangju, South "
+                              "Jeolla Province, Korea, as demand for advanced packaging grows.", AMKOR_SIGNAL))
 
 
 if __name__ == "__main__":
