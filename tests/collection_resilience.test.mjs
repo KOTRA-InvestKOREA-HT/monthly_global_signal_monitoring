@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { createDomainGuard, collectWithCheckpoint, collectionMaxAgeMs, retryableCollection } from '../scripts/collection_resilience.mjs';
-import { collectionBlockingErrors, companyCollectionIdentity, companyTrendInputs, parseArgs } from '../scripts/collect_company_signals.mjs';
+import { collectCompany, collectionBlockingErrors, companyCollectionIdentity, companyTrendInputs, parseArgs } from '../scripts/collect_company_signals.mjs';
 import { coverageStatus } from '../scripts/local_report.mjs';
 
 test('unavailable host pauses, another host proceeds, and cooldown allows one probe', async () => {
@@ -65,6 +65,140 @@ test('access-denied URLs never trigger transport cooldown for unrelated pages', 
   }), /403/);
   assert.equal(await guard.run('https://site.example/public', async () => 'public'), 'public');
   assert.equal(guard.stats.skipped, 0);
+});
+
+// --- 서버 오류 하나가 호스트를 쉬게 하던 일(2026-10 DNP) ------------------------------------------------------
+// 2026-10 수집(11-02 실행)에서 DNP 의 www.dnp.co.jp/en/ir/ 가 500 을 냈다. 재시도 세 번이 각각 호스트 실패로 세어져
+// 한도 3을 채웠고, 30초 쉼 동안 IR 목록 2곳과 기사 상세 10건이 모두 domain_cooldown 으로 끝났다.
+
+const serverError = (status = 500) => async () => {
+  throw Object.assign(new Error(`HTTP ${status}`), { status });
+};
+
+test('retries of one URL that answers 5xx count once, so its host keeps serving the other pages', async () => {
+  let now = 0;
+  const guard = createDomainGuard({ now: () => now });
+  // fetchWithRetries 는 같은 주소를 세 번(재시도 2번) 보낸다.
+  for (let i = 0; i < 3; i++) {
+    await assert.rejects(guard.run('https://www.dnp-like.example/en/ir/', serverError(500)), /HTTP 500/);
+    now += 1000;
+  }
+  assert.equal(await guard.run('https://www.dnp-like.example/ir/library/report/', async () => 'listing'), 'listing');
+  assert.equal(await guard.run('https://www.dnp-like.example/news/detail/20178744_1587.html', async () => 'article'), 'article');
+  assert.equal(guard.stats.skipped, 0);
+  // 성공으로 연속이 끊기면 같은 주소의 5xx 는 다시 한 번 센다.
+  const again = createDomainGuard({ now: () => now });
+  await assert.rejects(again.run('https://again.example/en/ir/', serverError(500)));
+  assert.equal(await again.run('https://again.example/news/', async () => 'ok'), 'ok');
+  for (const page of ['en/ir/', 'a', 'b']) await assert.rejects(again.run(`https://again.example/${page}`, serverError(500)));
+  await assert.rejects(again.run('https://again.example/news/detail/1.html', async () => 'never'), /domain_cooldown/);
+});
+
+test('three different URLs answering 5xx in a row still cool the host down, and 429 or silence still count every attempt', async () => {
+  const guard = createDomainGuard();
+  // 서버 전체 장애: 주소마다 재시도까지 5xx 다. 셋째 주소에서 쉰다.
+  for (const page of ['news/', 'ir/']) {
+    for (let i = 0; i < 3; i++) await assert.rejects(guard.run(`https://outage.example/${page}`, serverError(502)));
+  }
+  // 두 주소까지는 쉬지 않아 셋째 주소가 나간다. 그 5xx 에서 쉰다.
+  await assert.rejects(guard.run('https://outage.example/library/', serverError(503)), /HTTP 503/);
+  await assert.rejects(guard.run('https://outage.example/news/detail/1.html', async () => 'never'), /domain_cooldown/);
+  // 429 는 호스트가 직접 늦추라고 한 것이다. 주소 하나라도 시도마다 센다.
+  const limited = createDomainGuard();
+  for (let i = 0; i < 3; i++) await assert.rejects(limited.run('https://busy.example/news/', serverError(429)), /HTTP 429/);
+  await assert.rejects(limited.run('https://busy.example/news/detail/1.html', async () => 'never'), /domain_cooldown/);
+  // 응답이 없는 실패(시간초과)도 지금처럼 시도마다 센다. 한 번에 20초씩 들기 때문이다.
+  const silent = createDomainGuard();
+  for (let i = 0; i < 3; i++) {
+    await assert.rejects(silent.run('https://silent.example/news/', async () => { throw new Error('This operation was aborted'); }));
+  }
+  await assert.rejects(silent.run('https://silent.example/news/detail/1.html', async () => 'never'), /domain_cooldown/);
+  // 같은 주소의 5xx 반복은 앞선 응답 없는 실패의 연속 횟수를 지우지 않는다.
+  const mixed = createDomainGuard();
+  await assert.rejects(mixed.run('https://mixed.example/a', serverError(500)));
+  await assert.rejects(mixed.run('https://mixed.example/a', serverError(500)));
+  await assert.rejects(mixed.run('https://mixed.example/b', async () => { throw new Error('fetch failed'); }));
+  await assert.rejects(mixed.run('https://mixed.example/b', async () => { throw new Error('fetch failed'); }));
+  await assert.rejects(mixed.run('https://mixed.example/c', async () => 'never'), /domain_cooldown/);
+});
+
+async function withFetch(handler, task) {
+  const realFetch = globalThis.fetch;
+  const requested = [];
+  globalThis.fetch = async (target) => {
+    const url = String(target);
+    requested.push(url);
+    const response = handler(url) || new Response('not found', { status: 404, statusText: 'Not Found' });
+    Object.defineProperty(response, 'url', { value: url });
+    return response;
+  };
+  try { return { result: await task(), requested }; } finally { globalThis.fetch = realFetch; }
+}
+
+// 수집기 전체가 쓰는 domainGuard 와 실제 재시도(fetchRetries 2, 사이에 0.7초·1.4초 대기)를 그대로 거친다.
+// 출처 순서도 DNP 와 같다: 피드 → 뉴스 목록 → IR(500) → IR 목록 2곳 → 상세 기사.
+test('DNP: an IR page that answers 500 on every retry no longer wipes out the article detail fetches', async () => {
+  const company = { target_no: 63, company: 'DNP', query_aliases: ['Dai Nippon Printing'] };
+  const base = 'https://www.dnp-replay.example';
+  const articles = [
+    ['20178744_1587', 'DNP introduced in Sankei Shimbun My Vision', '2026-10-27'],
+    ['20178725_1587', 'DNP Group Sustainability Briefing 2026 video released', '2026-10-23'],
+    ['20178718_1587', 'DNP joins the Tokyo Green Biz Lounge for employee well-being', '2026-10-19'],
+    ['20178679_1587', 'DNP establishes the joint venture TriNebula Cell Tech', '2026-10-09'],
+  ];
+  const detailUrl = id => `${base}/news/detail/${id}.html`;
+  const feed = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>DNP News</title>
+<item><title>${articles[3][1]}</title><link>${detailUrl(articles[3][0])}?from=rss</link><pubDate>Fri, 09 Oct 2026 01:00:00 GMT</pubDate></item>
+</channel></rss>`;
+  const listing = `<html><body><ul>${articles.slice(0, 3).map(([id, title, date]) =>
+    `<li><a href="${detailUrl(id)}">${title}</a> <span>${date}</span></li>`).join('')}</ul></body></html>`;
+  const library = `<html><body><a href="${base}/ir/library/">IR Library</a> <a href="${base}/ir/faq/">FAQ</a></body></html>`;
+  const articleHtml = (title, date) => `<html><head><title>${title}</title>
+<meta property="article:published_time" content="${date}"></head>
+<body><main><article><h1>${title}</h1><p>${'Dai Nippon Printing announced the initiative in Tokyo today. '.repeat(10)}</p></article></main></body></html>`;
+  const pages = {
+    [`${base}/news/rss_news_jp.xml`]: () => new Response(feed, { headers: { 'content-type': 'application/rss+xml' } }),
+    [`${base}/news/`]: () => new Response(listing, { headers: { 'content-type': 'text/html' } }),
+    // 번역 프록시가 없어진 경로. 몇 번을 보내도 같은 500 이다.
+    [`${base}/en/ir/`]: () => new Response('<html><title>Fastly error: unknown domain</title></html>',
+      { status: 500, statusText: 'Internal Server Error', headers: { 'content-type': 'text/html', 'retry-after': '0' } }),
+    [`${base}/ir/library/report/`]: () => new Response(library, { headers: { 'content-type': 'text/html' } }),
+    [`${base}/ir/library/?lang=en`]: () => new Response(library, { headers: { 'content-type': 'text/html' } }),
+  };
+  for (const [id, title, date] of articles) {
+    for (const url of [detailUrl(id), `${detailUrl(id)}?from=rss`]) {
+      pages[url] = () => new Response(articleHtml(title, date), { headers: { 'content-type': 'text/html' } });
+    }
+  }
+  const sourceConfig = {
+    official_feeds: { DNP: [{ source: 'DNP - Official RSS', kind: 'press_release', url: `${base}/news/rss_news_jp.xml` }] },
+    official_pages: { DNP: [
+      { source: 'DNP - Corporate News', kind: 'newsroom', url: `${base}/news/` },
+      { source: 'DNP - Investor Relations', kind: 'ir', url: `${base}/en/ir/` },
+      { source: 'DNP - Securities Reports', kind: 'filing', url: `${base}/ir/library/report/` },
+      { source: 'DNP - IR Library', kind: 'financial_report', url: `${base}/ir/library/?lang=en` },
+    ] },
+  };
+  const october = { mode: 'explicit', fromDate: '2026-10-01', toDate: '2026-10-31', from_date: '2026-10-01', to_date: '2026-10-31',
+    fromMs: Date.parse('2026-10-01T00:00:00Z'), toMs: Date.parse('2026-10-31T23:59:59Z'), lookbackDays: 45 };
+  const args = { ...parseArgs([]), rateLimitSeconds: 0, timeoutSeconds: 5, maxPerSource: 6, maxPerCompany: 10, maxDetailPerCompany: 10 };
+  const trend = { technologyMap: { companies: [] }, keywordConfig: { groups: {} }, searchTerms: {} };
+  const { result, requested } = await withFetch(url => pages[url]?.(),
+    () => collectCompany(company, sourceConfig, ['official_feeds', 'official_pages'], args, october, '2026-11-02T07:02:42Z',
+      { probe: (url, request) => request(), trend }));
+  // IR 페이지는 재시도까지 세 번 보냈고, 그 오류 하나만 남는다.
+  assert.equal(requested.filter(url => url === `${base}/en/ir/`).length, 3);
+  assert.deepEqual(result.errors.map(error => [error.source, error.kind, error.error]),
+    [['official_pages', 'ir', 'HTTP 500 Internal Server Error']]);
+  // 뒤따른 IR 목록 2곳과 기사 상세는 쉼 없이 나갔고 본문을 받았다.
+  assert.ok(requested.includes(`${base}/ir/library/report/`));
+  assert.ok(requested.includes(`${base}/ir/library/?lang=en`));
+  const fetched = result.rows.filter(row => row.content_fetch_status === 'fetched').map(row => row.url.replace(base, '')).sort();
+  assert.deepEqual(fetched, [
+    '/news/detail/20178679_1587.html?from=rss', '/news/detail/20178718_1587.html', '/news/detail/20178725_1587.html',
+    '/news/detail/20178744_1587.html',
+  ]);
+  assert.ok(result.rows.every(row => row.content_fetch_status === 'fetched'));
 });
 
 test('checkpoint resumes completed companies, retries transient failures, expires and respects refresh', async t => {

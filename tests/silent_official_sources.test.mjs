@@ -295,10 +295,13 @@ test('host-neutral failures neither start nor clear a host cooldown', async () =
   for (let i = 0; i < 3; i++) await assert.rejects(neutral());
   assert.equal(await guard.run('https://neutral.example/news', async () => 'ok'), 'ok');
   // 진짜 장애 한 번 뒤의 중립 실패는 연속 횟수를 지우지 않는다. 장애가 한 번 더 오면 쉰다.
-  const down = () => guard.run('https://neutral.example/x', async () => { throw Object.assign(new Error('HTTP 502'), { status: 502 }); });
-  await assert.rejects(down());
+  // 5xx 는 주소마다 한 번만 세므로(2026-10 DNP) 둘째 장애는 다른 주소다.
+  const down = page => guard.run(`https://neutral.example/${page}`, async () => {
+    throw Object.assign(new Error('HTTP 502'), { status: 502 });
+  });
+  await assert.rejects(down('x'));
   await assert.rejects(neutral());
-  await assert.rejects(down());
+  await assert.rejects(down('z'));
   await assert.rejects(guard.run('https://neutral.example/y', async () => 'never'), /domain_cooldown/);
 });
 
