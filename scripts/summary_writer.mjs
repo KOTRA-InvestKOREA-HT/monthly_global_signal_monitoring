@@ -8,7 +8,8 @@
 // 예시만 받아 쓴다. 두 단계는 워크플로도 나뉜다(collect-company-signals → publish-report).
 //
 // 되돌아갈 판정 문안이 없으므로 검사에 걸린 문안은 무엇이 걸렸는지 알려 주고 다시 쓰게 한다. 끝내 통과하지
-// 못한 승인 후보는 summary_failed 로 표시해 이번 보고서에서 빼고, 다음 실행이 다시 쓴다. 할당량(429)이나
+// 못한 승인 후보는 summary_failed 로 표시해(마지막으로 걸린 문안도 함께) 이번 보고서에서 빼고, 다음 실행이 다시 쓴다.
+// 빠진 후보는 발행 단계가 경고·상태로 드러낸다(publish_report.mjs copyFailures). 할당량(429)이나
 // 서비스 장애로 멈추면 보고서를 만들지 않고, 다음 실행이 이미 쓴 문안을 그대로 이어 받는다.
 import crypto from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -218,7 +219,16 @@ const PROBLEM_GUIDE = [
   [/^english_country_in_korean:/, 'summary_ko leaves a country name in English. Write country names in Korean (한국, 대만, 일본, 중국, 미국, 독일); ' +
     'keep a country name in English only inside a company, institution, event or program name.'],
   [/^mistranslated_term$/,'A term is mistranslated in summary_ko; use the Korean terminology in the policy.'],
-  [/^bilingual_month_mismatch$/, 'The two languages state different months; both must carry the same months.'],
+  // 5호(2026-10) Siemens Gamesa S5(Global Venturing 인사 기사)가 이 사유로 세 번 다 걸려 보고서에서 빠졌다. 그 기사에 적힌
+  // 달은 기사 머리의 게시일 "Oct 1, 2026" 하나뿐이라, 한쪽 언어만 그 날짜를 옮긴 것으로 보인다(문안이 남지 않아 확인은 못 함).
+  // 그때 안내는 "두 언어의 달이 다르다"뿐이라 어느 쪽에 어느 달이 있는지 모델이 두 문안을 대조해 찾아야 했다.
+  // 이제 코드에 양쪽 달을 싣고(bilingualFactProblems), 빠진 쪽에 넣거나 양쪽에서 뺄 기준을 함께 준다.
+  [/^bilingual_month_mismatch(?::|$)/, code => {
+    const [, ko, en] = /^bilingual_month_mismatch:ko=([^|]*)\|en=(.*)$/.exec(code) || [];
+    return `The two languages state different months${ko ? ` (summary_ko: ${ko}; summary_en: ${en})` : ''}. Both must state the same months: ` +
+      'add the month to the language that lacks it, or remove it from both when the article does not give it as the date of this event. ' +
+      'The date line showing when the article itself was published is not the date of the event.';
+  }],
   [/^bilingual_percent_mismatch$/, 'The two languages state different percentages; both must carry the same percentages.'],
   [/^missing_item$/, 'The previous answer left this item out; return it.'],
   [/^empty$/, 'The previous copy was empty in at least one language; write both.'],
@@ -229,7 +239,7 @@ export function explainProblem(problem) {
   const code = String(problem);
   const entry = PROBLEM_GUIDE.find(([pattern]) => pattern.test(code))?.[1];
   if (!entry) return code;
-  const guide = typeof entry === 'function' ? entry() : entry;
+  const guide = typeof entry === 'function' ? entry(code) : entry;
   // 검토 지적은 이미 설명과 구절을 담고 있다. 유형 안내를 앞에 붙이고 지적 문장은 그대로 둔다.
   if (code.startsWith('review_')) return `${guide} Reviewer: ${code.replace(/^review_\w+:\s*/, '')} [${code.match(/^review_\w+/)[0]}]`;
   return `${guide} [${code}]`;
@@ -328,14 +338,18 @@ const detailPart = text => (text.includes(' - ') ? text.slice(text.indexOf(' - '
 // 실행 35175067142: Renishaw 한국어 문안에만 "2026년 9월 SEMICON Taiwan, 10월 SEMICON West" 일정이 있었다.
 const EN_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 const factSet = values => [...new Set(values)].sort().join(',');
+// 달 불일치 코드에는 양쪽 달을 적는다(예: bilingual_month_mismatch:ko=10월|en=none). 다시 쓸 때 모델이 어느 쪽을 고칠지
+// 알 수 있고, 끝내 실패하면 실행 요약·summary_failed 에서 사람이 바로 읽는다(5호 Siemens Gamesa S5, PROBLEM_GUIDE 참고).
+const monthNumbers = values => [...new Set(values)].sort((a, b) => a - b);
+const monthLabels = (months, label) => months.map(label).join(',') || 'none';
 export function bilingualFactProblems(decision) {
   const ko = String(decision.summary_ko || ''), en = String(decision.summary_en || '');
   if (!ko.trim() || !en.trim()) return [];
-  const koMonths = factSet([...ko.matchAll(/(?<!\d)(1[0-2]|[1-9])월/g)].map(m => Number(m[1])));
+  const koMonths = monthNumbers([...ko.matchAll(/(?<!\d)(1[0-2]|[1-9])월/g)].map(m => Number(m[1])));
   // 약어(Jan.·Sept. 23·Oct 6)도 읽는다. 전체 철자만 읽던 때 영문 "Sept. 23"과 국문 "9월 23일"이 불일치로 걸렸다
   // (docs/prompt_burden_review_2026-10-26.md 3번). 국문 문안의 영문 날짜를 걸게 된 뒤(english_date_in_korean)로는 이 오탐이
   // "Jan. 1, 2027" 카드를 국문으로 고칠 길까지 막는다. 약어는 마침표나 숫자가 뒤따를 때만 달로 본다.
-  const enMonths = factSet([
+  const enMonths = monthNumbers([
     ...[...en.matchAll(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi)]
       .filter(m => !(m[1].toLowerCase() === 'may' && m[0] === 'may')).map(m => EN_MONTHS.indexOf(m[1].toLowerCase()) + 1),
     ...[...en.matchAll(/\b(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)(?:\.|(?=\s?\d))/g)]
@@ -343,7 +357,9 @@ export function bilingualFactProblems(decision) {
   ]);
   const koPercents = factSet([...ko.matchAll(/(\d+(?:\.\d+)?)\s?(?:%|퍼센트)/g)].map(m => Number(m[1])));
   const enPercents = factSet([...en.matchAll(/(\d+(?:\.\d+)?)\s?(?:%|percent\b)/gi)].map(m => Number(m[1])));
-  return [...(koMonths !== enMonths ? ['bilingual_month_mismatch'] : []), ...(koPercents !== enPercents ? ['bilingual_percent_mismatch'] : [])];
+  const monthMismatch = koMonths.join() === enMonths.join() ? [] : [`bilingual_month_mismatch:ko=${monthLabels(koMonths, month => `${month}월`)}` +
+    `|en=${monthLabels(enMonths, month => EN_MONTHS[month - 1][0].toUpperCase() + EN_MONTHS[month - 1].slice(1))}`];
+  return [...monthMismatch, ...(koPercents !== enPercents ? ['bilingual_percent_mismatch'] : [])];
 }
 
 // 보고서 검토에서 확인된 오역. 영문 원어와 짝을 이룰 때만 잡는다(실행 35167466191·35175067142).
@@ -592,12 +608,23 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
     const failed = new Set(interrupted ? [] : todo.map(decision => decision.candidate_id).filter(id => published.has(id) && !kept.has(id)));
     // 검토 지적으로 다시 쓰는 실행은 지적받지 않은 후보의 실패 표시를 그대로 둔다.
     const carried = asked ? (review.summary_failed?.candidate_ids || []).filter(id => !asked[id]) : [];
+    // 끝내 걸린 마지막 문안. 실패한 후보는 판정 파일의 문안을 비우므로(withoutSummary) 여기 말고는 남지 않는다.
+    // 5호(2026-10) Siemens Gamesa S5 는 문제 코드(bilingual_month_mismatch)만 남아, 모델이 정말 두 언어에 다른 달을 썼는지
+    // 검사가 잘못 걸었는지 가릴 수 없었다. 검사가 걸린 문안은 previous 에, 가져오기 검사에 걸린 문안은 written 에 있다.
+    const rejectedCopy = id => {
+      const copy = written.get(id) || previous[id];
+      return copy && (String(copy.summary_en || '').trim() || String(copy.summary_ko || '').trim())
+        ? { summary_en: String(copy.summary_en || ''), summary_ko: String(copy.summary_ko || '') } : null;
+    };
     const withFailed = () => {
       const { summary_failed, ...rest } = review;
       const ids = [...new Set([...carried, ...failed])];
+      const copies = Object.fromEntries(ids.map(id => [id, failed.has(id) ? rejectedCopy(id) : summary_failed?.copies?.[id]])
+        .filter(([, copy]) => copy));
       return { ...rest, decisions,
         ...(ids.length ? { summary_failed: { version: WRITER_VERSION, candidate_ids: ids,
-          problems: Object.fromEntries(ids.map(id => [id, failed.has(id) ? rejected[id] || [] : summary_failed?.problems?.[id] || []])) } } : {}) };
+          problems: Object.fromEntries(ids.map(id => [id, failed.has(id) ? rejected[id] || [] : summary_failed?.problems?.[id] || []])),
+          ...(Object.keys(copies).length ? { copies } : {}) } } : {}) };
     };
     let next = withFailed();
     // 마지막 안전장치: 보고서 생성이 쓰는 가져오기 검사를 그대로 통과해야 한다. 걸린 후보는 문안을 비우고 실패로 둔다.
@@ -615,7 +642,9 @@ export async function writeSummaries({ articles, reviewDir, writer, apiKey, poli
       }
     }
     for (const id of failed) {
-      stats.failed.push({ article_id: article.id, company: article.company, candidate_id: id, problems: rejected[id] || [] });
+      const copy = rejectedCopy(id);
+      stats.failed.push({ article_id: article.id, company: article.company, candidate_id: id, problems: rejected[id] || [],
+        ...(copy ? { rejected_copy: copy } : {}) });
       for (const problem of rejected[id] || []) {
         const name = problem.split(':')[0];
         stats.rejected[name] = (stats.rejected[name] || 0) + 1;

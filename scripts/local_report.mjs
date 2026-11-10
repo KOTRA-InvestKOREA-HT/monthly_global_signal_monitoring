@@ -658,6 +658,10 @@ export function importReview(article, review, { strictNumbers = false, summaries
         ai_summary_en: groundedSummary ? clean(decision.summary_en) : "",
         ai_summary_source: review.provider ? `${review.provider}_article_review` : "local_agent_review", ai_summary_reviewer: review.reviewer,
         ai_summary_cache_key: article.id, ai_evidence_quotes: quotes,
+        // 승인됐지만 문안이 끝내 검사를 통과하지 못해 보고서에서 빠진 행. 표시가 없으면 근접 후보와 똑같아 보인다.
+        // 5호(2026-10) Siemens Gamesa S5 가 그렇게 latest_investment_signals.json 에 ai_signal_supported=false 로만 남아,
+        // 승인된 시그널이 빠졌다는 것을 산출물에서 알 수 없었다. 발행 단계(publish_report.mjs copyFailures)가 이 표시로 경고한다.
+        ...(summaryFailed ? { ai_summary_failed: (review.summary_failed?.problems?.[candidate.id] || []).map(String) } : {}),
       };
       if (approved && !quotes.length) throw new Error(`${context}: approved candidate needs an evidence quote`);
       const errors = validateRows([row], candidate.kind, { requireSummaries: summaries });
@@ -936,6 +940,12 @@ export function articleCoverageGap(article, review, published = false) {
   // 재검토를 끝내지 못한 판정은 신호 유무를 확정하지 못한 것이다.
   if (review.semantic_recheck_pending) return 'recheck_pending';
   const decisions = review.decisions || [];
+  // 승인된 시그널을 찾았지만 문안이 끝내 검사를 통과하지 못해 싣지 못했다(summary_writer.mjs summary_failed).
+  // "검토했으나 미포착"과 섞이면 안 된다. 5호(2026-10) Siemens Gamesa 는 S5 가 이렇게 빠졌는데 커버리지 사유에는 다른 기사의
+  // needs_review 만 남았다. importReview 와 같이 지금도 승인 조건을 갖춘 후보만 센다.
+  const copyFailed = new Set(review.summary_failed?.candidate_ids || []);
+  if (decisions.some((decision) => copyFailed.has(decision.candidate_id) &&
+    decisionOutcome(article, decisions, decision).supported)) return 'summary_failed';
   if (decisions.some((decision) => decision.quality === 'needs_review')) return 'needs_review';
   if (!article.candidates.some((candidate) => hasArticleBody(candidate.row)) &&
     decisions.some((decision) => decision.entity_supported && decision.indicator_supported)) return 'no_body';
@@ -1084,6 +1094,8 @@ export async function build(args) {
       wording_fixed_articles: reviews.filter((review) => review.adjudication?.kind === "wording").length,
       // 실행 상태의 recheck_pending 과 같은 단위(후보 수)로 센다. 사업동향 후보는 PDF 에 없으므로 행으로는 셀 수 없다.
       recheck_pending_candidates: reviews.reduce((n, review) => n + (review.semantic_recheck_pending?.candidate_ids?.length || 0), 0),
+      // 승인됐지만 문안이 끝내 검사를 통과하지 못해 빠진 후보(importReview 의 ai_summary_failed).
+      summary_failed_candidates: results.filter((item) => item.row?.ai_summary_failed).length,
       date_pending_investment_rows: datePending(investment).length,
       date_pending_business_rows: datePending(relevant).length,
       deferred_articles: deferred.length,

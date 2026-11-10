@@ -291,7 +291,7 @@ test('S1 or S4 approvals that rest on a completed acquisition are asked again', 
 // 같은 실행: Renishaw 한국어 문안에만 9월·10월 전시 일정이 있었다.
 test('Korean and English summaries that state different months or percentages are refreshed', () => {
   const decision = { summary_ko: '2026년 9월 SEMICON Taiwan과 10월 SEMICON West에서 공개 예정임.', summary_en: 'It will be shown at SEMICON Taiwan and SEMICON West.' };
-  assert.deepEqual(bilingualFactProblems(decision), ['bilingual_month_mismatch']);
+  assert.deepEqual(bilingualFactProblems(decision), ['bilingual_month_mismatch:ko=9월,10월|en=none']);
   assert.deepEqual(bilingualFactProblems({ ...decision, summary_en: 'It will be shown at SEMICON Taiwan in September and SEMICON West in October.' }), []);
   assert.deepEqual(bilingualFactProblems({ summary_ko: '매출이 26% 증가했음.', summary_en: 'Revenue rose 62 percent.' }), ['bilingual_percent_mismatch']);
   // 같은 실행의 오역: scheme of arrangement → 멤버십 배치 방식, late-stage → 말기.
