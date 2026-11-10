@@ -828,6 +828,7 @@
     {
       "target_no": 49,
       "company": "Maxon",
+      "target_identity": {"legal_name": "maxon international ag", "country": "Switzerland", "names": ["maxon", "maxon group", "maxon motor ag", "maxon international ag"], "official_domains": ["maxongroup.com"], "unrelated_domains": ["maxon.net"]},
       "query_aliases": [
         "maxon group"
       ],
