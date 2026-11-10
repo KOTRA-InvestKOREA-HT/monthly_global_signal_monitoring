@@ -17,7 +17,7 @@ import {
 } from "./link_policy.mjs";
 import { aemModelUrl, configuredOfficialHosts, extractQualcommAemArticle, hasAemModel, fetchedTitleMatchesPublisherArticle, isOfficialHostUrl,
   recoverPublisherRow } from './publisher_recovery.mjs';
-import { distinctiveWords, extractEmbeddedArticle, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
+import { distinctiveWords, extractEmbeddedArticle, sameHeadline, sharedWordRatio, withoutSiteSuffix } from './embedded_article.mjs';
 import { COLLECTION_SETTINGS, newsDigestInputs } from './collection_args.mjs';
 // v17: 본문 상한을 24000자에서 36000자로 올렸다. 버전을 바꿔야 게시 단계가 24000자로 잘린 수집본을 다시 쓰지 않는다.
 // v18: 상세 페이지를 못 읽은 공식 피드 기사에 피드 요약(200자 이상)을 본문으로 싣는다(content_source=feed_summary).
@@ -746,33 +746,196 @@ function extractDateFromItemprop(html) {
   return null;
 }
 
-// <article> 안에 다시 든 <article> 은 관련 기사 카드다. Airbus 보도자료는 본문 <article> 끝에 "관련 뉴스" 카드
-// 다섯 장을 <article> 로 넣고 카드마다 그 기사의 <time> 을 단다. 그 날짜(10월)가 9월 기사의 게시일 근거로 읽혀
-// 9월 기사 여섯 건이 모두 근거 충돌로 보류됐다(2026-10 로컬 수집). 바깥 기사에 <time> 이 하나라도 있을 때만
-// 안쪽 조각을 뺀다. 기사 본문이 안쪽 <article> 에만 있는 페이지는 이전처럼 모두 읽는다.
-function withoutNestedArticles(html) {
-  const source = stripComments(html);
-  const cuts = [];
-  let depth = 0;
-  let start = 0;
-  for (const match of source.matchAll(/<article\b[^>]*>|<\/article\s*>/gi)) {
-    if (match[0][1] !== "/") {
-      depth += 1;
-      if (depth === 2) start = match.index;
-    } else if (depth > 0) {
-      if (depth === 2) cuts.push([start, match.index + match[0].length]);
-      depth -= 1;
+// ── 기사 자신의 <time> 만 게시일 근거로 남기기 ──
+// 페이지의 <time> 을 모두 게시일 근거로 읽으면 관련 기사·사이드바·최신 뉴스 목록에 달린 남의 날짜가 섞여
+// 근거 충돌이 된다. 2026-10 보고서(2026-11-02 수집)에서 Toppan Holdings 의 승인 시그널("Six Companies Launch
+// Joint R&D ...", 10/28)이 그렇게 date_pending 으로 빠졌다. 본문 <article> 끝의 <section class="newsRelated">
+// ("Related News") 카드 두 장이 2026/08/03·2026/04/09 <time> 을 달고 있었고, 카드가 <article> 이 아니라 <li>·<div>
+// 라서 아래 Airbus 규칙(안쪽 <article>)으로는 걸러지지 않았다. 같은 수집본에서 근거 충돌 85행 가운데 36행이
+// 이 모양이었다(기사 자신의 날짜는 meta·JSON-LD·itemprop·목록 날짜와 맞는데 다른 <time> 이 어긋남). 남의 <time>
+// 만 기사 날짜와 어긋난 행(Umicore 처럼 다른 근거 없이 <time> 끼리 어긋난 행 포함)은 58행이었다.
+// 그래서 <time> 마다 자리를 보고 세 단계로 거른다. 메타·JSON-LD·itemprop 같은 다른 근거는 건드리지 않으므로,
+// 기사 머리의 날짜가 구조화 데이터와 어긋나는 진짜 충돌은 그대로 충돌로 남는다.
+
+const VOID_ELEMENTS = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param",
+  "source", "track", "wbr"]);
+
+// 같은 길이의 공백으로 덮는다. 위치가 그대로라 덮은 사본에서 잰 범위를 원문에 그대로 쓸 수 있다.
+const blankSpan = (text) => " ".repeat(text.length);
+
+// 여는 태그와 닫는 태그의 짝을 맞춰 요소마다 [start, end) 범위와 부모를 남긴다. 닫는 태그가 빠진 요소는 조상이
+// 닫힐 때 함께 닫는다. 닫지 않은 <li>·<p> 가 줄줄이 오면 다음 형제가 열릴 때 앞의 것을 닫는다(HTML 의 암묵적 닫기).
+// 그러지 않으면 닫지 않은 댓글 <li> 하나가 뒤의 형제를 모두 품는다.
+// 주석·스크립트·스타일은 미리 공백으로 덮어 그 안의 태그 글자에 깊이가 어긋나지 않게 한다.
+const SIBLING_CLOSED = new Set(["li", "p", "dt", "dd", "tr", "td", "th", "option"]);
+
+function parseElementTree(masked) {
+  const elements = [];
+  const stack = [];
+  for (const match of masked.matchAll(/<(\/?)([a-zA-Z][\w:-]*)([^>]*)>/g)) {
+    const name = match[2].toLowerCase();
+    if (match[1]) {
+      const at = stack.findLastIndex((open) => open.name === name);
+      if (at === -1) continue;
+      const end = match.index + match[0].length;
+      stack[at].closed = true;
+      for (const open of stack.splice(at)) open.end = end;
+      continue;
     }
+    if (SIBLING_CLOSED.has(name) && stack.at(-1)?.name === name) stack.pop().end = match.index;
+    const tagEnd = match.index + match[0].length;
+    const element = { name, attrs: match[3], start: match.index, tagEnd, end: masked.length, closed: false,
+      parent: stack.at(-1) || null };
+    elements.push(element);
+    if (VOID_ELEMENTS.has(name) || match[3].trimEnd().endsWith("/")) element.end = tagEnd;
+    else stack.push(element);
   }
-  if (!cuts.length) return html;
-  let outer = "";
+  return elements;
+}
+
+const containsRange = (outer, inner) => outer.start <= inner.start && inner.end <= outer.end;
+
+function* ancestorsOf(element) {
+  for (let node = element.parent; node; node = node.parent) yield node;
+}
+
+// 1단계: 기사 밖이라고 표시된 덩어리. <aside>·<nav>, 보조 영역 role, 그리고 class·id 낱말이 관련·추천·최신·인기·
+// 사이드바·댓글·사이트 머리글인 덩어리다. 2026-10 근거 충돌 행의 페이지를 다시 받아 보니 남의 날짜는 이런 곳에
+// 있었다: Toppan "newsRelated", Mercom·metrology.news "recent-posts" 위젯(<aside>), bits-chips "sidebar",
+// STAT "article-recirculation", Motley Fool "content-sidebar", TechInsights "recent-news", TokenPost
+// "site-header" 의 오늘 날짜, investornews 댓글(li.comment). camelCase(newsRelated)는 낱말로 끊어 읽는다.
+// "no-sidebar"·"has-comments" 처럼 페이지 전체에 붙는 class 가 있어 html·body·main 에는 낱말 규칙을 쓰지 않는다.
+const FOREIGN_BLOCK_TAGS = new Set(["aside", "nav"]);
+const FOREIGN_BLOCK_ROLES = /^(?:complementary|navigation|banner|contentinfo)$/i;
+const FOREIGN_BLOCK_WORDS = /(?:^|[\s_-])(?:related\w*|sidebar|recommended|recommendations?|recirc|recirculation|recent|latest|popular|trending|most-?read|most-?viewed|more-?(?:news|stories|articles|posts)|read-?next|comments?|comment-?list|site-?header|masthead)(?=$|[\s_-])/i;
+const PAGE_WRAPPERS = new Set(["html", "body", "main"]);
+
+function foreignBlock(element, headlineFound) {
+  if (FOREIGN_BLOCK_TAGS.has(element.name)) return true;
+  if (FOREIGN_BLOCK_ROLES.test(extractAttribute(element.attrs, "role"))) return true;
+  const outsideArticle = ![...ancestorsOf(element)].some((node) => node.name === "article" || node.name === "main");
+  // 사이트 꼬리말. 기사 안의 <footer> 에는 게시일("Posted on")을 두는 테마가 있어 그대로 둔다.
+  if (element.name === "footer" && outsideArticle) return true;
+  // 사이트 머리글. Digital Today 는 기사 제목 앞의 사이트 <header> 에 2025-11-20 <time> 을 달아, 2026-10-28 기사
+  // (Onsemi-Ferric 인수 협상)가 근거 충돌로 보류됐다. 기사 밖 <header> 에 제목을 두는 사이트(RegMedNet 의
+  // header#post-header)가 있으므로 제목을 찾은 페이지에서만 쓰고, 제목을 담은 머리글은 아래에서 지킨다.
+  if (element.name === "header" && headlineFound && outsideArticle) return true;
+  if (PAGE_WRAPPERS.has(element.name)) return false;
+  const label = `${extractAttribute(element.attrs, "class")} ${extractAttribute(element.attrs, "id")}`
+    .replace(/([a-z\d])([A-Z])/g, "$1-$2");
+  return FOREIGN_BLOCK_WORDS.test(label);
+}
+
+// 기사 제목이 실린 <h1>(없으면 <h2>). og:title 이나 <title> 과 같은 제목이어야 한다. 첫 <h1> 을 그냥 쓰지 않는
+// 것은 사이트 로고를 <h1> 에 넣는 페이지가 있어서다. 그러면 로고 옆 오늘 날짜가 기사 날짜로 올라선다.
+// 사이트 이름 한두 낱말과 맞지 않게 세 낱말 이상인 제목만 쓴다.
+function findHeadlineElement(html, elements) {
+  const title = (extractMetaContent(html, ["og:title", "twitter:title"]) || extractTagText(html, "title"))
+    .replace(/\s+\|.*$/, "").trim();
+  if (normalizeArticleText(title).split(" ").filter(Boolean).length < 3) return null;
+  const headings = elements.filter((element) => /^h[12]$/.test(element.name) && element.closed);
+  const matches = (element) => sameHeadline(title, [cleanText(html.slice(element.tagEnd, element.end))]);
+  return headings.find((element) => element.name === "h1" && matches(element)) || headings.find(matches) || null;
+}
+
+const visibleLength = (fragment) => fragment.replace(/<[^>]*>/g, " ").replace(/&(?:#\d+|#x[\da-f]+|\w+);/gi, "x")
+  .replace(/\s+/g, " ").trim().length;
+
+// 기사 머리의 날짜로 보는 거리(보이는 글자 수). 제목 바로 뒤의 부제·바이라인을 넘는 정도다. 2026-10 근거 충돌
+// 페이지에서 기사 자신의 <time> 은 제목 뒤 0~344자(EnergyWatch 는 부제 다음)에, 남의 <time> 은 아무리 가까워도
+// 472자(Morningstar 사이드 패널, <aside>)와 1,788자 뒤에 있었다. 제목 앞의 날짜는 Toppan 처럼 제목과 같은 덩어리
+// 안에 든 것만 본다. TokenPost·Digital Today 의 사이트 머리글 날짜와 RegMedNet 웨비나 카운트다운은 제목 앞
+// 43~136자에 있지만 제목과 다른 덩어리다.
+const HEADLINE_AFTER_CHARS = 600;
+const HEADLINE_BEFORE_CHARS = 200;
+
+// 기사 머리의 <time>: 제목 안, 제목이 든 <header> 안, 제목 바로 뒤(HEADLINE_AFTER_CHARS 안), 또는 제목 바로 앞이면서
+// 부모나 조부모가 제목까지 담은 것.
+function headlineTimes(headline, times, masked) {
+  const header = [...ancestorsOf(headline)].find((node) => node.name === "header");
+  const near = new Set(times.filter((time) => containsRange(headline, time) || (header && containsRange(header, time))));
+  let gap = 0;
+  let cursor = headline.end;
+  for (const time of times.filter((item) => item.start >= headline.end)) {
+    gap += visibleLength(masked.slice(cursor, time.start));
+    cursor = time.start;
+    if (gap > HEADLINE_AFTER_CHARS) break;
+    near.add(time);
+  }
+  for (const time of times.filter((item) => item.end <= headline.start)) {
+    const shared = [...ancestorsOf(time)].slice(0, 2).some((node) => containsRange(node, headline));
+    if (shared && visibleLength(masked.slice(time.end, headline.start)) <= HEADLINE_BEFORE_CHARS) near.add(time);
+  }
+  return near;
+}
+
+// ranges 의 [start, end) 를 공백으로 덮는다. 겹치는 범위는 합쳐 한 번에 만든다.
+function blankRanges(text, ranges) {
+  const sorted = [...ranges].sort((left, right) => left.start - right.start);
+  let result = "";
   let from = 0;
-  for (const [cutStart, cutEnd] of cuts) {
-    outer += source.slice(from, cutStart);
-    from = cutEnd;
+  for (const { start, end } of sorted) {
+    if (end <= from) continue;
+    const begin = Math.max(start, from);
+    result += text.slice(from, begin) + " ".repeat(end - begin);
+    from = end;
   }
-  outer += source.slice(from);
-  return /<time\b/i.test(outer) ? outer : html;
+  return result + text.slice(from);
+}
+
+// 게시일 근거로 남길 <time> 만 두고 나머지 <time> 의 여는 태그를 공백으로 덮은 HTML 을 돌려준다.
+// 주석 속 <time> 도 덮는다(화면에 보이지 않는 날짜다). 스크립트 문자열 안의 <time> 은 구조를 읽을 수 없으므로
+// 예전처럼 그대로 둔다.
+function articleScopedTimeHtml(html) {
+  const source = String(html || "").replace(/<!--[\s\S]*?-->/g, blankSpan);
+  if (!/<time\b/i.test(source)) return source;
+  const masked = source.replace(/<(script|style|template|noscript)\b[\s\S]*?<\/\1\s*>/gi, blankSpan);
+  const elements = parseElementTree(masked);
+  const headline = findHeadlineElement(source, elements);
+  const times = elements.filter((element) => element.name === "time");
+  const near = headline ? headlineTimes(headline, times, masked) : new Set();
+  const tagHtml = (time) => time.closed ? source.slice(time.start, time.end) : `${source.slice(time.start, time.tagEnd)}</time>`;
+  // 날짜로 읽히는 게시일 <time> 이 하나라도 있는지. 머리의 <time> 이 "5 min read" 같은 글뿐이면 거르지 않는다.
+  const dated = (list) => list.some((time) => extractDatesFromTimeTags(tagHtml(time)).some((item) => item.kind === "published"));
+
+  // 제목을 담은 덩어리는 class 가 무엇이든 기사 밖이 아니다("content-sidebar-wrap" 처럼 본문과 사이드바를 함께
+  // 감싼 틀). 제목을 못 찾았으면 <h1> 을 담은 덩어리를 같은 뜻으로 지킨다.
+  const guards = headline ? [headline] : elements.filter((element) => element.name === "h1");
+  const foreign = new Set(elements.filter((element) => foreignBlock(element, Boolean(headline)) &&
+    !guards.some((guard) => containsRange(element, guard))));
+  const inForeign = (time) => [...ancestorsOf(time)].some((node) => foreign.has(node));
+  let kept = times.filter((time) => !inForeign(time));
+  // 기사 머리의 날짜가 이름만 기사 밖 같은 덩어리에 든 사이트가 있다. 3M 투자자 보도자료는 제목 바로 뒤
+  // "related-documents-line" 에, Escape Collective 는 기사 왼쪽 칸 "article__left-sidebar" 에, Global Mining
+  // Review 는 제목 머리글 속 breadcrumb <nav> 에 게시일을 둔다(2026-10 수집에서 확정 근거였던 날짜). 다른 기사 머리
+  // 날짜가 없을 때만 이런 <time> 을 되살린다. 제목이 든 <article> 밖이면 가까워도 되살리지 않는다(Morningstar 의
+  // 사이드 패널 <aside> 는 제목 472자 뒤에 있다).
+  if (headline && !dated(kept.filter((time) => near.has(time)))) {
+    const article = [...ancestorsOf(headline)].find((node) => node.name === "article");
+    const rescued = times.filter((time) => near.has(time) && inForeign(time) && (!article || containsRange(article, time)));
+    if (dated(rescued)) kept = times.filter((time) => !inForeign(time) || rescued.includes(time));
+  }
+
+  // 2단계: <article> 안에 다시 든 <article> 은 관련 기사 카드다. Airbus 보도자료는 본문 <article> 끝에 "관련 뉴스"
+  // 카드 다섯 장을 <article> 로 넣고 카드마다 그 기사의 <time> 을 단다. 그 날짜(10월)가 9월 기사의 게시일 근거로
+  // 읽혀 9월 기사 여섯 건이 모두 근거 충돌로 보류됐다(2026-10 로컬 수집). 카드 밖에 <time> 이 하나라도 남을
+  // 때만 카드 안을 뺀다. 기사 본문이 안쪽 <article> 에만 있는 페이지는 이전처럼 모두 읽는다.
+  const insideCard = (time) => [...ancestorsOf(time)].some((node) => node.name === "article" &&
+    [...ancestorsOf(node)].some((outer) => outer.name === "article") && !(headline && containsRange(node, headline)));
+  if (kept.some((time) => !insideCard(time))) kept = kept.filter((time) => !insideCard(time));
+
+  // 3단계: 기사 자신의 것이 분명한 <time> 이 있으면 그것만 남긴다. 기사 머리의 날짜(headlineTimes)이거나
+  // itemprop="datePublished" 인 것이다. Umicore 보도자료는 제목 바로 뒤에 자기 날짜를 두고 본문 아래 최신 뉴스
+  // 세 건의 <time> 을 아무 표시 없는 <div> 에 둔다. 1단계로는 못 거르는 이런 목록도 기사 머리의 날짜가 있으면
+  // 근거에서 빠진다. 머리의 두 <time> 이 서로 어긋나면 둘 다 남아 이전처럼 충돌이 된다.
+  if (headline) {
+    const own = kept.filter((time) => near.has(time) ||
+      /datePublished|dateCreated/i.test(extractAttribute(time.attrs, "itemprop")));
+    if (dated(own)) kept = own;
+  }
+
+  const keep = new Set(kept);
+  return blankRanges(source, times.filter((time) => !keep.has(time)).map((time) => ({ start: time.start, end: time.tagEnd })));
 }
 
 // 찾은 근거를 하나로 줄이지 않고 모두 돌려준다. 어느 하나를 고르는 판단과 근거끼리
@@ -789,7 +952,7 @@ export function collectHtmlDateEvidence(html, url = "") {
   return [
     dateEvidence(extractMetaContent(html, PUBLISHED_META_NAMES), "meta", "published"),
     dateEvidence(jsonLdPublished?.[1], "jsonld", "published"),
-    ...extractDatesFromTimeTags(withoutNestedArticles(html)),
+    ...extractDatesFromTimeTags(articleScopedTimeHtml(html)),
     dateEvidence(extractDateFromItemprop(html), "itemprop", "published"),
     dateEvidence(extractMetaContent(html, MODIFIED_META_NAMES), "modified_meta", "modified"),
     dateEvidence(jsonLdModified?.[1], "modified_jsonld", "modified"),
