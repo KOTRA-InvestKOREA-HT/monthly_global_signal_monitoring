@@ -1,185 +1,63 @@
 {
-  "status": "completed_with_review_failures",
-  "reason": "invalid_responses",
-  "requests": 908,
-  "cached": 439,
-  "completed": 798,
-  "total": 800,
-  "no_body_skipped": 0,
+  "status": "completed_with_copy_failures",
+  "requests": 16,
+  "cached": 675,
+  "completed": 691,
+  "total": 691,
+  "no_body_skipped": 5,
   "date_hints": 0,
-  "failed_articles": [
-    {
-      "article_id": "ddab7cfb7499239ce14db1b5",
-      "reason": "evidence_mismatch"
-    },
-    {
-      "article_id": "c8e5ce61778b3196c5fd989f",
-      "reason": "evidence_mismatch"
-    }
-  ],
+  "failed_articles": [],
   "diagnostics": [
     {
       "article_id": "ddab7cfb7499239ce14db1b5",
       "attempt": 1,
+      "stage": "verify",
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/28b08c43-8b12-4ca2-ac62-571b778ae348-attempt-1.json"
+      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/16a65311-0ce4-44b3-9b0d-166dfefbae74-verify-attempt-1.json"
     },
     {
       "article_id": "ddab7cfb7499239ce14db1b5",
       "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/f55835f2-d4c9-4326-8ec2-1327d15fe899-attempt-2.json"
-    },
-    {
-      "article_id": "12d31083265e55779cf75f10",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/12d31083265e55779cf75f10/0b38ccd9-3035-46d1-b434-aae5cced0595-attempt-1.json"
-    },
-    {
-      "article_id": "12d31083265e55779cf75f10",
-      "attempt": 1,
       "stage": "verify",
       "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/12d31083265e55779cf75f10/50bb2d15-dce2-4a3a-bcd8-0f85370274a7-verify-attempt-1.json"
-    },
-    {
-      "article_id": "3446f01b98a489c5690388ae",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/3446f01b98a489c5690388ae/f787002a-d01f-42d6-b883-1f7b6de16a5c-attempt-1.json"
-    },
-    {
-      "article_id": "34315fc45939bffaff16b4c5",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/34315fc45939bffaff16b4c5/d5665d37-5072-4489-b81c-0b9a0d01e573-attempt-1.json"
-    },
-    {
-      "article_id": "5fe0a7a4028e0fef4edf5c45",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/5fe0a7a4028e0fef4edf5c45/41dd1cb2-4ba0-4233-bd94-e22c1423e2be-attempt-1.json"
-    },
-    {
-      "article_id": "0d72718b302e4509aaa1a349",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/0d72718b302e4509aaa1a349/c6c22a3b-fc88-4ed4-85b3-352f63ebb0f9-attempt-1.json"
-    },
-    {
-      "article_id": "c8e5ce61778b3196c5fd989f",
-      "attempt": 1,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/c8e5ce61778b3196c5fd989f/2c77a0c9-1fbf-4cd2-a2e0-c52fb46be05a-attempt-1.json"
-    },
-    {
-      "article_id": "c8e5ce61778b3196c5fd989f",
-      "attempt": 2,
-      "reason": "evidence_mismatch",
-      "file": "reviews/diagnostics/c8e5ce61778b3196c5fd989f/a39c6aaf-6fb6-43e5-af56-e1187fd5784e-attempt-2.json"
+      "file": "reviews/diagnostics/ddab7cfb7499239ce14db1b5/f989d2be-d8fe-40c6-b778-8fa3d8f7b119-verify-attempt-2.json"
     }
   ],
   "concurrency": 4,
-  "quote_removals": [
+  "quote_removals": [],
+  "recheck_pending": [
     {
-      "article_id": "12d31083265e55779cf75f10",
-      "candidate_ids": [
-        "investment:1",
-        "investment:2",
-        "investment:3",
-        "investment:4",
-        "investment:5",
-        "relevant",
-        "investment:2"
-      ]
-    },
-    {
-      "article_id": "af6a729e6241c97510f38de8",
-      "candidate_ids": [
-        "investment:3"
-      ]
-    },
-    {
-      "article_id": "4327e653f0fa64e0ec84b54b",
-      "candidate_ids": [
-        "investment:4"
-      ]
-    },
-    {
-      "article_id": "148b5db2e78a4b1e38be8695",
+      "article_id": "ddab7cfb7499239ce14db1b5",
       "candidate_ids": [
         "investment:5"
-      ]
-    },
-    {
-      "article_id": "d4e89cf4a2bd1830fe7f809a",
-      "candidate_ids": [
-        "investment:5"
-      ]
-    },
-    {
-      "article_id": "344e84a87d077ee76c012325",
-      "candidate_ids": [
-        "investment:3",
-        "investment:4",
-        "relevant"
-      ]
-    },
-    {
-      "article_id": "67cb55a30303779bad2be868",
-      "candidate_ids": [
-        "relevant"
-      ]
-    },
-    {
-      "article_id": "0a77319856b4243212a27668",
-      "candidate_ids": [
-        "investment:1",
-        "investment:2",
-        "investment:4",
-        "relevant"
-      ]
-    },
-    {
-      "article_id": "89e700a578a1472422af6244",
-      "candidate_ids": [
-        "investment:2",
-        "relevant"
-      ]
+      ],
+      "reason": "verifier:evidence_mismatch"
     }
   ],
-  "recheck_pending": [],
   "verification": {
     "model": "gemini-3.5-flash-lite",
-    "requested": 45,
-    "verified": 44,
+    "requested": 16,
+    "verified": 10,
     "partial": 0,
     "pending": 0,
-    "changed": 12,
-    "failed": 0,
-    "rejected_responses": 1,
+    "changed": 3,
+    "failed": 1,
+    "rejected_responses": 2,
     "errors": {
-      "evidence_mismatch": 1
+      "evidence_mismatch": 2,
+      "503:capacity": 4
     }
   },
   "key_runs": [
     {
       "key": 1,
-      "status": "paused",
-      "reason": "quota",
-      "requests": 495,
-      "completed": 439
-    },
-    {
-      "key": 2,
-      "status": "paused",
-      "reason": "invalid_responses",
-      "requests": 413,
-      "completed": 798
+      "status": "completed",
+      "requests": 16,
+      "completed": 691
     }
   ],
-  "approved_candidates": 150,
+  "approved_candidates": 144,
+  "collection_retryable": [],
   "period": {
     "from_date": "2026-10-01",
     "to_date": "2026-10-31"
@@ -187,51 +65,71 @@
   "provider": "gemini",
   "model": "gemini-3.5-flash-lite",
   "issue_number": "5",
+  "copy_failures": [
+    {
+      "company": "HyproMag",
+      "kind": "investment",
+      "investment_signal_no": 2,
+      "title": "HyProMag USA Pre-Feasibility Study Outlines Future Expansion Options to Quadruple Planned U.S. Rare Earth Magnet Capacity Indicating an Incremental Post-Tax NPV of up to US$2.1 Billion - Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPTnozajhqSWFsRlFGVFpZZjNkX0p6MmY3X0hva2ZyY2FjYkN0WHg1ZUJqOWs0b0RKOUZLYWVLeFdQTGJ3QUtBOFBlTUVkLThDWTZZalNxcmVDbHlEQjdmQXFTYnJlU0VNaWxubjdKZHdjbER0aHl6OWlMZ3RBc0N0eHRkS0tPdGJ6WlVjT2MwYXpiRlAzb0E?oc=5",
+      "problems": [
+        "bilingual_percent_mismatch"
+      ]
+    }
+  ],
   "judgement_run": {
-    "id": "41403709884",
+    "id": "42780448022",
     "attempt": "1",
-    "sha": "92827f214ecc666dc0b9fc3ed6c2e0ebeaa4a80b",
+    "sha": "9037ebd42580ef20da5bb10acf20fe3757f2011c",
     "ref": "main"
   },
   "summary_writer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 217,
-    "requests": 160,
-    "cached": 99,
-    "written": 160,
+    "articles": 226,
+    "requests": 93,
+    "cached": 259,
+    "written": 10,
     "written_by": {
-      "gemini-3.5-flash-lite": 160
+      "gemini-3.5-flash-lite": 10
     },
     "failed": [
       {
-        "article_id": "2850b3a0cf669688ad4cb451",
-        "company": "Siemens-Gamesa",
-        "candidate_id": "investment:5",
+        "article_id": "78612d1fd2bd804f17185272",
+        "company": "HyproMag",
+        "candidate_id": "investment:2",
         "problems": [
-          "bilingual_month_mismatch"
-        ]
+          "bilingual_percent_mismatch"
+        ],
+        "rejected_copy": {
+          "summary_en": "HyProMag USA completed an independent pre-feasibility study by PegasusTSI Inc. and BBA USA Inc. evaluating a three-plant expansion and a centralized finishing hub. The study indicates an incremental post-tax net present value of US$1.85 billion to US$2.06 billion and a post-tax internal rate of return of 31% to 36%.",
+          "summary_ko": "미국 희토류 자석 공장 확장 사전타당성조사 완료 - HyProMag USA는 PegasusTSI Inc.와 BBA USA Inc.의 사전타당성조사를 통해 신규 공장 3곳과 중앙 허브 확장 시 세후 NPV 18억 5,400만~20억 6,200만 달러 및 세후 IRR 31~36%가 도출되었다고 밝혔음."
+        }
       }
     ],
     "errors": {
-      "unavailable": 8,
-      "invalid_response": 1
+      "unavailable": 2
     },
     "rejected": {
-      "bilingual_month_mismatch": 1
+      "bilingual_percent_mismatch": 1
     },
     "key_runs": [
       {
         "key": 1,
-        "requests": 160
+        "requests": 79,
+        "stopped": "quota"
+      },
+      {
+        "key": 2,
+        "requests": 14
       }
     ]
   },
   "summary_reviewer": {
     "model": "gemini-3.5-flash-lite",
-    "articles": 18,
-    "requests": 18,
-    "cached": 0,
-    "reviewed": 20,
+    "articles": 59,
+    "requests": 59,
+    "cached": 9,
+    "reviewed": 66,
     "flagged": [
       {
         "article_id": "674e4d78cb0cf5b2c8449d2c",
@@ -243,42 +141,6 @@
         "note": "The source states Patrik Jonsson's retirement as a future event, whereas the copy states it as present or ongoing."
       },
       {
-        "article_id": "82b84d3a1bdc202a3ddfcc0d",
-        "company": "Mitsubishi Chemical",
-        "candidate_id": "investment:5",
-        "check": "certainty",
-        "copy_phrase": "appointed",
-        "source_phrase": "Effective as of January 1, 2027",
-        "note": "The copy presents the appointment as a completed action, whereas the source indicates it is effective on a future date."
-      },
-      {
-        "article_id": "d351cda7566a7331f7c425c1",
-        "company": "Eli Lilly and Company",
-        "candidate_id": "investment:5",
-        "check": "certainty",
-        "copy_phrase": "Ilya Yuffa를 Lilly Global Markets 사장으로 임명하고",
-        "source_phrase": "On Jan. 1, 2027 , Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets",
-        "note": "The copy states Ilya Yuffa's appointment as done, whereas the sources state it as a future event for Jan. 1, 2027."
-      },
-      {
-        "article_id": "d351cda7566a7331f7c425c1",
-        "company": "Eli Lilly and Company",
-        "candidate_id": "investment:5",
-        "check": "mismatch",
-        "copy_phrase": "Lilly Global Markets 사장",
-        "source_phrase": "",
-        "note": "The English summary includes executive vice president for Ilya Yuffa, which is missing in the Korean summary."
-      },
-      {
-        "article_id": "d351cda7566a7331f7c425c1",
-        "company": "Eli Lilly and Company",
-        "candidate_id": "investment:5",
-        "check": "mismatch",
-        "copy_phrase": "Lilly Europe and Canada 대표",
-        "source_phrase": "",
-        "note": "The English summary includes group vice president for Elias Khalil, which is missing in the Korean summary."
-      },
-      {
         "article_id": "8037799df096aca6557c1c28",
         "company": "Charles River",
         "candidate_id": "relevant",
@@ -286,6 +148,213 @@
         "copy_phrase": "엔드포인트",
         "source_phrase": "",
         "note": "The word 엔드포인트 is a Hangul transliteration of the English common noun endpoint and should be translated as an established Korean term such as 평가지표."
+      },
+      {
+        "article_id": "ec7fd45857d6ef78c5df7fa1",
+        "company": "Mitsubishi Chemical",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "appointed Masaru Utsunomiya as Chief Technology Officer and Executive Officer",
+        "source_phrase": "Effective January 1, 2027",
+        "note": "The English copy states the appointment as done, whereas the source specifies a future effective date."
+      },
+      {
+        "article_id": "ec7fd45857d6ef78c5df7fa1",
+        "company": "Mitsubishi Chemical",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "appointed",
+        "source_phrase": "",
+        "note": "The English copy states the appointment as completed, whereas the Korean copy states it as a future plan."
+      },
+      {
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "check": "unsupported",
+        "copy_phrase": "글로벌 조직 통합",
+        "source_phrase": "",
+        "note": "The sources do not state that there was a global organizational integration."
+      },
+      {
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "임명해",
+        "source_phrase": "Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets",
+        "note": "The copy states Ilya Yuffa's appointment as a completed action while the sources state it as a future event for Jan. 1, 2027."
+      },
+      {
+        "article_id": "d351cda7566a7331f7c425c1",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "investment:5",
+        "check": "mismatch",
+        "copy_phrase": "임명해",
+        "source_phrase": "",
+        "note": "The English summary states Ilya Yuffa will become executive vice president in the future, while the Korean summary states it as done."
+      },
+      {
+        "article_id": "6d5dd69690eb2b8c63b00cae",
+        "company": "Besi",
+        "candidate_id": "investment:4",
+        "check": "unsupported",
+        "copy_phrase": "연구개발",
+        "source_phrase": "",
+        "note": "The sources do not state that the collaboration is for research and development."
+      },
+      {
+        "article_id": "1a2b3ce4eae345917527e5a4",
+        "company": "Infineon",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "칩 매립",
+        "source_phrase": "",
+        "note": "The term '칩 매립' is an unestablished literal translation for chip embedding."
+      },
+      {
+        "article_id": "2750bfcac949d1d7a0a6857a",
+        "company": "Air Products",
+        "candidate_id": "investment:5",
+        "check": "certainty",
+        "copy_phrase": "Air Products appointed Kurt Lefevere and Francesco Maione as Group Presidents, effective November 1, 2026.",
+        "source_phrase": "Air Products (NYSE: APD) today announced that Kurt Lefevere and Francesco Maione have been appointed Group Presidents, effective November 1, 2026.",
+        "note": "The source states the appointment is effective November 1, 2026, which is in the future relative to the published date of October 26, 2026, but the English copy states it as already done."
+      },
+      {
+        "article_id": "93de510176261407728a48ea",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "term",
+        "copy_phrase": "가속 주식매매 계약",
+        "source_phrase": "",
+        "note": "The term '가속 주식매매 계약' is a literal translation that is not an established Korean financial term."
+      },
+      {
+        "article_id": "93de510176261407728a48ea",
+        "company": "Applied Materials",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "다이온웨이퍼",
+        "source_phrase": "",
+        "note": "The term '다이온웨이퍼' is a literal compound coined from English parts rather than an established Korean term."
+      },
+      {
+        "article_id": "a5b3fb220bd3b04d0cf83db9",
+        "company": "Infineon",
+        "candidate_id": "investment:3",
+        "check": "mismatch",
+        "copy_phrase": "Austria",
+        "source_phrase": "",
+        "note": "Austria appears in the English summary but is missing in the Korean summary."
+      },
+      {
+        "article_id": "5c022ecb7376a6719c0ac562",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "presented",
+        "source_phrase": "These data will be shared in an oral presentation at the European Society for Medical Oncology (ESMO) Annual Congress in Madrid, Spain .",
+        "note": "The source states that the data will be shared in the future, whereas the copy states it as already presented."
+      },
+      {
+        "article_id": "cdeb6e89fc543db614816683",
+        "company": "Eli Lilly and Company",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "생산하며",
+        "source_phrase": "will produce",
+        "note": "The copy states as current what the sources state as future."
+      },
+      {
+        "article_id": "b2d52d543afbf71c7d075075",
+        "company": "3M",
+        "candidate_id": "investment:4",
+        "check": "certainty",
+        "copy_phrase": "구축 및 확장하기로 했음",
+        "source_phrase": "AWS plans to deploy and scale 3M's Expanded Beam Optical (EBO) platform for its data center infrastructure.",
+        "note": "The copy states the deployment and scaling as a settled decision, whereas the source states it as planned."
+      },
+      {
+        "article_id": "b2d52d543afbf71c7d075075",
+        "company": "3M",
+        "candidate_id": "investment:4",
+        "check": "term",
+        "copy_phrase": "광학 연결성",
+        "source_phrase": "optical connectivity",
+        "note": "광학 연결성 is a literal compound; 광 연결성 is the established Korean term in the tech press."
+      },
+      {
+        "article_id": "fe4e4e568a6fc949b0099398",
+        "company": "3M",
+        "candidate_id": "investment:4",
+        "check": "mismatch",
+        "copy_phrase": "private placement of newly issued shares in the fourth quarter of 2026",
+        "source_phrase": "",
+        "note": "Summary_en applies the fourth quarter of 2026 date to the private placement, whereas summary_ko applies it to the strategic investment closing."
+      },
+      {
+        "article_id": "adbccb98d0acbc646fd190a6",
+        "company": "Asahi Glass",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "진행되며",
+        "source_phrase": "AGC Biologics plans to manufacture the recombinant enzymes at the 100-liter and 1,000-liter scales.",
+        "note": "The copy states the manufacturing scale as definitive rather than planned."
+      },
+      {
+        "article_id": "adbccb98d0acbc646fd190a6",
+        "company": "Asahi Glass",
+        "candidate_id": "relevant",
+        "check": "mismatch",
+        "copy_phrase": "100리터 및 1,000리터 규모로 진행되며",
+        "source_phrase": "",
+        "note": "The Korean copy states the manufacturing at specific scales as definitive, while the English copy states it as planned."
+      },
+      {
+        "article_id": "33fcf72ae99c820626664a55",
+        "company": "ASML",
+        "candidate_id": "relevant",
+        "check": "unsupported",
+        "copy_phrase": "supported by the sale of 113 new lithography systems",
+        "source_phrase": "In the third quarter we reported a record total net sales of €11.7 billion, towards the high end of our guidance, reflecting the strong execution of our ramp-up.",
+        "note": "The copy states that the net sales were supported by the sale of 113 new lithography systems, but the sources do not state this causal relationship."
+      },
+      {
+        "article_id": "942110f0fdc8559c097006af",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "term",
+        "copy_phrase": "다이투웨이퍼",
+        "source_phrase": "",
+        "note": "다이투웨이퍼 is a literal Hangul transliteration of the English compound die-to-wafer rather than an established Korean term."
+      },
+      {
+        "article_id": "942110f0fdc8559c097006af",
+        "company": "Applied Materials",
+        "candidate_id": "relevant",
+        "check": "term",
+        "copy_phrase": "다이투웨이퍼",
+        "source_phrase": "",
+        "note": "다이투웨이퍼 is a literal Hangul transliteration of the English compound die-to-wafer rather than an established Korean term."
+      },
+      {
+        "article_id": "942110f0fdc8559c097006af",
+        "company": "Applied Materials",
+        "candidate_id": "relevant",
+        "check": "certainty",
+        "copy_phrase": "고성능 3D 집적 소자를 구현하고 있음",
+        "source_phrase": "to enable future high-performance 3D integrated devices",
+        "note": "The source states enabling future high-performance 3D integrated devices as a future objective, whereas the copy states it as currently done."
+      },
+      {
+        "article_id": "cd77380066dac205584c9ef0",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "check": "certainty",
+        "copy_phrase": "체결했음",
+        "source_phrase": "will join the company's EPIC Center in Silicon Valley as a research partner",
+        "note": "The copy states the partnership as done (체결했음), whereas the source states it as future (will join)."
       }
     ],
     "enforce": [
@@ -298,11 +367,11 @@
         ]
       },
       {
-        "article_id": "82b84d3a1bdc202a3ddfcc0d",
+        "article_id": "ec7fd45857d6ef78c5df7fa1",
         "company": "Mitsubishi Chemical",
         "candidate_id": "investment:5",
         "problems": [
-          "review_certainty: The copy presents the appointment as a completed action, whereas the source indicates it is effective on a future date. Copy: \"appointed\" Source: \"Effective as of January 1, 2027\""
+          "review_certainty: The English copy states the appointment as done, whereas the source specifies a future effective date. Copy: \"appointed Masaru Utsunomiya as Chief Technology Officer and Executive Officer\" Source: \"Effective January 1, 2027\""
         ]
       },
       {
@@ -310,31 +379,72 @@
         "company": "Eli Lilly and Company",
         "candidate_id": "investment:5",
         "problems": [
-          "review_certainty: The copy states Ilya Yuffa's appointment as done, whereas the sources state it as a future event for Jan. 1, 2027. Copy: \"Ilya Yuffa를 Lilly Global Markets 사장으로 임명하고\" Source: \"On Jan. 1, 2027 , Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets\""
+          "review_unsupported: The sources do not state that there was a global organizational integration. Copy: \"글로벌 조직 통합\"",
+          "review_certainty: The copy states Ilya Yuffa's appointment as a completed action while the sources state it as a future event for Jan. 1, 2027. Copy: \"임명해\" Source: \"Ilya Yuffa will take on an expanded role as executive vice president and president, Lilly Global Markets\""
+        ]
+      },
+      {
+        "article_id": "6d5dd69690eb2b8c63b00cae",
+        "company": "Besi",
+        "candidate_id": "investment:4",
+        "problems": [
+          "review_unsupported: The sources do not state that the collaboration is for research and development. Copy: \"연구개발\""
+        ]
+      },
+      {
+        "article_id": "2750bfcac949d1d7a0a6857a",
+        "company": "Air Products",
+        "candidate_id": "investment:5",
+        "problems": [
+          "review_certainty: The source states the appointment is effective November 1, 2026, which is in the future relative to the published date of October 26, 2026, but the English copy states it as already done. Copy: \"Air Products appointed Kurt Lefevere and Francesco Maione as Group Presidents, effective November 1, 2026.\" Source: \"Air Products (NYSE: APD) today announced that Kurt Lefevere and Francesco Maione have been appointed Group Presidents, effective November 1, 2026.\""
+        ]
+      },
+      {
+        "article_id": "b2d52d543afbf71c7d075075",
+        "company": "3M",
+        "candidate_id": "investment:4",
+        "problems": [
+          "review_certainty: The copy states the deployment and scaling as a settled decision, whereas the source states it as planned. Copy: \"구축 및 확장하기로 했음\" Source: \"AWS plans to deploy and scale 3M's Expanded Beam Optical (EBO) platform for its data center infrastructure.\""
+        ]
+      },
+      {
+        "article_id": "942110f0fdc8559c097006af",
+        "company": "Applied Materials",
+        "candidate_id": "relevant",
+        "problems": [
+          "review_certainty: The source states enabling future high-performance 3D integrated devices as a future objective, whereas the copy states it as currently done. Copy: \"고성능 3D 집적 소자를 구현하고 있음\" Source: \"to enable future high-performance 3D integrated devices\""
+        ]
+      },
+      {
+        "article_id": "cd77380066dac205584c9ef0",
+        "company": "Applied Materials",
+        "candidate_id": "investment:4",
+        "problems": [
+          "review_certainty: The copy states the partnership as done (체결했음), whereas the source states it as future (will join). Copy: \"체결했음\" Source: \"will join the company's EPIC Center in Silicon Valley as a research partner\""
         ]
       }
     ],
     "discarded": 0,
     "errors": {
-      "quota": 1
+      "unavailable": 10
     },
     "stopped": {
-      "reason": "quota",
-      "http_status": 429
+      "reason": "unavailable",
+      "http_status": 503
     },
     "unchecked": [],
     "kept": [],
-    "first_flagged": 6,
-    "first_enforce": 3,
+    "first_flagged": 25,
+    "first_enforce": 8,
     "rounds": []
   },
   "box_writer": {
     "model": "gemini-3.5-flash-lite",
-    "targets": 1,
-    "cached": 0,
-    "requests": 1,
-    "written": 0,
-    "nothing_new": 1,
+    "targets": 3,
+    "cached": 1,
+    "requests": 2,
+    "written": 2,
+    "nothing_new": 0,
     "failed": [],
     "errors": {}
   }
