@@ -432,6 +432,57 @@ export function rateLimitHeaders(headers, apiKey) {
   return found;
 }
 
+// Gemini 의 429 는 하루 한도든 분당 한도(요청 수·입력 토큰)든 message 가 "You exceeded your current quota" 로 시작한다.
+// 무엇에 걸렸는지는 details 의 QuotaFailure.violations[].quotaId(…PerDay… / …PerMinute…)와 RetryInfo.retryDelay("34s"),
+// message 끝의 "Please retry in 34.5s" 에만 있다. 예전에는 message 만 보고 모든 429 를 credits_exhausted 로 분류했고,
+// 판정은 첫 429 에서 실행 전체를 멈춘 뒤 다음 키로 넘겼다. 분당 입력 토큰 한도에 잠깐 걸린 것도 하루 한도가 끝난 것처럼
+// 멈춘 것이다. 2026-11-10 실행 42765829296 은 수집 뒤 판정을 10여 분 돌고 두 키 모두 할당량으로 멈췄는데, 하루 한도에
+// 닿을 요청 수가 아니었다(10월 실행은 키 하나로 495건을 보냈다). 요청 하나에 정책 문서(약 2만 자)와 기사 본문(최대 3.6만 자)이
+// 함께 가므로 긴 기사가 몰리면 분당 입력 토큰 한도에 닿는다.
+export function quotaDetails(detail, stated = '') {
+  const details = Array.isArray(detail?.error?.details) ? detail.error.details : [];
+  const quotaIds = [...new Set(details.flatMap(d => (Array.isArray(d?.violations) ? d.violations : []))
+    .map(v => String(v?.quotaId || '').trim()).filter(Boolean))].slice(0, 5);
+  const delay = details.map(d => d?.retryDelay).find(value => typeof value === 'string' && /^\s*\d+(\.\d+)?s\s*$/.test(value));
+  const seconds = Number(delay ? delay.trim().slice(0, -1) : String(stated).match(/retry in\s+([\d.]+)\s*s/i)?.[1]);
+  return { quota_ids: quotaIds, retry_seconds: Number.isFinite(seconds) && seconds > 0 ? seconds : null,
+    daily: quotaIds.some(id => /per\s*day/i.test(id)), per_minute: quotaIds.some(id => /per\s*(minute|second)/i.test(id)) };
+}
+
+// 실패 응답 본문으로 사유를 정한다. 하루 한도(PerDay)가 분당 표시보다 앞선다. 둘 다 없으면 예전 message 규칙을 그대로 쓴다.
+export function providerFailure(stated, detail = null) {
+  const message = String(stated || '').toLowerCase();
+  const quota = quotaDetails(detail, stated);
+  const reason = /overload|high demand|capacity/.test(message) ? 'capacity'
+    : /model.*not found|model.*not supported/.test(message) ? 'model_unavailable'
+    : /api key/.test(message) ? 'api_key'
+    // A 429 is either a burst this run can wait out or an exhausted account.
+    // One costs a minute and the other costs a day, so name which it was.
+    : quota.daily ? 'credits_exhausted'
+    : quota.per_minute || quota.retry_seconds ? 'rate_limit'
+    : /credit|quota|balance|exceeded your current/.test(message) ? 'credits_exhausted'
+    : /per (minute|second)|rate limit|too many requests/.test(message) ? 'rate_limit'
+    : 'unspecified';
+  return { reason, quota_ids: quota.quota_ids, retry_seconds: quota.retry_seconds };
+}
+
+// 분당 한도에 걸린 기사를 다시 보내기 전에 기다릴 시간. 안내된 대기시간에 1~2초를 더하고, 안내가 없으면 1분을 기다린다.
+// 분당 한도는 1분이면 풀리므로 2분을 넘기지 않는다. 기사 하나가 이 재시도를 RATE_LIMIT_RETRIES 번까지 쓴다.
+export const RATE_LIMIT_RETRIES = 3;
+export function rateLimitWaitMs(retrySeconds, delayMs = 0, random = Math.random) {
+  const base = Math.ceil((retrySeconds ?? 60) * 1000) + 1000 + Math.floor(random() * 1000);
+  return Math.min(120000, Math.max(delayMs, base));
+}
+
+// 게이트는 상태 코드만 보고 다른 요청을 멈춰 왔다. 429 일 때는 본문 사본을 읽어 분당 한도인지 먼저 본다.
+async function failureOf(response) {
+  if (typeof response?.clone !== 'function') return { reason: 'unspecified', quota_ids: [], retry_seconds: null };
+  const body = await response.clone().text().catch(() => '');
+  let detail = null;
+  try { detail = JSON.parse(body); } catch { /* JSON 이 아니면 본문 그대로 본다 */ }
+  return providerFailure(String(detail?.error?.message || detail?.detail || detail?.message || body || ''), detail);
+}
+
 // 모델에 보내는 판정 계약 구간. 로컬 CLI 작업 지침과 문안 절(## Summary wording)은 제외한다.
 // 판정 호출은 문안을 쓰지 않는다. 문안 절은 문안 단계(summary_writer.mjs)와 로컬 판정자만 받는다.
 export function policySection(doc) {
@@ -647,21 +698,18 @@ export async function requestReview(article, policy, apiKey, fetchImpl = fetch, 
     let detail = null;
     try { detail = JSON.parse(body); } catch { /* JSON 이 아니면 본문 그대로 본다 */ }
     const stated = String(detail?.error?.message || detail?.detail || detail?.message || body || '');
-    const message = stated.toLowerCase();
-    error.provider_reason = /overload|high demand|capacity/.test(message) ? 'capacity'
-      : /model.*not found|model.*not supported/.test(message) ? 'model_unavailable'
-      : /api key/.test(message) ? 'api_key'
-      // A 429 is either a burst this run can wait out or an exhausted account.
-      // One costs a minute and the other costs a day, so name which it was.
-      : /credit|quota|balance|exceeded your current/.test(message) ? 'credits_exhausted'
-      : /per (minute|second)|rate limit|too many requests/.test(message) ? 'rate_limit'
-      : 'unspecified';
+    const failure = providerFailure(stated, detail);
+    error.provider_reason = failure.reason;
+    // 어느 한도였는지(quotaId)는 키나 본문이 아니라 Google 이 정한 한도 이름이라 남긴다. 실행 요약과 status.json 에 나간다.
+    if (failure.quota_ids.length) error.quota_ids = failure.quota_ids;
+    if (failure.retry_seconds) error.retry_seconds = failure.retry_seconds;
     // 분류에 성공하면 프로바이더 본문은 남기지 않는다. 분류가 실패했을 때만, 무엇을 받았길래
     // 알아보지 못했는지 남긴다. 그게 없으면 1분 기다릴 일인지 계정이 빈 것인지 알아낼 방법이 없다.
     if (error.provider_reason === 'unspecified') error.provider_message = providerMessage(stated, apiKey) || '(빈 응답 본문)';
     error.rate_limit = rateLimitHeaders(response.headers, apiKey);
     const retryAfter = response.headers.get('retry-after');
     if (retryAfter) error.retry_after = retryAfter;
+    else if (failure.retry_seconds) error.retry_after = String(Math.ceil(failure.retry_seconds));
     throw error;
   }
   const payload = await response.json().catch(() => { throw invalid('invalid_json'); });
@@ -879,9 +927,19 @@ export async function reviewArticles(options) {
     // Stop queued requests promptly on quota/auth errors, but let in-flight
     // successful responses finish validation and durable cache writes.
     // 보강의 실패로는 판정 요청을 멈추지 않는다. 할당량이 정말 끝났다면 다음 판정 요청이 같은 응답으로 알아낸다.
-    if (!supplement) {
-      if (response.status === 429) stopped = { status: 'paused', reason: 'quota', http_status: 429 };
-      else if (!response.ok && response.status < 500) stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
+    if (response.status === 429) {
+      const failure = await failureOf(response);
+      if (failure.reason === 'rate_limit') {
+        // 분당 한도는 기다리면 풀린다. 실행을 멈추지 않고 이 간격의 다음 요청들을 안내된 시간만큼 늦춘다.
+        // 걸린 기사는 reviewArticlesSerial 이 같은 시간을 기다렸다가 다시 보낸다.
+        pace.nextStart = Math.max(pace.nextStart, performance.now() + rateLimitWaitMs(failure.retry_seconds, pace.delayMs));
+      } else if (!supplement) {
+        stopped = { status: 'paused', reason: 'quota', http_status: 429,
+          ...(failure.reason !== 'unspecified' ? { provider_reason: failure.reason } : {}),
+          ...(failure.quota_ids.length ? { quota_ids: failure.quota_ids } : {}) };
+      }
+    } else if (!supplement && !response.ok && response.status < 500) {
+      stopped = { status: 'paused', reason: 'provider_error', http_status: response.status };
     }
     return response;
   };
@@ -1022,7 +1080,8 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
         const transient = error.status === 429 || error.status >= 500 || error.transport_error;
         // 할당량 소진은 몇십 초 기다려도 풀리지 않는다. 재시도로 요청만 쓰지 않고 바로 멈춘다.
         if (transient && retries < 2 && error.provider_reason !== 'credits_exhausted') {
-          waitMs = Math.max(config.delayMs, 15000 * 2 ** retries + Math.floor(random() * 1000));
+          waitMs = Math.max(config.delayMs, 15000 * 2 ** retries + Math.floor(random() * 1000),
+            error.retry_seconds ? rateLimitWaitMs(error.retry_seconds, 0, random) : 0);
           retries++;
           console.log(`Article ${article.id}: verifier temporarily unavailable (${error.transport_reason || `HTTP ${error.status}`}); retry ${retries}/2 after ${waitMs}ms`);
           continue;
@@ -1140,7 +1199,7 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
       if (error.verifier_config) throw error;
       if (error.code !== 'ENOENT') console.log(`Rechecking invalid cache: ${article.id}`);
     }
-    let providerRetries = 0, waitMs = judgementWait;
+    let providerRetries = 0, rateLimitRetries = 0, waitMs = judgementWait;
     let maxAttempts = 2, retryFeedback = false;
     // 되묻기 전의 유효한 응답과 되묻은 이유. 되묻기가 실패하거나 멈춰도 이 판정은 잃지 않되, 재검토가 끝난 것으로
     // 저장하지 않는다. 앞 응답에는 최신 재검토 버전이 이미 찍혀 있어, 그대로 저장하면 다음 실행이 다시 묻지 않고
@@ -1183,7 +1242,16 @@ async function reviewArticlesSerial({ articles, reviewDir, policy, config, fetch
           console.log(`Article ${article.id}: transient provider error (${error.transport_reason || `HTTP ${error.status}`}${error.transport_message ? `: ${error.transport_message}` : ''}); retry ${providerRetries}/2 after ${waitMs}ms`);
           continue;
         }
-        if (error.status === 429 || error.status >= 500) return pause({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
+        // 분당 한도(429 rate_limit)는 실행을 멈추지 않고 안내된 시간 뒤에 같은 요청을 다시 보낸다. 하루 한도와 분류되지 않은
+        // 429 만 아래에서 멈추고 다음 키로 넘긴다(quotaDetails 설명 참고). 재시도도 요청 예산을 쓴다.
+        if (error.status === 429 && error.provider_reason === 'rate_limit' && rateLimitRetries < RATE_LIMIT_RETRIES) {
+          waitMs = rateLimitWaitMs(error.retry_seconds, config.delayMs, random);
+          rateLimitRetries++;
+          console.log(`Article ${article.id}: per-minute limit (${(error.quota_ids || []).join(', ') || 'rate limit'}); ` +
+            `retry ${rateLimitRetries}/${RATE_LIMIT_RETRIES} after ${waitMs}ms`);
+          continue;
+        }
+        if (error.status === 429 || error.status >= 500) return pause({ status: 'paused', reason: error.status === 429 ? 'quota' : 'provider_unavailable', http_status: error.status, provider_reason: error.provider_reason, ...(error.quota_ids ? { quota_ids: error.quota_ids } : {}), ...(error.provider_message ? { provider_message: error.provider_message } : {}), ...(error.rate_limit ? { rate_limit: error.rate_limit } : {}), ...(error.retry_after ? { retry_after: error.retry_after } : {}) });
         if (error.transport_error) return pause({ status: 'paused', reason: 'transport_error',
           ...(error.transport_reason ? { transport_reason: error.transport_reason } : {}),
           ...(error.transport_message ? { transport_message: error.transport_message } : {}) });
@@ -1407,7 +1475,8 @@ async function main() {
       `${run.reason ? ` (${run.reason})` : ''} after ${run.requests} requests`).join('; ')}.\n` : '') +
     (reviewFailed.length ? `${reviewFailed.length} article(s) failed evidence validation twice; the report will be built without them ` +
       'and their companies are marked as incomplete evidence.\n' : '') +
-    (state.status === 'paused' && !reviewFailed.length ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
+    (state.status === 'paused' && !reviewFailed.length ? `Reason: ${state.reason}${state.provider_reason ? ` (${state.provider_reason})` : ''}` +
+      `${state.quota_ids?.length ? ` [${state.quota_ids.join(', ')}]` : ''}${state.retry_after ? `, retry-after ${state.retry_after}s` : ''}. ` +
       (state.provider_message ? `${PROVIDER.label} said: ${state.provider_message}
 ` : '') +
       (state.transport_reason ? `Transport: ${state.transport_reason}${state.transport_message ? ` - ${state.transport_message}` : ''}
