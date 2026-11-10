@@ -6,6 +6,13 @@
       "excludes_ko": "전력 변환·전원용 전력 반도체(우주용·방사선 내성 제품 포함), 차량용 UWB·디지털 키·실내 재실 감지 칩, 우주항공 외 용도의 일반 반도체",
       "includes_en": "Semiconductors that transmit, receive, amplify or convert RF signals in satellite communication, aerospace or defence radar systems (RF front ends, power amplifiers, LNAs, beamforming and mmWave chips)",
       "excludes_en": "Power semiconductors for power conversion or supply, including space-grade or radiation-hardened ones; automotive UWB, digital key and in-cabin presence chips; general semiconductors for non-aerospace uses"
+    },
+    "linear_scale": {
+      "note": "Renishaw·HEIDENHAIN. 리니어 스케일은 업계에서 리니어 엔코더라고 부르고 위치 측정 엔코더 제품군에 속한다. 범위가 없던 2026-10 판정은 Renishaw 의 Miskin 공장 1단계 완공(엔코더 생산 증설)을 '위치 엔코더라 리니어 스케일이 아니다'로 보고 품목 무관 처리했다(9월에도 같은 사건을 기사마다 다르게 판정).",
+      "includes_ko": "직선 위치를 측정하는 리니어 스케일, 곧 리니어 엔코더(광학식·자기식·유도식, 절대형·증분형, 판독 헤드 포함). 리니어 엔코더를 포함하는 위치 측정 엔코더 제품군의 생산·개발·증설도 해당한다(Renishaw 의 position encoder, HEIDENHAIN 의 length·linear encoder 등)",
+      "excludes_ko": "엔코더가 없는 측정기기(3차원 측정기, 터치 프로브, 단독 레이저 간섭계), 적층 제조(3D 프린팅) 장비, 엔코더를 부품으로만 쓰는 모션 스테이지·완제 장비, 의료·분광 사업",
+      "includes_en": "Linear scales, also called linear encoders, that measure linear position (optical, magnetic or inductive; absolute or incremental; including readheads). Production, development or capacity expansion of a position-encoder product line that includes linear encoders also links (for example Renishaw position encoders, HEIDENHAIN length and linear encoders)",
+      "excludes_en": "Measuring instruments without encoders (coordinate measuring machines, touch probes, stand-alone laser interferometers), additive manufacturing (3D printing) systems, motion stages or finished equipment that only use encoders as components, and healthcare or spectroscopy businesses"
     }
   }
 }
