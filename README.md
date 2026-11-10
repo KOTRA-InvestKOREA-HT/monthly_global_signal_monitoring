@@ -268,6 +268,11 @@ A local build keeps the dated-but-unconfirmed rows in `date_pending.json` in the
    문안 모델에게 돌려 한 번 다시 쓰게 한다. 다시 쓴 문안은 다시 검토하지 않고, 실행 요약에 다시 확인하지 않은
    카드 수로 적는다(`summary_reviewer.unchecked`). 검토 지적만으로 항목을 빼지는 않으며, 나머지 지적은 기록만 한다.
    지적은 실행 요약과 `outputs/latest_ai_summary_summary.json`의 `summary_reviewer`에 남는다.
+   승인된 시그널의 문안이 세 번 써도 검사를 통과하지 못하면 그 시그널은 이번 보고서에서 빠지고(보고서는 만든다) 다음 실행이
+   다시 쓴다. 빠진 시그널은 실행 화면에 "Approved signal left out of the report" 경고로 뜨고,
+   `outputs/latest_ai_summary_summary.json`의 `status`가 `completed_with_copy_failures`(판정 실패도 있으면
+   `completed_with_review_and_copy_failures`)가 되며 `copy_failures`에 목록이,
+   해당 행에 `ai_summary_failed`(걸린 사유)가 남는다. 마지막으로 걸린 문안은 실행 요약과 판정 파일의 `summary_failed.copies`에 있다.
 
 두 워크플로는 같은 동시 실행 그룹이라 한쪽이 도는 동안 다른 쪽은 기다린다. GitHub 는 그룹마다 대기 실행을
 하나만 두므로, 대시보드는 실행이 대기 중이거나 도는 동안 새 실행을 보내지 않는다.

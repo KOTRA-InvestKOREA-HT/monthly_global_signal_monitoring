@@ -91,14 +91,18 @@ export async function writeWithKeyRotation(keys, write, log = console.log) {
     apiKey: keys[Math.min(index, keys.length - 1)] };
 }
 
-function writerSummary(stats) {
+// 끝내 쓰지 못한 후보는 마지막으로 걸린 문안을 함께 적는다. 5호(2026-10) Siemens Gamesa S5 는 사유 코드만 남아 문안이 정말
+// 틀렸는지 검사가 잘못 걸었는지 실행 뒤에 가릴 수 없었다.
+export function writerSummary(stats) {
   const byModel = Object.entries(stats.written_by || {}).map(([model, n]) => `${model} ${n}`).join(', ');
   return `### Report copy (${stats.model})\n` +
     `${stats.articles} articles; ${stats.requests} requests; ${stats.cached} summaries reused; ` +
     `${stats.written} written${byModel ? ` (${byModel})` : ''}; ${stats.failed.length} gave up` +
     `${Object.keys(stats.errors).length ? `; errors ${JSON.stringify(stats.errors)}` : ''}` +
     `${Object.keys(stats.rejected).length ? `; rejected by ${JSON.stringify(stats.rejected)}` : ''}.\n` +
-    stats.failed.map(item => `- ${item.company} ${item.candidate_id}: left out of this report (${item.problems.join('; ') || 'no usable copy'})\n`).join('') +
+    stats.failed.map(item => `- **${item.company} ${item.candidate_id}: left out of this report** (${item.problems.join('; ') || 'no usable copy'})\n` +
+      (item.rejected_copy ? `  - last rejected EN: ${item.rejected_copy.summary_en || '(empty)'}\n` +
+        `  - last rejected KO: ${item.rejected_copy.summary_ko || '(empty)'}\n` : '')).join('') +
     (stats.stopped ? `Stopped: ${stats.stopped.reason}${stats.stopped.http_status ? ` (HTTP ${stats.stopped.http_status})` : ''}. ` +
       'Written copy is saved; run publish-report again for the same dates to continue. Existing published PDFs are unchanged.\n' : '');
 }
@@ -119,6 +123,41 @@ export function reviewerSummary(stats) {
     (stats.kept || []).map(item => `- ${item.company} ${item.candidate_id}: previous copy kept (${item.reason})\n`).join('') +
     stats.flagged.map(item => `- ${item.company} ${item.candidate_id} [${item.check}] "${item.copy_phrase}"` +
       `${item.source_phrase ? ` vs "${item.source_phrase}"` : ''}: ${item.note}\n`).join('');
+}
+
+// 승인됐지만 문안이 끝내 검사를 통과하지 못해 이번 보고서에서 빠진 시그널. 빌드가 만든 행에서 센다(importReview 가 붙이는
+// ai_summary_failed). 문안 단계의 기록(stats.failed)만 보면 검토 지적으로 다시 쓰다 가져오기 검사에 걸려 빠진 카드를 놓친다.
+// 5호(2026-10) Siemens Gamesa S5 가 bilingual_month_mismatch 로 빠졌을 때 실행은 초록으로 끝났고, 출력 상태는 판정 실패 때문에
+// completed_with_review_failures 였을 뿐 이 누락은 summary_writer.failed 안쪽과 실행 요약 한 줄에만 있었다.
+// 보고서를 막지는 않는다. 판정 실패(publishableReviewFailures)처럼, 막으면 카드 한 장이 매달 보고서 전체를 세울 수 있다.
+export function copyFailures(investment, relevant) {
+  return [...investment.map(row => ['investment', row]), ...relevant.map(row => ['business', row])]
+    .filter(([, row]) => Array.isArray(row.ai_summary_failed))
+    .map(([kind, row]) => ({ company: row.company, kind,
+      ...(kind === 'investment' ? { investment_signal_no: row.investment_signal_no } : {}),
+      title: row.title, url: row.url, problems: row.ai_summary_failed }));
+}
+
+// 발행 상태. 판정 실패와 문안 실패를 함께 드러낸다. 판정 실패만 있을 때의 값(completed_with_review_failures)은 그대로다.
+export function publishedStatus(judgementStatus, reviewFailed, copyFailed) {
+  const kinds = [reviewFailed.length ? 'review' : '', copyFailed.length ? 'copy' : ''].filter(Boolean);
+  return kinds.length ? `completed_with_${kinds.join('_and_')}_failures` : judgementStatus;
+}
+
+// GitHub Actions 경고 주석. 실행 화면 맨 위에 노란 경고로 뜬다. 메시지의 %·줄바꿈은 Actions 규칙대로 바꾼다.
+export function copyFailureAnnotations(failures) {
+  const escape = text => String(text).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  return failures.map(item => `::warning title=Approved signal left out of the report::` +
+    escape(`${item.company} ${item.kind === 'investment' ? `S${item.investment_signal_no}` : 'business'} "${item.title}": ` +
+      `the copy never passed the checks (${item.problems.join('; ') || 'no usable copy'}). It stays on the dashboard and is written again next run.`));
+}
+
+function copyFailureSummary(failures) {
+  if (!failures.length) return '';
+  return `### Approved signals left out of this report\n**${failures.length} approved signal(s) are missing from both PDFs** because their copy ` +
+    'never passed the checks. They stay on the dashboard (ai_summary_failed) and publish-report writes them again next run.\n' +
+    failures.map(item => `- ${item.company} ${item.kind === 'investment' ? `S${item.investment_signal_no}` : 'business'}: ` +
+      `${item.title} (${item.problems.join('; ') || 'no usable copy'})\n`).join('');
 }
 
 async function main() {
@@ -196,6 +235,9 @@ async function main() {
     stage = 'publish';
     const investment = await read(path.join(reportDir, 'investment.json'));
     const relevant = await read(path.join(reportDir, 'relevant.json'));
+    const copyFailed = copyFailures(investment, relevant);
+    for (const line of copyFailureAnnotations(copyFailed)) console.log(line);
+    if (process.env.GITHUB_STEP_SUMMARY && copyFailed.length) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, copyFailureSummary(copyFailed));
     // 워크플로는 두 PDF 가 모두 만들어진 뒤에만 이 파일들을 함께 커밋한다.
     for (const [source, target] of [['signals.json', 'latest_company_signals.json'], ['summary.json', 'latest_collection_summary.json'],
       ['investment.json', 'latest_investment_signals.json'], ['relevant.json', 'latest_relevant_signals.json']]) {
@@ -209,14 +251,14 @@ async function main() {
     // 판정 단계의 상태에 이 단계의 문안 통계를 붙인다. 실행 식별자는 두 단계가 따로 남는다.
     const { stage: _stage, judged: _judged, run_dir: _runDir, run, ...judgement } = judged;
     await write('outputs/latest_ai_summary_summary.json', {
-      ...judgement, status: reviewFailed.length ? 'completed_with_review_failures' : judgement.status,
+      ...judgement, status: publishedStatus(judgement.status, reviewFailed, copyFailed), copy_failures: copyFailed,
       judgement_run: run || null, summary_writer: stats, summary_reviewer: reviewStats, box_writer: boxStats, issue_number: issueNumber, period, provider,
       model: judged.model });
     await fs.mkdir('public/reports', { recursive: true });
     await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
     await fs.copyFile(path.join(reportDir, 'report_en.pdf'), 'public/reports/latest_report_en.pdf');
     await write(STATUS_FILE, { status: 'completed', stage, issue_number: issueNumber, summary_writer: stats,
-      review_failures: reviewFailed.length, period, ...runIdentity() });
+      review_failures: reviewFailed.length, copy_failures: copyFailed, period, ...runIdentity() });
   } catch (error) {
     const buildFailure = await read(BUILD_FAILURE_FILE).catch(() => null);
     await write(STATUS_FILE, { status: 'failed', stage, reason: error.publish_reason || 'validation_or_execution',

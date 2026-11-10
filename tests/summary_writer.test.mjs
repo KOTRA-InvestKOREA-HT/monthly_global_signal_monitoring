@@ -4,13 +4,15 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { groupArticles, importReview, summaryNumberProblems, summaryQuoteProblems } from '../scripts/local_report.mjs';
+import { articleCoverageGap, groupArticles, importReview, summaryNumberProblems, summaryQuoteProblems } from '../scripts/local_report.mjs';
 import { policySection } from '../scripts/review_report.mjs';
 import {
   buildWriterInstruction, writerPolicySection, writerRequest, writerBody, resolveWriter, writeSummaries, summaryStyleProblems,
   koreanScriptProblems, englishCountriesInKorean, bilingualFactProblems, explainProblem, DEFAULT_WRITER_MODEL, WRITER_ATTEMPTS, WRITER_EXAMPLES, SIGNAL_SUMMARY_LIMITS,
 } from '../scripts/summary_writer.mjs';
-import { issueNumberFor, judgementFor, summaryApiKey } from '../scripts/publish_report.mjs';
+import {
+  issueNumberFor, judgementFor, summaryApiKey, copyFailures, copyFailureAnnotations, publishedStatus, writerSummary,
+} from '../scripts/publish_report.mjs';
 
 const doc = fs.readFileSync(new URL('../docs/local_report_review.md', import.meta.url), 'utf8');
 const wording = writerPolicySection(doc);
@@ -228,17 +230,125 @@ test('the new Korean checks reach the writer as a reason it can act on, and a fi
     summary_en: 'Eli Lilly and Company announced executive appointments, effective Jan. 1, 2027, with Ilya Yuffa taking on the role of president of Lilly Global Markets.',
     summary_ko: '임원 임명 - Eli Lilly and Company는 Jan. 1, 2027부로 Ilya Yuffa를 Lilly Global Markets 사장으로 임명할 예정임.' };
   // 영문 날짜만 쓰면 국문에 달이 없으니 한·영 달 대조에도 걸린다.
-  assert.deepEqual(summaryStyleProblems(article, decision), ['bilingual_month_mismatch', 'english_date_in_korean:Jan. 1']);
+  assert.deepEqual(summaryStyleProblems(article, decision), ['bilingual_month_mismatch:ko=none|en=January', 'english_date_in_korean:Jan. 1']);
   // 영문 약어 달(Jan.)과 국문 "1월"은 같은 달이다. 예전에는 불일치로 걸려 국문으로 고친 문안이 다시 거부됐다.
   const fixed = { ...decision, summary_ko: decision.summary_ko.replace('Jan. 1, 2027부로', '2027년 1월 1일부로') };
   assert.deepEqual(summaryStyleProblems(article, fixed), []);
   assert.deepEqual(bilingualFactProblems({ summary_en: 'Eco&Dream said on Sept. 23 that it signed a supply contract.',
     summary_ko: 'Eco&Dream은 9월 23일 공급 계약을 체결했다고 밝혔음.' }), []);
   assert.deepEqual(bilingualFactProblems({ summary_en: 'The plant opens Oct 6.', summary_ko: '공장은 11월 6일 문을 열 예정임.' }),
-    ['bilingual_month_mismatch']);
+    ['bilingual_month_mismatch:ko=11월|en=October']);
   assert.match(explainProblem('english_date_in_korean:Jan. 1'), /Korean form: 2027년 1월 1일.*\[english_date_in_korean:Jan\. 1\]$/);
   assert.match(explainProblem('cjk_in_korean:州'), /Chinese characters.*\[cjk_in_korean:州\]$/);
   assert.match(explainProblem('english_country_in_korean:Taiwan'), /country names in Korean \(한국, 대만.*\[english_country_in_korean:Taiwan\]$/);
+});
+
+// ---- 5호(2026-10) Siemens Gamesa S5: 승인된 인사 시그널이 bilingual_month_mismatch 로 세 번 다 걸려 조용히 빠졌다 ----
+// Global Venturing 기사에 적힌 달은 기사 머리의 게시일 "Oct 1, 2026" 하나뿐이고, 사건(부사장 취임) 날짜는 없다.
+// 실패한 문안은 남지 않아 확인하지 못했지만, 한쪽 언어만 그 게시일을 옮긴 경우를 재현한다.
+const gamesaQuotes = ['Kendra Rauschenberger has taken on the role of vice president of global sales for onshore wind at Siemens Gamesa.',
+  'Kendra Rauschenberger has left her position as general partner at Siemens Energy Ventures, the corporate VC arm of German energy technology ' +
+  'company Siemens Energy, after six and a half years to take on the role of vice president of global sales for onshore wind at Siemens Gamesa.'];
+const gamesa = groupArticles([{ company: 'Siemens-Gamesa', target_no: 50, query_aliases: ['Siemens Gamesa'],
+  title: 'Rauschenberger leaves Siemens Energy’s investment arm - Global Venturing', url: 'https://example.com/rauschenberger',
+  published_at: '2026-10-01T14:24:45Z', content_text: `Rauschenberger leaves Siemens Energy’s investment arm Oct 1, 2026 • Oishani Mitra ${gamesaQuotes.join(' ')}`,
+  target_technology: '해상풍력터빈', target_technology_en: 'offshore wind turbine',
+  investment_signal_no: 5, investment_signal_label_en: 'Strategic Executive Move' }], [], { from_date: '2026-10-01', to_date: '2026-10-31' })[0];
+const gamesaJudge = { candidate_id: 'investment:5', entity_supported: true, target_technology_supported: false, indicator_supported: true,
+  leading_indicator_supported: true, event_stage: 'precursor', quality: 'pass', evidence_quotes: gamesaQuotes,
+  reason: 'Kendra Rauschenberger was appointed vice president of global sales for onshore wind at Siemens Gamesa.' };
+const gamesaGood = { candidate_id: 'investment:5',
+  summary_en: 'Kendra Rauschenberger left her position as general partner at Siemens Energy Ventures to become vice president of global sales for onshore wind at Siemens Gamesa.',
+  summary_ko: '육상풍력 글로벌 영업 부사장 영입 - Siemens Gamesa는 Siemens Energy Ventures 파트너 출신 Kendra Rauschenberger를 육상풍력 글로벌 영업 부사장으로 영입했음.' };
+// 국문에만 기사 게시일을 사건 날짜처럼 넣은 문안.
+const gamesaByline = { ...gamesaGood, summary_ko: gamesaGood.summary_ko.replace('Siemens Gamesa는 ', 'Siemens Gamesa는 2026년 10월 1일 ') };
+
+async function writeGamesa(answers) {
+  const root = await fsp.mkdtemp(path.join(os.tmpdir(), 'writer-gamesa-'));
+  const reviewDir = path.join(root, 'reviews');
+  await fsp.mkdir(reviewDir);
+  const file = path.join(reviewDir, `${gamesa.id}.json`);
+  await fsp.writeFile(file, JSON.stringify({ article_id: gamesa.id, reviewer: 'gemini/test', provider: 'gemini', decisions: [gamesaJudge] }));
+  const bodies = [];
+  const stats = await writeSummaries({ articles: [gamesa], reviewDir, writer, apiKey: 'AIza-test', policyWording: wording,
+    sleep: async () => {}, log: () => {},
+    fetchImpl: async (url, init) => { bodies.push(JSON.parse(bodyText(init))); return gemini([answers[Math.min(bodies.length, answers.length) - 1]]); } });
+  return { stats, bodies, saved: JSON.parse(await fsp.readFile(file, 'utf8')) };
+}
+
+test('the Siemens Gamesa fixture is an approved S5 whose clean copy passes every check', () => {
+  assert.equal(importReview(gamesa, { article_id: gamesa.id, reviewer: 'gemini/test', decisions: [gamesaJudge] }, { summaries: false })[0].supported, true);
+  const decision = { ...gamesaJudge, ...gamesaGood };
+  assert.deepEqual(summaryStyleProblems(gamesa, decision), []);
+  assert.deepEqual(summaryStyleProblems(gamesa, { ...gamesaJudge, ...gamesaByline }), ['bilingual_month_mismatch:ko=10월|en=none']);
+});
+
+test('a month mismatch names the months on each side, so the retry knows which language to fix', async () => {
+  // 예전 안내는 "두 언어의 달이 다르다"뿐이었다. 이제 어느 쪽에 어느 달이 있는지와, 게시일은 사건 날짜가 아니라는 기준을 준다.
+  const reason = explainProblem('bilingual_month_mismatch:ko=10월|en=none');
+  assert.match(reason, /^The two languages state different months \(summary_ko: 10월; summary_en: none\)\. Both must state the same months/);
+  assert.match(reason, /date line showing when the article itself was published is not the date of the event/);
+  assert.match(reason, /\[bilingual_month_mismatch:ko=10월\|en=none\]$/);
+  // 저장된 옛 코드(달 없이)도 안내 문장으로 바뀐다.
+  assert.match(explainProblem('bilingual_month_mismatch'), /^The two languages state different months\. Both must.*\[bilingual_month_mismatch\]$/);
+
+  const { stats, bodies, saved } = await writeGamesa([gamesaByline, gamesaGood]);
+  assert.equal(bodies.length, 2);
+  assert.match(bodies[1].items[0].rejected_because[0], /summary_ko: 10월; summary_en: none/);
+  assert.deepEqual(bodies[1].items[0].previous_copy, { summary_en: gamesaByline.summary_en, summary_ko: gamesaByline.summary_ko });
+  assert.equal(stats.written, 1);
+  assert.deepEqual(stats.failed, []);
+  assert.equal('summary_failed' in saved, false);
+  assert.equal(importReview(gamesa, saved)[0].supported, true);
+  assert.equal(articleCoverageGap(gamesa, saved), null);
+});
+
+test('an approved signal whose copy never passes is marked on its row, its company and the publish status, with the rejected copy kept', async () => {
+  const { stats, bodies, saved } = await writeGamesa([gamesaByline]);
+  assert.equal(bodies.length, WRITER_ATTEMPTS);
+  const problems = ['bilingual_month_mismatch:ko=10월|en=none'];
+  const rejectedCopy = { summary_en: gamesaByline.summary_en, summary_ko: gamesaByline.summary_ko };
+  // 기록 집계는 코드 이름으로 한다.
+  assert.deepEqual(stats.rejected, { bilingual_month_mismatch: 1 });
+  assert.deepEqual(stats.failed, [{ article_id: gamesa.id, company: 'Siemens-Gamesa', candidate_id: 'investment:5', problems,
+    rejected_copy: rejectedCopy }]);
+  // 판정 파일의 문안은 비우고, 마지막으로 걸린 문안은 summary_failed 에 남긴다. 다음 감사가 실제 오류인지 검사 오탐인지 가릴 수 있다.
+  assert.equal(saved.decisions[0].summary_ko, '');
+  assert.deepEqual(saved.summary_failed.candidate_ids, ['investment:5']);
+  assert.deepEqual(saved.summary_failed.problems, { 'investment:5': problems });
+  assert.deepEqual(saved.summary_failed.copies, { 'investment:5': rejectedCopy });
+  // 실행 요약은 걸린 문안을 그대로 보여 준다.
+  const summary = writerSummary(stats);
+  assert.match(summary, /\*\*Siemens-Gamesa investment:5: left out of this report\*\* \(bilingual_month_mismatch:ko=10월\|en=none\)/);
+  assert.ok(summary.includes(`last rejected KO: ${gamesaByline.summary_ko}`));
+
+  // 행에는 빠진 까닭이 남는다. 예전에는 ai_signal_supported=false 인 근접 후보와 구별되지 않았다.
+  const [result] = importReview(gamesa, saved);
+  assert.equal(result.supported, false);
+  assert.equal(result.row.ai_signal_supported, false);
+  assert.deepEqual(result.row.ai_summary_failed, problems);
+  // 근접 후보는 표시가 없다.
+  const nearMiss = importReview(article, { ...review, decisions: [{ ...judge, leading_indicator_supported: false }] }, { summaries: false })[0];
+  assert.equal(nearMiss.near_miss, true);
+  assert.equal('ai_summary_failed' in nearMiss.row, false);
+  // 기업 커버리지는 "검토했으나 미포착"이 아니라 문안 실패로 남는다.
+  assert.equal(articleCoverageGap(gamesa, saved), 'summary_failed');
+
+  // 발행 단계: 빌드된 행에서 빠진 시그널을 모아 상태와 Actions 경고로 드러낸다. 보고서는 막지 않는다.
+  const failures = copyFailures([result.row], []);
+  assert.deepEqual(failures, [{ company: 'Siemens-Gamesa', kind: 'investment', investment_signal_no: 5,
+    title: gamesa.title, url: gamesa.url, problems }]);
+  assert.equal(publishedStatus('paused', [], failures), 'completed_with_copy_failures');
+  assert.equal(publishedStatus('paused', ['ddab7cfb'], failures), 'completed_with_review_and_copy_failures');
+  // 판정 실패만 있을 때와 실패가 없을 때의 값은 예전과 같다.
+  assert.equal(publishedStatus('paused', ['ddab7cfb'], []), 'completed_with_review_failures');
+  assert.equal(publishedStatus('completed', [], []), 'completed');
+  const [annotation] = copyFailureAnnotations(failures);
+  assert.match(annotation, /^::warning title=Approved signal left out of the report::Siemens-Gamesa S5 "Rauschenberger leaves/);
+  assert.ok(annotation.includes('(bilingual_month_mismatch:ko=10월|en=none)'));
+  // Actions 명령 한 줄이 끊기지 않게 줄바꿈과 %는 바꾼다.
+  assert.match(copyFailureAnnotations([{ ...failures[0], title: '100% owned\nplant' }])[0], /"100%25 owned%0Aplant"/);
+  assert.deepEqual(copyFailures([{ ...result.row, ai_summary_failed: undefined }], []), []);
 });
 
 test('copy with an English country name in Korean is written again with the reason named', async () => {
