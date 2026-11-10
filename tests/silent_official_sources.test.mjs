@@ -6,6 +6,12 @@
 // 3. 200 으로 받았는데 링크가 0개인 공식 페이지는 page_empty 오류로 남긴다.
 // 4. 목록 페이지가 광고한 피드(Texcell /actualites/feed/ 500)는 한 번만 받고, 그 실패로 호스트를 쉬게 하지 않는다.
 // 5. Plansee 의 /en/articles/detail/ 기사는 설정의 article_path 로 기사로 받는다(확인 예산 0 에 빠지던 10/15 기사).
+// 같은 수집에서 남은 세 곳(2026-11-10 점검):
+// 6. AGC(Asahi Glass) /en/news/ 는 목록을 스크립트로 news_all.json 에서 그린다. 링크 133개가 모두 메뉴라 오류 없이 0건이었다.
+//    그 JSON 을 읽는다. 날짜가 "20261028-100000" 이다.
+// 7. Toray /news/ 는 목록도 기사(article.html?contentId=)도 키가 필요한 CMS API(microCMS)로 그린다. 받을 것이 없어 뺐다.
+// 8. maxon 뉴스룸은 서버가 그린 목록이라 그대로 둔다(10월 전사 보도자료가 없었다). 날짜 없는 안내서 PDF 만 싣는
+//    Media Center 는 뺐고, 동명 대상(Maxon 소프트웨어 등)을 가를 target_identity 를 넣었다.
 // 고정 자료는 실제 응답의 구조만 흉내 낸 것이다.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,9 +20,11 @@ import { collectionBlockingErrors, collectCompany, configuredArticleVerdict, CHI
   correctionsLast, extractDateFromText, fetchDiscoveredFeed, fetchText, jsonFeedDate, parseArgs, parseJsonFeed,
   routineNotice } from '../scripts/collect_company_signals.mjs';
 import { createDomainGuard, retryableCollection } from '../scripts/collection_resilience.mjs';
+import { decisionForApproval } from '../scripts/local_report.mjs';
 import { configuredOfficialHosts } from '../scripts/publisher_recovery.mjs';
 
 const realSources = JSON.parse(fs.readFileSync(new URL('../config/company_sources.json', import.meta.url), 'utf8'));
+const realTechnology = JSON.parse(fs.readFileSync(new URL('../data/company_technology_map.json', import.meta.url), 'utf8'));
 
 async function withFetch(handler, task) {
   const realFetch = globalThis.fetch;
@@ -393,4 +401,110 @@ test('a host_only page is never fetched but still declares the company\'s offici
   assert.equal(pages.some(page => !page.host_only && /^https:\/\/www\.qualcomm\.com\//.test(page.url)), false);
   // Cytiva 뉴스 센터(자바스크립트 앱 껍데기, 링크 0개)는 뺐다. Danaher 목록과 피드로 읽는다.
   assert.equal(realSources.official_pages.Cytiva.some(page => /cytivalifesciences\.com/.test(page.url)), false);
+});
+
+// --- 6. AGC(Asahi Glass): 뉴스 목록 JSON ---------------------------------------------------------------------
+
+test('a compact YYYYMMDD-HHMMSS JSON feed date is read as that day; other shapes keep the old handling', () => {
+  // AGC news_all.json 의 date. 예전에는 날짜로도 글 속 날짜로도 읽히지 않아 그대로 남았다(날짜 미상).
+  assert.equal(jsonFeedDate('20261028-100000'), '2026-10-28');
+  assert.equal(jsonFeedDate('20261106-150000'), '2026-11-06');
+  assert.equal(jsonFeedDate('20261015'), '2026-10-15');
+  // 시각 자리가 여섯 자리가 아니거나 뒤에 글자가 붙으면 이 모양이 아니다.
+  assert.equal(jsonFeedDate('20261028-1000'), '20261028-1000');
+  assert.equal(jsonFeedDate('20261028-100000x'), '20261028-100000x');
+});
+
+const AGC = 'https://www.agc.com';
+// news_all.json 은 최상위가 배열이다. type 이 inner 인 항목은 /en/news/detail/ 상세 페이지(서버가 그린 HTML)를 가리킨다.
+const agcItem = (date, id, title, type = 'inner') => ({ date, path: type === 'pdf' ? `/en/news/pdf/${date.slice(0, 8)}e.pdf`
+  : `/en/news/detail/${id}_2814.html`, type, pdf: `/en/news/pdf/${date.slice(0, 8)}e.pdf`, title, sort: '', flg_ir: 'T',
+flg_csr: 'F', flg_show: 'F', tag: [{ tag01: '', tag02: '', tag03: '', tag04: '', tag05: '', tag06: 'R&D', tag07: '' }] });
+const AGC_NEWS = [
+  agcItem('20261106-150000', '1212604', 'AGC to Exhibit Materials Supporting a Hydrogen Society at the COP31 Japan Pavilion'),
+  agcItem('20261028-100000', '1212518', 'Six Companies Launch Joint R&D to Build a Quantum-Computing-Based Materials Development Platform'),
+  agcItem('20261006-100000', '1212354', 'AGC Biologics Awarded Multiple Cell Therapy Projects at Its Yokohama Site'),
+  agcItem('20260918-150000', '1212254', 'SEMICON West 2026'),
+];
+const AGC_QUANTUM = `${AGC}/en/news/detail/1212518_2814.html`;
+const AGC_BIOLOGICS = `${AGC}/en/news/detail/1212354_2814.html`;
+
+test('AGC is read from its news JSON: October releases are dated official press releases with detail bodies', async () => {
+  const company = { target_no: 67, company: 'Asahi Glass', query_aliases: ['AGC Inc', 'AGC'] };
+  const feeds = realSources.official_feeds['Asahi Glass'];
+  const [feed] = feeds;
+  const details = {
+    [AGC_QUANTUM]: articleHtml('Six Companies Launch Joint R&D to Build a Quantum-Computing-Based Materials Development Platform',
+      'AGC and five companies began joint research on a quantum-computing-based materials development platform. '),
+    [AGC_BIOLOGICS]: articleHtml('AGC Biologics Awarded Multiple Cell Therapy Projects at Its Yokohama Site',
+      'AGC Biologics was awarded several cell therapy development projects at its Yokohama site. '),
+  };
+  const { result, requested } = await withFetch(url => url === feed.url ? json(AGC_NEWS) : details[url] ? html(details[url]) : null,
+    () => collect(company, { official_feeds: { 'Asahi Glass': feeds } }, ['official_feeds']));
+  assert.deepEqual(result.errors, []);
+  const rows = result.rows.filter(row => row.source_type === 'official');
+  assert.deepEqual(rows.map(row => [row.published_at, row.published_at_source, row.source_kind, row.url]).sort(), [
+    ['2026-10-06T00:00:00Z', 'feed', 'press_release', AGC_BIOLOGICS],
+    ['2026-10-28T00:00:00Z', 'feed', 'press_release', AGC_QUANTUM],
+  ]);
+  for (const row of rows) {
+    assert.equal(row.content_fetch_status, 'fetched');
+    assert.ok(row.content_text.length > 500);
+  }
+  // 11월·9월 항목은 기간 밖이라 상세 페이지를 받지 않는다. 메뉴뿐인 /en/news/ 목록도 더 받지 않는다.
+  assert.deepEqual(requested.slice().sort(), [AGC_BIOLOGICS, AGC_QUANTUM, feed.url].sort());
+});
+
+test('AGC no longer reads the menu-only /en/news/ page, and agc.com stays its official host', () => {
+  const [feed] = realSources.official_feeds['Asahi Glass'];
+  assert.equal(feed.format, 'json');
+  assert.equal(feed.json.items, undefined);
+  assert.equal(new URL(feed.url).pathname, '/en/news/detail/news_all.json');
+  assert.equal(realSources.official_pages['Asahi Glass'].some(page => /\/en\/news\/?$/.test(new URL(page.url).pathname)), false);
+  assert.ok(configuredOfficialHosts('Asahi Glass', realSources).has('agc.com'));
+});
+
+// --- 7. Toray: 키가 필요한 CMS API 로만 그리는 뉴스룸 --------------------------------------------------------------
+
+test('Toray no longer lists its script-drawn newsroom; its IR pages and official host remain', () => {
+  // www.toray.com/news/ 와 기사 article.html?contentId= 는 HTML 에 기사가 없다(목록 링크 2개, 기사 본문 0자).
+  // 둘 다 microCMS API(요청마다 API 키 머리글)에서 그린다. 수집기는 그 API 를 부르지 않는다.
+  const pages = realSources.official_pages.Toray;
+  assert.equal(pages.some(page => new URL(page.url).pathname.startsWith('/news')), false);
+  assert.deepEqual(pages.map(page => new URL(page.url).pathname),
+    ['/ir/', '/ir/annual_reports/', '/ir/library/', '/ir/library/lib_001.html']);
+  assert.equal(realSources.official_feeds.Toray, undefined);
+  assert.ok(configuredOfficialHosts('Toray', realSources).has('toray.com'));
+});
+
+// --- 8. maxon: 뉴스룸은 그대로, 안내서 PDF 목록은 빼고, 동명 대상을 가를 식별 정보 --------------------------------
+
+test('maxon keeps its server-rendered newsroom and no longer reads the brochure-only Media Center', () => {
+  // 2026-10 수집에서 maxon 의 공식 행 네 건은 모두 Media Center 의 날짜 없는 안내서 PDF 였다
+  // ("company mediacenter business unit container ... download", 한 건은 document_too_large).
+  const pages = realSources.official_pages.Maxon;
+  assert.deepEqual(pages.map(page => [page.kind, page.url]),
+    [['newsroom', 'https://www.maxongroup.com/en/news-and-events/news']]);
+});
+
+test('maxon has a target identity, so a maxon.net (Maxon software) article cannot approve the drive maker', () => {
+  const maxon = realTechnology.companies.find(company => company.company === 'Maxon');
+  const identity = maxon.target_identity;
+  assert.equal(identity.legal_name, 'maxon international ag');
+  assert.equal(identity.country, 'Switzerland');
+  assert.deepEqual(identity.official_domains, ['maxongroup.com']);
+  assert.deepEqual(identity.unrelated_domains, ['maxon.net']);
+  // 검색어(query_aliases)는 그대로다. 식별 정보는 판정 모델과 승인 검사에만 간다.
+  assert.deepEqual(maxon.query_aliases, ['maxon group']);
+  const body = 'Maxon teased another AI tool for Cinema 4D artists, and the company said more details follow. '.repeat(5);
+  const article = url => ({ target_identity: identity, url, content_source_url: url, evidence: [body],
+    candidates: [{ id: 'relevant', kind: 'relevant', row: { content_text: body } }] });
+  const decision = { candidate_id: 'relevant', entity_supported: true, target_technology_supported: false };
+  // 동명 회사 자기 사이트의 기사에 정식명(maxon international ag)이 없으면 귀속을 인정하지 않는다.
+  assert.equal(decisionForApproval(article('https://www.maxon.net/en/article/ai-tool'), [decision], decision).entity_supported, false);
+  // maxon 자기 사이트와 제3자 매체의 기사는 모델 판단을 그대로 둔다.
+  assert.equal(decisionForApproval(article('https://www.maxongroup.com/en/news-and-events/news/x-306082'), [decision], decision)
+    .entity_supported, true);
+  assert.equal(decisionForApproval(article('https://www.creativebloq.example/maxon-ai-tool'), [decision], decision)
+    .entity_supported, true);
 });

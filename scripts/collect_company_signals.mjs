@@ -1906,13 +1906,17 @@ export function normalizeOfficialPageEntries(entries) {
 // 받아 그리고, 상세 페이지도 같은 JSON 의 news_description 을 그려서 HTML 로는 본문을 받을 수 없다.
 // 그래서 2026-08 수집에서 magniX 는 결과가 0건이었다. 설정의 json 항목이 필드 이름을 정한다:
 // items(배열 경로, 점으로 구분), title, url, date(YYYYMMDD 또는 ISO), body(HTML 본문), base(상대 주소의 기준), include.
+// items 를 적지 않으면 응답 최상위가 배열이다(AGC 의 news_all.json).
 // 본문이 있으면 여기서 싣는다. 본문이 실린 행은 상세 페이지를 다시 받지 않는다(enrichOfficialRowsWithContent).
 // JSON 피드 항목의 날짜 값. YYYYMMDD 는 ISO 로 바꾸고, 날짜로 읽히는 값(ISO·"10/29/2026 00:00:00" 등)은 그대로 둔다.
 // 둘 다 아니면 글 속 날짜를 찾는다. SCHOTT Pharma 검색 API 의 tagLine 은 "Thursday, October 1, 2026, mainz, germany"
 // 처럼 날짜 뒤에 발표 장소가 붙어 그대로는 날짜로 읽히지 않는다. 읽히던 값은 이 단계를 거치지 않으므로 예전 피드는 그대로다.
+// YYYYMMDD 뒤에 -HHMMSS 가 붙은 값도 그날로 읽는다. AGC 뉴스 목록(news_all.json)의 date 가 "20261028-100000" 이라
+// 그대로 두면 날짜도 글 속 날짜도 아니어서 2026-10 의 보도자료 다섯 건이 모두 날짜 미상이 된다. 시각은 버린다(YYYYMMDD 와 같다).
 export function jsonFeedDate(value) {
   const rawDate = String(value ?? "").trim();
-  if (/^\d{8}$/.test(rawDate)) return `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6)}`;
+  const compact = rawDate.match(/^(\d{4})(\d{2})(\d{2})(?:-\d{6})?$/);
+  if (compact) return `${compact[1]}-${compact[2]}-${compact[3]}`;
   if (!rawDate || dateEvidence(rawDate, "feed")) return rawDate;
   return extractDateFromText(rawDate) || rawDate;
 }
