@@ -60,8 +60,9 @@ export const HELD_EXIT_CODE = 65;
 // 판정 단계가 이미 한 번 더 받아 봤으므로(review_report.mjs collectWithRetryPass) 여기서는 다시 받지 않는다.
 // 매달 같은 오류를 주는 사이트도 있어, 다시 수집해도 남으면 사람이 allow 로 넘긴다(워크플로 입력
 // allow_retryable_companies, 대시보드 "발행만 실행"의 체크 상자). 멈춤은 막다른 길이 아니다. 2026-11 확인으로 DNP 의
-// 설정 주소 https://www.dnp.co.jp/en/ir/ 는 늘 500(Fastly "unknown domain")이라, 설정을 고칠 때까지 DNP 는 매 실행
-// 재시도 대상으로 남는다. 넘김이 없으면 그 주소 하나가 매달 발행을 막는다. 접근 거부(403) 같은 영구 오류는 재시도 대상이
+// 설정 주소 https://www.dnp.co.jp/en/ir/ 는 늘 500(Fastly "unknown domain")이어서 DNP 가 매 실행 재시도 대상으로
+// 남았다. 넘김이 없었다면 그 주소 하나가 매달 발행을 막았다(2026-11-10 설정에서 뺐다. IR 소식은 IR News RSS 가 받는다).
+// 이렇게 영구히 깨진 설정 주소가 보이면 넘기기만 하지 말고 설정을 고친다. 접근 거부(403) 같은 영구 오류는 재시도 대상이
 // 아니라서 여기서 멈추지 않는다. 그 기업은 지금처럼 보고서에 수집 미완료로 나간다.
 export function collectionRetryable(summary, allow = false) {
   const companies = retryableCompanies(summary);

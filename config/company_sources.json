@@ -2634,15 +2634,6 @@
         "domain": "www.dnp.co.jp"
       },
       {
-        "source": "DNP - Investor Relations / Investor Relations",
-        "kind": "ir",
-        "url": "https://www.dnp.co.jp/en/ir/",
-        "crawl_priority": "Primary",
-        "page_title": "Investor Relations",
-        "source_type_label": "Investor Relations",
-        "domain": "www.dnp.co.jp"
-      },
-      {
         "source": "DNP - Securities Reports / Regulatory Filings",
         "kind": "filing",
         "url": "https://www.dnp.co.jp/ir/library/report/",
