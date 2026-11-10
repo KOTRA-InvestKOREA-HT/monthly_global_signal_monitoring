@@ -7,8 +7,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { collectWithCheckpoint, createStepLog, onlyDetailStepsRetryable, retryableCollection } from '../scripts/collection_resilience.mjs';
+import { collectWithCheckpoint, createStepLog, onlyDetailStepsRetryable, retryableCollection, retryableCompanies } from '../scripts/collection_resilience.mjs';
 import { collectCompany, createTally, mergeTally, parseArgs } from '../scripts/collect_company_signals.mjs';
+import { COLLECTION_RETRY_PASSES, COLLECTION_RETRY_WAIT_MS, collectWithRetryPass } from '../scripts/review_report.mjs';
 
 const company = { target_no: 1, company: 'Acme Widgets', query_aliases: [] };
 const sourceConfig = { official_feeds: { 'Acme Widgets': [{ url: 'https://acme.example/rss', source: 'Acme newsroom' }] } };
@@ -223,4 +224,76 @@ test('steps that failed transiently or were paused are never replayed', async ()
   let ran = false;
   assert.deepEqual(await replay.run('source:e', async () => { ran = true; }), { value: { rows: [{ title: 'kept' }], errors: [] }, replayed: true });
   assert.equal(ran, false);
+});
+
+// Issue 5(2026-10)는 11월 2일 수집이 8개 기업을 재시도 대상으로 남긴 채 같은 실행에서 판정·발행까지 갔다.
+// 재시도 대상 기업은 "다음 실행"에서 다시 받게 돼 있었는데, 판정이 한 번에 끝나 다음 실행이 없었다. 이제 판정
+// 실행이 수집기를 한 번만 더 돌린다. 끝난 기업은 진행 파일에서 읽으므로 요청은 남은 기업에만 간다.
+const ISSUE5_RETRYABLE = ['Dupont', 'Chemours', '3M', 'Ouster', 'HyproMag', 'Texcell', 'DNP', 'Shanghai Electric Wind Power'];
+
+test('a judgement run collects the companies left retryable once more, and only those', async t => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'retry-pass-'));
+  t.after(() => fs.rm(directory, { recursive: true, force: true }));
+  const companies = ['ASML', 'Airbus', ...ISSUE5_RETRYABLE];
+  // DNP·Texcell 은 두 번째에도 500 을 준다(9월 기간 발행 때도 남았다). 나머지 여섯은 두 번째에 받힌다.
+  const stubborn = new Set(['DNP', 'Texcell']);
+  const requested = new Map();
+  let pass = 0, summary = null;
+  const collectAll = async () => {
+    pass += 1;
+    const results = await Promise.all(companies.map(name => collectWithCheckpoint({ directory, identity: { company: name },
+      toDate: '2026-10-31', now: () => Date.parse('2026-11-02T07:20:00Z') + pass * 60000,
+      collect: async () => {
+        requested.set(name, (requested.get(name) || 0) + 1);
+        const failing = ISSUE5_RETRYABLE.includes(name) && (pass === 1 || stubborn.has(name));
+        return { rows: [], stats: {},
+          errors: failing ? [{ company: name, source: 'official_pages', error: 'HTTP 500 Internal Server Error' }] : [] };
+      } })));
+    // 수집기 요약과 같은 모양이다(collect_company_signals.mjs main).
+    summary = { retryable_company_count: results.filter(retryableCollection).length,
+      cached_company_count: results.filter(result => result.cached).length,
+      collection_coverage: companies.map((company, index) => ({ company, retryable: retryableCollection(results[index]) })) };
+  };
+  const waits = [], logs = [];
+  const result = await collectWithRetryPass({ collect: collectAll, readSummary: async () => summary,
+    wait: async ms => { waits.push(ms); }, log: line => logs.push(line) });
+
+  assert.equal(COLLECTION_RETRY_PASSES, 1);
+  assert.equal(pass, 2, 'one extra pass, not a loop');
+  assert.deepEqual(waits, [COLLECTION_RETRY_WAIT_MS]);
+  assert.match(logs[0], /^8 companies still have temporary collection errors \(Dupont, Chemours, .*, Shanghai Electric Wind Power\); collecting them again in 60s$/);
+  assert.deepEqual([result.retry_passes, result.retryable_before_retry, result.retryable], [1, ISSUE5_RETRYABLE, ['Texcell', 'DNP']]);
+  assert.deepEqual(retryableCompanies(result.summary), ['Texcell', 'DNP']);
+  // 끝난 두 기업은 두 번째 수집에서 요청하지 않는다(진행 파일에서 읽는다). 비용은 남은 기업 수만큼이다.
+  assert.equal(result.summary.cached_company_count, 2);
+  assert.deepEqual(companies.filter(name => requested.get(name) === 1), ['ASML', 'Airbus']);
+  assert.deepEqual(companies.filter(name => requested.get(name) === 2), ISSUE5_RETRYABLE);
+});
+
+test('the extra pass is skipped when nothing is retryable, and a failing collection is never retried', async () => {
+  let runs = 0;
+  const clean = await collectWithRetryPass({ collect: async () => { runs += 1; },
+    readSummary: async () => ({ retryable_company_count: 0, collection_coverage: [{ company: 'ASML', retryable: false }] }),
+    wait: async () => assert.fail('no wait without retryable companies'), log: () => {} });
+  assert.equal(runs, 1);
+  assert.deepEqual([clean.retry_passes, clean.retryable], [0, []]);
+
+  await assert.rejects(collectWithRetryPass({ collect: async () => { throw new Error('Collection failed'); },
+    readSummary: async () => assert.fail('no summary after a failed collection'), wait: async () => {}, log: () => {} }),
+  /Collection failed/);
+  // 한 번 더 받는 수집이 실패해도 판정 실행이 실패한다. 반쯤 쓴 수집으로 판정하지 않는다.
+  let attempt = 0;
+  await assert.rejects(collectWithRetryPass({
+    collect: async () => { if (++attempt === 2) throw new Error('Collection failed'); },
+    readSummary: async () => ({ retryable_company_count: 1, collection_coverage: [{ company: 'DNP', retryable: true }] }),
+    wait: async () => {}, log: () => {} }), /Collection failed/);
+});
+
+// 판정 실행이 수집기를 돌릴 때 한 번 더 받기를 거치고, 남은 기업을 판정 상태에 남기는지 본다(발행 단계와 산출물 감사가 읽는다).
+test('the judgement run collects through the retry pass and records the companies still retryable', async () => {
+  const source = (await fs.readFile('scripts/review_report.mjs', 'utf8')).replace(/\r\n/g, '\n');
+  assert.match(source, /collection = await collectWithRetryPass\(\{ collect, readSummary: \(\) => read\(path\.join\(inputDir, 'latest_collection_summary\.json'\)\) \}\);/);
+  assert.match(source, /const retryable = retryableCompanies\(summary\);/);
+  assert.match(source, /collection_retryable: retryable,/);
+  assert.match(source, /\*\*Collection incomplete\.\*\*/);
 });

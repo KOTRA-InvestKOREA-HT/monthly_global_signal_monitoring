@@ -158,6 +158,12 @@ export function retryableCollection(result) {
   return result.errors.some(retryableError);
 }
 
+// 수집 요약에서 재시도 대상으로 남은 기업 이름. 판정 단계의 한 번 더 받기(review_report.mjs)와 발행 단계의
+// 멈춤(publish_report.mjs)이 같은 목록을 본다. Issue 5(2026-10)는 이 목록에 8개 기업이 남은 채 발행됐다.
+export function retryableCompanies(summary) {
+  return (summary?.collection_coverage || []).filter(item => item?.retryable).map(item => item.company);
+}
+
 // 상세 페이지 한 건 단계(collect_company_signals.mjs fetchDetailOutcome)가 남기는 오류의 출처.
 const DETAIL_STEP_SOURCES = new Set(['official_detail', 'official_model']);
 

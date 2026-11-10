@@ -9,7 +9,7 @@ import { sourceCandidates, groupArticles, decisionForApproval, decisionOutcome, 
 import { resolveProvider, resolveVerifier, describeKeyShape, GEMINI } from './review_providers.mjs';
 import { DATE_HINT_VERSION, decisionProperties, PROMPT_VERSION, promptContract, reviewPromptDigest, VERIFY_INSTRUCTION } from './review_prompts.mjs';
 import { CONTENT_COLLECTION_VERSION, TREND_DISCOVERY_PER_COMPANY, collectorCommand, newsDigestInputs } from './collect_company_signals.mjs';
-import { collectionInputDigest, collectionNeedsRefresh } from './collection_resilience.mjs';
+import { collectionInputDigest, collectionNeedsRefresh, retryableCompanies } from './collection_resilience.mjs';
 import { reportEligible, periodPlacement } from './date_state.mjs';
 import { APPROVAL_POLICY, investmentStageSupported, targetTechnologyRequired, relevanceDenialPhrase } from './validate_report_inputs.mjs';
 import { resolveReportPeriod } from './report_period.mjs';
@@ -1256,6 +1256,47 @@ export function publishableReviewFailures(state) {
   return ids.length && state.completed + ids.length === state.total ? ids : [];
 }
 
+// 수집이 끝났는데 일시 오류(연결 실패·타임아웃·429·5xx·호스트 쉼)로 재시도 대상인 기업이 남으면, 판정 전에
+// 수집기를 한 번만 더 돌린다. 재시도 대상 기업은 "다음 실행"에서 다시 받도록 돼 있었다(collectionNeedsRefresh).
+// 그런데 판정이 한도에 걸리지 않고 한 번에 끝나면 다음 실행이 없다. Issue 5(2026-10)는 11월 2일 수집이
+// Dupont·Chemours(429), 3M·Ouster·HyproMag·Shanghai Electric Wind Power(연결 실패), Texcell·DNP(500 뒤 호스트 쉼)
+// 8개 기업을 재시도 대상으로 남긴 채 같은 실행에서 판정을 끝내고 발행까지 갔다. DNP 는 기사 본문을 모두 잃었다.
+// 두 번째 수집은 끝난 기업을 기업별 진행 파일(company_progress, 24시간)에서 그대로 쓰고 재시도 대상 기업만
+// 요청한다. 상세 페이지 단계에만 오류가 있으면 멈춘 기사만 받는다(onlyDetailStepsRetryable). 모델 호출은 없다.
+// 한 번으로 묶는 것은 매달 같은 답을 주는 사이트가 있어서다. HyproMag·Texcell·DNP·Shanghai Electric Wind Power 는
+// 9월 기간 발행 때도 남았다. 그래도 남은 기업은 발행 단계가 문안을 쓰기 전에 멈춰 사람이 고르게 한다
+// (publish_report.mjs collectionRetryable).
+export const COLLECTION_RETRY_PASSES = 1;
+// 429·5xx 를 준 호스트가 숨 돌릴 시간. 수집기의 호스트 쉼(30초)·Google 쉼(60초부터)과 같은 크기로 둔다.
+export const COLLECTION_RETRY_WAIT_MS = 60000;
+
+// collect: 수집기를 한 번 돌린다(실패하면 던진다). readSummary: 그 수집이 남긴 요약을 읽는다.
+export async function collectWithRetryPass({ collect, readSummary, wait = ms => new Promise(resolve => setTimeout(resolve, ms)),
+  passes = COLLECTION_RETRY_PASSES, waitMs = COLLECTION_RETRY_WAIT_MS, log = console.log }) {
+  await collect();
+  let summary = await readSummary();
+  const before = retryableCompanies(summary);
+  let retried = 0;
+  while (retried < passes && summary.retryable_company_count > 0) {
+    retried += 1;
+    log(`${summary.retryable_company_count} companies still have temporary collection errors ` +
+      `(${retryableCompanies(summary).join(', ')}); collecting them again in ${Math.round(waitMs / 1000)}s`);
+    await wait(waitMs);
+    await collect();
+    summary = await readSummary();
+  }
+  return { summary, retry_passes: retried, retryable_before_retry: before, retryable: retryableCompanies(summary) };
+}
+
+// 한 번 더 받아도 남은 기업의 안내. 판정 실행의 경고 표시와 실행 요약에 같은 문장을 쓴다. 한 줄이어야 한다(경고 표시).
+export function collectionRetryNote(retryable, collection = null) {
+  return `${retryable.length} companies still have temporary collection errors` +
+    `${collection?.retry_passes ? ` after ${collection.retry_passes} extra collection pass` : ''}: ${retryable.join(', ')}. ` +
+    'Their articles may be missing, so publish-report stops before writing the copy. Run collect-company-signals again for the ' +
+    'same dates (within a day it reuses the other companies and collects only these again), or run publish-report with ' +
+    'allow_retryable_companies to publish without them.';
+}
+
 // 실패한 단계. 마지막 catch 가 어디서 멈췄는지 남긴다.
 let failedStage = 'setup';
 
@@ -1308,6 +1349,8 @@ async function main() {
     console.log('Discarded saved article reviews; every article will be reviewed again');
   }
   failedStage = 'collection';
+  // 이번 실행이 수집기를 돌렸을 때만 채운다. 저장된 수집을 그대로 쓰면(재시도 대상 0) 비어 있다.
+  let collection = null;
   try {
     await fs.access(sourceFile);
     const previous = await read(path.join(inputDir, 'latest_collection_summary.json'));
@@ -1322,12 +1365,18 @@ async function main() {
   }
   catch {
     // 운영 수집 인자(응답 헤더 한도 포함)는 collection_args.mjs 한 곳에 있다. 다른 진입점도 같은 값을 쓴다.
-    const result = spawnSync(process.execPath, collectorCommand(['--out-dir', inputDir, '--from-date', from, '--to-date', to]),
-      { stdio: 'inherit' });
-    if (result.error || result.status !== 0) throw new Error('Collection failed');
+    const collect = () => {
+      const result = spawnSync(process.execPath, collectorCommand(['--out-dir', inputDir, '--from-date', from, '--to-date', to]),
+        { stdio: 'inherit' });
+      if (result.error || result.status !== 0) throw new Error('Collection failed');
+    };
+    collection = await collectWithRetryPass({ collect, readSummary: () => read(path.join(inputDir, 'latest_collection_summary.json')) });
   }
   const [signals, summary] = await Promise.all([read(sourceFile), read(path.join(inputDir, 'latest_collection_summary.json'))]);
   if (summary.from_date !== from || summary.to_date !== to) throw new Error('Cached collection period mismatch');
+  // 한 번 더 받아도 남은 기업. 판정은 그대로 한다(나머지 기업의 판정은 저장돼 다음 실행이 다시 쓴다).
+  // 발행 단계는 이 목록이 비어 있지 않으면 문안을 쓰기 전에 멈춘다.
+  const retryable = retryableCompanies(summary);
   const candidates = sourceCandidates(signals, technology, indicators, period);
   const articles = groupArticles(candidates.investment, candidates.relevant, period, policy);
   const snapshot = { policy, period, summary, signals, articles, targets, technology, indicators, date_deferred: candidates.deferred };
@@ -1344,9 +1393,12 @@ async function main() {
   const judged = state.status === 'completed' || reviewFailed.length > 0;
   const approved = judged ? await approvedCandidateCount(articles, path.join(root, 'reviews')) : null;
   await write(path.join(root, 'status.json'), { ...state, stage: 'judgement', judged, ...(approved === null ? {} : { approved_candidates: approved }),
+    collection_retryable: retryable, ...(collection?.retry_passes ? { collection_retry_passes: collection.retry_passes,
+      collection_retryable_before_retry: collection.retryable_before_retry } : {}),
     period, provider: PROVIDER.id, model: MODEL, run_dir: path.basename(runDir),
     issue_number: String(process.env.REPORT_ISSUE_NUMBER || '').trim(), ...runIdentity() });
   console.log(JSON.stringify(state));
+  if (retryable.length && process.env.GITHUB_ACTIONS === 'true') console.log(`::warning title=Collection incomplete::${collectionRetryNote(retryable, collection)}`);
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
     `### ${PROVIDER.label} judgement\n${state.status}: ${state.completed}/${state.total} articles; ${state.requests} API requests; ${state.cached} cached` +
     `${state.no_body_skipped ? `; ${state.no_body_skipped} not sent (every article of the company lacks a body)` : ''}` +
@@ -1380,7 +1432,8 @@ async function main() {
       `${item.candidate_ids.join(', ')} held back from the report, kept for the dashboard and asked again next run\n`).join('') +
     state.diagnostics.map(item => `- Diagnostic in progress artifact: ${item.file} (${item.reason})\n`).join('') +
     (judged ? `\n**Judgement complete.** ${approved} approved candidate(s) await report copy. ` +
-      'Run the publish-report workflow for the same dates next; it writes the copy and builds both PDFs.\n' : ''));
+      'Run the publish-report workflow for the same dates next; it writes the copy and builds both PDFs.\n' : '') +
+    (retryable.length ? `\n**Collection incomplete.** ${collectionRetryNote(retryable, collection)}\n` : ''));
   if (!judged) process.exitCode = 75;
 }
 
