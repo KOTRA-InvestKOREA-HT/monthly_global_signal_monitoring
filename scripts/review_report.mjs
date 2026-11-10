@@ -1360,9 +1360,8 @@ export async function collectWithRetryPass({ collect, readSummary, wait = ms => 
 export function collectionRetryNote(retryable, collection = null) {
   return `${retryable.length} companies still have temporary collection errors` +
     `${collection?.retry_passes ? ` after ${collection.retry_passes} extra collection pass` : ''}: ${retryable.join(', ')}. ` +
-    'Their articles may be missing, so publish-report stops before writing the copy. Run collect-company-signals again for the ' +
-    'same dates (within a day it reuses the other companies and collects only these again), or run publish-report with ' +
-    'allow_retryable_companies to publish without them.';
+    'Their articles may be missing; publish-report still builds the report and lists them. If the errors look temporary, ' +
+    'run collect-company-signals again for the same dates (within a day it reuses the other companies and collects only these again).';
 }
 
 // 실패한 단계. 마지막 catch 가 어디서 멈췄는지 남긴다.

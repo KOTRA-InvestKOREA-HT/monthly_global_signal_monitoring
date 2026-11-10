@@ -77,10 +77,7 @@ export async function POST(request) {
       return Response.json({ error: `발행을 시작하지 않았습니다. ${reason}`, pipeline }, { status: 409 });
     }
 
-    // '발행만 실행' 창에서 사람이 체크한 경우에만 재시도 대상 기업이 남은 판정을 발행한다(Issue 5 의 8개 기업처럼).
-    // 값이 정확히 true 일 때만 받는다. 판정 버튼은 이 값을 무시한다.
-    const allowRetryable = stage === "publish" && body.allowRetryable === true;
-    const { workflowFile, inputs } = dispatchFor(stage, config, { fromDate, toDate, issueNumber, allowRetryable });
+    const { workflowFile, inputs } = dispatchFor(stage, config, { fromDate, toDate, issueNumber });
     // 보내기 전에 잰다. 실행은 응답이 오기 전에 만들어질 수 있고, 화면은 이 시각보다 먼저 만들어진 실행을 지난 실행으로 본다.
     const requestedAt = new Date().toISOString();
     const response = await fetch(

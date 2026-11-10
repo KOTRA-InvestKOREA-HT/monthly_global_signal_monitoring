@@ -1,13 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import { githubConfig } from '../app/lib/github_env.mjs';
 import { suggestedIssue } from '../app/lib/issue_number.mjs';
-import { HELD_STEP, PAUSED_STEP, dispatchFor, pipelineStatus, stopKind } from '../app/lib/report_pipeline.mjs';
-import { HELD_EXIT_CODE, collectionRetryable, heldMessage } from '../scripts/publish_report.mjs';
+import { PAUSED_STEP, dispatchFor, pipelineStatus } from '../app/lib/report_pipeline.mjs';
 import { HANDOFF_WAIT_MS, NOT_STARTED_LABEL, START_WAIT_MS, followRequest, requestedStatus, runRequest } from '../app/lib/run_request.mjs';
 
 // 대시보드 버튼 한 번이 판정(collect-company-signals)과 발행(publish-report)을 차례로 돌린다.
@@ -146,20 +142,13 @@ test('each button sends only the inputs its workflow defines', async () => {
     return [...block.matchAll(/^ {6}(\w+):$/gm)].map(match => match[1]);
   };
   for (const stage of ['collect', 'publish']) {
-    for (const allowRetryable of [false, true]) {
-      const { workflowFile, inputs } = dispatchFor(stage, config, { ...values, allowRetryable });
-      const defined = await inputsOf(workflowFile);
-      for (const name of Object.keys(inputs)) assert.ok(defined.includes(name), `${workflowFile} does not define ${name}; GitHub answers 422`);
-    }
+    const { workflowFile, inputs } = dispatchFor(stage, config, values);
+    const defined = await inputsOf(workflowFile);
+    for (const name of Object.keys(inputs)) assert.ok(defined.includes(name), `${workflowFile} does not define ${name}; GitHub answers 422`);
   }
   assert.equal(dispatchFor('collect', config, values).inputs.auto_publish, 'true');
   assert.equal('auto_publish' in dispatchFor('publish', config, values).inputs, false);
   assert.equal(dispatchFor('publish', config, values).workflowFile, 'publish-report.yml');
-  // 재시도 대상 기업을 넘기는 입력은 '발행만 실행'에서 체크했을 때만 간다. 판정 버튼은 보내지 않는다.
-  assert.equal(dispatchFor('publish', config, { ...values, allowRetryable: true }).inputs.allow_retryable_companies, 'true');
-  assert.equal('allow_retryable_companies' in dispatchFor('publish', config, values).inputs, false);
-  assert.equal('allow_retryable_companies' in dispatchFor('publish', config, { ...values, allowRetryable: 'true' }).inputs, false);
-  assert.equal('allow_retryable_companies' in dispatchFor('collect', config, { ...values, allowRetryable: true }).inputs, false);
 });
 
 test('manual collection judges only; the publish hand-off waits for a finished judgement', async () => {
@@ -189,110 +178,6 @@ test('manual collection judges only; the publish hand-off waits for a finished j
 
   // 발행이 멈추면 커밋까지 가지 않는다.
   assert.ok(publish.indexOf(`- name: ${PAUSED_STEP}`) < publish.indexOf('git-auto-commit-action'));
-});
-
-// Issue 5(2026-10)는 수집 요약에 재시도 대상 8개 기업이 남은 채 발행됐다. 발행 단계는 판정이 끝났는지만 봤고,
-// 대시보드에도 그 목록이 보이지 않았다. 이제 발행은 문안을 쓰기 전에 멈추고, 대시보드는 "발행 보류"로 보인다.
-const ISSUE5_RETRYABLE = ['Dupont', 'Chemours', '3M', 'Ouster', 'HyproMag', 'Texcell', 'DNP', 'Shanghai Electric Wind Power'];
-const issue5Summary = { retryable_company_count: 8, collection_coverage: [
-  { company: 'Australian Strategic Metals', status: 'completed', retryable: false, cached: false },
-  ...ISSUE5_RETRYABLE.map(company => ({ company, status: 'incomplete', retryable: true, cached: false }))] };
-
-test('publish holds a judgement whose collection still has retryable companies, unless a person allows it', () => {
-  const period = { from_date: '2026-10-01', to_date: '2026-10-31' };
-  const held = collectionRetryable(issue5Summary);
-  assert.deepEqual([held.held, held.allowed, held.count, held.companies], [true, false, 8, ISSUE5_RETRYABLE]);
-  const message = heldMessage(held, period);
-  assert.match(message, /^8 companies still have temporary collection errors in the judged collection: Dupont, Chemours, 3M, Ouster, HyproMag, Texcell, DNP, Shanghai Electric Wind Power\./);
-  assert.match(message, /collect-company-signals again for 2026-10-01\.\.2026-10-31/);
-  assert.match(message, /allow_retryable_companies/);
-  assert.doesNotMatch(message, /\n/, 'one line, so it fits an annotation');
-
-  assert.deepEqual(collectionRetryable(issue5Summary, true), { companies: ISSUE5_RETRYABLE, count: 8, held: false, allowed: true });
-  // 재시도 대상이 없으면 멈추지 않는다. 접근 거부(403)처럼 다시 받아도 같은 오류는 재시도 대상이 아니다.
-  const clean = { retryable_company_count: 0, collection_coverage: [{ company: 'DNP', status: 'incomplete', retryable: false }] };
-  assert.deepEqual(collectionRetryable(clean), { companies: [], count: 0, held: false, allowed: false });
-  // 기업 목록이 없는 옛 요약도 수만 있으면 멈춘다.
-  assert.equal(collectionRetryable({ retryable_company_count: 3 }).held, true);
-  assert.equal(collectionRetryable(null).held, false);
-});
-
-test('a held publish exits before choosing a model or key and leaves a held status', async t => {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'publish-held-'));
-  t.after(() => fs.rm(dir, { recursive: true, force: true }));
-  const period = { from_date: '2026-10-01', to_date: '2026-10-31' };
-  const work = path.join(dir, 'outputs', 'review_work');
-  await fs.mkdir(path.join(work, '2026-10-issue5'), { recursive: true });
-  await fs.writeFile(path.join(work, 'status.json'), JSON.stringify({ stage: 'judgement', judged: true, status: 'completed',
-    completed: 800, total: 800, period, run_dir: '2026-10-issue5', issue_number: '5' }));
-  await fs.writeFile(path.join(work, '2026-10-issue5', 'snapshot.json'), JSON.stringify({ summary: issue5Summary, articles: [] }));
-  // 키를 하나도 주지 않는다. 멈춤이 키 검사보다 먼저이므로 모델을 부를 수 없다.
-  const env = { ...process.env, REPORT_FROM_DATE: period.from_date, REPORT_TO_DATE: period.to_date,
-    GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: path.join(dir, 'step_summary.md') };
-  for (const name of ['GEMINI_API_KEY', 'GEMINI_FOR_SUMMARY', 'GEMINI_FREE_TIER_CONFIRMED', 'REPORT_ISSUE_NUMBER',
-    'REPORT_ALLOW_RETRYABLE_COMPANIES', 'GITHUB_RUN_ID']) delete env[name];
-  const script = path.resolve('scripts/publish_report.mjs');
-
-  const held = spawnSync(process.execPath, [script], { cwd: dir, env, encoding: 'utf8' });
-  assert.equal(held.status, HELD_EXIT_CODE, held.stderr);
-  assert.notEqual(HELD_EXIT_CODE, 75, 'a hold is not a quota pause');
-  assert.match(held.stdout, /::error title=Collection incomplete::8 companies .*Shanghai Electric Wind Power\./);
-  const status = JSON.parse(await fs.readFile(path.join(work, 'publish_status.json'), 'utf8'));
-  assert.deepEqual([status.status, status.reason, status.retryable_companies, status.retryable_company_count],
-    ['held', 'collection_retryable', ISSUE5_RETRYABLE, 8]);
-  assert.match(await fs.readFile(env.GITHUB_STEP_SUMMARY, 'utf8'), /^### Collection incomplete\n8 companies/);
-  await assert.rejects(fs.access(path.join(dir, 'outputs', 'latest_collection_summary.json')), 'nothing is published');
-
-  // 넘기면 멈춤을 지나 키 검사에서 멈춘다(키가 없다). 모델 호출 없이 넘김이 통하는 것만 본다.
-  // 넘김이 막다른 길을 없앤다: DNP 의 설정 주소는 2026-11 확인으로 늘 500 이라 설정을 고칠 때까지 매 실행 남는다.
-  const allowed = spawnSync(process.execPath, [script], { cwd: dir, env: { ...env, REPORT_ALLOW_RETRYABLE_COMPANIES: 'true' },
-    encoding: 'utf8' });
-  assert.equal(allowed.status, 1);
-  assert.match(allowed.stdout, /Publishing with 8 retryable companies \(allow_retryable_companies\)/);
-  assert.match(allowed.stderr, /GEMINI_FOR_SUMMARY \(or GEMINI_API_KEY\)/);
-});
-
-test('a held publish fails through its own named step, before validation and the commit', async () => {
-  const collect = (await fs.readFile('.github/workflows/collect-company-signals.yml', 'utf8')).replace(/\r\n/g, '\n');
-  const publish = (await fs.readFile('.github/workflows/publish-report.yml', 'utf8')).replace(/\r\n/g, '\n');
-  assert.ok(publish.includes(`- name: ${HELD_STEP}\n`), 'publish lacks the held step');
-  assert.ok(publish.includes(`if: \${{ steps.publish.outputs.held == 'true' }}`));
-  assert.ok(publish.includes(`if [ "$code" -eq ${HELD_EXIT_CODE} ]; then echo "held=true" >> "$GITHUB_OUTPUT"; exit 0; fi\n`),
-    'exit code of publish_report.mjs is tied to the held step');
-  const held = publish.indexOf(`- name: ${HELD_STEP}`);
-  assert.ok(held < publish.indexOf('- name: Validate report inputs') && held < publish.indexOf('git-auto-commit-action'));
-  // 넘기는 입력은 기본이 꺼짐이고, 스크립트가 읽는 변수로 간다.
-  assert.match(publish, /\n {6}allow_retryable_companies:\n {8}description: [^\n]+\n {8}type: boolean\n {8}default: false\n/);
-  assert.match(publish, /\n {10}REPORT_ALLOW_RETRYABLE_COMPANIES: \$\{\{ inputs\.allow_retryable_companies \|\| 'false' \}\}\n/);
-  assert.match(await fs.readFile('scripts/publish_report.mjs', 'utf8'), /process\.env\.REPORT_ALLOW_RETRYABLE_COMPANIES === 'true'/);
-  // 판정이 이어서 시작하는 발행은 넘기지 않는다. 사람이 고르지 않은 발행은 늘 멈춘다.
-  const handOff = collect.slice(collect.indexOf('- name: Start publish-report for the finished judgement'));
-  assert.doesNotMatch(handOff, /allow_retryable_companies/);
-});
-
-test('the dashboard reads a held publish as 발행 보류 and keeps publish-only open to allow it', async () => {
-  const collect = run('2026-11-02T07:02:00Z', 'completed', 'success');
-  const publish = run('2026-11-02T08:40:00Z', 'completed', 'failure');
-  const held = pipelineStatus({ collect, publish, publishHeld: true });
-  // can_publish 가 true 라야 늘 남는 기업(DNP 의 영구 500 주소)이 매달 발행을 막지 않는다. 사람이 넘길 길이 열려 있다.
-  assert.deepEqual([held.stage, held.label, held.held, held.paused, held.can_publish], ['publish', '발행 보류', true, false, true]);
-  assert.match(held.hint, /'크롤링 수행'을 다시 누르면 그 기업만 다시 받아/);
-  assert.match(held.hint, /'재시도 대상 기업이 남아도 발행'/);
-  assert.equal(pipelineStatus({ collect, publish }).held, false);
-  assert.equal(pipelineStatus({ collect, publish }).label, '발행 실패');
-
-  // 실패한 단계 이름으로 가른다. 건너뛴 단계는 세지 않는다.
-  assert.deepEqual(stopKind([{ steps: [{ name: HELD_STEP, conclusion: 'failure' }] }]), { paused: false, held: true });
-  assert.deepEqual(stopKind([{ steps: [{ name: PAUSED_STEP, conclusion: 'failure' }, { name: HELD_STEP, conclusion: 'skipped' }] }]),
-    { paused: true, held: false });
-  assert.deepEqual(stopKind([{ steps: [{ name: 'Validate report inputs', conclusion: 'failure' }] }]), { paused: false, held: false });
-
-  // 화면: 안내 문구를 보이고, 체크 상자는 발행 보류 뒤 '발행만 실행' 창에만 있다.
-  const page = await fs.readFile('app/page.jsx', 'utf8');
-  assert.match(page, /\["판정 완료", "판정 일시정지", "발행 일시정지", "발행 보류",/);
-  assert.match(page, /runDialog === "publish" && crawlStatus\?\.held \? \(/);
-  assert.match(page, /재시도 대상 기업이 남아도 발행/);
-  assert.match(page, /allowRetryable: stage === "publish" && Boolean\(crawlStatus\?\.held\) && allowRetryable/);
 });
 
 // 수동 실행 폼의 호수 기본값이 "2"였다. 그대로 돌리면 status.json 에 2호가 기록되고 발행이 Issue 2 PDF 를 커밋했다.
@@ -484,28 +369,4 @@ test('publish-only dispatches publish-report without the judgement inputs', asyn
   const dispatch = calls.find(call => call.method === 'POST');
   assert.match(dispatch.url, /workflows\/publish-report\.yml\/dispatches$/);
   assert.deepEqual(dispatch.body.inputs, { from_date: '2026-09-01', to_date: '2026-09-30', issue_number: '4' });
-});
-
-// 발행 보류 뒤 사람이 체크하면 '발행만 실행'이 재시도 대상 기업을 넘기는 입력을 보낸다. 정확히 true 일 때만이고,
-// 판정 버튼으로는 보내지 않는다.
-test('publish-only after a hold sends allow_retryable_companies only when it was ticked', async () => {
-  const answer = url => (url.includes('collect-company-signals.yml/runs')
-    ? runs([run('2026-11-02T07:02:00Z', 'completed', 'success')])
-    : url.includes('publish-report.yml/runs') ? runs([run('2026-11-02T08:40:00Z', 'completed', 'failure')])
-      : url.includes('/jobs') ? reply(200, { jobs: [{ steps: [{ name: HELD_STEP, conclusion: 'failure' }] }] })
-        : reply(204));
-  const period = { fromDate: '2026-10-01', toDate: '2026-10-31', issueNumber: '5' };
-  const dispatched = async body => {
-    const { response, calls } = await withGitHub(answer, { ...period, ...body });
-    assert.equal(response.status, 202);
-    return calls.find(call => call.method === 'POST');
-  };
-  const allowed = await dispatched({ stage: 'publish', allowRetryable: true });
-  assert.deepEqual(allowed.body.inputs,
-    { from_date: '2026-10-01', to_date: '2026-10-31', issue_number: '5', allow_retryable_companies: 'true' });
-  assert.equal('allow_retryable_companies' in (await dispatched({ stage: 'publish', allowRetryable: 'true' })).body.inputs, false);
-  assert.equal('allow_retryable_companies' in (await dispatched({ stage: 'publish' })).body.inputs, false);
-  const crawl = await dispatched({ allowRetryable: true });
-  assert.match(crawl.url, /collect-company-signals\.yml\/dispatches$/);
-  assert.equal('allow_retryable_companies' in crawl.body.inputs, false);
 });

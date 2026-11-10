@@ -394,8 +394,6 @@ export default function HomePage() {
   const [published, setPublished] = useState(null);
   // 실행 확인 창. "collect" 는 크롤링 수행(판정 후 발행까지), "publish" 는 발행만 실행이다.
   const [runDialog, setRunDialog] = useState(null);
-  // 발행 보류 뒤 '발행만 실행' 창의 체크 상자. 창을 열 때마다 꺼진 상태로 시작한다.
-  const [allowRetryable, setAllowRetryable] = useState(false);
   const [reportLang, setReportLang] = useState("ko");
   const [signals, setSignals] = useState([]);
   const [relevantSignals, setRelevantSignals] = useState([]);
@@ -557,8 +555,6 @@ export default function HomePage() {
           fromDate: selectedPeriod.fromDate,
           toDate: selectedPeriod.toDate,
           issueNumber: safeIssue,
-          // 창에 체크 상자가 보였고(발행 보류 뒤) 사람이 체크했을 때만 보낸다.
-          allowRetryable: stage === "publish" && Boolean(crawlStatus?.held) && allowRetryable,
         }),
       });
       const payload = await response.json();
@@ -681,7 +677,7 @@ export default function HomePage() {
             <span>{triggering ? "요청 중" : "크롤링 수행"}</span>
           </button>
           {crawlStatus?.can_publish ? (
-            <button className="secondary" onClick={() => { setAllowRetryable(false); setRunDialog("publish"); }} disabled={triggering}>
+            <button className="secondary" onClick={() => setRunDialog("publish")} disabled={triggering}>
               <FileText size={18} />
               <span>발행만 실행</span>
             </button>
@@ -760,17 +756,6 @@ export default function HomePage() {
                 onChange={(event) => setIssueNumber(event.target.value)}
               />
             </label>
-            {/* Issue 5(2026-10)는 재시도 대상 8개 기업이 남은 채 아무 표시 없이 발행됐다. 이제 발행은 그런 판정에서 멈추고(발행 보류),
-                다시 수집해도 남을 때만 사람이 여기서 체크해 넘긴다. 발행 보류가 아닐 때는 보이지 않는다. */}
-            {runDialog === "publish" && crawlStatus?.held ? (
-              <label className="modalCheck">
-                <input type="checkbox" checked={allowRetryable} onChange={(event) => setAllowRetryable(event.target.checked)} />
-                <span>
-                  {"재시도 대상 기업이 남아도 발행 — 그 기업의 이번 달 기사가 빠졌을 수 있습니다. 먼저 '크롤링 수행'으로 다시 받아 보고, " +
-                    "같은 기업이 계속 남을 때만 체크하세요. 기업 목록은 보류된 발행의 실행 기록에 있습니다."}
-                </span>
-              </label>
-            ) : null}
             <div className="modalActions">
               <button className="secondary" type="button" onClick={() => setRunDialog(null)}>
                 취소
@@ -873,7 +858,7 @@ export default function HomePage() {
       ) : null}
 
       {message ? <div className="notice success">{message}</div> : null}
-      {crawlStatus?.hint && ["판정 완료", "판정 일시정지", "발행 일시정지", "발행 보류", "판정 실패", "발행 실패", NOT_STARTED_LABEL].includes(crawlStatus.label) ? (
+      {crawlStatus?.hint && ["판정 완료", "판정 일시정지", "발행 일시정지", "판정 실패", "발행 실패", NOT_STARTED_LABEL].includes(crawlStatus.label) ? (
         <div className={`notice ${crawlStatus.label.endsWith("실패") || crawlStatus.label === NOT_STARTED_LABEL ? "error" : ""}`}>
           {crawlStatus.hint}
           {crawlStatus.html_url ? (
@@ -933,7 +918,7 @@ export default function HomePage() {
         <div>
           <span>크롤링 상태</span>
           <strong
-            className={crawlStatus?.active ? "statusRunning" : crawlStatus?.paused || crawlStatus?.held ? "statusWarning" : ""}
+            className={crawlStatus?.active ? "statusRunning" : crawlStatus?.paused ? "statusWarning" : ""}
             title={crawlStatus?.title || undefined}
           >
             {triggering ? "요청 중" : crawlStatus?.label || "대기"}

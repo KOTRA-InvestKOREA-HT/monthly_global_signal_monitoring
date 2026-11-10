@@ -3,7 +3,6 @@ name: publish-report
 # 2단계: collect-company-signals 가 끝낸 판정을 이어받아 보고서 문안을 쓰고 한·영 PDF 를 만든다.
 #
 # 판정과 같은 기간으로 실행한다(비워 두면 둘 다 지난달). 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
-# 판정이 쓴 수집에 재시도 대상 기업(일시 오류)이 남았어도 문안을 쓰지 않고 멈춘다(Held 단계). allow_retryable_companies 로 넘긴다.
 # 문안 모델(gemini-3.5-flash-lite)이 할당량으로 멈추면 쓴 문안은 캐시에 남으므로, 같은 기간으로 다시 돌리면 이어서 쓴다.
 # 두 PDF 가 모두 만들어졌을 때만 outputs/latest_*.json 과 PDF 를 커밋한다.
 # 대시보드 버튼으로 시작한 collect-company-signals 는 판정이 끝나면 이 워크플로를 실행한다. 대시보드의
@@ -26,13 +25,6 @@ on:
         description: "Report issue number; leave empty to use the one given to collect-company-signals"
         required: false
         default: ""
-      # Issue 5(2026-10)는 수집이 8개 기업을 재시도 대상으로 남긴 채 발행됐다. 이제 그런 판정은 문안을 쓰기 전에
-      # 멈춘다(Held 단계). 다시 수집해도 같은 기업이 남을 때(매달 같은 오류를 주는 사이트) 사람이 확인하고 켠다.
-      # 판정이 이어서 시작하는 발행(auto_publish)은 이 값을 넘기지 않으므로 늘 꺼진 채 돈다.
-      allow_retryable_companies:
-        description: "Publish even though some companies still have temporary collection errors (a held run lists them). Leave off to stop so they can be collected again"
-        type: boolean
-        default: false
 
 # collect-company-signals 와 같은 그룹이다. 두 단계가 같은 진행 캐시를 동시에 고쳐 쓰지 않게 한다.
 concurrency:
@@ -102,13 +94,10 @@ jobs:
           REPORT_FROM_DATE: ${{ steps.report_period.outputs.from_date }}
           REPORT_TO_DATE: ${{ steps.report_period.outputs.to_date }}
           REPORT_ISSUE_NUMBER: ${{ inputs.issue_number || '' }}
-          REPORT_ALLOW_RETRYABLE_COMPANIES: ${{ inputs.allow_retryable_companies || 'false' }}
         # 종료 코드 75 는 문안 모델이 한도로 멈춘 것이다. 아래 "Paused" 단계가 실행을 실패로 끝낸다(collect-company-signals 와 같다).
-        # 종료 코드 65 는 재시도 대상 기업이 남아 문안을 쓰기 전에 멈춘 것이다(publish_report.mjs HELD_EXIT_CODE). 아래 "Held" 단계가 끝낸다.
         run: |
           code=0
           node scripts/publish_report.mjs || code=$?
-          if [ "$code" -eq 65 ]; then echo "held=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           if [ "$code" -eq 75 ]; then echo "paused=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           exit "$code"
       - name: Save progress even when quota is exhausted
@@ -131,14 +120,6 @@ jobs:
         run: |
           echo "::warning::Writing the report copy stopped before finishing (quota). Run publish-report again for the same dates to resume."
           exit 75
-      # 재시도 대상 기업이 남은 판정이면 여기서 끝낸다. 기업 목록은 앞 단계의 오류 표시와 실행 요약에 있다.
-      # 이름은 app/lib/report_pipeline.mjs 의 HELD_STEP 과 같다. 대시보드가 이 이름으로 "발행 보류"를 알아본다.
-      - name: Held - retryable companies remain
-        if: ${{ steps.publish.outputs.held == 'true' }}
-        run: |
-          echo "Not published: some companies still have temporary collection errors (see the Collection incomplete annotation)."
-          echo "Run collect-company-signals again for the same dates, or run publish-report with allow_retryable_companies on."
-          exit 65
       - name: Validate report inputs
         run: node scripts/validate_report_inputs.mjs
       - name: Downloadable bilingual PDFs

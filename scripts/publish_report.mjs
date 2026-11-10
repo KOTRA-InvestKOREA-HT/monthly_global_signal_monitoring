@@ -48,35 +48,22 @@ export function judgementFor(status, period) {
   return status;
 }
 
-// 수집 미완료로 멈출 때의 종료 코드. 워크플로가 이 코드를 받으면 "Held - retryable companies remain" 단계로
-// 실행을 실패시키고, 대시보드가 그 단계 이름(app/lib/report_pipeline.mjs HELD_STEP)으로 "발행 보류"를 알아본다.
-// 75(한도로 멈춤)와 다른 번호여야 한다. 65 는 sysexits 의 EX_DATAERR(입력 자료가 올바르지 않음)다.
-export const HELD_EXIT_CODE = 65;
-
-// 판정이 쓴 수집에 재시도 대상 기업이 남았는지. 남았으면 문안을 쓰기 전에 멈춘다(held).
-// Issue 5(2026-10)는 수집 요약에 재시도 대상 8개 기업(Dupont, Chemours, 3M, Ouster, HyproMag, Texcell, DNP,
-// Shanghai Electric Wind Power)이 남은 채 발행됐다. 이 단계는 판정이 끝났는지만 봤고, 대시보드도 그 목록을 보여 주지
-// 않아 아무도 다시 수집하지 않았다. 그 기업들이 10월에 낸 기사는 보고서에서 빠졌을 수 있다(DNP 는 본문을 모두 잃었다).
-// 판정 단계가 이미 한 번 더 받아 봤으므로(review_report.mjs collectWithRetryPass) 여기서는 다시 받지 않는다.
-// 매달 같은 오류를 주는 사이트도 있어, 다시 수집해도 남으면 사람이 allow 로 넘긴다(워크플로 입력
-// allow_retryable_companies, 대시보드 "발행만 실행"의 체크 상자). 멈춤은 막다른 길이 아니다. 2026-11 확인으로 DNP 의
-// 설정 주소 https://www.dnp.co.jp/en/ir/ 는 늘 500(Fastly "unknown domain")이어서 DNP 가 매 실행 재시도 대상으로
-// 남았다. 넘김이 없었다면 그 주소 하나가 매달 발행을 막았다(2026-11-10 설정에서 뺐다. IR 소식은 IR News RSS 가 받는다).
-// 이렇게 영구히 깨진 설정 주소가 보이면 넘기기만 하지 말고 설정을 고친다. 접근 거부(403) 같은 영구 오류는 재시도 대상이
-// 아니라서 여기서 멈추지 않는다. 그 기업은 지금처럼 보고서에 수집 미완료로 나간다.
-export function collectionRetryable(summary, allow = false) {
+// 판정이 쓴 수집에 재시도 대상 기업(일시 오류)이 남았는지. 발행은 막지 않고 경고와 기록만 남긴다.
+// 2026-11-10 에 남으면 문안을 쓰기 전에 멈추게 했다가(8b5fa8b) 같은 날 되돌렸다. 그날 남은 5개 기업(Amkor Technology,
+// Magnix, Schmalz, HyproMag, Veolia)은 다시 수집할 때마다 같은 주소에서 같은 오류를 냈다(매체가 늘 주는 429, 늘 끊기는 연결).
+// 일시 오류가 아니라서 몇 번을 다시 돌려도 발행이 막혔다(실행 42773340938). 진짜 일시 오류는 판정 단계의 한 번 더 받기
+// (review_report.mjs collectWithRetryPass)가 거른다. 같은 날 첫 수집의 BASF·Heraeus 가 그렇게 풀렸다.
+// 남은 기업은 실행 경고·요약과 latest_ai_summary_summary.json 의 published_with_retryable_companies 에 남아,
+// 다음 달 감사가 "기사 없음"과 수집 실패를 가를 수 있다.
+export function collectionRetryable(summary) {
   const companies = retryableCompanies(summary);
-  // 기업 목록이 없는 옛 요약도 수만 있으면 멈춘다.
-  const count = Math.max(companies.length, Number(summary?.retryable_company_count) || 0);
-  return { companies, count, held: count > 0 && !allow, allowed: count > 0 && allow };
+  // 기업 목록이 없는 옛 요약도 수는 센다.
+  return { companies, count: Math.max(companies.length, Number(summary?.retryable_company_count) || 0) };
 }
 
-export function heldMessage(retryable, period) {
-  return `${retryable.count} companies still have temporary collection errors in the judged collection` +
-    `${retryable.companies.length ? `: ${retryable.companies.join(', ')}` : ''}. Their articles may be missing, so the report ` +
-    `was not built and no copy was written. Run collect-company-signals again for ${period.from_date}..${period.to_date} ` +
-    '(the dashboard button does this and publishes again; within a day it collects only these companies again), ' +
-    'or run publish-report with allow_retryable_companies on to publish without them.';
+export function retryableWarning(retryable) {
+  return `Published although ${retryable.count} companies still have temporary collection errors` +
+    `${retryable.companies.length ? `: ${retryable.companies.join(', ')}` : ''}. Their articles may be missing from the report.`;
 }
 
 // local_report.mjs build 가 실행 폴더 안에 만드는 report-* 빌드 폴더를 지운다.
@@ -204,33 +191,23 @@ async function main() {
     const judged = judgementFor(await read(path.join(ROOT, 'status.json')).catch(() => null), period);
     // 문안을 쓰기 전에 확인한다. 다 쓰고 나서 호수 때문에 멈추면 그 호출이 헛돈다.
     const issueNumber = issueNumberFor(process.env.REPORT_ISSUE_NUMBER, judged);
-    const runDir = path.join(ROOT, judged.run_dir);
-    const snapshot = await read(path.join(runDir, 'snapshot.json'));
-    // 문안 모델·키를 고르기 전에 본다. 멈춰도 쓴 문안이 없으니 헛도는 호출이 없고, 키가 없는 실행도 같은 이유로 멈춘다.
-    const retryable = collectionRetryable(snapshot.summary, process.env.REPORT_ALLOW_RETRYABLE_COMPANIES === 'true');
-    if (retryable.held) {
-      const message = heldMessage(retryable, period);
-      console.error(message);
-      if (process.env.GITHUB_ACTIONS === 'true') console.log(`::error title=Collection incomplete::${message}`);
-      if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, `### Collection incomplete\n${message}\n`);
-      await write(STATUS_FILE, { status: 'held', stage, reason: 'collection_retryable', retryable_companies: retryable.companies,
-        retryable_company_count: retryable.count, period, ...runIdentity() });
-      process.exitCode = HELD_EXIT_CODE;
-      return;
-    }
-    if (retryable.allowed) {
-      console.log(`Publishing with ${retryable.count} retryable companies (allow_retryable_companies): ${retryable.companies.join(', ')}`);
-      if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,
-        `### Collection incomplete (allowed)\nPublished although ${retryable.count} companies still have temporary collection errors: ` +
-        `${retryable.companies.join(', ')}.\n`);
-    }
     const writer = resolveWriter();
     const apiKeys = process.env.GEMINI_FREE_TIER_CONFIRMED === 'true' ? summaryApiKeys() : [];
     if (!apiKeys.length) {
       throw new Error('GEMINI_FOR_SUMMARY (or GEMINI_API_KEY) with GEMINI_FREE_TIER_CONFIRMED=true is required to write the report copy. ' +
         'Set GEMINI_FREE_TIER_CONFIRMED only after confirming the key belongs to a project with no paid billing.');
     }
+    const runDir = path.join(ROOT, judged.run_dir);
+    const snapshot = await read(path.join(runDir, 'snapshot.json'));
     const policyDoc = await fs.readFile('docs/local_report_review.md', 'utf8');
+    // 재시도 대상 기업이 남았어도 발행한다. 경고와 기록만 남긴다(collectionRetryable 설명 참고).
+    const retryable = collectionRetryable(snapshot.summary);
+    if (retryable.count) {
+      const message = retryableWarning(retryable);
+      console.log(message);
+      if (process.env.GITHUB_ACTIONS === 'true') console.log(`::warning title=Collection incomplete::${message}`);
+      if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, `### Collection incomplete\n${message}\n`);
+    }
 
     stage = 'write';
     const { stats, apiKey } = await writeWithKeyRotation(apiKeys, key => writeSummaries({ articles: snapshot.articles,
@@ -304,8 +281,8 @@ async function main() {
       ...judgement, status: publishedStatus(judgement.status, reviewFailed, copyFailed), copy_failures: copyFailed,
       judgement_run: run || null, summary_writer: stats, summary_reviewer: reviewStats, box_writer: boxStats, issue_number: issueNumber, period, provider,
       model: judged.model,
-      // 사람이 allow 로 넘긴 발행이면 그때 남아 있던 기업을 남긴다. 다음 달 감사가 "기사 없음"과 가를 수 있게 한다.
-      ...(retryable.allowed ? { published_with_retryable_companies: retryable.companies } : {}) });
+      // 수집이 다 끝나지 않은 채 발행한 기업. 다음 달 감사가 "기사 없음"과 가를 수 있게 남긴다.
+      ...(retryable.count ? { published_with_retryable_companies: retryable.companies } : {}) });
     await fs.mkdir('public/reports', { recursive: true });
     await fs.copyFile(path.join(reportDir, 'report_ko.pdf'), 'public/reports/latest_report.pdf');
     await fs.copyFile(path.join(reportDir, 'report_en.pdf'), 'public/reports/latest_report_en.pdf');
