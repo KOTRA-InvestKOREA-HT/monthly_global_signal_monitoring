@@ -150,6 +150,8 @@ const TRANSIENT_ERROR = /fetch failed|timeout|aborted|domain_cooldown|HTTP (408|
 const PROBE_PAUSED = /google_probe_paused/i;
 
 export function retryableError(error) {
+  // 본문을 받지 못하는 매체의 기사(collect_company_signals.mjs markUnreadableOutletErrors)는 다시 받아도 같은 답이 온다.
+  if (error?.unreadable_outlet) return false;
   const message = error?.error || '';
   return TRANSIENT_ERROR.test(message) || PROBE_PAUSED.test(message);
 }

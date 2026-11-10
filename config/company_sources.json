@@ -166,13 +166,6 @@
         "url": "https://www.riotinto.com/news/feed"
       }
     ],
-    "HyproMag": [
-      {
-        "source": "Mkango Resources (HyProMag parent) - News RSS",
-        "kind": "press_release",
-        "url": "https://mkango.ca/rss"
-      }
-    ],
     "Veolia": [
       {
         "source": "Veolia - Official RSS",
@@ -1232,17 +1225,6 @@
         "page_title": "SEC Filings",
         "source_type_label": "Regulatory Filings",
         "domain": "ir.appliedmaterials.com"
-      }
-    ],
-    "Magnix": [
-      {
-        "source": "Magnix - magniX News / Newsroom / News",
-        "kind": "newsroom",
-        "url": "https://www.magnix.aero/news",
-        "crawl_priority": "Primary",
-        "page_title": "magniX News",
-        "source_type_label": "Newsroom / News",
-        "domain": "www.magnix.aero"
       }
     ],
     "Prodrive": [
@@ -2317,22 +2299,13 @@
         "domain": "hypromag.com"
       },
       {
-        "source": "HyproMag - Mkango 2026 News / News Archive",
+        "source": "HyproMag - Mkango Magnetic Materials (HyProMag parent) / Latest Releases",
         "kind": "newsroom",
-        "url": "https://mkango.ca/news/2026",
+        "url": "https://www.mkangomagneticmaterials.com/",
         "crawl_priority": "Supplemental",
-        "page_title": "Mkango 2026 News",
-        "source_type_label": "News Archive",
-        "domain": "mkango.ca"
-      },
-      {
-        "source": "HyproMag - Mkango News / Newsroom / Regulatory News",
-        "kind": "newsroom",
-        "url": "https://mkango.ca/news/",
-        "crawl_priority": "Supplemental",
-        "page_title": "Mkango News",
+        "page_title": "Mkango Magnetic Materials",
         "source_type_label": "Newsroom / Regulatory News",
-        "domain": "mkango.ca"
+        "domain": "www.mkangomagneticmaterials.com"
       }
     ],
     "EVG": [
@@ -3501,6 +3474,9 @@
     "Benzinga",
     "WSJ",
     "Wall Street Journal",
-    "Moomoo"
+    "Moomoo",
+    "Global Sources",
+    "Smart Water Magazine",
+    "MBC Radio"
   ]
 }

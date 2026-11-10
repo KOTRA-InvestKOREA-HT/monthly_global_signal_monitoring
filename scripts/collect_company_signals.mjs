@@ -3788,7 +3788,20 @@ export async function collectCompany(company, sourceConfig, selectedSources, arg
       errors.push({ target_no: company.target_no, company: company.company, source: "google_news_korea", error: error.message });
     }
   }
-  return { rows, requestCount, errors, stats: { ...stats, ...tally } };
+  return { rows, requestCount, errors: markUnreadableOutletErrors(errors, sourceConfig), stats: { ...stats, ...tally } };
+}
+
+const DETAIL_ERROR_SOURCES = new Set(["official_detail", "official_model"]);
+
+// 본문을 받지 못하는 매체(external_news_unreadable_outlets)의 기사 상세 오류. 다시 받아도 같은 답이 오므로 기업을 재시도
+// 대상으로 만들지 않는다(collection_resilience.mjs retryableError). 2026-11-10 수집에서 Global Sources(Amkor)·Smart Water
+// Magazine(Veolia)은 첫 화면부터 봇 요청에 늘 429 를, MBC Radio(Schmalz)는 늘 연결 실패를 냈다. 한 실행의 다섯 번 수집에서
+// 같은 기사가 같은 오류로 실패해, 재시도 대상으로 남아 매번 다시 수집됐다. 오류 기록은 그대로 남긴다.
+// Google 확인 멈춤(google_probe_paused)은 매체 탓이 아니라 다음 실행에 풀리므로 표시하지 않는다.
+export function markUnreadableOutletErrors(errors, sourceConfig) {
+  return errors.map((error) => (DETAIL_ERROR_SOURCES.has(error.source) && !/google_probe_paused/i.test(error.error || "")
+    && unreadableOutlet({ publisher: String(error.source_name || "").replace(/^Google News:\s*/i, "") }, sourceConfig)
+    ? { ...error, unreadable_outlet: true } : error));
 }
 
 async function main() {
