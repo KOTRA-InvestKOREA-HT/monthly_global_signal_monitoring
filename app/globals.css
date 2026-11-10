@@ -185,6 +185,21 @@ button {
   color: var(--text);
 }
 
+/* 발행 보류 뒤 '발행만 실행' 창의 체크 상자(재시도 대상 기업이 남아도 발행). */
+.modalCheck {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modalCheck input {
+  margin-top: 3px;
+}
+
 .monthGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

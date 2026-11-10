@@ -110,6 +110,9 @@ environments. Progress lives in `outputs/review_work`; rerun the same period to
 resume. `REPORT_REREVIEW=true` (the Actions `rereview` checkbox) discards saved
 article reviews and reviews every article again; if that run pauses, rerun with it
 off so the next run resumes instead of starting over. A review stopped by the request budget or a provider error exits with code 75 and does not publish new PDFs; articles that still fail evidence validation after retries no longer block the report and are marked as incomplete evidence.
+`npm run report:publish` exits with code 65 before writing any copy while the judged collection still has
+retryable companies; `REPORT_ALLOW_RETRYABLE_COMPANIES=true` (the Actions `allow_retryable_companies` checkbox)
+publishes without them.
 Successful CLI runs update `outputs/latest_*.json` and both `public/reports` PDFs;
 only Actions additionally commits the outputs. Python dependencies from
 `requirements-python.txt` and Chrome/Edge are required to build the reports.
@@ -259,9 +262,15 @@ A local build keeps the dated-but-unconfirmed rows in `date_pending.json` in the
    `publish-report`를 이어서 실행한다.
    요청 한도에는 재시도가 포함되며, 한도에 도달하면 진행분을 저장하고 중단한다. 같은 기간으로
    다시 실행하면 유효한 판정을 재사용한다. 판정이 끝나면 실행 요약에 "Judgement complete"가 나온다.
+   수집이 일시 오류로 끝나지 않은 기업(재시도 대상)을 남기면 1분 쉬고 수집기를 한 번 더 돌린다. 끝난 기업은
+   진행 파일에서 읽고 남은 기업만 받는다. 그래도 남으면 실행 요약에 "Collection incomplete"와 기업 목록이 나온다.
    이 단계는 PDF를 만들거나 커밋하지 않는다.
 2. `publish-report`: 같은 기간으로 실행한다(둘 다 비워 두면 지난달). 끝난 판정을 이어받아 보고서
    문안을 쓰고 한·영 PDF를 만들어 커밋한다. 판정이 끝나지 않았으면 문안을 쓰지 않고 멈춘다.
+   판정이 쓴 수집에 재시도 대상 기업이 남았어도 문안을 쓰지 않고 멈춘다(`Held - retryable companies remain`,
+   대시보드 "발행 보류"). 같은 기간으로 1단계를 다시 돌려 그 기업을 다시 받거나, 다시 받아도 남으면
+   `allow_retryable_companies`를 켜고(대시보드 "발행만 실행"의 체크 상자) 발행한다. Issue 5(2026-10)는 8개 기업이
+   남은 채 발행됐다.
    문안 모델이 할당량으로 멈추면 쓴 문안은 저장되므로 다시 실행하면 이어서 쓴다.
    문안을 쓴 뒤 검토 모델(`gemini-3.5-flash-lite`, 저장소 변수 `GEMINI_REVIEWER_MODEL=off`로 끔)이 시제·근거 없는 사실·
    없는 한국어 용어·한영 불일치를 짚는다. 보고서에 실리는 문안의 시제 지적과 투자 시그널 카드의 근거 지적은

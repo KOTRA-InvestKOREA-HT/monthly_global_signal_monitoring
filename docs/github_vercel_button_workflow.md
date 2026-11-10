@@ -90,8 +90,24 @@ retry, the judgement finishes without them: their companies are marked as incomp
 evidence and the articles are listed in `review_failed_articles` of the collection
 summary. Stage 1 never builds PDFs or commits; it only saves the judgement in the cache.
 
+If the collection leaves companies with temporary errors (`collection_coverage[].retryable`:
+connection failures, timeouts, 429/5xx, host cooldowns), stage 1 waits 60 seconds and runs the
+collector once more before judging. Finished companies come from the per-company progress files,
+so only the retryable companies are requested again; no model is called. Companies still retryable
+after that pass are listed as "Collection incomplete" in the run summary and in `status.json`
+(`collection_retryable`). Issue 5 (2026-10) was published with eight such companies because a
+judgement that finished in one run never had the "next run" that used to retry them.
+
 Stage 2 (`publish_report.mjs`) restores that judgement, writes the copy, validates the
 decisions and builds both PDFs (HTML printed by Chrome, `scripts/build_html_report.mjs`).
+Before writing any copy it checks the judged collection: while retryable companies remain it
+exits with code 65 and the workflow fails through a step named `Held - retryable companies remain`
+(`HELD_STEP` in `app/lib/report_pipeline.mjs`), with the company list in an error annotation.
+Run stage 1 again for the same dates to collect them again, or, when the same companies keep
+failing, run `publish-report` with `allow_retryable_companies` on (the dashboard's "발행만 실행"
+dialog shows a checkbox for this after a held run). An allowed publish records the companies in
+`published_with_retryable_companies` of `outputs/latest_ai_summary_summary.json`. The
+`auto_publish` hand-off never sets that input.
 Only when both PDFs are built does it copy the final results to:
 
 ```text
@@ -127,7 +143,8 @@ GITHUB_REF=main
 The server-side token needs access to dispatch Actions and read repository data.
 "크롤링 수행" sends `from_date`, `to_date`, `issue_number` and `auto_publish=true`
 to `collect-company-signals`. "발행만 실행" sends only `from_date`, `to_date` and
-`issue_number` to `publish-report` (it defines no `auto_publish`; GitHub would answer 422).
+`issue_number` to `publish-report` (it defines no `auto_publish`; GitHub would answer 422),
+plus `allow_retryable_companies=true` only when the checkbox shown after a held publish is ticked.
 The route refuses "크롤링 수행" with 409 while any run is queued or running (both workflows
 share one concurrency group, and GitHub keeps only one pending run per group, so a new
 judgement would cancel a waiting publish), refuses "발행만 실행" with 409 unless the latest
@@ -137,11 +154,12 @@ fills the issue number from the last published issue (`outputs/latest_ai_summary
 the same issue for that month, one more for the next month, blank otherwise.
 
 `GET /api/crawl-status` reads the latest run of both workflows and reports the newer one:
-판정 중 / 판정 일시정지 / 판정 실패 / 판정 완료 / 발행 중 / 발행 일시정지 / 발행 실패 / 완료.
+판정 중 / 판정 일시정지 / 판정 실패 / 판정 완료 / 발행 중 / 발행 일시정지 / 발행 보류 / 발행 실패 / 완료.
 Exit code 75 (quota or provider pause) and a real error both end a run as `failure`, so
 each workflow fails a pause through a step named `Paused - run again to resume`
 (`PAUSED_STEP` in `app/lib/report_pipeline.mjs`); the route reads the run's jobs to tell
-the two apart.
+the two apart. A publish held for retryable companies fails through `Held - retryable companies remain`
+(`HELD_STEP`) and shows as 발행 보류; "발행만 실행" stays open so the operator can allow it.
 
 `GET /api/crawl-status` needs `GITHUB_TOKEN` as well as the owner and repository; without it
 the status reads "설정 필요" instead of calling GitHub. `GET /api/trigger-crawl` opened in a
