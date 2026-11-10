@@ -68,6 +68,11 @@ export function botChallengeError(vendor, detail = '') {
   return Object.assign(new Error(`bot_challenge: ${vendor}${detail ? ` (${detail})` : ''}`), { noRetry: true, botChallenge: vendor });
 }
 
+// 호스트 연속 실패로 셀 오류. 응답이 없었거나(연결 오류·시간초과, status 없음) 408·429·5xx 다.
+function hostFailure(error) {
+  return error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500;
+}
+
 // challengeThreshold: 한 호스트에서 차단 페이지를 연달아 이만큼 받으면 이번 실행 동안 그 호스트에는 더 보내지 않고
 // 같은 bot_challenge 오류로 끝낸다. domain_cooldown 과 달리 일시 오류로 세지 않는다(재시도 대상이 아니다).
 export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 30000, challengeThreshold = 2 } = {}) {
@@ -75,8 +80,14 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
   const stats = { attempts: 0, skipped: 0, elapsed_ms: 0, bot_challenges: 0, challenge_skipped: 0 };
   return { stats, async run(url, request) {
     const host = new URL(url).hostname;
-    const state = domains.get(host) || { failures: 0, until: 0, probing: false, challenges: 0, vendor: '' };
+    // serverErrorUrls: 이번 연속 실패 구간에서 5xx 로 이미 센 주소. 연속이 끊기면(성공·다른 응답) 비운다.
+    const state = domains.get(host) ||
+      { failures: 0, until: 0, probing: false, challenges: 0, vendor: '', serverErrorUrls: new Set() };
     domains.set(host, state);
+    const resetFailures = () => {
+      state.failures = 0;
+      state.serverErrorUrls.clear();
+    };
     if (state.challenges >= challengeThreshold) {
       stats.challenge_skipped++;
       throw botChallengeError(state.vendor, `skipped: ${host} challenged earlier in this run`);
@@ -93,7 +104,7 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
     stats.attempts++;
     try {
       const result = await request();
-      state.failures = 0;
+      resetFailures();
       state.challenges = 0;
       return result;
     } catch (error) {
@@ -108,12 +119,24 @@ export function createDomainGuard({ now = Date.now, threshold = 3, cooldownMs = 
       // hostNeutral 오류는 연속 실패 수를 늘리지도 되돌리지도 않는다. 목록 페이지가 광고했을 뿐인 피드 주소의 5xx 가
       // 그렇다(2026-10 Texcell /actualites/feed/ 의 500). 그 실패로 같은 호스트의 목록·기사가 30초 쉬면 안 되고,
       // 그 응답이 앞선 진짜 장애의 연속 횟수를 지워서도 안 된다.
+      // 서버가 5xx 로 답한 실패는 주소마다 한 번만 센다. 재시도(fetchWithRetries 는 같은 주소를 세 번까지 보낸다)가
+      // 같은 답을 다시 받아도 호스트에 대한 새 근거가 아니다. 예전에는 시도마다 세어 주소 하나의 500 이 혼자 한도 3을
+      // 채웠다. 2026-10 수집(11-02 실행)에서 DNP 의 www.dnp.co.jp/en/ir/ 는 매번 500 이었다(번역 프록시가 없어진
+      // 경로, "Fastly error: unknown domain"). 그 세 번으로 30초 쉼이 걸렸고, 쉼으로 끝난 요청은 바로 돌아오므로
+      // 뒤따른 IR 목록 2곳과 정상인 /news/detail/ 기사 10건이 모두 그 30초 안에 domain_cooldown 으로 끝났다.
+      // 10-13·10-25 실행도 같았다. 다른 주소 세 곳이 잇달아 5xx 면 호스트 장애로 보고 지금처럼 쉰다(5xx 는 빨리 온다).
+      // 응답이 없는 실패(연결 오류·시간초과)와 429 는 지금처럼 시도마다 센다. 호스트가 답하지 않거나 직접 늦추라고 한
+      // 것이라 시도 하나하나가 호스트에 대한 근거이고, 시간초과는 한 번에 20초씩 들어 빨리 쉬어야 한다.
       if (error.hostNeutral) {
         // 그대로 둔다.
-      } else if (!error.noRetry && (error.status === undefined || error.status === 408 || error.status === 429 || error.status >= 500)) {
-        state.failures++;
-        if (state.failures >= threshold) state.until = now() + cooldownMs;
-      } else state.failures = 0;
+      } else if (!error.noRetry && hostFailure(error)) {
+        const answered = error.status >= 500;
+        if (!answered || !state.serverErrorUrls.has(String(url))) {
+          if (answered) state.serverErrorUrls.add(String(url));
+          state.failures++;
+          if (state.failures >= threshold) state.until = now() + cooldownMs;
+        }
+      } else resetFailures();
       throw error;
     } finally {
       if (probe) state.probing = false;
