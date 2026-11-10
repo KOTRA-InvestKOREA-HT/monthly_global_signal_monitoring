@@ -1346,7 +1346,7 @@
   "items": {
     "kicker": "K E Y   D E V E L O P M E N T S",
     "title": "Global Business Developments by Company",
-    "note": "These companies had no signals in August but reported developments tied directly to their target technologies. All are monitored for emerging signals.",
+    "note": "These companies had no signals in August but reported developments tied directly to their target technologies. Cards without a target technology cover all of a company's businesses. All are monitored for emerging signals.",
     "target_label": "Target technology",
     "trend_label": "August Developments",
     "cards": [

@@ -388,17 +388,23 @@ class SourceLinkTests(unittest.TestCase):
             self.assertEqual(profile["detailed_industry"], expected)
             self.assertEqual(pdf.target_section_for_profile(profile), ("", ""))
 
-    def test_item_page_leaves_out_companies_never_matched_to_their_target_technology(self):
-        # 2026-10-12: 면제 기업은 품목 연계를 확인하지 않았으므로 품목별 사업동향 페이지에 싣지 않는다.
+    def test_item_page_carries_exempt_companies_without_signals_as_company_wide_trends(self):
+        # 2026-11-10: 시그널이 없는 면제 기업은 상세 페이지가 없어, 이 면에서 빼면 사업동향이 보고서 어디에도
+        # 실리지 않았다(10월호 JSR 오창 공장 준공). 면제 기업은 품목 대신 회사 전반의 사업동향으로 싣고,
+        # 일반 기업의 면제 판정 행은 품목 연계가 확인되지 않았으므로 여전히 싣지 않는다.
         import report_content
         profiles = [{"company": "Cognex", "target_technology": "machine vision"},
-                    {"company": "Air Products", "target_technology": "HMD", "exempt_from_relevance": True},
+                    {"company": "JSR", "target_technology": "EUV", "exempt_from_relevance": True},
+                    {"company": "Toray", "target_technology": "PVDF", "exempt_from_relevance": True},
                     {"company": "EVG", "target_technology": "wafer bonding"}]
-        rows = [{"company": "Cognex"}, {"company": "Air Products"},
+        rows = [{"company": "Cognex"}, {"company": "JSR", "excluded_from_relevance": True},
+                {"company": "Toray", "excluded_from_relevance": True},
                 {"company": "EVG", "technology_gate_decision": "relevance_exempt"}]
+        signal_index = {"Toray": {3: [{"company": "Toray"}]}}
         with unittest.mock.patch.object(report_content, "signal_supported", return_value=True):
-            entries = report_content.build_item_trend_entries(profiles, {}, rows)
-        self.assertEqual([entry["profile"]["company"] for entry in entries], ["Cognex"])
+            entries = report_content.build_item_trend_entries(profiles, signal_index, rows)
+        self.assertEqual([entry["profile"]["company"] for entry in entries], ["Cognex", "JSR"])
+        self.assertEqual(report_content.target_section_for_profile(entries[1]["profile"]), ("", ""))
 
     def test_every_exempt_company_has_its_own_industry_label(self):
         self.assertEqual(set(pdf.EXEMPT_INDUSTRY), set(pdf.EXEMPT_COMPANIES))

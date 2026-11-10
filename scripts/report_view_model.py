@@ -221,7 +221,8 @@ def item_entries(profiles, signal_index, relevant, summary):
             "company": entry["profile"].get("display_name") or entry["profile"]["company"],
             "industry": entry["profile"].get("detailed_industry", ""),
             "country": entry["profile"].get("country", ""),
-            "target_text": report.item_target_text(entry["profile"]),
+            # 면제 기업 카드는 품목 줄 없이 회사 전반의 사업동향을 싣는다. 상세 페이지 상자와 같은 함수로 정한다.
+            "target_text": report.target_section_for_profile(entry["profile"])[1],
             # 문장 수를 줄 수에 맞춰 자르지 않고 문안 전체를 싣는다. 카드 높이는 Chrome 이 잰 값으로 장을 나눈다.
             # 줄 수에 맞춰 자르던 때는 긴 영문의 뒷문장이 빠져, HyproMag 인수금액이 영문에만, Renishaw 전시
             # 일정이 한글에만 남았다(실행 35167466191).

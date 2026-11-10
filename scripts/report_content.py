@@ -1495,23 +1495,29 @@ def target_section_for_profile(profile):
 
 
 def build_item_trend_entries(profiles, signal_index, relevant_rows):
-    """5대 시그널 미포착 + 타겟 품목·기술 연관 사업동향 포착 기업을 기업 단위로 모은다."""
+    """5대 시그널 미포착 + 이번 달 사업동향 포착 기업을 기업 단위로 모은다.
+
+    일반 기업은 타겟 품목·기술과 직접 연계된 사업동향만 싣는다. 기술 관련성 확인을 면제받은 기업은
+    품목 대신 회사 전반의 사업동향을 싣는다. 상세 페이지 사업현황 상자(business_row_on_target)와 같은 규칙이다.
+    """
     entries = []
     for profile in profiles:
         company = profile["company"]
         if any(signal_index.get(company, {}).values()):
             continue
-        # 이 카드의 존재 이유가 '타겟 품목·기술과 직접 연계된 사업동향'이므로,
-        # 그 연계가 확인되지 않은 행으로는 카드를 만들지 않는다.
-        # 기술 관련성 확인을 면제받은 기업과 행은 품목과의 연계를 확인하지 않았으므로 싣지 않는다.
-        # 예전에는 품목 줄만 숨긴 채 회사 전반의 사업동향 카드로 실었다(2026-10-12 사용자 결정으로 제외).
-        if profile.get("exempt_from_relevance"):
+        # 2026-10-12에 면제 기업을 이 면에서 뺐더니, 시그널이 없는 달에는 면제 기업의 사업동향이 보고서
+        # 어디에도 실리지 않았다. 상세 페이지는 시그널이 있어야 생기므로 시그널 없는 기업이 갈 곳은 이 면뿐이다.
+        # 10월호에서 승인까지 받은 JSR 오창 공장 준공, Prodrive 한국 사무소 기사가 이렇게 빠졌다
+        # (2026-11-10 사용자 결정으로 복원).
+        exempt_company = bool(profile.get("exempt_from_relevance"))
+        # 일반 기업 카드의 존재 이유는 '타겟 품목·기술과 직접 연계된 사업동향'이므로, 그 연계가 확인되지 않은
+        # 행(면제 판정 행)과 품목이 지정되지 않은 기업으로는 카드를 만들지 않는다.
+        if not exempt_company and not str(profile.get("target_technology") or "").strip():
             continue
         candidates = [row for row in relevant_rows
-                      if row.get("company") == company and signal_supported(row) and not is_relevance_exempt(row)]
+                      if row.get("company") == company and signal_supported(row)
+                      and (exempt_company or not is_relevance_exempt(row))]
         if not candidates:
-            continue
-        if not str(profile.get("target_technology") or "").strip():
             continue
         entries.append({"profile": profile, "row": sort_signal_rows(candidates)[0]})
     return entries

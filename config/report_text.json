@@ -155,9 +155,9 @@
         "en": "{month} Developments"
       },
       "item_note": {
-        "ko": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 향후 시그널 발전 가능성을 모니터링함.",
-        "en": "These companies had no signals in {month} but reported developments tied directly to their target technologies. All are monitored for emerging signals.",
-        "note": "{month}에 보고 달이 들어간다."
+        "ko": "5대 시그널에는 미포착되었으나, {month}중 투자유치 필요 품목·기술과 직접 연계되는 글로벌 사업동향이 포착된 기업. 품목·기술 표시가 없는 카드는 기업 전반의 주요 사업동향임. 향후 시그널 발전 가능성을 모니터링함.",
+        "en": "These companies had no signals in {month} but reported developments tied directly to their target technologies. Cards without a target technology cover all of a company's businesses. All are monitored for emerging signals.",
+        "note": "{month}에 보고 달이 들어간다. 가운데 문장은 품목 줄 없이 실리는 기술 관련성 확인 면제 기업 카드를 설명한다(2026-11-10 복원, 영문은 10-12 이전 승인 문구 그대로)."
       }
     }
   },
